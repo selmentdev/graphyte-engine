@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="notstd::span&lt;*&gt;">
+        <DisplayString>{{ size={m_Size} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">m_Size</Item>
+            <ArrayItems>
+                <Size>m_Size</Size>
+                <ValuePointer>m_Data</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+    <Type Name="notstd::fixed_vector&lt;*,*&gt;">
+        <DisplayString>{{ size={m_Size} }}</DisplayString>
+        <Expand>
+            <Item Name="[size]" ExcludeView="simple">m_Size</Item>
+            <ArrayItems>
+                <Size>m_Size</Size>
+                <ValuePointer>($T1*)&amp;m_Data</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+    <Type Name="notstd::flat_map&lt;*,*&gt;">
+        <DisplayString>{{ size={m_Data.size()}}}</DisplayString>
+        <Expand>
+            <Item Name="[compare]">m_Compare</Item>
+            <ExpandedItem>m_Data</ExpandedItem>
+        </Expand>
+    </Type>
+    <Type Name="notstd::flat_set&lt;*,*&gt;">
+        <DisplayString>{{ size={m_Data.size()}}}</DisplayString>
+        <Expand>
+            <Item Name="[compare]">m_Compare</Item>
+            <ExpandedItem>m_Data</ExpandedItem>
+        </Expand>
+    </Type>
+    <!--<Type Name="Graphyte::IntrusiveList&lt;*&gt;">
+        --><!--<DisplayString>{{ size={m_Size} }}</DisplayString>--><!--
+        <Expand
+            <CustomListItems MaxItemsPerView="25">
+                <Variable Name="iBucket" InitialValue="-1" />
+                <Variable Name="pBucket" InitialValue="m_ppBins == nullptr ? nullptr : *m_ppBins" />
+                <Variable Name="iBucketIncrement" InitialValue="-1" />
+
+                <Size>m_nElements</Size>
+                <Exec>pBucket = nullptr</Exec>
+                <Loop>
+                    <If Condition="pBucket == nullptr">
+                        <Exec>iBucket++</Exec>
+                        <Exec>iBucketIncrement = __findnonnull(m_ppBins + iBucket, m_nBins - iBucket)</Exec>
+                        <Break Condition="iBucketIncrement == -1" />
+                        <Exec>iBucket += iBucketIncrement</Exec>
+                        <Exec>pBucket = m_ppBins[iBucket]</Exec>
+                    </If>
+                    <Item>pBucket,na</Item>
+                    <Exec>pBucket = pBucket->m_pNext</Exec>
+                </Loop>
+
+            </CustomListItems>
+        </Expand>
+    </Type>-->
+</AutoVisualizer>
