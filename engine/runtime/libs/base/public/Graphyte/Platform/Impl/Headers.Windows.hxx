@@ -1,0 +1,224 @@
+#pragma once
+
+//
+// Strip system headers from unused symbols.
+//
+
+
+#define NOATOM
+//#define NOCLIPBOARD
+//#define NOCOLOR
+#define NOCOMM
+//#define NOCTLMGR
+#define NODEFERWINDOWPOS
+#define NODRAWTEXT
+//#define NOGDI
+#define NOGDICAPMASKS
+#define NOHELP
+//#define NOICONS
+#define NOIMAGE
+#define NOKANJI
+#define NOKERNEL
+//#define NOKEYSTATES
+//#define NOMB
+#define NOMCX
+#define NOMEMMGR
+//#define NOMENUS
+#define NOMETAFILE
+#define NOMINMAX
+//#define NOMSG
+//#define NONLS
+#define NOOPENFILE
+#define NOPROFILER
+#define NOPROXYSTUB
+#define NORASTEROPS
+#define NORPC
+#define NOSCROLL
+#define NOSERVICE
+//#define NOSHOWWINDOW
+#define NOSOUND
+//#define NOSYSCOMMANDS
+//#define NOSYSMETRICS
+#define NOTAPE
+#define NOTEXTMETRIC
+//#define NOUSER
+//#define NOVIRTUALKEYCODES
+#define NOWH
+//#define NOWINMESSAGES
+//#define NOWINOFFSETS
+//#define NOWINSTYLES
+#define OEMRESOURCE
+
+
+
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+
+#ifndef STRICT
+#define STRICT 1
+#endif
+
+#if false
+#define _CRTDBG_MAP_ALLOC
+#ifdef _DEBUG
+#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define new DEBUG_NEW
+#endif
+#endif
+
+#include <crtdbg.h>
+
+//
+// Include system configurable headers.
+//
+#include <SDKDDKVer.h>
+#include <intrin.h>
+
+//
+// Make sure that build system properly configured headers
+//
+#if !defined(NTDDI_VERSION)
+#error "Unknown DDI version"
+#endif
+
+#if !defined(WINVER)
+#error "Unknown WINVER version"
+#endif
+
+#if !defined(_WIN32_WINNT)
+#error "Unknown _WIN32_WINNT version"
+#endif
+
+#if defined(_MSC_VER) && defined(NDEBUG)
+#   define _SECURE_SCL 0
+#   define _SECURE_SCL_THROWS 0
+#endif
+
+//
+// Windows headers
+//
+#include <Windows.h>
+#include <errno.h>
+#include <process.h>
+#include <ShellAPI.h>
+#include <Psapi.h>
+#include <Ole2.h>
+#include <dwmapi.h>
+#include <wincrypt.h>
+#include <strsafe.h>
+
+//
+// Winsock implementation
+//
+#include <WinSock2.h>
+#include <in6addr.h>
+#include <ws2ipdef.h>
+#include <WS2tcpip.h>
+
+//
+// Remove unnecessary preprocessor macros.
+//
+#include <Graphyte/Platform/Impl/Headers.Windows.Cleanup.hxx>
+
+//
+// Exception handling
+//
+#include <exception>
+#include <stdexcept>
+
+//
+// STL Headers.
+//
+#include <algorithm>
+#include <array>
+#include <limits>
+#include <list>
+#include <locale>
+#include <map>
+#include <memory>
+#include <new>
+#include <queue>
+#include <set>
+#include <stack>
+#include <string>
+#include <type_traits>
+#include <unordered_map>
+#include <vector>
+#include <codecvt>
+#include <string_view>
+#include <optional>
+#include <atomic>
+#include <charconv>
+#include <functional>
+
+//
+// C Library Headers.
+//
+#include <cassert>
+#include <cctype>
+#include <cerrno>
+#include <cinttypes>
+#include <climits>
+#include <clocale>
+#include <cmath>
+#include <cstdarg>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+
+//
+// Format library
+//
+
+#include <fmt/format.h>
+
+
+//
+// MSVC Runtime Debug
+//
+#if defined(_MSC_VER) && !defined(NDEBUG)
+// Include runtime debug headers
+#   include <crtdbg.h>
+#endif
+
+//
+// Additional intrinsics.
+//
+#if defined(_MSC_VER)
+#   pragma intrinsic(_lrotl, _lrotr, _rotl, _rotr, _strset, abs, fabs, labs, memcmp, memcpy, memset, strcat, strcmp, strcpy, strlen)
+#   pragma intrinsic(acos, cosh, pow, tanh, asin, fmod, sinh)
+#   pragma intrinsic(atan, exp, log10, sqrt, atan2, log, sin, tan, cos)
+#   pragma intrinsic(_rotr8, _rotr16, _rotr, _rotr64)
+#   pragma intrinsic(_rotl8, _rotl16, _rotl, _rotl64)
+
+#   if defined(_M_X86) || defined(_M_X64)
+#       pragma intrinsic(__rdtsc)
+#   endif
+#endif
+
+//
+// SIMD support
+//
+#if GRAPHYTE_PLATFORM_WINDOWS
+#   if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
+#       include <mmintrin.h>
+#       include <xmmintrin.h>
+#       include <emmintrin.h>
+#       include <pmmintrin.h>
+#       include <tmmintrin.h>
+#       include <smmintrin.h>
+#       include <nmmintrin.h>
+#       include <ammintrin.h>
+#       include <wmmintrin.h>
+#       include <immintrin.h>
+#   elif GRAPHYTE_CPU_ARM_32
+#       include <arm_neon.h>
+#       include <armintr.h>
+#   elif GRAPHYTE_CPU_ARM_64
+#       include <arm64_neon.h>
+#       include <arm64intr.h>
+#   endif
+#endif
