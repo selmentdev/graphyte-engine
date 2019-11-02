@@ -1,0 +1,14 @@
+----filter { "platforms:shared" }
+--    defines {
+--        "FMT_SHARED=1",
+--    }
+--
+--    defines {
+--        "FMT_EXCEPTIONS=0",
+--    }
+--    links {
+--        "fmt",
+--    }
+--    includedirs {
+--        "%{wks.location}/sdks/fmt/include"
+--    }
