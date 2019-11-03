@@ -370,14 +370,14 @@ namespace Graphyte::Storage
 
     void Path::Split(
         std::string_view path,
-        std::string& path_part,
-        std::string& filename_part,
-        std::string& extension_part
+        std::string_view& path_part,
+        std::string_view& filename_part,
+        std::string_view& extension_part
     ) noexcept
     {
-        path_part = Path::GetPath(path);
-        filename_part = Path::GetBaseFilename(path);
-        extension_part = Path::GetExtension(path, false);
+        path_part = Path::GetPathRef(path);
+        filename_part = Path::GetBaseFilenameRef(path);
+        extension_part = Path::GetExtensionRef(path, false);
     }
 
     void Path::Normalize(

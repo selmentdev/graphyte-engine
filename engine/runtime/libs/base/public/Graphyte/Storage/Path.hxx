@@ -154,12 +154,19 @@ namespace Graphyte::Storage
             std::string_view path
         ) noexcept;
 
-        // TODO: This could return string_view as well.
+        /*!
+         * \brief   Splits source path into separate parts.
+         *
+         * \param   path            Provides source path to split.
+         * \param   path_part       Returns path of source.
+         * \param   filename_part   Returns file name of source.
+         * \param   extension_part  Returns extension of source.
+         */
         static void Split(
             std::string_view path,
-            std::string& path_part,
-            std::string& filename_part,
-            std::string& extension_part
+            std::string_view& path_part,
+            std::string_view& filename_part,
+            std::string_view& extension_part
         ) noexcept;
 
         static void Normalize(
