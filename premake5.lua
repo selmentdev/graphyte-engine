@@ -362,7 +362,7 @@ io.writefile('engine/include/Graphyte/Build.Version.hxx', configfunction())
 function use_com_graphyte_base()
     filter {}
         links {
-            --"com.graphyte.base",
+            "com.graphyte.base",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/base/public",
@@ -393,7 +393,7 @@ end;
 function use_com_graphyte_launch()
     filter {}
         links {
-            --"com.graphyte.launch",
+            "com.graphyte.launch",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/launch/public",
