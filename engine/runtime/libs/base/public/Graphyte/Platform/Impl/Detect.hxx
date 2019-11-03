@@ -731,13 +731,15 @@
 #   define GRAPHYTE_ENABLE_STACKTRACE_FAST 1
 #endif
 
+#if !defined(GRAPHYTE_ENABLE_PROFILE)
+#   define GRAPHYTE_ENABLE_PROFILE 0
+#endif
+
 
 // =================================================================================================
 //
 // Profiler
 //
-
-#define GRAPHYTE_ENABLE_PROFILE 0
 
 // Update inline depth
 #if defined(_MSC_VER)
@@ -819,26 +821,6 @@
 #else
 #   define GX_LIB_EXPORT __attribute__((visibility("default")))
 #   define GX_LIB_IMPORT __attribute__((visibility("default")))
-#endif
-
-
-// =================================================================================================
-//
-// Likely / unlikely.
-//
-
-#if defined(_MSC_VER)
-#   define GX_LIKELY(expression)   (expression)
-#   define GX_UNLIKELY(expression) (expression)
-#else
-#   define GX_LIKELY(expression)   __builtin_expect(!!(expression), 1)
-#   define GX_UNLIKELY(expression) __builtin_expect(!!(expression), 0)
-#endif
-
-#if defined(_MSC_VER)
-#   define GX_PACKED __declspec(align(1))
-#else
-#   define GX_PACKED __attribute__((__packed__))
 #endif
 
 
