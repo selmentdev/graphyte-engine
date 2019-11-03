@@ -82,6 +82,10 @@ end
 function graphyte_test()
     graphyte_common {}
     
+    includedirs {
+        "%{wks.location}/sdks/catch2/include"
+    }
+    
     filter { "toolset:msc*" }
         ufinclude {}
     
@@ -358,7 +362,7 @@ io.writefile('engine/include/Graphyte/Build.Version.hxx', configfunction())
 function use_com_graphyte_base()
     filter {}
         links {
-            "com.graphyte.base",
+            --"com.graphyte.base",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/base/public",
@@ -389,7 +393,7 @@ end;
 function use_com_graphyte_launch()
     filter {}
         links {
-            "com.graphyte.launch",
+            --"com.graphyte.launch",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/launch/public",
@@ -400,7 +404,7 @@ end;
 function use_com_graphyte_graphics()
     filter {}
         links {
-            "com.graphyte.graphics",
+            --"com.graphyte.graphics",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/graphics/public",
@@ -411,7 +415,7 @@ end;
 function use_com_graphyte_framework()
     filter {}
         links {
-            "com.graphyte.framework",
+            --"com.graphyte.framework",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/framework/public",
@@ -422,7 +426,7 @@ end;
 function use_com_graphyte_geometry()
     filter {}
         links {
-            "com.graphyte.geometry",
+            --"com.graphyte.geometry",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/geometry/public",
@@ -433,7 +437,7 @@ end;
 function use_com_graphyte_rendering()
     filter {}
         links {
-            "com.graphyte.rendering",
+            --"com.graphyte.rendering",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/rendering/public",
@@ -444,7 +448,7 @@ end;
 function use_com_graphyte_entities()
     filter {}
         links {
-            "com.graphyte.entities",
+            --"com.graphyte.entities",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/entities/public",
@@ -455,7 +459,7 @@ end;
 function use_com_graphyte_ai()
     filter {}
         links {
-            "com.graphyte.ai",
+            --"com.graphyte.ai",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/ai/public",
@@ -466,7 +470,7 @@ end;
 function use_com_graphyte_assets_base()
     filter {}
         links {
-            "com.graphyte.assets.base",
+            --"com.graphyte.assets.base",
         }
         includedirs {
             "%{wks.location}/engine/developer/assets/libs/base/public",
@@ -481,26 +485,8 @@ include 'sdks'
 solution "*"
 
     --
-    -- Modules
-    --
-
-    filter { "tags:com_graphyte_base" }
-        links {
-            "module.base",
-        }
-        includedirs {
-            "%{wks.location}/engine/runtime/libs/base/public",
-        }
-
-
-    --
     -- SDKs
     --
-
-    filter { "tags:sdks-catch2" }
-        includedirs {
-            "%{wks.location}/sdks/catch2/include"
-        }
 
     filter { "tags:sdks-curl" }
         links {
@@ -522,14 +508,6 @@ solution "*"
             "%{wks.location}/sdks/fmt/include"
         }
 
-    filter { "tags:sdks-freetype" }
-        links {
-            "freetype",
-        }
-        includedirs {
-            "%{wks.location}/sdks/freetype/include"
-        }
-
     filter { "tags:sdks-glad" }
         links {
             "glad",
@@ -538,44 +516,9 @@ solution "*"
             "%{wks.location}/sdks/glad/include"
         }
 
-    filter { "tags:sdks-pugixml" }
-        links {
-            "pugixml",
-        }
-        includedirs {
-            "%{wks.location}/sdks/pugixml/include"
-        }
-        defines {
-            "PUGIXML_API=__declspec(dllimport)",
-            "PUGIXML_CLASS=__declspec(dllimport)"
-        }
-
     ----------------------------------------------
     -- LUA
     ----------------------------------------------
-
-    filter { "tags:sdks-lua", "kind:SharedLib", "toolset:msc*" }
-        defines {
-            "LUA_BUILD_AS_DLL=1",
-        }
-
-    filter { "tags:sdks-lua", "system:linux" }
-        defines {
-            "LUA_USE_LINUX=1"
-        }
-        links {
-            "dl",
-            "m",
-        }
-
-    filter { "tags:sdks-lua" }
-        links {
-            "lua",
-        }
-        includedirs {
-            "%{wks.location}/sdks/lua/include"
-        }
-
     filter { "tags:sdks-lz4" }
         links {
             "lz4",
@@ -591,59 +534,6 @@ solution "*"
         includedirs {
             "%{wks.location}/sdks/mbedtls/include"
         }
-
-    filter { "tags:sdks-png" }
-        links {
-            "png",
-        }
-        includedirs {
-            "%{wks.location}/sdks/png/include"
-        }
-
-
-    -------------
-    -- sol2
-    -------------
-
-    filter { "tags:sdks-sol2" }
-        includedirs {
-            "%{wks.location}/sdks/sol2/include"
-        }
-
-
-    -------------
-    -- SQLITE
-    -------------
-
-    filter { "tags:sdks-sqlite" }
-        links {
-            "sqlite",
-        }
-        includedirs {
-            "%{wks.location}/sdks/sqlite/include"
-        }
-
-    filter { "tags:sdks-sqlite", "toolset:msc*" }
-        defines {
-            "SQLITE_API=__declspec(dllimport)"
-        }
-
-    --------------------
-    -- yaml
-    --------------------
-    filter { "tags:sdks-yaml" }
-        links {
-            "yaml",
-        }
-
-        includedirs {
-            "%{wks.location}/sdks/yaml/include"
-        }
-
-        defines {
-            "YAML_DECLARE_STATIC=1",
-        }
-
 
     -----------------------
     -- zlib
@@ -670,25 +560,4 @@ solution "*"
     filter { "tags:sdks-zlib", "system:linux or system:android" }
         defines {
             "Z_HAVE_UNISTD_H=1",
-        }
-
-    -----------------------
-    -- mpack
-    -----------------------
-
-    filter { "tags:sdks-mpack" }
-        links {
-            "mpack",
-        }
-
-        includedirs {
-            "%{wks.location}/sdks/mpack/include"
-        }
-
-    -----------------------
-    -- rapidjson
-    -----------------------
-    filter { "tags:sdks-rapidjson" }
-        includedirs {
-            "%{wks.location}/sdks/RapidJSON/include"
         }
