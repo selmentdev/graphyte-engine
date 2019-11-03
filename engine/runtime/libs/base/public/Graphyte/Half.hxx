@@ -1,11 +1,11 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
-#include <Graphyte/Math/Simd.hxx>
-#include <Graphyte/Types.hxx>
+#include <Graphyte/Maths/Simd.hxx>
+#include <Graphyte/Maths/Types.hxx>
 
 namespace Graphyte
 {
-    mathinline float mathcall FromHalf(Half value) noexcept
+    mathinline float mathcall FromHalf(Maths::half value) noexcept
     {
 #if GRAPHYTE_HW_F16C
         __m128i v1 = _mm_cvtsi32_si128(static_cast<int32_t>(value.Value));
@@ -50,7 +50,7 @@ namespace Graphyte
 #endif
     }
 
-    mathinline Half mathcall ToHalf(float value) noexcept
+    mathinline Maths::half mathcall ToHalf(float value) noexcept
     {
 #if GRAPHYTE_HW_F16C
         __m128 v1 = _mm_set_ss(value);
@@ -92,7 +92,7 @@ namespace Graphyte
             result = ((uvalue + UINT32_C(0x0fff) + ((uvalue >> UINT32_C(13)) & UINT32_C(1))) >> UINT32_C(13)) & UINT32_C(0x7fff);
         }
 
-        return Half{ static_cast<uint16_t>(result | sign) };
+        return Maths::half{ static_cast<uint16_t>(result | sign) };
 #endif
     }
 }

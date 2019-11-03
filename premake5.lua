@@ -404,7 +404,7 @@ end;
 function use_com_graphyte_graphics()
     filter {}
         links {
-            --"com.graphyte.graphics",
+            "com.graphyte.graphics",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/graphics/public",
@@ -426,7 +426,7 @@ end;
 function use_com_graphyte_geometry()
     filter {}
         links {
-            --"com.graphyte.geometry",
+            "com.graphyte.geometry",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/geometry/public",
@@ -437,7 +437,7 @@ end;
 function use_com_graphyte_rendering()
     filter {}
         links {
-            --"com.graphyte.rendering",
+            "com.graphyte.rendering",
         }
         includedirs {
             "%{wks.location}/engine/runtime/libs/rendering/public",

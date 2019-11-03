@@ -7,7 +7,7 @@
 #include <Graphyte/Modules.hxx>
 #include <Graphyte/Network.hxx>
 #include <Graphyte/System/Process.hxx>
-//#include <Graphyte/Graphics.hxx>
+#include <Graphyte/Graphics.hxx>
 #include <Graphyte/Flags.hxx>
 #include <Graphyte/Console.hxx>
 #include <Graphyte/String.hxx>
@@ -278,7 +278,7 @@ namespace Graphyte::Launch
 
         LogBanner();
 
-        //Graphics::Initialize();
+        Graphics::Initialize();
 
         Console::Initialize();
     }
@@ -289,7 +289,7 @@ namespace Graphyte::Launch
 
         Console::Finalize();
 
-        //Graphics::Finalize();
+        Graphics::Finalize();
 
         Threading::TaskDispatcher::Finalize();
 

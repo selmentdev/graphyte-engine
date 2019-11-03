@@ -12,7 +12,7 @@ project "com.graphyte.base"
     }
 
     tags {
-        --"sdks-lz4",
+        "sdks-lz4",
         --"sdks-yaml",
         --"sdks-zlib",
         --"sdks-mbedtls",
