@@ -6,6 +6,7 @@
 #include <Graphyte/Bitwise.hxx>
 #include "OpenGLGpuTypeMapping.hxx"
 #include "OpenGLGpuShader.hxx"
+#include <Graphyte/Flags.hxx>
 
 namespace Graphyte::Graphics
 {

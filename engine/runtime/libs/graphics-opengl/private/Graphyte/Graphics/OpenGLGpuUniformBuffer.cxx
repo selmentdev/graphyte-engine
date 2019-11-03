@@ -2,6 +2,7 @@
 #include "OpenGLGpuDevice.hxx"
 #include "OpenGLGpuUniformBuffer.hxx"
 #include <Graphyte/Bitwise.hxx>
+#include <Graphyte/Flags.hxx>
 
 namespace Graphyte::Graphics
 {

@@ -1,6 +1,7 @@
 #include "Graphics.GLCore.pch.hxx"
 #include "OpenGLGpuVertexBuffer.hxx"
 #include "OpenGLGpuDevice.hxx"
+#include <Graphyte/Flags.hxx>
 
 namespace Graphyte::Graphics
 {
