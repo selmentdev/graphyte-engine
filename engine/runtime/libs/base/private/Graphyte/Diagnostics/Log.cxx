@@ -50,16 +50,19 @@ namespace Graphyte::Diagnostics
 
         if (buffer.size() != 0)
         {
-            //
-            // Forward log to terminal.
-            //
-
-            bool const is_error = (level == LogLevel::Error || level == LogLevel::Fatal);
-            bool const is_terminal = Application::GetDescriptor().Type == Application::ApplicationType::ConsoleTool;
-
-            if (Impl::GLogOutputTerminal && is_error && is_terminal)
+            if constexpr (System::CurrentPlatformKind == System::PlatformKind::Desktop)
             {
-                std::fwrite(buffer.data(), buffer.size(), 1, stderr);
+                //
+                // Forward log to terminal. Only on desktop platform.
+                //
+
+                bool const is_error = (level == LogLevel::Error || level == LogLevel::Fatal);
+                bool const is_terminal = Application::GetDescriptor().Type == Application::ApplicationType::ConsoleTool;
+
+                if (Impl::GLogOutputTerminal && is_error && is_terminal)
+                {
+                    std::fwrite(buffer.data(), buffer.size(), 1, stderr);
+                }
             }
 
 
@@ -73,10 +76,12 @@ namespace Graphyte::Diagnostics
 
                 size_t processed{};
 
-                [[maybe_unused]] auto status = Impl::GLogOutputFile->Write(
+                auto const status = Impl::GLogOutputFile->Write(
                     { reinterpret_cast<const std::byte*>(buffer.data()), buffer.size() },
                     processed
                 );
+
+                GX_ABORT_UNLESS(status == Status::Success, "Failed to write to log file");
             }
 
 
