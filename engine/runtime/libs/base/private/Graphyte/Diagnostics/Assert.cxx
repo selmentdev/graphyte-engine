@@ -36,6 +36,11 @@ namespace Graphyte::Diagnostics
             return false;
         }
 
+
+        //
+        // Acquire global diagnostics reporting lock.
+        //
+
         Threading::ScopedLock<Threading::CriticalSection> lock{ Impl::GetDiagnosticsLock() };
 
         if (Impl::GIsAsserting)

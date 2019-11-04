@@ -31,6 +31,12 @@ namespace Graphyte::Diagnostics
         fmt::format_args args
     ) noexcept
     {
+        //
+        // Acquire global diagnostics reporting lock.
+        //
+
+        Threading::ScopedLock<Threading::CriticalSection> lock{ Impl::GetDiagnosticsLock() };
+
         if (Impl::GIsAborting)
         {
             GX_LOG(LogPlatform, Error, "Aborting is not reentrant\n");
@@ -109,6 +115,7 @@ namespace Graphyte::Diagnostics
             content,
             stacktrace))
         {
+            Impl::GIsAborting = false;
             return true;
         }
 
