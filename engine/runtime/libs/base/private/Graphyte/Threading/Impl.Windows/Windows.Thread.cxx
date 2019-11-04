@@ -5,41 +5,73 @@
 #include <Graphyte/Application.hxx>
 #include <Graphyte/System/Impl.Windows/Windows.Helpers.hxx>
 
-#if defined(ENABLE_NSIGHT_PROFILER)
-#include <nvToolsExt.h>
+namespace Graphyte::Threading::Impl
+{
+    constexpr int ConvertThreadPriority(ThreadPriority value) noexcept
+    {
+        switch (value)
+        {
+        case ThreadPriority::TimeCritical:
+            return THREAD_PRIORITY_TIME_CRITICAL;
+        case ThreadPriority::Highest:
+            return THREAD_PRIORITY_HIGHEST;
+        case ThreadPriority::AboveNormal:
+            return THREAD_PRIORITY_ABOVE_NORMAL;
+        case ThreadPriority::Normal:
+            return THREAD_PRIORITY_NORMAL;
+        case ThreadPriority::BelowNormal:
+            return THREAD_PRIORITY_BELOW_NORMAL;
+        case ThreadPriority::Lower:
+            return THREAD_PRIORITY_NORMAL - 1;
+        case ThreadPriority::Lowest:
+            return THREAD_PRIORITY_LOWEST;
+        }
+
+        return THREAD_PRIORITY_NORMAL;
+    }
+
+#if WDK_NTDDI_VERSION < NTDDI_WIN10_RS1
+    //
+    // More info:
+    //  https://en.wikipedia.org/wiki/Windows_10_version_history
+    //  https://docs.microsoft.com/pl-pl/visualstudio/debugger/how-to-set-a-thread-name-in-native-code?view=vs-2019
+    //
+
+    constexpr const DWORD MS_VC_EXCEPTION = 0x406D1388;
+
+    typedef struct alignas(8) tagTHREADNAME_INFO
+    {
+        DWORD dwType; // Must be 0x1000.
+        LPCSTR szName; // Pointer to name (in user addr space).
+        DWORD dwThreadID; // Thread ID (-1=caller thread).
+        DWORD dwFlags; // Reserved for future use, must be zero.
+    } THREADNAME_INFO;
+
+    void Win32SetThreadName(DWORD dwThreadID, LPCSTR szThreadName)
+    {
+        THREADNAME_INFO info{
+            .dwType = 0x1000,
+            .szName = szThreadName,
+            .dwThreadID = dwThreadID,
+            .dwFlags = 0,
+        };
+
+#pragma warning(push)
+#pragma warning(disable: 6320 6322)
+        __try
+        {
+            RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+        }
+        __except (EXCEPTION_EXECUTE_HANDLER)
+        {
+        }
+#pragma warning(pop)
+    }
 #endif
+}
 
 namespace Graphyte::Threading
 {
-    namespace Impl
-    {
-        inline int ConvertThreadPriority(
-            ThreadPriority priority
-        ) noexcept
-        {
-            switch (priority)
-            {
-            case ThreadPriority::TimeCritical:
-                return THREAD_PRIORITY_TIME_CRITICAL;
-            case ThreadPriority::Highest:
-                return THREAD_PRIORITY_HIGHEST;
-            case ThreadPriority::AboveNormal:
-                return THREAD_PRIORITY_ABOVE_NORMAL;
-            case ThreadPriority::Normal:
-                return THREAD_PRIORITY_NORMAL;
-            case ThreadPriority::BelowNormal:
-                return THREAD_PRIORITY_BELOW_NORMAL;
-            case ThreadPriority::Lower:
-                return THREAD_PRIORITY_NORMAL - 1;
-            case ThreadPriority::Lowest:
-                return THREAD_PRIORITY_LOWEST;
-            }
-
-            GX_ASSERT(false);
-            return THREAD_PRIORITY_NORMAL;
-        }
-    }
-
     DWORD CALLBACK Thread::ThreadEntryPoint(
         LPVOID context
     ) noexcept
@@ -49,66 +81,40 @@ namespace Graphyte::Threading
 
         DWORD result{};
 
-#if !(defined(__MINGW32__) || defined(__MINGW64__))
         __try
-#endif
         {
             result = thread->Run();
         }
-
-#if !(defined(__MINGW32__) || defined(__MINGW64__))
         __except (EXCEPTION_EXECUTE_HANDLER)
         {
             result = ~DWORD{};
             Graphyte::Application::RequestExit(true);
         }
-#endif
 
         return result;
     }
 
     void Thread::SetThreadName(
-        [[maybe_unused]] ThreadId thread_id,
-        [[maybe_unused]] const char* thread_name
+        const Thread& thread,
+        const char* name
     ) noexcept
     {
+        GX_ABORT_UNLESS(name != nullptr, "What's the point of naming thread with empty name?");
+
+#if WDK_NTDDI_VERSION < NTDDI_WIN10_RS1
         if (IsDebuggerPresent() != FALSE)
         {
-            // We are using debug exception to set thread name in debugger:
-            // http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx
-
-#if !(defined(__MINGW32__) || defined(__MINGW64__))
-            static const constexpr uint32_t EXCEPTION_CODE = 0x406D1388;
-
-            struct THREADNAME_INFO
-            {
-                uint32_t dw_type;
-                const char* sz_name;
-                uint32_t dw_thread_id;
-                uint32_t dw_flags;
-            };
-
-            ::Sleep(10);
-            THREADNAME_INFO payload{
-                .dw_type = 0x1000,
-                .sz_name = thread_name,
-                .dw_thread_id = thread_id,
-                .dw_flags = 0,
-            };
-
-            __try
-            {
-                RaiseException(EXCEPTION_CODE, 0, sizeof(THREADNAME_INFO) / sizeof(ULONG_PTR), (ULONG_PTR*)&payload);
-            }
-            __except (EXCEPTION_EXECUTE_HANDLER)
-            {
-                ;
-            }
+            Impl::Win32SetThreadName(thread.m_ThreadId, name);
         }
-#endif
+#else
+        auto const wname = System::Impl::ConvertString(name);
+        HRESULT hr = SetThreadDescription(thread.m_Handle, wname.c_str());
 
-#if defined(ENABLE_NSIGHT_PROFILER)
-        nvtxNameOsThreadA(thread_id, thread_name);
+        GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to set thread {} name to `{}`, because `{}`",
+            thread.m_ThreadId,
+            name,
+            Diagnostics::GetMessageFromHRESULT(hr)
+        );
 #endif
     }
 
@@ -163,15 +169,7 @@ namespace Graphyte::Threading
 
             SetThreadPriority(m_Handle, Impl::ConvertThreadPriority(priority));
 
-            SetThreadDescription(
-                m_Handle,
-                Graphyte::System::Impl::ConvertString(thread_name).c_str()
-            );
-
-            Thread::SetThreadName(
-                m_ThreadId,
-                thread_name
-            );
+            SetThreadName(*this, thread_name);
 
             ResumeThread(m_Handle);
         }

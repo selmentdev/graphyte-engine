@@ -22,8 +22,8 @@ namespace Graphyte::Threading
         ) noexcept;
 
         static void SetThreadName(
-            ThreadId thread_id,
-            const char* thread_name
+            const Thread& thread,
+            const char* name
         ) noexcept;
 
     public:

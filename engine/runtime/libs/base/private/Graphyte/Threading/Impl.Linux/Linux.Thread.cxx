@@ -92,7 +92,12 @@ namespace Graphyte::Threading
                 sched.sched_priority = ConvertThreadPriority(priority);
                 pthread_setschedparam(m_Handle, policy, &sched);
             }
-            //SetThreadName(m_Handle, thread_name);
+
+            if (thread_name != nullptr)
+            {
+                pthread_setname_np(m_Handle, thread_name);
+            }
+
             //ResumeThread(m_Handle);
         }
         else
