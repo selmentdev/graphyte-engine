@@ -16,6 +16,12 @@ namespace Graphyte::Diagnostics::Impl
 #else
     BASE_API LogLevel GLogLevel{ LogLevel::Warn };
 #endif
+
+    static Threading::CriticalSection& GetGlobalLogLock() noexcept
+    {
+        static Threading::CriticalSection s_LogLock;
+        return s_LogLock;
+    }
 }
 
 namespace Graphyte::Diagnostics
@@ -63,9 +69,9 @@ namespace Graphyte::Diagnostics
 
             if (Impl::GLogOutputFile != nullptr)
             {
-                size_t processed{};
+                Threading::ScopedLock<Threading::CriticalSection> lock{ Impl::GetGlobalLogLock() };
 
-                // BUG: This should be synchronized in order to not corrupt state of output file!
+                size_t processed{};
 
                 [[maybe_unused]] auto status = Impl::GLogOutputFile->Write(
                     { reinterpret_cast<const std::byte*>(buffer.data()), buffer.size() },
