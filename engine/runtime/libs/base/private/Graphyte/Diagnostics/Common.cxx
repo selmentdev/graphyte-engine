@@ -27,6 +27,12 @@
 
 namespace Graphyte::Diagnostics::Impl
 {
+    extern Threading::CriticalSection& GetDiagnosticsLock() noexcept
+    {
+        static Threading::CriticalSection s_DiagnosticsLock;
+        return s_DiagnosticsLock;
+    }
+
     ErrorReporting GErrorReporting{ ErrorReporting::Interactive };
 
     bool GStackTraceSymbolInfo{ false };

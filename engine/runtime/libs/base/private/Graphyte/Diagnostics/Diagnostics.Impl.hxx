@@ -1,6 +1,7 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Storage/IFileSystem.hxx>
+#include <Graphyte/Threading/Sync.hxx>
 
 namespace Graphyte::Diagnostics::Impl
 {
@@ -24,12 +25,6 @@ namespace Graphyte::Diagnostics::Impl
         std::string_view stacktrace
     ) noexcept;
 
-    extern void ReportCrash(
-        std::string_view title,
-        std::string_view content,
-        std::string_view stacktrace
-    ) noexcept;
-
     extern bool GLogOutputDebugger;
 
     //!
@@ -42,6 +37,8 @@ namespace Graphyte::Diagnostics::Impl
     //!         that this parameter is valid raw C string.
     //!
     extern void DebugOutput(LogLevel level, const char* text) noexcept;
+
+    extern Threading::CriticalSection& GetDiagnosticsLock() noexcept;
 
     extern bool GLogOutputTerminal;
     extern bool GStackTraceSymbolInfo;

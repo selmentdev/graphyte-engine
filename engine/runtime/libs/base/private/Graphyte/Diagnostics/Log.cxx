@@ -65,6 +65,8 @@ namespace Graphyte::Diagnostics
             {
                 size_t processed{};
 
+                // BUG: This should be synchronized in order to not corrupt state of output file!
+
                 [[maybe_unused]] auto status = Impl::GLogOutputFile->Write(
                     { reinterpret_cast<const std::byte*>(buffer.data()), buffer.size() },
                     processed

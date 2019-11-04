@@ -36,6 +36,8 @@ namespace Graphyte::Diagnostics
             return false;
         }
 
+        Threading::ScopedLock<Threading::CriticalSection> lock{ Impl::GetDiagnosticsLock() };
+
         if (Impl::GIsAsserting)
         {
             GX_LOG(LogPlatform, Error, "Assertion is not reentrant\n");
