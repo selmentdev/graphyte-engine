@@ -1,18 +1,16 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
+#include <Graphyte/Threading.hxx>
 #include <Graphyte/Threading/Runnable.hxx>
 #include <Graphyte/Threading/Thread.hxx>
 
 namespace Graphyte::Threading
 {
-    using ThreadHandle = HANDLE;
-    using ThreadId = DWORD;
-
     class BASE_API Thread final
     {
     private:
-        HANDLE m_Handle;
-        DWORD m_ThreadId;
+        ThreadHandle m_Handle;
+        ThreadId m_ThreadId;
         ThreadAffinity m_Affinity;
         IRunnable* m_Runnable;
 

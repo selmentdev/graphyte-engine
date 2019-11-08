@@ -5,9 +5,6 @@
 
 namespace Graphyte::Threading
 {
-    using ThreadHandle = pthread_t;
-    using ThreadId = pthread_t;
-
     class BASE_API LinuxThread final
     {
     private:

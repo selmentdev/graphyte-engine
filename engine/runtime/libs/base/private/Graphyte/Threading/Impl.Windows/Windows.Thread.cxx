@@ -108,10 +108,10 @@ namespace Graphyte::Threading
         }
 #else
         auto const wname = System::Impl::ConvertString(name);
-        HRESULT hr = SetThreadDescription(thread.m_Handle, wname.c_str());
+        HRESULT hr = SetThreadDescription(thread.m_Handle.Value, wname.c_str());
 
         GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to set thread {} name to `{}`, because `{}`",
-            thread.m_ThreadId,
+            thread.m_ThreadId.Value,
             name,
             Diagnostics::GetMessageFromHRESULT(hr)
         );
@@ -128,7 +128,7 @@ namespace Graphyte::Threading
 
     Thread::~Thread() noexcept
     {
-        if (m_Handle != nullptr)
+        if (m_Handle.Value != nullptr)
         {
             Stop(true);
         }
@@ -148,18 +148,18 @@ namespace Graphyte::Threading
         m_Runnable = runnable;
         m_Affinity = affinity;
 
-        m_Handle = CreateThread(
+        m_Handle.Value = CreateThread(
             nullptr,
             stack_size,
             ThreadEntryPoint,
             this,
             STACK_SIZE_PARAM_IS_A_RESERVATION | CREATE_SUSPENDED,
-            (DWORD*)&m_ThreadId
+            &m_ThreadId.Value
         );
 
-        if (m_Handle != nullptr)
+        if (m_Handle.Value != nullptr)
         {
-            if (SetThreadAffinityMask(m_Handle, static_cast<DWORD_PTR>(affinity)) == FALSE)
+            if (SetThreadAffinityMask(m_Handle.Value, static_cast<DWORD_PTR>(affinity)) == FALSE)
             {
                 GX_LOG(LogPlatform, Error, "Failed to set thread affinity (thread: `{}`, affinity: {:016x}\n",
                     thread_name != nullptr ? thread_name : "<unknown>",
@@ -167,25 +167,25 @@ namespace Graphyte::Threading
                 );
             }
 
-            SetThreadPriority(m_Handle, Impl::ConvertThreadPriority(priority));
+            SetThreadPriority(m_Handle.Value, Impl::ConvertThreadPriority(priority));
 
             SetThreadName(*this, thread_name);
 
-            ResumeThread(m_Handle);
+            ResumeThread(m_Handle.Value);
         }
         else
         {
             m_Runnable = nullptr;
         }
 
-        return m_Handle != nullptr;
+        return m_Handle.Value != nullptr;
     }
 
     bool Thread::Stop(
         bool wait
     ) noexcept
     {
-        GX_ASSERT(m_Handle != nullptr);
+        GX_ASSERT(m_Handle.Value != nullptr);
 
         if (m_Runnable != nullptr)
         {
@@ -194,21 +194,21 @@ namespace Graphyte::Threading
 
         if (wait)
         {
-            WaitForSingleObject(m_Handle, INFINITE);
+            WaitForSingleObject(m_Handle.Value, INFINITE);
         }
 
-        CloseHandle(m_Handle);
+        CloseHandle(m_Handle.Value);
 
-        m_Handle = nullptr;
+        m_Handle.Value = nullptr;
 
         return true;
     }
 
     void Thread::Join() noexcept
     {
-        GX_ASSERT(m_Handle != nullptr);
+        GX_ASSERT(m_Handle.Value != nullptr);
 
-        WaitForSingleObject(m_Handle, INFINITE);
+        WaitForSingleObject(m_Handle.Value, INFINITE);
     }
 
     uint32_t Thread::Run() noexcept
@@ -242,6 +242,6 @@ namespace Graphyte::Threading
 
     ThreadId Thread::CurrentThreadId() noexcept
     {
-        return GetCurrentThreadId();
+        return { .Value = GetCurrentThreadId() };
     }
 }

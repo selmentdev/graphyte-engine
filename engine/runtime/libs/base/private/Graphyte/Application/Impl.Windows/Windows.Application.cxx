@@ -159,16 +159,19 @@ namespace Graphyte::Application::Impl
     {
         GX_ASSERT(keycode == VK_LSHIFT || keycode == VK_RSHIFT);
 
-        auto mask = (keycode == VK_LSHIFT)
+        auto const mask = (keycode == VK_LSHIFT)
             ? Input::ModifierKeyState::LeftShift
             : Input::ModifierKeyState::RightShift;
 
-        auto key = (keycode == VK_LSHIFT)
+        auto const key = (keycode == VK_LSHIFT)
             ? Input::KeyCode::LeftShift
             : Input::KeyCode::RightShift;
 
-        if (((Impl::GApplicationModifierKeys & mask) == mask) &&
-            ((GetKeyState(static_cast<int>(keycode)) & 0x8000) == 0))
+        auto const invalidated =
+            Flags::Has(Impl::GApplicationModifierKeys, mask) &&
+            (GetKeyState(static_cast<int>(keycode)) & 0x8000) == 0;
+
+        if (invalidated)
         {
             //
             // Modifier key was registered in one of previous messages and it isn't hold down anymore.
@@ -282,17 +285,11 @@ namespace Graphyte::Application::Impl
             .hwndTarget  = handle,
         };
 
-        BOOL result = RegisterRawInputDevices(
-            &rid,
-            1,
-            sizeof(rid)
-        );
+        BOOL result = RegisterRawInputDevices(&rid, 1, sizeof(rid));
 
         if (result == FALSE)
         {
-            GX_ABORT("Cannot register input device: {}",
-                Diagnostics::GetMessageFromSystemError()
-            );
+            GX_ABORT("Cannot register input device: {}", Diagnostics::GetMessageFromSystemError());
         }
     }
 }
@@ -606,10 +603,7 @@ namespace Graphyte::Application::Impl
                 }
             }
 
-            char32_t character = MapVirtualKeyW(
-                key,
-                MAPVK_VK_TO_CHAR
-            );
+            char32_t character = MapVirtualKeyW(key, MAPVK_VK_TO_CHAR);
 
             Input::KeyCode keycode = Impl::TranslateKeyCode(key);
 
@@ -639,9 +633,9 @@ namespace Graphyte::Application::Impl
     {
         UpdateModifierKeys();
 
-        Impl::GApplicationEventHandler->OnApplicationActivated(
-            message.WParam != 0
-        );
+        auto const activated = (message.WParam != 0);
+
+        Impl::GApplicationEventHandler->OnApplicationActivated(activated);
 
         Impl::BaseWindowProc(message);
     }
