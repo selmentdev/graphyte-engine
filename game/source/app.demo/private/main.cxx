@@ -1,5 +1,6 @@
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Diagnostics.hxx>
+#include <Graphyte/Threading.hxx>
 
 GX_DECLARE_LOG_CATEGORY(LogAssetsCompiler, Trace, Trace);
 GX_DEFINE_LOG_CATEGORY(LogAssetsCompiler);
@@ -29,6 +30,15 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     Graphyte::Converter<Graphyte::Uuid>::FromString(u1, "0000000000000000dupadupadupadupa");
     Graphyte::Converter<Graphyte::Uuid>::FromString(u1, "000000000000000dupadupadupadupad");
     Graphyte::Converter<Graphyte::Uuid>::FromString(u1, "00000000000000dupadupadupadupadu");
+
+    Graphyte::Threading::ParallelFor(1000, [](uint32_t index)
+    {
+        GX_LOG(LogAssetsCompiler, Trace,
+            "Parfor: {} on {}\n",
+            (index + 1),
+            Graphyte::Threading::CurrentThreadId().Value
+        );
+    });
 
     return 0;
 }

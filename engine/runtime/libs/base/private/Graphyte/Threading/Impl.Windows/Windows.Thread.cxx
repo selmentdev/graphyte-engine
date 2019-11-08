@@ -72,28 +72,158 @@ namespace Graphyte::Threading::Impl
 
 namespace Graphyte::Threading
 {
-    DWORD CALLBACK Thread::ThreadEntryPoint(
-        LPVOID context
-    ) noexcept
+    namespace Impl
     {
-        GX_ASSERT(context != nullptr);
-        Thread* thread = static_cast<Thread*>(context);
-
-        DWORD result{};
-
-        __try
+        unsigned __stdcall ThreadEntryPoint(void* context)
         {
-            result = thread->Run();
-        }
-        __except (EXCEPTION_EXECUTE_HANDLER)
-        {
-            result = ~DWORD{};
-            Graphyte::Application::RequestExit(true);
-        }
+            GX_ABORT_UNLESS(context != nullptr, "Invalid context provided to thread.");
 
-        return result;
+            IRunnable* runnable = reinterpret_cast<IRunnable*>(context);
+
+            unsigned int result{ 1 };
+
+            __try
+            {
+                if (runnable->OnStart())
+                {
+                    result = runnable->OnRun();
+                    runnable->OnStop();
+                }
+            }
+            __except (EXCEPTION_EXECUTE_HANDLER)
+            {
+                result = ~DWORD{};
+
+                GX_ABORT("Exception occured on other thread");
+            }
+
+            _endthreadex(result);
+
+            return result;
+        }
     }
 
+    Thread::Thread() noexcept = default;
+
+    Thread::Thread(Thread&& other) noexcept
+        : m_Handle{ std::exchange(other.m_Handle, {}) }
+        , m_Id{ std::exchange(other.m_Id, {}) }
+        , m_Runnable{ std::exchange(other.m_Runnable, {}) }
+    {
+    }
+
+    Thread& Thread::operator=(Thread&& other) noexcept
+    {
+        m_Handle = std::exchange(other.m_Handle, {});
+        m_Id = std::exchange(other.m_Id, {});
+        m_Runnable = std::exchange(other.m_Runnable, {});
+
+        return (*this);
+    }
+
+    Thread::~Thread() noexcept
+    {
+        if (m_Handle.Value != nullptr)
+        {
+            Stop(true);
+        }
+    }
+
+    bool Thread::Start(
+        IRunnable* runnable,
+        std::string_view name,
+        size_t stacksize,
+        ThreadPriority priority,
+        ThreadAffinity affinity
+    ) noexcept
+    {
+        static_assert(sizeof(unsigned) == sizeof(DWORD));
+        static_assert(alignof(unsigned) == alignof(DWORD));
+
+        m_Runnable = runnable;
+
+        GX_ASSERT(runnable != nullptr);
+
+        m_Handle.Value = reinterpret_cast<HANDLE>(_beginthreadex(
+            nullptr,
+            static_cast<unsigned int>(stacksize),
+            Impl::ThreadEntryPoint,
+            m_Runnable,
+            STACK_SIZE_PARAM_IS_A_RESERVATION | CREATE_SUSPENDED,
+            reinterpret_cast<unsigned int*>(&m_Id.Value)
+        ));
+
+        if (m_Handle.Value != nullptr)
+        {
+            this->SetAffinity(affinity);
+            this->SetPriority(priority);
+
+            if (!name.empty())
+            {
+                std::wstring const wname = System::Impl::ConvertString(name);
+                SetThreadDescription(m_Handle.Value, wname.c_str());
+
+            }
+
+            //
+            // Thread was created suspended. Resume it.
+            //
+
+            ResumeThread(m_Handle.Value);
+
+            return true;
+        }
+        else
+        {
+            GX_ABORT("Failed to start thread");
+            m_Runnable = {};
+            return false;
+        }
+    }
+
+    bool Thread::Stop(bool wait) noexcept
+    {
+        GX_ABORT_UNLESS(m_Handle.Value != nullptr, "Thread not created");
+    
+        if (m_Runnable != nullptr)
+        {
+            m_Runnable->OnStop();
+        }
+
+        if (wait)
+        {
+            WaitForSingleObject(m_Handle.Value, INFINITE);
+        }
+
+        CloseHandle(m_Handle.Value);
+
+        m_Handle.Value = nullptr;
+
+        return true;
+    }
+
+    bool Thread::Join() noexcept
+    {
+        GX_ABORT_UNLESS(m_Handle.Value != nullptr, "Thread not created");
+        WaitForSingleObject(m_Handle.Value, INFINITE);
+
+        return true;
+    }
+
+    void Thread::SetAffinity(ThreadAffinity affinity) noexcept
+    {
+        SetThreadAffinityMask(m_Handle.Value, static_cast<DWORD_PTR>(affinity));
+    }
+
+    void Thread::SetPriority(ThreadPriority priority) noexcept
+    {
+        SetThreadPriority(m_Handle.Value, Impl::ConvertThreadPriority(priority));
+    }
+}
+
+#if false
+namespace Graphyte::Threading
+{
     void Thread::SetThreadName(
         const Thread& thread,
         const char* name
@@ -225,23 +355,5 @@ namespace Graphyte::Threading
 
         return result;
     }
-
-    void Thread::Yield() noexcept
-    {
-        ::Sleep(0);
-    }
-
-    void Thread::Sleep(
-        uint32_t timeout
-    ) noexcept
-    {
-        // Explicitely call Windows API function
-
-        ::Sleep(timeout);
-    }
-
-    ThreadId Thread::CurrentThreadId() noexcept
-    {
-        return { .Value = GetCurrentThreadId() };
-    }
 }
+#endif

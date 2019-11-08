@@ -1,6 +1,6 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Threading/ParallelFor.hxx>
 #include <Graphyte/Diagnostics/Profiler.hxx>
+#include <Graphyte/Threading.hxx>
 #include <Graphyte/Threading/Sync.hxx>
 #include <Graphyte/Threading/TaskDispatcher.hxx>
 #include <Graphyte/System.hxx>

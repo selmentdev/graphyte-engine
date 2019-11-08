@@ -149,21 +149,4 @@ namespace Graphyte::Threading
 
         return result;
     }
-
-    void LinuxThread::Yield() noexcept
-    {
-        sched_yield();
-    }
-
-    void LinuxThread::Sleep(
-        uint32_t timeout
-    ) noexcept
-    {
-        usleep(timeout * 1000);
-    }
-
-    ThreadId LinuxThread::CurrentThreadId() noexcept
-    {
-        return pthread_self();
-    }
 }

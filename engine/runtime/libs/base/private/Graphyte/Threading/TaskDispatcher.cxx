@@ -88,7 +88,7 @@ namespace Graphyte::Threading
         for (auto& worker : m_Workers)
         {
             worker.Runnable = std::make_unique<TaskWorkerThread>(*this);
-            worker.Worker.Start(worker.Runnable.get(), fmt::format("worker-{}", index++).c_str());
+            worker.Worker.Start(worker.Runnable.get(), fmt::format("worker-{}", index++));
         }
     }
 

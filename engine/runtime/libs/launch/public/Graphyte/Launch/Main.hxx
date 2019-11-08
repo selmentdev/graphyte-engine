@@ -7,9 +7,9 @@
 // GPU driver markers.
 //
 
-// Enable NVIDIA GPU marker.
+// https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
 extern "C" { GX_LIB_EXPORT uint32_t NvOptimusEnablement = 1; }
-// Enable AMD GPU marker.
+// https://gpuopen.com/amdpowerxpressrequesthighperformance/
 extern "C" { GX_LIB_EXPORT uint32_t AmdPowerXpressRequestHighPerformance = 1; }
 
 

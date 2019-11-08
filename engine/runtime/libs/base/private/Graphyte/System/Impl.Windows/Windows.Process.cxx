@@ -324,7 +324,7 @@ namespace Graphyte::System
                 do
                 {
                     Pipe::Read(outputs.data(), pipe_read.data(), 2);
-                    Threading::Thread::Yield();
+                    Threading::YieldThread();
                 } while (Process::IsRunning(handle, exit_code));
 
                 Pipe::Read(outputs.data(), pipe_read.data(), 2);
