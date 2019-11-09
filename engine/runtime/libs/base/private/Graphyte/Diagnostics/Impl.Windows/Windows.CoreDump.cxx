@@ -133,7 +133,7 @@ namespace Graphyte::Diagnostics
             Storage::Path::Append(dump_path, filename);
 
             HANDLE hFile = CreateFileW(
-                System::Impl::ConvertString(dump_path).c_str(),
+                System::Impl::WidenString(dump_path).c_str(),
                 GENERIC_WRITE,
                 0,
                 nullptr,

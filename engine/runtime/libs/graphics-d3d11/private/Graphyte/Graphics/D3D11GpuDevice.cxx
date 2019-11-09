@@ -115,7 +115,7 @@ namespace Graphyte::Graphics
             );
 
 
-            std::string description = System::Impl::ConvertString(desc.Description);
+            std::string description = System::Impl::NarrowString(desc.Description);
 
             GX_LOG(LogD3D11Render, Info, "Adapter: `{}`\n", description);
 

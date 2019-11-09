@@ -167,7 +167,7 @@ namespace Graphyte::Threading::Impl
             Impl::Win32SetThreadName(id.Value, sname.c_str());
         }
 #else
-        std::wstring const wname = System::Impl::ConvertString(name);
+        std::wstring const wname = System::Impl::WidenString(name);
 
         HRESULT hr = SetThreadDescription(handle.Value, wname.c_str());
 

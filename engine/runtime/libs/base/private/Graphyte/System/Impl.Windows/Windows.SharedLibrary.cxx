@@ -11,7 +11,7 @@ namespace Graphyte::System
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         HMODULE native = LoadLibraryW(wpath.data());
 

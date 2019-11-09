@@ -38,7 +38,7 @@ namespace Graphyte::System
                 {
                     if (is_unicode)
                     {
-                        content = Impl::ConvertString(reinterpret_cast<wchar_t*>(data));
+                        content = Impl::NarrowString(reinterpret_cast<wchar_t*>(data));
                     }
                     else
                     {
@@ -70,7 +70,7 @@ namespace Graphyte::System
         {
             EmptyClipboard();
 
-            std::wstring wvalue = Impl::ConvertString(content);
+            std::wstring wvalue = Impl::WidenString(content);
 
             size_t const length = wvalue.length();
             size_t const buffer_size = sizeof(wchar_t) * (length + 1);
@@ -117,7 +117,7 @@ namespace Graphyte::System
     {
         GX_ASSERT(name != nullptr);
 
-        std::wstring const wname = Impl::ConvertString(name);
+        std::wstring const wname = Impl::WidenString(name);
 
         DWORD dwLength = GetEnvironmentVariableW(wname.c_str(), nullptr, 0);
 
@@ -137,7 +137,7 @@ namespace Graphyte::System
 
             if (dwResult != 0 && dwResult == dwLength)
             {
-                result = Impl::ConvertString(wbuffer);
+                result = Impl::NarrowString(wbuffer);
                 return Status::Success;
             }
         }
@@ -153,8 +153,8 @@ namespace Graphyte::System
         GX_ASSERT(name != nullptr);
         GX_ASSERT(value != nullptr);
 
-        std::wstring const wname = Impl::ConvertString(name);
-        std::wstring const wvalue = Impl::ConvertString(value);
+        std::wstring const wname = Impl::WidenString(name);
+        std::wstring const wvalue = Impl::WidenString(value);
 
         BOOL bResult = SetEnvironmentVariableW(
             wname.c_str(),
@@ -175,7 +175,7 @@ namespace Graphyte::System
     {
         GX_ASSERT(name != nullptr);
 
-        std::wstring const wname = Impl::ConvertString(name);
+        std::wstring const wname = Impl::WidenString(name);
 
         BOOL bResult = SetEnvironmentVariableW(
             wname.c_str(),
@@ -194,7 +194,7 @@ namespace Graphyte::System
         const std::string& value
     ) noexcept
     {
-        std::wstring const wpath = System::Impl::ConvertString(value);
+        std::wstring const wpath = System::Impl::WidenString(value);
 
         BOOL status = SetCurrentDirectoryW(wpath.c_str());
 
@@ -230,7 +230,7 @@ namespace Graphyte::System
             return Diagnostics::GetStatusFromSystemError();
         }
 
-        result = System::Impl::ConvertString(wszPath);
+        result = System::Impl::NarrowString(wszPath);
         Storage::Path::Normalize(result);
 
         return Status::Success;
@@ -250,7 +250,7 @@ namespace Graphyte::System
 
         if (dwLength != 0)
         {
-            result = System::Impl::ConvertString(
+            result = System::Impl::NarrowString(
                 std::wstring_view{
                     std::data(wpath),
                     dwLength
@@ -298,9 +298,9 @@ namespace Graphyte::System
         // Convert argument strings.
         //
 
-        std::wstring const wtype = Impl::ConvertString(type);
-        std::wstring const wcommand = Impl::ConvertString(command);
-        std::wstring const wparams = Impl::ConvertString(params);
+        std::wstring const wtype = Impl::WidenString(type);
+        std::wstring const wcommand = Impl::WidenString(command);
+        std::wstring const wparams = Impl::WidenString(params);
 
         HINSTANCE handle = ShellExecuteW(
             nullptr,
@@ -330,7 +330,7 @@ namespace Graphyte::System
         const char* path
     ) noexcept
     {
-        std::wstring const wpath = Impl::ConvertString(path);
+        std::wstring const wpath = Impl::WidenString(path);
 
         bool success;
 

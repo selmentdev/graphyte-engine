@@ -23,7 +23,7 @@ namespace Graphyte::System::Impl
 
         DisplayInfo& info = *reinterpret_cast<DisplayInfo*>(context);
 
-        if (Impl::ConvertString(info.Name) == miex.szDevice)
+        if (Impl::WidenString(info.Name) == miex.szDevice)
         {
             info.DisplayRect = {
                 miex.rcMonitor.left,
@@ -116,8 +116,8 @@ namespace Graphyte::System
                     {
                         DisplayInfo display_info{};
 
-                        display_info.Name = Impl::ConvertString(device.DeviceName);
-                        display_info.Id = Impl::ConvertString(monitor.DeviceID);
+                        display_info.Name = Impl::NarrowString(device.DeviceName);
+                        display_info.Id = Impl::NarrowString(monitor.DeviceID);
                         display_info.Primary = (device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) != 0;
 
                         EnumDisplayMonitors(nullptr, nullptr, Impl::AcquireMonitorInfo, reinterpret_cast<LPARAM>(&display_info));

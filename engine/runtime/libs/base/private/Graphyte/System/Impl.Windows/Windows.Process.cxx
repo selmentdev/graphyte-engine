@@ -89,8 +89,8 @@ namespace Graphyte::System
             ? fmt::format("\"{}\" {}", path, params)
             : fmt::format("\"{}\"", path);
 
-        std::wstring szCcommandLine = System::Impl::ConvertString(command_line);
-        std::wstring szWorkingDirectory = System::Impl::ConvertString(working_directory);
+        std::wstring szCcommandLine = System::Impl::WidenString(command_line);
+        std::wstring szWorkingDirectory = System::Impl::WidenString(working_directory);
 
         PROCESS_INFORMATION process_information{};
 
@@ -296,8 +296,8 @@ namespace Graphyte::System
 
         PROCESS_INFORMATION process_information{};
 
-        std::wstring wszCommandLine = System::Impl::ConvertString(commandline);
-        std::wstring const wszWorkingDirectory = System::Impl::ConvertString(working_directory);
+        std::wstring wszCommandLine = System::Impl::WidenString(commandline);
+        std::wstring const wszWorkingDirectory = System::Impl::WidenString(working_directory);
 
         if (CreateProcessW(
             nullptr,

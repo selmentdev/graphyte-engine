@@ -27,7 +27,7 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         DWORD dwAccess = static_cast<DWORD>(GENERIC_READ);
         DWORD dwShare = static_cast<DWORD>(FILE_SHARE_READ | (share_write ? FILE_SHARE_WRITE : 0));
@@ -61,7 +61,7 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         DWORD dwAccess = static_cast<DWORD>(GENERIC_WRITE);
         DWORD dwShare = static_cast<DWORD>(share_read ? FILE_SHARE_READ : 0);
@@ -92,7 +92,7 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         DWORD dwFileAttributes = GetFileAttributesW(wpath.data());
 
@@ -111,7 +111,7 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         DWORD dwFileAttributes = static_cast<DWORD>(value ? FILE_ATTRIBUTE_READONLY : FILE_ATTRIBUTE_NORMAL);
 
@@ -129,7 +129,7 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         WIN32_FILE_ATTRIBUTE_DATA wfad{};
 
@@ -159,7 +159,7 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         WIN32_FILE_ATTRIBUTE_DATA wfad{};
 
@@ -182,7 +182,7 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         DWORD dwFileAttributes = GetFileAttributesW(wpath.data());
         DWORD dwLastError = GetLastError();
@@ -201,9 +201,9 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wdestination{};
-        System::Impl::ConvertPath(wdestination, destination);
+        System::Impl::WidenStringPath(wdestination, destination);
         System::Impl::WindowsPath wsource{};
-        System::Impl::ConvertPath(wsource, source);
+        System::Impl::WidenStringPath(wsource, source);
 
         if (CopyFileW(wsource.data(), wdestination.data(), TRUE) != FALSE)
         {
@@ -219,9 +219,9 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wdestination{};
-        System::Impl::ConvertPath(wdestination, destination);
+        System::Impl::WidenStringPath(wdestination, destination);
         System::Impl::WindowsPath wsource{};
-        System::Impl::ConvertPath(wsource, source);
+        System::Impl::WidenStringPath(wsource, source);
 
         if (MoveFileW(wsource.data(), wdestination.data()) != FALSE)
         {
@@ -236,7 +236,7 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         if (DeleteFileW(wpath.data()) != FALSE)
         {
@@ -251,7 +251,7 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         BOOL created = CreateDirectoryW(wpath.data(), nullptr);
         DWORD dwLastError = GetLastError();
@@ -269,7 +269,7 @@ namespace Graphyte::Storage
     ) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, path);
+        System::Impl::WidenStringPath(wpath, path);
 
         if (RemoveDirectoryW(wpath.data()) != FALSE)
         {
@@ -287,7 +287,7 @@ namespace Graphyte::Storage
         std::string const wildcard = Path::Combine(path, "*.*");
 
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, wildcard);
+        System::Impl::WidenStringPath(wpath, wildcard);
 
         WIN32_FIND_DATAW wfd{};
 
@@ -303,7 +303,7 @@ namespace Graphyte::Storage
 
                 if (filename != L"." && filename != L"..")
                 {
-                    std::string const report_path = Path::Combine(path, System::Impl::ConvertString(filename));
+                    std::string const report_path = Path::Combine(path, System::Impl::NarrowString(filename));
                     bool const is_directory = !!(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 
                     status = visitor.Visit(report_path, is_directory);
@@ -326,7 +326,7 @@ namespace Graphyte::Storage
         std::string const wildcard = Path::Combine(path, "*.*");
 
         System::Impl::WindowsPath wpath{};
-        System::Impl::ConvertPath(wpath, wildcard);
+        System::Impl::WidenStringPath(wpath, wildcard);
 
         WIN32_FIND_DATAW wfd{};
 
@@ -342,7 +342,7 @@ namespace Graphyte::Storage
 
                 if (filename != L"." && filename != L"..")
                 {
-                    std::string const report_path = Path::Combine(path, System::Impl::ConvertString(filename));
+                    std::string const report_path = Path::Combine(path, System::Impl::NarrowString(filename));
 
                     ULARGE_INTEGER li_file_size{};
                     li_file_size.LowPart = wfd.nFileSizeLow;

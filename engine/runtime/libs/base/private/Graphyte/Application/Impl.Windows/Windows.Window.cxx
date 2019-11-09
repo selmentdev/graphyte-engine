@@ -34,10 +34,7 @@ namespace Graphyte::Application::Impl
     {
         m_Descriptor = descriptor;
 
-        std::wstring wtitle = System::Impl::ConvertString(
-            descriptor.Title
-        );
-
+        std::wstring wtitle = System::Impl::WidenString(descriptor.Title);
 
         DWORD dw_style = 0;
         DWORD dw_style_ex = 0;

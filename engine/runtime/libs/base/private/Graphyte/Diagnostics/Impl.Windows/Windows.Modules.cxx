@@ -38,7 +38,7 @@ namespace Graphyte::Diagnostics
             {
                 do
                 {
-                    result.emplace_back(System::Impl::ConvertString(entry.szModule));
+                    result.emplace_back(System::Impl::NarrowString(entry.szModule));
                 } while (Module32NextW(snapshot, &entry) != FALSE);
             }
 

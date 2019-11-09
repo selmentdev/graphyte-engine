@@ -67,7 +67,7 @@ namespace Graphyte::System::Impl
 
                         if (RegQueryValueExW(current, name, nullptr, nullptr, reinterpret_cast<LPBYTE>(data.data()), &dw_size) == ERROR_SUCCESS)
                         {
-                            result = Impl::ConvertString(data);
+                            result = Impl::NarrowString(data);
                             succeeded = true;
                         }
                     }
@@ -80,7 +80,7 @@ namespace Graphyte::System::Impl
         return succeeded;
     }
 
-    BASE_API std::string ConvertString(
+    BASE_API std::string NarrowString(
         std::wstring_view value
     ) noexcept
     {
@@ -102,7 +102,7 @@ namespace Graphyte::System::Impl
         return result;
     }
 
-    BASE_API std::wstring ConvertString(
+    BASE_API std::wstring WidenString(
         std::string_view value
     ) noexcept
     {
@@ -124,25 +124,7 @@ namespace Graphyte::System::Impl
         return result;
     }
 
-    BASE_API size_t ConvertString(
-        wchar_t* buffer,
-        size_t buffer_size,
-        std::string_view value
-    ) noexcept
-    {
-        size_t const result = static_cast<size_t>(MultiByteToWideChar(
-            CP_UTF8,
-            0,
-            value.data(),
-            static_cast<int>(value.length()),
-            buffer,
-            static_cast<int>(buffer_size)
-        ));
-
-        return result;
-    }
-
-    BASE_API size_t ConvertString(
+    BASE_API size_t NarrowString(
         char* buffer,
         size_t buffer_size,
         std::wstring_view value
@@ -162,7 +144,25 @@ namespace Graphyte::System::Impl
         return result;
     }
 
-    BASE_API bool ConvertPath(
+    BASE_API size_t WidenString(
+        wchar_t* buffer,
+        size_t buffer_size,
+        std::string_view value
+    ) noexcept
+    {
+        size_t const result = static_cast<size_t>(MultiByteToWideChar(
+            CP_UTF8,
+            0,
+            value.data(),
+            static_cast<int>(value.length()),
+            buffer,
+            static_cast<int>(buffer_size)
+        ));
+
+        return result;
+    }
+
+    BASE_API bool WidenStringPath(
         WindowsPath& result,
         std::string_view value
     ) noexcept

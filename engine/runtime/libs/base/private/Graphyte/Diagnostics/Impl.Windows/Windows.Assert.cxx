@@ -39,9 +39,9 @@ namespace Graphyte::Diagnostics::Impl
             }
         };
 
-        std::wstring wtitle = System::Impl::ConvertString(title);
-        std::wstring wcontent = System::Impl::ConvertString(content);
-        std::wstring wstacktrace = System::Impl::ConvertString(stacktrace);
+        std::wstring wtitle = System::Impl::WidenString(title);
+        std::wstring wcontent = System::Impl::WidenString(content);
+        std::wstring wstacktrace = System::Impl::WidenString(stacktrace);
 
         TASKDIALOGCONFIG config{
             .cbSize                  = sizeof(TASKDIALOGCONFIG),

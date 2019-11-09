@@ -23,29 +23,29 @@ namespace Graphyte::System::Impl
         std::string& result
     ) noexcept;
 
-    extern BASE_API std::string ConvertString(
+    extern BASE_API std::string NarrowString(
         std::wstring_view value
     ) noexcept;
 
-    extern BASE_API std::wstring ConvertString(
+    extern BASE_API std::wstring WidenString(
         std::string_view value
     ) noexcept;
 
-    extern BASE_API size_t ConvertString(
-        wchar_t* buffer,
-        size_t buffer_size,
-        std::string_view value
-    ) noexcept;
-
-    extern BASE_API size_t ConvertString(
+    extern BASE_API size_t NarrowString(
         char* buffer,
         size_t buffer_size,
         std::wstring_view value
     ) noexcept;
 
+    extern BASE_API size_t WidenString(
+        wchar_t* buffer,
+        size_t buffer_size,
+        std::string_view value
+    ) noexcept;
+
     using WindowsPath = std::array<wchar_t, MAX_PATH>;
 
-    extern BASE_API bool ConvertPath(
+    extern BASE_API bool WidenStringPath(
         WindowsPath& result,
         std::string_view value
     ) noexcept;

@@ -28,9 +28,9 @@ namespace Graphyte::Launch::Impl::Windows
     ) noexcept
     {
         Diagnostics::OnAbort(
-            System::Impl::ConvertString(expression),
-            System::Impl::ConvertString(function),
-            System::Impl::ConvertString(file),
+            System::Impl::NarrowString(expression),
+            System::Impl::NarrowString(function),
+            System::Impl::NarrowString(file),
             line,
             "Invalid parameter detected in CRT function"
         );

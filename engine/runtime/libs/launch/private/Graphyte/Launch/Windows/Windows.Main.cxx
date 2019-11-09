@@ -38,7 +38,7 @@ namespace Graphyte::Launch::Impl::Windows
         GSingleInstanceMutex = CreateMutexW(
             nullptr,
             TRUE,
-            System::Impl::ConvertString(name).c_str()
+            System::Impl::WidenString(name).c_str()
         );
 
         if (GSingleInstanceMutex != nullptr)

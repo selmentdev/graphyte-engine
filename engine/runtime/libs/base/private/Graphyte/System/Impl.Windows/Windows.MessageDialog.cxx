@@ -22,8 +22,8 @@ namespace Graphyte::System
         MessageDialogImage image
     ) noexcept
     {
-        std::wstring const wszTitle = System::Impl::ConvertString(title);
-        std::wstring const wszMessage = System::Impl::ConvertString(message);
+        std::wstring const wszTitle = System::Impl::WidenString(title);
+        std::wstring const wszMessage = System::Impl::WidenString(message);
 
         std::vector<TASKDIALOG_BUTTON> buttons{};
 

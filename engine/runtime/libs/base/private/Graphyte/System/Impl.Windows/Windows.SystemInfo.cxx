@@ -24,7 +24,7 @@ namespace Graphyte::System
 
         if (SUCCEEDED(hr))
         {
-            result = Impl::ConvertString(wszPath.data());
+            result = Impl::NarrowString(wszPath.data());
 
             Storage::Path::Normalize(result);
             Storage::Path::AddDirectorySeparator(result);
@@ -53,7 +53,7 @@ namespace Graphyte::System
             // Convert to engine type.
             //
 
-            result = Impl::ConvertString(wszPath.data());
+            result = Impl::NarrowString(wszPath.data());
 
             Storage::Path::Normalize(result);
             Storage::Path::AddDirectorySeparator(result);
@@ -96,7 +96,7 @@ namespace Graphyte::System
             // Convert to engine type.
             //
 
-            result = Impl::ConvertString(wszFullPath.data());
+            result = Impl::NarrowString(wszFullPath.data());
 
             Storage::Path::Normalize(result);
             Storage::Path::AddDirectorySeparator(result);
@@ -122,7 +122,7 @@ namespace Graphyte::System
 
         if (SUCCEEDED(hr))
         {
-            result = Impl::ConvertString(wszPath.data());
+            result = Impl::NarrowString(wszPath.data());
 
             Storage::Path::Normalize(result);
             Storage::Path::AddDirectorySeparator(result);
@@ -147,7 +147,7 @@ namespace Graphyte::System
 
         if (SUCCEEDED(hr))
         {
-            result = Impl::ConvertString(wszPath.data());
+            result = Impl::NarrowString(wszPath.data());
 
             Storage::Path::Normalize(result);
             Storage::Path::AddDirectorySeparator(result);
@@ -164,7 +164,7 @@ namespace Graphyte::System
 
         GetComputerNameW(wszName.data(), &dwSize);
 
-        return Impl::ConvertString(wszName.data());
+        return Impl::NarrowString(wszName.data());
     }
 
     BASE_API std::string GetUserName() noexcept
@@ -175,7 +175,7 @@ namespace Graphyte::System
 
         GetUserNameW(wszName.data(), &dwSize);
 
-        return Impl::ConvertString(wszName.data());
+        return Impl::NarrowString(wszName.data());
     }
 
     BASE_API std::string GetSystemVersion() noexcept
@@ -295,7 +295,7 @@ namespace Graphyte::System
 
         if (GetUserDefaultLocaleName(&locale[0], static_cast<int>(locale.size())))
         {
-            return Impl::ConvertString(std::wstring_view(locale.data(), locale.size()));
+            return Impl::NarrowString(std::wstring_view(locale.data(), locale.size()));
         }
 
         return {};
@@ -328,7 +328,7 @@ namespace Graphyte::System
 
                 if (result != FALSE)
                 {
-                    return Impl::ConvertString(wbuffer);
+                    return Impl::NarrowString(wbuffer);
                 }
             }
         }

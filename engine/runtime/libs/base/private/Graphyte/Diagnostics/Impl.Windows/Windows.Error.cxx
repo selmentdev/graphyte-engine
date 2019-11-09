@@ -179,7 +179,7 @@ namespace Graphyte::Diagnostics
 
         if (buffer != nullptr)
         {
-            result = System::Impl::ConvertString(buffer);
+            result = System::Impl::NarrowString(buffer);
             LocalFree(buffer);
         }
 
