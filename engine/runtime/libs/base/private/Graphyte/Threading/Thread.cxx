@@ -197,6 +197,14 @@ namespace Graphyte::Threading
     {
     }
 
+    Thread::~Thread() noexcept
+    {
+        if (m_Handle.IsValid())
+        {
+            Stop(true);
+        }
+    }
+
     Thread& Thread::operator=(Thread&& other) noexcept
     {
         m_Handle = std::exchange(other.m_Handle, {});
@@ -204,14 +212,6 @@ namespace Graphyte::Threading
         m_Runnable = std::exchange(other.m_Runnable, {});
 
         return (*this);
-    }
-
-    Thread::~Thread() noexcept
-    {
-        if (m_Handle.Value != nullptr)
-        {
-            Stop(true);
-        }
     }
 
     bool Thread::Start(
@@ -222,7 +222,7 @@ namespace Graphyte::Threading
         ThreadAffinity affinity
     ) noexcept
     {
-        GX_ABORT_UNLESS(m_Handle.Value == nullptr, "Thread already created");
+        GX_ABORT_UNLESS(!m_Handle.IsValid(), "Thread already created");
 
         m_Runnable = runnable;
 
@@ -239,7 +239,7 @@ namespace Graphyte::Threading
             reinterpret_cast<unsigned int*>(&m_Id.Value)
         ));
 
-        bool const success = (m_Handle.Value != nullptr);
+        bool const success = m_Handle.IsValid();
 
 #elif GRAPHYTE_PLATFORM_POSIX
 
@@ -249,7 +249,7 @@ namespace Graphyte::Threading
         int const result = pthread_create(&m_Handle.Value, &attrs, &Impl::ThreadEntryPoint, m_Runnable);
         pthread_attr_destroy(&attrs);
 
-        bool const success = (m_Handle.Value != nullptr && result == 0);
+        bool const success = (m_Handle.IsValid() && result == 0);
 #else
 #error Not implemented
 #endif
@@ -285,7 +285,7 @@ namespace Graphyte::Threading
 
     bool Thread::Stop(bool wait) noexcept
     {
-        GX_ABORT_UNLESS(m_Handle.Value != nullptr, "Thread not created");
+        GX_ABORT_UNLESS(m_Handle.IsValid(), "Thread not created");
 
         if (m_Runnable != nullptr)
         {
@@ -310,7 +310,7 @@ namespace Graphyte::Threading
 
     bool Thread::Join() noexcept
     {
-        GX_ABORT_UNLESS(m_Handle.Value != nullptr, "Thread not created");
+        GX_ABORT_UNLESS(m_Handle.IsValid(), "Thread not created");
 
 #if GRAPHYTE_PLATFORM_WINDOWS
 
@@ -329,7 +329,7 @@ namespace Graphyte::Threading
 
     void Thread::SetAffinity([[maybe_unused]] ThreadAffinity affinity) noexcept
     {
-        GX_ABORT_UNLESS(m_Handle.Value != nullptr, "Thread not created");
+        GX_ABORT_UNLESS(m_Handle.IsValid(), "Thread not created");
 
 #if GRAPHYTE_PLATFORM_WINDOWS
 
@@ -346,7 +346,7 @@ namespace Graphyte::Threading
 
     void Thread::SetPriority(ThreadPriority priority) noexcept
     {
-        GX_ABORT_UNLESS(m_Handle.Value != nullptr, "Thread not created");
+        GX_ABORT_UNLESS(m_Handle.IsValid(), "Thread not created");
 
 #if GRAPHYTE_PLATFORM_WINDOWS
 

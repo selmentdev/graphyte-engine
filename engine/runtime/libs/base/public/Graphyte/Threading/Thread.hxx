@@ -14,10 +14,10 @@ namespace Graphyte::Threading
     public:
         Thread() noexcept;
         Thread(const Thread&) = delete;
-        Thread(Thread&&) noexcept;
-        Thread& operator=(const Thread&) = delete;
-        Thread& operator=(Thread&&) noexcept;
+        Thread(Thread&& other) noexcept;
         ~Thread() noexcept;
+        Thread& operator=(const Thread&) = delete;
+        Thread& operator=(Thread&& other) noexcept;
 
     public:
         ThreadHandle GetHandle() const noexcept

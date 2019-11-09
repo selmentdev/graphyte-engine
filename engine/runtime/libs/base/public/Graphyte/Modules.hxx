@@ -1,7 +1,7 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Status.hxx>
-#include <Graphyte/System/SharedLibrary.hxx>
+#include <Graphyte/System/Library.hxx>
 #include <Graphyte/Status.hxx>
 #include <Graphyte/Threading/Sync.hxx>
 
@@ -91,11 +91,11 @@ namespace Graphyte
      */
     struct ModuleDescriptor final
     {
-        std::string Name;                           //!< Name of module.
-        std::string Path;                           //!< Path to loaded module.
-        System::SharedLibraryHandle ModuleHandle; //!< System handle of loaded library.
-        std::unique_ptr<IModule> Instance;          //!< Instance of IModule created by this library.
-        int32_t LoadOrder;                          //!< Load order index.
+        std::string Name;                   //!< Name of module.
+        std::string Path;                   //!< Path to loaded module.
+        System::Library ModuleLibrary;      //!< System handle of loaded library.
+        std::unique_ptr<IModule> Instance;  //!< Instance of IModule created by this library.
+        int32_t LoadOrder;                  //!< Load order index.
     };
 
     /*!

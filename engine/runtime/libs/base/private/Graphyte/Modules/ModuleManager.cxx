@@ -48,7 +48,7 @@ namespace Graphyte
             // Dispose loaded shared library.
             //
 
-            [[maybe_unused]] Status status = System::SharedLibrary::Unload(descriptor.ModuleHandle);
+            [[maybe_unused]] Status status = descriptor.ModuleLibrary.Unload();
             GX_ASSERT(status == Status::Success);
         }
 
@@ -57,7 +57,8 @@ namespace Graphyte
     }
 
     IModule* ModuleManager::Load(
-        std::string_view name, Status* status
+        std::string_view name,
+        Status* status
     ) noexcept
     {
         GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
@@ -79,7 +80,7 @@ namespace Graphyte
         }
         else
         {
-            using CreateModuleSignature = IModule*(*)() noexcept;
+            using CreateModuleSignature = IModule* (void) noexcept;
 
 
             //
@@ -93,8 +94,8 @@ namespace Graphyte
             // Load library.
             //
 
-            System::SharedLibraryHandle handle{};
-            currentStatus = System::SharedLibrary::Load(handle, path.c_str());
+            System::Library library{};
+            currentStatus = library.Load(path);
 
             if (currentStatus == Status::Success)
             {
@@ -102,10 +103,7 @@ namespace Graphyte
                 // Get `CreateModule` function from module.
                 //
 
-                auto* createModuleFunction = System::SharedLibrary::Get<CreateModuleSignature>(
-                    handle,
-                    "CreateModule"
-                );
+                auto* createModuleFunction = library.Resolve<CreateModuleSignature>("CreateModule");
 
                 if (createModuleFunction != nullptr)
                 {
@@ -123,7 +121,7 @@ namespace Graphyte
                         ModuleDescriptor descriptor{
                             .Name = std::string{ name },
                             .Path = path,
-                            .ModuleHandle = handle,
+                            .ModuleLibrary = std::move(library),
                             .Instance = std::unique_ptr<IModule>(result),
                             .LoadOrder = 0,
                         };
@@ -215,7 +213,7 @@ namespace Graphyte
 
             auto& descriptor = it->second;
 
-            GX_ASSERT(descriptor.ModuleHandle.IsValid());
+            GX_ASSERT(descriptor.ModuleLibrary.IsValid());
             GX_ASSERT(descriptor.Instance != nullptr);
 
 
@@ -238,7 +236,7 @@ namespace Graphyte
             // Dispose loaded shared library.
             //
 
-            status = System::SharedLibrary::Unload(descriptor.ModuleHandle);
+            status = descriptor.ModuleLibrary.Unload();
 
 
             //

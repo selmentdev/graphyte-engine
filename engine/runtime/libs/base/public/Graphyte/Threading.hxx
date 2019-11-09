@@ -107,6 +107,11 @@ namespace Graphyte::Threading
 #else
 #error Not supported.
 #endif
+
+        bool IsValid() const noexcept
+        {
+            return Value != nullptr;
+        }
     };
 
     struct ThreadId final
