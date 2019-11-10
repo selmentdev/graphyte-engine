@@ -431,7 +431,7 @@ namespace Graphyte::Maths
 
 
     template <typename T>
-    mathinline T mathcall Fract(T v) noexcept
+    mathinline T mathcall Frac(T v) noexcept
     {
         static_assert(Maths::VectorType<T>);
 
@@ -444,8 +444,8 @@ namespace Graphyte::Maths
             } } };
         return { v_result.V };
 #elif GRAPHYTE_HW_AVX
-        auto v_temp = _mm_floor_ps(v.V);
-        auto v_result = _mm_sub_ps(v.V, v_temp);
+        __m128 const v_temp = _mm_floor_ps(v.V);
+        __m128 const v_result = _mm_sub_ps(v.V, v_temp);
         return { v_result };
 #endif
     }
@@ -461,7 +461,7 @@ namespace Graphyte::Maths
         result = Min<T>(max, result);
         return result;
 #elif GRAPHYTE_HW_AVX
-        auto v_result = _mm_max_ps(min.V, v.V);
+        __m128 v_result = _mm_max_ps(min.V, v.V);
         v_result = _mm_min_ps(max.V, v_result);
         return { v_result };
 #endif
@@ -477,7 +477,7 @@ namespace Graphyte::Maths
         T zero = Zero<T>();
         return Clamp<T>(v, zero, { Impl::VEC4_ONE_4.V });
 #elif GRAPHYTE_HW_AVX
-        auto v_result = _mm_max_ps(v.V, Impl::VEC4_ZERO_4.V);
+        __m128 const v_result = _mm_max_ps(v.V, Impl::VEC4_ZERO_4.V);
         return { _mm_min_ps(v_result, Impl::VEC4_ONE_4.V) };
 #endif
     }
@@ -499,7 +499,7 @@ namespace Graphyte::Maths
             } } };
         return { v_result.V };
 #elif GRAPHYTE_HW_AVX
-        auto v_zero = _mm_setzero_ps();
+        __m128 const v_zero = _mm_setzero_ps();
         return { _mm_sub_ps(v_zero, v.V) };
 #endif
     }
@@ -964,7 +964,7 @@ namespace Graphyte::Maths
         GX_ASSERT(destination != nullptr);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        destination[0] = Vector4::GetX(v);
+        destination[0] = GetX(v);
 #elif GRAPHYTE_HW_AVX
         _mm_store_ss(destination, v.V);
 #endif
@@ -1216,6 +1216,32 @@ namespace Graphyte::Maths
 }
 
 
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall Abs(T v) noexcept
+    {
+        static_assert(Maths::VectorType<T>);
+        static_assert(!Maths::MaskableType<T>);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::Vec4F32 v_result = { { {
+                fabsf(v.V.F[0]),
+                fabsf(v.V.F[1]),
+                fabsf(v.V.F[2]),
+                fabsf(v.V.F[3]),
+            } } };
+        return { v_result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 v_result = _mm_setzero_ps();
+        v_result = _mm_sub_ps(v_result, v.V);
+        v_result = _mm_max_ps(v_result, v.V);
+        return { v_result };
+#endif
+    }
+}
+
+
 //
 // Comparison
 //
@@ -1223,7 +1249,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline auto mathcall CmpEq(T v1, T v2) noexcept -> Maths::MaskType<T>
+    mathinline auto mathcall CmpEq(T v1, T v2) noexcept -> typename T::MaskType
     {
         static_assert(Maths::EqualComparable<T>);
         static_assert(Maths::VectorType<T>);
@@ -1243,7 +1269,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline auto mathcall CmpEqEps(T v1, T v2, Vec4 epsilon) noexcept -> Maths::MaskType<T>
+    mathinline auto mathcall CmpEqEps(T v1, T v2, Vec4 epsilon) noexcept -> typename T::MaskType
     {
         static_assert(Maths::EqualComparable<T>);
         static_assert(Maths::VectorType<T>);
@@ -1278,7 +1304,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline auto mathcall CmpNeq(T v1, T v2) noexcept -> Maths::MaskType<T>
+    mathinline auto mathcall CmpNeq(T v1, T v2) noexcept -> typename T::MaskType
     {
         static_assert(Maths::EqualComparable<T>);
         static_assert(Maths::VectorType<T>);
@@ -1298,7 +1324,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline auto mathcall CmpLt(T v1, T v2) noexcept -> Maths::MaskType<T>
+    mathinline auto mathcall CmpLt(T v1, T v2) noexcept -> typename T::MaskType
     {
         static_assert(Maths::OrderComparable<T>);
         static_assert(Maths::VectorType<T>);
@@ -1318,7 +1344,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline auto mathcall CmpLe(T v1, T v2) noexcept -> Maths::MaskType<T>
+    mathinline auto mathcall CmpLe(T v1, T v2) noexcept -> typename T::MaskType
     {
         static_assert(Maths::OrderComparable<T>);
         static_assert(Maths::VectorType<T>);
@@ -1338,7 +1364,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline auto mathcall CmpGt(T v1, T v2) noexcept -> Maths::MaskType<T>
+    mathinline auto mathcall CmpGt(T v1, T v2) noexcept -> typename T::MaskType
     {
         static_assert(Maths::OrderComparable<T>);
         static_assert(Maths::VectorType<T>);
@@ -1358,7 +1384,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline auto mathcall CmpGe(T v1, T v2) noexcept -> Maths::MaskType<T>
+    mathinline auto mathcall CmpGe(T v1, T v2) noexcept -> typename T::MaskType
     {
         static_assert(Maths::OrderComparable<T>);
         static_assert(Maths::VectorType<T>);
@@ -1520,3 +1546,349 @@ namespace Graphyte::Maths
     }
 }
 
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall Select(T v1, T v2, typename T::MaskType mask) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::Vec4U32 v_result = { { {
+                (v1.V.U[0] & ~mask.V.U[0]) | (v2.V.U[0] & mask.V.U[0]),
+                (v1.V.U[1] & ~mask.V.U[1]) | (v2.V.U[1] & mask.V.U[1]),
+                (v1.V.U[2] & ~mask.V.U[2]) | (v2.V.U[2] & mask.V.U[2]),
+                (v1.V.U[3] & ~mask.V.U[3]) | (v2.V.U[3] & mask.V.U[3]),
+            } } };
+        return { v_result.V };
+#elif GRAPHYTE_HW_AVX
+#if true
+        return { _mm_blendv_ps(v1.V, v2.V, mask.V) };
+#else
+        __m128 const v_temp1 = _mm_andnot_ps(control.V, v1.V);
+        __m128 const v_temp2 = _mm_and_ps(v2.V, control.V);
+        return { _mm_or_ps(v_temp1, v_temp2) };
+#endif
+#endif
+    }
+}
+
+// =================================================================================================
+//
+// Swizzling.
+//
+
+namespace Graphyte::Maths
+{
+    mathinline Vec4 mathcall Swizzle(Vec4 v, uint32_t element0, uint32_t element1, uint32_t element2, uint32_t element3) noexcept
+    {
+        GX_ASSERT((element0 < 4) && (element1 < 4) && (element2 < 4) && (element3 < 4));
+        GX_COMPILER_ASSUME((element0 < 4) && (element1 < 4) && (element2 < 4) && (element3 < 4));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::Vec4F32 v_result = { { { v.V.F[element0], v.V.F[element1], v.V.F[element2], v.V.F[element3] } } };
+        return { v_result.V };
+#elif GRAPHYTE_HW_AVX
+        uint32_t elements[4] = {
+            element0,
+            element1,
+            element2,
+            element3
+        };
+        __m128i const v_control = _mm_loadu_si128(reinterpret_cast<const __m128i*>(&elements[0]));
+        return { _mm_permutevar_ps(v.V, v_control) };
+#else
+        uint32_t const* mem_ptr = reinterpret_cast<uint32_t const*>(&v.V);
+
+        Vec4 result;
+        uint32_t* work_ptr = reinterpret_cast<uint32_t*>(&result.V);
+
+        work_ptr[0] = mem_ptr[element0];
+        work_ptr[1] = mem_ptr[element1];
+        work_ptr[2] = mem_ptr[element2];
+        work_ptr[3] = mem_ptr[element3];
+
+        return { result.V };
+#endif
+    }
+
+    template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
+    mathinline Vec4 mathcall Swizzle(Vec4 v) noexcept
+    {
+        static_assert(X <= 3, "X out of range");
+        static_assert(Y <= 3, "Y out of range");
+        static_assert(Z <= 3, "Z out of range");
+        static_assert(W <= 3, "W out of range");
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return Swizzle(v, X, Y, Z, W);
+#elif GRAPHYTE_HW_AVX
+        return { _mm_permute_ps(v.V, _MM_SHUFFLE(W, Z, Y, X)) };
+#endif
+    }
+
+    template <> mathinline Vec4 mathcall Swizzle<0, 1, 2, 3>(Vec4 v) noexcept
+    {
+        return v;
+    }
+
+#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
+    template <> mathinline Vec4 mathcall Swizzle<0, 1, 0, 1>(Vec4 v) noexcept
+    {
+        return { _mm_movelh_ps(v.V, v.V) };
+    }
+    template <> mathinline Vec4 mathcall Swizzle<2, 3, 2, 3>(Vec4 v) noexcept
+    {
+        return { _mm_movehl_ps(v.V, v.V) };
+    }
+
+    template <> mathinline Vec4 mathcall Swizzle<0, 0, 1, 1>(Vec4 v) noexcept
+    {
+        return { _mm_unpacklo_ps(v.V, v.V) };
+    }
+    template <> mathinline Vec4 mathcall Swizzle<2, 2, 3, 3>(Vec4 v) noexcept
+    {
+        return { _mm_unpackhi_ps(v.V, v.V) };
+    }
+    template <> mathinline Vec4 mathcall Swizzle<0, 0, 2, 2>(Vec4 v) noexcept
+    {
+        return { _mm_moveldup_ps(v.V) };
+    }
+    template <> mathinline Vec4 mathcall Swizzle<1, 1, 3, 3>(Vec4 v) noexcept
+    {
+        return { _mm_movehdup_ps(v.V) };
+    }
+#endif
+
+#if GRAPHYTE_HW_AVX2 && !GRAPHYTE_MATH_NO_INTRINSICS
+    template <> mathinline Vec4 mathcall Swizzle<0, 0, 0, 0>(Vec4 v) noexcept
+    {
+        return { _mm_broadcastss_ps(v.V) };
+    }
+#endif
+
+    template <SwizzleMask Mask>
+    mathinline Vec4 mathcall Swizzle(Vec4 v) noexcept
+    {
+        return Swizzle<
+            (static_cast<uint32_t>(Mask) >> 0) & 3,
+            (static_cast<uint32_t>(Mask) >> 2) & 3,
+            (static_cast<uint32_t>(Mask) >> 4) & 3,
+            (static_cast<uint32_t>(Mask) >> 6) & 3>(v);
+    }
+}
+
+namespace Graphyte::Maths
+{
+
+#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
+    namespace Impl
+    {
+        template <uint32_t Shuffle, bool X, bool Y, bool Z, bool W> struct PermuteHelper final
+        {
+            static Vec4 mathcall Permute(Vec4 v1, Vec4 v2) noexcept
+            {
+                static const Impl::Vec4U32 select_mask = { { {
+                        X ? 0xFFFFFFFFU : 0U,
+                        Y ? 0xFFFFFFFFU : 0U,
+                        Z ? 0xFFFFFFFFU : 0U,
+                        W ? 0xFFFFFFFFU : 0U,
+                    } } };
+
+                __m128 const v_shuffled1 = _mm_permute_ps(v1.V, Shuffle);
+                __m128 const v_shuffled2 = _mm_permute_ps(v2.V, Shuffle);
+                __m128 const v_masked1 = _mm_andnot_ps(select_mask.V, v_shuffled1);
+                __m128 const v_masked2 = _mm_and_ps(select_mask.V, v_shuffled2);
+                return { _mm_or_ps(v_masked1, v_masked2) };
+            }
+        };
+
+        template <uint32_t Shuffle> struct PermuteHelper<Shuffle, false, false, false, false>
+        {
+            static Vec4 mathcall Permute(Vec4 v1, [[maybe_unused]] Vec4 v2) noexcept
+            {
+                return { _mm_permute_ps(v1.V, Shuffle) };
+            }
+        };
+
+        template <uint32_t Shuffle> struct PermuteHelper<Shuffle, true, true, true, true>
+        {
+            static Vec4 mathcall Permute([[maybe_unused]] Vec4 v1, Vec4 v2) noexcept
+            {
+                return { _mm_permute_ps(v2.V, Shuffle) };
+            }
+        };
+
+        template <uint32_t Shuffle> struct PermuteHelper<Shuffle, false, false, true, true>
+        {
+            static Vec4 mathcall Permute(Vec4 v1, Vec4 v2) noexcept
+            {
+                return { _mm_shuffle_ps(v1.V, v2.V, Shuffle) };
+            }
+        };
+
+        template <uint32_t Shuffle> struct PermuteHelper<Shuffle, true, true, false, false>
+        {
+            static Vec4 mathcall Permute(Vec4 v1, Vec4 v2) noexcept
+            {
+                return { _mm_shuffle_ps(v2.V, v1.V, Shuffle) };
+            }
+        };
+    }
+#endif
+
+    template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
+    mathinline Vec4 mathcall Permute(Vec4 v1, Vec4 v2) noexcept
+    {
+        static_assert(X <= 7, "X template parameter out of range");
+        static_assert(Y <= 7, "Y template parameter out of range");
+        static_assert(Z <= 7, "Z template parameter out of range");
+        static_assert(W <= 7, "W template parameter out of range");
+
+#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
+        constexpr uint32_t shuffle = _MM_SHUFFLE(W & 3, Z & 3, Y & 3, X & 3);
+        constexpr bool x = X > 3;
+        constexpr bool y = Y > 3;
+        constexpr bool z = Z > 3;
+        constexpr bool w = W > 3;
+        return Impl::PermuteHelper<shuffle, x, y, z, w>::Permute(v1, v2);
+#else
+        return Permute(v1, v2, X, Y, Z, W);
+#endif
+    }
+
+    template <> mathinline Vec4 mathcall Permute<0, 1, 2, 3>(Vec4 v1, [[maybe_unused]] Vec4 v2) noexcept
+    {
+        return v1;
+    }
+
+    template <> mathinline Vec4 mathcall Permute<4, 5, 6, 7>([[maybe_unused]] Vec4 v1, Vec4 v2) noexcept
+    {
+        return v2;
+    }
+
+#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
+    template <> mathinline Vec4 mathcall Permute<0, 1, 4, 5>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_movelh_ps(v1.V, v2.V) };
+    }
+    template <> mathinline Vec4 mathcall Permute<6, 7, 2, 3>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_movehl_ps(v1.V, v2.V) };
+    }
+    template <> mathinline Vec4 mathcall Permute<0, 4, 1, 5>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_unpacklo_ps(v1.V, v2.V) };
+    }
+    template <> mathinline Vec4 mathcall Permute<2, 6, 3, 7>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_unpackhi_ps(v1.V, v2.V) };
+    }
+    template <> mathinline Vec4 mathcall Permute<2, 3, 6, 7>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_castpd_ps(_mm_unpackhi_pd(_mm_castps_pd(v1.V), _mm_castps_pd(v2.V))) };
+    }
+    template <> mathinline Vec4 mathcall Permute<4, 1, 2, 3>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0x1) };
+    }
+    template <> mathinline Vec4 mathcall Permute<0, 5, 2, 3>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0x2) };
+    }
+    template <> mathinline Vec4 mathcall Permute<4, 5, 2, 3>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0x3) };
+    }
+    template <> mathinline Vec4 mathcall Permute<0, 1, 6, 3>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0x4) };
+    }
+    template <> mathinline Vec4 mathcall Permute<4, 1, 6, 3>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0x5) };
+    }
+    template <> mathinline Vec4 mathcall Permute<0, 5, 6, 3>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0x6) };
+    }
+    template <> mathinline Vec4 mathcall Permute<4, 5, 6, 3>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0x7) };
+    }
+    template <> mathinline Vec4 mathcall Permute<0, 1, 2, 7>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0x8) };
+    }
+    template <> mathinline Vec4 mathcall Permute<4, 1, 2, 7>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0x9) };
+    }
+    template <> mathinline Vec4 mathcall Permute<0, 5, 2, 7>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0xA) };
+    }
+    template <> mathinline Vec4 mathcall Permute<4, 5, 2, 7>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0xB) };
+    }
+    template <> mathinline Vec4 mathcall Permute<0, 1, 6, 7>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0xC) };
+    }
+    template <> mathinline Vec4 mathcall Permute<4, 1, 6, 7>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0xD) };
+    }
+    template <> mathinline Vec4 mathcall Permute<0, 5, 6, 7>(Vec4 v1, Vec4 v2) noexcept
+    {
+        return { _mm_blend_ps(v1.V, v2.V, 0xE) };
+    }
+#endif
+
+    mathinline Vec4 mathcall Permute(Vec4 v1, Vec4 v2, uint32_t permute_x, uint32_t permute_y, uint32_t permute_z, uint32_t permute_w) noexcept
+    {
+        GX_ASSERT((permute_x <= 7) && (permute_y <= 7) && (permute_z <= 7) && (permute_w <= 7));
+        GX_COMPILER_ASSUME((permute_x <= 7) && (permute_y <= 7) && (permute_z <= 7) && (permute_w <= 7));
+#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
+        static const Impl::Vec4U32 v_threes = { { { 3, 3, 3, 3 } } };
+
+        alignas(16) uint32_t elements[4] = { permute_x, permute_y, permute_z, permute_w };
+        __m128i v_control = _mm_load_si128(reinterpret_cast<const __m128i*>(&elements[0]));
+
+        __m128i const v_select = _mm_cmpgt_epi32(v_control, _mm_castps_si128(v_threes.V));
+        v_control = _mm_castps_si128(_mm_and_ps(_mm_castsi128_ps(v_control), v_threes.V));
+
+        __m128 const v_shuffled1 = _mm_permutevar_ps(v1.V, v_control);
+        __m128 const v_shuffled2 = _mm_permutevar_ps(v2.V, v_control);
+
+        __m128 const v_masked1 = _mm_andnot_ps(_mm_castsi128_ps(v_select), v_shuffled1);
+        __m128 const v_masked2 = _mm_and_ps(_mm_castsi128_ps(v_select), v_shuffled2);
+
+        return { _mm_or_ps(v_masked1, v_masked2) };
+#else
+        const uint32_t* mem_ptr[2];
+        mem_ptr[0] = reinterpret_cast<const uint32_t*>(&v1.V);
+        mem_ptr[1] = reinterpret_cast<const uint32_t*>(&v2.V);
+
+        Vec4 result;
+        uint32_t* work_ptr = reinterpret_cast<uint32_t*>(&result.V);
+
+        size_t const i0 = permute_x & 3;
+        size_t const e0 = permute_x >> 2;
+        work_ptr[0] = mem_ptr[e0][i0];
+
+        size_t const i1 = permute_y & 3;
+        size_t const e1 = permute_y >> 2;
+        work_ptr[1] = mem_ptr[e1][i1];
+
+        size_t const i2 = permute_z & 3;
+        size_t const e2 = permute_z >> 2;
+        work_ptr[2] = mem_ptr[e2][i2];
+
+        size_t const i3 = permute_w & 3;
+        size_t const e3 = permute_w >> 2;
+        work_ptr[3] = mem_ptr[e3][i3];
+
+        return result;
+#endif
+    }
+}

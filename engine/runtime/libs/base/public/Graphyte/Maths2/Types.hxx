@@ -43,6 +43,7 @@ namespace Graphyte::Maths
         using IsFloat = void;
         using IsOrderComparable = void;
         using IsEqualComparable = void;
+        using MaskType = Bool4;
         static constexpr const size_t Components = 4;
     };
 
@@ -54,6 +55,7 @@ namespace Graphyte::Maths
         using IsFloat = void;
         using IsOrderComparable = void;
         using IsEqualComparable = void;
+        using MaskType = Bool3;
         static constexpr const size_t Components = 3;
     };
 
@@ -65,6 +67,7 @@ namespace Graphyte::Maths
         using IsFloat = void;
         using IsOrderComparable = void;
         using IsEqualComparable = void;
+        using MaskType = Bool2;
         static constexpr const size_t Components = 2;
     };
 
@@ -85,6 +88,7 @@ namespace Graphyte::Maths
         using IsVector = void;
         using IsFloat = void;
         using IsEqualComparable = void;
+        using MaskType = Bool4;
         static constexpr const size_t Components = 4;
     };
 
@@ -95,6 +99,7 @@ namespace Graphyte::Maths
         using IsVector = void;
         using IsFloat = void;
         using IsEqualComparable = void;
+        using MaskType = Bool4;
         static constexpr const size_t Components = 4;
     };
 
@@ -105,6 +110,7 @@ namespace Graphyte::Maths
         using IsVector = void;
         using IsFloat = void;
         using IsEqualComparable = void;
+        using MaskType = Bool4;
         static constexpr const size_t Components = 4;
     };
 
@@ -115,35 +121,11 @@ namespace Graphyte::Maths
         using IsVector = void;
         using IsFloat = void;
         using IsEqualComparable = void;
+        using MaskType = Bool4;
         static constexpr const size_t Components = 4;
     };
 }
 
-namespace Graphyte::Maths::Impl
-{
-    template <size_t N> struct DeduceMaskTypeImpl;
-
-    template <> struct DeduceMaskTypeImpl<2> final
-    {
-        using Type = Bool2;
-    };
-
-    template <> struct DeduceMaskTypeImpl<3> final
-    {
-        using Type = Bool3;
-    };
-
-    template <> struct DeduceMaskTypeImpl<4> final
-    {
-        using Type = Bool4;
-    };
-}
-
-namespace Graphyte::Maths
-{
-    template <typename T>
-    using MaskType = typename Maths::Impl::DeduceMaskTypeImpl<T::Components>::Type;
-}
 
 namespace Graphyte::Maths
 {
