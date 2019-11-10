@@ -1817,9 +1817,13 @@ namespace Graphyte::Maths
             } } };
         return { v_result.V };
 #elif GRAPHYTE_HW_AVX
+#if true
+        return { _mm_blendv_ps(v1.V, v2.V, control.V) };
+#else
         auto v_temp1 = _mm_andnot_ps(control.V, v1.V);
         auto v_temp2 = _mm_and_ps(v2.V, control.V);
         return { _mm_or_ps(v_temp1, v_temp2) };
+#endif
 #endif
     }
 
