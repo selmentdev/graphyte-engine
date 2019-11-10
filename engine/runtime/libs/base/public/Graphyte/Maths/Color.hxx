@@ -11,6 +11,7 @@ namespace Graphyte::Maths
     struct Matrix;
 }
 
+#if false
 namespace Graphyte::Maths
 {
     struct Color final
@@ -97,3 +98,4 @@ namespace Graphyte::Maths
 }
 
 #include <Graphyte/Maths/Color.impl.hxx>
+#endif

@@ -131,20 +131,20 @@ namespace Graphyte::Geometry
         //
         if (this->CompareTangentY)
         {
-            auto const lhs = Maths::Color::Load(&mesh.WedgeColors[lhs_index]);
-            auto const rhs = Maths::Color::Load(&mesh.WedgeColors[rhs_index]);
-
-            if (!Maths::Vector4::IsEqual(Maths::Vector4{ lhs.V }, Maths::Vector4{ rhs.V }, vtolerance))
-            {
-                if (Maths::Color::IsLess(lhs, rhs))
-                {
-                    return -1;
-                }
-                else if (Maths::Color::IsGreater(lhs, rhs))
-                {
-                    return 1;
-                }
-            }
+            //auto const lhs = Maths::Color::Load(&mesh.WedgeColors[lhs_index]);
+            //auto const rhs = Maths::Color::Load(&mesh.WedgeColors[rhs_index]);
+            //
+            //if (!Maths::Vector4::IsEqual(Maths::Vector4{ lhs.V }, Maths::Vector4{ rhs.V }, vtolerance))
+            //{
+            //    if (Maths::Color::IsLess(lhs, rhs))
+            //    {
+            //        return -1;
+            //    }
+            //    else if (Maths::Color::IsGreater(lhs, rhs))
+            //    {
+            //        return 1;
+            //    }
+            //}
         }
 
         return 0;

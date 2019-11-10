@@ -86,6 +86,24 @@ namespace Graphyte::Maths::Impl
 
     template <typename T>
     constexpr bool IsGeometricVector<T, std::void_t<typename T::IsGeometricVector>> = true;
+
+    template <typename T, typename = void>
+    constexpr bool IsFloat = false;
+
+    template <typename T>
+    constexpr bool IsFloat<T, std::void_t<typename T::IsFloat>> = true;
+
+    template <typename T, typename = void>
+    constexpr bool IsEqualComparable = false;
+
+    template <typename T>
+    constexpr bool IsEqualComparable<T, std::void_t<typename T::IsEqualComparable>> = true;
+
+    template <typename T, typename = void>
+    constexpr bool IsOrderComparable = false;
+
+    template <typename T>
+    constexpr bool IsOrderComparable <T, std::void_t<typename T::IsOrderComparable>> = true;
 }
 
 namespace Graphyte::Maths
@@ -94,13 +112,22 @@ namespace Graphyte::Maths
     concept VectorType = Impl::IsVector<T>;
 
     template <typename T>
-    concept MaskType = Impl::IsMask<T>;
+    concept MaskableType = Impl::IsMask<T>;
 
     template <typename T>
     concept MatrixType = Impl::IsMatrix<T>;
 
     template <typename T>
     concept GeometricVectorType = Impl::IsGeometricVector<T>;
+
+    template <typename T>
+    concept FloatType = Impl::IsFloat<T>;
+
+    template <typename T>
+    concept EqualComparable = Impl::IsEqualComparable<T>;
+
+    template <typename T>
+    concept OrderComparable = Impl::IsOrderComparable<T>;
 }
 
 
@@ -123,8 +150,19 @@ namespace Graphyte::Maths::Impl
             int32_t I[4];
         };
     };
+
+    struct VectorDouble4 final
+    {
+        union
+        {
+            double F[4];
+            uint64_t U[4];
+            int64_t I[4];
+        };
+    };
 #elif GRAPHYTE_HW_NEON
     using VectorFloat4 = float32x4_t;
+    using VectorDouble4 = double32x4_t;
 #elif GRAPHYTE_HW_AVX
     using VectorFloat4 = __m128;
 #else
@@ -243,31 +281,6 @@ namespace Graphyte::Maths::Impl
 
 #if false
 
-template <typename To, typename From> To load(From const* source) noexcept = delete;
-template <typename To, typename From> void store(To* destination, From source) noexcept = delete;
-template <typename T> T make(float x, float y, float z, float w) noexcept = delete;
-template <typename T> T make(float x, float y, float z) noexcept = delete;
-template <typename T> T make(float x, float y) noexcept = delete;
-
-template <typename T> T unit_x() noexcept = delete;
-template <typename T> T unit_y() noexcept = delete;
-template <typename T> T unit_z() noexcept = delete;
-template <typename T> T unit_w() noexcept = delete;
-
-template <typename T> T identity() noexcept = delete;
-template <typename T> T zero() noexcept = delete;
-
-
-struct float4x4 { float F[16]; };
-struct float4 { float x, y, z, w; };
-struct float3 { float x, y, z; };
-struct float2 { float x, y; };
-struct alignas(16) float4x4a { float F[16]; };
-struct alignas(16) float4a { float x, y, z, w; };
-struct alignas(16) float3a { float x, y, z; };
-struct alignas(16) float2a { float x, y; };
-
-
 template <int X, int Y, int Z, int W> vec4 mathcall swizzle(vec4 v) noexcept { return { _mm_permute_ps(v.V, _MM_SHUFFLE(W, Z, Y, X)) }; }
 template<> vec4 mathcall swizzle<0, 1, 2, 3>(vec4 v) noexcept { return v; }
 
@@ -277,10 +290,6 @@ template<> vec4 mathcall swizzle<0, 0, 1, 1>(vec4 v) noexcept { return { _mm_unp
 template<> vec4 mathcall swizzle<2, 2, 3, 3>(vec4 v) noexcept { return { _mm_unpackhi_ps(v.V, v.V) }; }
 template<> vec4 mathcall swizzle<0, 0, 2, 2>(vec4 v) noexcept { return { _mm_moveldup_ps(v.V) }; }
 template<> vec4 mathcall swizzle<1, 1, 3, 3>(vec4 v) noexcept { return { _mm_movehdup_ps(v.V) }; }
-
-bool4 mathcall cmplt(vec4 v1, vec4 v2) noexcept { return { _mm_cmplt_ps(v1.V, v2.V) }; }
-bool3 mathcall cmplt(vec3 v1, vec3 v2) noexcept { return { _mm_cmplt_ps(v1.V, v2.V) }; }
-bool2 mathcall cmplt(vec2 v1, vec2 v2) noexcept { return { _mm_cmplt_ps(v1.V, v2.V) }; }
 
 bool4 mathcall cmpnan(vec4 v) noexcept { return { _mm_cmpneq_ps(v.V, v.V) }; }
 bool3 mathcall cmpnan(vec3 v) noexcept { return { _mm_cmpneq_ps(v.V, v.V) }; }
