@@ -91,8 +91,8 @@ namespace Graphyte::Maths
         static Matrix mathcall AffineTransformation(Vector3 scaling, Vector3 rotation_origin, Quaternion rotation_quaternion, Vector3 translation) noexcept;
 
     public:
-        static Matrix mathcall Reflect(Plane reflection_plane) noexcept;
-        static Matrix mathcall Shadow(Plane shadow_plane, Vector4 light_position) noexcept;
+        //static Matrix mathcall Reflect(Plane reflection_plane) noexcept;
+        //static Matrix mathcall Shadow(Plane shadow_plane, Vector4 light_position) noexcept;
 
     public:
         static Matrix mathcall LookAtLH(Vector3 eye_position, Vector3 focus_position, Vector3 up_direction) noexcept;

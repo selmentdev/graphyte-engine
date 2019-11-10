@@ -937,7 +937,7 @@ namespace Graphyte::Maths
     {
         GX_ASSERT(destination != nullptr);
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Float4A ft;
+        float4a ft;
         Vector4::Store(&ft, v);
 
         destination->X = ToHalf(ft.X);

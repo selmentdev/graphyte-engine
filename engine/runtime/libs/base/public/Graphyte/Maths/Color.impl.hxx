@@ -52,7 +52,7 @@ namespace Graphyte::Maths
         v_n = Vector4::Multiply(v_n, { Detail::VEC4_UBYTE_MAX.V });
         v_n = Vector4::Round(v_n);
 
-        Float4A temp;
+        float4a temp;
         Vector4::Store(&temp, v_n);
 
         destination->Value = (

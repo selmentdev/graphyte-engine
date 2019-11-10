@@ -2186,6 +2186,7 @@ namespace Graphyte::Maths
         return m_result;
     }
 
+#if false
     mathinline Matrix mathcall Matrix::Reflect(Plane reflection_plane) noexcept
     {
         GX_ASSERT(!Vector3::IsEqual({ reflection_plane.V }, Vector3::Zero()));
@@ -2239,6 +2240,7 @@ namespace Graphyte::Maths
 
         return m_result;
     }
+#endif
 
     mathinline Matrix mathcall Matrix::LookAtLH(Vector3 eye_position, Vector3 focus_position, Vector3 up_direction) noexcept
     {

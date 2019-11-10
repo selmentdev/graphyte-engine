@@ -918,7 +918,7 @@ namespace Graphyte::Maths
             return true;
         }
 
-        Impl::Ieee754::FloatBits u[2];
+        Graphyte::Impl::Ieee754::FloatBits u[2];
         u[0].AsFloat = value1;
         u[1].AsFloat = value2;
 

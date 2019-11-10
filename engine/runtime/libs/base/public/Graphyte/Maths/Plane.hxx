@@ -1,6 +1,6 @@
 #pragma once
 #include <Graphyte/Maths/Simd.hxx>
-
+#if false
 namespace Graphyte::Maths
 {
     struct Vector2;
@@ -60,3 +60,4 @@ namespace Graphyte::Maths
 }
 
 #include <Graphyte/Maths/Plane.impl.hxx>
+#endif

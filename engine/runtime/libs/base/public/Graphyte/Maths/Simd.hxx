@@ -1,10 +1,8 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
+#include <Graphyte/Maths2/Impl/Simd.hxx>
 
 #if GRAPHYTE_HW_AVX
-#   include <xmmintrin.h>
-#   include <emmintrin.h>
-
 #if GRAPHYTE_HW_AVX
 #   define sse_sfence()
 #else
@@ -33,15 +31,6 @@
     V3 = _mm_shuffle_ps(V3,V4,_MM_SHUFFLE(2,1,2,0));\
 
 #elif GRAPHYTE_HW_NEON
-
-#if defined(_MSC_VER)
-#   if defined(_M_ARM)
-#       include <arm_neon.h>
-#   elif defined(_M_ARM64)
-#       include <arm64_neon.h>
-#   endif
-#endif
-
 #if defined(_MSC_VER) && (_MSC_FULL_VER != 170051221) && (_MSC_FULL_VER < 170065500)
 #   define neon_vmulq_n_f32( a, b ) vmulq_f32( (a), vdupq_n_f32( (b) ) )
 #   define neon_vmlaq_n_f32( a, b, c ) vmlaq_f32( (a), (b), vdupq_n_f32( (c) ) )
@@ -54,40 +43,6 @@
 #   define neon_vmlaq_lane_f32( a, b, c, d ) vmlaq_lane_f32( (a), (b), (c), (d) )
 #endif
 #endif
-
-#if GRAPHYTE_HAVE_VECTORCALL
-#define mathcall __vectorcall
-#elif GRAPHYTE_COMPILER_MSVC
-#define mathcall __fastcall
-#else
-#define mathcall
-#endif
-
-#if GRAPHYTE_COMPILER_MSVC
-#define mathinline __forceinline
-// XXX: Check when we may make it `constexpr const` instead
-#define mathconst extern const __declspec(selectany)
-#elif GRAPHYTE_COMPILER_CLANG
-#define mathinline inline __attribute__((__always_inline__)) 
-#define mathconst constexpr const
-#else
-#define mathinline inline __attribute__((__artificial__, __always_inline__)) 
-#define mathconst constexpr const
-#endif
-
-namespace Graphyte::Maths
-{
-    mathinline constexpr bool mathcall BitIsNaN(uint32_t bits) noexcept
-    {
-        return ((bits & UINT32_C(0x7F800000)) == UINT32_C(0x7F800000))
-            && ((bits & UINT32_C(0x007FFFFF)) != 0);
-    }
-
-    mathinline constexpr bool mathcall BitIsInf(uint32_t bits) noexcept
-    {
-        return ((bits & UINT32_C(0x7FFFFFFF)) == UINT32_C(0x7F800000));
-    }
-}
 
 namespace Graphyte::Maths
 {
