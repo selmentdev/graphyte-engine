@@ -606,7 +606,7 @@
 #   define GRAPHYTE_HW_F16C 1
 #endif
 
-#if defined(__FMA__) || defined(__AVX2__)
+#if defined(__FMA__) || defined(__AVX__) 
 #   undef  GRAPHYTE_HW_FMA3
 #   define GRAPHYTE_HW_FMA3 1
 #endif

@@ -1,6 +1,5 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
-#include <Graphyte/Threading/Interlocked.hxx>
 
 namespace Graphyte::Threading
 {

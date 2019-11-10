@@ -32,6 +32,7 @@ namespace Graphyte::System
 
         if (FreeLibrary(m_Handle.Value) != FALSE)
         {
+            m_Handle = {};
             return Status::Success;
         }
 
