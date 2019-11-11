@@ -627,84 +627,112 @@ namespace Graphyte::Maths
     template <typename T>
     mathinline T mathcall MulAdd(T v1, T v2, T v3) noexcept
     {
-        static_assert(VectorType<T>);
-        static_assert(!GeometricVectorType<T>);
-        static_assert(T::Components <= 4);
+        if constexpr (std::is_arithmetic_v<T>)
+        {
+            return (v1 * v2) + v3;
+        }
+        else
+        {
+            static_assert(VectorType<T>);
+            static_assert(!GeometricVectorType<T>);
+            static_assert(T::Components <= 4);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::Vec4F32 v_result = { { {
-                (v1.V.F[0] * v2.V.F[0]) + v3.V.F[0],
-                (v1.V.F[1] * v2.V.F[1]) + v3.V.F[1],
-                (v1.V.F[2] * v2.V.F[2]) + v3.V.F[2],
-                (v1.V.F[3] * v2.V.F[3]) + v3.V.F[3],
-            } } };
-        return { v_result.V };
+            Impl::Vec4F32 v_result = { { {
+                    (v1.V.F[0] * v2.V.F[0]) + v3.V.F[0],
+                    (v1.V.F[1] * v2.V.F[1]) + v3.V.F[1],
+                    (v1.V.F[2] * v2.V.F[2]) + v3.V.F[2],
+                    (v1.V.F[3] * v2.V.F[3]) + v3.V.F[3],
+                } } };
+            return { v_result.V };
 #elif GRAPHYTE_HW_AVX
-        return { _mm_fmadd_ps(v1.V, v2.V, v3.V) };
+            return { _mm_fmadd_ps(v1.V, v2.V, v3.V) };
 #endif
+        }
     }
 
     // (v1 * v2) - v3
     template <typename T>
     mathinline T mathcall MulSub(T v1, T v2, T v3) noexcept
     {
-        static_assert(VectorType<T>);
-        static_assert(!GeometricVectorType<T>);
-        static_assert(T::Components <= 4);
+        if constexpr (std::is_arithmetic_v<T>)
+        {
+            return (v1 * v2) - v3;
+        }
+        else
+        {
+            static_assert(VectorType<T>);
+            static_assert(!GeometricVectorType<T>);
+            static_assert(T::Components <= 4);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::Vec4F32 v_result = { { {
-                (v1.V.F[0] * v2.V.F[0]) - v3.V.F[0],
-                (v1.V.F[1] * v2.V.F[1]) - v3.V.F[1],
-                (v1.V.F[2] * v2.V.F[2]) - v3.V.F[2],
-                (v1.V.F[3] * v2.V.F[3]) - v3.V.F[3],
-            } } };
-        return { v_result.V };
+            Impl::Vec4F32 v_result = { { {
+                    (v1.V.F[0] * v2.V.F[0]) - v3.V.F[0],
+                    (v1.V.F[1] * v2.V.F[1]) - v3.V.F[1],
+                    (v1.V.F[2] * v2.V.F[2]) - v3.V.F[2],
+                    (v1.V.F[3] * v2.V.F[3]) - v3.V.F[3],
+                } } };
+            return { v_result.V };
 #elif GRAPHYTE_HW_AVX
-        return { _mm_fmsub_ps(v1.V, v2.V, v3.V) };
+            return { _mm_fmsub_ps(v1.V, v2.V, v3.V) };
 #endif
+        }
     }
 
     // -(v1 * v2) + v3
     template <typename T>
     mathinline T mathcall NegMulAdd(T v1, T v2, T v3) noexcept
     {
-        static_assert(VectorType<T>);
-        static_assert(!GeometricVectorType<T>);
-        static_assert(T::Components <= 4);
+        if constexpr (std::is_arithmetic_v<T>)
+        {
+            return -(v1 * v2) + v3;
+        }
+        else
+        {
+            static_assert(VectorType<T>);
+            static_assert(!GeometricVectorType<T>);
+            static_assert(T::Components <= 4);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::Vec4F32 v_result = { { {
-                v3.V.F[0] - (v1.V.F[0] * v2.V.F[0]),
-                v3.V.F[1] - (v1.V.F[1] * v2.V.F[1]),
-                v3.V.F[2] - (v1.V.F[2] * v2.V.F[2]),
-                v3.V.F[3] - (v1.V.F[3] * v2.V.F[3]),
-            } } };
-        return { v_result.V };
+            Impl::Vec4F32 v_result = { { {
+                    v3.V.F[0] - (v1.V.F[0] * v2.V.F[0]),
+                    v3.V.F[1] - (v1.V.F[1] * v2.V.F[1]),
+                    v3.V.F[2] - (v1.V.F[2] * v2.V.F[2]),
+                    v3.V.F[3] - (v1.V.F[3] * v2.V.F[3]),
+                } } };
+            return { v_result.V };
 #elif GRAPHYTE_HW_AVX
-        return { _mm_fnmadd_ps(v1.V, v2.V, v3.V) };
+            return { _mm_fnmadd_ps(v1.V, v2.V, v3.V) };
 #endif
+        }
     }
 
     // -(v1 * v2) - v3
     template <typename T>
     mathinline T mathcall NegMulSub(T v1, T v2, T v3) noexcept
     {
-        static_assert(VectorType<T>);
-        static_assert(!GeometricVectorType<T>);
-        static_assert(T::Components <= 4);
+        if constexpr (std::is_arithmetic_v<T>)
+        {
+            return -(v1 * v2) - v3;
+        }
+        else
+        {
+            static_assert(VectorType<T>);
+            static_assert(!GeometricVectorType<T>);
+            static_assert(T::Components <= 4);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::Vec4F32 v_result = { { {
-                -v3.V.F[0] - (v1.V.F[0] * v2.V.F[0]),
-                -v3.V.F[1] - (v1.V.F[1] * v2.V.F[1]),
-                -v3.V.F[2] - (v1.V.F[2] * v2.V.F[2]),
-                -v3.V.F[3] - (v1.V.F[3] * v2.V.F[3]),
-            } } };
-        return { v_result.V };
+            Impl::Vec4F32 v_result = { { {
+                    -v3.V.F[0] - (v1.V.F[0] * v2.V.F[0]),
+                    -v3.V.F[1] - (v1.V.F[1] * v2.V.F[1]),
+                    -v3.V.F[2] - (v1.V.F[2] * v2.V.F[2]),
+                    -v3.V.F[3] - (v1.V.F[3] * v2.V.F[3]),
+                } } };
+            return { v_result.V };
 #elif GRAPHYTE_HW_AVX
-        return { _mm_fnmsub_ps(v1.V, v2.V, v3.V) };
+            return { _mm_fnmsub_ps(v1.V, v2.V, v3.V) };
 #endif
+        }
     }
 }
 

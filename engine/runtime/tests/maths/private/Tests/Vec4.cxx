@@ -337,6 +337,8 @@ TEST_CASE("Vec4 - order comparable")
 
     CHECK(M::IsEq(M::Infinity<M::Vec4>(), M::Infinity<M::Vec4>()));
     CHECK_FALSE(M::IsNeq(M::Infinity<M::Vec4>(), M::Infinity<M::Vec4>()));
+
+    REQUIRE(M::MulAdd(1.0F, 1.0F, 1.0F) == Approx{ 2.0F });
 }
 
 TEST_CASE("Vec4 - componentwise comparisons")
