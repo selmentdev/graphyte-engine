@@ -1,4 +1,5 @@
 #include "Test.Maths.pch.hxx"
+#if false
 #include <Graphyte/Maths2/Vector.hxx>
 #include <Graphyte/Maths2/Bool4.hxx>
 
@@ -56,3 +57,4 @@ TEST_CASE("Bool4 - logic operations")
         CHECK_FALSE(M::AllFalse(ret));
     }
 }
+#endif

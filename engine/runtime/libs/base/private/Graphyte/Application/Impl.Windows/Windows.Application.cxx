@@ -736,7 +736,7 @@ namespace Graphyte::Application::Impl
 
             ClientToScreen(message.HWnd, &cursor);
 
-            Maths::float2 const position{
+            Maths::Float2 const position{
                 static_cast<float>(cursor.x),
                 static_cast<float>(cursor.y)
             };
@@ -787,7 +787,7 @@ namespace Graphyte::Application::Impl
         float const spin = 1.0F / 120.0F;
         float const wheel_delta = static_cast<float>(GET_WHEEL_DELTA_WPARAM(message.WParam));
 
-        Maths::float2 const position{
+        Maths::Float2 const position{
             static_cast<float>(GET_X_LPARAM(message.LParam)),
             static_cast<float>(GET_Y_LPARAM(message.LParam))
         };
@@ -815,7 +815,7 @@ namespace Graphyte::Application::Impl
                 {
                     TOUCHINPUT const& input = inputs[i];
 
-                    Maths::float2 const location{
+                    Maths::Float2 const location{
                         static_cast<float>(input.x) / 100.0F,
                         static_cast<float>(input.y) / 100.0F
                     };
@@ -1179,7 +1179,7 @@ namespace Graphyte::Application::Impl
         {
             Impl::GApplicationEventHandler->OnWindowSizeChanged(
                 window,
-                Maths::float2{
+                Maths::Float2{
                     static_cast<float>(new_w),
                     static_cast<float>(new_h)
                 },
@@ -1301,7 +1301,7 @@ namespace Graphyte::Application::Impl
         {
             Impl::GApplicationEventHandler->OnWindowMoved(
                 window,
-                Maths::float2{
+                Maths::Float2{
                     static_cast<float>(new_x),
                     static_cast<float>(new_y)
                 }
@@ -1369,7 +1369,7 @@ namespace Graphyte::Application::Impl
                 }
                 else
                 {
-                    Maths::float2 const position{
+                    Maths::Float2 const position{
                         static_cast<float>(data->data.mouse.lLastX),
                         static_cast<float>(data->data.mouse.lLastY)
                     };

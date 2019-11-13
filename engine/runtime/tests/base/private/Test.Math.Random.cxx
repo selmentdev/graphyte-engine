@@ -1,4 +1,5 @@
 #include "Test.Base.pch.hxx"
+#if false
 #include <Graphyte/Maths/Random.hxx>
 
 TEST_CASE("Default random number generator")
@@ -246,3 +247,4 @@ TEST_CASE("Entropy")
     auto entropy = compute_entropy(data.data(), std::size(data) * sizeof(uint64_t));
     CHECK(entropy == Approx(8.0).epsilon(0.001));
 }
+#endif

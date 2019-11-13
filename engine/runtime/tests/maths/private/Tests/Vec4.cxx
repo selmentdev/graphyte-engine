@@ -1,7 +1,190 @@
 #include "Test.Maths.pch.hxx"
-#include <Graphyte/Maths2/Vector.hxx>
-#include <Graphyte/Maths2/Bool4.hxx>
+#include <Graphyte/Maths/Vector.Components.hxx>
+#include <Graphyte/Maths/Vector.Constructors.hxx>
+#include <Graphyte/Maths/Vector.Arithmetic.hxx>
+#include <Graphyte/Maths/Consts.hxx>
 
+mathinline Graphyte::Maths::Vec4 ToVec4(float x, Graphyte::Maths::Vec2 v, float w) noexcept
+{
+    Graphyte::Maths::Vec4 const v_xwxw = Graphyte::Maths::Make<Graphyte::Maths::Vec4>(x, w, x, w);
+    return Graphyte::Maths::Permute<0, 4, 5, 1>(v_xwxw, { v.V });
+}
+
+mathinline Graphyte::Maths::Vec4 ToVec4(float x, float y, Graphyte::Maths::Vec2 v) noexcept
+{
+    Graphyte::Maths::Vec4 const v_xyxy = Graphyte::Maths::Make<Graphyte::Maths::Vec4>(x, y, x, y);
+    return Graphyte::Maths::Permute<0, 1, 4, 5>(v_xyxy, { v.V });
+}
+
+mathinline Graphyte::Maths::Vec4 ToVec4(Graphyte::Maths::Vec2 v, float z, float w) noexcept
+{
+    Graphyte::Maths::Vec4 const v_zwzw = Graphyte::Maths::Make<Graphyte::Maths::Vec4>(z, w, z, w);
+    return Graphyte::Maths::Permute<4, 5, 0, 1>(v_zwzw, { v.V });
+}
+
+mathinline Graphyte::Maths::Vec4 ToVec4(float x, Graphyte::Maths::Vec3 v) noexcept
+{
+    Graphyte::Maths::Vec4 const v_xxxx = Graphyte::Maths::Make<Graphyte::Maths::Vec4>(x);
+    return Graphyte::Maths::Permute<4, 0, 1, 2>({ v.V }, v_xxxx);
+}
+
+mathinline Graphyte::Maths::Vec4 ToVec4(Graphyte::Maths::Vec3 v, float w) noexcept
+{
+    Graphyte::Maths::Vec4 const v_wwww = Graphyte::Maths::Make<Graphyte::Maths::Vec4>(w);
+    return Graphyte::Maths::Permute<0, 1, 2, 4>({ v.V }, v_wwww);
+}
+
+mathinline Graphyte::Maths::Vec3 ToVec3(float x, Graphyte::Maths::Vec2 v) noexcept
+{
+    Graphyte::Maths::Vec4 const v_xxxx = Graphyte::Maths::Make<Graphyte::Maths::Vec4>(x);
+    return { Graphyte::Maths::Permute<4, 0, 1, 4>({ v.V }, v_xxxx).V };
+}
+
+mathinline Graphyte::Maths::Vec3 ToVec3(Graphyte::Maths::Vec2 v, float z) noexcept
+{
+    Graphyte::Maths::Vec4 const v_zzzz = Graphyte::Maths::Make<Graphyte::Maths::Vec4>(z);
+    return { Graphyte::Maths::Permute<0, 1, 4, 4>({v.V}, v_zzzz).V };
+}
+
+TEST_CASE("Maths / Vector / Get and Set component value")
+{
+    using namespace Graphyte::Maths;
+
+    Vec4 const v = Zero<Vec4>();
+
+    REQUIRE(GetX(v) == Approx{ 0.0F });
+    REQUIRE(GetY(v) == Approx{ 0.0F });
+    REQUIRE(GetZ(v) == Approx{ 0.0F });
+    REQUIRE(GetW(v) == Approx{ 0.0F });
+
+
+    Vec4 const va = SetX(v, 1.0F);
+
+    REQUIRE(GetX(va) == Approx{ 1.0F });
+    REQUIRE(GetY(va) == Approx{ 0.0F });
+    REQUIRE(GetZ(va) == Approx{ 0.0F });
+    REQUIRE(GetW(va) == Approx{ 0.0F });
+
+    Vec4 const vb = SetY(v, 1.0F);
+
+    REQUIRE(GetX(vb) == Approx{ 0.0F });
+    REQUIRE(GetY(vb) == Approx{ 1.0F });
+    REQUIRE(GetZ(vb) == Approx{ 0.0F });
+    REQUIRE(GetW(vb) == Approx{ 0.0F });
+
+    Vec4 const vc = SetZ(v, 1.0F);
+
+    REQUIRE(GetX(vc) == Approx{ 0.0F });
+    REQUIRE(GetY(vc) == Approx{ 0.0F });
+    REQUIRE(GetZ(vc) == Approx{ 1.0F });
+    REQUIRE(GetW(vc) == Approx{ 0.0F });
+
+    Vec4 const vd = SetW(v, 1.0F);
+
+    REQUIRE(GetX(vd) == Approx{ 0.0F });
+    REQUIRE(GetY(vd) == Approx{ 0.0F });
+    REQUIRE(GetZ(vd) == Approx{ 0.0F });
+    REQUIRE(GetW(vd) == Approx{ 1.0F });
+}
+
+TEST_CASE("Maths / Vector / Making Vec4 form other vectors")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("From Vec3")
+    {
+        Vec3 const xyz = Make<Vec3>(1.0F, 2.0F, 3.0F);
+
+        SECTION("xyz | w")
+        {
+            Vec4 const r = ToVec4(xyz, 4.0F);
+
+            CHECK(GetX(r) == Approx{ 1.0F });
+            CHECK(GetY(r) == Approx{ 2.0F });
+            CHECK(GetZ(r) == Approx{ 3.0F });
+            CHECK(GetW(r) == Approx{ 4.0F });
+        }
+
+        SECTION("w | xyz")
+        {
+            Vec4 const r = ToVec4(4.0F, xyz);
+
+            CHECK(GetX(r) == Approx{ 4.0F });
+            CHECK(GetY(r) == Approx{ 1.0F });
+            CHECK(GetZ(r) == Approx{ 2.0F });
+            CHECK(GetW(r) == Approx{ 3.0F });
+        }
+    }
+
+    SECTION("From Vec2")
+    {
+        Vec2 const xy = Make<Vec2>(1.0F, 2.0F);
+
+        SECTION("xy | z | w")
+        {
+            Vec4 const r = ToVec4(xy, 3.0F, 4.0F);
+
+            CHECK(GetX(r) == Approx{ 1.0F });
+            CHECK(GetY(r) == Approx{ 2.0F });
+            CHECK(GetZ(r) == Approx{ 3.0F });
+            CHECK(GetW(r) == Approx{ 4.0F });
+        }
+
+        SECTION("z | xy | w")
+        {
+            Vec4 const r = ToVec4(3.0F, xy, 4.0F);
+
+            CHECK(GetX(r) == Approx{ 3.0F });
+            CHECK(GetY(r) == Approx{ 1.0F });
+            CHECK(GetZ(r) == Approx{ 2.0F });
+            CHECK(GetW(r) == Approx{ 4.0F });
+        }
+
+        SECTION("z | w | xy")
+        {
+            Vec4 const r = ToVec4(3.0F, 4.0F, xy);
+
+            CHECK(GetX(r) == Approx{ 3.0F });
+            CHECK(GetY(r) == Approx{ 4.0F });
+            CHECK(GetZ(r) == Approx{ 1.0F });
+            CHECK(GetW(r) == Approx{ 2.0F });
+        }
+    }
+}
+
+TEST_CASE("Maths / Vector / Making Vec3 from other vectors")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("From Vec2")
+    {
+        Vec2 const xy = Make<Vec2>(1.0F, 2.0F);
+
+        SECTION("z | xy")
+        {
+            Vec3 const r = ToVec3(5.0F, xy);
+
+            CHECK(GetX(r) == Approx{ 5.0F });
+            CHECK(GetY(r) == Approx{ 1.0F });
+            CHECK(GetZ(r) == Approx{ 2.0F });
+        }
+
+        SECTION("xy | z")
+        {
+            Vec3 const r = ToVec3(xy, 5.0F);
+
+            CHECK(GetX(r) == Approx{ 1.0F });
+            CHECK(GetY(r) == Approx{ 2.0F });
+            CHECK(GetZ(r) == Approx{ 5.0F });
+        }
+    }
+}
+
+TEST_CASE("Maths / Vector / Select by bool value")
+{
+}
+
+#if false
 TEST_CASE("Vec4 Operations")
 {
     namespace M = Graphyte::Maths;
@@ -450,3 +633,36 @@ TEST_CASE("Vec4 - componentwise comparisons")
     CHECK_FALSE(M::AnyFalse(b44));
     CHECK_FALSE(M::AllFalse(b44));
 }
+
+//TEST_CASE("operators")
+//{
+//    namespace M = Graphyte::Maths;
+//
+//    M::Vec4 const v1 = M::Make<M::Vec4>(1.0F);
+//    M::Vec4 const v2 = M::Make<M::Vec4>(2.0F);
+//    M::Vec4 const v3 = M::Make<M::Vec4>(3.0F);
+//
+//    REQUIRE(v1 != v2);
+//    REQUIRE_FALSE(v1 == v2);
+//
+//    REQUIRE(M::IsEqEps(v1 + v2, v3, M::Epsilon<M::Vec4>()));
+//}
+
+template <typename T>
+int check() requires(Graphyte::Maths::EqualComparable<T>)
+{
+    return 1;
+}
+
+template <typename T>
+int check() requires(!Graphyte::Maths::EqualComparable<T>)
+{
+    return 0;
+}
+
+TEST_CASE("xxx")
+{
+    CHECK(check<int>() == 0);
+    CHECK(check<Graphyte::Maths::Vec4>() == 1);
+}
+#endif

@@ -1,4 +1,5 @@
 #include "Test.Base.pch.hxx"
+#if false
 #include <Graphyte/Maths/Scalar.hxx>
 
 TEST_CASE("Math / Scalar / Fused Multiply Add", "[math]")
@@ -291,3 +292,4 @@ TEST_CASE("Math / Scalar / Float <-> Fixed", "[math]")
         CHECK(math::FixedToFloat(0xFU, 4) == Approx(1.0F));
     }
 }
+#endif

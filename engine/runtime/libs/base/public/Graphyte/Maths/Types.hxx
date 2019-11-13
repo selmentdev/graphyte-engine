@@ -1,111 +1,102 @@
 #pragma once
-#include <Graphyte/Base.module.hxx>
+#include <Graphyte/Maths/Impl/Simd.hxx>
 
 
 // =================================================================================================
 //
-// Half types.
+// Half Vector Storage
 //
+
 
 namespace Graphyte::Maths
 {
-    struct half final
+    struct Half final
     {
         uint16_t Value;
     };
 
-    struct half2 final
+    using Half1 = Half;
+
+    struct Half2 final
     {
-        half X;
-        half Y;
+        Half X;
+        Half Y;
     };
 
-    struct half3 final
+    struct Half3 final
     {
-        half X;
-        half Y;
-        half Z;
+        Half X;
+        Half Y;
+        Half Z;
     };
 
-    struct half4 final
+    struct Half4 final
     {
-        half X;
-        half Y;
-        half Z;
-        half W;
-    };
-}
-
-
-// =================================================================================================
-//
-// Unaligned float vector types.
-//
-
-namespace Graphyte::Maths
-{
-    struct float4 final
-    {
-        float X;
-        float Y;
-        float Z;
-        float W;
-    };
-
-    struct float3 final
-    {
-        float X;
-        float Y;
-        float Z;
-    };
-
-    struct float2 final
-    {
-        float X;
-        float Y;
+        Half X;
+        Half Y;
+        Half Z;
+        Half W;
     };
 }
 
 
 // =================================================================================================
 //
-// Aligned float vector types.
+// Float Vector Storage
 //
 
 namespace Graphyte::Maths
 {
-
-    struct alignas(16) float4a final
+    struct Float4 final
     {
-        float X;
-        float Y;
-        float Z;
-        float W;
+        float X, Y, Z, W;
     };
 
-    struct alignas(16) float3a final
+    struct Float3 final
     {
-        float X;
-        float Y;
-        float Z;
+        float X, Y, Z;
     };
 
-    struct alignas(16) float2a final
+    struct Float2 final
+    {
+        float X, Y;
+    };
+
+    struct Float1 final
     {
         float X;
-        float Y;
     };
+
+    struct alignas(16) Float4A final
+    {
+        float X, Y, Z, W;
+    };
+
+    struct alignas(16) Float3A final
+    {
+        float X, Y, Z;
+    };
+
+    struct alignas(16) Float2A final
+    {
+        float X, Y;
+    };
+
+    struct alignas(16) Float1A final
+    {
+        float X;
+    };
+
 }
-
 
 // =================================================================================================
 //
-// Unaligned float matrix types.
+// Float Matrix Storage
 //
 
 namespace Graphyte::Maths
 {
-    struct float4x4 final
+    struct Float4x4 final
     {
         union
         {
@@ -121,7 +112,7 @@ namespace Graphyte::Maths
         };
     };
 
-    struct float4x3 final
+    struct Float4x3 final
     {
         union
         {
@@ -137,7 +128,7 @@ namespace Graphyte::Maths
         };
     };
 
-    struct float3x4 final
+    struct Float3x4 final
     {
         union
         {
@@ -152,7 +143,7 @@ namespace Graphyte::Maths
         };
     };
 
-    struct float3x3 final
+    struct Float3x3 final
     {
         union
         {
@@ -166,17 +157,8 @@ namespace Graphyte::Maths
             float F[9];
         };
     };
-}
 
-
-// =================================================================================================
-//
-// Unaligned float matrix types.
-//
-
-namespace Graphyte::Maths
-{
-    struct alignas(16) float4x4a final
+    struct alignas(16) Float4x4A final
     {
         union
         {
@@ -192,7 +174,7 @@ namespace Graphyte::Maths
         };
     };
 
-    struct alignas(16) float4x3a final
+    struct alignas(16) Float4x3A final
     {
         union
         {
@@ -208,7 +190,7 @@ namespace Graphyte::Maths
         };
     };
 
-    struct alignas(16) float3x4a final
+    struct alignas(16) Float3x4A final
     {
         union
         {
@@ -223,7 +205,7 @@ namespace Graphyte::Maths
         };
     };
 
-    struct alignas(16) float3x3a final
+    struct alignas(16) Float3x3A final
     {
         union
         {
@@ -239,82 +221,30 @@ namespace Graphyte::Maths
     };
 }
 
-
 // =================================================================================================
 //
-// Unaligned integral vector types.
+// Color space
 //
 
 namespace Graphyte::Maths
 {
-    struct uint4 final
+    struct ColorRGBA final
     {
-        uint32_t X;
-        uint32_t Y;
-        uint32_t Z;
-        uint32_t W;
+        union
+        {
+            struct
+            {
+                uint8_t R;
+                uint8_t G;
+                uint8_t B;
+                uint8_t A;
+            };
+
+            uint32_t Value;
+        };
     };
 
-    struct uint3 final
-    {
-        uint32_t X;
-        uint32_t Y;
-        uint32_t Z;
-    };
-
-    struct uint2 final
-    {
-        uint32_t X;
-        uint32_t Y;
-    };
-
-    struct int4 final
-    {
-        int32_t X;
-        int32_t Y;
-        int32_t Z;
-        int32_t W;
-    };
-
-    struct int3 final
-    {
-        int32_t X;
-        int32_t Y;
-        int32_t Z;
-    };
-
-    struct int2 final
-    {
-        int32_t X;
-        int32_t Y;
-    };
-
-    struct ubyte4 final
-    {
-        uint8_t X;
-        uint8_t Y;
-        uint8_t Z;
-        uint8_t W;
-    };
-
-    struct sbyte4 final
-    {
-        int8_t X;
-        int8_t Y;
-        int8_t Z;
-        int8_t W;
-    };
-}
-
-
-// =================================================================================================
-//
-// Packed bit field types
-//
-
-namespace Graphyte::Maths::Packed
-{
-    struct color32 final
+    struct ColorBGRA final
     {
         union
         {
@@ -329,20 +259,226 @@ namespace Graphyte::Maths::Packed
             uint32_t Value;
         };
     };
+}
 
-    struct color64 final
+
+// =================================================================================================
+//
+// Mask types
+// 
+
+namespace Graphyte::Maths
+{
+    struct Bool4 final
     {
-        union
-        {
-            struct
-            {
-                uint16_t B;
-                uint16_t G;
-                uint16_t R;
-                uint16_t A;
-            };
+        Impl::VectorFloat4 V;
+        using IsSimdMask = void;
+        using IsSimdEqualComparable = void;
+        static constexpr const size_t Components = 4;
+    };
 
-            uint64_t Value;
-        };
+    struct Bool3 final
+    {
+        Impl::VectorFloat4 V;
+        using IsSimdMask = void;
+        using IsSimdEqualComparable = void;
+        static constexpr const size_t Components = 3;
+    };
+
+    struct Bool2 final
+    {
+        Impl::VectorFloat4 V;
+        using IsSimdMask = void;
+        using IsSimdEqualComparable = void;
+        static constexpr const size_t Components = 2;
+    };
+}
+
+
+// =================================================================================================
+//
+//  Vector types
+//
+
+namespace Graphyte::Maths
+{
+    struct Vec4 final
+    {
+        Impl::VectorFloat4 V;
+        using IsSimdVector = void;
+        using IsSimdEqualComparable = void;
+        using IsSimdOrderComparable = void;
+        static constexpr const size_t Components = 4;
+    };
+
+    struct Vec3 final
+    {
+        Impl::VectorFloat4 V;
+        using IsSimdVector = void;
+        using IsSimdEqualComparable = void;
+        using IsSimdOrderComparable = void;
+        static constexpr const size_t Components = 3;
+    };
+
+    struct Vec2 final
+    {
+        Impl::VectorFloat4 V;
+        using IsSimdVector = void;
+        using IsSimdEqualComparable = void;
+        using IsSimdOrderComparable = void;
+        static constexpr const size_t Components = 2;
+    };
+
+    struct Quat final
+    {
+        Impl::VectorFloat4 V;
+        using IsSimdVector = void;
+        using IsSimdEqualComparable = void;
+        static constexpr const size_t Components = 4;
+    };
+}
+
+
+// =================================================================================================
+//
+// Matrix types
+//
+
+namespace Graphyte::Maths
+{
+    struct Matrix final
+    {
+        Impl::MatrixFloat4x4 M;
+        using IsSimdMatrix = void;
+        using IsSimdEqualComparable = void;
+        static constexpr const size_t Components = 16;
+    };
+}
+
+// =================================================================================================
+//
+// Geometric types
+//
+
+namespace Graphyte::Maths
+{
+    struct Plane final
+    {
+        Impl::VectorFloat4 V;
+        using IsSimdVector = void;
+        using IsSimdEqualComparable = void;
+        static constexpr const size_t Components = 4;
+    };
+
+    struct Sphere final
+    {
+        Impl::VectorFloat4 V;
+        using IsSimdVector = void;
+        using IsSimdEqualComparable = void;
+        static constexpr const size_t Components = 4;
+    };
+
+    struct Color final
+    {
+        Impl::VectorFloat4 V;
+        using IsSimdVector = void;
+        using IsSimdEqualComparable = void;
+        static constexpr const size_t Components = 4;
+    };
+}
+
+
+// =================================================================================================
+//
+// Unsigned integer types
+//
+
+namespace Graphyte::Maths
+{
+    struct UInt4 final
+    {
+        uint32_t X;
+        uint32_t Y;
+        uint32_t Z;
+        uint32_t W;
+    };
+
+    struct UInt3 final
+    {
+        uint32_t X;
+        uint32_t Y;
+        uint32_t Z;
+    };
+
+    struct UInt2 final
+    {
+        uint32_t X;
+        uint32_t Y;
+    };
+
+    struct UInt1 final
+    {
+        uint32_t X;
+    };
+}
+
+
+// =================================================================================================
+//
+// Signed integer types
+//
+
+namespace Graphyte::Maths
+{
+    struct SInt4 final
+    {
+        int32_t X;
+        int32_t Y;
+        int32_t Z;
+        int32_t W;
+    };
+
+    struct SInt3 final
+    {
+        int32_t X;
+        int32_t Y;
+        int32_t Z;
+    };
+
+    struct SInt2 final
+    {
+        int32_t X;
+        int32_t Y;
+    };
+
+    struct SInt1 final
+    {
+        int32_t X;
+    };
+}
+
+
+
+// =================================================================================================
+//
+// Byte types
+//
+
+namespace Graphyte::Maths
+{
+    struct UByte4 final
+    {
+        uint8_t X;
+        uint8_t Y;
+        uint8_t Z;
+        uint8_t W;
+    };
+
+    struct SByte4 final
+    {
+        int8_t X;
+        int8_t Y;
+        int8_t Z;
+        int8_t W;
     };
 }

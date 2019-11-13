@@ -10,19 +10,19 @@ namespace Graphyte::Rendering
     public:
         struct alignas(16) CameraParamsBuffer final
         {
-            Maths::float4x4a View;
-            Maths::float4x4a Projection;
-            Maths::float4x4a ViewProjection;
+            Maths::Float4x4A View;
+            Maths::Float4x4A Projection;
+            Maths::Float4x4A ViewProjection;
         };
 
         struct alignas(16) ObjectParamsBuffer final
         {
-            Maths::float4x4a World;
-            Maths::float4x4a InverseWorld;
+            Maths::Float4x4A World;
+            Maths::Float4x4A InverseWorld;
         };
 
         // debug
-        std::vector<std::pair<Rendering::StaticMesh*, Maths::float4x4a>> Meshes;
+        std::vector<std::pair<Rendering::StaticMesh*, Maths::Float4x4A>> Meshes;
 
     public:
         DeferredShadingSceneRenderer(uint32_t width, uint32_t height) noexcept;

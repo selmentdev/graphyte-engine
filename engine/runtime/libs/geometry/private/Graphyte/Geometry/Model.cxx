@@ -43,19 +43,20 @@ namespace Graphyte::Geometry
         return result;
     }
 
-    Maths::Matrix Model::ComputeWorldMatrix(ModelPart* part) const noexcept
+    Maths::Matrix Model::ComputeWorldMatrix([[maybe_unused]] ModelPart* part) const noexcept
     {
-        Maths::Matrix result = Maths::Matrix::Identity();
-
-        while (part != nullptr)
-        {
-            auto const local = Maths::Matrix::Load(&part->LocalTransform);
-            result = Maths::Matrix::MultiplyTranspose(result, local);
-            part = part->Parent;
-        }
-
-        result = Maths::Matrix::Transpose(result);
-        return result;
+        //Maths::Matrix result = Maths::Matrix::Identity();
+        //
+        //while (part != nullptr)
+        //{
+        //    auto const local = Maths::Matrix::Load(&part->LocalTransform);
+        //    result = Maths::Matrix::MultiplyTranspose(result, local);
+        //    part = part->Parent;
+        //}
+        //
+        //result = Maths::Matrix::Transpose(result);
+        //return result;
+        return {};
     }
 
     GEOMETRY_API Storage::Archive& operator<< (Storage::Archive& archive, Model& model) noexcept

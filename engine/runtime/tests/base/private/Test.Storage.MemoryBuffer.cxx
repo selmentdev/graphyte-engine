@@ -2,7 +2,7 @@
 #include <Graphyte/Storage/ArchiveMemoryReader.hxx>
 #include <Graphyte/Storage/ArchiveMemoryWriter.hxx>
 #include <Graphyte/Maths/Types.hxx>
-
+#if false
 TEST_CASE("Memory reader and writer")
 {
     std::vector<std::byte> buffer{};
@@ -65,3 +65,4 @@ TEST_CASE("Memory reader and writer")
         }
     }
 }
+#endif

@@ -1,4 +1,5 @@
 #include "Base.pch.hxx"
+#if false
 #include <Graphyte/Maths/Random.hxx>
 
 namespace Graphyte::Maths::Random
@@ -70,3 +71,4 @@ namespace Graphyte::Maths::Random
         return (hi << 32) | lo;
     }
 }
+#endif

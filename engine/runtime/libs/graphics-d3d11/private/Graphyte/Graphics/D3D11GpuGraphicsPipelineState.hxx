@@ -19,7 +19,7 @@ namespace Graphyte::Graphics
         ID3D11HullShader* m_HS;
 
         uint32_t m_BlendState_SampleMask;
-        Maths::float4 m_BlendState_BlendFactors;
+        Maths::Float4 m_BlendState_BlendFactors;
         D3D11_PRIMITIVE_TOPOLOGY m_PrimitiveTopology;
     };
     static_assert(!std::is_polymorphic_v<D3D11GpuGraphicsPipelineState>);

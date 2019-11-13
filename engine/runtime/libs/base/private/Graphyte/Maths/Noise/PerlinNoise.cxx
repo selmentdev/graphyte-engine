@@ -1,4 +1,5 @@
 #include "Base.pch.hxx"
+#if false
 #include <Graphyte/Maths/Noise/PerlinNoise.hxx>
 #include <Graphyte/Maths/Scalar.hxx>
 #include <Graphyte/Maths/Interpolation.hxx>
@@ -449,3 +450,4 @@ namespace Graphyte::Maths
         return 0.87F * Interpolation::Lerp(n0, n1, s);
     }
 }
+#endif

@@ -1,4 +1,5 @@
 #include "Test.Graphics.pch.hxx"
+#if false
 #include <Graphyte/Graphics/PixelFormat.hxx>
 #include <Graphyte/Graphics/Image.hxx>
 #include <Graphyte/ByteAccess.hxx>
@@ -1340,3 +1341,4 @@ TEST_CASE("gen-3d.dds")
         }
     }
 }
+#endif

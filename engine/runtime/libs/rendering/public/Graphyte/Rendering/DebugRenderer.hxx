@@ -1,10 +1,5 @@
 #pragma once
 #include <Graphyte/Rendering.module.hxx>
-
-#include <Graphyte/Maths/Vector3.hxx>
-#include <Graphyte/Maths/Color.hxx>
-#include <Graphyte/Maths/Matrix.hxx>
-
 #include <Graphyte/Graphics/Gpu/GpuDefinitions.hxx>
 
 namespace Graphyte::Rendering
@@ -31,8 +26,8 @@ namespace Graphyte::Rendering
 
     public:
         virtual void Line(
-            Maths::Vector3 start,
-            Maths::Vector3 end,
+            Maths::Vec3 start,
+            Maths::Vec3 end,
             Maths::Color color,
             float width,
             bool ztest,

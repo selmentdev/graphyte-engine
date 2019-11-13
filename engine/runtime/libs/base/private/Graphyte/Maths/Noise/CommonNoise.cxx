@@ -1,4 +1,5 @@
 #include "Base.pch.hxx"
+#if false
 #include <Graphyte/Maths/Noise/CommonNoise.hxx>
 
 namespace Graphyte::Maths
@@ -38,3 +39,4 @@ namespace Graphyte::Maths
         222, 114,  67,  29,  24,  72, 243, 141, 128, 195,  78,  66, 215,  61, 156, 180,
     };
 }
+#endif

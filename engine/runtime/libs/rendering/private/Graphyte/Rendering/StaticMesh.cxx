@@ -56,14 +56,14 @@ namespace Graphyte::Rendering
             v2.Position = mesh.VertexPositions[i2];
             v3.Position = mesh.VertexPositions[i3];
 
-            Maths::float2 const uv1 = mesh.WedgeTextureCoords[0][w1];
-            Maths::float2 const uv2 = mesh.WedgeTextureCoords[0][w2];
-            Maths::float2 const uv3 = mesh.WedgeTextureCoords[0][w3];
+            Maths::Float2 const uv1 = mesh.WedgeTextureCoords[0][w1];
+            Maths::Float2 const uv2 = mesh.WedgeTextureCoords[0][w2];
+            Maths::Float2 const uv3 = mesh.WedgeTextureCoords[0][w3];
 
 
-            v1.UV[0] = Maths::half2{ ToHalf(uv1.X), ToHalf(uv1.Y) };
-            v2.UV[0] = Maths::half2{ ToHalf(uv2.X), ToHalf(uv2.Y) };
-            v3.UV[0] = Maths::half2{ ToHalf(uv3.X), ToHalf(uv3.Y) };
+            //v1.UV[0] = Maths::Half2{ ToHalf(uv1.X), ToHalf(uv1.Y) };
+            //v2.UV[0] = Maths::Half2{ ToHalf(uv2.X), ToHalf(uv2.Y) };
+            //v3.UV[0] = Maths::Half2{ ToHalf(uv3.X), ToHalf(uv3.Y) };
 
 
             vertices.push_back(v1);

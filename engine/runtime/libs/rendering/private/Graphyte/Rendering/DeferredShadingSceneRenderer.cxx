@@ -59,11 +59,11 @@ namespace Graphyte::Rendering
         m_ObjectParams = GRenderDevice->CreateUniformBuffer(sizeof(ObjectParamsBuffer), Graphics::GpuBufferUsage::Dynamic, nullptr);
 
         {
-            Maths::Matrix rot = Maths::Matrix::RotationX(-Maths::PI_OVER_2<float>);
+            //Maths::Matrix rot = Maths::Matrix::RotationX(-Maths::PI_OVER_2<float>);
 
             ObjectParamsBuffer data{};
-            Maths::Matrix::Store(&data.World, rot);
-            Maths::Matrix::Store(&data.InverseWorld, rot);
+            //Maths::Matrix::Store(&data.World, rot);
+            //Maths::Matrix::Store(&data.InverseWorld, rot);
 
             void* buffer = GRenderDevice->LockUniformBuffer(m_ObjectParams, 0, sizeof(ObjectParamsBuffer), Graphics::GpuResourceLockMode::WriteOnly);
             memcpy(buffer, &data, sizeof(data));
@@ -201,7 +201,7 @@ namespace Graphyte::Rendering
             state.BlendState.RenderTarget[0].BlendOperationAlpha = Graphics::GpuBlendOperation::Add;
             state.BlendState.RenderTarget[0].RenderTargetWriteMask = Graphics::GpuColorWriteEnable::All;
             state.BlendState.SampleMask = 0xffffffff;
-            state.BlendState.BlendFactors = Graphyte::Maths::float4{ 1.0F, 1.0F, 1.0F, 1.0F };
+            state.BlendState.BlendFactors = Graphyte::Maths::Float4{ 1.0F, 1.0F, 1.0F, 1.0F };
 
             state.RasterizerState.FillMode = Graphics::GpuFillMode::Solid;
             state.RasterizerState.CullMode = Graphics::GpuCullMode::Back;
@@ -257,8 +257,8 @@ namespace Graphyte::Rendering
                 auto sm = new StaticMesh();
                 sm->LoadMesh(*part->MeshData, Graphics::GpuInputLayout::Complex);
 
-                Maths::float4x4a m;
-                Maths::Matrix::Store(&m, model.ComputeWorldMatrix(part));
+                Maths::Float4x4A m;
+                //Maths::Matrix::Store(&m, model.ComputeWorldMatrix(part));
 
                 Meshes.push_back({ sm, m });
             }
@@ -269,14 +269,17 @@ namespace Graphyte::Rendering
     {
     }
 
-    void DeferredShadingSceneRenderer::SetupView(Maths::Matrix view, Maths::Matrix projection) noexcept
+    void DeferredShadingSceneRenderer::SetupView(
+        [[maybe_unused]] Maths::Matrix view,
+        [[maybe_unused]] Maths::Matrix projection
+    ) noexcept
     {
         CameraParamsBuffer params{};
-        Maths::Matrix::Store(&params.View, view);
-        Maths::Matrix::Store(&params.Projection, projection);
+        //Maths::Matrix::Store(&params.View, view);
+        //Maths::Matrix::Store(&params.Projection, projection);
 
-        Maths::Matrix vp = Maths::Matrix::Multiply(view, projection);
-        Maths::Matrix::Store(&params.ViewProjection, vp);
+        //Maths::Matrix vp = Maths::Matrix::Multiply(view, projection);
+        //Maths::Matrix::Store(&params.ViewProjection, vp);
 
         {
             void* buffer = GRenderDevice->LockUniformBuffer(m_CameraParams, 0, sizeof(params), Graphics::GpuResourceLockMode::WriteOnly);
@@ -321,7 +324,7 @@ namespace Graphyte::Rendering
         {
             ObjectParamsBuffer params;
             params.World = sm.second;
-            Maths::Matrix::Store(&params.InverseWorld, Maths::Matrix::Inverse(nullptr, Maths::Matrix::Load(&params.World)));
+            //Maths::Matrix::Store(&params.InverseWorld, Maths::Matrix::Inverse(nullptr, Maths::Matrix::Load(&params.World)));
             void* buffer = GRenderDevice->LockUniformBuffer(m_ObjectParams, 0, sizeof(params), Graphics::GpuResourceLockMode::WriteOnly);
             memcpy(buffer, &params, sizeof(params));
             GRenderDevice->UnlockUniformBuffer(m_ObjectParams);
@@ -338,3 +341,4 @@ namespace Graphyte::Rendering
     {
     }
 }
+

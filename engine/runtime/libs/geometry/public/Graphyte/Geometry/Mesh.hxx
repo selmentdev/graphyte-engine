@@ -48,7 +48,7 @@ namespace Graphyte::Geometry
          *
          * @note    VertexPositions[vertex_index] = Float3(position)
          */
-        std::vector<Maths::float3> VertexPositions;
+        std::vector<Maths::Float3> VertexPositions;
 
         /**
          * @brief   Stores mapping between wedge_index to vertex_index.
@@ -62,35 +62,35 @@ namespace Graphyte::Geometry
          *
          * @note    WedgeTangentX[wedge_index] = tangent_x.
          */
-        std::vector<Maths::float3> WedgeTangentX;
+        std::vector<Maths::Float3> WedgeTangentX;
 
         /**
          * @brief   Stores information of tangent in V direction at specified wedge_index.
          *
          * @note    WedgeTangentY[wedge_index] = tangent_y.
          */
-        std::vector<Maths::float3> WedgeTangentY;
+        std::vector<Maths::Float3> WedgeTangentY;
 
         /**
          * @brief   Stores normal vector at specified wedge_index.
          *
          * @note    WedgeTangentZ[wedge_index] = normal.
          */
-        std::vector<Maths::float3> WedgeTangentZ;
+        std::vector<Maths::Float3> WedgeTangentZ;
 
         /**
          * @brief   Stores texture coords at specified wedge_index.
          *
          * @note    WedgeTextureCoords[uv_layer][wedge_index] = texcoords.
          */
-        std::vector<Maths::float2> WedgeTextureCoords[MaxTextureCoords];
+        std::vector<Maths::Float2> WedgeTextureCoords[MaxTextureCoords];
 
         /**
          * @brief   Stores color information at specified wedge_index.
          *
          * @note    WedgeColors[wedge_index] = color.
          */
-        std::vector<Maths::Packed::color32> WedgeColors;
+        std::vector<Maths::ColorBGRA> WedgeColors;
 
     public:
         /**

@@ -1,19 +1,16 @@
 #include "Geometry.pch.hxx"
 #include <Graphyte/Geometry/MeshVertexComparator.hxx>
-#include <Graphyte/Maths/Vector4.hxx>
-#include <Graphyte/Maths/Vector3.hxx>
-#include <Graphyte/Maths/Vector2.hxx>
-#include <Graphyte/Maths/Color.hxx>
 
 namespace Graphyte::Geometry
 {
     int MeshVertexComparator::Compare(
-        const Mesh& mesh,
-        uint32_t lhs_index,
-        uint32_t rhs_index,
-        float tolerance
+        [[maybe_unused]] const Mesh& mesh,
+        [[maybe_unused]] uint32_t lhs_index,
+        [[maybe_unused]] uint32_t rhs_index,
+        [[maybe_unused]] float tolerance
     ) const noexcept
     {
+#if false
         Maths::Vector4 const vtolerance = Maths::Vector4::Make(tolerance);
 
         //
@@ -148,5 +145,9 @@ namespace Graphyte::Geometry
         }
 
         return 0;
+    }
+#else
+        return 0;
+#endif
     }
 }

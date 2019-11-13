@@ -570,7 +570,7 @@ namespace Graphyte::Graphics
         bool IndependentBlend;
         GpuRenderTargetBlendDesc RenderTarget[8];
         uint32_t SampleMask;
-        Maths::float4 BlendFactors;
+        Maths::Float4 BlendFactors;
     };
 
     struct GpuRasterizerStateDesc final

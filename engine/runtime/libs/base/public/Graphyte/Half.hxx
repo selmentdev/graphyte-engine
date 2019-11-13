@@ -1,5 +1,7 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
+
+#if false
 #include <Graphyte/Maths/Simd.hxx>
 #include <Graphyte/Maths/Types.hxx>
 
@@ -96,3 +98,4 @@ namespace Graphyte
 #endif
     }
 }
+#endif

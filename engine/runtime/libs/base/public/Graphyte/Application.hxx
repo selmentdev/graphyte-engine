@@ -379,30 +379,30 @@ namespace Graphyte::Application
         virtual bool OnMouseDown(
             Window& window,
             Input::MouseButton button,
-            Maths::float2 position
+            Maths::Float2 position
         ) noexcept;
 
         virtual bool OnMouseUp(
             Window& window,
             Input::MouseButton button,
-            Maths::float2 position
+            Maths::Float2 position
         ) noexcept;
 
         virtual bool OnMouseDoubleClick(
             Window& window,
             Input::MouseButton button,
-            Maths::float2 position
+            Maths::Float2 position
         ) noexcept;
 
         virtual bool OnMouseWheel(
             float delta,
-            Maths::float2 position
+            Maths::Float2 position
         ) noexcept;
 
         virtual bool OnMouseMove() noexcept;
 
         virtual bool OnMouseMove(
-            Maths::float2 position
+            Maths::Float2 position
         ) noexcept;
 
         virtual bool OnControllerAnalog(
@@ -427,7 +427,7 @@ namespace Graphyte::Application
 
         virtual bool OnGestureTouch(
             Input::GestureType gesture,
-            Maths::float2 delta,
+            Maths::Float2 delta,
             float wheel_delta,
             bool inverted
         ) noexcept;
@@ -436,35 +436,35 @@ namespace Graphyte::Application
 
         virtual bool OnTouchStarted(
             Window& window,
-            Maths::float2 position,
+            Maths::Float2 position,
             Input::TouchIndex touch_index,
             uint32_t controller
         ) noexcept;
 
         virtual bool OnTouchMoved(
-            Maths::float2 location,
+            Maths::Float2 location,
             Input::TouchIndex touch_index,
             uint32_t controller
         ) noexcept;
 
         virtual bool OnTouchEnded(
-            Maths::float2 location,
+            Maths::Float2 location,
             Input::TouchIndex touch_index,
             uint32_t controller
         ) noexcept;
 
         virtual bool OnMotion(
-            Maths::float3 tilt,
-            Maths::float3 rotation_rate,
-            Maths::float3 gravity,
-            Maths::float3 acceleration,
+            Maths::Float3 tilt,
+            Maths::Float3 rotation_rate,
+            Maths::Float3 gravity,
+            Maths::Float3 acceleration,
             uint32_t controller
         ) noexcept;
 
     public:
         virtual bool OnWindowSizeChanged(
             Window& window,
-            Maths::float2 size,
+            Maths::Float2 size,
             bool was_minimized
         ) noexcept;
 
@@ -494,7 +494,7 @@ namespace Graphyte::Application
 
         virtual void OnWindowMoved(
             Window& window,
-            Maths::float2 position
+            Maths::Float2 position
         ) noexcept;
 
         virtual void OnWindowClose(

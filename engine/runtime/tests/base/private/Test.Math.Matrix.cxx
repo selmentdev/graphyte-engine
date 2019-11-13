@@ -1,4 +1,5 @@
 #include "Test.Base.pch.hxx"
+#if false
 #include <Graphyte/Maths/Vector4.hxx>
 
 TEST_CASE("Math / Matrix", "[math]")
@@ -213,3 +214,4 @@ TEST_CASE("Math / Matrix", "[math]")
         CHECK(Matrix::IsIdentity(m3));
     }
 }
+#endif

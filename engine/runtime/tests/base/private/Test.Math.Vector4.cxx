@@ -1,4 +1,5 @@
 #include "Test.Base.pch.hxx"
+#if false
 #include <Graphyte/Maths/Vector4.hxx>
 
 TEST_CASE("Math / Vector4 / Construction", "[math]")
@@ -3475,3 +3476,4 @@ TEST_CASE("Math / Vector4 / int-float and uint-float conversion functions", "[ma
     static Vector4 mathcall ConvertFloatToUInt(Vector4 vfloat, uint32_t mul_exponent) noexcept;
     */
 }
+#endif
