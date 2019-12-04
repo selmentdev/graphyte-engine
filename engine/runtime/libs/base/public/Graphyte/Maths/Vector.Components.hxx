@@ -1,6 +1,7 @@
 #pragma once
 #include <Graphyte/Maths/Types.hxx>
 #include <Graphyte/Diagnostics.hxx>
+#include <Graphyte/Maths/Impl/Simd.Consts.hxx>
 
 // =================================================================================================
 //

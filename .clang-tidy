@@ -1,0 +1,5 @@
+Checks:          '*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-clang-diagnostic-language-extension-token,-modernize-use-trailing-return-type'
+#Checks:          '-*,android-*,bugprone-*,clang-analyzer*,cppcoreguidelines*,misc-*,modernize-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-clang-diagnostic-language-extension-token,-modernize-use-trailing-return-type'
+#WarningsAsErrors: ''
+#HeaderFilterRegex: ''
+#FormatStyle:     none

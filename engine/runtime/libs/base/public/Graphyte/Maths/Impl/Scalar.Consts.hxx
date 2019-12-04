@@ -33,10 +33,10 @@ namespace Graphyte::Maths
 
     template <typename T> constexpr const T TAU = PI2<T>;
 
-    constexpr const uint32_t ROUNDING_ERROR_U32 = UINT32_C(0);
-    constexpr const uint64_t ROUNDING_ERROR_U64 = UINT64_C(0);
-    constexpr const int32_t ROUNDING_ERROR_I32 = INT32_C(0);
-    constexpr const int64_t ROUNDING_ERROR_I64 = INT64_C(0);
+    constexpr const uint32_t ROUNDING_ERROR_U32 = 0;
+    constexpr const uint64_t ROUNDING_ERROR_U64 = 0;
+    constexpr const int32_t ROUNDING_ERROR_I32 = 0;
+    constexpr const int64_t ROUNDING_ERROR_I64 = 0;
     constexpr const float ROUNDING_ERROR_F32 = 0.000001F;
     constexpr const double ROUNDING_ERROR_F64 = 0.00000001;
 
