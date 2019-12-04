@@ -132,11 +132,13 @@ namespace Graphyte::Diagnostics
 
             LPCSTR pszStrings = content_buffer.data();
 
+            constexpr DWORD event_id = 0xc000'0001;
+
             ReportEventA(
                 Impl::GSystemEventLog,
                 EVENTLOG_ERROR_TYPE,
                 0,
-                0xc000'0001,
+                event_id,
                 nullptr,
                 1,
                 0,

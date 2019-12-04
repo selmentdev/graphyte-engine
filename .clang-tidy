@@ -1,4 +1,4 @@
-Checks:          '*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-clang-diagnostic-language-extension-token,-modernize-use-trailing-return-type'
+Checks:          '*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-clang-diagnostic-language-extension-token,-modernize-use-trailing-return-type,-llvm-namespace-comment,-hicpp-no-array-decay,-fuchsia-*,-clang-diagnostic-language-extension-token*,-google-readability-namespace-comments,-llvm-include-order'
 #Checks:          '-*,android-*,bugprone-*,clang-analyzer*,cppcoreguidelines*,misc-*,modernize-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-array-to-pointer-decay,-clang-diagnostic-language-extension-token,-modernize-use-trailing-return-type'
 #WarningsAsErrors: ''
 #HeaderFilterRegex: ''

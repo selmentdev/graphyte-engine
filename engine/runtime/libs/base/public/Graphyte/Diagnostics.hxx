@@ -572,7 +572,7 @@ namespace Graphyte::Diagnostics
         Graphyte::Diagnostics::LogLevel::runtime, \
         Graphyte::Diagnostics::LogLevel::compile> \
     { \
-        __forceinline LogCategory##name() noexcept \
+        inline LogCategory##name() noexcept \
             : LogCategory(#name) \
         { \
         } \

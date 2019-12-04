@@ -175,7 +175,7 @@ namespace Graphyte::System
 
 namespace Graphyte::System
 {
-    __forceinline void Prefetch(
+    inline void Prefetch(
         [[maybe_unused]] const void* memory,
         [[maybe_unused]] ptrdiff_t offset
     ) noexcept
@@ -189,7 +189,7 @@ namespace Graphyte::System
 #endif
     }
 
-    __forceinline void PrefetchBlock(
+    inline void PrefetchBlock(
         [[maybe_unused]] const void* memory,
         [[maybe_unused]] size_t size
     ) noexcept
@@ -219,7 +219,7 @@ namespace Graphyte::System
 
 namespace Graphyte::System
 {
-    __forceinline void SecureMemoryZero(
+    inline void SecureMemoryZero(
         void* destination,
         size_t size
     ) noexcept
@@ -235,7 +235,7 @@ namespace Graphyte::System
         }
     }
 
-    __forceinline void* MemoryMove(
+    inline void* MemoryMove(
         void* destination,
         const void* source,
         size_t size
@@ -244,7 +244,7 @@ namespace Graphyte::System
         return memmove(destination, source, size);
     }
 
-    __forceinline void* MemoryCopy(
+    inline void* MemoryCopy(
         void* destination,
         const void* source,
         size_t size
@@ -253,7 +253,7 @@ namespace Graphyte::System
         return memcpy(destination, source, size);
     }
 
-    __forceinline void* MemoryCopyBlock(
+    inline void* MemoryCopyBlock(
         void* destination,
         const void* source,
         size_t size
@@ -262,7 +262,7 @@ namespace Graphyte::System
         return memcpy(destination, source, size);
     }
 
-    __forceinline void* MemoryCopyStreaming(
+    inline void* MemoryCopyStreaming(
         void* destination,
         const void* source,
         size_t size
@@ -271,7 +271,7 @@ namespace Graphyte::System
         return memcpy(destination, source, size);
     }
 
-    __forceinline int MemoryCompare(
+    inline int MemoryCompare(
         const void* buffer1,
         const void* buffer2,
         size_t size
@@ -280,7 +280,7 @@ namespace Graphyte::System
         return memcmp(buffer1, buffer2, size);
     }
 
-    __forceinline void* MemorySet(
+    inline void* MemorySet(
         void* destination,
         uint8_t value,
         size_t size
@@ -289,7 +289,7 @@ namespace Graphyte::System
         return memset(destination, value, size);
     }
 
-    __forceinline void* MemoryZero(
+    inline void* MemoryZero(
         void* destination,
         size_t size
     ) noexcept
