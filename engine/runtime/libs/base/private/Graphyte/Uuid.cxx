@@ -35,23 +35,27 @@ namespace Graphyte
 
     BASE_API bool Converter<Uuid>::ToString(std::string& result, Uuid const& value) noexcept
     {
-        char buffer[32];
+        static constexpr const size_t NumberOfCharsInUInt64 = 16;
+        static constexpr const size_t NumberOfCharsInUuid = 32;
+
+        std::array<char, NumberOfCharsInUuid> buffer{};
+
 
         //
         // Buffer iterators.
         //
 
-        char* beg = buffer;
-        char* mid = beg + 16;
-        char* end = mid + 16;
+        char* beg = buffer.data();
+        char* mid = beg + NumberOfCharsInUInt64;
+        char* end = mid + NumberOfCharsInUInt64;
 
 
         //
         // Convert to chars separately.
         //
 
-        auto [ptr0, ecc0] = std::to_chars(beg, mid, value.Low, 16);
-        auto [ptr1, ecc1] = std::to_chars(mid, end, value.High, 16);
+        auto [ptr0, ecc0] = std::to_chars(beg, mid, value.Low, NumberOfCharsInUInt64);
+        auto [ptr1, ecc1] = std::to_chars(mid, end, value.High, NumberOfCharsInUInt64);
 
 
         //
@@ -73,15 +77,18 @@ namespace Graphyte
 
     BASE_API bool Converter<Uuid>::FromString(Uuid& result, std::string_view value) noexcept
     {
-        if (value.size() == 32)
+        static constexpr const size_t NumberOfCharsInUInt64 = 16;
+        static constexpr const size_t NumberOfCharsInUuid = 32;
+
+        if (value.size() == NumberOfCharsInUuid)
         {
             //
             // Split string into two parts.
             //
 
             auto const* beg = value.data();
-            auto const* mid = beg + 16;
-            auto const* end = mid + 16;
+            auto const* mid = beg + NumberOfCharsInUInt64;
+            auto const* end = mid + NumberOfCharsInUInt64;
 
             uint64_t part0{};
             uint64_t part1{};
@@ -91,8 +98,8 @@ namespace Graphyte
             // Parse each part separately.
             //
 
-            auto [part0_end, ecc0] = std::from_chars(beg, mid, part0, 16);
-            auto [part1_end, ecc1] = std::from_chars(mid, end, part1, 16);
+            auto [part0_end, ecc0] = std::from_chars(beg, mid, part0, NumberOfCharsInUInt64);
+            auto [part1_end, ecc1] = std::from_chars(mid, end, part1, NumberOfCharsInUInt64);
 
 
             //
