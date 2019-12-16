@@ -1,6 +1,33 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / LoadStore")
+{
+    using namespace Graphyte::Maths;
+
+    Float4A const f1{ 1.0F, 2.0F, 3.0F, 4.0F };
+    Vector4 const v1 = Load<Vector4>(&f1);
+
+    CHECK(GetX(v1) == 1.0F);
+    CHECK(GetY(v1) == 2.0F);
+    CHECK(GetZ(v1) == 3.0F);
+    CHECK(GetW(v1) == 4.0F);
+
+    Float3A f2{};
+    Store<Vector4>(&f2, v1);
+
+    CHECK(f2.X == 1.0F);
+    CHECK(f2.Y == 2.0F);
+    CHECK(f2.Z == 3.0F);
+
+    Plane const p1 = Load<Plane>(&f1);
+    Float2A f3{};
+    Store<Float2A>(&f3, p1);
+
+    CHECK(f3.X == 1.0F);
+    CHECK(f3.Y == 2.0F);
+}
+
 TEST_CASE("Maths / Vector4 / Cross Product")
 {
     using namespace Graphyte::Maths;

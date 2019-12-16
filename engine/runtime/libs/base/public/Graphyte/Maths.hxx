@@ -1,6 +1,7 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Diagnostics.hxx>
+#include <Graphyte/Bitwise.hxx>
 
 // =================================================================================================
 //
@@ -1340,6 +1341,306 @@ namespace Graphyte::Maths
 
 // =================================================================================================
 //
+// Storage types
+//
+
+namespace Graphyte::Maths
+{
+    struct Half final
+    {
+        uint16_t Value;
+    };
+
+    using Half1 = Half;
+
+    struct Half2 final
+    {
+        Half X;
+        Half Y;
+    };
+
+    struct Half3 final
+    {
+        Half X;
+        Half Y;
+        Half Z;
+    };
+
+    struct Half4 final
+    {
+        Half X;
+        Half Y;
+        Half Z;
+        Half W;
+    };
+
+    struct Float4 final
+    {
+        float X, Y, Z, W;
+    };
+
+    struct Float3 final
+    {
+        float X, Y, Z;
+    };
+
+    struct Float2 final
+    {
+        float X, Y;
+    };
+
+    struct Float1 final
+    {
+        float X;
+    };
+
+    struct alignas(16) Float4A final
+    {
+        float X, Y, Z, W;
+    };
+
+    struct alignas(16) Float3A final
+    {
+        float X, Y, Z;
+    };
+
+    struct alignas(16) Float2A final
+    {
+        float X, Y;
+    };
+
+    struct alignas(16) Float1A final
+    {
+        float X;
+    };
+
+    struct Float4x4 final
+    {
+        union
+        {
+            struct
+            {
+                float M11, M12, M13, M14;
+                float M21, M22, M23, M24;
+                float M31, M32, M33, M34;
+                float M41, M42, M43, M44;
+            };
+            float M[4][4];
+            float F[16];
+        };
+    };
+
+    struct Float4x3 final
+    {
+        union
+        {
+            struct
+            {
+                float M11, M12, M13;
+                float M21, M22, M23;
+                float M31, M32, M33;
+                float M41, M42, M43;
+            };
+            float M[4][3];
+            float F[12];
+        };
+    };
+
+    struct Float3x4 final
+    {
+        union
+        {
+            struct
+            {
+                float M11, M12, M13, M14;
+                float M21, M22, M23, M24;
+                float M31, M32, M33, M34;
+            };
+            float M[3][4];
+            float F[12];
+        };
+    };
+
+    struct Float3x3 final
+    {
+        union
+        {
+            struct
+            {
+                float M11, M12, M13;
+                float M21, M22, M23;
+                float M31, M32, M33;
+            };
+            float M[3][3];
+            float F[9];
+        };
+    };
+
+    struct alignas(16) Float4x4A final
+    {
+        union
+        {
+            struct
+            {
+                float M11, M12, M13, M14;
+                float M21, M22, M23, M24;
+                float M31, M32, M33, M34;
+                float M41, M42, M43, M44;
+            };
+            float M[4][4];
+            float F[16];
+        };
+    };
+
+    struct alignas(16) Float4x3A final
+    {
+        union
+        {
+            struct
+            {
+                float M11, M12, M13;
+                float M21, M22, M23;
+                float M31, M32, M33;
+                float M41, M42, M43;
+            };
+            float M[4][3];
+            float F[12];
+        };
+    };
+
+    struct alignas(16) Float3x4A final
+    {
+        union
+        {
+            struct
+            {
+                float M11, M12, M13, M14;
+                float M21, M22, M23, M24;
+                float M31, M32, M33, M34;
+            };
+            float M[3][4];
+            float F[12];
+        };
+    };
+
+    struct alignas(16) Float3x3A final
+    {
+        union
+        {
+            struct
+            {
+                float M11, M12, M13;
+                float M21, M22, M23;
+                float M31, M32, M33;
+            };
+            float M[3][3];
+            float F[9];
+        };
+    };
+
+    struct ColorRGBA final
+    {
+        union
+        {
+            struct
+            {
+                uint8_t R;
+                uint8_t G;
+                uint8_t B;
+                uint8_t A;
+            };
+
+            uint32_t Value;
+        };
+    };
+
+    struct ColorBGRA final
+    {
+        union
+        {
+            struct
+            {
+                uint8_t B;
+                uint8_t G;
+                uint8_t R;
+                uint8_t A;
+            };
+
+            uint32_t Value;
+        };
+    };
+
+    struct UInt4 final
+    {
+        uint32_t X;
+        uint32_t Y;
+        uint32_t Z;
+        uint32_t W;
+    };
+
+    struct UInt3 final
+    {
+        uint32_t X;
+        uint32_t Y;
+        uint32_t Z;
+    };
+
+    struct UInt2 final
+    {
+        uint32_t X;
+        uint32_t Y;
+    };
+
+    struct UInt1 final
+    {
+        uint32_t X;
+    };
+
+    struct SInt4 final
+    {
+        int32_t X;
+        int32_t Y;
+        int32_t Z;
+        int32_t W;
+    };
+
+    struct SInt3 final
+    {
+        int32_t X;
+        int32_t Y;
+        int32_t Z;
+    };
+
+    struct SInt2 final
+    {
+        int32_t X;
+        int32_t Y;
+    };
+
+    struct SInt1 final
+    {
+        int32_t X;
+    };
+
+    struct UByte4 final
+    {
+        uint8_t X;
+        uint8_t Y;
+        uint8_t Z;
+        uint8_t W;
+    };
+
+    struct SByte4 final
+    {
+        int8_t X;
+        int8_t Y;
+        int8_t Z;
+        int8_t W;
+    };
+}
+
+// =================================================================================================
+//
 // Common enum types
 //
 
@@ -1654,6 +1955,251 @@ namespace Graphyte::Maths
         __m128 const zzzz = _mm_set_ps1(z);
         __m128 const xyzz = _mm_shuffle_ps(v.V, zzzz, _MM_SHUFFLE(1, 0, 1, 0));
         return { xyzz };
+#endif
+    }
+}
+
+
+// =================================================================================================
+//
+// Load / store operations
+//
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall Load(Float4A const* source) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components == 4)
+    {
+        GX_ASSERT(source != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                source->X,
+                source->Y,
+                source->Z,
+                source->W,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_load_ps(reinterpret_cast<float const*>(source)) };
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float4A* destination, T v) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components == 4)
+    {
+        GX_ASSERT(destination != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void*>(destination), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->X = v.V.F[0];
+        destination->Y = v.V.F[1];
+        destination->Z = v.V.F[2];
+        destination->W = v.V.F[3];
+#elif GRAPHYTE_HW_AVX
+        _mm_store_ps(reinterpret_cast<float*>(destination), v.V);
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Load(Float4 const* source) noexcept
+        requires (Impl::SimdVectorType<T>and T::Components == 4)
+    {
+        GX_ASSERT(source != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                source->X,
+                source->Y,
+                source->Z,
+                source->W,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_loadu_ps(reinterpret_cast<float const*>(source)) };
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float4* destination, T v) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components == 4)
+    {
+        GX_ASSERT(destination != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->X = v.V.F[0];
+        destination->Y = v.V.F[1];
+        destination->Z = v.V.F[2];
+        destination->W = v.V.F[3];
+#elif GRAPHYTE_HW_AVX
+        _mm_storeu_ps(reinterpret_cast<float*>(destination), v.V);
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Load(Float3A const* source) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+    {
+        GX_ASSERT(source != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                source->X,
+                source->Y,
+                source->Z,
+                0.0F,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const xyzn = _mm_load_ps(reinterpret_cast<float const*>(source));
+        __m128 const result = _mm_and_ps(xyzn, Impl::VEC4_MASK_COMPONENTS_3.V);
+        return { result };
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float3A* destination, T v) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+    {
+        GX_ASSERT(destination != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void*>(destination), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->X = v.V.F[0];
+        destination->Y = v.V.F[1];
+        destination->Z = v.V.F[2];
+#elif GRAPHYTE_HW_AVX
+        __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
+        _mm_storel_epi64(reinterpret_cast<__m128i*>(destination), _mm_castps_si128(v.V));
+        _mm_store_ss(&destination->Z, zzzz);
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Load(Float3 const* source) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+    {
+        GX_ASSERT(source != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                source->X,
+                source->Y,
+                source->Z,
+                0.0F,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const v_x = _mm_load_ss(&source->X);
+        __m128 const v_y = _mm_load_ss(&source->Y);
+        __m128 const v_z = _mm_load_ss(&source->Z);
+        __m128 const v_xy = _mm_unpacklo_ps(v_x, v_y);
+        __m128 const v_xyz = _mm_movelh_ps(v_xy, v_z);
+        return { v_xyz };
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float3* destination, T v) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+    {
+        GX_ASSERT(destination != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->X = v.V.F[0];
+        destination->Y = v.V.F[1];
+        destination->Z = v.V.F[2];
+#elif GRAPHYTE_HW_AVX
+        __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
+        _mm_store_ss(&destination->X, v.V);
+        _mm_store_ss(&destination->Y, yyyy);
+        _mm_store_ss(&destination->Z, zzzz);
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Load(Float2A const* source) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+    {
+        GX_ASSERT(source != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                source->X,
+                source->Y,
+                0.0F,
+                0.0F,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const v_xy = _mm_loadl_epi64(reinterpret_cast<__m128* const*>(source));
+        return { _mm_castsi128_ps(v_xy) };
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float2A* destination, T v) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+    {
+        GX_ASSERT(destination != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void*>(destination), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->X = v.V.F[0];
+        destination->Y = v.V.F[1];
+#elif GRAPHYTE_HW_AVX
+        _mm_storel_epi64(reinterpret_cast<__m128i*>(destination), _mm_castps_si128(v.V));
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Load(Float2 const* source) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+    {
+        GX_ASSERT(source != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                source->X,
+                source->Y,
+                0.0F,
+                0.0F,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const v_x = _mm_load_ss(&source->X);
+        __m128 const v_y = _mm_load_ss(&source->Y);
+        __m128 const result = _mm_unpacklo_ps(v_x, v_y);
+        return { result };
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float2* destination, T v) noexcept
+        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+    {
+
+        GX_ASSERT(destination != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->X = v.V.F[0];
+        destination->Y = v.V.F[1];
+#elif GRAPHYTE_HW_AVX
+        __m128 const v_y = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        _mm_store_ss(&destination->X, v.V);
+        _mm_store_ss(&destination->Y, v_y);
 #endif
     }
 }

@@ -39,8 +39,8 @@ namespace Graphyte::Rendering::Impl
 
     public:
         virtual void Line(
-            [[maybe_unused]] Maths::Vec3 start,
-            [[maybe_unused]] Maths::Vec3 end,
+            [[maybe_unused]] Maths::Vector3 start,
+            [[maybe_unused]] Maths::Vector3 end,
             [[maybe_unused]] Maths::Color color,
             [[maybe_unused]] float width,
             [[maybe_unused]] bool ztest,

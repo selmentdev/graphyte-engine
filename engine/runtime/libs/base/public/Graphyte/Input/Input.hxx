@@ -1,6 +1,6 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
-#include <Graphyte/Maths/Types.hxx>
+#include <Graphyte/Maths.hxx>
 
 namespace Graphyte::Input
 {

@@ -26,8 +26,8 @@ namespace Graphyte::Rendering
 
     public:
         virtual void Line(
-            Maths::Vec3 start,
-            Maths::Vec3 end,
+            Maths::Vector3 start,
+            Maths::Vector3 end,
             Maths::Color color,
             float width,
             bool ztest,

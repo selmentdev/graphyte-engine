@@ -1,7 +1,7 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Diagnostics.hxx>
-#include <Graphyte/Maths/Types.hxx>
+#include <Graphyte/Maths.hxx>
 #include <Graphyte/Storage/EnumSerialize.hxx>
 #include <Graphyte/Uuid.hxx>
 #include <Graphyte/DateTime.hxx>
