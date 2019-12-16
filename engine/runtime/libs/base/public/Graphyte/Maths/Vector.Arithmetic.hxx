@@ -263,43 +263,6 @@ namespace Graphyte::Maths
         return { _mm_permute_ps(vhalf2, _MM_SHUFFLE(0, 0, 0, 0)) };
 #endif
     }
-
-    template <typename T>
-    mathinline T mathcall Abs(T v) noexcept
-        requires SimdVectorType<T>
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::Vec4F32 v_result = { { {
-                fabsf(v.V.F[0]),
-                fabsf(v.V.F[1]),
-                fabsf(v.V.F[2]),
-                fabsf(v.V.F[3]),
-            } } };
-        return { v_result.V };
-#elif GRAPHYTE_HW_AVX
-        __m128 v_result = _mm_setzero_ps();
-        v_result = _mm_sub_ps(v_result, v.V);
-        v_result = _mm_max_ps(v_result, v.V);
-        return { v_result };
-#endif
-    }
-
-    template <typename T>
-    mathinline T mathcall Sqrt(T v) noexcept
-        requires (SimdVectorType<T> and T::Componenst <= 4)
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::Vec4F32 v_result = { { {
-                sqrtf(v.V.F[0]),
-                sqrtf(v.V.F[1]),
-                sqrtf(v.V.F[2]),
-                sqrtf(v.V.F[3]),
-            } } };
-        return { v_result.V };
-#elif GRAPHYTE_HW_AVX
-        return { _mm_sqrt_ps(v.V) };
-#endif
-    }
 }
 
 
@@ -310,41 +273,6 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall Negate(T v) noexcept
-        requires SimdVectorType<T>
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::Vec4F32 v_result = { { {
-                -v.V.F[0],
-                -v.V.F[1],
-                -v.V.F[2],
-                -v.V.F[3],
-            } } };
-        return { v_result.V };
-#elif GRAPHYTE_HW_AVX
-        __m128 const v_zero = _mm_setzero_ps();
-        return { _mm_sub_ps(v_zero, v.V) };
-#endif
-    }
-
-    template <typename T>
-    mathinline T mathcall Add(T v1, T v2) noexcept
-        requires SimdVectorType<T>
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::Vec4F32 v_temp = { { {
-            v1.V.F[0] + v2.V.F[0],
-            v1.V.F[1] + v2.V.F[1],
-            v1.V.F[2] + v2.V.F[2],
-            v1.V.F[3] + v2.V.F[3],
-        } } };
-        return { v_temp.V };
-#elif GRAPHYTE_HW_AVX
-        return { _mm_add_ps(v1.V, v2.V) };
-#endif
-    }
-
     template <typename T>
     mathinline T mathcall Subtract(T v1, T v2) noexcept
         requires SimdVectorType<T>
