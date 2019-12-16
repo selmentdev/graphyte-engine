@@ -36,38 +36,37 @@ namespace Graphyte
     BASE_API bool Converter<Uuid>::ToString(std::string& result, Uuid const& value) noexcept
     {
         static constexpr const size_t NumberOfCharsInUInt64 = 16;
-        static constexpr const size_t NumberOfCharsInUuid = 32;
 
-        std::array<char, NumberOfCharsInUuid> buffer{};
-
-
-        //
-        // Buffer iterators.
-        //
-
-        char* beg = buffer.data();
-        char* mid = beg + NumberOfCharsInUInt64;
-        char* end = mid + NumberOfCharsInUInt64;
-
+        std::array<char, NumberOfCharsInUInt64> buffer_low{};
+        std::array<char, NumberOfCharsInUInt64> buffer_high{};
 
         //
         // Convert to chars separately.
         //
 
-        auto [ptr0, ecc0] = std::to_chars(beg, mid, value.Low, NumberOfCharsInUInt64);
-        auto [ptr1, ecc1] = std::to_chars(mid, end, value.High, NumberOfCharsInUInt64);
+        auto [ptr0, ecc0] = std::to_chars(
+            buffer_low.data(),
+            buffer_low.data() + buffer_low.size(),
+            value.Low,
+            16
+        );
+
+        auto [ptr1, ecc1] = std::to_chars(
+            buffer_high.data(),
+            buffer_high.data() + buffer_high.size(),
+            value.High,
+            16
+        );
 
 
-        //
-        // Validate.
-        //
-
-        bool const part0_valid = (ecc0 == std::errc{}) && (ptr0 == mid);
-        bool const part1_valid = (ecc1 == std::errc{}) && (ptr1 == end);
-
-        if (part0_valid && part1_valid)
+        if (ecc0 == std::errc{} && ecc1 == std::errc{})
         {
-            result.assign(beg, end);
+            result.reserve(32);
+            result.assign(buffer_low.size() - (ptr0 - buffer_low.data()), '0');
+            result.append(buffer_low.data(), ptr0);
+
+            result.append(buffer_high.size() - (ptr1 - buffer_high.data()), '0');
+            result.append(buffer_high.data(), ptr1);
             return true;
         }
 

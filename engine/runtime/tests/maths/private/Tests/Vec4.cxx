@@ -1,8 +1,30 @@
 #include "Test.Maths.pch.hxx"
-#include <Graphyte/Maths/Vector.Components.hxx>
-#include <Graphyte/Maths/Vector.Constructors.hxx>
-#include <Graphyte/Maths/Vector.Arithmetic.hxx>
-#include <Graphyte/Maths/Consts.hxx>
+#include <Graphyte/Maths.hxx>
+
+TEST_CASE("Maths / Vector4 / Cross Product")
+{
+    using namespace Graphyte::Maths;
+
+    Vector4 const a = Make<Vector4>(1.0F, 0.0F, 0.0F, 0.0F);
+    Vector4 const b = Make<Vector4>(0.0F, 1.0F, 0.0F, 0.0F);
+    Vector4 const c = Make<Vector4>(0.0F, 0.0F, 1.0F, 0.0F);
+
+    Vector4 const abc = Cross(a, b, c);
+
+    union {
+        Graphyte::Maths::Impl::ConstFloat32x4 C;
+        Vector4 V;
+    } u;
+
+    u.V = abc;
+
+    CHECK(u.C.F[0] == 1.0F);
+    CHECK(u.C.F[1] == 1.0F);
+    CHECK(u.C.F[2] == 1.0F);
+    CHECK(u.C.F[3] == 1.0F);
+}
+
+#if false
 
 mathinline Graphyte::Maths::Vec4 ToVec4(float x, Graphyte::Maths::Vec2 v, float w) noexcept
 {
@@ -497,7 +519,7 @@ TEST_CASE("Vec4 - order comparable")
     CHECK(M::IsNeq(v2, v3));
     CHECK(M::IsNeq(v3, v4));
     CHECK(M::IsNeq(v4, v1));
-    
+
     CHECK_FALSE(M::IsLt(v1, v2));
     CHECK_FALSE(M::IsLt(v2, v3));
     CHECK_FALSE(M::IsLt(v3, v4));
@@ -665,4 +687,6 @@ TEST_CASE("xxx")
     CHECK(check<int>() == 0);
     CHECK(check<Graphyte::Maths::Vec4>() == 1);
 }
+#endif
+
 #endif

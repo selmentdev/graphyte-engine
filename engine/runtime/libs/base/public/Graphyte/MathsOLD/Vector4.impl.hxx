@@ -473,7 +473,7 @@ namespace Graphyte::Maths
         return { _mm_cvtepi32_ps(v_v) };
 #endif
     }
-    
+
     mathinline Vector4 mathcall Vector4::Load(const uint2* source) noexcept
     {
         GX_ASSERT(source != nullptr);
@@ -2595,7 +2595,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 result;
-        
+
         result.V.F[0] = 0.0F;
 
         for (size_t index = 0; index < 4; ++index)
@@ -4498,21 +4498,6 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Vector4 mathcall Vector4::Dot(Vector4 v1, Vector4 v2) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        auto dot =
-            v1.V.F[0] * v2.V.F[0] +
-            v1.V.F[1] * v2.V.F[1] +
-            v1.V.F[2] * v2.V.F[2] +
-            v1.V.F[3] * v2.V.F[3];
-        Detail::Vector4F32 v_result = { { { dot, dot, dot, dot } } };
-        return { v_result.V };
-#elif GRAPHYTE_HW_AVX
-        return { _mm_dp_ps(v1.V, v2.V, 0xFF) };
-#endif
-    }
-
     mathinline Vector4 mathcall Vector4::Cross(Vector4 v1, Vector4 v2, Vector4 v3) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -4811,7 +4796,7 @@ namespace Graphyte::Maths
         auto v_dot = Vector4::Dot(v1, v2);
 
         v_l1 = Vector4::Multiply(v_l1, v_l2);
-        
+
         auto v_cos_angle = Vector4::Multiply(v_dot, v_l1);
         v_cos_angle = Vector4::Clamp(v_cos_angle, { Detail::VEC4_NEGATIVE_ONE_4.V }, { Detail::VEC4_ONE_4.V });
         return Vector4::ACos(v_cos_angle);
@@ -5055,55 +5040,4 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline bool mathcall Vector4::AnyTrue(Vector4 v) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        return
-            (v.V.U[0] != 0) ||
-            (v.V.U[1] != 0) ||
-            (v.V.U[2] != 0) ||
-            (v.V.U[3] != 0);
-#elif GRAPHYTE_HW_AVX
-        return _mm_movemask_ps(v.V) != 0;
-#endif
-    }
-
-    mathinline bool mathcall Vector4::AnyFalse(Vector4 v) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        return
-            (v.V.U[0] == 0) ||
-            (v.V.U[1] == 0) ||
-            (v.V.U[2] == 0) ||
-            (v.V.U[3] == 0);
-#elif GRAPHYTE_HW_AVX
-        return _mm_movemask_ps(v.V) != 0b1111;
-#endif
-    }
-
-    mathinline bool mathcall Vector4::AllTrue(Vector4 v) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        return
-            (v.V.U[0] != 0) &&
-            (v.V.U[1] != 0) &&
-            (v.V.U[2] != 0) &&
-            (v.V.U[3] != 0);
-#elif GRAPHYTE_HW_AVX
-        return _mm_movemask_ps(v.V) == 0b1111;
-#endif
-    }
-
-    mathinline bool mathcall Vector4::AllFalse(Vector4 v) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        return
-            (v.V.U[0] == 0) &&
-            (v.V.U[1] == 0) &&
-            (v.V.U[2] == 0) &&
-            (v.V.U[3] == 0);
-#elif GRAPHYTE_HW_AVX
-        return _mm_movemask_ps(v.V) == 0;
-#endif
-    }
 }

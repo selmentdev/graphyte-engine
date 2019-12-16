@@ -6,8 +6,6 @@
 #include <lz4.h>
 #include <lz4hc.h>
 
-#define GRAPHYTE_SDKS_WITH_ZLIB 0
-
 #if GRAPHYTE_SDKS_WITH_ZLIB
 #include <zlib.h>
 #endif

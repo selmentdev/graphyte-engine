@@ -26,10 +26,16 @@ TEST_CASE("Unicode conversion")
 
     SECTION("Codepoint reading - explicit bytes")
     {
-        const char8_t sequence[] = u8"\xf0\x9f\x98\x81";
+        char8_t sequence[5];
+        sequence[0] = 0xf0;
+        sequence[1] = 0x9f;
+        sequence[2] = 0x98;
+        sequence[3] = 0x81;
+        sequence[4] = 0;
+        // { '\xf0', '\x9f', '\x98', '\x81' };
 
-        auto source_start = std::begin(sequence);
-        auto source_end = std::end(sequence) - 1;
+        const char8_t* source_start = std::begin(sequence);
+        const char8_t* source_end = std::end(sequence) - 1;
 
         char32_t cp1 = 0;
         char32_t cp2 = 0;

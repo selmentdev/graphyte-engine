@@ -611,7 +611,7 @@
 #   define GRAPHYTE_HW_F16C 1
 #endif
 
-#if defined(__FMA__) || defined(__AVX__) 
+#if defined(__FMA__) || defined(__AVX__)
 #   undef  GRAPHYTE_HW_FMA3
 #   define GRAPHYTE_HW_FMA3 1
 #endif
@@ -1023,3 +1023,6 @@ namespace Graphyte::Impl::Ieee754
     inline constexpr enum_type operator ^ (const enum_type lhs, const enum_type rhs) noexcept { return static_cast<enum_type>(static_cast<std::underlying_type_t<enum_type>>(lhs) ^ static_cast<std::underlying_type_t<enum_type>>(rhs)); } \
     inline constexpr bool operator ! (const enum_type value) noexcept { return !static_cast<std::underlying_type_t<enum_type>>(value); } \
     inline constexpr enum_type operator ~ (const enum_type value) noexcept { return static_cast<enum_type>(~static_cast<std::underlying_type_t<enum_type>>(value)); }
+
+
+#define GRAPHYTE_SDKS_WITH_ZLIB 0

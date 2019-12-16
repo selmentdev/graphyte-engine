@@ -33,7 +33,7 @@ TEST_CASE("Uuid")
 
         std::string str{};
         REQUIRE(Converter<Uuid>::ToString(str, value));
-        REQUIRE(str == "deadc0dedeadbeefcafebabebeefcace");
+        REQUIRE(str == "deadbeefdeadc0debeefcacecafebabe");
     }
 
     SECTION("Ordering")

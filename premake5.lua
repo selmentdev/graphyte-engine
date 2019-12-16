@@ -20,7 +20,7 @@ function graphyte_common()
         }
 
     filter {}
-    
+
         includedirs {
             "%{wks.location}/engine/include",
             "./public",
@@ -33,7 +33,7 @@ end
 
 function graphyte_module()
     graphyte_common {}
-    
+
     filter { "toolset:msc*" }
         ufinclude {}
 
@@ -66,10 +66,10 @@ end
 
 function graphyte_app()
     graphyte_common {}
-    
+
     filter { "toolset:msc*" }
         ufinclude {}
-    
+
     filter { "toolset:msc*" }
         files {
             "%{wks.location}/engine/resources/*.h",
@@ -81,14 +81,14 @@ end
 
 function graphyte_test()
     graphyte_common {}
-    
+
     includedirs {
         "%{wks.location}/sdks/catch2/include"
     }
-    
+
     filter { "toolset:msc*" }
-        ufinclude {}
-    
+        -- ufinclude {} -- this breaks unit tests line numbering feature
+
     filter { "toolset:msc*" }
         files {
             "%{wks.location}/engine/resources/*.h",
@@ -203,7 +203,7 @@ workspace "graphyte"
 
     filter { "architecture:arm64 or arm" }
         editandcontinue "off"
-        
+
         defines {
             "GRAPHYTE_MATH_NO_INTRINSICS=1",
         }
@@ -258,7 +258,7 @@ workspace "graphyte"
         buildoptions {
             "-fno-finite-math-only",
         }
-    
+
     -- setup configurations
     -- optimization: https://docs.microsoft.com/en-us/cpp/build/reference/o-options-optimize-code?view=vs-2019
     filter { "configurations:debug" }
@@ -491,7 +491,7 @@ solution "*"
     filter { "tags:sdks-curl" }
         links {
             "curl",
-        }    
+        }
         includedirs {
             "%{wks.location}/sdks/curl/include"
         }
@@ -511,7 +511,7 @@ solution "*"
     filter { "tags:sdks-glad" }
         links {
             "glad",
-        }    
+        }
         includedirs {
             "%{wks.location}/sdks/glad/include"
         }
@@ -542,7 +542,7 @@ solution "*"
         links {
             "zlib",
         }
-    
+
         includedirs {
             "%{wks.location}/sdks/zlib/include"
         }
@@ -552,7 +552,7 @@ solution "*"
             "STDC=1",
         }
 
-    filter { "tags:sdks-zlib", "toolset:msc*" } -- "platforms:shared", 
+    filter { "tags:sdks-zlib", "toolset:msc*" } -- "platforms:shared",
         defines {
             "ZLIB_DLL=1",
         }
