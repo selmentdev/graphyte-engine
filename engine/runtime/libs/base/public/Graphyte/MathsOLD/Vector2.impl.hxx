@@ -562,42 +562,6 @@ namespace Graphyte::Maths
         return { Vector4::Barycentric({ position0.V }, { position1.V }, { position2.V }, { f.V }, { g.V }).V };
     }
 
-    mathinline Vector4 mathcall Vector2::Dot(Vector2 v1, Vector2 v2) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        auto f_dot = (v1.V.F[0] * v2.V.F[0]) + (v1.V.F[1] * v2.V.F[1]);
-        Detail::Vector4F32 v_result = { { {
-                f_dot, f_dot, f_dot, f_dot
-            } } };
-        return { v_result.V };
-#elif GRAPHYTE_HW_AVX
-        return { _mm_dp_ps(v1.V, v2.V, 0b0011'1111) };
-#endif
-    }
-
-    mathinline Vector4 mathcall Vector2::Cross(Vector2 v1, Vector2 v2) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        auto f_cross = (v1.V.F[0] * v2.V.F[1]) - (v1.V.F[1] * v2.V.F[0]);
-        Detail::Vector4F32 v_result = { { {
-                f_cross, f_cross, f_cross, f_cross
-            } } };
-        return { v_result.V };
-#elif GRAPHYTE_HW_AVX
-        auto v_result = _mm_permute_ps(v2.V, _MM_SHUFFLE(0, 1, 0, 1));
-        v_result      = _mm_mul_ps(v_result, v1.V);
-        auto v_temp   = _mm_permute_ps(v_result, _MM_SHUFFLE(1, 1, 1, 1));
-        v_result      = _mm_sub_ss(v_result, v_temp);
-        v_result      = _mm_permute_ps(v_result, _MM_SHUFFLE(0, 0, 0, 0));
-        return { v_result };
-#endif
-    }
-
-    mathinline Vector4 mathcall Vector2::LengthSquared(Vector2 v) noexcept
-    {
-        return Vector2::Dot(v, v);
-    }
-
     mathinline Vector4 mathcall Vector2::ReciprocalLengthEst(Vector2 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -635,18 +599,6 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Vector4 mathcall Vector2::Length(Vector2 v) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        auto v_result = LengthSquared(v);
-        v_result = Vector4::Sqrt(v_result);
-        return { v_result.V };
-#elif GRAPHYTE_HW_AVX
-        auto v_temp = _mm_dp_ps(v.V, v.V, 0b0011'1111);
-        return { _mm_sqrt_ps(v_temp) };
-#endif
-    }
-
     mathinline Vector2 mathcall Vector2::NormalizeEst(Vector2 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -657,39 +609,6 @@ namespace Graphyte::Maths
         auto v_temp   = _mm_dp_ps(v.V, v.V, 0b0011'1111);
         auto v_result = _mm_rsqrt_ps(v_temp);
         return { _mm_mul_ps(v_result, v.V) };
-#endif
-    }
-
-    mathinline Vector2 mathcall Vector2::Normalize(Vector2 v) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        auto f_length = Vector2::Length(v).V.F[0];
-
-        if (f_length > 0.0F)
-        {
-            f_length = 1.0F / f_length;
-        }
-
-        Detail::Vector4F32 v_result = { { {
-                v.V.F[0] * f_length,
-                v.V.F[1] * f_length,
-                v.V.F[2] * f_length,
-                v.V.F[3] * f_length,
-            } } };
-        return { v_result.V };
-
-#elif GRAPHYTE_HW_AVX
-        auto v_length_sq = _mm_dp_ps(v.V, v.V, 0b0011'1111);
-        auto v_result    = _mm_sqrt_ps(v_length_sq);
-        auto v_zero_mask = _mm_setzero_ps();
-        v_zero_mask      = _mm_cmpneq_ps(v_zero_mask, v_result);
-        v_length_sq      = _mm_cmpneq_ps(v_length_sq, Detail::VEC4_INFINITY.V);
-        v_result         = _mm_div_ps(v.V, v_result);
-        v_result         = _mm_and_ps(v_result, v_zero_mask);
-        auto v_temp1     = _mm_andnot_ps(v_length_sq, Detail::VEC4_QNAN.V);
-        auto v_temp2     = _mm_and_ps(v_result, v_length_sq);
-        v_result         = _mm_or_ps(v_temp1, v_temp2);
-        return { v_result };
 #endif
     }
 
@@ -730,14 +649,6 @@ namespace Graphyte::Maths
 
         auto v_control = Vector4::MaskCompareEqual(v_max, v_min);
         v_result = Vector4::Select(v_result, { v.V }, v_control);
-        return { v_result.V };
-    }
-
-    mathinline Vector2 mathcall Vector2::Reflect(Vector2 incident, Vector2 normal) noexcept
-    {
-        auto v_result = Vector2::Dot(incident, normal);
-        v_result = Vector4::Add(v_result, v_result);
-        v_result = Vector4::NegativeMultiplySubtract(v_result, { normal.V }, { incident.V });
         return { v_result.V };
     }
 

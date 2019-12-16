@@ -5,21 +5,6 @@
 
 namespace Graphyte::Maths
 {
-    mathinline Vector3 mathcall Vector3::Make(float value) noexcept
-    {
-        return { Vector4::Make(value).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Make(float x, float y) noexcept
-    {
-        return { Vector4::Make(x, y, 0.0F, 0.0F).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Make(float x, float y, float z) noexcept
-    {
-        return { Vector4::Make(x, y, z, 0.0F).V };
-    }
-
     mathinline Vector3 mathcall Vector3::MakeUInt(uint32_t value) noexcept
     {
         return { Vector4::MakeUInt(value).V };
@@ -88,51 +73,6 @@ namespace Graphyte::Maths
     mathinline void mathcall Vector3::StorePacked(float4* destination, Vector3 v) noexcept
     {
         Vector4::StorePacked(destination, { v.V });
-    }
-
-    mathinline Vector3 mathcall Vector3::Zero() noexcept
-    {
-        return { Vector4::Zero().V };
-    }
-
-    mathinline Vector3 mathcall Vector3::One() noexcept
-    {
-        return { Vector4::One().V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Infinity() noexcept
-    {
-        return { Vector4::Infinity().V };
-    }
-
-    mathinline Vector3 mathcall Vector3::NaN() noexcept
-    {
-        return { Vector4::NaN().V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Epsilon() noexcept
-    {
-        return { Vector4::Epsilon().V };
-    }
-
-    mathinline Vector3 mathcall Vector3::SignMask() noexcept
-    {
-        return { Vector4::SignMask().V };
-    }
-
-    mathinline Vector3 mathcall Vector3::UnitX() noexcept
-    {
-        return { Vector4::UnitX().V };
-    }
-
-    mathinline Vector3 mathcall Vector3::UnitY() noexcept
-    {
-        return { Vector4::UnitY().V };
-    }
-
-    mathinline Vector3 mathcall Vector3::UnitZ() noexcept
-    {
-        return { Vector4::UnitZ().V };
     }
 
     mathinline bool mathcall Vector3::IsEqual(Vector3 v1, Vector3 v2) noexcept
@@ -303,41 +243,6 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Vector3 mathcall Vector3::Min(Vector3 v1, Vector3 v2) noexcept
-    {
-        return { Vector4::Min({ v1.V }, { v2.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Max(Vector3 v1, Vector3 v2) noexcept
-    {
-        return { Vector4::Max({ v1.V }, { v2.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Round(Vector3 v) noexcept
-    {
-        return { Vector4::Round({ v.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Truncate(Vector3 v) noexcept
-    {
-        return { Vector4::Truncate({ v.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Floor(Vector3 v) noexcept
-    {
-        return { Vector4::Floor({ v.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Ceiling(Vector3 v) noexcept
-    {
-        return { Vector4::Ceiling({ v.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Fract(Vector3 v) noexcept
-    {
-        return { Vector4::Fract({ v.V }).V };
-    }
-
     mathinline Vector3 mathcall Vector3::Clamp(Vector3 v, Vector3 min, Vector3 max) noexcept
     {
         return { Vector4::Clamp({ v.V }, { min.V }, { max.V }).V };
@@ -348,59 +253,14 @@ namespace Graphyte::Maths
         return { Vector4::Saturate({ v.V }).V };
     }
 
-    mathinline Vector3 mathcall Vector3::Negate(Vector3 v) noexcept
-    {
-        return { Vector4::Negate({ v.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Add(Vector3 v1, Vector3 v2) noexcept
-    {
-        return { Vector4::Add({ v1.V }, { v2.V }).V };
-    }
-
-    mathinline Vector4 mathcall Vector3::Sum(Vector3 v) noexcept
-    {
-        return Vector4::Sum({ v.V });
-    }
-
     mathinline Vector3 mathcall Vector3::AddAngles(Vector3 v1, Vector3 v2) noexcept
     {
         return { Vector4::AddAngles({ v1.V }, { v2.V }).V };
     }
 
-    mathinline Vector3 mathcall Vector3::Subtract(Vector3 v1, Vector3 v2) noexcept
-    {
-        return { Vector4::Subtract({ v1.V }, { v2.V }).V };
-    }
-
     mathinline Vector3 mathcall Vector3::SubtractAngles(Vector3 v1, Vector3 v2) noexcept
     {
         return { Vector4::SubtractAngles({ v1.V }, { v2.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Multiply(Vector3 v1, Vector3 v2) noexcept
-    {
-        return { Vector4::Multiply({ v1.V }, { v2.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::MultiplyAdd(Vector3 v1, Vector3 v2, Vector3 v3) noexcept
-    {
-        return { Vector4::MultiplyAdd({ v1.V }, { v2.V }, { v3.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Divide(Vector3 v1, Vector3 v2) noexcept
-    {
-        return { Vector4::Divide({ v1.V }, { v2.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::NegativeMultiplySubtract(Vector3 v1, Vector3 v2, Vector3 v3) noexcept
-    {
-        return { Vector4::NegativeMultiplySubtract({ v1.V }, { v2.V }, { v3.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Scale(Vector3 v, float scale) noexcept
-    {
-        return { Vector4::Scale({ v.V }, scale).V };
     }
 
     mathinline Vector3 mathcall Vector3::ReciprocalEst(Vector3 v) noexcept
@@ -411,16 +271,6 @@ namespace Graphyte::Maths
     mathinline Vector3 mathcall Vector3::Reciprocal(Vector3 v) noexcept
     {
         return { Vector4::Reciprocal({ v.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::SqrtEst(Vector3 v) noexcept
-    {
-        return { Vector4::SqrtEst({ v.V }).V };
-    }
-
-    mathinline Vector3 mathcall Vector3::Sqrt(Vector3 v) noexcept
-    {
-        return { Vector4::Sqrt({ v.V }).V };
     }
 
     mathinline Vector3 mathcall Vector3::ReciprocalSqrtEst(Vector3 v) noexcept
@@ -639,29 +489,6 @@ namespace Graphyte::Maths
         return { v_result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_dp_ps(v1.V, v2.V, 0b0111'1111) };
-#endif
-    }
-
-    mathinline Vector3 mathcall Vector3::Cross(Vector3 v1, Vector3 v2) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        Detail::Vector4F32 v_result = { { {
-                (v1.V.F[1] * v2.V.F[2]) - (v1.V.F[2] * v2.V.F[1]),
-                (v1.V.F[2] * v2.V.F[0]) - (v1.V.F[0] * v2.V.F[2]),
-                (v1.V.F[0] * v2.V.F[1]) - (v1.V.F[1] * v2.V.F[0]),
-                0.0F,
-            } } };
-        return { v_result.V };
-#elif GRAPHYTE_HW_AVX
-        auto v_temp1 = _mm_permute_ps(v1.V, _MM_SHUFFLE(3, 0, 2, 1));
-        auto v_temp2 = _mm_permute_ps(v2.V, _MM_SHUFFLE(3, 1, 0, 2));
-        auto v_result = _mm_mul_ps(v_temp1, v_temp2);
-        v_temp1 = _mm_permute_ps(v_temp1, _MM_SHUFFLE(3, 0, 2, 1));
-        v_temp2 = _mm_permute_ps(v_temp2, _MM_SHUFFLE(3, 1, 0, 2));
-        v_temp1 = _mm_mul_ps(v_temp1, v_temp2);
-        v_result = _mm_sub_ps(v_result, v_temp1);
-        v_result = _mm_and_ps(v_result, Detail::VEC4_MASK_COMPONENTS_3.V);
-        return { v_result };
 #endif
     }
 

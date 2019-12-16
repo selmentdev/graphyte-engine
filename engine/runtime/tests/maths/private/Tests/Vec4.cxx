@@ -5,23 +5,115 @@ TEST_CASE("Maths / Vector4 / Cross Product")
 {
     using namespace Graphyte::Maths;
 
-    Vector4 const a = Make<Vector4>(1.0F, 0.0F, 0.0F, 0.0F);
-    Vector4 const b = Make<Vector4>(0.0F, 1.0F, 0.0F, 0.0F);
-    Vector4 const c = Make<Vector4>(0.0F, 0.0F, 1.0F, 0.0F);
+    Vector4 const a = Make<Vector4>(1.0F, 5.0F, 3.0F, 4.0F);
+    Vector4 const b = Make<Vector4>(7.0F, 7.0F, 9.0F, 10.0F);
+    Vector4 const c = Make<Vector4>(3.0F, 7.0F, 4.0F, -1.0F);
 
     Vector4 const abc = Cross(a, b, c);
 
-    union {
-        Graphyte::Maths::Impl::ConstFloat32x4 C;
-        Vector4 V;
-    } u;
+    Graphyte::Maths::Impl::ConstFloat32x4 cc;
+    cc.V = abc.V;
 
-    u.V = abc;
+    CHECK(cc.F[0] == -154.0F);
+    CHECK(cc.F[1] == -66.0F);
+    CHECK(cc.F[2] == 220.0F);
+    CHECK(cc.F[3] == -44.0F);
+}
 
-    CHECK(u.C.F[0] == 1.0F);
-    CHECK(u.C.F[1] == 1.0F);
-    CHECK(u.C.F[2] == 1.0F);
-    CHECK(u.C.F[3] == 1.0F);
+TEST_CASE("Maths / Vector4 / Dot Product")
+{
+    using namespace Graphyte::Maths;
+
+    Vector4 const a = Make<Vector4>(1.0F, 5.0F, 3.0F, 4.0F);
+    Vector4 const b = Make<Vector4>(7.0F, 7.0F, 9.0F, 10.0F);
+    Vector4 const c = Make<Vector4>(3.0F, 7.0F, 4.0F, -1.0F);
+
+    //Vector4 Dot(a, b);
+}
+
+TEST_CASE("Maths / Vector / Rounding")
+{
+    using namespace Graphyte::Maths;
+
+    Vector4 const v1 = Make<Vector4>(0.1F, 0.4F, 0.6F, 0.9F);
+    Vector4 const v2 = Make<Vector4>(-0.1F, 0.5F, -0.5F, -0.9F);
+
+    Vector4 const v3 = Make<Vector4>(10.1F, 3330.4F, 5510.6F, 124420.9F);
+    Vector4 const v4 = Make<Vector4>(-20.1F, 44444440.5F, -1120.5F, -512520.9F);
+
+    SECTION("Round")
+    {
+        Vector4 const r1 = Round(v1);
+        Vector4 const r2 = Round(v2);
+        Vector4 const r3 = Round(v3);
+        Vector4 const r4 = Round(v4);
+
+        CHECK(GetX(r1) == 0.0F);
+        CHECK(GetY(r1) == 0.0F);
+        CHECK(GetZ(r1) == 1.0F);
+        CHECK(GetW(r1) == 1.0F);
+
+        CHECK(GetX(r2) == 0.0F);
+        CHECK(GetY(r2) == 0.0F);
+        CHECK(GetZ(r2) == 0.0F);
+        CHECK(GetW(r2) == -1.0F);
+
+        CHECK(GetX(r3) == 10.0F);
+        CHECK(GetY(r3) == 3330.0F);
+        CHECK(GetZ(r3) == 5511.0F);
+        CHECK(GetW(r3) == 124421.0F);
+
+        CHECK(GetX(r4) == -20.0F);
+        CHECK(GetY(r4) == 44444440.0F);
+        CHECK(GetZ(r4) == -1120.0F);
+        CHECK(GetW(r4) == -512521.0F);
+
+        CHECK(Round(0.1F) == 0.0F);
+        CHECK(Round(0.4F) == 0.0F);
+        CHECK(Round(0.6F) == 1.0F);
+        CHECK(Round(0.9F) == 1.0F);
+        CHECK(Round(-0.1F) == 0.0F);
+        CHECK(Round(0.5F) == 1.0F);
+        CHECK(Round(-0.5F) == -1.0F);
+        CHECK(Round(-0.9F) == -1.0F);
+    }
+
+    SECTION("Truncate")
+    {
+        Vector4 const r1 = Truncate(v1);
+        Vector4 const r2 = Truncate(v2);
+        Vector4 const r3 = Truncate(v3);
+        Vector4 const r4 = Truncate(v4);
+
+        CHECK(GetX(r1) == 0.0F);
+        CHECK(GetY(r1) == 0.0F);
+        CHECK(GetZ(r1) == 0.0F);
+        CHECK(GetW(r1) == 0.0F);
+
+        CHECK(GetX(r2) == 0.0F);
+        CHECK(GetY(r2) == 0.0F);
+        CHECK(GetZ(r2) == 0.0F);
+        CHECK(GetW(r2) == 0.0F);
+
+        CHECK(GetX(r3) == 10.0F);
+        CHECK(GetY(r3) == 3330.0F);
+        CHECK(GetZ(r3) == 5510.0F);
+        CHECK(GetW(r3) == 124420.0F);
+
+        CHECK(GetX(r4) == -20.0F);
+        CHECK(GetY(r4) == 44444440.0F);
+        CHECK(GetZ(r4) == -1120.0F);
+        CHECK(GetW(r4) == -512520.0F);
+
+        CHECK(Truncate(0.1F) == 0.0F);
+        CHECK(Truncate(0.4F) == 0.0F);
+        CHECK(Truncate(0.6F) == 0.0F);
+        CHECK(Truncate(0.9F) == 0.0F);
+        CHECK(Truncate(-0.1F) == 0.0F);
+        CHECK(Truncate(0.5F) == 0.0F);
+        CHECK(Truncate(-0.5F) == -0.0F);
+        CHECK(Truncate(-0.9F) == -0.0F);
+    }
 }
 
 #if false
