@@ -1912,6 +1912,195 @@ namespace Graphyte::Maths
 
 // =================================================================================================
 //
+// Vector4 permutations
+//
+
+#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
+
+namespace Graphyte::Maths::Impl
+{
+    template <uint32_t S, bool X, bool Y, bool Z, bool W>
+    mathinline Vector4 mathcall PermuteHelper(Vector4 v1, Vector4 v2) noexcept
+    {
+        if constexpr (X == false && Y == false && Z == false && W == false)
+        {
+            return { _mm_permute_ps(v1.V, S) };
+        }
+        else if constexpr (X == true && Y == true && Z == true && W == true)
+        {
+            return { _mm_permute_ps(v2.V, S) };
+        }
+        else if constexpr (X == false && Y == false && Z == true && W == true)
+        {
+            return { _mm_shuffle_ps(v1.V, v2.V, S) };
+        }
+        else if constexpr (X == true && Y == true && Z == false && W == false)
+        {
+            return { _mm_shuffle_ps(v2.V, v1.V, S) };
+        }
+        else
+        {
+            static constexpr Impl::ConstUInt32x4 const select_mask{ { {
+                    X ? SELECT_1 : SELECT_0,
+                    Y ? SELECT_1 : SELECT_0,
+                    Z ? SELECT_1 : SELECT_0,
+                    W ? SELECT_1 : SELECT_0,
+                } } };
+
+            __m128 const shuffled_v1 = _mm_permute_ps(v1.V, S);
+            __m128 const shuffled_v2 = _mm_permute_ps(v2.V, S);
+            __m128 const masked_v1 = _mm_andnot_ps(select_mask.V, shuffled_v1);
+            __m128 const masked_v2 = _mm_and_ps(select_mask.V, shuffled_v2);
+            __m128 const result = _mm_or_ps(masked_v1, masked_v2);
+            return { result };
+        }
+    }
+}
+
+#endif
+
+namespace Graphyte::Maths
+{
+    template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
+    mathinline Vector4 mathcall Permute(Vector4 v1, Vector4 v2) noexcept
+    {
+        static_assert(X < 8);
+        static_assert(Y < 8);
+        static_assert(Z < 8);
+        static_assert(W < 8);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return Permute(v1, v2, X, Y, Z, W);
+#elif GRAPHYTE_HW_AVX
+        constexpr uint32_t shuffle = _MM_SHUFFLE(W & 3, Z & 3, Y & 3, X & 3);
+        constexpr bool x = (X >= 4);
+        constexpr bool y = (Y >= 4);
+        constexpr bool z = (Z >= 4);
+        constexpr bool w = (W >= 4);
+
+        return Impl::PermuteHelper<shuffle, x, y, z, w>(v1, v2);
+#endif
+    }
+
+    template <>
+    mathinline Vector4 mathcall Permute<0, 1, 2, 3>(Vector4 v1, [[maybe_unused]] Vector4 v2) noexcept
+    {
+        return v1;
+    }
+}
+
+// =================================================================================================
+//
+// Swizzling
+//
+
+namespace Graphyte::Maths
+{
+    template <size_t X, size_t Y, size_t Z, size_t W>
+    mathinline Vector4 mathcall Swizzle(Vector4 v) noexcept
+    {
+        static_assert(X < 4);
+        static_assert(Y < 4);
+        static_assert(Z < 4);
+        static_assert(W < 4);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                v.V.F[X],
+                v.V.F[Y],
+                v.V.F[Z],
+                v.V.F[W],
+            } } };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_permute_ps(v.V, _MM_SHUFFLE(W, Z, Y, X)) };
+#endif
+    }
+
+    template<> mathinline Vector4 mathcall Swizzle<0, 1, 2, 3>(Vector4 v) noexcept
+    {
+        return v;
+    }
+
+#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
+    template<> mathinline Vector4 mathcall Swizzle<0, 1, 0, 1>(Vector4 v) noexcept
+    {
+        return { _mm_movelh_ps(v.V, v.V) };
+    }
+
+    template<> mathinline Vector4 mathcall Swizzle<2, 3, 2, 3>(Vector4 v) noexcept
+    {
+        return { _mm_movehl_ps(v.V, v.V) };
+    }
+
+    template<> mathinline Vector4 mathcall Swizzle<0, 0, 1, 1>(Vector4 v) noexcept
+    {
+        return { _mm_unpacklo_ps(v.V, v.V) };
+    }
+
+    template<> mathinline Vector4 mathcall Swizzle<2, 2, 3, 3>(Vector4 v) noexcept
+    {
+        return { _mm_unpackhi_ps(v.V, v.V) };
+    }
+
+    template<> mathinline Vector4 mathcall Swizzle<0, 0, 2, 2>(Vector4 v) noexcept
+    {
+        return { _mm_moveldup_ps(v.V) };
+    }
+
+    template<> mathinline Vector4 mathcall Swizzle<1, 1, 3, 3>(Vector4 v) noexcept
+    {
+        return { _mm_movehdup_ps(v.V) };
+    }
+#endif
+
+#if GRAPHYTE_HW_AVX2 && !GRAPHYTE_MATH_NO_INTRINSICS
+    template <> mathinline Vector4 mathcall Vector4::Swizzle<0, 0, 0, 0>(Vector4 v) noexcept
+    {
+        return { _mm_broadcastss_ps(v.V) };
+    }
+#endif
+
+    template <SwizzleMask M>
+    mathinline Vector4 mathcall Swizzle(Vector4 v) noexcept
+    {
+        return Swizzle<
+            (static_cast<size_t>(M) >> 0) & 3,
+            (static_cast<size_t>(M) >> 2) & 3,
+            (static_cast<size_t>(M) >> 4) & 3,
+            (static_cast<size_t>(M) >> 6) & 3>(v);
+    }
+
+    mathinline Vector4 mathcall Swizzle(Vector4 v, uint32_t index0, uint32_t index1, uint32_t index2, uint32_t index3) noexcept
+    {
+        GX_ASSERT((index0 < 4) && (index1 < 4) && (index2 < 4) && (index3 < 4));
+        GX_COMPILER_ASSUME((index0 < 4) && (index1 < 4) && (index2 < 4) && (index3 < 4));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                v.V.F[index0],
+                v.V.F[index1],
+                v.V.F[index2],
+                v.V.F[index3],
+            } } };
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        alignas(__m128i) uint32_t indices[4]{
+            index0,
+            index1,
+            index2,
+            index3,
+        };
+
+        __m128i const control = _mm_load_si128(reinterpret_cast<__m128i const*>(&indices[0]));
+        __m128 const result = _mm_permutevar_ps(v.V, control);
+        return { result };
+#endif
+    }
+}
+
+
+// =================================================================================================
+//
 // Type conversion operations
 //
 
