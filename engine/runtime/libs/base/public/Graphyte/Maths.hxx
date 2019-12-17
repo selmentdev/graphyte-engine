@@ -85,7 +85,7 @@ namespace Graphyte::Maths::Impl
 namespace Graphyte::Maths::Impl
 {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-    struct VectorFloat4 final
+    struct SimdFloat32x4 final
     {
         union
         {
@@ -95,9 +95,9 @@ namespace Graphyte::Maths::Impl
         };
     };
 #elif GRAPHYTE_HW_NEON
-    using VectorFloat4 = float32x4_t;
+    using SimdFloat32x4 = float32x4_t;
 #elif GRAPHYTE_HW_AVX
-    using VectorFloat4 = __m128;
+    using SimdFloat32x4 = __m128;
 #else
 #error Unknown architecture
 #endif
@@ -120,7 +120,7 @@ namespace Graphyte::Maths::Impl
 #if GRAPHYTE_MATH_NO_INTRINSICS
         union
         {
-            VectorFloat4 R[4];
+            SimdFloat32x4 R[4];
             struct
             {
                 float M11, M12, M13, M14;
@@ -132,7 +132,7 @@ namespace Graphyte::Maths::Impl
             float F[16];
         };
 #else
-        VectorFloat4 R[4];
+        SimdFloat32x4 R[4];
 #endif
     };
 }
@@ -148,7 +148,7 @@ namespace Graphyte::Maths::Impl
         union
         {
             alignas(16) float F[4];
-            VectorFloat4 V;
+            SimdFloat32x4 V;
         };
     };
 
@@ -159,7 +159,7 @@ namespace Graphyte::Maths::Impl
         union
         {
             alignas(16) int32_t I[4];
-            VectorFloat4 V;
+            SimdFloat32x4 V;
         };
     };
     static_assert(std::is_pod_v<ConstInt32x4>);
@@ -169,7 +169,7 @@ namespace Graphyte::Maths::Impl
         union
         {
             alignas(16) uint32_t U[4];
-            VectorFloat4 V;
+            SimdFloat32x4 V;
         };
     };
     static_assert(std::is_pod_v<ConstUInt32x4>);
@@ -179,7 +179,7 @@ namespace Graphyte::Maths::Impl
         union
         {
             alignas(16) uint8_t U[16];
-            VectorFloat4 V;
+            SimdFloat32x4 V;
         };
     };
     static_assert(std::is_pod_v<ConstUInt8x16>);
@@ -1129,43 +1129,6 @@ namespace Graphyte::Maths::Impl
 
 namespace Graphyte::Maths::Impl
 {
-    // Vector2, Vector3, Vector4, Quaternion, Plane
-    template <typename T, typename = void>
-    constexpr bool IsSimdVector = false;
-
-    template <typename T>
-    constexpr bool IsSimdVector<T, std::void_t<typename T::IsSimdVector>> = true;
-
-
-    // Matrix
-    template <typename T, typename = void>
-    constexpr bool IsSimdMatrix = false;
-
-    template <typename T>
-    constexpr bool IsSimdMatrix<T, std::void_t<typename T::IsSimdMatrix>> = true;
-
-
-    // Bool2, Bool3, Bool4
-    template <typename T, typename = void>
-    constexpr bool IsSimdMask = false;
-
-    template <typename T>
-    constexpr bool IsSimdMask<T, std::void_t<typename T::IsSimdMask>> = true;
-
-    // Vector2, Vector3, Vector4, Quaternion, Plane, Color, Matrix, Bool2, Bool3, Bool4
-    template <typename T, typename = void>
-    constexpr bool IsSimdEqualComparable = false;
-
-    template <typename T>
-    constexpr bool IsSimdEqualComparable<T, std::void_t<typename T::IsSimdEqualComparable>> = true;
-
-    // Vector2, Vector3, Vector4, Color
-    template <typename T, typename = void>
-    constexpr bool IsSimdOrderComparable = false;
-
-    template <typename T>
-    constexpr bool IsSimdOrderComparable<T, std::void_t<typename T::IsSimdOrderComparable>> = true;
-
     template <size_t Components>
     struct BitMaskFromComponents;
 
@@ -1183,30 +1146,82 @@ namespace Graphyte::Maths::Impl
 // Concepts
 //
 
-namespace Graphyte::Maths::Impl
+namespace Graphyte::Maths
 {
     template <typename T>
-    concept SimdVectorType = Maths::Impl::IsSimdVector<T>;
+    struct IsOrderComparable : std::false_type { };
 
     template <typename T>
-    concept SimdMatrixType = Maths::Impl::IsSimdMatrix<T>;
+    concept OrderComparable = IsOrderComparable<T>::value;
 
     template <typename T>
-    concept SimdMaskType = Maths::Impl::IsSimdMask<T>;
+    struct IsEqualComparable : std::false_type { };
 
     template <typename T>
-    concept SimdMaskableType = Maths::Impl::IsSimdVector<T>
-        and Maths::Impl::IsSimdMask<typename T::MaskType>;
+    concept EqualComparable = IsEqualComparable<T>::value;
 
     template <typename T>
-    concept SimdEqualComparableType = Maths::Impl::IsSimdEqualComparable<T>;
+    concept Comparable = EqualComparable<T> and OrderComparable<T>;
+
 
     template <typename T>
-    concept SimdOrderComparableType = Maths::Impl::IsSimdOrderComparable<T>;
+    struct IsLoadable : std::false_type { };
 
     template <typename T>
-    concept SimdComparableType = Maths::Impl::IsSimdEqualComparable<T>
-        and Maths::Impl::IsSimdOrderComparable<T>;
+    concept Loadable = IsLoadable<T>::value;
+
+
+    template <typename T>
+    struct IsStorable : std::false_type { };
+
+    template <typename T>
+    concept Storable = IsStorable<T>::value;
+
+
+    template <typename T>
+    struct IsArithmetic : std::false_type { };
+
+    template <typename T>
+    concept Arithmetic = IsArithmetic<T>::value;
+
+    template <typename T>
+    struct IsBitwisable : std::false_type { };
+
+    template <typename T>
+    concept Bitwisable = IsBitwisable<T>::value;
+
+    template <typename T>
+    struct IsTranscendental : std::false_type { };
+
+    template <typename T>
+    concept Transcendental = IsTranscendental<T>::value;
+
+    template <typename T>
+    struct IsRoundable : std::false_type { };
+
+    template <typename T>
+    concept Roundable = IsRoundable<T>::value;
+
+    template <typename T>
+    struct IsInterpolable : std::false_type { };
+
+    template <typename T>
+    concept Interpolable = IsInterpolable<T>::value and Arithmetic<T>;
+
+    template <typename T>
+    concept ScalarLike = std::is_floating_point_v<T>;
+
+    template <typename T>
+    struct IsVectorLike : std::false_type { };
+
+    template <typename T>
+    concept VectorLike = IsVectorLike<T>::value;
+
+    template <typename T>
+    struct IsMatrixLike : std::false_type { };
+
+    template <typename T>
+    concept MatrixLike = IsMatrixLike<T>::value;
 }
 
 // =================================================================================================
@@ -1218,124 +1233,207 @@ namespace Graphyte::Maths
 {
     struct Bool4 final
     {
-        Impl::VectorFloat4 V;
+        Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 4;
         using ComponentType = uint32_t;
-
-        using IsSimdMask = void;
-        using IsEqualComparable = void;
+        using MaskType = Bool4;
     };
+
+    template <> struct IsVectorLike<Bool4> : std::true_type { };
+    template <> struct IsEqualComparable<Bool4> : std::true_type { };
+    template <> struct IsBitwisable<Bool4> : std::true_type { };
+
 
     struct Bool3 final
     {
-        Impl::VectorFloat4 V;
+        Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 3;
         using ComponentType = uint32_t;
-
-        using IsSimdMask = void;
-        using IsEqualComparable = void;
+        using MaskType = Bool3;
     };
+
+    template <> struct IsVectorLike<Bool3> : std::true_type { };
+    template <> struct IsEqualComparable<Bool3> : std::true_type { };
+    template <> struct IsBitwisable<Bool3> : std::true_type { };
+
 
     struct Bool2 final
     {
-        Impl::VectorFloat4 V;
+        Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 2;
         using ComponentType = uint32_t;
-
-        using IsSimdMask = void;
-        using IsEqualComparable = void;
+        using MaskType = Bool2;
     };
+
+    template <> struct IsVectorLike<Bool2> : std::true_type { };
+    template <> struct IsEqualComparable<Bool2> : std::true_type { };
+    template <> struct IsBitwisable<Bool2> : std::true_type { };
+    
+
+    struct Bool1 final
+    {
+        Impl::SimdFloat32x4 V;
+
+        static constexpr const size_t Components = 1;
+        using ComponentType = uint32_t;
+        using MaskType = Bool1;
+    };
+
+    template <> struct IsVectorLike<Bool1> : std::true_type { };
+    template <> struct IsEqualComparable<Bool1> : std::true_type { };
+    template <> struct IsBitwisable<Bool1> : std::true_type { };
 
     struct Vector4 final
     {
-        Impl::VectorFloat4 V;
+        Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 4;
         using ComponentType = float;
-
         using MaskType = Bool4;
-
-        using IsSimdVector = void;
-        using IsSimdEqualComparable = void;
-        using IsSimdOrderComparable = void;
     };
+
+    template <> struct IsVectorLike<Vector4> : std::true_type { };
+    template <> struct IsLoadable<Vector4> : std::true_type { };
+    template <> struct IsStorable<Vector4> : std::true_type { };
+    template <> struct IsOrderComparable<Vector4> : std::true_type { };
+    template <> struct IsEqualComparable<Vector4> : std::true_type { };
+    template <> struct IsArithmetic<Vector4> : std::true_type { };
+    template <> struct IsTranscendental<Vector4> : std::true_type { };
+    template <> struct IsRoundable<Vector4> : std::true_type { };
+    template <> struct IsInterpolable<Vector4> : std::true_type { };
 
     struct Vector3 final
     {
-        Impl::VectorFloat4 V;
+        Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 3;
         using ComponentType = float;
         using MaskType = Bool3;
-        using IsSimdVector = void;
-        using IsSimdEqualComparable = void;
-        using IsSimdOrderComparable = void;
     };
+
+    template <> struct IsVectorLike<Vector3> : std::true_type { };
+    template <> struct IsLoadable<Vector3> : std::true_type { };
+    template <> struct IsStorable<Vector3> : std::true_type { };
+    template <> struct IsOrderComparable<Vector3> : std::true_type { };
+    template <> struct IsEqualComparable<Vector3> : std::true_type { };
+    template <> struct IsArithmetic<Vector3> : std::true_type { };
+    template <> struct IsTranscendental<Vector3> : std::true_type { };
+    template <> struct IsRoundable<Vector3> : std::true_type { };
+    template <> struct IsInterpolable<Vector3> : std::true_type { };
 
     struct Vector2 final
     {
-        Impl::VectorFloat4 V;
+        Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 2;
         using ComponentType = float;
         using MaskType = Bool2;
-        using IsSimdVector = void;
-        using IsSimdEqualComparable = void;
-        using IsSimdOrderComparable = void;
     };
+
+    template <> struct IsVectorLike<Vector2> : std::true_type { };
+    template <> struct IsLoadable<Vector2> : std::true_type { };
+    template <> struct IsStorable<Vector2> : std::true_type { };
+    template <> struct IsOrderComparable<Vector2> : std::true_type { };
+    template <> struct IsEqualComparable<Vector2> : std::true_type { };
+    template <> struct IsArithmetic<Vector2> : std::true_type { };
+    template <> struct IsTranscendental<Vector2> : std::true_type { };
+    template <> struct IsRoundable<Vector2> : std::true_type { };
+    template <> struct IsInterpolable<Vector2> : std::true_type { };
+
+    struct Vector1 final
+    {
+        Impl::SimdFloat32x4 V;
+        static constexpr const size_t Components = 1;
+        using ComponentType = float;
+        using MaskType = Bool1;
+    };
+
+    template <> struct IsVectorLike<Vector1> : std::true_type { };
+    template <> struct IsLoadable<Vector1> : std::true_type { };
+    template <> struct IsStorable<Vector1> : std::true_type { };
+    template <> struct IsOrderComparable<Vector1> : std::true_type { };
+    template <> struct IsEqualComparable<Vector1> : std::true_type { };
+    template <> struct IsArithmetic<Vector1> : std::true_type { };
+    template <> struct IsTranscendental<Vector1> : std::true_type { };
+    template <> struct IsRoundable<Vector1> : std::true_type { };
+    template <> struct IsInterpolable<Vector1> : std::true_type { };
+
 
     struct Quaternion final
     {
-        Impl::VectorFloat4 V;
+        Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 4;
         using ComponentType = float;
         using MaskType = Bool4;
-        using IsSimdEqualComparable = void;
     };
+
+    template <> struct IsVectorLike<Quaternion> : std::true_type {};
+    template <> struct IsEqualComparable<Quaternion> : std::true_type {};
+    template <> struct IsLoadable<Quaternion> : std::true_type {};
+    template <> struct IsStorable<Quaternion> : std::true_type {};
 
     struct Plane final
     {
-        Impl::VectorFloat4 V;
+        Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 4;
         using ComponentType = float;
         using MaskType = Bool4;
-        using IsSimdEqualComparable = void;
     };
+    
+    template <> struct IsVectorLike<Plane> : std::true_type { };
+    template <> struct IsEqualComparable<Plane> : std::true_type { };
+    template <> struct IsLoadable<Plane> : std::true_type { };
+    template <> struct IsStorable<Plane> : std::true_type { };
 
     struct Sphere final
     {
-        Impl::VectorFloat4 V;
+        Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 4;
         using ComponentType = float;
         using MaskType = Bool4;
-        using IsSimdEqualComparable = void;
     };
+
+    template <> struct IsVectorLike<Sphere> : std::true_type { };
+    template <> struct IsEqualComparable<Sphere> : std::true_type { };
+    template <> struct IsLoadable<Sphere> : std::true_type { };
+    template <> struct IsStorable<Sphere> : std::true_type { };
 
     struct Matrix final
     {
         Impl::MatrixFloat4x4 M;
 
         static constexpr const size_t Components = 16;
-        using IsSimdMatrix = void;
-        using IsSimdEqualComparable = void;
+        using ComponentType = float;
     };
+
+    template <> struct IsMatrixLike<Matrix> : std::true_type { };
+    template <> struct IsEqualComparable<Matrix> : std::true_type { };
+    template <> struct IsLoadable<Matrix> : std::true_type { };
+    template <> struct IsStorable<Matrix> : std::true_type { };
+    template <> struct IsArithmetic<Matrix> : std::true_type { };
+    template <> struct IsRoundable<Matrix> : std::true_type { };
 
     struct Color final
     {
-        Impl::VectorFloat4 V;
+        Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 4;
         using ComponentType = float;
         using MaskType = Bool4;
-        using IsSimdEqualComparable = void;
-        using IsSimdOrderComparable = void;
     };
+    
+    template <> struct IsVectorLike<Color> : std::true_type { };
+    template <> struct IsLoadable<Color> : std::true_type { };
+    template <> struct IsStorable<Color> : std::true_type { };
+    template <> struct IsOrderComparable<Color> : std::true_type { };
+    template <> struct IsEqualComparable<Color> : std::true_type { };
+    template <> struct IsInterpolable<Color> : std::true_type { };
 }
 
 
@@ -1969,7 +2067,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Load(Float4A const* source) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components == 4)
+        requires VectorLike<T> and Loadable<T> and (T::Components == 4)
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -1990,7 +2088,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float4A* destination, T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components == 4)
+        requires VectorLike<T> and Storable<T> and (T::Components == 4)
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void*>(destination), std::align_val_t{ 16 }));
@@ -2007,7 +2105,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Load(Float4 const* source) noexcept
-        requires (Impl::SimdVectorType<T>and T::Components == 4)
+        requires VectorLike<T> and Loadable<T> and (T::Components == 4)
     {
         GX_ASSERT(source != nullptr);
 
@@ -2027,7 +2125,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float4* destination, T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components == 4)
+        requires VectorLike<T> and Storable<T> and (T::Components == 4)
     {
         GX_ASSERT(destination != nullptr);
 
@@ -2043,7 +2141,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Load(Float3A const* source) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+        requires VectorLike<T> and Loadable<T> and (T::Components >= 3)
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -2066,7 +2164,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float3A* destination, T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+        requires VectorLike<T> and Storable<T> and (T::Components >= 3)
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void*>(destination), std::align_val_t{ 16 }));
@@ -2084,7 +2182,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Load(Float3 const* source) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+        requires VectorLike<T> and Loadable<T> and (T::Components >= 3)
     {
         GX_ASSERT(source != nullptr);
 
@@ -2109,7 +2207,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float3* destination, T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+        requires VectorLike<T> and Storable<T> and (T::Components >= 3)
     {
         GX_ASSERT(destination != nullptr);
 
@@ -2128,7 +2226,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Load(Float2A const* source) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+        requires VectorLike<T> and Loadable<T> and (T::Components >= 2)
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -2150,7 +2248,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float2A* destination, T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+        requires VectorLike<T> and Storable<T> and (T::Components >= 2)
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void*>(destination), std::align_val_t{ 16 }));
@@ -2165,7 +2263,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Load(Float2 const* source) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+        requires VectorLike<T> and Loadable<T> and (T::Components >= 2)
     {
         GX_ASSERT(source != nullptr);
 
@@ -2188,7 +2286,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float2* destination, T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+        requires VectorLike<T> and Storable<T> and (T::Components >= 2)
     {
 
         GX_ASSERT(destination != nullptr);
@@ -2214,7 +2312,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall SplatX(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and (T::Components >= 1)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const value = v.V.F[0];
@@ -2235,7 +2333,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SplatY(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and (T::Components >= 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const value = v.V.F[1];
@@ -2254,7 +2352,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SplatZ(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and (T::Components >= 3)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const value = v.V.F[2];
@@ -2273,7 +2371,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SplatW(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and (T::Components >= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const value = v.V.F[3];
@@ -2292,7 +2390,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline float mathcall GetByIndex(T v, size_t index) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T>
     {
         GX_ASSERT(index < 4);
         GX_COMPILER_ASSUME(index < 4);
@@ -2308,7 +2406,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetByIndex(T v, float value, size_t index) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T>
     {
         GX_ASSERT(index < 4);
         GX_COMPILER_ASSUME(index < 4);
@@ -2321,7 +2419,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall GetByIndex(float* result, T v, size_t index) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T>
     {
         GX_ASSERT(result != nullptr);
         GX_ASSERT(index < 4);
@@ -2338,7 +2436,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetByIndex(T v, float const* value, size_t index)
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T>
     {
         GX_ASSERT(value != nullptr);
         GX_ASSERT(index < 4);
@@ -2352,7 +2450,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline float mathcall GetX(T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 1)
+        requires VectorLike<T> and (T::Components >= 1)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.F[0];
@@ -2363,7 +2461,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline float mathcall GetY(T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+        requires VectorLike<T> and (T::Components >= 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.F[1];
@@ -2375,7 +2473,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline float mathcall GetZ(T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+        requires VectorLike<T> and (T::Components >= 3)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.F[2];
@@ -2387,7 +2485,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline float mathcall GetW(T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 4)
+        requires VectorLike<T> and (T::Components >= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.F[3];
@@ -2399,7 +2497,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall GetX(float* result, T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 1)
+        requires VectorLike<T> and (T::Components >= 1)
     {
         GX_ASSERT(result != nullptr);
 
@@ -2412,7 +2510,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall GetY(float* result, T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+        requires VectorLike<T> and (T::Components >= 2)
     {
         GX_ASSERT(result != nullptr);
 
@@ -2425,7 +2523,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall GetZ(float* result, T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+        requires VectorLike<T> and (T::Components >= 3)
     {
         GX_ASSERT(result != nullptr);
 
@@ -2438,7 +2536,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall GetW(float* result, T v) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 4)
+        requires VectorLike<T> and (T::Components >= 4)
     {
         GX_ASSERT(result != nullptr);
 
@@ -2451,7 +2549,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetX(T v, float value) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 1)
+        requires VectorLike<T> and (T::Components >= 1)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2471,7 +2569,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetY(T v, float value) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+        requires VectorLike<T> and (T::Components >= 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2491,7 +2589,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetZ(T v, float value) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+        requires VectorLike<T> and (T::Components >= 3)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2511,7 +2609,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetW(T v, float value) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 4)
+        requires VectorLike<T> and (T::Components >= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2531,7 +2629,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetX(T v, float const* value) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 1)
+        requires VectorLike<T> and (T::Components >= 1)
     {
         GX_ASSERT(value != nullptr);
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -2552,7 +2650,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetY(T v, float const* value) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+        requires VectorLike<T> and (T::Components >= 2)
     {
         GX_ASSERT(value != nullptr);
 
@@ -2575,7 +2673,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetZ(T v, float const* value) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+        requires VectorLike<T> and (T::Components >= 3)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2597,7 +2695,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetW(T v, float const* value) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 4)
+        requires VectorLike<T> and (T::Components >= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2627,56 +2725,56 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall UnitX() noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 1)
+        requires VectorLike<T> and (T::Components >= 1)
     {
         return { Impl::VEC4_POSITIVE_UNIT_X.V };
     }
 
     template <typename T>
     mathinline T mathcall UnitY() noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+        requires VectorLike<T> and (T::Components >= 2)
     {
         return { Impl::VEC4_POSITIVE_UNIT_Y.V };
     }
 
     template <typename T>
     mathinline T mathcall UnitZ() noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+        requires VectorLike<T> and (T::Components >= 3)
     {
         return { Impl::VEC4_POSITIVE_UNIT_Z.V };
     }
 
     template <typename T>
     mathinline T mathcall UnitW() noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 4)
+        requires VectorLike<T> and (T::Components >= 4)
     {
         return { Impl::VEC4_POSITIVE_UNIT_W.V };
     }
 
     template <typename T>
     mathinline T mathcall NegativeUnitX() noexcept
-        requires (Impl::SimdVectorType<T>and T::Components >= 1)
+        requires VectorLike<T> and (T::Components >= 1)
     {
         return { Impl::VEC4_NEGATIVE_UNIT_X.V };
     }
 
     template <typename T>
     mathinline T mathcall NegativeUnitY() noexcept
-        requires (Impl::SimdVectorType<T>and T::Components >= 2)
+        requires VectorLike<T> and (T::Components >= 2)
     {
         return { Impl::VEC4_NEGATIVE_UNIT_Y.V };
     }
 
     template <typename T>
     mathinline T mathcall NegativeUnitZ() noexcept
-        requires (Impl::SimdVectorType<T>and T::Components >= 3)
+        requires VectorLike<T> and (T::Components >= 3)
     {
         return { Impl::VEC4_NEGATIVE_UNIT_Z.V };
     }
 
     template <typename T>
     mathinline T mathcall NegativeUnitW() noexcept
-        requires (Impl::SimdVectorType<T>and T::Components >= 4)
+        requires VectorLike<T> and (T::Components >= 4)
     {
         return { Impl::VEC4_NEGATIVE_UNIT_W.V };
     }
@@ -2684,7 +2782,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Zero() noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return { Impl::VEC4_ZERO_4.V };
@@ -2695,35 +2793,35 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall One() noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T>
     {
         return { Impl::VEC4_ONE_4.V };
     }
 
     template <typename T>
     mathinline T mathcall Infinity() noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T>
     {
         return { Impl::VEC4_INFINITY.V };
     }
 
     template <typename T>
     mathinline T mathcall Nan() noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T>
     {
         return { Impl::VEC4_QNAN.V };
     }
 
     template <typename T>
     mathinline T mathcall Epsilon() noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T>
     {
         return { Impl::VEC4_EPSILON.V };
     }
 
     template <typename T>
     mathinline T mathcall SignMask() noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return { Impl::VEC4_NEGATIVE_ZERO.V };
@@ -2744,7 +2842,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Make(float x, float y, float z, float w) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 4)
+        requires VectorLike<T> and (T::Components >= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2762,7 +2860,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Make(float x, float y, float z) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 3)
+        requires VectorLike<T> and (T::Components >= 3)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2780,7 +2878,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Make(float x, float y) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 2)
+        requires VectorLike<T> and (T::Components >= 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2798,7 +2896,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Make(float x) noexcept
-        requires (Impl::SimdVectorType<T> and T::Components >= 1)
+        requires VectorLike<T> and (T::Components >= 1)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2816,7 +2914,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Splat(float value) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2832,7 +2930,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall MakeUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
-        requires (Impl::SimdVectorType<T> or Impl::SimdMaskType<T>)
+        requires VectorLike<T> and Bitwisable<T> and (T::Components == 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2855,7 +2953,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SplatUInt(uint32_t value) noexcept
-        requires (Impl::SimdVectorType<T> or Impl::SimdMaskType<T>)
+        requires VectorLike<T> and Bitwisable<T> and (T::Components == 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2883,7 +2981,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall True() noexcept
-        requires (Impl::SimdMaskType<T>)
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2902,7 +3000,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall False() noexcept
-        requires (Impl::SimdMaskType<T>)
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result = { { {
@@ -2920,7 +3018,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall And(T a, T b) noexcept
-        requires (Impl::SimdMaskType<T>)
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2939,7 +3037,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall AndNot(T a, T b) noexcept
-        requires (Impl::SimdMaskType<T>)
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result = { { {
@@ -2957,7 +3055,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Or(T a, T b) noexcept
-        requires (Impl::SimdMaskType<T>)
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2976,7 +3074,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Xor(T a, T b) noexcept
-        requires (Impl::SimdMaskType<T>)
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2995,7 +3093,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Nor(T a, T b) noexcept
-        requires (Impl::SimdMaskType<T>)
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result = { { {
@@ -3023,7 +3121,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall CompareEqual(T a, T b) noexcept
-        requires (Impl::SimdMaskType<T> and Impl::SimdEqualComparableType<T>)
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -3042,7 +3140,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CompareNotEqual(T a, T b) noexcept
-        requires (Impl::SimdMaskType<T> and Impl::SimdEqualComparableType<T>)
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -3139,7 +3237,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsEqual(T a, T b) noexcept
-        requires (Impl::SimdMaskType<T> and SimdEqualComparable<T>)
+        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T>
     {
         T const result = Maths::CompareEqual(a, b);
         return AllTrue(result);
@@ -3147,7 +3245,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsNotEqual(T a, T b) noexcept
-        requires (Impl::SimdMaskType<T> and SimdEqualComparable<T>)
+        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T>
     {
         T const result = Maths::CompareNotEqual(a, b);
         return AllTrue(result);
@@ -3165,7 +3263,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Cos(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3183,7 +3281,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Sin(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3201,7 +3299,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall SinCos(T& result_sin, T& result_cos, T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const vsin{ { {
@@ -3228,7 +3326,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Tan(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3244,7 +3342,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Asin(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3260,7 +3358,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Acos(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3276,7 +3374,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Atan(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3292,7 +3390,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Atan2(T y, T x) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3308,7 +3406,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Sinh(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3324,7 +3422,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Cosh(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3340,7 +3438,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Tanh(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3356,7 +3454,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Asinh(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3372,7 +3470,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Acosh(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3389,7 +3487,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Atanh(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3405,7 +3503,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Log(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3421,7 +3519,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Log10(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3437,7 +3535,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Log2(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3453,7 +3551,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Exp(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3469,7 +3567,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Exp10(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3485,7 +3583,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Exp2(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3501,7 +3599,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Power(T x, T y) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3517,7 +3615,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Hypot(T x, T y) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3533,7 +3631,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Sqrt(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3549,7 +3647,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SqrtEst(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3566,14 +3664,14 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall InvSqrt(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
         return { _mm_rsqrt_ps(v.V) };
     }
 
     template <typename T>
     mathinline T mathcall Cbrt(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3589,7 +3687,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall InvCbrt(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Transcendental<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3605,7 +3703,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Abs(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3627,7 +3725,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Negate(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3653,7 +3751,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Add(T a, T b) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3671,7 +3769,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Subtract(T a, T b) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3689,7 +3787,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Multiply(T a, T b) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3707,7 +3805,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Multiply(T a, typename T::ComponentType b) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3726,7 +3824,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Divide(T a, T b) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3744,7 +3842,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Divide(T a, typename T::ComponentType b) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const invb = 1.0F / b;
@@ -3767,7 +3865,7 @@ namespace Graphyte::Maths
     // (a * b) + c
     template <typename T>
     mathinline T mathcall MultiplyAdd(T a, T b, T c) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3786,7 +3884,7 @@ namespace Graphyte::Maths
     // (a * b) - c
     template <typename T>
     mathinline T mathcall MultiplySubtract(T a, T b, T c) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3805,7 +3903,7 @@ namespace Graphyte::Maths
     // -(a * b) + c
     template <typename T>
     mathinline T mathcall NegateMultiplyAdd(T a, T b, T c) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3824,7 +3922,7 @@ namespace Graphyte::Maths
     // -(a * b) - c
     template <typename T>
     mathinline T mathcall NegateMultiplySubtract(T a, T b, T c) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3851,7 +3949,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Lerp(T a, T b, float t) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         T const scale = Make<T>(t);
@@ -3868,7 +3966,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Lerp(T a, T b, T t) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         T const length = Subtract<T>(b, a);
@@ -3891,7 +3989,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Min(T a, T b) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Comparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3908,7 +4006,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Max(T a, T b) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Comparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3965,7 +4063,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Ceiling(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Roundable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 result{ { {
@@ -3988,7 +4086,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Floor(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Roundable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4011,7 +4109,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Truncate(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Roundable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 result;
@@ -4045,7 +4143,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Round(T v) noexcept
-        requires (Impl::SimdVectorType<T>)
+        requires VectorLike<T> and Roundable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4067,26 +4165,31 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Fract(T v) noexcept
+    mathinline T mathcall Fraction(T x, T y) noexcept
+        requires VectorLike<T> and Roundable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                v.V.F[0] - std::floor(v.V.F[0]),
-                v.V.F[1] - std::floor(v.V.F[1]),
-                v.V.F[2] - std::floor(v.V.F[2]),
-                v.V.F[3] - std::floor(v.V.F[3]),
+                fmodf(x.V.F[0], y.V.F[0]),
+                fmodf(x.V.F[1], y.V.F[1]),
+                fmodf(x.V.F[2], y.V.F[2]),
+                fmodf(x.V.F[3], y.V.F[3]),
             } } };
         return { result.V };
+#elif GRAPHYTE_MATH_SVML
+        return { _mm_fmod_ps(x.V, y.V) };
 #elif GRAPHYTE_HW_AVX
-        __m128 const down = _mm_floor_ps(v.V);
-        __m128 const result = _mm_sub_ps(v.V, down);
+        __m128 const q = _mm_div_ps(x.V, y.V);
+        __m128 const t = _mm_round_ps(q, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
+        __m128 const c = _mm_cvtepi32_ps(_mm_cvttps_epi32(t));
+        __m128 const result = _mm_fnmadd_ps(c, y.V, x.V);
         return { result };
 #endif
     }
 
-    mathinline float mathcall Fract(float value) noexcept
+    mathinline float mathcall Fraction(float x, float y) noexcept
     {
-        return value - std::floor(value);
+        return fmodf(x, y);
     }
 
     mathinline float mathcall Modulo(float a, float b) noexcept
@@ -4104,7 +4207,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline typename T::MaskType mathcall CompareEqual(T a, T b) noexcept
-        requires (Impl::SimdMaskableType<T> and Impl::SimdEqualComparableType<T>)
+        requires VectorLike<T> and EqualComparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4122,7 +4225,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareEqual(T a, T b, T epsilon) noexcept
-        requires (Impl::SimdMaskableType<T> and Impl::SimdEqualComparableType<T>)
+        requires VectorLike<T> and EqualComparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const dx = (a.V.F[0] - b.V.F[0]);
@@ -4155,7 +4258,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareNotEqual(T a, T b) noexcept
-        requires (Impl::SimdMaskableType<T> and Impl::SimdEqualComparableType<T>)
+        requires VectorLike<T> and EqualComparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4173,7 +4276,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareGreater(T a, T b) noexcept
-        requires (Impl::SimdMaskableType<T> and Impl::SimdOrderComparableType<T>)
+        requires VectorLike<T> and OrderComparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4191,7 +4294,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareGreaterEqual(T a, T b) noexcept
-        requires (Impl::SimdMaskableType<T> and Impl::SimdOrderComparableType<T>)
+        requires VectorLike<T> and OrderComparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4209,7 +4312,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareLess(T a, T b) noexcept
-        requires (Impl::SimdMaskableType<T> and Impl::SimdOrderComparableType<T>)
+        requires VectorLike<T> and OrderComparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4227,7 +4330,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareLessEqual(T a, T b) noexcept
-        requires (Impl::SimdMaskableType<T> and Impl::SimdOrderComparableType<T>)
+        requires VectorLike<T> and OrderComparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4245,7 +4348,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareNan(T v) noexcept
-        requires (Impl::SimdMaskableType<T>)
+        requires VectorLike<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4263,7 +4366,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareInfinite(T v) noexcept
-        requires (Impl::SimdMaskableType<T>)
+        requires VectorLike<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {

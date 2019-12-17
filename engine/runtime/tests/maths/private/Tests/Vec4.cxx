@@ -22,7 +22,7 @@ TEST_CASE("Maths / LoadStore")
 
     Plane const p1 = Load<Plane>(&f1);
     Float2A f3{};
-    Store<Float2A>(&f3, p1);
+    Store<Plane>(&f3, p1);
 
     CHECK(f3.X == 1.0F);
     CHECK(f3.Y == 2.0F);
@@ -75,34 +75,34 @@ TEST_CASE("Maths / Vector / Rounding")
         Vector4 const r3 = Round(v3);
         Vector4 const r4 = Round(v4);
 
-        CHECK(GetX(r1) == 0.0F);
-        CHECK(GetY(r1) == 0.0F);
-        CHECK(GetZ(r1) == 1.0F);
-        CHECK(GetW(r1) == 1.0F);
+        CHECK(GetX(r1) == Approx{ 0.0F });
+        CHECK(GetY(r1) == Approx{ 0.0F });
+        CHECK(GetZ(r1) == Approx{ 1.0F });
+        CHECK(GetW(r1) == Approx{ 1.0F });
 
-        CHECK(GetX(r2) == 0.0F);
-        CHECK(GetY(r2) == 0.0F);
-        CHECK(GetZ(r2) == 0.0F);
-        CHECK(GetW(r2) == -1.0F);
+        CHECK(GetX(r2) == Approx{ 0.0F });
+        CHECK(GetY(r2) == Approx{ 0.0F });
+        CHECK(GetZ(r2) == Approx{ 0.0F });
+        CHECK(GetW(r2) == Approx{ -1.0F });
 
-        CHECK(GetX(r3) == 10.0F);
-        CHECK(GetY(r3) == 3330.0F);
-        CHECK(GetZ(r3) == 5511.0F);
-        CHECK(GetW(r3) == 124421.0F);
+        CHECK(GetX(r3) == Approx{ 10.0F });
+        CHECK(GetY(r3) == Approx{ 3330.0F });
+        CHECK(GetZ(r3) == Approx{ 5511.0F });
+        CHECK(GetW(r3) == Approx{ 124421.0F });
 
-        CHECK(GetX(r4) == -20.0F);
-        CHECK(GetY(r4) == 44444440.0F);
-        CHECK(GetZ(r4) == -1120.0F);
-        CHECK(GetW(r4) == -512521.0F);
+        CHECK(GetX(r4) == Approx{ -20.0F });
+        CHECK(GetY(r4) == Approx{ 44444440.0F });
+        CHECK(GetZ(r4) == Approx{ -1120.0F });
+        CHECK(GetW(r4) == Approx{ -512521.0F });
 
-        CHECK(Round(0.1F) == 0.0F);
-        CHECK(Round(0.4F) == 0.0F);
-        CHECK(Round(0.6F) == 1.0F);
-        CHECK(Round(0.9F) == 1.0F);
-        CHECK(Round(-0.1F) == 0.0F);
-        CHECK(Round(0.5F) == 1.0F);
-        CHECK(Round(-0.5F) == -1.0F);
-        CHECK(Round(-0.9F) == -1.0F);
+        CHECK(Round(0.1F) == Approx{ 0.0F });
+        CHECK(Round(0.4F) == Approx{ 0.0F });
+        CHECK(Round(0.6F) == Approx{ 1.0F });
+        CHECK(Round(0.9F) == Approx{ 1.0F });
+        CHECK(Round(-0.1F) == Approx{ 0.0F });
+        CHECK(Round(0.5F) == Approx{ 1.0F });
+        CHECK(Round(-0.5F) == Approx{ -1.0F });
+        CHECK(Round(-0.9F) == Approx{ -1.0F });
     }
 
     SECTION("Truncate")
@@ -112,34 +112,145 @@ TEST_CASE("Maths / Vector / Rounding")
         Vector4 const r3 = Truncate(v3);
         Vector4 const r4 = Truncate(v4);
 
-        CHECK(GetX(r1) == 0.0F);
-        CHECK(GetY(r1) == 0.0F);
-        CHECK(GetZ(r1) == 0.0F);
-        CHECK(GetW(r1) == 0.0F);
+        CHECK(GetX(r1) == Approx{ 0.0F });
+        CHECK(GetY(r1) == Approx{ 0.0F });
+        CHECK(GetZ(r1) == Approx{ 0.0F });
+        CHECK(GetW(r1) == Approx{ 0.0F });
 
-        CHECK(GetX(r2) == 0.0F);
-        CHECK(GetY(r2) == 0.0F);
-        CHECK(GetZ(r2) == 0.0F);
-        CHECK(GetW(r2) == 0.0F);
+        CHECK(GetX(r2) == Approx{ 0.0F });
+        CHECK(GetY(r2) == Approx{ 0.0F });
+        CHECK(GetZ(r2) == Approx{ 0.0F });
+        CHECK(GetW(r2) == Approx{ 0.0F });
 
-        CHECK(GetX(r3) == 10.0F);
-        CHECK(GetY(r3) == 3330.0F);
-        CHECK(GetZ(r3) == 5510.0F);
-        CHECK(GetW(r3) == 124420.0F);
+        CHECK(GetX(r3) == Approx{ 10.0F });
+        CHECK(GetY(r3) == Approx{ 3330.0F });
+        CHECK(GetZ(r3) == Approx{ 5510.0F });
+        CHECK(GetW(r3) == Approx{ 124420.0F });
 
-        CHECK(GetX(r4) == -20.0F);
-        CHECK(GetY(r4) == 44444440.0F);
-        CHECK(GetZ(r4) == -1120.0F);
-        CHECK(GetW(r4) == -512520.0F);
+        CHECK(GetX(r4) == Approx{ -20.0F });
+        CHECK(GetY(r4) == Approx{ 44444440.0F });
+        CHECK(GetZ(r4) == Approx{ -1120.0F });
+        CHECK(GetW(r4) == Approx{ -512520.0F });
 
-        CHECK(Truncate(0.1F) == 0.0F);
-        CHECK(Truncate(0.4F) == 0.0F);
-        CHECK(Truncate(0.6F) == 0.0F);
-        CHECK(Truncate(0.9F) == 0.0F);
-        CHECK(Truncate(-0.1F) == 0.0F);
-        CHECK(Truncate(0.5F) == 0.0F);
-        CHECK(Truncate(-0.5F) == -0.0F);
-        CHECK(Truncate(-0.9F) == -0.0F);
+        CHECK(Truncate(0.1F) == Approx{ 0.0F });
+        CHECK(Truncate(0.4F) == Approx{ 0.0F });
+        CHECK(Truncate(0.6F) == Approx{ 0.0F });
+        CHECK(Truncate(0.9F) == Approx{ 0.0F });
+        CHECK(Truncate(-0.1F) == Approx{ 0.0F });
+        CHECK(Truncate(0.5F) == Approx{ 0.0F });
+        CHECK(Truncate(-0.5F) == Approx{ -0.0F });
+        CHECK(Truncate(-0.9F) == Approx{ -0.0F });
+    }
+
+    SECTION("Floor")
+    {
+        Vector4 const r1 = Floor(v1);
+        Vector4 const r2 = Floor(v2);
+        Vector4 const r3 = Floor(v3);
+        Vector4 const r4 = Floor(v4);
+
+        CHECK(GetX(r1) == Approx{ 0.0F });
+        CHECK(GetY(r1) == Approx{ 0.0F });
+        CHECK(GetZ(r1) == Approx{ 0.0F });
+        CHECK(GetW(r1) == Approx{ 0.0F });
+
+        CHECK(GetX(r2) == Approx{ -1.0F });
+        CHECK(GetY(r2) == Approx{ 0.0F });
+        CHECK(GetZ(r2) == Approx{ -1.0F });
+        CHECK(GetW(r2) == Approx{ -1.0F });
+
+        CHECK(GetX(r3) == Approx{ 10.0F });
+        CHECK(GetY(r3) == Approx{ 3330.0F });
+        CHECK(GetZ(r3) == Approx{ 5510.0F });
+        CHECK(GetW(r3) == Approx{ 124420.0F });
+
+        CHECK(GetX(r4) == Approx{ -21.0F });
+        CHECK(GetY(r4) == Approx{ 44444440.0F });
+        CHECK(GetZ(r4) == Approx{ -1121.0F });
+        CHECK(GetW(r4) == Approx{ -512520.0F });
+
+        CHECK(Floor(0.1F) == Approx{ 0.0F });
+        CHECK(Floor(0.4F) == Approx{ 0.0F });
+        CHECK(Floor(0.6F) == Approx{ 0.0F });
+        CHECK(Floor(0.9F) == Approx{ 0.0F });
+        CHECK(Floor(-0.1F) == Approx{ -1.0F });
+        CHECK(Floor(0.5F) == Approx{ 0.0F });
+        CHECK(Floor(-0.5F) == Approx{ -1.0F });
+        CHECK(Floor(-0.9F) == Approx{ -1.0F });
+    }
+
+    SECTION("Ceiling")
+    {
+        Vector4 const r1 = Ceiling(v1);
+        Vector4 const r2 = Ceiling(v2);
+        Vector4 const r3 = Ceiling(v3);
+        Vector4 const r4 = Ceiling(v4);
+
+        CHECK(GetX(r1) == Approx{ 1.0F });
+        CHECK(GetY(r1) == Approx{ 1.0F });
+        CHECK(GetZ(r1) == Approx{ 1.0F });
+        CHECK(GetW(r1) == Approx{ 1.0F });
+
+        CHECK(GetX(r2) == Approx{ 0.0F });
+        CHECK(GetY(r2) == Approx{ 1.0F });
+        CHECK(GetZ(r2) == Approx{ 0.0F });
+        CHECK(GetW(r2) == Approx{ 0.0F });
+
+        CHECK(GetX(r3) == Approx{ 11.0F });
+        CHECK(GetY(r3) == Approx{ 3331.0F });
+        CHECK(GetZ(r3) == Approx{ 5511.0F });
+        CHECK(GetW(r3) == Approx{ 124420.0F });
+
+        CHECK(GetX(r4) == Approx{ -20.0F });
+        CHECK(GetY(r4) == Approx{ 44444440.0F });
+        CHECK(GetZ(r4) == Approx{ -1120.0F });
+        CHECK(GetW(r4) == Approx{ -512520.0F });
+
+        CHECK(Ceiling(0.1F) == Approx{ 1.0F });
+        CHECK(Ceiling(0.4F) == Approx{ 1.0F });
+        CHECK(Ceiling(0.6F) == Approx{ 1.0F });
+        CHECK(Ceiling(0.9F) == Approx{ 1.0F });
+        CHECK(Ceiling(-0.1F) == Approx{ 0.0F });
+        CHECK(Ceiling(0.5F) == Approx{ 1.0F });
+        CHECK(Ceiling(-0.5F) == Approx{ -0.0F });
+        CHECK(Ceiling(-0.9F) == Approx{ -0.0F });
+    }
+
+    SECTION("Fraction")
+    {
+        Vector4 const r1 = Fraction(v1, One<Vector4>());
+        Vector4 const r2 = Fraction(v2, One<Vector4>());
+        Vector4 const r3 = Fraction(v3, One<Vector4>());
+        Vector4 const r4 = Fraction(v4, One<Vector4>());
+
+        CHECK(GetX(r1) == Approx{ 0.1F });
+        CHECK(GetY(r1) == Approx{ 0.4F });
+        CHECK(GetZ(r1) == Approx{ 0.6F });
+        CHECK(GetW(r1) == Approx{ 0.9F });
+
+        CHECK(GetX(r2) == Approx{ -0.1F });
+        CHECK(GetY(r2) == Approx{ 0.5F });
+        CHECK(GetZ(r2) == Approx{ -0.5F });
+        CHECK(GetW(r2) == Approx{ -0.9F });
+
+        CHECK(GetX(r3) == Approx{ 0.1F });
+        CHECK(GetY(r3) == Approx{ 0.4F }.margin(0.01F));
+        CHECK(GetZ(r3) == Approx{ 0.6F }.margin(0.01F));
+        CHECK(GetW(r3) == Approx{ 0.9F }.margin(0.01F));
+
+        CHECK(GetX(r4) == Approx{ -0.1F });
+        CHECK(GetY(r4) == Approx{ 0.0F }.margin(0.01F));
+        CHECK(GetZ(r4) == Approx{ -0.5F });
+        CHECK(GetW(r4) == Approx{ -0.9F }.margin(0.01F));
+
+        CHECK(Fraction(0.1F, 1.0F) == Approx{ 0.1F });
+        CHECK(Fraction(0.4F, 1.0F) == Approx{ 0.4F });
+        CHECK(Fraction(0.6F, 1.0F) == Approx{ 0.6F });
+        CHECK(Fraction(0.9F, 1.0F) == Approx{ 0.9F });
+        CHECK(Fraction(-0.1F, 1.0F) == Approx{ -0.1F });
+        CHECK(Fraction(0.5F, 1.0F) == Approx{ 0.5F });
+        CHECK(Fraction(-0.5F, 1.0F) == Approx{ -0.5F });
+        CHECK(Fraction(-0.9F, 1.0F) == Approx{ -0.9F });
     }
 }
 
