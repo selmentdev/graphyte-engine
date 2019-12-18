@@ -85,7 +85,7 @@ namespace Graphyte::Maths::Impl
 namespace Graphyte::Maths::Impl
 {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-    struct SimdFloat32x4 final
+    struct alignas(16) SimdFloat32x4 final
     {
         union
         {
@@ -112,12 +112,8 @@ namespace Graphyte::Maths::Impl
 namespace Graphyte::Maths::Impl
 {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-    struct MatrixFloat4x4 final
-#else
-    struct alignas(16) MatrixFloat4x4 final
-#endif
+    struct alignas(16) SimdFloat32x4x4 final
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
         union
         {
             SimdFloat32x4 R[4];
@@ -131,10 +127,14 @@ namespace Graphyte::Maths::Impl
             float M[4][4];
             float F[16];
         };
-#else
-        SimdFloat32x4 R[4];
-#endif
     };
+
+#else
+    struct alignas(16) SimdFloat32x4x4 final
+    {
+        SimdFloat32x4 R[4];
+    };
+#endif
 }
 // =================================================================================================
 //
@@ -1271,7 +1271,7 @@ namespace Graphyte::Maths
     template <> struct IsVectorLike<Bool2> : std::true_type { };
     template <> struct IsEqualComparable<Bool2> : std::true_type { };
     template <> struct IsBitwisable<Bool2> : std::true_type { };
-    
+
 
     struct Bool1 final
     {
@@ -1384,7 +1384,7 @@ namespace Graphyte::Maths
         using ComponentType = float;
         using MaskType = Bool4;
     };
-    
+
     template <> struct IsVectorLike<Plane> : std::true_type { };
     template <> struct IsEqualComparable<Plane> : std::true_type { };
     template <> struct IsLoadable<Plane> : std::true_type { };
@@ -1406,9 +1406,11 @@ namespace Graphyte::Maths
 
     struct Matrix final
     {
-        Impl::MatrixFloat4x4 M;
+        Impl::SimdFloat32x4x4 M;
 
         static constexpr const size_t Components = 16;
+        static constexpr const size_t Rows = 4;
+        static constexpr const size_t Columns = 4;
         using ComponentType = float;
     };
 
@@ -1427,7 +1429,7 @@ namespace Graphyte::Maths
         using ComponentType = float;
         using MaskType = Bool4;
     };
-    
+
     template <> struct IsVectorLike<Color> : std::true_type { };
     template <> struct IsLoadable<Color> : std::true_type { };
     template <> struct IsStorable<Color> : std::true_type { };
@@ -2430,7 +2432,7 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        __m128 const v_xy = _mm_loadl_epi64(reinterpret_cast<__m128* const*>(source));
+        __m128i const v_xy = _mm_loadl_epi64(reinterpret_cast<__m128i* const*>(source));
         return { _mm_castsi128_ps(v_xy) };
 #endif
     }
@@ -2979,6 +2981,9 @@ namespace Graphyte::Maths
         return { _mm_setzero_ps() };
 #endif
     }
+
+    template <typename T>
+    mathinline T mathcall Identity() noexcept = delete;
 
     template <typename T>
     mathinline T mathcall One() noexcept
@@ -5049,6 +5054,228 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
+    template <typename T>
+    mathinline T mathcall Load(Float4x4A const* source) noexcept
+        requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(source != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        Matrix result;
+
+        result.M.R[0].F[0] = source->M[0][0];
+        result.M.R[0].F[1] = source->M[0][1];
+        result.M.R[0].F[2] = source->M[0][2];
+        result.M.R[0].F[3] = source->M[0][3];
+
+        result.M.R[1].F[0] = source->M[1][0];
+        result.M.R[1].F[1] = source->M[1][1];
+        result.M.R[1].F[2] = source->M[1][2];
+        result.M.R[1].F[3] = source->M[1][3];
+
+        result.M.R[2].F[0] = source->M[2][0];
+        result.M.R[2].F[1] = source->M[2][1];
+        result.M.R[2].F[2] = source->M[2][2];
+        result.M.R[2].F[3] = source->M[2][3];
+
+        result.M.R[3].F[0] = source->M[3][0];
+        result.M.R[3].F[1] = source->M[3][1];
+        result.M.R[3].F[2] = source->M[3][2];
+        result.M.R[3].F[3] = source->M[3][3];
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+
+        Matrix result;
+
+        result.M.R[0] = _mm_load_ps(&source->M11);
+        result.M.R[1] = _mm_load_ps(&source->M21);
+        result.M.R[2] = _mm_load_ps(&source->M31);
+        result.M.R[3] = _mm_load_ps(&source->M41);
+
+        return result;
+
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float4x4A* destination, T m) noexcept
+    {
+        GX_ASSERT(destination != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        destination->M[0][0] = m.M.R[0].F[0];
+        destination->M[0][1] = m.M.R[0].F[1];
+        destination->M[0][2] = m.M.R[0].F[2];
+        destination->M[0][3] = m.M.R[0].F[3];
+
+        destination->M[1][0] = m.M.R[1].F[0];
+        destination->M[1][1] = m.M.R[1].F[1];
+        destination->M[1][2] = m.M.R[1].F[2];
+        destination->M[1][3] = m.M.R[1].F[3];
+
+        destination->M[2][0] = m.M.R[2].F[0];
+        destination->M[2][1] = m.M.R[2].F[1];
+        destination->M[2][2] = m.M.R[2].F[2];
+        destination->M[2][3] = m.M.R[2].F[3];
+
+        destination->M[3][0] = m.M.R[3].F[0];
+        destination->M[3][1] = m.M.R[3].F[1];
+        destination->M[3][2] = m.M.R[3].F[2];
+        destination->M[3][3] = m.M.R[3].F[3];
+
+#elif GRAPHYTE_HW_AVX
+
+        _mm_store_ps(&destination->M11, m.M.R[0]);
+        _mm_store_ps(&destination->M21, m.M.R[1]);
+        _mm_store_ps(&destination->M31, m.M.R[2]);
+        _mm_store_ps(&destination->M41, m.M.R[3]);
+
+#endif
+    }
+
+    //mathinline Matrix mathcall Load(Float4x3A const* source) noexcept;
+    //mathinline Matrix mathcall Load(Float3x4A const* source) noexcept;
+    //mathinline Matrix mathcall
+    //mathinline Matrix mathcall Load(Float3x3 const* source) noexcept;
+
+    mathinline Matrix mathcall Multiply(Matrix a, Matrix b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        Matrix result;
+
+        {
+            float const x = a.M.M[0][0];
+            float const y = a.M.M[0][1];
+            float const z = a.M.M[0][2];
+            float const w = a.M.M[0][3];
+
+            result.M.M[0][0] = (b.M.M[0][0] * x) + (b.M.M[1][0] * y) + (b.M.M[2][0] * z) + (b.M.M[3][0] * w);
+            result.M.M[0][1] = (b.M.M[0][1] * x) + (b.M.M[1][1] * y) + (b.M.M[2][1] * z) + (b.M.M[3][1] * w);
+            result.M.M[0][2] = (b.M.M[0][2] * x) + (b.M.M[1][2] * y) + (b.M.M[2][2] * z) + (b.M.M[3][2] * w);
+            result.M.M[0][3] = (b.M.M[0][3] * x) + (b.M.M[1][3] * y) + (b.M.M[2][3] * z) + (b.M.M[3][3] * w);
+        }
+
+        {
+            float const x = a.M.M[1][0];
+            float const y = a.M.M[1][1];
+            float const z = a.M.M[1][2];
+            float const w = a.M.M[1][3];
+
+            result.M.M[1][0] = (b.M.M[0][0] * x) + (b.M.M[1][0] * y) + (b.M.M[2][0] * z) + (b.M.M[3][0] * w);
+            result.M.M[1][1] = (b.M.M[0][1] * x) + (b.M.M[1][1] * y) + (b.M.M[2][1] * z) + (b.M.M[3][1] * w);
+            result.M.M[1][2] = (b.M.M[0][2] * x) + (b.M.M[1][2] * y) + (b.M.M[2][2] * z) + (b.M.M[3][2] * w);
+            result.M.M[1][3] = (b.M.M[0][3] * x) + (b.M.M[1][3] * y) + (b.M.M[2][3] * z) + (b.M.M[3][3] * w);
+        }
+
+        {
+            float const x = a.M.M[2][0];
+            float const y = a.M.M[2][1];
+            float const z = a.M.M[2][2];
+            float const w = a.M.M[2][3];
+
+            result.M.M[2][0] = (b.M.M[0][0] * x) + (b.M.M[1][0] * y) + (b.M.M[2][0] * z) + (b.M.M[3][0] * w);
+            result.M.M[2][1] = (b.M.M[0][1] * x) + (b.M.M[1][1] * y) + (b.M.M[2][1] * z) + (b.M.M[3][1] * w);
+            result.M.M[2][2] = (b.M.M[0][2] * x) + (b.M.M[1][2] * y) + (b.M.M[2][2] * z) + (b.M.M[3][2] * w);
+            result.M.M[2][3] = (b.M.M[0][3] * x) + (b.M.M[1][3] * y) + (b.M.M[2][3] * z) + (b.M.M[3][3] * w);
+        }
+
+        {
+            float const x = a.M.M[3][0];
+            float const y = a.M.M[3][1];
+            float const z = a.M.M[3][2];
+            float const w = a.M.M[3][3];
+
+            result.M.M[3][0] = (b.M.M[0][0] * x) + (b.M.M[1][0] * y) + (b.M.M[2][0] * z) + (b.M.M[3][0] * w);
+            result.M.M[3][1] = (b.M.M[0][1] * x) + (b.M.M[1][1] * y) + (b.M.M[2][1] * z) + (b.M.M[3][1] * w);
+            result.M.M[3][2] = (b.M.M[0][2] * x) + (b.M.M[1][2] * y) + (b.M.M[2][2] * z) + (b.M.M[3][2] * w);
+            result.M.M[3][3] = (b.M.M[0][3] * x) + (b.M.M[1][3] * y) + (b.M.M[2][3] * z) + (b.M.M[3][3] * w);
+        }
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+
+        Matrix result;
+
+        {
+            __m128 const x = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 0);
+            __m128 const y = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 1);
+            __m128 const z = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 2);
+            __m128 const w = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 3);
+
+            __m128 const abx = _mm_mul_ps(x, b.M.R[0]);
+            __m128 const aby = _mm_fmadd_ps(y, b.M.R[1], abx);
+            __m128 const abz = _mm_fmadd_ps(z, b.M.R[2], aby);
+            __m128 const abw = _mm_fmadd_ps(w, b.M.R[3], abz);
+
+            result.M.R[0] = abw;
+        }
+
+        {
+            __m128 const x = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 0);
+            __m128 const y = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 1);
+            __m128 const z = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 2);
+            __m128 const w = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 3);
+
+            __m128 const abx = _mm_mul_ps(x, b.M.R[0]);
+            __m128 const aby = _mm_fmadd_ps(y, b.M.R[1], abx);
+            __m128 const abz = _mm_fmadd_ps(z, b.M.R[2], aby);
+            __m128 const abw = _mm_fmadd_ps(w, b.M.R[3], abz);
+
+            result.M.R[1] = abw;
+        }
+
+        {
+            __m128 const x = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 0);
+            __m128 const y = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 1);
+            __m128 const z = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 2);
+            __m128 const w = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 3);
+
+            __m128 const abx = _mm_mul_ps(x, b.M.R[0]);
+            __m128 const aby = _mm_fmadd_ps(y, b.M.R[1], abx);
+            __m128 const abz = _mm_fmadd_ps(z, b.M.R[2], aby);
+            __m128 const abw = _mm_fmadd_ps(w, b.M.R[3], abz);
+
+            result.M.R[2] = abw;
+        }
+
+        {
+            __m128 const x = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 0);
+            __m128 const y = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 1);
+            __m128 const z = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 2);
+            __m128 const w = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 3);
+
+            __m128 const abx = _mm_mul_ps(x, b.M.R[0]);
+            __m128 const aby = _mm_fmadd_ps(y, b.M.R[1], abx);
+            __m128 const abz = _mm_fmadd_ps(z, b.M.R[2], aby);
+            __m128 const abw = _mm_fmadd_ps(w, b.M.R[3], abz);
+
+            result.M.R[3] = abw;
+        }
+
+        return result;
+
+#endif
+    }
+
+    template <>
+    mathinline Matrix mathcall Identity<Matrix>() noexcept
+    {
+        Matrix result;
+        result.M.R[0] = Impl::VEC4_POSITIVE_UNIT_X.V;
+        result.M.R[1] = Impl::VEC4_POSITIVE_UNIT_Y.V;
+        result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        return result;
+    }
+
     mathinline Vector4 mathcall GetBaseX(Matrix m) noexcept
     {
         return { m.M.R[0] };

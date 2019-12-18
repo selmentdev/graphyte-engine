@@ -1,6 +1,72 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / Matrix / Load-Store")
+{
+    using namespace Graphyte::Maths;
+
+    Float4x4A const mm{ { {
+        1.0F, 2.0F, 3.0F, 4.0F,
+        1.5F, 2.5F, 3.5F, 4.5F,
+        2.1F, 3.1F, 4.1F, 5.1F,
+        3.2F, 4.3F, 5.4F, 6.5F,
+    } } };
+
+    Matrix const m = Load<Matrix>(&mm);
+
+    Vector4 r0 = GetBaseX(m);
+    Vector4 r1 = GetBaseY(m);
+    Vector4 r2 = GetBaseZ(m);
+    Vector4 r3 = GetBaseW(m);
+
+    CHECK(GetX(r0) == mm.M11);
+    CHECK(GetY(r0) == mm.M12);
+    CHECK(GetZ(r0) == mm.M13);
+    CHECK(GetW(r0) == mm.M14);
+
+    CHECK(GetX(r1) == mm.M21);
+    CHECK(GetY(r1) == mm.M22);
+    CHECK(GetZ(r1) == mm.M23);
+    CHECK(GetW(r1) == mm.M24);
+
+    CHECK(GetX(r2) == mm.M31);
+    CHECK(GetY(r2) == mm.M32);
+    CHECK(GetZ(r2) == mm.M33);
+    CHECK(GetW(r2) == mm.M34);
+
+    CHECK(GetX(r3) == mm.M41);
+    CHECK(GetY(r3) == mm.M42);
+    CHECK(GetZ(r3) == mm.M43);
+    CHECK(GetW(r3) == mm.M44);
+
+    Matrix const mr = Multiply(Identity<Matrix>(), m);
+
+    r0 = GetBaseX(mr);
+    r1 = GetBaseY(mr);
+    r2 = GetBaseZ(mr);
+    r3 = GetBaseW(mr);
+
+    CHECK(GetX(r0) == mm.M11);
+    CHECK(GetY(r0) == mm.M12);
+    CHECK(GetZ(r0) == mm.M13);
+    CHECK(GetW(r0) == mm.M14);
+
+    CHECK(GetX(r1) == mm.M21);
+    CHECK(GetY(r1) == mm.M22);
+    CHECK(GetZ(r1) == mm.M23);
+    CHECK(GetW(r1) == mm.M24);
+
+    CHECK(GetX(r2) == mm.M31);
+    CHECK(GetY(r2) == mm.M32);
+    CHECK(GetZ(r2) == mm.M33);
+    CHECK(GetW(r2) == mm.M34);
+
+    CHECK(GetX(r3) == mm.M41);
+    CHECK(GetY(r3) == mm.M42);
+    CHECK(GetZ(r3) == mm.M43);
+    CHECK(GetW(r3) == mm.M44);
+}
+
 TEST_CASE("Maths / LoadStore")
 {
     using namespace Graphyte::Maths;
