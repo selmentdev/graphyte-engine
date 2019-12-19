@@ -9,6 +9,8 @@ project "lz4"
         "**.lua"
     }
 
+    inlining "explicit"
+
     includedirs {
         "include",
     }

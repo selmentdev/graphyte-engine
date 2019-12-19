@@ -6,9 +6,13 @@ project "fmt"
         "source/format.cc",
         "**.lua"
     }
+
+    inlining "explicit"
+
     includedirs {
         "include"
     }
+
     defines {
         "FMT_EXCEPTIONS=0",
     }

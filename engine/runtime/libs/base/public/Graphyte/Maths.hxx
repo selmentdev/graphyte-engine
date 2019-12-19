@@ -1250,6 +1250,7 @@ namespace Graphyte::Maths
         Impl::SimdFloat32x4 V;
 
         static constexpr const size_t Components = 3;
+        static constexpr const uint32_t CompareMask = 0b0111;
         using ComponentType = uint32_t;
         using MaskType = Bool3;
     };
@@ -2986,6 +2987,9 @@ namespace Graphyte::Maths
     mathinline T mathcall Identity() noexcept = delete;
 
     template <typename T>
+    mathinline bool mathcall IsIdentity(T v) noexcept = delete;
+
+    template <typename T>
     mathinline T mathcall One() noexcept
         requires VectorLike<T>
     {
@@ -4576,6 +4580,387 @@ namespace Graphyte::Maths
         return { result };
 #endif
     }
+
+    template <typename T>
+    mathinline bool mathcall IsEqual(T a, T b) noexcept
+        requires VectorLike<T> and EqualComparable<T> and (T::Components >= 1 && T::Components <= 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return (a.V.F[0] == b.V.F[0])
+                && (a.V.F[1] == b.V.F[1])
+                && (a.V.F[2] == b.V.F[2])
+                && (a.V.F[3] == b.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (a.V.F[0] == b.V.F[0])
+                && (a.V.F[1] == b.V.F[1])
+                && (a.V.F[2] == b.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (a.V.F[0] == b.V.F[0])
+                && (a.V.F[1] == b.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (a.V.F[0] == b.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_cmpeq_ps(a.V, b.V);
+        static constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return (_mm_movemask_ps(mask) == movemask);
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) == movemask;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsNotEqual(T a, T b) noexcept
+        requires VectorLike<T> and EqualComparable<T> and (T::Components >= 1 && T::Components <= 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return (a.V.F[0] != b.V.F[0])
+                || (a.V.F[1] != b.V.F[1])
+                || (a.V.F[2] != b.V.F[2])
+                || (a.V.F[3] != b.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (a.V.F[0] != b.V.F[0])
+                || (a.V.F[1] != b.V.F[1])
+                || (a.V.F[2] != b.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (a.V.F[0] != b.V.F[0])
+                || (a.V.F[1] != b.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (a.V.F[0] != b.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_cmpneq_ps(a.V, b.V);
+        static constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return (_mm_movemask_ps(mask) != 0);
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) != movemask;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsGreater(T a, T b) noexcept
+        requires VectorLike<T> and OrderComparable<T> and (T::Components >= 1 && T::Components <= 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return (a.V.F[0] > b.V.F[0])
+                && (a.V.F[1] > b.V.F[1])
+                && (a.V.F[2] > b.V.F[2])
+                && (a.V.F[3] > b.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (a.V.F[0] > b.V.F[0])
+                && (a.V.F[1] > b.V.F[1])
+                && (a.V.F[2] > b.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (a.V.F[0] > b.V.F[0])
+                && (a.V.F[1] > b.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (a.V.F[0] > b.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_cmpgt_ps(a.V, b.V);
+        static constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) == movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) == movemask;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsGreaterEqual(T a, T b) noexcept
+        requires VectorLike<T> and Comparable<T> and (T::Components >= 1 && T::Components <= 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return (a.V.F[0] >= b.V.F[0])
+                && (a.V.F[1] >= b.V.F[1])
+                && (a.V.F[2] >= b.V.F[2])
+                && (a.V.F[3] >= b.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (a.V.F[0] >= b.V.F[0])
+                && (a.V.F[1] >= b.V.F[1])
+                && (a.V.F[2] >= b.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (a.V.F[0] >= b.V.F[0])
+                && (a.V.F[1] >= b.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (a.V.F[0] >= b.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_cmpge_ps(a.V, b.V);
+        static constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) == movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) == movemask;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsLess(T a, T b) noexcept
+        requires VectorLike<T> and OrderComparable<T> and (T::Components >= 1 && T::Components <= 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return (a.V.F[0] < b.V.F[0])
+                && (a.V.F[1] < b.V.F[1])
+                && (a.V.F[2] < b.V.F[2])
+                && (a.V.F[3] < b.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (a.V.F[0] < b.V.F[0])
+                && (a.V.F[1] < b.V.F[1])
+                && (a.V.F[2] < b.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (a.V.F[0] < b.V.F[0])
+                && (a.V.F[1] < b.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (a.V.F[0] < b.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_cmplt_ps(a.V, b.V);
+        static constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) == movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) == movemask;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsLessEqual(T a, T b) noexcept
+        requires VectorLike<T> and Comparable<T> and (T::Components >= 1 && T::Components <= 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return (a.V.F[0] <= b.V.F[0])
+                && (a.V.F[1] <= b.V.F[1])
+                && (a.V.F[2] <= b.V.F[2])
+                && (a.V.F[3] <= b.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (a.V.F[0] <= b.V.F[0])
+                && (a.V.F[1] <= b.V.F[1])
+                && (a.V.F[2] <= b.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (a.V.F[0] <= b.V.F[0])
+                && (a.V.F[1] <= b.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (a.V.F[0] <= b.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_cmple_ps(a.V, b.V);
+        static constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) == movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) == movemask;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool InBounds(T v, T bounds) noexcept
+        requires VectorLike<T> and Comparable<T> and (T::Components >= 1 && T::Components <= 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return ((v.V.F[0] <= bounds.V.F[0]) && (v.V.F[0] >= -bounds.V.F[0]))
+                && ((v.V.F[1] <= bounds.V.F[1]) && (v.V.F[1] >= -bounds.V.F[1]))
+                && ((v.V.F[2] <= bounds.V.F[2]) && (v.V.F[2] >= -bounds.V.F[2]))
+                && ((v.V.F[3] <= bounds.V.F[3]) && (v.V.F[3] >= -bounds.V.F[3]));
+        else if constexpr (T::Components == 3)
+        {
+            return ((v.V.F[0] <= bounds.V.F[0]) && (v.V.F[0] >= -bounds.V.F[0]))
+                && ((v.V.F[1] <= bounds.V.F[1]) && (v.V.F[1] >= -bounds.V.F[1]));
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return ((v.V.F[0] <= bounds.V.F[0]) && (v.V.F[0] >= -bounds.V.F[0]))
+                && ((v.V.F[1] <= bounds.V.F[1]) && (v.V.F[1] >= -bounds.V.F[1]))
+                && ((v.V.F[2] <= bounds.V.F[2]) && (v.V.F[2] >= -bounds.V.F[2]));
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return ((v.V.F[0] <= bounds.V.F[0]) && (v.V.F[0] >= -bounds.V.F[0]));
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const neg_bounds = _mm_mul_ps(bounds.V, Impl::VEC4_NEGATIVE_ONE_4.V);
+        __m128 const m_pos = _mm_cmple_ps(v.V, bounds.V);
+        __m128 const m_neg = _mm_cmple_ps(v.V, neg_bounds);
+        __m128 const mask = _mm_and_ps(m_pos, m_neg);
+
+        static constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) == movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) == movemask;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool IsNan(T v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return std::isnan(a.V.F[0])
+                || std::isnan(a.V.F[1])
+                || std::isnan(a.V.F[2])
+                || std::isnan(a.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return std::isnan(a.V.F[0])
+                || std::isnan(a.V.F[1])
+                || std::isnan(a.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return std::isnan(a.V.F[0])
+                || std::isnan(a.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return std::isnan(a.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_cmpneq_ps(v.V, v.V);
+
+        static constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) == movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) != 0;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool IsInfinity(T v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return std::isinf(a.V.F[0])
+                || std::isinf(a.V.F[1])
+                || std::isinf(a.V.F[2])
+                || std::isinf(a.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return std::isinf(a.V.F[0])
+                || std::isinf(a.V.F[1])
+                || std::isinf(a.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return std::isinf(a.V.F[0])
+                || std::isinf(a.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return std::isinf(a.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const abs = _mm_and_ps(v.V, Impl::VEC4_MASK_ABS.V);
+        __m128 const mask = _mm_cmpeq_ps(abs, Impl::VEC4_INFINITY.V);
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) != 0;
+        }
+        else
+        {
+            static constexpr const int movemask = (1 << T::Components) - 1;
+            return (_mm_movemask_ps(mask) & movemask) != 0;
+        }
+#endif
+    }
 }
 
 // =================================================================================================
@@ -5030,6 +5415,18 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
+    template <>
+    mathinline Quaternion mathcall Identity<Quaternion>() noexcept
+    {
+        return { Impl::VEC4_POSITIVE_UNIT_W.V };
+    }
+
+    template <>
+    mathinline bool mathcall IsIdentity<Quaternion>(Quaternion v) noexcept
+    {
+        return IsEqual<Vector4>(AsVector4(v), { Impl::VEC4_POSITIVE_UNIT_W.V });
+    }
+
     mathinline Vector4 mathcall Dot(Quaternion a, Quaternion b) noexcept
     {
         return Dot(AsVector4(a), AsVector4(b));
@@ -5274,6 +5671,52 @@ namespace Graphyte::Maths
         result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
         result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
         return result;
+    }
+
+    template <>
+    mathinline bool mathcall IsIdentity<Matrix>(Matrix m) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        uint32_t const* items = reinterpret_cast<uint32_t const*>(&m.M.M[0][0]);
+
+        uint32_t one = iter[0] ^ 0x3f80'0000;
+        uint32_t zero = iter[1];
+        zero |= iter[2];
+        zero |= iter[3];
+
+        zero |= iter[4];
+        one |= iter[5];
+        zero |= iter[6];
+        zero |= iter[7];
+
+        zero |= iter[8];
+        zero |= iter[9];
+        one |= iter[10];
+        zero |= iter[11];
+
+        zero |= iter[12];
+        zero |= iter[13];
+        zero |= iter[14];
+        one |= iter[15] ^ 0x3f80'0000;
+
+        // clear sign mask
+        zero &= 0x7fff'ffff;
+        one |= zero;
+
+        return one == 0;
+#elif GRAPHYTE_HW_AVX
+        __m128 const m0 = _mm_cmpeq_ps(m.M.R[0], Impl::VEC4_POSITIVE_UNIT_X.V);
+        __m128 const m1 = _mm_cmpeq_ps(m.M.R[1], Impl::VEC4_POSITIVE_UNIT_Y.V);
+        __m128 const m2 = _mm_cmpeq_ps(m.M.R[2], Impl::VEC4_POSITIVE_UNIT_Z.V);
+        __m128 const m3 = _mm_cmpeq_ps(m.M.R[3], Impl::VEC4_POSITIVE_UNIT_W.V);
+
+        __m128 const m1_0 = _mm_and_ps(m0, m1);
+        __m128 const m1_1 = _mm_and_ps(m2, m3);
+
+        __m128 const m2_final = _mm_and_ps(m1_0, m1_1);
+
+        return _mm_movemask_ps(m2_final) == 0b1111;
+#endif
     }
 
     mathinline Vector4 mathcall GetBaseX(Matrix m) noexcept

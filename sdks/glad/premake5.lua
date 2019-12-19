@@ -13,9 +13,12 @@ project "glad"
 
     files {
         "include/**.h",
+
         "source/glad.c",
         "**.lua"
     }
+
+    inlining "explicit"
 
     includedirs {
         "./include",

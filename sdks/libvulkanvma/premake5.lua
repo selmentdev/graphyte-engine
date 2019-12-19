@@ -9,6 +9,8 @@ project "libvulkanvma"
         "**.lua"
     }
 
+    inlining "explicit"
+
     includedirs {
         "include",
         "$(VULKAN_SDK)/include",

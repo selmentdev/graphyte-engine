@@ -7,3 +7,5 @@ project "catch2"
         "include/**.hpp",
         "**.lua"
     }
+
+    inlining "explicit"

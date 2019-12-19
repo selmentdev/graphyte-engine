@@ -1,6 +1,7 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+
 TEST_CASE("Maths / Matrix / Load-Store")
 {
     using namespace Graphyte::Maths;
@@ -45,6 +46,8 @@ TEST_CASE("Maths / Matrix / Load-Store")
     r1 = GetBaseY(mr);
     r2 = GetBaseZ(mr);
     r3 = GetBaseW(mr);
+
+    CHECK_FALSE(IsEqual(r0, r1));
 
     CHECK(GetX(r0) == mm.M11);
     CHECK(GetY(r0) == mm.M12);

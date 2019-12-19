@@ -387,11 +387,6 @@ namespace Graphyte::Maths
         return v_result;
     }
 
-    mathinline Quaternion mathcall Quaternion::Identity() noexcept
-    {
-        return { Detail::VEC4_POSITIVE_UNIT_W.V };
-    }
-
     mathinline Quaternion mathcall Quaternion::RotationFromRollPitchYaw(float pitch, float yaw, float roll) noexcept
     {
         auto v_angles = Vector3{ Vector4::Make(pitch, yaw, roll, 0.0F).V };
