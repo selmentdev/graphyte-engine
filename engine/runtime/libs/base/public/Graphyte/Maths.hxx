@@ -5905,6 +5905,52 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Matrix mathcall Transpose(Matrix m) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Matrix result;
+
+        result.M.F[0][0] = b.M.F[0][0];
+        result.M.F[0][1] = b.M.F[1][0];
+        result.M.F[0][2] = b.M.F[2][0];
+        result.M.F[0][3] = b.M.F[3][0];
+
+        result.M.F[1][0] = b.M.F[0][1];
+        result.M.F[1][1] = b.M.F[1][1];
+        result.M.F[1][2] = b.M.F[2][1];
+        result.M.F[1][3] = b.M.F[3][1];
+
+        result.M.F[2][0] = b.M.F[0][2];
+        result.M.F[2][1] = b.M.F[1][2];
+        result.M.F[2][2] = b.M.F[2][2];
+        result.M.F[2][3] = b.M.F[3][2];
+
+        result.M.F[3][0] = b.M.F[0][3];
+        result.M.F[3][1] = b.M.F[1][3];
+        result.M.F[3][2] = b.M.F[2][3];
+        result.M.F[3][3] = b.M.F[3][3];
+
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const trx_r0 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const trx_r1 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const trx_r2 = _mm_shuffle_ps(m.M.R[2], m.M.R[3], _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const trx_r3 = _mm_shuffle_ps(m.M.R[2], m.M.R[3], _MM_SHUFFLE(3, 2, 3, 2));
+
+        __m128 const res_r0 = _mm_shuffle_ps(trx_r0, trx_r1, _MM_SHUFFLE(2, 0, 2, 0));
+        __m128 const res_r1 = _mm_shuffle_ps(trx_r0, trx_r1, _MM_SHUFFLE(3, 1, 3, 1));
+        __m128 const res_r2 = _mm_shuffle_ps(trx_r2, trx_r3, _MM_SHUFFLE(2, 0, 2, 0));
+        __m128 const res_r3 = _mm_shuffle_ps(trx_r2, trx_r3, _MM_SHUFFLE(3, 1, 3, 1));
+
+        Matrix result;
+        result.M.R[0] = res_r0;
+        result.M.R[1] = res_r1;
+        result.M.R[2] = res_r2;
+        result.M.R[3] = res_r3;
+        return result;
+#endif
+    }
+
     template <typename T>
     mathinline T mathcall Nan() noexcept
         requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
