@@ -147,6 +147,7 @@ workspace "graphyte"
         "MultiProcessorCompile",
         "FatalWarnings",
         "NoManifest",
+        "UndefinedIdentifiers",
     }
 
     -- setup architectures
@@ -222,6 +223,11 @@ workspace "graphyte"
             "/Zc:inline",
             "/Zc:throwingNew",
             "/Zc:__cplusplus",  -- https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+            "/Zc:ternary",
+            "/Zc:referenceBinding",
+            "/Zc:externConstexpr",
+            "/DYNAMICBASE",
+
         }
         linkoptions {
             "/ignore:4221", -- LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
@@ -236,7 +242,7 @@ workspace "graphyte"
             "4275",         -- non - DLL-interface class 'class_1' used as base for DLL-interface class 'class_2'
         }
 
-    filter { "toolset:msc*", "configurations:release" }
+    filter { "toolset:msc*", "configurations:release or configurations:profile or configurations:checked" }
         defines {
             "_HAS_ITERATOR_DEBUGGING=0",
             "_SCL_SECURE=0",
@@ -244,7 +250,13 @@ workspace "graphyte"
             "_CRT_SECURE_INVALID_PARAMETER=",
         }
         buildoptions {
-            "/sdl-",
+            --"/sdl",       -- https://docs.microsoft.com/en-us/cpp/build/reference/sdl-enable-additional-security-checks?view=vs-2019
+        }
+
+        flags {
+            "NoBufferSecurityCheck",
+            "NoRuntimeChecks",
+            "NoIncrementalLink",    -- disable it for better ltcg
         }
 
     filter { "toolset:gcc*" }
@@ -289,6 +301,10 @@ workspace "graphyte"
         optimize "speed"
         inlining "auto"
 
+        flags {
+            "LinkTimeOptimization",
+        }
+
     filter { "configurations:release" }
         defines {
             "GX_CONFIG_RELEASE",
@@ -297,6 +313,10 @@ workspace "graphyte"
         runtime "release"
         optimize "speed"
         inlining "auto"
+
+        flags {
+            "LinkTimeOptimization",
+        }
 
     filter {}
         kind "SharedLib"

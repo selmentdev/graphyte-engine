@@ -9,16 +9,16 @@ namespace Graphyte
 
 #if GRAPHYTE_PLATFORM_WINDOWS
 
-        static_assert(sizeof(Uuid) == sizeof(GUID));
+        static_assert(sizeof(Uuid) == sizeof(UUID));
 
-        GUID guid;
+        UUID uuid;
+        UuidCreateSequential(&uuid);
 
-        [[maybe_unused]] HRESULT hr = CoCreateGuid(&guid);
-        //GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to generate random UUID");
-
-        std::memcpy(&result, &guid, sizeof(Uuid));
+        std::memcpy(&result, &uuid, sizeof(Uuid));
 
 #elif GRAPHYTE_PLATFORM_LINUX
+
+        static_assert(sizeof(Uuid) == sizeof(uuid_t));
 
         uuid_t uuid;
         uuid_generate(uuid);
