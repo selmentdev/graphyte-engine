@@ -3364,72 +3364,156 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    mathinline bool mathcall AllTrue(Bool4 v) noexcept
+    template <typename T>
+    mathinline bool mathcall AllTrue(T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        return (v.V.U[0] != 0)
-            && (v.V.U[1] != 0)
-            && (v.V.U[2] != 0)
-            && (v.V.U[3] != 0);
+        if constexpr (T::Components == 4)
+        {
+            return (v.V.U[0] != 0)
+                && (v.V.U[1] != 0)
+                && (v.V.U[2] != 0)
+                && (v.V.U[3] != 0);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (v.V.U[0] != 0)
+                && (v.V.U[1] != 0)
+                && (v.V.U[2] != 0);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (v.V.U[0] != 0)
+                && (v.V.U[1] != 0);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (v.V.U[0] != 0);
+        }
 #elif GRAPHYTE_HW_AVX
-        return { _mm_movemask_ps(v.V) == 0b1111 };
+        constexpr const int movemask = (1 << T::Components) - 1;
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(v.V) == movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(v.V) & movemask) == movemask;
+        }
 #endif
     }
 
-    mathinline bool mathcall AllFalse(Bool4 v) noexcept
+    template <typename T>
+    mathinline bool mathcall AllFalse(T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        return (v.V.U[0] == 0)
-            && (v.V.U[1] == 0)
-            && (v.V.U[2] == 0)
-            && (v.V.U[3] == 0);
+        if constexpr (T::Components == 4)
+        {
+            return (v.V.U[0] == 0)
+                && (v.V.U[1] == 0)
+                && (v.V.U[2] == 0)
+                && (v.V.U[3] == 0);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (v.V.U[0] == 0)
+                && (v.V.U[1] == 0)
+                && (v.V.U[2] == 0);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (v.V.U[0] == 0)
+                && (v.V.U[1] == 0);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (v.V.U[0] == 0);
+        }
 #elif GRAPHYTE_HW_AVX
-        return { _mm_movemask_ps(v.V) == 0 };
+        return _mm_movemask_ps(v.V) == 0;
 #endif
     }
 
-    mathinline bool mathcall AnyTrue(Bool4 v) noexcept
+    template <typename T>
+    mathinline bool mathcall AnyTrue(T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        return (v.V.U[0] != 0)
-            || (v.V.U[1] != 0)
-            || (v.V.U[2] != 0)
-            || (v.V.U[3] != 0);
+        if constexpr (T::Components == 4)
+        {
+            return (v.V.U[0] != 0)
+                || (v.V.U[1] != 0)
+                || (v.V.U[2] != 0)
+                || (v.V.U[3] != 0);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (v.V.U[0] != 0)
+                || (v.V.U[1] != 0)
+                || (v.V.U[2] != 0);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (v.V.U[0] != 0)
+                || (v.V.U[1] != 0);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (v.V.U[0] != 0);
+        }
 #elif GRAPHYTE_HW_AVX
-        return { _mm_movemask_ps(v.V) != 0 };
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(v.V) != 0;
+        }
+        else
+        {
+            constexpr const int movemask == (1 << T::Components) - 1;
+            return (_mm_movemask_ps(v.V) & movemask) != 0;
+        }
 #endif
     }
 
-    mathinline bool mathcall AnyFalse(Bool4 v) noexcept
+    template <typename T>
+    mathinline bool mathcall AnyFalse(T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        return (v.V.U[0] == 0)
-            || (v.V.U[1] == 0)
-            || (v.V.U[2] == 0)
-            || (v.V.U[3] == 0);
+        if constexpr (T::Components == 4)
+        {
+            return (v.V.U[0] == 0)
+                || (v.V.U[1] == 0)
+                || (v.V.U[2] == 0)
+                || (v.V.U[3] == 0);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (v.V.U[0] == 0)
+                || (v.V.U[1] == 0)
+                || (v.V.U[2] == 0);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (v.V.U[0] == 0)
+                || (v.V.U[1] == 0);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (v.V.U[0] == 0);
+        }
 #elif GRAPHYTE_HW_AVX
-        return { _mm_movemask_ps(v.V) != 0b1111 };
-#endif
-    }
+        constexpr const int movemask == (1 << T::Components) - 1;
 
-    mathinline bool mathcall AllTrue(Bool3 v) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        return (v.V.U[0] != 0)
-            && (v.V.U[1] != 0)
-            && (v.V.U[2] != 0);
-#elif GRAPHYTE_HW_AVX
-        return { _mm_movemask_ps(v.V) == 0b0111 };
-#endif
-    }
-
-    mathinline bool mathcall AllTrue(Bool2 v) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        return (v.V.U[0] != 0)
-            && (v.V.U[0] != 0);
-#elif GRAPHYTE_HW_AVX
-        return { _mm_movemask_ps(v.V) == 0b0011 };
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(v.V) != movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(v.V) & movemask) != movemask;
+        }
 #endif
     }
 
@@ -4880,6 +4964,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool IsNan(T v) noexcept
+        requires VectorLike<T> and EqualComparable<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -4922,6 +5007,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool IsInfinity(T v) noexcept
+        requires VectorLike<T> and EqualComparable<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -5500,6 +5586,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float4x4A* destination, T m) noexcept
+        requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
@@ -5535,6 +5622,44 @@ namespace Graphyte::Maths
 
 #endif
     }
+
+#if false
+    template <typename T>
+    mathinline T mathcall Load(Float4x3A const* source) noexcept
+    {
+        GX_ASSERT(source != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        Matrix result;
+
+        result.M.R[0].F[0] = source->M[0][0];
+        result.M.R[0].F[1] = source->M[0][1];
+        result.M.R[0].F[2] = source->M[0][2];
+        result.M.R[0].F[3] = 0.0F;
+
+        result.M.R[1].F[0] = source->M[1][0];
+        result.M.R[1].F[1] = source->M[1][1];
+        result.M.R[1].F[2] = source->M[1][2];
+        result.M.R[1].F[3] = 0.0F;
+
+        result.M.R[2].F[0] = source->M[2][0];
+        result.M.R[2].F[1] = source->M[2][1];
+        result.M.R[2].F[2] = source->M[2][2];
+        result.M.R[2].F[3] = 0.0F;
+
+        result.M.R[3].F[0] = source->M[3][0];
+        result.M.R[3].F[1] = source->M[3][1];
+        result.M.R[3].F[2] = source->M[3][2];
+        result.M.R[3].F[3] = 1.0F;
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+#endif
+    }
+#endif
 
     //mathinline Matrix mathcall Load(Float4x3A const* source) noexcept;
     //mathinline Matrix mathcall Load(Float3x4A const* source) noexcept;
@@ -5601,63 +5726,256 @@ namespace Graphyte::Maths
 
         Matrix result;
 
-        {
-            __m128 const x = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 0);
-            __m128 const y = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 1);
-            __m128 const z = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 2);
-            __m128 const w = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 3);
+        __m128 const x_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 0);
+        __m128 const y_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 1);
+        __m128 const z_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 2);
+        __m128 const w_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 3);
 
-            __m128 const abx = _mm_mul_ps(x, b.M.R[0]);
-            __m128 const aby = _mm_fmadd_ps(y, b.M.R[1], abx);
-            __m128 const abz = _mm_fmadd_ps(z, b.M.R[2], aby);
-            __m128 const abw = _mm_fmadd_ps(w, b.M.R[3], abz);
+        __m128 const abx_r0 = _mm_mul_ps(x_r0, b.M.R[0]);
+        __m128 const aby_r0 = _mm_fmadd_ps(y_r0, b.M.R[1], abx_r0);
+        __m128 const abz_r0 = _mm_fmadd_ps(z_r0, b.M.R[2], aby_r0);
+        __m128 const abw_r0 = _mm_fmadd_ps(w_r0, b.M.R[3], abz_r0);
 
-            result.M.R[0] = abw;
-        }
+        __m128 const x_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 0);
+        __m128 const y_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 1);
+        __m128 const z_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 2);
+        __m128 const w_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 3);
 
-        {
-            __m128 const x = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 0);
-            __m128 const y = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 1);
-            __m128 const z = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 2);
-            __m128 const w = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 3);
+        __m128 const abx_r1 = _mm_mul_ps(x_r1, b.M.R[0]);
+        __m128 const aby_r1 = _mm_fmadd_ps(y_r1, b.M.R[1], abx_r1);
+        __m128 const abz_r1 = _mm_fmadd_ps(z_r1, b.M.R[2], aby_r1);
+        __m128 const abw_r1 = _mm_fmadd_ps(w_r1, b.M.R[3], abz_r1);
 
-            __m128 const abx = _mm_mul_ps(x, b.M.R[0]);
-            __m128 const aby = _mm_fmadd_ps(y, b.M.R[1], abx);
-            __m128 const abz = _mm_fmadd_ps(z, b.M.R[2], aby);
-            __m128 const abw = _mm_fmadd_ps(w, b.M.R[3], abz);
+        __m128 const x_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 0);
+        __m128 const y_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 1);
+        __m128 const z_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 2);
+        __m128 const w_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 3);
 
-            result.M.R[1] = abw;
-        }
+        __m128 const abx_r2 = _mm_mul_ps(x_r2, b.M.R[0]);
+        __m128 const aby_r2 = _mm_fmadd_ps(y_r2, b.M.R[1], abx_r2);
+        __m128 const abz_r2 = _mm_fmadd_ps(z_r2, b.M.R[2], aby_r2);
+        __m128 const abw_r2 = _mm_fmadd_ps(w_r2, b.M.R[3], abz_r2);
 
-        {
-            __m128 const x = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 0);
-            __m128 const y = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 1);
-            __m128 const z = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 2);
-            __m128 const w = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 3);
+        __m128 const x_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 0);
+        __m128 const y_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 1);
+        __m128 const z_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 2);
+        __m128 const w_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 3);
 
-            __m128 const abx = _mm_mul_ps(x, b.M.R[0]);
-            __m128 const aby = _mm_fmadd_ps(y, b.M.R[1], abx);
-            __m128 const abz = _mm_fmadd_ps(z, b.M.R[2], aby);
-            __m128 const abw = _mm_fmadd_ps(w, b.M.R[3], abz);
+        __m128 const abx_r3 = _mm_mul_ps(x_r3, b.M.R[0]);
+        __m128 const aby_r3 = _mm_fmadd_ps(y_r3, b.M.R[1], abx_r3);
+        __m128 const abz_r3 = _mm_fmadd_ps(z_r3, b.M.R[2], aby_r3);
+        __m128 const abw_r3 = _mm_fmadd_ps(w_r3, b.M.R[3], abz_r3);
 
-            result.M.R[2] = abw;
-        }
-
-        {
-            __m128 const x = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 0);
-            __m128 const y = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 1);
-            __m128 const z = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 2);
-            __m128 const w = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 3);
-
-            __m128 const abx = _mm_mul_ps(x, b.M.R[0]);
-            __m128 const aby = _mm_fmadd_ps(y, b.M.R[1], abx);
-            __m128 const abz = _mm_fmadd_ps(z, b.M.R[2], aby);
-            __m128 const abw = _mm_fmadd_ps(w, b.M.R[3], abz);
-
-            result.M.R[3] = abw;
-        }
+        result.M.R[0] = abw_r0;
+        result.M.R[1] = abw_r1;
+        result.M.R[2] = abw_r2;
+        result.M.R[3] = abw_r3;
 
         return result;
+
+#endif
+    }
+
+    mathinline Matrix mathcall MultiplyTranspose(Matrix a, Matrix b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+#elif GRAPHYTE_HW_AVX
+        Matrix result;
+
+        __m128 const x_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 0);
+        __m128 const y_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 1);
+        __m128 const z_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 2);
+        __m128 const w_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 3);
+
+        __m128 const abx_r0 = _mm_mul_ps(x_r0, b.M.R[0]);
+        __m128 const aby_r0 = _mm_fmadd_ps(y_r0, b.M.R[1], abx_r0);
+        __m128 const abz_r0 = _mm_fmadd_ps(z_r0, b.M.R[2], aby_r0);
+        __m128 const abw_r0 = _mm_fmadd_ps(w_r0, b.M.R[3], abz_r0);
+
+        __m128 const x_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 0);
+        __m128 const y_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 1);
+        __m128 const z_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 2);
+        __m128 const w_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 3);
+
+        __m128 const abx_r1 = _mm_mul_ps(x_r1, b.M.R[0]);
+        __m128 const aby_r1 = _mm_fmadd_ps(y_r1, b.M.R[1], abx_r1);
+        __m128 const abz_r1 = _mm_fmadd_ps(z_r1, b.M.R[2], aby_r1);
+        __m128 const abw_r1 = _mm_fmadd_ps(w_r1, b.M.R[3], abz_r1);
+
+        __m128 const x_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 0);
+        __m128 const y_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 1);
+        __m128 const z_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 2);
+        __m128 const w_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 3);
+
+        __m128 const abx_r2 = _mm_mul_ps(x_r2, b.M.R[0]);
+        __m128 const aby_r2 = _mm_fmadd_ps(y_r2, b.M.R[1], abx_r2);
+        __m128 const abz_r2 = _mm_fmadd_ps(z_r2, b.M.R[2], aby_r2);
+        __m128 const abw_r2 = _mm_fmadd_ps(w_r2, b.M.R[3], abz_r2);
+
+        __m128 const x_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 0);
+        __m128 const y_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 1);
+        __m128 const z_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 2);
+        __m128 const w_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 3);
+
+        __m128 const abx_r3 = _mm_mul_ps(x_r3, b.M.R[0]);
+        __m128 const aby_r3 = _mm_fmadd_ps(y_r3, b.M.R[1], abx_r3);
+        __m128 const abz_r3 = _mm_fmadd_ps(z_r3, b.M.R[2], aby_r3);
+        __m128 const abw_r3 = _mm_fmadd_ps(w_r3, b.M.R[3], abz_r3);
+
+        __m128 const trn_r0 = _mm_shuffle_ps(abw_r0, abw_r1, _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const trn_r2 = _mm_shuffle_ps(abw_r0, abw_r1, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const trn_r1 = _mm_shuffle_ps(abw_r2, abw_r3, _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const trn_r3 = _mm_shuffle_ps(abw_r2, abw_r3, _MM_SHUFFLE(3, 2, 3, 2));
+
+        __m128 const final_r0 = _mm_shuffle_ps(trn_r0, trn_r1, _MM_SHUFFLE(2, 0, 2, 0));
+        __m128 const final_r1 = _mm_shuffle_ps(trn_r0, trn_r1, _MM_SHUFFLE(3, 1, 3, 1));
+        __m128 const final_r2 = _mm_shuffle_ps(trn_r2, trn_r3, _MM_SHUFFLE(2, 0, 2, 0));
+        __m128 const final_r3 = _mm_shuffle_ps(trn_r2, trn_r3, _MM_SHUFFLE(3, 1, 3, 1));
+
+        result.M.R[0] = final_r0;
+        result.M.R[1] = final_r1;
+        result.M.R[2] = final_r2;
+        result.M.R[3] = final_r3;
+
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Nan() noexcept
+        requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        T result;
+        result.M.R[0] = Impl::VEC4_QNAN.V;
+        result.M.R[1] = Impl::VEC4_QNAN.V;
+        result.M.R[2] = Impl::VEC4_QNAN.V;
+        result.M.R[3] = Impl::VEC4_QNAN.V;
+        return result;
+    }
+
+
+#if !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_COMPILER_MSVC
+#pragma float_control(push)
+#pragma float_control(precise, on)
+#endif
+
+    template <typename T>
+    mathinline bool mathcall IsNan(T m) noexcept
+        requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        size_t count = T::Components;
+
+        uint32_t const* item = reinterpret_cast<uint32_t const*>(&m.M.F[0]);
+
+        do
+        {
+            uint32_t const value = (*item);
+            uint32_t const umask = value & 0x7fff'ffffU;
+            uint32_t const unan = umask - 0x7f80'0001U;
+
+            if (unan < 0x007f'ffffU)
+            {
+                break;
+            }
+
+            ++item;
+        } while (--count != 0);
+
+        return count != 0;
+
+#elif GRAPHYTE_HW_AVX
+
+        __m128 const r0 = m.M.R[0];
+        __m128 const r1 = m.M.R[1];
+        __m128 const r2 = m.M.R[2];
+        __m128 const r3 = m.M.R[3];
+
+        __m128 const eq_r0 = _mm_cmpneq_ps(r0, r0);
+        __m128 const eq_r1 = _mm_cmpneq_ps(r1, r1);
+        __m128 const eq_r2 = _mm_cmpneq_ps(r2, r2);
+        __m128 const eq_r3 = _mm_cmpneq_ps(r3, r3);
+
+        __m128 const eq_r0r1 = _mm_or_ps(eq_r0, eq_r1);
+        __m128 const eq_r2r3 = _mm_or_ps(eq_r2, eq_r3);
+
+        __m128 const eq_r0r1r2r3 = _mm_or_ps(eq_r0r1, eq_r2r3);
+
+        return _mm_movemask_ps(eq_r0r1r2r3) != 0;
+
+#endif
+    }
+
+#if !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_COMPILER_MSVC
+#pragma float_control(pop)
+#endif
+
+    template <typename T>
+    mathinline Matrix mathcall Infinity() noexcept
+        requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        T result;
+
+        result.M.R[0] = Impl::VEC4_INFINITY.V;
+        result.M.R[1] = Impl::VEC4_INFINITY.V;
+        result.M.R[2] = Impl::VEC4_INFINITY.V;
+        result.M.R[3] = Impl::VEC4_INFINITY.V;
+
+        return result;
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsInfinity(T m) noexcept
+        requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        size_t count = T::Components;
+
+        uint32_t const* item = reinterpret_cast<uint32_t const*>(&m.M.F[0]);
+
+        do
+        {
+            uint32_t const value = (*item);
+            uint32_t const umask = value & 0x7fff'ffffU;
+
+            if (umask == 0x7f80'0000U)
+            {
+                break;
+            }
+
+            ++item;
+        } while (--count != 0);
+
+        return count != 0;
+
+#elif GRAPHYTE_HW_AVX
+
+        __m128 const r0 = m.M.R[0];
+        __m128 const r1 = m.M.R[1];
+        __m128 const r2 = m.M.R[2];
+        __m128 const r3 = m.M.R[3];
+
+        __m128 const abs = Impl::VEC4_MASK_ABS.V;
+
+        __m128 const abs_r0 = _mm_and_ps(r0, abs);
+        __m128 const abs_r1 = _mm_and_ps(r1, abs);
+        __m128 const abs_r2 = _mm_and_ps(r2, abs);
+        __m128 const abs_r3 = _mm_and_ps(r3, abs);
+
+        __m128 const inf = Impl::VEC4_INFINITY.V;
+
+        __m128 const inf_r0 = _mm_cmpeq_ps(abs_r0, inf);
+        __m128 const inf_r1 = _mm_cmpeq_ps(abs_r1, inf);
+        __m128 const inf_r2 = _mm_cmpeq_ps(abs_r2, inf);
+        __m128 const inf_r3 = _mm_cmpeq_ps(abs_r3, inf);
+
+        __m128 const inf_r0r1 = _mm_or_ps(inf_r0, inf_r1);
+        __m128 const inf_r2r3 = _mm_or_ps(inf_r2, inf_r3);
+
+        __m128 const inf_r0r1r2r3 = _mm_or_ps(inf_r0r1, inf_r2r3);
+
+        return _mm_movemask_ps(inf_r0r1r2r3) != 0;
 
 #endif
     }
@@ -5677,6 +5995,7 @@ namespace Graphyte::Maths
     mathinline bool mathcall IsIdentity<Matrix>(Matrix m) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
+
         uint32_t const* items = reinterpret_cast<uint32_t const*>(&m.M.M[0][0]);
 
         uint32_t one = iter[0] ^ 0x3f80'0000;
@@ -5704,11 +6023,18 @@ namespace Graphyte::Maths
         one |= zero;
 
         return one == 0;
+
 #elif GRAPHYTE_HW_AVX
-        __m128 const m0 = _mm_cmpeq_ps(m.M.R[0], Impl::VEC4_POSITIVE_UNIT_X.V);
-        __m128 const m1 = _mm_cmpeq_ps(m.M.R[1], Impl::VEC4_POSITIVE_UNIT_Y.V);
-        __m128 const m2 = _mm_cmpeq_ps(m.M.R[2], Impl::VEC4_POSITIVE_UNIT_Z.V);
-        __m128 const m3 = _mm_cmpeq_ps(m.M.R[3], Impl::VEC4_POSITIVE_UNIT_W.V);
+
+        __m128 const r0 = m.M.R[0];
+        __m128 const r1 = m.M.R[1];
+        __m128 const r2 = m.M.R[2];
+        __m128 const r3 = m.M.R[3];
+
+        __m128 const m0 = _mm_cmpeq_ps(r0, Impl::VEC4_POSITIVE_UNIT_X.V);
+        __m128 const m1 = _mm_cmpeq_ps(r1, Impl::VEC4_POSITIVE_UNIT_Y.V);
+        __m128 const m2 = _mm_cmpeq_ps(r2, Impl::VEC4_POSITIVE_UNIT_Z.V);
+        __m128 const m3 = _mm_cmpeq_ps(r3, Impl::VEC4_POSITIVE_UNIT_W.V);
 
         __m128 const m1_0 = _mm_and_ps(m0, m1);
         __m128 const m1_1 = _mm_and_ps(m2, m3);
