@@ -4938,6 +4938,7 @@ namespace Graphyte::Maths
                 && ((v.V.F[1] <= bounds.V.F[1]) && (v.V.F[1] >= -bounds.V.F[1]))
                 && ((v.V.F[2] <= bounds.V.F[2]) && (v.V.F[2] >= -bounds.V.F[2]))
                 && ((v.V.F[3] <= bounds.V.F[3]) && (v.V.F[3] >= -bounds.V.F[3]));
+        }
         else if constexpr (T::Components == 3)
         {
             return ((v.V.F[0] <= bounds.V.F[0]) && (v.V.F[0] >= -bounds.V.F[0]))
@@ -4979,25 +4980,25 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
         {
-            return isnanf(a.V.F[0])
-                || isnanf(a.V.F[1])
-                || isnanf(a.V.F[2])
-                || isnanf(a.V.F[3]);
+            return isnanf(v.V.F[0])
+                || isnanf(v.V.F[1])
+                || isnanf(v.V.F[2])
+                || isnanf(v.V.F[3]);
         }
         else if constexpr (T::Components == 3)
         {
-            return isnanf(a.V.F[0])
-                || isnanf(a.V.F[1])
-                || isnanf(a.V.F[2]);
+            return isnanf(v.V.F[0])
+                || isnanf(v.V.F[1])
+                || isnanf(v.V.F[2]);
         }
         else if constexpr (T::Components == 2)
         {
-            return isnanf(a.V.F[0])
-                || isnanf(a.V.F[1]);
+            return isnanf(v.V.F[0])
+                || isnanf(v.V.F[1]);
         }
         else if constexpr (T::Components == 1)
         {
-            return isnanf(a.V.F[0]);
+            return isnanf(v.V.F[0]);
         }
 #elif GRAPHYTE_HW_AVX
         __m128 const mask = _mm_cmpneq_ps(v.V, v.V);
@@ -5022,25 +5023,25 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
         {
-            return std::isinf(a.V.F[0])
-                || std::isinf(a.V.F[1])
-                || std::isinf(a.V.F[2])
-                || std::isinf(a.V.F[3]);
+            return std::isinf(v.V.F[0])
+                || std::isinf(v.V.F[1])
+                || std::isinf(v.V.F[2])
+                || std::isinf(v.V.F[3]);
         }
         else if constexpr (T::Components == 3)
         {
-            return std::isinf(a.V.F[0])
-                || std::isinf(a.V.F[1])
-                || std::isinf(a.V.F[2]);
+            return std::isinf(v.V.F[0])
+                || std::isinf(v.V.F[1])
+                || std::isinf(v.V.F[2]);
         }
         else if constexpr (T::Components == 2)
         {
-            return std::isinf(a.V.F[0])
-                || std::isinf(a.V.F[1]);
+            return std::isinf(v.V.F[0])
+                || std::isinf(v.V.F[1]);
         }
         else if constexpr (T::Components == 1)
         {
-            return std::isinf(a.V.F[0]);
+            return std::isinf(v.V.F[0]);
         }
 #elif GRAPHYTE_HW_AVX
         __m128 const abs = _mm_and_ps(v.V, Impl::VEC4_MASK_ABS.V);
@@ -5790,6 +5791,58 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
 
+        Matrix result;
+
+        {
+            float const x = b.M.M[0][0];
+            float const y = b.M.M[0][1];
+            float const z = b.M.M[0][2];
+            float const w = b.M.M[0][3];
+
+            result.M.M[0][0] = (a.M.M[0][0] * x) + (a.M.M[0][1] * y) + (a.M.M[0][2] * z) + (a.M.M[0][3] * w);
+            result.M.M[0][1] = (a.M.M[1][0] * x) + (a.M.M[1][1] * y) + (a.M.M[1][2] * z) + (a.M.M[1][3] * w);
+            result.M.M[0][2] = (a.M.M[2][0] * x) + (a.M.M[2][1] * y) + (a.M.M[2][2] * z) + (a.M.M[2][3] * w);
+            result.M.M[0][3] = (a.M.M[3][0] * x) + (a.M.M[3][1] * y) + (a.M.M[3][2] * z) + (a.M.M[3][3] * w);
+        }
+
+        {
+            float const x = b.M.M[1][0];
+            float const y = b.M.M[1][1];
+            float const z = b.M.M[1][2];
+            float const w = b.M.M[1][3];
+
+            result.M.M[1][0] = (a.M.M[0][0] * x) + (a.M.M[0][1] * y) + (a.M.M[0][2] * z) + (a.M.M[0][3] * w);
+            result.M.M[1][1] = (a.M.M[1][0] * x) + (a.M.M[1][1] * y) + (a.M.M[1][2] * z) + (a.M.M[1][3] * w);
+            result.M.M[1][2] = (a.M.M[2][0] * x) + (a.M.M[2][1] * y) + (a.M.M[2][2] * z) + (a.M.M[2][3] * w);
+            result.M.M[1][3] = (a.M.M[3][0] * x) + (a.M.M[3][1] * y) + (a.M.M[3][2] * z) + (a.M.M[3][3] * w);
+        }
+
+        {
+            float const x = b.M.M[2][0];
+            float const y = b.M.M[2][1];
+            float const z = b.M.M[2][2];
+            float const w = b.M.M[2][3];
+
+            result.M.M[2][0] = (a.M.M[0][0] * x) + (a.M.M[0][1] * y) + (a.M.M[0][2] * z) + (a.M.M[0][3] * w);
+            result.M.M[2][1] = (a.M.M[1][0] * x) + (a.M.M[1][1] * y) + (a.M.M[1][2] * z) + (a.M.M[1][3] * w);
+            result.M.M[2][2] = (a.M.M[2][0] * x) + (a.M.M[2][1] * y) + (a.M.M[2][2] * z) + (a.M.M[2][3] * w);
+            result.M.M[2][3] = (a.M.M[3][0] * x) + (a.M.M[3][1] * y) + (a.M.M[3][2] * z) + (a.M.M[3][3] * w);
+        }
+
+        {
+            float const x = b.M.M[3][0];
+            float const y = b.M.M[3][1];
+            float const z = b.M.M[3][2];
+            float const w = b.M.M[3][3];
+
+            result.M.M[3][0] = (a.M.M[0][0] * x) + (a.M.M[0][1] * y) + (a.M.M[0][2] * z) + (a.M.M[0][3] * w);
+            result.M.M[3][1] = (a.M.M[1][0] * x) + (a.M.M[1][1] * y) + (a.M.M[1][2] * z) + (a.M.M[1][3] * w);
+            result.M.M[3][2] = (a.M.M[2][0] * x) + (a.M.M[2][1] * y) + (a.M.M[2][2] * z) + (a.M.M[2][3] * w);
+            result.M.M[3][3] = (a.M.M[3][0] * x) + (a.M.M[3][1] * y) + (a.M.M[3][2] * z) + (a.M.M[3][3] * w);
+        }
+
+        return result;
+
 #elif GRAPHYTE_HW_AVX
         Matrix result;
 
@@ -6008,25 +6061,25 @@ namespace Graphyte::Maths
 
         uint32_t const* items = reinterpret_cast<uint32_t const*>(&m.M.M[0][0]);
 
-        uint32_t one = iter[0] ^ 0x3f80'0000;
-        uint32_t zero = iter[1];
-        zero |= iter[2];
-        zero |= iter[3];
+        uint32_t one = items[0] ^ 0x3f80'0000;
+        uint32_t zero = items[1];
+        zero |= items[2];
+        zero |= items[3];
 
-        zero |= iter[4];
-        one |= iter[5];
-        zero |= iter[6];
-        zero |= iter[7];
+        zero |= items[4];
+        one |= items[5];
+        zero |= items[6];
+        zero |= items[7];
 
-        zero |= iter[8];
-        zero |= iter[9];
-        one |= iter[10];
-        zero |= iter[11];
+        zero |= items[8];
+        zero |= items[9];
+        one |= items[10];
+        zero |= items[11];
 
-        zero |= iter[12];
-        zero |= iter[13];
-        zero |= iter[14];
-        one |= iter[15] ^ 0x3f80'0000;
+        zero |= items[12];
+        zero |= items[13];
+        zero |= items[14];
+        one |= items[15] ^ 0x3f80'0000;
 
         // clear sign mask
         zero &= 0x7fff'ffff;
