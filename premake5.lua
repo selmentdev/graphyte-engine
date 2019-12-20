@@ -227,7 +227,7 @@ workspace "graphyte"
             "/Zc:referenceBinding",
             "/Zc:externConstexpr",
             "/DYNAMICBASE",
-
+            --"/experimental:preprocessor", -- not possible, because system headers and external libraries will fail
         }
         linkoptions {
             "/ignore:4221", -- LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library

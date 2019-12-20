@@ -3393,6 +3393,7 @@ namespace Graphyte::Maths
         }
 #elif GRAPHYTE_HW_AVX
         constexpr const int movemask = (1 << T::Components) - 1;
+
         if constexpr (T::Components == 4)
         {
             return _mm_movemask_ps(v.V) == movemask;
@@ -3432,7 +3433,16 @@ namespace Graphyte::Maths
             return (v.V.U[0] == 0);
         }
 #elif GRAPHYTE_HW_AVX
-        return _mm_movemask_ps(v.V) == 0;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(v.V) == 0;
+        }
+        else
+        {
+            constexpr const int movemask = (1 << T::Components) - 1;
+            return (_mm_movemask_ps(v.V) & movemask) == 0;
+        }
 #endif
     }
 
@@ -3470,7 +3480,7 @@ namespace Graphyte::Maths
         }
         else
         {
-            constexpr const int movemask == (1 << T::Components) - 1;
+            constexpr const int movemask = (1 << T::Components) - 1;
             return (_mm_movemask_ps(v.V) & movemask) != 0;
         }
 #endif
@@ -3504,7 +3514,7 @@ namespace Graphyte::Maths
             return (v.V.U[0] == 0);
         }
 #elif GRAPHYTE_HW_AVX
-        constexpr const int movemask == (1 << T::Components) - 1;
+        constexpr const int movemask = (1 << T::Components) - 1;
 
         if constexpr (T::Components == 4)
         {
@@ -3549,10 +3559,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::cos(v.V.F[0]),
-                std::cos(v.V.F[1]),
-                std::cos(v.V.F[2]),
-                std::cos(v.V.F[3]),
+                cosf(v.V.F[0]),
+                cosf(v.V.F[1]),
+                cosf(v.V.F[2]),
+                cosf(v.V.F[3]),
             } } };
 
         return { result.V };
@@ -3567,10 +3577,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::sin(v.V.F[0]),
-                std::sin(v.V.F[1]),
-                std::sin(v.V.F[2]),
-                std::sin(v.V.F[3]),
+                sinf(v.V.F[0]),
+                sinf(v.V.F[1]),
+                sinf(v.V.F[2]),
+                sinf(v.V.F[3]),
             } } };
 
         return { result.V };
@@ -3585,17 +3595,17 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const vsin{ { {
-                std::sin(v.V.F[0]),
-                std::sin(v.V.F[1]),
-                std::sin(v.V.F[2]),
-                std::sin(v.V.F[3]),
+                sinf(v.V.F[0]),
+                sinf(v.V.F[1]),
+                sinf(v.V.F[2]),
+                sinf(v.V.F[3]),
             } } };
 
         Impl::ConstFloat32x4 const vcos{ { {
-                std::cos(v.V.F[0]),
-                std::cos(v.V.F[1]),
-                std::cos(v.V.F[2]),
-                std::cos(v.V.F[3]),
+                cosf(v.V.F[0]),
+                cosf(v.V.F[1]),
+                cosf(v.V.F[2]),
+                cosf(v.V.F[3]),
             } } };
 
         result_sin.V = vsin.V;
@@ -3612,10 +3622,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::tan(v.V.F[0]),
-                std::tan(v.V.F[1]),
-                std::tan(v.V.F[2]),
-                std::tan(v.V.F[3]),
+                tanf(v.V.F[0]),
+                tanf(v.V.F[1]),
+                tanf(v.V.F[2]),
+                tanf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_tan_ps(v.V) };
@@ -3628,10 +3638,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::asin(v.V.F[0]),
-                std::asin(v.V.F[1]),
-                std::asin(v.V.F[2]),
-                std::asin(v.V.F[3]),
+                asinf(v.V.F[0]),
+                asinf(v.V.F[1]),
+                asinf(v.V.F[2]),
+                asinf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_asin_ps(v.V) };
@@ -3644,10 +3654,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::acos(v.V.F[0]),
-                std::acos(v.V.F[1]),
-                std::acos(v.V.F[2]),
-                std::acos(v.V.F[3]),
+                acosf(v.V.F[0]),
+                acosf(v.V.F[1]),
+                acosf(v.V.F[2]),
+                acosf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_acos_ps(v.V) };
@@ -3660,10 +3670,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::atan(v.V.F[0]),
-                std::atan(v.V.F[1]),
-                std::atan(v.V.F[2]),
-                std::atan(v.V.F[3]),
+                atanf(v.V.F[0]),
+                atanf(v.V.F[1]),
+                atanf(v.V.F[2]),
+                atanf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_atan_ps(v.V) };
@@ -3676,10 +3686,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::atan2(y.V.F[0], x.V.F[0]),
-                std::atan2(y.V.F[1], x.V.F[1]),
-                std::atan2(y.V.F[2], x.V.F[2]),
-                std::atan2(y.V.F[3], x.V.F[3]),
+                atan2f(y.V.F[0], x.V.F[0]),
+                atan2f(y.V.F[1], x.V.F[1]),
+                atan2f(y.V.F[2], x.V.F[2]),
+                atan2f(y.V.F[3], x.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_atan2_ps(y.V, x.V) };
@@ -3692,10 +3702,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::sinh(v.V.F[0]),
-                std::sinh(v.V.F[1]),
-                std::sinh(v.V.F[2]),
-                std::sinh(v.V.F[3]),
+                sinhf(v.V.F[0]),
+                sinhf(v.V.F[1]),
+                sinhf(v.V.F[2]),
+                sinhf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_sinh_ps(v.V) };
@@ -3708,10 +3718,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::cosh(v.V.F[0]),
-                std::cosh(v.V.F[1]),
-                std::cosh(v.V.F[2]),
-                std::cosh(v.V.F[3]),
+                coshf(v.V.F[0]),
+                coshf(v.V.F[1]),
+                coshf(v.V.F[2]),
+                coshf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_cosh_ps(v.V) };
@@ -3724,10 +3734,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::tanh(v.V.F[0]),
-                std::tanh(v.V.F[1]),
-                std::tanh(v.V.F[2]),
-                std::tanh(v.V.F[3]),
+                tanhf(v.V.F[0]),
+                tanhf(v.V.F[1]),
+                tanhf(v.V.F[2]),
+                tanhf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_tanh_ps(v.V) };
@@ -3740,10 +3750,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::asinh(v.V.F[0]),
-                std::asinh(v.V.F[1]),
-                std::asinh(v.V.F[2]),
-                std::asinh(v.V.F[3]),
+                asinhf(v.V.F[0]),
+                asinhf(v.V.F[1]),
+                asinhf(v.V.F[2]),
+                asinhf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_asinh_ps(v.V) };
@@ -3756,10 +3766,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::acosh(v.V.F[0]),
-                std::acosh(v.V.F[1]),
-                std::acosh(v.V.F[2]),
-                std::acosh(v.V.F[3]),
+                acoshf(v.V.F[0]),
+                acoshf(v.V.F[1]),
+                acoshf(v.V.F[2]),
+                acoshf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_acosh_ps(v.V) };
@@ -3773,10 +3783,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::atanh(v.V.F[0]),
-                std::atanh(v.V.F[1]),
-                std::atanh(v.V.F[2]),
-                std::atanh(v.V.F[3]),
+                atanhf(v.V.F[0]),
+                atanhf(v.V.F[1]),
+                atanhf(v.V.F[2]),
+                atanhf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_atanh_ps(v.V) };
@@ -3789,10 +3799,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::log(v.V.F[0]),
-                std::log(v.V.F[1]),
-                std::log(v.V.F[2]),
-                std::log(v.V.F[3]),
+                logf(v.V.F[0]),
+                logf(v.V.F[1]),
+                logf(v.V.F[2]),
+                logf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_log_ps(v.V) };
@@ -3805,10 +3815,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::log10(v.V.F[0]),
-                std::log10(v.V.F[1]),
-                std::log10(v.V.F[2]),
-                std::log10(v.V.F[3]),
+                log10f(v.V.F[0]),
+                log10f(v.V.F[1]),
+                log10f(v.V.F[2]),
+                log10f(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_log10_ps(v.V) };
@@ -3821,10 +3831,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::log2(v.V.F[0]),
-                std::log2(v.V.F[1]),
-                std::log2(v.V.F[2]),
-                std::log2(v.V.F[3]),
+                log2f(v.V.F[0]),
+                log2f(v.V.F[1]),
+                log2f(v.V.F[2]),
+                log2f(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_log2_ps(v.V) };
@@ -3837,10 +3847,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::exp(v.V.F[0]),
-                std::exp(v.V.F[1]),
-                std::exp(v.V.F[2]),
-                std::exp(v.V.F[3]),
+                expf(v.V.F[0]),
+                expf(v.V.F[1]),
+                expf(v.V.F[2]),
+                expf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_exp_ps(v.V) };
@@ -3853,10 +3863,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::pow(10.0F, v.V.F[0]),
-                std::pow(10.0F, v.V.F[1]),
-                std::pow(10.0F, v.V.F[2]),
-                std::pow(10.0F, v.V.F[3]),
+                powf(10.0F, v.V.F[0]),
+                powf(10.0F, v.V.F[1]),
+                powf(10.0F, v.V.F[2]),
+                powf(10.0F, v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_exp10_ps(v.V) };
@@ -3869,10 +3879,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::exp2(v.V.F[0]),
-                std::exp2(v.V.F[1]),
-                std::exp2(v.V.F[2]),
-                std::exp2(v.V.F[3]),
+                exp2f(v.V.F[0]),
+                exp2f(v.V.F[1]),
+                exp2f(v.V.F[2]),
+                exp2f(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_exp2_ps(v.V) };
@@ -3885,10 +3895,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::pow(x.V.F[0], y.V.F[0]),
-                std::pow(x.V.F[1], y.V.F[1]),
-                std::pow(x.V.F[2], y.V.F[2]),
-                std::pow(x.V.F[3], y.V.F[3]),
+                powf(x.V.F[0], y.V.F[0]),
+                powf(x.V.F[1], y.V.F[1]),
+                powf(x.V.F[2], y.V.F[2]),
+                powf(x.V.F[3], y.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_pow_ps(x.V, y.V) };
@@ -3901,10 +3911,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::hypot(x.V.F[0], y.V.F[0]),
-                std::hypot(x.V.F[1], y.V.F[1]),
-                std::hypot(x.V.F[2], y.V.F[2]),
-                std::hypot(x.V.F[3], y.V.F[3]),
+                hypotf(x.V.F[0], y.V.F[0]),
+                hypotf(x.V.F[1], y.V.F[1]),
+                hypotf(x.V.F[2], y.V.F[2]),
+                hypotf(x.V.F[3], y.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_hypot_ps(x.V, y.V) };
@@ -3917,10 +3927,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::sqrt(v.V.F[0]),
-                std::sqrt(v.V.F[1]),
-                std::sqrt(v.V.F[2]),
-                std::sqrt(v.V.F[3]),
+                sqrtf(v.V.F[0]),
+                sqrtf(v.V.F[1]),
+                sqrtf(v.V.F[2]),
+                sqrtf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_HW_AVX
         return { _mm_sqrt_ps(v.V) };
@@ -3957,10 +3967,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::cbrt(v.V.F[0]),
-                std::cbrt(v.V.F[1]),
-                std::cbrt(v.V.F[2]),
-                std::cbrt(v.V.F[3]),
+                cbrtf(v.V.F[0]),
+                cbrtf(v.V.F[1]),
+                cbrtf(v.V.F[2]),
+                cbrtf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_cbrt_ps(v.V) };
@@ -3973,10 +3983,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                1.0F / std::cbrt(v.V.F[0]),
-                1.0F / std::cbrt(v.V.F[1]),
-                1.0F / std::cbrt(v.V.F[2]),
-                1.0F / std::cbrt(v.V.F[3]),
+                1.0F / cbrtf(v.V.F[0]),
+                1.0F / cbrtf(v.V.F[1]),
+                1.0F / cbrtf(v.V.F[2]),
+                1.0F / cbrtf(v.V.F[3]),
             } } };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_invcbrt_ps(v.V) };
@@ -3989,10 +3999,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::abs(v.V.F[0]),
-                std::abs(v.V.F[1]),
-                std::abs(v.V.F[2]),
-                std::abs(v.V.F[3]),
+                absf(v.V.F[0]),
+                absf(v.V.F[1]),
+                absf(v.V.F[2]),
+                absf(v.V.F[3]),
             } } };
 
         return { result.V };
@@ -4315,7 +4325,7 @@ namespace Graphyte::Maths::Impl
 {
     mathinline float RoundToNearest(float value) noexcept
     {
-        float const integral = std::floor(value);
+        float const integral = floorf(value);
         float const fraction = value - integral;
 
         if (fraction < 0.5F)
@@ -4349,10 +4359,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 result{ { {
-                std::ceil(v.V.F[0]),
-                std::ceil(v.V.F[1]),
-                std::ceil(v.V.F[2]),
-                std::ceil(v.V.F[3]),
+                ceilf(v.V.F[0]),
+                ceilf(v.V.F[1]),
+                ceilf(v.V.F[2]),
+                ceilf(v.V.F[3]),
             } } };
 
         return { result.V };
@@ -4363,7 +4373,7 @@ namespace Graphyte::Maths
 
     mathinline float mathcall Ceiling(float value) noexcept
     {
-        return std::ceil(value);
+        return ceilf(value);
     }
 
     template <typename T>
@@ -4372,10 +4382,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                std::floor(v.V.F[0]),
-                std::floor(v.V.F[1]),
-                std::floor(v.V.F[2]),
-                std::floor(v.V.F[3]),
+                floorf(v.V.F[0]),
+                floorf(v.V.F[1]),
+                floorf(v.V.F[2]),
+                floorf(v.V.F[3]),
             } } };
 
         return { result.V };
@@ -4386,7 +4396,7 @@ namespace Graphyte::Maths
 
     mathinline float mathcall Floor(float value) noexcept
     {
-        return std::floor(value);
+        return floorf(value);
     }
 
     template <typename T>
@@ -4420,7 +4430,7 @@ namespace Graphyte::Maths
 
     mathinline float mathcall Truncate(float value) noexcept
     {
-        return std::trunc(value);
+        return truncf(value);
     }
 
     template <typename T>
@@ -4443,7 +4453,7 @@ namespace Graphyte::Maths
 
     mathinline float mathcall Round(float value) noexcept
     {
-        return std::round(value);
+        return roundf(value);
     }
 
     template <typename T>
@@ -4476,7 +4486,7 @@ namespace Graphyte::Maths
 
     mathinline float mathcall Modulo(float a, float b) noexcept
     {
-        return std::fmod(a, b);
+        return fmodf(a, b);
     }
 }
 
@@ -4515,10 +4525,10 @@ namespace Graphyte::Maths
         float const dz = (a.V.F[2] - b.V.F[2]);
         float const dw = (a.V.F[3] - b.V.F[3]);
 
-        float const absx = std::abs(dx);
-        float const absy = std::abs(dy);
-        float const absz = std::abs(dz);
-        float const absw = std::abs(dw);
+        float const absx = absf(dx);
+        float const absy = absf(dy);
+        float const absz = absf(dz);
+        float const absw = absf(dw);
 
         Impl::ConstUInt32x4 const result{ { {
                 (absx <= epsilon.V.F[0]) ? SELECT_1 : SELECT_0,
@@ -4969,25 +4979,25 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
         {
-            return std::isnan(a.V.F[0])
-                || std::isnan(a.V.F[1])
-                || std::isnan(a.V.F[2])
-                || std::isnan(a.V.F[3]);
+            return isnanf(a.V.F[0])
+                || isnanf(a.V.F[1])
+                || isnanf(a.V.F[2])
+                || isnanf(a.V.F[3]);
         }
         else if constexpr (T::Components == 3)
         {
-            return std::isnan(a.V.F[0])
-                || std::isnan(a.V.F[1])
-                || std::isnan(a.V.F[2]);
+            return isnanf(a.V.F[0])
+                || isnanf(a.V.F[1])
+                || isnanf(a.V.F[2]);
         }
         else if constexpr (T::Components == 2)
         {
-            return std::isnan(a.V.F[0])
-                || std::isnan(a.V.F[1]);
+            return isnanf(a.V.F[0])
+                || isnanf(a.V.F[1]);
         }
         else if constexpr (T::Components == 1)
         {
-            return std::isnan(a.V.F[0]);
+            return isnanf(a.V.F[0]);
         }
 #elif GRAPHYTE_HW_AVX
         __m128 const mask = _mm_cmpneq_ps(v.V, v.V);
