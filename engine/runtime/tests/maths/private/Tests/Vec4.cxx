@@ -2,6 +2,44 @@
 #include <Graphyte/Maths.hxx>
 
 
+TEST_CASE("Maths / Matrix / Transpose")
+{
+    using namespace Graphyte::Maths;
+
+    Float4x4A const values{ { {
+        0.0F, 1.0F, 2.0F, 3.0F,
+        4.0F, 5.0F, 6.0F, 7.0F,
+        8.0F, 9.0F, 10.0F, 11.0F,
+        12.0F, 13.0F, 14.0F, 15.0F,
+    } } };
+
+    Matrix const original = Load<Matrix>(&values);
+    Matrix const transposed = Transpose(original);
+
+    Float4x4A stored{};
+    Store<Matrix>(&stored, transposed);
+
+    CHECK(stored.M11 == 0.0F);
+    CHECK(stored.M12 == 4.0F);
+    CHECK(stored.M13 == 8.0F);
+    CHECK(stored.M14 == 12.0F);
+
+    CHECK(stored.M21 == 1.0F);
+    CHECK(stored.M22 == 5.0F);
+    CHECK(stored.M23 == 9.0F);
+    CHECK(stored.M24 == 13.0F);
+
+    CHECK(stored.M31 == 2.0F);
+    CHECK(stored.M32 == 6.0F);
+    CHECK(stored.M33 == 10.0F);
+    CHECK(stored.M34 == 14.0F);
+
+    CHECK(stored.M41 == 3.0F);
+    CHECK(stored.M42 == 7.0F);
+    CHECK(stored.M43 == 11.0F);
+    CHECK(stored.M44 == 15.0F);
+}
+
 TEST_CASE("Maths / Matrix / Load-Store")
 {
     using namespace Graphyte::Maths;
