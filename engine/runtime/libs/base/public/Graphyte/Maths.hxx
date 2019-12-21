@@ -1990,6 +1990,96 @@ namespace Graphyte::Maths
     {
         return v1;
     }
+
+    mathinline Vector4 mathcall Permute(Vector4 a, Vector4 b, uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
+    {
+        GX_ASSERT(x < 8);
+        GX_ASSERT(y < 8);
+        GX_ASSERT(z < 8);
+        GX_ASSERT(w < 8);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        const uint32_t* aPtr[2];
+        aPtr[0] = reinterpret_cast<const uint32_t*>(&V1);
+        aPtr[1] = reinterpret_cast<const uint32_t*>(&V2);
+
+        XMVECTOR Result;
+        auto pWork = reinterpret_cast<uint32_t*>(&Result);
+
+        const uint32_t i0 = PermuteX & 3;
+        const uint32_t vi0 = PermuteX >> 2;
+        pWork[0] = aPtr[vi0][i0];
+
+        const uint32_t i1 = PermuteY & 3;
+        const uint32_t vi1 = PermuteY >> 2;
+        pWork[1] = aPtr[vi1][i1];
+
+        const uint32_t i2 = PermuteZ & 3;
+        const uint32_t vi2 = PermuteZ >> 2;
+        pWork[2] = aPtr[vi2][i2];
+
+        const uint32_t i3 = PermuteW & 3;
+        const uint32_t vi3 = PermuteW >> 2;
+        pWork[3] = aPtr[vi3][i3];
+
+        return Result;
+
+
+        uint32_t const* vptrs[2]{
+            reinterpret_cast<uint32_t const*>(&a.V),
+            reinterpret_cast<uint32_t const*>(&b.V),
+        };
+
+        uint32_t const ix = (x & 3);
+        uint32_t const iy = (y & 3);
+        uint32_t const iz = (z & 3);
+        uint32_t const iw = (w & 3);
+
+        uint32_t const vx = (x >> 2);
+        uint32_t const vy = (y >> 2);
+        uint32_t const vz = (z >> 2);
+        uint32_t const vw = (w >> 2);
+
+        uint32_t const rx = vptrs[vx][ix];
+        uint32_t const ry = vptrs[vy][iy];
+        uint32_t const rz = vptrs[vz][iz];
+        uint32_t const rw = vptrs[vw][iw];
+
+        Impl::ConstUInt32x4 const result{ { {
+                rx,
+                ry,
+                rz,
+                rw,
+            } } };
+
+
+#elif GRAPHYTE_HW_AVX
+        static Impl::ConstUInt32x4 const threes{ { {
+                3,
+                3,
+                3,
+                3,
+            } } };
+
+        alignas(__m128) uint32_t elements[4]{ x, y, z, w };
+
+        __m128i const control = _mm_load_si128(reinterpret_cast<__m128i const*>(&elements[0]));
+
+        __m128i const select = _mm_cmpgt_epi32(control, _mm_castps_si128(threes.V));
+        __m128i const permutation = _mm_castps_si128(_mm_and_ps(_mm_castsi128_ps(control), threes.V));
+
+
+        __m128 const shuffle1 = _mm_permutevar_ps(a.V, permutation);
+        __m128 const shuffle2 = _mm_permutevar_ps(b.V, permutation);
+
+        __m128 const masked1 = _mm_andnot_ps(_mm_castsi128_ps(select), shuffle1);
+        __m128 const masked2 = _mm_and_ps(_mm_castsi128_ps(select), shuffle2);
+
+        __m128 const result = _mm_or_ps(masked1, masked2);
+
+        return { result };
+#endif
+    }
 }
 
 // =================================================================================================
@@ -2096,6 +2186,86 @@ namespace Graphyte::Maths
 
         __m128i const control = _mm_load_si128(reinterpret_cast<__m128i const*>(&indices[0]));
         __m128 const result = _mm_permutevar_ps(v.V, control);
+        return { result };
+#endif
+    }
+
+    mathinline Vector4 mathcall MergeXY(Vector4 a, Vector4 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                a.V.U[0],
+                b.V.U[0],
+                a.V.U[1],
+                b.V.U[1],
+            } } };
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const result = _mm_unpacklo_ps(a.V, b.V);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const result = vzipq_f32(a.V, b.V).val[0];
+        return { result };
+#endif
+    }
+
+    mathinline Vector4 mathcall MergeZW(Vector4 a, Vector4 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                a.V.U[2],
+                b.V.U[2],
+                a.V.U[3],
+                b.V.U[3],
+            } } };
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const result = _mm_unpackhi_ps(a.V, b.V);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const result = vzipq_f32(a.V, b.V).val[1];
+        return { result };
+#endif
+    }
+
+    mathinline Vector4 mathcall ShiftLeft(Vector4 a, Vector4 b, uint32_t count) noexcept
+    {
+        GX_ASSERT(count < 4);
+        return Permute(a, b, count + 0, count + 1, count + 2, count + 3);
+    }
+
+    mathinline Vector4 mathcall RotateLeft(Vector4 v, uint32_t count) noexcept
+    {
+        GX_ASSERT(count < 4);
+        return Swizzle(v, (count + 0) & 0b11, (count + 1) & 0b11, (count + 2) & 0b11, (count + 3) & 0b11);
+    }
+
+    mathinline Vector4 mathcall RotateRight(Vector4 v, uint32_t count) noexcept
+    {
+        GX_ASSERT(count < 4);
+        return Swizzle(v, (4 - count) & 0b11, (5 - count) & 0b11, (6 - count) & 0b11, (7 - count) & 0b11);
+    }
+
+    mathinline Vector4 mathcall SumComponents(Vector4 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const sum = (v.V.F[0] + v.V.F[1] + v.V.F[2] + v.V.F[3]);
+
+        Impl::ConstFloat32x4 const result{ { {
+                sum,
+                sum,
+                sum,
+                sum,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const partial = _mm_hadd_ps(v.V, v.V);
+        __m128 const result = _mm_hadd_ps(partial, partial);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const partial = vpaddq_f32(v.V, v.V);
+        float32x4_t const result = vpaddq_f32(partial, partial);
         return { result };
 #endif
     }
@@ -2648,6 +2818,8 @@ namespace Graphyte::Maths
         return v.V.F[0];
 #elif GRAPHYTE_HW_AVX
         return _mm_cvtss_f32(v.V);
+#elif GRAPHYTE_HW_NEON
+        return vgetq_lane_f32(v.V, 0);
 #endif
     }
 
@@ -2660,6 +2832,8 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const result = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
         return _mm_cvtss_f32(result);
+#elif GRAPHYTE_HW_NEON
+        return vgetq_lane_f32(v.V, 1);
 #endif
     }
 
@@ -2672,6 +2846,8 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const result = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
         return _mm_cvtss_f32(result);
+#elif GRAPHYTE_HW_NEON
+        return vgetq_lane_f32(v.V, 2);
 #endif
     }
 
@@ -2684,6 +2860,8 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const result = _mm_permute_ps(v.V, _MM_SHUFFLE(3, 3, 3, 3));
         return _mm_cvtss_f32(result);
+#elif GRAPHYTE_HW_NEON
+        return vgetq_lane_f32(v.V, 3);
 #endif
     }
 
@@ -2756,6 +2934,8 @@ namespace Graphyte::Maths
         __m128 const xxxx = _mm_set_ss(value);
         __m128 const result = _mm_move_ss(v.V, xxxx);
         return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vsetq_lane_f32(value, v.V, 0) };
 #endif
     }
 
@@ -2776,6 +2956,8 @@ namespace Graphyte::Maths
         __m128 const yyyy = _mm_set_ss(value);
         __m128 const result = _mm_insert_ps(v.V, yyyy, 0x10);
         return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vsetq_lane_f32(value, v.V, 1) };
 #endif
     }
 
@@ -2796,6 +2978,8 @@ namespace Graphyte::Maths
         __m128 const zzzz = _mm_set_ss(value);
         __m128 const result = _mm_insert_ps(v.V, zzzz, 0x20);
         return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vsetq_lane_f32(value, v.V, 2) };
 #endif
     }
 
@@ -2816,6 +3000,8 @@ namespace Graphyte::Maths
         __m128 const wwww = _mm_set_ss(value);
         __m128 const result = _mm_insert_ps(v.V, wwww, 0x30);
         return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vsetq_lane_f32(value, v.V, 3) };
 #endif
     }
 
@@ -2837,6 +3023,8 @@ namespace Graphyte::Maths
         __m128 const xxxx = _mm_load_ss(value);
         __m128 const result = _mm_move_ss(v.V, xxxx);
         return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vld1q_lane_f32(value, v.V, 0) };
 #endif
     }
 
@@ -2860,6 +3048,8 @@ namespace Graphyte::Maths
         __m128 const n_yxzw = _mm_move_ss(o_yxzw, yyyy);
         __m128 const xyzw = _mm_permute_ps(n_yxzw, _MM_SHUFFLE(3, 2, 0, 1));
         return { xyzw };
+#elif GRAPHYTE_HW_NEON
+        return { vld1q_lane_f32(value, v.V, 1) };
 #endif
     }
 
@@ -2882,6 +3072,8 @@ namespace Graphyte::Maths
         __m128 const n_zyxw = _mm_move_ss(o_zyxw, zzzz);
         __m128 const xyzw = _mm_permute_ps(n_zyxw, _MM_SHUFFLE(3, 0, 1, 2));
         return { xyzw };
+#elif GRAPHYTE_HW_NEON
+        return { vld1q_lane_f32(value, v.V, 2) };
 #endif
     }
 
@@ -2904,6 +3096,8 @@ namespace Graphyte::Maths
         __m128 const n_wyzx = _mm_move_ss(o_wyzx, wwww);
         __m128 const xyzw = _mm_permute_ps(n_wyzx, _MM_SHUFFLE(0, 2, 1, 3));
         return { xyzw };
+#elif GRAPHYTE_HW_NEON
+        return { vld1q_lane_f32(value, v.V, 3) };
 #endif
     }
 }
@@ -2980,6 +3174,8 @@ namespace Graphyte::Maths
         return { Impl::VEC4_ZERO_4.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_setzero_ps() };
+#elif GRAPHYTE_HW_NEON
+        return { vdupq_n_f32(0.0F) };
 #endif
     }
 
@@ -2993,28 +3189,72 @@ namespace Graphyte::Maths
     mathinline T mathcall One() noexcept
         requires VectorLike<T>
     {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                1.0F,
+                1.0F,
+                1.0F,
+                1.0F,
+            } } };
+#elif GRAPHYTE_HW_AVX
         return { Impl::VEC4_ONE_4.V };
+#elif GRAPHYTE_HW_NEON
+        return { vdupq_n_f32(1.0F) };
+#endif
     }
 
     template <typename T>
     mathinline T mathcall Infinity() noexcept
         requires VectorLike<T>
     {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                0x7F800000,
+                0x7F800000,
+                0x7F800000,
+                0x7F800000,
+            } } };
+#elif GRAPHYTE_HW_AVX
         return { Impl::VEC4_INFINITY.V };
+#elif GRAPHYTE_HW_NEON
+        return { vdupq_n_u32(0x7F800000) };
+#endif
     }
 
     template <typename T>
     mathinline T mathcall Nan() noexcept
         requires VectorLike<T>
     {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                0x7FC00000,
+                0x7FC00000,
+                0x7FC00000,
+                0x7FC00000,
+            } } };
+#elif GRAPHYTE_HW_AVX
         return { Impl::VEC4_QNAN.V };
+#elif GRAPHYTE_HW_NEON
+        return { vdupq_n_u32(0x7FC00000) };
+#endif
     }
 
     template <typename T>
     mathinline T mathcall Epsilon() noexcept
         requires VectorLike<T>
     {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                0x34000000,
+                0x34000000,
+                0x34000000,
+                0x34000000,
+            } } };
+#elif GRAPHYTE_HW_AVX
         return { Impl::VEC4_EPSILON.V };
+#elif GRAPHYTE_HW_NEON
+        return { vdupq_n_u32(0x34000000) };
+#endif
     }
 
     template <typename T>
@@ -3022,10 +3262,22 @@ namespace Graphyte::Maths
         requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        return { Impl::VEC4_NEGATIVE_ZERO.V };
+        Impl::ConstUInt32x4 const result{ { {
+                0x80000000U,
+                0x80000000U,
+                0x80000000U,
+                0x80000000U,
+            } } };
 #elif GRAPHYTE_HW_AVX
         auto v_temp = _mm_set1_epi32(static_cast<int>(0x80000000));
         return { _mm_castsi128_ps(v_temp) };
+#elif GRAPHYTE_HW_NEON
+        return { vdupq_n_u32(0x80000000U) };
+#endif
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return { Impl::VEC4_NEGATIVE_ZERO.V };
+#elif GRAPHYTE_HW_AVX
 #endif
     }
 }
@@ -3111,7 +3363,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Splat(float value) noexcept
+    mathinline T mathcall Replicate(float value) noexcept
         requires VectorLike<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -3123,6 +3375,23 @@ namespace Graphyte::Maths
             } } };
 #elif GRAPHYTE_HW_AVX
         return { _mm_set_ps1(value) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Replicate(float const* source) noexcept
+        requires VectorLike<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const value = (*source);
+        Impl::ConstFloat32x4 const result{ { {
+                value,
+                value,
+                value,
+                value,
+            } } };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_load_ps1(source) };
 #endif
     }
 
@@ -3150,7 +3419,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall SplatUInt(uint32_t value) noexcept
+    mathinline T mathcall ReplicateUInt(uint32_t value) noexcept
         requires VectorLike<T> and Bitwisable<T> and (T::Components == 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -3165,6 +3434,26 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const ivec = _mm_set1_epi32(static_cast<int>(value));
         return { _mm_castsi128_ps(ivec) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall ReplicateUInt(uint32_t const* source) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components == 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        uint32_t const value = (*source);
+
+        Impl::ConstUInt32x4 const result{ { {
+                value,
+                value,
+                value,
+                value,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_load_ps1(reinterpret_cast<float const*>(source)) };
 #endif
     }
 }
@@ -3294,7 +3583,7 @@ namespace Graphyte::Maths
         requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstUInt32x4 const result = { { {
+        Impl::ConstUInt32x4 const result{ { {
                 ~(a.V.U[0] | b.V.U[0]),
                 ~(a.V.U[1] | b.V.U[1]),
                 ~(a.V.U[2] | b.V.U[2]),
@@ -3306,7 +3595,72 @@ namespace Graphyte::Maths
         __m128i const result = _mm_andnot_si128(partial, _mm_castps_si128(Impl::VEC4_MASK_NEGATIVE_ONE.V));
         return { _mm_castsi128_ps(result) };
 #endif
+    }
 
+    template <typename T>
+    mathinline T mathcall SelectControl(uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
+        requires VectorLike<T> and Bitwisable<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        GX_ASSERT(x < 2);
+        GX_ASSERT(y < 2);
+        GX_ASSERT(z < 2);
+        GX_ASSERT(w < 4);
+
+        uint32_t const control[2]{ SELECT_0, SELECT_1 };
+
+        Impl::ConstUInt32x4 const result{ { {
+                control[x],
+                control[y],
+                control[z],
+                control[w],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const xyzw = _mm_set_epi32(
+            static_cast<int>(w),
+            static_cast<int>(z),
+            static_cast<int>(y),
+            static_cast<int>(x)
+        );
+        __m128i const zero = _mm_setzero_si128();
+        __m128i const control = _mm_cmpgt_epi32(xyzw, zero);
+        __m128 const result = _mm_castsi128_ps(control);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        int32x2_t const xy = vcreate_s32(static_cast<uint64_t>(x) | static_cast<uint64_t>(y) << 32);
+        int32x2_t const zw = vcreate_s32(static_cast<uint64_t>(z) | static_cast<uint64_t>(w) << 32);
+        int32x4_t const xyzw = vcombine_s32(xy, zw);
+        int32x4_t const zero = vdupq_n_s32(0);
+        int32x4_t const result = vcgtq_s32(xyzw, zero);
+        return { vreinterpretq_f32_s32(result) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Select(T a, T b, typename T::MaskType control) noexcept
+        requires VectorLike<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        Impl::ConstUInt32x4 const result{ { {
+                (a.V.U[0] & ~control.V.U[0]) | (b.V.U[0] & control.V.U[0]),
+                (a.V.U[1] & ~control.V.U[1]) | (b.V.U[1] & control.V.U[1]),
+                (a.V.U[2] & ~control.V.U[2]) | (b.V.U[2] & control.V.U[2]),
+                (a.V.U[3] & ~control.V.U[3]) | (b.V.U[3] & control.V.U[3]),
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const masked1 = _mm_andnot_ps(control.V, a.V);
+        __m128 const masked2 = _mm_and_ps(b.V, control.V);
+        __m128 const result = _mm_or_ps(masked1, masked2);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const result = _vbslq_f32(control.V, b.V, a.V);
+        return { result };
+#endif
     }
 }
 
@@ -3627,6 +3981,8 @@ namespace Graphyte::Maths
                 tanf(v.V.F[2]),
                 tanf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_tan_ps(v.V) };
 #endif
@@ -3643,6 +3999,8 @@ namespace Graphyte::Maths
                 asinf(v.V.F[2]),
                 asinf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_asin_ps(v.V) };
 #endif
@@ -3659,6 +4017,8 @@ namespace Graphyte::Maths
                 acosf(v.V.F[2]),
                 acosf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_acos_ps(v.V) };
 #endif
@@ -3675,6 +4035,8 @@ namespace Graphyte::Maths
                 atanf(v.V.F[2]),
                 atanf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_atan_ps(v.V) };
 #endif
@@ -3691,6 +4053,8 @@ namespace Graphyte::Maths
                 atan2f(y.V.F[2], x.V.F[2]),
                 atan2f(y.V.F[3], x.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_atan2_ps(y.V, x.V) };
 #endif
@@ -3707,6 +4071,8 @@ namespace Graphyte::Maths
                 sinhf(v.V.F[2]),
                 sinhf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_sinh_ps(v.V) };
 #endif
@@ -3723,6 +4089,8 @@ namespace Graphyte::Maths
                 coshf(v.V.F[2]),
                 coshf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_cosh_ps(v.V) };
 #endif
@@ -3739,6 +4107,8 @@ namespace Graphyte::Maths
                 tanhf(v.V.F[2]),
                 tanhf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_tanh_ps(v.V) };
 #endif
@@ -3755,6 +4125,8 @@ namespace Graphyte::Maths
                 asinhf(v.V.F[2]),
                 asinhf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_asinh_ps(v.V) };
 #endif
@@ -3771,6 +4143,8 @@ namespace Graphyte::Maths
                 acoshf(v.V.F[2]),
                 acoshf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_acosh_ps(v.V) };
 #endif
@@ -3788,6 +4162,8 @@ namespace Graphyte::Maths
                 atanhf(v.V.F[2]),
                 atanhf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_atanh_ps(v.V) };
 #endif
@@ -3804,6 +4180,8 @@ namespace Graphyte::Maths
                 logf(v.V.F[2]),
                 logf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_log_ps(v.V) };
 #endif
@@ -3820,6 +4198,8 @@ namespace Graphyte::Maths
                 log10f(v.V.F[2]),
                 log10f(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_log10_ps(v.V) };
 #endif
@@ -3836,6 +4216,8 @@ namespace Graphyte::Maths
                 log2f(v.V.F[2]),
                 log2f(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_log2_ps(v.V) };
 #endif
@@ -3852,6 +4234,8 @@ namespace Graphyte::Maths
                 expf(v.V.F[2]),
                 expf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_exp_ps(v.V) };
 #endif
@@ -3868,6 +4252,8 @@ namespace Graphyte::Maths
                 powf(10.0F, v.V.F[2]),
                 powf(10.0F, v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_exp10_ps(v.V) };
 #endif
@@ -3884,6 +4270,8 @@ namespace Graphyte::Maths
                 exp2f(v.V.F[2]),
                 exp2f(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_exp2_ps(v.V) };
 #endif
@@ -3900,6 +4288,8 @@ namespace Graphyte::Maths
                 powf(x.V.F[2], y.V.F[2]),
                 powf(x.V.F[3], y.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_pow_ps(x.V, y.V) };
 #endif
@@ -3916,6 +4306,8 @@ namespace Graphyte::Maths
                 hypotf(x.V.F[2], y.V.F[2]),
                 hypotf(x.V.F[3], y.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_hypot_ps(x.V, y.V) };
 #endif
@@ -3932,6 +4324,8 @@ namespace Graphyte::Maths
                 sqrtf(v.V.F[2]),
                 sqrtf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_sqrt_ps(v.V) };
 #endif
@@ -3948,6 +4342,7 @@ namespace Graphyte::Maths
                 sqrtf(v.V.F[2]),
                 sqrtf(v.V.F[3]),
             } } };
+
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_sqrt_ps(v.V) };
@@ -3958,7 +4353,18 @@ namespace Graphyte::Maths
     mathinline T mathcall InvSqrt(T v) noexcept
         requires VectorLike<T> and Transcendental<T>
     {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                1.0F / sqrtf(v.V.F[0]),
+                1.0F / sqrtf(v.V.F[1]),
+                1.0F / sqrtf(v.V.F[2]),
+                1.0F / sqrtf(v.V.F[3]),
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
         return { _mm_rsqrt_ps(v.V) };
+#endif
     }
 
     template <typename T>
@@ -3972,6 +4378,8 @@ namespace Graphyte::Maths
                 cbrtf(v.V.F[2]),
                 cbrtf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_cbrt_ps(v.V) };
 #endif
@@ -3988,6 +4396,8 @@ namespace Graphyte::Maths
                 1.0F / cbrtf(v.V.F[2]),
                 1.0F / cbrtf(v.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_invcbrt_ps(v.V) };
 #endif
@@ -3999,10 +4409,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                absf(v.V.F[0]),
-                absf(v.V.F[1]),
-                absf(v.V.F[2]),
-                absf(v.V.F[3]),
+                fabsf(v.V.F[0]),
+                fabsf(v.V.F[1]),
+                fabsf(v.V.F[2]),
+                fabsf(v.V.F[3]),
             } } };
 
         return { result.V };
@@ -4032,6 +4442,8 @@ namespace Graphyte::Maths
         __m128 const zero = _mm_setzero_ps();
         __m128 const result = _mm_sub_ps(zero, v.V);
         return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vnegq_f32(v.V) };
 #endif
     }
 
@@ -4056,6 +4468,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_add_ps(a.V, b.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vaddq_f32(a.V, b.V) };
 #endif
     }
 
@@ -4074,6 +4488,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_sub_ps(a.V, b.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vsubq_f32(a.V, b.V) };
 #endif
     }
 
@@ -4092,6 +4508,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_mul_ps(a.V, b.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vmulq_f32(a.V, b.V) };
 #endif
     }
 
@@ -4111,6 +4529,8 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const s = _mm_set_ps1(b);
         return { _mm_mul_ps(a.V, s) };
+#elif GRAPHYTE_HW_NEON
+        return { vmulq_n_f32(a.V, b) };
 #endif
     }
 
@@ -4129,6 +4549,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_div_ps(a.V, b.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vdivq_f32(a.V, b.V) };
 #endif
     }
 
@@ -4170,6 +4592,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_fmadd_ps(a.V, b.V, c.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vfmaq_f32(c.V, a.V, b.V) };
 #endif
     }
 
@@ -4208,6 +4632,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_fnmadd_ps(a.V, b.V, c.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vfmsq_f32(c.V, a.V, b.V) };
 #endif
     }
 
@@ -4227,6 +4653,26 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_fnmsub_ps(a.V, b.V, c.V) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Reciprocal(T v) noexcept
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                1.0F / v.V.F[0],
+                1.0F / v.V.F[1],
+                1.0F / v.V.F[2],
+                1.0F / v.V.F[3],
+            } } };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_div_ps(Impl::VEC4_ONE_4.V) };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const one = vdupq_n_f32(1.0F);
+        float32x4_t const result = vdivq_f32(one, v.V);
+        return { result };
 #endif
     }
 }
@@ -4270,47 +4716,156 @@ namespace Graphyte::Maths
         return { result };
 #endif
     }
-}
 
-// =================================================================================================
-//
-// Component-wise operations
-//
-
-namespace Graphyte::Maths
-{
     template <typename T>
-    mathinline T mathcall Min(T a, T b) noexcept
-        requires VectorLike<T> and Comparable<T>
+    mathinline T mathcall Hermite(T position0, T tangent0, T position1, T tangent1, float t) noexcept
+        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 const result{ { {
-                (a.V.F[0] < b.V.F[0]) ? a.V.F[0] : b.V.F[0],
-                (a.V.F[1] < b.V.F[1]) ? a.V.F[1] : b.V.F[1],
-                (a.V.F[2] < b.V.F[2]) ? a.V.F[2] : b.V.F[2],
-                (a.V.F[3] < b.V.F[3]) ? a.V.F[3] : b.V.F[3],
-            } } };
-        return { result.V };
+        float const t2 = t * t;
+        float const t3 = t * t2;
+
+
+        T const p0 = Replicate<T>(2.0F * t3 - 3.0F * t2 + 1.0F);
+        T const t0 = Replicate<T>(t3 - 2.0F * t2 + t);
+        T const p1 = Replicate<T>(-2.0F * t3 + 3.0F * t2);
+        T const t1 = Replicate<T>(t3 - t2);
+
+        T const r0 = Multiply<T>(p0, position0);
+        T const r1 = MultiplyAdd<T>(t0, tangent0, r0);
+        T const r2 = MultiplyAdd<T>(p1, position1, r1);
+        T const r3 = MultiplyAdd<T>(t1, tangent1, r2);
+
+        return { r3 };
 #elif GRAPHYTE_HW_AVX
-        return { _mm_min_ps(a.V, b.V) };
+        float const t2 = t * t;
+        float const t3 = t * t2;
+
+        __m128 const p0 = _mm_set_ps1(2.0F * t3 - 3.0F * t2 + 1.0F);
+        __m128 const t0 = _mm_set_ps1(t3 - 2.0F * t2 + t);
+        __m128 const p1 = _mm_set_ps1(-2.0F * t3 + 3.0F * t2);
+        __m128 const t1 = _mm_set_ps1(t3 - t2);
+
+        __m128 const r0 = _mm_mul_ps(p0, position0.V);
+        __m128 const r1 = _mm_fmadd_ps(t0, tangent0.V, r0);
+        __m128 const r2 = _mm_fmadd_ps(p1, position1.V, r1);
+        __m128 const r3 = _mm_fmadd_ps(t1, tangent1.V, r2);
+
+        return { r3 };
 #endif
     }
 
     template <typename T>
-    mathinline T mathcall Max(T a, T b) noexcept
-        requires VectorLike<T> and Comparable<T>
+    mathinline T mathcall Hermite(T position0, T tangent0, T position1, T tangent1, T t) noexcept
+        requires VectorLike<T>and Interpolable<T>and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 const result{ { {
-                (a.V.F[0] < b.V.F[0]) ? b.V.F[0] : a.V.F[0],
-                (a.V.F[1] < b.V.F[1]) ? b.V.F[1] : a.V.F[1],
-                (a.V.F[2] < b.V.F[2]) ? b.V.F[2] : a.V.F[2],
-                (a.V.F[3] < b.V.F[3]) ? b.V.F[3] : a.V.F[3],
+        T const t2 = Multiply<T>(t, t);
+        T const t3 = Multiply<T>(t, t2);
+
+        T const p0 = Replicate<T>(2.0F * t3.V.F[0] - 3.0F * t2.V.F[0] + 1.0F);
+        T const t0 = Replicate<T>(t3.V.F[1] - 2.0F * t2.V.F[1] + t.V.F[1]);
+        T const p1 = Replicate<T>(-2.0F * t3.V.F[2] + 3.0F * t2.V.F[2]);
+        T const t1 = Replicate<T>(t3.V.F[2] - t2.V.F[2]);
+
+        T const r0 = Multiply<T>(p0, position0);
+        T const r1 = MultiplyAdd<T>(t0, tangent0, r0);
+        T const r2 = MultiplyAdd<T>(p1, position1, r1);
+        T const r3 = MultiplyAdd<T>(t1, tangent1, r2);
+
+        return { r3 };
+
+#elif GRAPHYTE_HW_AVX
+        static Impl::ConstFloat32x4 const catmul_t2{ { {
+                -3.0F,
+                -2.0F,
+                +3.0F,
+                -1.0F,
             } } };
 
-        return { result.V };
+        static Impl::ConstFloat32x4 const catmul_t3{ { {
+                +2.0F,
+                +1.0F,
+                -2.0F,
+                +1.0F,
+            } } };
+
+        __m128 const t2 = _mm_mul_ps(t.V, t.V);
+        __m128 const t3 = _mm_mul_ps(t2, t.V);
+
+        __m128 const t2_m = _mm_mul_ps(t2, catmul_t2.V);
+        __m128 const t3_m = _mm_mul_ps(t3, catmul_t3.V);
+
+        __m128 const t2t3_ma = _mm_add_ps(t2_m, t3_m);
+        __m128 const ty = _mm_and_ps(t.V, Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const t2t3ty = _mm_add_ps(t2t3_ma, ty);
+        __m128 const tfinal = _mm_add_ps(t2t3ty, Impl::VEC4_POSITIVE_UNIT_X.V);
+
+        __m128 const r0 = _mm_permute_ps(tfinal, _MM_SHUFFLE(0, 0, 0, 0));
+        __m128 const r1 = _mm_permute_ps(tfinal, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const r2 = _mm_permute_ps(tfinal, _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 const r3 = _mm_permute_ps(tfinal, _MM_SHUFFLE(3, 3, 3, 3));
+
+        __m128 const f0 = _mm_mul_ps(r0, position0.V);
+        __m128 const f1 = _mm_fmadd_ps(r1, tangent0.V, f0);
+        __m128 const f2 = _mm_fmadd_ps(r2, position1.V, f1);
+        __m128 const f3 = _mm_fmadd_ps(r3, tangent1.V, f2);
+
+        return { f3 };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Barycentric(T a, T b, T c, float f, float g) noexcept
+        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const pba = Subtract<T>(b, a);
+        T const pca = Subtract<T>(c, a);
+        T const sf = Replicate<T>(f);
+        T const sg = Replicate<T>(g);
+        T const accum = MultiplyAdd<T>(pba, sf, a);
+        T const result = MultiplyAdd<T>(pca, sg, accum);
+        return result;
 #elif GRAPHYTE_HW_AVX
-        return { _mm_max_ps(a.V, b.V) };
+        __m128 const pba = _mm_sub_ps(b.V, a.V);
+        __m128 const pca = _mm_sub_ps(c.V, a.V);
+        __m128 const sf = _mm_set_ps1(f);
+        __m128 const sg = _mm_set_ps1(g);
+        __m128 const accum = _mm_fmadd_ps(pba, sf, a.V);
+        __m128 const result = _mm_fmadd_ps(pca, sg, accum);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const pba = vsubq_f32(b.V, a.V);
+        flaot32x4_t const pca = vsubq_f32(c.V, a.V);
+        float32x4_t const accum = vmlaq_n_f32(a.V, pba.V, f);
+        float32x4_t const result = vmlaq_n_f32(accum, pca, g);
+        return { result };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Barycentric(T a, T b, T c, T f, T g) noexcept
+        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const pba = Subtract<T>(b, a);
+        T const pca = Subtract<T>(c, a);
+        T const accum = MultiplyAdd<T>(pba, f, a);
+        T const result = MultiplyAdd<T>(pca, g, accum);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const pba = _mm_sub_ps(b.V, a.V);
+        __m128 const pca = _mm_sub_ps(c.V, a.V);
+        __m128 const accum = _mm_fmadd_ps(pba, f.V, a.V);
+        __m128 const result = _mm_fmadd_ps(pca, g.V, accum);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const pba = vsubq_f32(b.V, a.V);
+        flaot32x4_t const pca = vsubq_f32(c.V, a.V);
+        float32x4_t const accum = vmlaq_f32(a.V, pba, f.V);
+        float32x4_t const result = vmlaq_f32(accum, pca, g.V);
+        return { result };
 #endif
     }
 }
@@ -4368,6 +4923,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_ceil_ps(v.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vrndpq_f32(v.V) };
 #endif
     }
 
@@ -4391,6 +4948,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_floor_ps(v.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vrndmq_f32(v.V) };
 #endif
     }
 
@@ -4425,6 +4984,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_round_ps(v.V, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC) };
+#elif GRAPHYTE_HW_NEON
+        return { vrndq_f32(v.V) };
 #endif
     }
 
@@ -4448,6 +5009,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_round_ps(v.V, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC) };
+#elif GRAPHYTE_HW_NEON
+        return { vrndnq_f32(v.V) };
 #endif
     }
 
@@ -4482,11 +5045,6 @@ namespace Graphyte::Maths
     mathinline float mathcall Fraction(float x, float y) noexcept
     {
         return fmodf(x, y);
-    }
-
-    mathinline float mathcall Modulo(float a, float b) noexcept
-    {
-        return fmodf(a, b);
     }
 }
 
@@ -4525,10 +5083,10 @@ namespace Graphyte::Maths
         float const dz = (a.V.F[2] - b.V.F[2]);
         float const dw = (a.V.F[3] - b.V.F[3]);
 
-        float const absx = absf(dx);
-        float const absy = absf(dy);
-        float const absz = absf(dz);
-        float const absw = absf(dw);
+        float const absx = fabsf(dx);
+        float const absy = fabsf(dy);
+        float const absz = fabsf(dz);
+        float const absw = fabsf(dw);
 
         Impl::ConstUInt32x4 const result{ { {
                 (absx <= epsilon.V.F[0]) ? SELECT_1 : SELECT_0,
@@ -4617,6 +5175,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_cmplt_ps(a.V, b.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vcltq_f32(a.V, b.V) };
 #endif
     }
 
@@ -4638,6 +5198,11 @@ namespace Graphyte::Maths
 #endif
     }
 
+#if !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_COMPILER_MSVC
+#pragma float_control(push)
+#pragma float_control(precise, on)
+#endif
+
     template <typename T>
     mathinline typename T::MaskType mathcall CompareNan(T v) noexcept
         requires VectorLike<T>
@@ -4656,6 +5221,10 @@ namespace Graphyte::Maths
 #endif
     }
 
+#if !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_COMPILER_MSVC
+#pragma float_control(pop)
+#endif
+
     template <typename T>
     mathinline typename T::MaskType mathcall CompareInfinite(T v) noexcept
         requires VectorLike<T>
@@ -4671,6 +5240,27 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const abs_v = _mm_and_ps(v.V, Impl::VEC4_MASK_ABS.V);
         __m128 const result = _mm_cmpeq_ps(abs_v, Impl::VEC4_INFINITY.V);
+        return { result };
+#endif
+    }
+
+    template <typename T>
+    mathinline typename T::MaskType mathcall CompareInBounds(T v, T bounds) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                (-bounds.V.F[0] <= v.V.F[0]) && (v.V.F[0] <= bounds.V.F[0]),
+                (-bounds.V.F[1] <= v.V.F[1]) && (v.V.F[1] <= bounds.V.F[1]),
+                (-bounds.V.F[2] <= v.V.F[2]) && (v.V.F[2] <= bounds.V.F[2]),
+                (-bounds.V.F[3] <= v.V.F[3]) && (v.V.F[3] <= bounds.V.F[3]),
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask_le = _mm_cmple_ps(v.V, bounds.V);
+        __m128 const neg_bounds = _mm_mul_ps(bounds.V, Impl::VEC4_NEGATIVE_ONE_4.V);
+        __m128 const mask_ge = _mm_cmple_ps(neg_bounds, v.V);
+        __m128 const result = _mm_and_ps(mask_le, mask_ge);
         return { result };
 #endif
     }
@@ -4934,31 +5524,31 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
         {
-            return ((v.V.F[0] <= bounds.V.F[0]) && (v.V.F[0] >= -bounds.V.F[0]))
-                && ((v.V.F[1] <= bounds.V.F[1]) && (v.V.F[1] >= -bounds.V.F[1]))
-                && ((v.V.F[2] <= bounds.V.F[2]) && (v.V.F[2] >= -bounds.V.F[2]))
-                && ((v.V.F[3] <= bounds.V.F[3]) && (v.V.F[3] >= -bounds.V.F[3]));
+            return ((-bounds.V.F[0] <= v.V.F[0]) && (v.V.F[0] <= bounds.V.F[0]))
+                && ((-bounds.V.F[1] <= v.V.F[1]) && (v.V.F[1] <= bounds.V.F[1]))
+                && ((-bounds.V.F[2] <= v.V.F[2]) && (v.V.F[2] <= bounds.V.F[2]))
+                && ((-bounds.V.F[3] <= v.V.F[3]) && (v.V.F[3] <= bounds.V.F[3]));
         }
         else if constexpr (T::Components == 3)
         {
-            return ((v.V.F[0] <= bounds.V.F[0]) && (v.V.F[0] >= -bounds.V.F[0]))
-                && ((v.V.F[1] <= bounds.V.F[1]) && (v.V.F[1] >= -bounds.V.F[1]));
+            return ((-bounds.V.F[0] <= v.V.F[0]) && (v.V.F[0] <= bounds.V.F[0]))
+                && ((-bounds.V.F[1] <= v.V.F[1]) && (v.V.F[1] <= bounds.V.F[1]))
+                && ((-bounds.V.F[2] <= v.V.F[2]) && (v.V.F[2] <= bounds.V.F[2]));
         }
         else if constexpr (T::Components == 2)
         {
-            return ((v.V.F[0] <= bounds.V.F[0]) && (v.V.F[0] >= -bounds.V.F[0]))
-                && ((v.V.F[1] <= bounds.V.F[1]) && (v.V.F[1] >= -bounds.V.F[1]))
-                && ((v.V.F[2] <= bounds.V.F[2]) && (v.V.F[2] >= -bounds.V.F[2]));
+            return ((-bounds.V.F[0] <= v.V.F[0]) && (v.V.F[0] <= bounds.V.F[0]))
+                && ((-bounds.V.F[1] <= v.V.F[1]) && (v.V.F[1] <= bounds.V.F[1]));
         }
         else if constexpr (T::Components == 1)
         {
-            return ((v.V.F[0] <= bounds.V.F[0]) && (v.V.F[0] >= -bounds.V.F[0]));
+            return ((-bounds.V.F[0] <= v.V.F[0]) && (v.V.F[0] <= bounds.V.F[0]));
         }
 #elif GRAPHYTE_HW_AVX
+        __m128 const mask_le = _mm_cmple_ps(v.V, bounds.V);
         __m128 const neg_bounds = _mm_mul_ps(bounds.V, Impl::VEC4_NEGATIVE_ONE_4.V);
-        __m128 const m_pos = _mm_cmple_ps(v.V, bounds.V);
-        __m128 const m_neg = _mm_cmple_ps(v.V, neg_bounds);
-        __m128 const mask = _mm_and_ps(m_pos, m_neg);
+        __m128 const mask_ge = _mm_cmple_ps(neg_bounds, v.V);
+        __m128 const mask = _mm_and_ps(mask_le, mask_ge);
 
         static constexpr const int movemask = (1 << T::Components) - 1;
 
@@ -5003,14 +5593,13 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const mask = _mm_cmpneq_ps(v.V, v.V);
 
-        static constexpr const int movemask = (1 << T::Components) - 1;
-
         if constexpr (T::Components == 4)
         {
-            return _mm_movemask_ps(mask) == movemask;
+            return _mm_movemask_ps(mask) != 0;
         }
         else
         {
+            static constexpr const int movemask = (1 << T::Components) - 1;
             return (_mm_movemask_ps(mask) & movemask) != 0;
         }
 #endif
@@ -5056,6 +5645,96 @@ namespace Graphyte::Maths
             static constexpr const int movemask = (1 << T::Components) - 1;
             return (_mm_movemask_ps(mask) & movemask) != 0;
         }
+#endif
+    }
+}
+
+// =================================================================================================
+//
+// Component-wise operations
+//
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall Min(T a, T b) noexcept
+        requires VectorLike<T>and Comparable<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                (a.V.F[0] < b.V.F[0]) ? a.V.F[0] : b.V.F[0],
+                (a.V.F[1] < b.V.F[1]) ? a.V.F[1] : b.V.F[1],
+                (a.V.F[2] < b.V.F[2]) ? a.V.F[2] : b.V.F[2],
+                (a.V.F[3] < b.V.F[3]) ? a.V.F[3] : b.V.F[3],
+            } } };
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_min_ps(a.V, b.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vminq_f32(a.V, b.V) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Max(T a, T b) noexcept
+        requires VectorLike<T>and Comparable<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                (a.V.F[0] < b.V.F[0]) ? b.V.F[0] : a.V.F[0],
+                (a.V.F[1] < b.V.F[1]) ? b.V.F[1] : a.V.F[1],
+                (a.V.F[2] < b.V.F[2]) ? b.V.F[2] : a.V.F[2],
+                (a.V.F[3] < b.V.F[3]) ? b.V.F[3] : a.V.F[3],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_max_ps(a.V, b.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vmaxq_f32(a.V, b.V) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Clamp(T v, T min, T max) noexcept
+        requires VectorLike<T>and Comparable<T>
+    {
+        GX_ASSERT(IsLessEqual(min, max));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const below = Max<T>(min, v);
+        T const result = Min<T>(max, below);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const below = _mm_max_ps(min.V, v.V);
+        __m128 const result = _mm_min_ps(max.V, below);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const below = vmaxq_f32(min.V, v.V);
+        float32x4_t const result = vminq_f32(max.V, below);
+        return { result };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Saturate(T v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const zero = Zero<T>();
+        T const one = One<T>();
+        return Clamp(v, zero, one);
+#elif GRAPHYTE_HW_AVX
+        __m128 const zero = _mm_setzero_ps();
+        __m128 const one = Impl::VEC4_ONE_4.V;
+        __m128 const below = _mm_max_ps(v.V, zero);
+        __m128 const result = _mm_min_ps(below, one);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0F);
+        float32x4_t const one = vdupq_n_f32(1.0F);
+        float32x4_t const below = vmaxq_f32(v.V, zero);
+        float32x4_t const result = vminq_f32(below, one);
+        return { result };
 #endif
     }
 }
