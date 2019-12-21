@@ -1,6 +1,103 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+#include <DirectXMath.h>
+
+
+TEST_CASE("Maths / Vector / Orthogonal")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Vector2")
+    {
+        Vector2 const o0 = Make<Vector2>(1.0F, 2.0F);
+        CHECK(GetX(o0) == 1.0F);
+        CHECK(GetY(o0) == 2.0F);
+
+        Vector2 const o1 = Orthogonal(o0);
+        CHECK(GetX(o1) == -2.0F);
+        CHECK(GetY(o1) == 1.0F);
+
+        Vector2 const o2 = Orthogonal(o1);
+        CHECK(GetX(o2) == -1.0F);
+        CHECK(GetY(o2) == -2.0F);
+
+        Vector2 const o3 = Orthogonal(o2);
+        CHECK(GetX(o3) == 2.0F);
+        CHECK(GetY(o3) == -1.0F);
+
+        Vector2 const o4 = Orthogonal(o3);
+        CHECK(GetX(o4) == 1.0F);
+        CHECK(GetY(o4) == 2.0F);
+    }
+
+    SECTION("Vector3")
+    {
+        Vector3 const o0 = Make<Vector3>(1.0F, 1.0F, 1.0F);
+        CHECK(GetX(o0) == 1.0F);
+        CHECK(GetY(o0) == 2.0F);
+        CHECK(GetZ(o0) == 3.0F);
+
+        Vector3 const o1 = Orthogonal(o0);
+        CHECK(GetX(o1) == 1.0F);
+        CHECK(GetY(o1) == 2.0F);
+        CHECK(GetZ(o1) == 3.0F);
+
+        Vector3 const o2 = Orthogonal(o1);
+        CHECK(GetX(o2) == 1.0F);
+        CHECK(GetY(o2) == 2.0F);
+        CHECK(GetZ(o2) == 3.0F);
+
+        Vector3 const o3 = Orthogonal(o2);
+        CHECK(GetX(o3) == 1.0F);
+        CHECK(GetY(o3) == 2.0F);
+        CHECK(GetZ(o3) == 3.0F);
+
+        Vector3 const o4 = Orthogonal(o3);
+        CHECK(GetX(o4) == 1.0F);
+        CHECK(GetY(o4) == 2.0F);
+        CHECK(GetZ(o4) == 3.0F);
+
+        Vector3 const o5 = Orthogonal(o4);
+        CHECK(GetX(o5) == 1.0F);
+        CHECK(GetY(o5) == 2.0F);
+        CHECK(GetZ(o5) == 3.0F);
+    }
+
+    SECTION("Vector4")
+    {
+        Vector4 const o0 = Make<Vector4>(1.0F, 2.0F, 3.0F, 4.0F);
+        CHECK(GetX(o0) == 1.0F);
+        CHECK(GetY(o0) == 2.0F);
+        CHECK(GetZ(o0) == 3.0F);
+        CHECK(GetW(o0) == 4.0F);
+
+        Vector4 const o1 = Orthogonal(o0);
+        CHECK(GetX(o1) == 3.0F);
+        CHECK(GetY(o1) == 4.0F);
+        CHECK(GetZ(o1) == -1.0F);
+        CHECK(GetW(o1) == -2.0F);
+
+        Vector4 const o2 = Orthogonal(o1);
+        CHECK(GetX(o2) == -1.0F);
+        CHECK(GetY(o2) == -2.0F);
+        CHECK(GetZ(o2) == -3.0F);
+        CHECK(GetW(o2) == -4.0F);
+
+        Vector4 const o3 = Orthogonal(o2);
+        CHECK(GetX(o3) == -3.0F);
+        CHECK(GetY(o3) == -4.0F);
+        CHECK(GetZ(o3) == 1.0F);
+        CHECK(GetW(o3) == 2.0F);
+
+        Vector4 const o4 = Orthogonal(o3);
+        CHECK(GetX(o4) == 1.0F);
+        CHECK(GetY(o4) == 2.0F);
+        CHECK(GetZ(o4) == 3.0F);
+        CHECK(GetW(o4) == 4.0F);
+    }
+}
+
 
 TEST_CASE("Maths / Matrix / Transpose")
 {

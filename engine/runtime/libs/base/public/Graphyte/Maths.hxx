@@ -1923,23 +1923,23 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths::Impl
 {
     template <uint32_t S, bool X, bool Y, bool Z, bool W>
-    mathinline Vector4 mathcall PermuteHelper(Vector4 v1, Vector4 v2) noexcept
+    mathinline __m128 mathcall PermuteHelper(__m128 v1, __m128 v2) noexcept
     {
         if constexpr (X == false && Y == false && Z == false && W == false)
         {
-            return { _mm_permute_ps(v1.V, S) };
+            return { _mm_permute_ps(v1, S) };
         }
         else if constexpr (X == true && Y == true && Z == true && W == true)
         {
-            return { _mm_permute_ps(v2.V, S) };
+            return { _mm_permute_ps(v2, S) };
         }
         else if constexpr (X == false && Y == false && Z == true && W == true)
         {
-            return { _mm_shuffle_ps(v1.V, v2.V, S) };
+            return { _mm_shuffle_ps(v1, v2, S) };
         }
         else if constexpr (X == true && Y == true && Z == false && W == false)
         {
-            return { _mm_shuffle_ps(v2.V, v1.V, S) };
+            return { _mm_shuffle_ps(v2, v1, S) };
         }
         else
         {
@@ -1950,8 +1950,8 @@ namespace Graphyte::Maths::Impl
                     W ? SELECT_1 : SELECT_0,
                 } } };
 
-            __m128 const shuffled_v1 = _mm_permute_ps(v1.V, S);
-            __m128 const shuffled_v2 = _mm_permute_ps(v2.V, S);
+            __m128 const shuffled_v1 = _mm_permute_ps(v1, S);
+            __m128 const shuffled_v2 = _mm_permute_ps(v2, S);
             __m128 const masked_v1 = _mm_andnot_ps(select_mask.V, shuffled_v1);
             __m128 const masked_v2 = _mm_and_ps(select_mask.V, shuffled_v2);
             __m128 const result = _mm_or_ps(masked_v1, masked_v2);
@@ -1965,7 +1965,7 @@ namespace Graphyte::Maths::Impl
 namespace Graphyte::Maths
 {
     template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
-    mathinline Vector4 mathcall Permute(Vector4 v1, Vector4 v2) noexcept
+    mathinline Vector4 mathcall Permute(Vector4 a, Vector4 b) noexcept
     {
         static_assert(X < 8);
         static_assert(Y < 8);
@@ -1973,7 +1973,7 @@ namespace Graphyte::Maths
         static_assert(W < 8);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        return Permute(v1, v2, X, Y, Z, W);
+        return Permute(a, b, X, Y, Z, W);
 #elif GRAPHYTE_HW_AVX
         constexpr uint32_t shuffle = _MM_SHUFFLE(W & 3, Z & 3, Y & 3, X & 3);
         constexpr bool x = (X >= 4);
@@ -1981,15 +1981,29 @@ namespace Graphyte::Maths
         constexpr bool z = (Z >= 4);
         constexpr bool w = (W >= 4);
 
-        return Impl::PermuteHelper<shuffle, x, y, z, w>(v1, v2);
+        return { Impl::PermuteHelper<shuffle, x, y, z, w>(a.V, b.V) };
 #endif
     }
 
-    template <>
-    mathinline Vector4 mathcall Permute<0, 1, 2, 3>(Vector4 v1, [[maybe_unused]] Vector4 v2) noexcept
-    {
-        return v1;
-    }
+    template <> mathinline Vector4 mathcall Permute<0, 1, 2, 3>(Vector4 a, [[maybe_unused]] Vector4 b) noexcept { return a; }
+    template <> mathinline Vector4 mathcall Permute<4, 5, 6, 7>([[maybe_unused]] Vector4 a, Vector4 b) noexcept { return b; }
+
+#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
+    template <> mathinline Vector4 mathcall Permute<4,1,2,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x1) }; }
+    template <> mathinline Vector4 mathcall Permute<0,5,2,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x2) }; }
+    template <> mathinline Vector4 mathcall Permute<4,5,2,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x3) }; }
+    template <> mathinline Vector4 mathcall Permute<0,1,6,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x4) }; }
+    template <> mathinline Vector4 mathcall Permute<4,1,6,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x5) }; }
+    template <> mathinline Vector4 mathcall Permute<0,5,6,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x6) }; }
+    template <> mathinline Vector4 mathcall Permute<4,5,6,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x7) }; }
+    template <> mathinline Vector4 mathcall Permute<0,1,2,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x8) }; }
+    template <> mathinline Vector4 mathcall Permute<4,1,2,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x9) }; }
+    template <> mathinline Vector4 mathcall Permute<0,5,2,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0xA) }; }
+    template <> mathinline Vector4 mathcall Permute<4,5,2,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0xB) }; }
+    template <> mathinline Vector4 mathcall Permute<0,1,6,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0xC) }; }
+    template <> mathinline Vector4 mathcall Permute<4,1,6,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0xD) }; }
+    template <> mathinline Vector4 mathcall Permute<0,5,6,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0xE) }; }
+#endif
 
     mathinline Vector4 mathcall Permute(Vector4 a, Vector4 b, uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
     {
@@ -3708,6 +3722,89 @@ namespace Graphyte::Maths
         return { _mm_xor_ps(_mm_castsi128_ps(result), Impl::VEC4_MASK_NEGATIVE_ONE.V) };
 #endif
     }
+
+    template <typename T>
+    mathinline T mathcall IsEqual(T a, T b) noexcept
+        requires VectorLike<T> and Bitwisable<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return (a.V.U[0] == b.V.U[0])
+                && (a.V.U[1] == b.V.U[1])
+                && (a.V.U[2] == b.V.U[2])
+                && (a.V.U[3] == b.V.U[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (a.V.U[0] == b.V.U[0])
+                && (a.V.U[1] == b.V.U[1])
+                && (a.V.U[2] == b.V.U[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (a.V.U[0] == b.V.U[0])
+                && (a.V.U[1] == b.V.U[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (a.V.U[0] == b.V.U[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128i const mask = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
+        static constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) == movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) == movemask;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall IsNotEqual(T a, T b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return (a.V.U[0] != b.V.U[0])
+                || (a.V.U[1] != b.V.U[1])
+                || (a.V.U[2] != b.V.U[2])
+                || (a.V.U[3] != b.V.U[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (a.V.U[0] != b.V.U[0])
+                || (a.V.U[1] != b.V.U[1])
+                || (a.V.U[2] != b.V.U[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (a.V.U[0] != b.V.U[0])
+                || (a.V.U[1] != b.V.U[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (a.V.U[0] != b.V.U[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128i const mask = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
+        static constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) != movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) != movemask;
+        }
+#endif
+    }
 }
 
 
@@ -4351,6 +4448,25 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall InvSqrt(T v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                1.0F / sqrtf(v.V.F[0]),
+                1.0F / sqrtf(v.V.F[1]),
+                1.0F / sqrtf(v.V.F[2]),
+                1.0F / sqrtf(v.V.F[3]),
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const partial = _mm_sqrt_ps(v.V);
+        __m128 const result = _mm_div_ps(Impl::VEC4_ONE_4.V, partial);
+        return { result };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall InvSqrtEst(T v) noexcept
         requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -5057,7 +5173,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline typename T::MaskType mathcall CompareEqual(T a, T b) noexcept
-        requires VectorLike<T> and EqualComparable<T>
+        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -5075,7 +5191,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareEqual(T a, T b, T epsilon) noexcept
-        requires VectorLike<T> and EqualComparable<T>
+        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const dx = (a.V.F[0] - b.V.F[0]);
@@ -5108,7 +5224,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareNotEqual(T a, T b) noexcept
-        requires VectorLike<T> and EqualComparable<T>
+        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5126,7 +5242,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareGreater(T a, T b) noexcept
-        requires VectorLike<T> and OrderComparable<T>
+        requires VectorLike<T> and OrderComparable<T> and !Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5144,7 +5260,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareGreaterEqual(T a, T b) noexcept
-        requires VectorLike<T> and OrderComparable<T>
+        requires VectorLike<T> and OrderComparable<T> and !Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5162,7 +5278,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareLess(T a, T b) noexcept
-        requires VectorLike<T> and OrderComparable<T>
+        requires VectorLike<T> and OrderComparable<T> and !Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5182,7 +5298,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareLessEqual(T a, T b) noexcept
-        requires VectorLike<T> and OrderComparable<T>
+        requires VectorLike<T> and OrderComparable<T> and !Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5205,7 +5321,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareNan(T v) noexcept
-        requires VectorLike<T>
+        requires VectorLike<T> and !Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5227,7 +5343,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareInfinite(T v) noexcept
-        requires VectorLike<T>
+        requires VectorLike<T> and !Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5246,6 +5362,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareInBounds(T v, T bounds) noexcept
+        requires VectorLike<T> and !Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -5267,7 +5384,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsEqual(T a, T b) noexcept
-        requires VectorLike<T> and EqualComparable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -5308,8 +5425,69 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
+    mathinline bool mathcall IsEqual(T a, T b, T epsilon) noexcept
+        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            float const fx = fabsf(a.V.F[0] - b.V.F[0]);
+            float const fy = fabsf(a.V.F[1] - b.V.F[1]);
+            float const fz = fabsf(a.V.F[2] - b.V.F[2]);
+            float const fw = fabsf(a.V.F[3] - b.V.F[3]);
+
+            return (fx <= epsilon.V.F[0])
+                && (fy <= epsilon.V.F[1])
+                && (fz <= epsilon.V.F[2])
+                && (fw <= epsilon.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            float const fx = fabsf(a.V.F[0] - b.V.F[0]);
+            float const fy = fabsf(a.V.F[1] - b.V.F[1]);
+            float const fz = fabsf(a.V.F[2] - b.V.F[2]);
+
+            return (fx <= epsilon.V.F[0])
+                && (fy <= epsilon.V.F[1])
+                && (fz <= epsilon.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            float const fx = fabsf(a.V.F[0] - b.V.F[0]);
+            float const fy = fabsf(a.V.F[1] - b.V.F[1]);
+
+            return (fx <= epsilon.V.F[0])
+                && (fy <= epsilon.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            float const fx = fabsf(a.V.F[0] - b.V.F[0]);
+
+            return (fx <= epsilon.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const dv = _mm_sub_ps(a.V, b.V);
+        __m128 const zero = _mm_setzero_ps();
+        __m128 const nv = _mm_sub_ps(zero, dv);
+        __m128 const av = _mm_max_ps(nv, dv);
+        __m128 const mask = _mm_cmple_ps(av, epsilon.V);
+
+        constexpr const int movemask = (1 << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) == movemask;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & movemask) == movemask;
+        }
+#endif
+    }
+
+    template <typename T>
     mathinline bool mathcall IsNotEqual(T a, T b) noexcept
-        requires VectorLike<T> and EqualComparable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -5335,15 +5513,15 @@ namespace Graphyte::Maths
             return (a.V.F[0] != b.V.F[0]);
         }
 #elif GRAPHYTE_HW_AVX
-        __m128 const mask = _mm_cmpneq_ps(a.V, b.V);
-        static constexpr const int movemask = (1 << T::Components) - 1;
-
         if constexpr (T::Components == 4)
         {
+            __m128 const mask = _mm_cmpneq_ps(a.V, b.V);
             return (_mm_movemask_ps(mask) != 0);
         }
         else
         {
+            static constexpr const int movemask = (1 << T::Components) - 1;
+            __m128 const mask = _mm_cmpeq_ps(a.V, b.V);
             return (_mm_movemask_ps(mask) & movemask) != movemask;
         }
 #endif
@@ -5351,7 +5529,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsGreater(T a, T b) noexcept
-        requires VectorLike<T> and OrderComparable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and OrderComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -5393,7 +5571,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsGreaterEqual(T a, T b) noexcept
-        requires VectorLike<T> and Comparable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and Comparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -5435,7 +5613,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsLess(T a, T b) noexcept
-        requires VectorLike<T> and OrderComparable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and OrderComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -5477,7 +5655,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsLessEqual(T a, T b) noexcept
-        requires VectorLike<T> and Comparable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and Comparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -5519,7 +5697,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool InBounds(T v, T bounds) noexcept
-        requires VectorLike<T> and Comparable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and Comparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -5874,7 +6052,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Vector4 Orthogonal(Vector4 v) noexcept
+    mathinline Vector4 mathcall Orthogonal(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5979,7 +6157,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Vector4 mathcall Cross(Vector3 a, Vector3 b) noexcept
+    mathinline Vector3 mathcall Cross(Vector3 a, Vector3 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6057,6 +6235,29 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Orthogonal(Vector3 v) noexcept
+    {
+        Vector3 const zzz = SplatZ(v);
+        Vector3 const yzy = AsVector3(Swizzle<1, 2, 1, 1>(AsVector4(v)));
+        Vector3 const negv = Negate<Vector3>(v);
+        Vector3 const zero = Zero<Vector3>();
+
+        Bool3 const cmp_zzz_negative = CompareLess<Vector3>(zzz, zero);
+        Bool3 const cmp_yzy_negative = CompareLess<Vector3>(yzy, zero);
+
+        Vector3 const s = Add<Vector3>(yzy, zzz);
+        Vector3 const d = Subtract<Vector3>(yzy, zzz);
+
+        Bool3 const select = CompareEqual<Bool3>(cmp_zzz_negative, cmp_yzy_negative);
+
+        Vector4 const r0 = Permute<4, 0, 0, 0>(AsVector4(negv), AsVector4(s));
+        Vector4 const r1 = Permute<4, 0, 0, 0>(AsVector4(v), AsVector4(d));
+
+        Vector4 const result = Select(r1, r0, Bool4{ select.V });
+
+        return AsVector3(result);
+    }
+
     mathinline Vector3 mathcall Reflect(Vector3 incident, Vector3 normal) noexcept
     {
         // result = incident - (2 * dot(incident, normal)) * normal
@@ -6098,6 +6299,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const value = (a.V.F[0] * b.V.F[1]) - (a.V.F[1] * b.V.F[0]);
+
         Impl::ConstFloat32x4 const result{ { {
                 value,
                 value,
@@ -6170,6 +6372,23 @@ namespace Graphyte::Maths
 
         __m128 const result = _mm_or_ps(select_qnan, select_inf);
 
+        return { result };
+#endif
+    }
+
+    mathinline Vector2 mathcall Orthogonal(Vector2 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                -V.F[1],
+                v.F[0],
+                0.0F,
+                0.0F,
+            } } };
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const partial = _mm_permute_ps(v.V, _MM_SHUFFLE(3, 2, 0, 1));
+        __m128 const result = _mm_mul_ps(partial, Impl::VEC4_NEGATE_X.V);
         return { result };
 #endif
     }
