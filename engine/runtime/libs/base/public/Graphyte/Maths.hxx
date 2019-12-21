@@ -1191,10 +1191,10 @@ namespace Graphyte::Maths
     concept Bitwisable = IsBitwisable<T>::value;
 
     template <typename T>
-    struct IsTranscendental : std::false_type { };
+    struct IsComponentwise : std::false_type { };
 
     template <typename T>
-    concept Transcendental = IsTranscendental<T>::value;
+    concept Componentwise = IsComponentwise<T>::value;
 
     template <typename T>
     struct IsRoundable : std::false_type { };
