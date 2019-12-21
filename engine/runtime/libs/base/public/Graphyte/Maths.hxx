@@ -1302,7 +1302,7 @@ namespace Graphyte::Maths
     template <> struct IsOrderComparable<Vector4> : std::true_type { };
     template <> struct IsEqualComparable<Vector4> : std::true_type { };
     template <> struct IsArithmetic<Vector4> : std::true_type { };
-    template <> struct IsTranscendental<Vector4> : std::true_type { };
+    template <> struct IsComponentwise<Vector4> : std::true_type { };
     template <> struct IsRoundable<Vector4> : std::true_type { };
     template <> struct IsInterpolable<Vector4> : std::true_type { };
 
@@ -1321,7 +1321,7 @@ namespace Graphyte::Maths
     template <> struct IsOrderComparable<Vector3> : std::true_type { };
     template <> struct IsEqualComparable<Vector3> : std::true_type { };
     template <> struct IsArithmetic<Vector3> : std::true_type { };
-    template <> struct IsTranscendental<Vector3> : std::true_type { };
+    template <> struct IsComponentwise<Vector3> : std::true_type { };
     template <> struct IsRoundable<Vector3> : std::true_type { };
     template <> struct IsInterpolable<Vector3> : std::true_type { };
 
@@ -1340,7 +1340,7 @@ namespace Graphyte::Maths
     template <> struct IsOrderComparable<Vector2> : std::true_type { };
     template <> struct IsEqualComparable<Vector2> : std::true_type { };
     template <> struct IsArithmetic<Vector2> : std::true_type { };
-    template <> struct IsTranscendental<Vector2> : std::true_type { };
+    template <> struct IsComponentwise<Vector2> : std::true_type { };
     template <> struct IsRoundable<Vector2> : std::true_type { };
     template <> struct IsInterpolable<Vector2> : std::true_type { };
 
@@ -1358,7 +1358,7 @@ namespace Graphyte::Maths
     template <> struct IsOrderComparable<Vector1> : std::true_type { };
     template <> struct IsEqualComparable<Vector1> : std::true_type { };
     template <> struct IsArithmetic<Vector1> : std::true_type { };
-    template <> struct IsTranscendental<Vector1> : std::true_type { };
+    template <> struct IsComponentwise<Vector1> : std::true_type { };
     template <> struct IsRoundable<Vector1> : std::true_type { };
     template <> struct IsInterpolable<Vector1> : std::true_type { };
 
@@ -3902,14 +3902,14 @@ namespace Graphyte::Maths
 
 // =================================================================================================
 //
-// Transcendental functions
+// Componentwise functions
 //
 
 namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Cos(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3927,7 +3927,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Sin(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3945,7 +3945,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall SinCos(T& result_sin, T& result_cos, T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const vsin{ { {
@@ -3972,7 +3972,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Tan(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3990,7 +3990,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Asin(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4008,7 +4008,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Acos(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4026,7 +4026,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Atan(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4044,7 +4044,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Atan2(T y, T x) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4062,7 +4062,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Sinh(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4080,7 +4080,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Cosh(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4098,7 +4098,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Tanh(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4116,7 +4116,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Asinh(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4134,7 +4134,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Acosh(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4153,7 +4153,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Atanh(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4171,7 +4171,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Log(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4189,7 +4189,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Log10(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4207,7 +4207,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Log2(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4225,7 +4225,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Exp(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4243,7 +4243,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Exp10(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4261,7 +4261,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Exp2(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4279,7 +4279,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Power(T x, T y) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4297,7 +4297,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Hypot(T x, T y) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4315,7 +4315,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Sqrt(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4333,7 +4333,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SqrtEst(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4351,7 +4351,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall InvSqrt(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4369,7 +4369,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Cbrt(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4387,7 +4387,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall InvCbrt(T v) noexcept
-        requires VectorLike<T> and Transcendental<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
