@@ -9,6 +9,46 @@ TEST_CASE("Maths / Vector / Interpolation")
 
     SECTION("Catmull Rom")
     {
+        Vector4 const a = Make<Vector4>(-1.0F, +2.0F, +3.0F, -4.0F);
+        Vector4 const b = Make<Vector4>(+4.0F, -3.0F, +7.0F, -11.0F);
+        Vector4 const c = Make<Vector4>(+1.0F, -1.0F, -3.0F, +5.0F);
+        Vector4 const d = Make<Vector4>(+3.0F, +1.0F, -4.0F, -10.0F);
+
+        SECTION("Linear")
+        {
+            for (float t = 0.0F; t <= 1.0F; t += DeltaT)
+            {
+                Vector4 const v = CatmullRom(a, b, c, d, t);
+
+                CHECK(GetX(v) == Approx{ CatmullRom(GetX(a), GetX(b), GetX(c), GetX(d), t) });
+                CHECK(GetY(v) == Approx{ CatmullRom(GetY(a), GetY(b), GetY(c), GetY(d), t) });
+                CHECK(GetZ(v) == Approx{ CatmullRom(GetZ(a), GetZ(b), GetZ(c), GetZ(d), t) });
+                CHECK(GetW(v) == Approx{ CatmullRom(GetW(a), GetW(b), GetW(c), GetW(d), t) });
+            }
+        }
+
+        SECTION("Vectorized")
+        {
+            for (float x = 0.0F; x <= 1.0F; x += DeltaT)
+            {
+                for (float y = 0.0F; y <= 1.0F; y += DeltaT)
+                {
+                    for (float z = 0.0F; z <= 1.0F; z += DeltaT)
+                    {
+                        for (float w = 0.0F; w <= 1.0F; w += DeltaT)
+                        {
+                            Vector4 const t = Make<Vector4>(x, y, z, w);
+                            Vector4 const v = CatmullRom(a, b, c, d, t);
+
+                            CHECK(GetX(v) == Approx{ CatmullRom(GetX(a), GetX(b), GetX(c), GetX(d), x) });
+                            CHECK(GetY(v) == Approx{ CatmullRom(GetY(a), GetY(b), GetY(c), GetY(d), y) });
+                            CHECK(GetZ(v) == Approx{ CatmullRom(GetZ(a), GetZ(b), GetZ(c), GetZ(d), z) });
+                            CHECK(GetW(v) == Approx{ CatmullRom(GetW(a), GetW(b), GetW(c), GetW(d), w) });
+                        }
+                    }
+                }
+            }
+        }
     }
 
     SECTION("Barycentric")

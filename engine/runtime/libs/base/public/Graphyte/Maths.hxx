@@ -5860,10 +5860,10 @@ namespace Graphyte::Maths
         __m128 const f2 = _mm_set_ps1((-3.0F * t3 + 4.0F * t2 + t) * 0.5F);
         __m128 const f3 = _mm_set_ps1((t3 - t2) * 0.5F);
 
-        __m128 const r0 = _mm_mul_ps(f0, p0);
-        __m128 const r1 = _mm_fmadd_ps(f1, p1, r0);
-        __m128 const r2 = _mm_fmadd_ps(f2, p2, r1);
-        __m128 const r3 = _mm_fmadd_ps(f3, p3, r2);
+        __m128 const r0 = _mm_mul_ps(f0, p0.V);
+        __m128 const r1 = _mm_fmadd_ps(f1, p1.V, r0);
+        __m128 const r2 = _mm_fmadd_ps(f2, p2.V, r1);
+        __m128 const r3 = _mm_fmadd_ps(f3, p3.V, r2);
 
         return { r3 };
 #endif
@@ -5871,6 +5871,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CatmullRom(T p0, T p1, T p2, T p3, T t) noexcept
+        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const fx = t.V.F[0];
@@ -5952,8 +5953,26 @@ namespace Graphyte::Maths
 
         // final result
         result = _mm_mul_ps(result, Impl::VEC4_ONE_HALF_4.V);
-        return result;
+        return { result };
 #endif
+    }
+
+    mathinline float mathcall CatmullRom(float p0, float p1, float p2, float p3, float t) noexcept
+    {
+        float const t2 = t * t;
+        float const t3 = t * t2;
+
+        float const f0 = (-t3 + 2.0F * t2 - t) * 0.5F;
+        float const f1 = (3.0F * t3 - 5.0F * t2 + 2.0F) * 0.5F;
+        float const f2 = (-3.0F * t3 + 4.0F * t2 + t) * 0.5F;
+        float const f3 = (t3 - t2) * 0.5F;
+
+        float const r0 = (f0 * p0);
+        float const r1 = (f1 * p1) + r0;
+        float const r2 = (f2 * p2) + r1;
+        float const r3 = (f3 * p3) + r2;
+
+        return r3;
     }
 }
 
