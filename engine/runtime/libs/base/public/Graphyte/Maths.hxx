@@ -1965,6 +1965,106 @@ namespace Graphyte::Maths::Impl
 namespace Graphyte::Maths
 {
     template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
+    mathinline Vector4 mathcall XXX_Permute(Vector4 a, Vector4 b) noexcept
+    {
+        static_assert(X < 8);
+        static_assert(Y < 8);
+        static_assert(Z < 8);
+        static_assert(W < 8);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        //
+        // Common case: select exactly first or second vector
+        //
+
+        if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3) { return a; }
+        else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 7) { return b; }
+
+        return Permute(a, b, X, Y, Z, W);
+#elif GRAPHYTE_HW_AVX
+
+        constexpr bool x_up = (X >= 4);
+        constexpr bool y_up = (Y >= 4);
+        constexpr bool z_up = (Z >= 4);
+        constexpr bool w_up = (W >= 4);
+
+        constexpr uint32_t shuffle = _MM_SHUFFLE(W & 3, Z & 3, Y & 3, X & 3);
+        
+
+        //
+        // Common case: select exactly first or second vector
+        //
+
+        if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3) { return a; }
+        else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 7) { return b; }
+        else if constexpr (X == 4 and Y == 1 and Z == 2 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x1) }; }
+        else if constexpr (X == 0 and Y == 5 and Z == 2 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x2) }; }
+        else if constexpr (X == 4 and Y == 5 and Z == 2 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x3) }; }
+        else if constexpr (X == 0 and Y == 1 and Z == 6 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x4) }; }
+        else if constexpr (X == 4 and Y == 1 and Z == 6 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x5) }; }
+        else if constexpr (X == 0 and Y == 5 and Z == 6 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x6) }; }
+        else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x7) }; }
+        else if constexpr (X == 0 and Y == 1 and Z == 2 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0x8) }; }
+        else if constexpr (X == 4 and Y == 1 and Z == 2 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0x9) }; }
+        else if constexpr (X == 0 and Y == 5 and Z == 2 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0xA) }; }
+        else if constexpr (X == 4 and Y == 5 and Z == 2 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0xB) }; }
+        else if constexpr (X == 0 and Y == 1 and Z == 6 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0xC) }; }
+        else if constexpr (X == 4 and Y == 1 and Z == 6 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0xD) }; }
+        else if constexpr (X == 0 and Y == 5 and Z == 6 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0xE) }; }
+
+        else if constexpr (X == 0 and Y == 1 and Z == 0 and W == 1) { return { _mm_movelh_ps(a.V, a.V) }; }
+        else if constexpr (X == 4 and Y == 5 and Z == 4 and W == 5) { return { _mm_movelh_ps(b.V, b.V) }; }
+        else if constexpr (X == 2 and Y == 3 and Z == 2 and W == 3) { return { _mm_movehl_ps(a.V, a.V) }; }
+        else if constexpr (X == 6 and Y == 7 and Z == 6 and W == 7) { return { _mm_movehl_ps(b.V, b.V) }; }
+
+        else if constexpr (X == 0 and Y == 0 and Z == 1 and W == 1) { return { _mm_unpacklo_ps(a.V, a.V) }; }
+        else if constexpr (X == 4 and Y == 4 and Z == 5 and W == 5) { return { _mm_unpacklo_ps(b.V, b.V) }; }
+        else if constexpr (X == 2 and Y == 2 and Z == 3 and W == 3) { return { _mm_unpackhi_ps(a.V, a.V) }; }
+        else if constexpr (X == 6 and Y == 6 and Z == 7 and W == 7) { return { _mm_unpackhi_ps(b.V, b.V) }; }
+
+        else if constexpr (X == 0 and Y == 0 and Z == 2 and W == 2) { return { _mm_moveldup_ps(a.V) }; }
+        else if constexpr (X == 1 and Y == 1 and Z == 3 and W == 3) { return { _mm_movehdup_ps(a.V) }; }
+
+        else if constexpr (X == 4 and Y == 4 and Z == 6 and W == 6) { return { _mm_moveldup_ps(b.V) }; }
+        else if constexpr (X == 5 and Y == 5 and Z == 7 and W == 7) { return { _mm_movehdup_ps(b.V) }; }
+
+
+        else if constexpr (X == 0 and Y == 0 and Z == 0 and W == 0) { return { _mm_broadcastss_ps(a.V) }; }
+        else if constexpr (X == 4 and Y == 4 and Z == 4 and W == 4) { return { _mm_broadcastss_ps(b.V) }; }
+
+        else if constexpr (!x_up and !y_up and !z_up and !w_up) { return { _mm_permute_ps(a.V, shuffle) }; }
+        else if constexpr (x_up and y_up and z_up and w_up) { return { _mm_permute_ps(b.V, shuffle) }; }
+        else if constexpr (!x_up and !y_up and z_up and w_up) { return { _mm_shuffle_ps(a.V, b.V, shuffle) }; }
+        else if constexpr (x_up and y_up and !z_up and !w_up) { return { _mm_shuffle_ps(b.V, a.V, shuffle) }; }
+        else
+        {
+            //
+            // General case.
+            //
+
+            static constexpr Impl::ConstUInt32x4 const select_mask{ { {
+                    x_up ? SELECT_1 : SELECT_0,
+                    y_up ? SELECT_1 : SELECT_0,
+                    z_up ? SELECT_1 : SELECT_0,
+                    w_up ? SELECT_1 : SELECT_0,
+                } } };
+
+            __m128 const shuffled_v1 = _mm_permute_ps(a.V, shuffle);
+            __m128 const shuffled_v2 = _mm_permute_ps(b.V, shuffle);
+            __m128 const masked_v1 = _mm_andnot_ps(select_mask.V, shuffled_v1);
+            __m128 const masked_v2 = _mm_and_ps(select_mask.V, shuffled_v2);
+            __m128 const result = _mm_or_ps(masked_v1, masked_v2);
+
+            return { result };
+        }
+#endif
+    }
+}
+
+namespace Graphyte::Maths
+{
+    template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
     mathinline Vector4 mathcall Permute(Vector4 a, Vector4 b) noexcept
     {
         static_assert(X < 8);
@@ -3112,6 +3212,383 @@ namespace Graphyte::Maths
         return { xyzw };
 #elif GRAPHYTE_HW_NEON
         return { vld1q_lane_f32(value, v.V, 3) };
+#endif
+    }
+}
+
+// =================================================================================================
+//
+// Getters and setters for bitwisable vectors
+//
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline uint32_t mathcall GetUIntByIndex(T v, size_t index) noexcept
+        requires VectorLike<T> and Bitwisable<T>
+    {
+        GX_ASSERT(index < 4);
+        GX_COMPILER_ASSUME(index < 4);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return v.V.U[index];
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstUInt32x4 result;
+        result.V = v.V;
+        return result.U[index];
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SetUIntByIndex(T v, uint32_t value, size_t index) noexcept
+        requires VectorLike<T> and Bitwisable<T>
+    {
+        GX_ASSERT(index < 4);
+        GX_COMPILER_ASSUME(index < 4);
+
+        Impl::ConstUInt32x4 result;
+        result.V = v.V;
+        result.U[index] = value;
+        return { result.V };
+    }
+
+    template <typename T>
+    mathinline void mathcall GetUIntByIndex(uint32_t* result, T v, size_t index) noexcept
+        requires VectorLike<T> and Bitwisable<T>
+    {
+        GX_ASSERT(index < 4);
+        GX_COMPILER_ASSUME(index < 4);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        (*result) = v.V.U[index];
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstUInt32x4 r;
+        r.V = v.V;
+        (*result) = r.U[index];
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SetUIntByIndex(T v, uint32_t const* value, size_t index) noexcept
+        requires VectorLike<T> and Bitwisable<T>
+    {
+        GX_ASSERT(index < 4);
+        GX_COMPILER_ASSUME(index < 4);
+
+        Impl::ConstUInt32x4 result;
+        result.V = v.V;
+        result.U[index] = (*value);
+        return { result.V };
+    }
+
+    template <typename T>
+    mathinline uint32_t mathcall GetUIntX(T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 1)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return v.V.U[0];
+#elif GRAPHYTE_HW_AVX
+        return static_cast<uint32_t>(_mm_cvtsi128_si32(_mm_castps_si128(v.V)));
+#elif GRAPHYTE_HW_NEON
+        return vgetq_lane_u32(v.V, 0);
+#endif
+    }
+
+    template <typename T>
+    mathinline uint32_t mathcall GetUIntY(T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 2)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return v.V.U[1];
+#elif GRAPHYTE_HW_AVX
+        __m128i const r = _mm_castps_si128(v.V);
+        return static_cast<uint32_t>(_mm_extract_epi32(r, 1));
+#elif GRAPHYTE_HW_NEON
+        return vgetq_lane_u32(v.V, 1);
+#endif
+    }
+
+    template <typename T>
+    mathinline uint32_t mathcall GetUIntZ(T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 3)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return v.V.U[2];
+#elif GRAPHYTE_HW_AVX
+        __m128i const r = _mm_castps_si128(v.V);
+        return static_cast<uint32_t>(_mm_extract_epi32(r, 2));
+#elif GRAPHYTE_HW_NEON
+        return vgetq_lane_u32(v.V, 2);
+#endif
+    }
+
+    template <typename T>
+    mathinline uint32_t mathcall GetUIntW(T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return v.V.U[3];
+#elif GRAPHYTE_HW_AVX
+        __m128i const r = _mm_castps_si128(v.V);
+        return static_cast<uint32_t>(_mm_extract_epi32(r, 3));
+#elif GRAPHYTE_HW_NEON
+        return vgetq_lane_u32(v.V, 3);
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall GetUIntX(uint32_t* result, T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 1)
+    {
+        GX_ASSERT(result != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        (*result) = v.V.U[0];
+#elif GRAPHYTE_HW_AVX
+        _mm_store_ss(reinterpret_cast<float*>(result), v.V);
+#elif GRAPHYTE_HW_NEON
+        vst1q_lane_u32(result, *reinterpret_cast<uint32x4_t const*>(&v.V), 0);
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall GetUIntY(uint32_t* result, T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 2)
+    {
+        GX_ASSERT(result != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        (*result) = v.V.U[1];
+#elif GRAPHYTE_HW_AVX
+        __m128i const r = _mm_castps_si128(v.V);
+        (*result) = static_cast<uint32_t>(_mm_extract_epi32(r, 1));
+#elif GRAPHYTE_HW_NEON
+        vst1q_lane_u32(result, *reinterpret_cast<uint32x4_t const*>(&v.V), 1);
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall GetUIntZ(uint32_t* result, T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 3)
+    {
+        GX_ASSERT(result != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        (*result) = v.V.U[2];
+#elif GRAPHYTE_HW_AVX
+        __m128i const r = _mm_castps_si128(v.V);
+        (*result) = static_cast<uint32_t>(_mm_extract_epi32(r, 2));
+#elif GRAPHYTE_HW_NEON
+        vst1q_lane_u32(result, *reinterpret_cast<uint32x4_t const*>(&v.V), 2);
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall GetUIntW(uint32_t* result, T v) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 4)
+    {
+        GX_ASSERT(result != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        (*result) = v.V.U[3];
+#elif GRAPHYTE_HW_AVX
+        __m128i const r = _mm_castps_si128(v.V);
+        (*result) = static_cast<uint32_t>(_mm_extract_epi32(r, 3));
+#elif GRAPHYTE_HW_NEON
+        vst1q_lane_u32(result, *reinterpret_cast<uint32x4_t const*>(&v.V), 3);
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SetUIntX(T v, uint32_t value) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 1)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                value,
+                v.V.U[1],
+                v.V.U[2],
+                v.V.U[3],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const xxxx = _mm_cvtsi32_si128(static_cast<int>(value));
+        __m128 const result = _mm_move_ss(v.V, _mm_castsi128_ps(xxxx));
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vsetq_lane_u32(value, v.V, 0) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SetUIntY(T v, uint32_t value) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 2)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                v.V.U[0],
+                value,
+                v.V.U[2],
+                v.V.U[3],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const vu = _mm_castps_si128(v.V);
+        __m128i const vy = _mm_insert_epi32(vu, static_cast<int>(value), 1);
+        __m128 const result = _mm_castsi128_ps(vy);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vsetq_lane_u32(value, v.V, 1) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SetUIntZ(T v, uint32_t value) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 3)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                v.V.U[0],
+                v.V.U[1],
+                value,
+                v.V.U[3],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const vu = _mm_castps_si128(v.V);
+        __m128i const vz = _mm_insert_epi32(vu, static_cast<int>(value), 2);
+        __m128 const result = _mm_castsi128_ps(vz);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vsetq_lane_u32(value, v.V, 2) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SetUIntW(T v, uint32_t value) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 4)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                v.V.U[0],
+                v.V.U[1],
+                v.V.U[2],
+                value,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const vu = _mm_castps_si128(v.V);
+        __m128i const vw = _mm_insert_epi32(vu, static_cast<int>(value), 3);
+        __m128 const result = _mm_castsi128_ps(vw);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vsetq_lane_u32(value, v.V, 3) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SetUIntX(T v, uint32_t const* value) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 1)
+    {
+        GX_ASSERT(value != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                *value,
+                v.V.U[1],
+                v.V.U[2],
+                v.V.U[3],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const vx = _mm_load_ss(reinterpret_cast<float const*>(value));
+        __m128 const result = _mm_move_ss(v.V, vx);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vld1q_lane_u32(value, *reinterpret_cast<uint32x4_t const*>(&v.V), 0) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SetUIntY(T v, uint32_t const* value) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 2)
+    {
+        GX_ASSERT(value != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                v.V.U[0],
+                *value,
+                v.V.U[2],
+                v.V.U[3],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const yxzw = _mm_permute_ps(v.V, _MM_SHUFFLE(3, 2, 0, 1));
+        __m128 const yyyy = _mm_load_ss(reinterpret_cast<float const*>(value));
+        __m128 const x_yxzw = _mm_move_ss(yxzw, yyyy);
+        __m128 const result = _mm_permute_ps(x_yxzw, _MM_SHUFFLE(3, 2, 0, 1));
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vld1q_lane_u32(value, *reinterpret_cast<uint32x4_t const*>(&v.V), 1) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SetUIntZ(T v, uint32_t const* value) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 3)
+    {
+        GX_ASSERT(value != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                v.V.U[0],
+                v.V.U[1],
+                *value,
+                v.V.U[3],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const zyxw = _mm_permute_ps(v.V, _MM_SHUFFLE(3, 0, 1, 2));
+        __m128 const zzzz = _mm_load_ss(reinterpret_cast<float const*>(value));
+        __m128 const z_zyxw = _mm_move_ss(zyxw, zzzz);
+        __m128 const result = _mm_permute_ps(z_zyxw, _MM_SHUFFLE(3, 0, 1, 2));
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vld1q_lane_u32(value, *reinterpret_cast<uint32x4_t const*>(&v.V), 2) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SetUIntW(T v, uint32_t const* value) noexcept
+        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 4)
+    {
+        GX_ASSERT(value != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                v.V.U[0],
+                v.V.U[1],
+                v.V.U[2],
+                *value,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const wyzx = _mm_permute_ps(v.V, _MM_SHUFFLE(0, 2, 1, 3));
+        __m128 const wwww = _mm_load_ss(reinterpret_cast<float const*>(value));
+        __m128 const w_wyzx = _mm_move_ss(wyzx, wwww);
+        __m128 const result = _mm_permute_ps(w_wyzx, _MM_SHUFFLE(0, 2, 1, 3));
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        return { vld1q_lane_u32(value, *reinterpret_cast<uint32x4_t const*>(&v.V), 3) };
 #endif
     }
 }
@@ -4651,6 +5128,28 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
+    mathinline T mathcall Reciprocal(T v) noexcept
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                1.0F / v.V.F[0],
+                1.0F / v.V.F[1],
+                1.0F / v.V.F[2],
+                1.0F / v.V.F[3],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_rcp_ps(v.V) };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const one = vdupq_n_f32(1.0F);
+        float32x4_t const result = vdivq_f32(one, v.V);
+        return { result };
+#endif
+    }
+
+    template <typename T>
     mathinline T mathcall Divide(T a, T b) noexcept
         requires VectorLike<T> and Arithmetic<T>
     {
@@ -4769,26 +5268,6 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_fnmsub_ps(a.V, b.V, c.V) };
-#endif
-    }
-
-    template <typename T>
-    mathinline T mathcall Reciprocal(T v) noexcept
-        requires VectorLike<T> and Arithmetic<T>
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 const result{ { {
-                1.0F / v.V.F[0],
-                1.0F / v.V.F[1],
-                1.0F / v.V.F[2],
-                1.0F / v.V.F[3],
-            } } };
-#elif GRAPHYTE_HW_AVX
-        return { _mm_div_ps(Impl::VEC4_ONE_4.V) };
-#elif GRAPHYTE_HW_NEON
-        float32x4_t const one = vdupq_n_f32(1.0F);
-        float32x4_t const result = vdivq_f32(one, v.V);
-        return { result };
 #endif
     }
 }

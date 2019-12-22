@@ -4,6 +4,75 @@
 #include <DirectXMath.h>
 
 
+
+TEST_CASE("Maths / Vector / Permute")
+{
+    using namespace Graphyte::Maths;
+
+    Vector4 const a = Make<Vector4>(1.0F, 2.0F, 3.0F, 4.0F);
+    Vector4 const b = Make<Vector4>(5.0F, 6.0F, 7.0F, 8.0F);
+
+    for (uint32_t x = 0; x < 8; ++x)
+    {
+        for (uint32_t y = 0; y < 8; ++y)
+        {
+            for (uint32_t z = 0; z < 8; ++z)
+            {
+                for (uint32_t w = 0; w < 8; ++w)
+                {
+                    Vector4 const expected = Make<Vector4>(
+                        static_cast<float>(x + 1),
+                        static_cast<float>(y + 1),
+                        static_cast<float>(z + 1),
+                        static_cast<float>(w + 1)
+                    );
+
+                    Vector4 const permuted = Permute(a, b, x, y, z, w);
+
+                    CHECK(GetX(expected) == GetX(permuted));
+                    CHECK(GetY(expected) == GetY(permuted));
+                    CHECK(GetZ(expected) == GetZ(permuted));
+                    CHECK(GetW(expected) == GetW(permuted));
+                }
+            }
+        }
+    }
+}
+
+TEST_CASE("Maths / Vector / Swizzle")
+{
+    using namespace Graphyte::Maths;
+
+    Vector4 const a = Make<Vector4>(1.0F, 2.0F, 3.0F, 4.0F);
+
+    for (uint32_t x = 0; x < 4; ++x)
+    {
+        for (uint32_t y = 0; y < 4; ++y)
+        {
+            for (uint32_t z = 0; z < 4; ++z)
+            {
+                for (uint32_t w = 0; w < 4; ++w)
+                {
+                    Vector4 const expected = Make<Vector4>(
+                        static_cast<float>(x + 1),
+                        static_cast<float>(y + 1),
+                        static_cast<float>(z + 1),
+                        static_cast<float>(w + 1)
+                    );
+
+                    Vector4 const swizzled = Swizzle(a, x, y, z, w);
+
+                    CHECK(GetX(expected) == GetX(swizzled));
+                    CHECK(GetY(expected) == GetY(swizzled));
+                    CHECK(GetZ(expected) == GetZ(swizzled));
+                    CHECK(GetW(expected) == GetW(swizzled));
+                }
+            }
+        }
+    }
+}
+
+
 TEST_CASE("Maths / Vector / Orthogonal")
 {
     using namespace Graphyte::Maths;
@@ -29,39 +98,6 @@ TEST_CASE("Maths / Vector / Orthogonal")
         Vector2 const o4 = Orthogonal(o3);
         CHECK(GetX(o4) == 1.0F);
         CHECK(GetY(o4) == 2.0F);
-    }
-
-    SECTION("Vector3")
-    {
-        Vector3 const o0 = Make<Vector3>(1.0F, 1.0F, 1.0F);
-        CHECK(GetX(o0) == 1.0F);
-        CHECK(GetY(o0) == 2.0F);
-        CHECK(GetZ(o0) == 3.0F);
-
-        Vector3 const o1 = Orthogonal(o0);
-        CHECK(GetX(o1) == 1.0F);
-        CHECK(GetY(o1) == 2.0F);
-        CHECK(GetZ(o1) == 3.0F);
-
-        Vector3 const o2 = Orthogonal(o1);
-        CHECK(GetX(o2) == 1.0F);
-        CHECK(GetY(o2) == 2.0F);
-        CHECK(GetZ(o2) == 3.0F);
-
-        Vector3 const o3 = Orthogonal(o2);
-        CHECK(GetX(o3) == 1.0F);
-        CHECK(GetY(o3) == 2.0F);
-        CHECK(GetZ(o3) == 3.0F);
-
-        Vector3 const o4 = Orthogonal(o3);
-        CHECK(GetX(o4) == 1.0F);
-        CHECK(GetY(o4) == 2.0F);
-        CHECK(GetZ(o4) == 3.0F);
-
-        Vector3 const o5 = Orthogonal(o4);
-        CHECK(GetX(o5) == 1.0F);
-        CHECK(GetY(o5) == 2.0F);
-        CHECK(GetZ(o5) == 3.0F);
     }
 
     SECTION("Vector4")
