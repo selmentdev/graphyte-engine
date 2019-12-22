@@ -95,6 +95,37 @@ TEST_CASE("Maths / Vector / Interpolation")
 
     SECTION("Hermite")
     {
+        Vector4 const a = Make<Vector4>(-2.0F, +2.0F, -1.0F, +1.0F);
+        Vector4 const b = Make<Vector4>(+1.0F, +1.0F, -1.0F, +1.0F);
+        Vector4 const c = Make<Vector4>(+2.0F, -2.0F, -2.0F, +1.0F);
+        Vector4 const d = Make<Vector4>(-1.0F, +1.0F, -1.0F, -1.0F);
+
+        SECTION("Linear")
+        {
+            for (float t = 0.0F; t <= 1.0F; t += DeltaT)
+            {
+                Vector4 const v = Hermite(a, b, c, d, t);
+
+                CHECK(GetX(v) == Approx{ Hermite(GetX(a), GetX(b), GetX(c), GetX(d), t) });
+                CHECK(GetY(v) == Approx{ Hermite(GetY(a), GetY(b), GetY(c), GetY(d), t) });
+                CHECK(GetZ(v) == Approx{ Hermite(GetZ(a), GetZ(b), GetZ(c), GetZ(d), t) });
+                CHECK(GetW(v) == Approx{ Hermite(GetW(a), GetW(b), GetW(c), GetW(d), t) });
+            }
+        }
+
+        SECTION("Vectorized")
+        {
+            for (float x = 0.0F; x <= 1.0F; x += DeltaT)
+            {
+                Vector4 const t = Replicate<Vector4>(x);
+                Vector4 const v = Hermite(a, b, c, d, t);
+
+                CHECK(GetX(v) == Approx{ Hermite(GetX(a), GetX(b), GetX(c), GetX(d), x) });
+                CHECK(GetY(v) == Approx{ Hermite(GetY(a), GetY(b), GetY(c), GetY(d), x) });
+                CHECK(GetZ(v) == Approx{ Hermite(GetZ(a), GetZ(b), GetZ(c), GetZ(d), x) });
+                CHECK(GetW(v) == Approx{ Hermite(GetW(a), GetW(b), GetW(c), GetW(d), x) });
+            }
+        }
     }
 
     SECTION("Lerp")

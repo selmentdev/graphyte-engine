@@ -5711,7 +5711,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Hermite(T position0, T tangent0, T position1, T tangent1, T t) noexcept
-        requires VectorLike<T>and Interpolable<T>and Arithmetic<T>
+        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         T const t2 = Multiply<T>(t, t);
@@ -5756,17 +5756,37 @@ namespace Graphyte::Maths
         __m128 const tfinal = _mm_add_ps(t2t3ty, Impl::VEC4_POSITIVE_UNIT_X.V);
 
         __m128 const r0 = _mm_permute_ps(tfinal, _MM_SHUFFLE(0, 0, 0, 0));
-        __m128 const r1 = _mm_permute_ps(tfinal, _MM_SHUFFLE(1, 1, 1, 1));
-        __m128 const r2 = _mm_permute_ps(tfinal, _MM_SHUFFLE(2, 2, 2, 2));
-        __m128 const r3 = _mm_permute_ps(tfinal, _MM_SHUFFLE(3, 3, 3, 3));
-
         __m128 const f0 = _mm_mul_ps(r0, position0.V);
+
+        __m128 const r1 = _mm_permute_ps(tfinal, _MM_SHUFFLE(1, 1, 1, 1));
         __m128 const f1 = _mm_fmadd_ps(r1, tangent0.V, f0);
+
+        __m128 const r2 = _mm_permute_ps(tfinal, _MM_SHUFFLE(2, 2, 2, 2));
         __m128 const f2 = _mm_fmadd_ps(r2, position1.V, f1);
+
+        __m128 const r3 = _mm_permute_ps(tfinal, _MM_SHUFFLE(3, 3, 3, 3));
         __m128 const f3 = _mm_fmadd_ps(r3, tangent1.V, f2);
 
         return { f3 };
 #endif
+    }
+
+    mathinline float mathcall Hermite(float position0, float tangent0, float position1, float tangent1, float t) noexcept
+    {
+        float const t2 = t * t;
+        float const t3 = t * t2;
+
+        float const p0 = (2.0F * t3 - 3.0F * t2 + 1.0F);
+        float const t0 = (t3 - 2.0F * t2 + t);
+        float const p1 = (-2.0F * t3 + 3.0F * t2);
+        float const t1 = (t3 - t2);
+
+        float const r0 = (p0 * position0);
+        float const r1 = (t0 * tangent0) + r0;
+        float const r2 = (p1 * position1) + r1;
+        float const r3 = (t1 * tangent1) + r2;
+
+        return r3;
     }
 
     template <typename T>
