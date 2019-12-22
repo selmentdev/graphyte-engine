@@ -1,9 +1,104 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
-#include <DirectXMath.h>
+TEST_CASE("Maths / Vector / Interpolation")
+{
+    using namespace Graphyte::Maths;
+    constexpr float const DeltaT = 0.1F;
 
 
+    SECTION("Catmull Rom")
+    {
+    }
+
+    SECTION("Barycentric")
+    {
+        Vector4 const a = Make<Vector4>(-1.0F, +2.0F, +3.0F, -4.0F);
+        Vector4 const b = Make<Vector4>(+4.0F, -3.0F, +7.0F, -11.0F);
+        Vector4 const c = Make<Vector4>(+1.0F, -1.0F, -3.0F, 5.0F);
+
+        SECTION("Linear")
+        {
+            for (float f = 0.0F; f < 1.0F; f += DeltaT)
+            {
+                for (float g = 0.0F; g < 1.0F; g += DeltaT)
+                {
+                    Vector4 v = Barycentric(a, b, c, f, g);
+
+                    CHECK(GetX(v) == Approx{ Barycentric(GetX(a), GetX(b), GetX(c), f, g) }.margin(0.0001F));
+                    CHECK(GetY(v) == Approx{ Barycentric(GetY(a), GetY(b), GetY(c), f, g) }.margin(0.0001F));
+                    CHECK(GetZ(v) == Approx{ Barycentric(GetZ(a), GetZ(b), GetZ(c), f, g) }.margin(0.0001F));
+                    CHECK(GetW(v) == Approx{ Barycentric(GetW(a), GetW(b), GetW(c), f, g) }.margin(0.0001F));
+                }
+            }
+        }
+
+        SECTION("Vectorized")
+        {
+            for (float f = 0.0F; f < 1.0F; f += DeltaT)
+            {
+                for (float g = 0.0F; g < 1.0F; g += DeltaT)
+                {
+                    Vector4 tf = Make<Vector4>(f, f * 0.5F, 1.0F - f, 1.0F - (f * 0.5F));
+                    Vector4 tg = Make<Vector4>(g, g * 0.5F, 1.0F - g, 1.0F - (g * 0.5F));
+
+                    Vector4 v = Barycentric(a, b, c, tf, tg);
+
+                    CHECK(GetX(v) == Approx{ Barycentric(GetX(a), GetX(b), GetX(c), GetX(tf), GetX(tg)) }.margin(0.0001F));
+                    CHECK(GetY(v) == Approx{ Barycentric(GetY(a), GetY(b), GetY(c), GetY(tf), GetY(tg)) }.margin(0.0001F));
+                    CHECK(GetZ(v) == Approx{ Barycentric(GetZ(a), GetZ(b), GetZ(c), GetZ(tf), GetZ(tg)) }.margin(0.0001F));
+                    CHECK(GetW(v) == Approx{ Barycentric(GetW(a), GetW(b), GetW(c), GetW(tf), GetW(tg)) }.margin(0.0001F));
+                }
+            }
+        }
+    }
+
+    SECTION("Hermite")
+    {
+    }
+
+    SECTION("Lerp")
+    {
+        Vector4 const a = Make<Vector4>(-1.0F, 2.0F, 3.0F, -4.0F);
+        Vector4 const b = Make<Vector4>(3.0F, 1.0F, -4.0F, -10.0F);
+
+        SECTION("Linear")
+        {
+            for (float t = 0.0F; t <= 1.0F; t += DeltaT)
+            {
+                Vector4 const v = Lerp(a, b, t);
+
+                CHECK(GetX(v) == Approx{ Lerp(GetX(a), GetX(b), t) });
+                CHECK(GetY(v) == Approx{ Lerp(GetY(a), GetY(b), t) });
+                CHECK(GetZ(v) == Approx{ Lerp(GetZ(a), GetZ(b), t) });
+                CHECK(GetW(v) == Approx{ Lerp(GetW(a), GetW(b), t) });
+            }
+        }
+
+        SECTION("Vectorized")
+        {
+            for (float x = 0.0F; x <= 1.0F; x += DeltaT)
+            {
+                for (float y = 0.0F; y <= 1.0F; y += DeltaT)
+                {
+                    for (float z = 0.0F; z <= 1.0F; z += DeltaT)
+                    {
+                        for (float w = 0.0F; w <= 1.0F; w += DeltaT)
+                        {
+                            Vector4 const t = Make<Vector4>(x, y, z, w);
+                            Vector4 const v = Lerp(a, b, t);
+
+                            CHECK(GetX(v) == Approx{ Lerp(GetX(a), GetX(b), x) });
+                            CHECK(GetY(v) == Approx{ Lerp(GetY(a), GetY(b), y) });
+                            CHECK(GetZ(v) == Approx{ Lerp(GetZ(a), GetZ(b), z) });
+                            CHECK(GetW(v) == Approx{ Lerp(GetW(a), GetW(b), w) });
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 TEST_CASE("Maths / Vector / Permute")
 {
