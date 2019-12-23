@@ -92,9 +92,14 @@ require "vstudio"
     api.register {
         name = "enablemodules",
         scope = "project",
-        kind = "boolean"
+        kind = "boolean",
     }
 
+    api.register {
+        name = "EnableClangTidyCodeAnalysis",
+        scope = "project",
+        kind = "boolean",
+    }
 ---
 -- Hooks into the VisualStudio generation action to support the msbuild options
 
@@ -131,6 +136,13 @@ require "vstudio"
                 m.element("EnableUnitySupport", nil, "true")
             end)
         end
+
+        if proj.EnableClangTidyCodeAnalysis then
+            table.insertafter(calls, m.projectName, function()
+                m.element("EnableClangTidyCodeAnalysis", nil, "true")
+            end)
+        end
+
         return calls
     end)
 
