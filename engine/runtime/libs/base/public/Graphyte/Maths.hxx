@@ -5555,6 +5555,31 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
+    mathinline T mathcall NormalizeRange(T v) noexcept
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const base = Subtract(value, min);
+        T const range = Subtract(max, min);
+        T const result = Divide(base, range);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const base = _mm_sub_ps(value.V, min.V);
+        __m128 const range = _mm_sub_ps(max.V, min.V);
+        __m128 const result = _mm_div_ps(base, range);
+        return { result };
+#endif
+    }
+
+    mathinline float mathcall NormalizeRange(float value, float min, float max) noexcept
+    {
+        float const base = (value - min);
+        float const range = (max - min);
+        float const result = (base / range);
+        return result;
+    }
+
+    template <typename T>
     mathinline T mathcall Square(T v) noexcept
         requires VectorLike<T> and Arithmetic<T>
     {
