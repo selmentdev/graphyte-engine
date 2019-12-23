@@ -5,3 +5,4 @@
 [ ] add precompiled headers to unit tests - right now MSVC tends to hung TestVersino.cxx for too long, espc. on ARM64
 [ ] check clang-cl toolchain
 [ ] unit tests for math sublibrary
+[ ] refactor `SplatN` in way which will allow to specify target type too

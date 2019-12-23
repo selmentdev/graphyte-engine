@@ -97,12 +97,6 @@ namespace Graphyte
 
 namespace Graphyte
 {
-    template <typename T>
-    concept ConsoleVariableTypeConcept
-        = std::is_same_v<T, std::string>
-        || std::is_integral_v<T>
-        || std::is_floating_point_v<T>;
-
     class BASE_API ConsoleVariableBase
         : public IConsoleVariable
     {
@@ -151,7 +145,6 @@ namespace Graphyte
     class ConsoleVariable final
         : public ConsoleVariableBase
     {
-        static_assert(ConsoleVariableTypeConcept<T>);
     public:
         T Value;
 

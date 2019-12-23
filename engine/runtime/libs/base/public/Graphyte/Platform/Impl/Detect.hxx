@@ -976,7 +976,7 @@ namespace Graphyte::Impl::Ieee754
 
             int32_t AsInt32;
 
-            float AsFloat;
+            float AsFloat32;
         };
     };
     static_assert(sizeof(FloatBits) == sizeof(float));

@@ -3,6 +3,39 @@
 
 namespace Graphyte
 {
+    template <typename TValue, typename TBits>
+    constexpr TValue FromBits(TBits bits) noexcept = delete;
+
+    template <typename TValue, typename TBits>
+    constexpr TBits ToBits(TValue value) noexcept = delete;
+
+    template <>
+    constexpr float FromBits<float, uint32_t>(uint32_t bits) noexcept
+    {
+        return Impl::Ieee754::FloatBits{ .AsUInt32 = bits }.AsFloat32;
+    }
+
+    template <>
+    constexpr double FromBits<double, uint64_t>(uint64_t bits) noexcept
+    {
+        return Impl::Ieee754::DoubleBits{ .AsUInt64 = bits }.AsFloat64;
+    }
+
+    template <>
+    constexpr uint32_t ToBits<float, uint32_t>(float value) noexcept
+    {
+        return Impl::Ieee754::FloatBits{ .AsFloat32 = value }.AsUInt32;
+    }
+
+    template <>
+    constexpr uint64_t ToBits<double, uint64_t>(double value) noexcept
+    {
+        return Impl::Ieee754::DoubleBits{ .AsFloat64 = value }.AsUInt64;
+    }
+}
+
+namespace Graphyte
+{
     enum struct ByteEncoding : uint32_t
     {
         LittleEndian = 0x01020304,
@@ -25,7 +58,7 @@ namespace Graphyte
     {
         Impl::Ieee754::FloatBits pun{};
         pun.AsUInt32 = value;
-        return pun.AsFloat;
+        return pun.AsFloat32;
     }
 
     constexpr __forceinline double ToFloat64(uint64_t value) noexcept
@@ -38,7 +71,7 @@ namespace Graphyte
     constexpr __forceinline uint32_t FromFloat32(float value) noexcept
     {
         Impl::Ieee754::FloatBits pun{};
-        pun.AsFloat = value;
+        pun.AsFloat32 = value;
         return pun.AsUInt32;
     }
 
