@@ -3881,6 +3881,8 @@ namespace Graphyte::Maths
                 value,
                 value,
             } } };
+#elif GRAPHYTE_HW_AVX2
+        return { _mm_broadcast_ss(source) };
 #elif GRAPHYTE_HW_AVX
         return { _mm_load_ps1(source) };
 #endif
@@ -7288,6 +7290,15 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector4 mathcall Reflect(Vector4 incident, Vector4 normal) noexcept
+    {
+        // result = incident - (2 * dot(incident, normal)) * normal
+        Vector4 const dot = Dot(incident, normal);
+        Vector4 const dot_2 = Add(dot, dot);
+        Vector4 const result = NegateMultiplyAdd(dot_2, normal, incident);
+        return result;
+    }
+
     mathinline Vector4 mathcall Transform(Vector4 v, Matrix m) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -7304,39 +7315,17 @@ namespace Graphyte::Maths
             } } };
 
         return { result.V };
-#elif GRAPHYTE_HW_AVX2
-        __m128 const wwww       = _mm_permute_ps(v.V, _MM_SHUFFLE(3, 3, 3, 3));
-        __m128 const wwww_r3    = _mm_mul_ps(wwww, m.M.R[3]);
-        __m128 const zzzz       = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
-        __m128 const zzzz_r2_r3 = _mm_fmadd_ps(zzzz, m.M.R[2], wwww_r3);
-        __m128 const yyyy       = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
-        __m128 const yyyy_r1_r2 = _mm_fmadd_ps(yyyy, m.M.R[1], zzzz_r2_r3);
-        __m128 const xxxx       = _mm_broadcastss_ps(v.V);
-        __m128 const xxxx_r0_r1 = _mm_fmadd_ps(xxxx, m.M.R[0], yyyy_r1_r2);
-        return { xxxx_r0_r1 };
 #elif GRAPHYTE_HW_AVX
-        __m128 const wwww       = _mm_permute_ps(v.V, _MM_SHUFFLE(3, 3, 3, 3));
-        __m128 const wwww_r3    = _mm_mul_ps(wwww, m.M.R[3]);
-        __m128 const zzzz       = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
-        __m128 const zzzz_r2    = _mm_mul_ps(zzzz, m.M.R[2]);
-        __m128 const zzzz_r2_r3 = _mm_add_ps(zzzz_r2, wwww_r3);
-        __m128 const yyyy       = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
-        __m128 const yyyy_r1    = _mm_mul_ps(yyyy, m.M.R[1]);
-        __m128 const yyyy_r1_r2 = _mm_add_ps(yyyy_r1, zzzz_r2);
-        __m128 const xxxx       = _mm_permute_ps(v.V, _MM_SHUFFLE(0, 0, 0, 0));
-        __m128 const xxxx_r0    = _mm_mul_ps(xxxx, m.M.R[0]);
-        __m128 const xxxx_r0_r1 = _mm_add_ps(xxxx_r0, yyyy_r1);
-        return { xxxx_r0_r1 };
+        __m128 const wwww = _mm_permute_ps(v.V, _MM_SHUFFLE(3, 3, 3, 3));
+        __m128 const r0 = _mm_mul_ps(wwww, m.M.R[3]);
+        __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 const r1 = _mm_fmadd_ps(zzzz, m.M.R[2], r0);
+        __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const r2 = _mm_fmadd_ps(yyyy, m.M.R[1], r1);
+        __m128 const xxxx = _mm_broadcastss_ps(v.V);
+        __m128 const r3 = _mm_fmadd_ps(xxxx, m.M.R[0], r2);
+        return { r3 };
 #endif
-    }
-
-    mathinline Vector4 mathcall Reflect(Vector4 incident, Vector4 normal) noexcept
-    {
-        // result = incident - (2 * dot(incident, normal)) * normal
-        Vector4 const dot = Dot(incident, normal);
-        Vector4 const dot_2 = Add(dot, dot);
-        Vector4 const result = NegateMultiplyAdd(dot_2, normal, incident);
-        return result;
     }
 }
 
@@ -7478,6 +7467,50 @@ namespace Graphyte::Maths
         Vector3 const result = NegateMultiplyAdd(dot_2, normal, incident);
         return result;
     }
+
+    mathinline Vector3 mathcall Transform(Vector3 v, Matrix m) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+#elif GRAPHYTE_HW_AVX
+        __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const xxxx = _mm_broadcastss_ps(v.V);
+        __m128 const r0 = _mm_fmadd_ps(zzzz, m.M.R[2], m.M.R[3]);
+        __m128 const r1 = _mm_fmadd_ps(yyyy, m.M.R[1], r0);
+        __m128 const r2 = _mm_fmadd_ps(xxxx, m.M.R[0], r1);
+        return { r2 };
+#endif
+    }
+
+    mathinline Vector3 mathcall TransformCoord(Vector3 v, Matrix m) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+#elif GRAPHYTE_HW_AVX
+        __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 const r0 = _mm_fmadd_ps(zzzz, m.M.R[2], m.M.R[3]);
+        __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const r1 = _mm_fmadd_ps(yyyy, m.M.R[1], r0);
+        __m128 const xxxx = _mm_broadcastss_ps(v.V);
+        __m128 const r2 = _mm_fmadd_ps(xxxx, m.M.R[0], r1);
+        __m128 const wwww = _mm_permute_ps(r2, _MM_SHUFFLE(3, 3, 3, 3));
+        __m128 const r3 = _mm_div_ps(r2, wwww);
+        return { r3 };
+#endif
+    }
+
+    mathinline Vector3 mathcall TransformNormal(Vector3 v, Matrix m) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+#elif GRAPHYTE_HW_AVX
+        __m128 const xxxx = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 const r0 = _mm_mul_ps(xxxx, m.M.R[2]);
+        __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const r1 = _mm_fmadd_ps(yyyy, m.M.R[1], r0);
+        __m128 const zzzz = _mm_broadcastss_ps(v.V);
+        __m128 const r2 = _mm_fmadd_ps(zzzz, m.M.R[0], r1);
+        return { r2 };
+#endif
+    }
 }
 
 // =================================================================================================
@@ -7612,6 +7645,44 @@ namespace Graphyte::Maths
         Vector2 const dot_2 = Add(dot, dot);
         Vector2 const result = NegateMultiplyAdd(dot_2, normal, incident);
         return result;
+    }
+
+    mathinline Vector2 mathcall Transform(Vector2 v, Matrix m) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+#elif GRAPHYTE_HW_AVX
+        __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const xxxx = _mm_broadcastss_ps(v.V);
+        __m128 const r0 = _mm_fmadd_ps(yyyy, m.M.R[1], m.M.R[3]);
+        __m128 const r1 = _mm_fmadd_ps(xxxx, m.M.R[0], r0);
+        return { r1 };
+#endif
+    }
+
+    mathinline Vector2 mathcall TransformCoord(Vector2 v, Matrix m) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+#elif GRAPHYTE_HW_AVX
+        __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const xxxx = _mm_broadcastss_ps(v.V);
+        __m128 const r0 = _mm_fmadd_ps(yyyy, m.M.R[1], m.M.R[3]);
+        __m128 const r1 = _mm_fmadd_ps(xxxx, m.M.R[0], r0);
+        __m128 const wwww = _mm_permute_ps(r1, _MM_SHUFFLE(3, 3, 3, 3));
+        __m128 const r2 = _mm_div_ps(r1, wwww);
+        return { r2 };
+#endif
+    }
+
+    mathinline Vector2 mathcall TransformNormal(Vector2 v, Matrix m) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+#elif GRAPHYTE_HW_AVX
+        __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const xxxx = _mm_broadcastss_ps(v.V);
+        __m128 const r0 = _mm_mul_ps(yyyy, m.M.R[1]);
+        __m128 const r1 = _mm_fmadd_ps(xxxx, m.M.R[0], r0);
+        return { r1 };
+#endif
     }
 }
 
@@ -7847,40 +7918,73 @@ namespace Graphyte::Maths
 
         Matrix result;
 
+#if GRAPHYTE_HW_AVX2
+        __m128 const m_r0 = a.M.R[0];
+        __m128 const x_r0 = _mm_broadcastss_ps(m_r0);
+        __m128 const y_r0 = _mm_permute_ps(m_r0, _MM_SHUFFLE(1, 1, 1, 1);
+        __m128 const z_r0 = _mm_permute_ps(m_r0, _MM_SHUFFLE(2, 2, 2, 2);
+        __m128 const w_r0 = _mm_permute_ps(m_r0, _MM_SHUFFLE(3, 3, 3, 3);
+#else
         __m128 const x_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 0);
         __m128 const y_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 1);
         __m128 const z_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 2);
         __m128 const w_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 3);
+#endif
 
         __m128 const abx_r0 = _mm_mul_ps(x_r0, b.M.R[0]);
         __m128 const aby_r0 = _mm_fmadd_ps(y_r0, b.M.R[1], abx_r0);
         __m128 const abz_r0 = _mm_fmadd_ps(z_r0, b.M.R[2], aby_r0);
         __m128 const abw_r0 = _mm_fmadd_ps(w_r0, b.M.R[3], abz_r0);
 
+#if GRAPHYTE_HW_AVX2
+        __m128 const m_r1 = a.M.R[1];
+        __m128 const x_r1 = _mm_broadcastss_ps(m_r1);
+        __m128 const y_r1 = _mm_permute_ps(m_r1, _MM_SHUFFLE(1, 1, 1, 1);
+        __m128 const z_r1 = _mm_permute_ps(m_r1, _MM_SHUFFLE(2, 2, 2, 2);
+        __m128 const w_r1 = _mm_permute_ps(m_r1, _MM_SHUFFLE(3, 3, 3, 3);
+#else
         __m128 const x_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 0);
         __m128 const y_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 1);
         __m128 const z_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 2);
         __m128 const w_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 3);
+#endif
 
         __m128 const abx_r1 = _mm_mul_ps(x_r1, b.M.R[0]);
         __m128 const aby_r1 = _mm_fmadd_ps(y_r1, b.M.R[1], abx_r1);
         __m128 const abz_r1 = _mm_fmadd_ps(z_r1, b.M.R[2], aby_r1);
         __m128 const abw_r1 = _mm_fmadd_ps(w_r1, b.M.R[3], abz_r1);
 
+
+#if GRAPHYTE_HW_AVX2
+        __m128 const m_r2 = a.M.R[2];
+        __m128 const x_r2 = _mm_broadcastss_ps(m_r2);
+        __m128 const y_r2 = _mm_permute_ps(m_r2, _MM_SHUFFLE(1, 1, 1, 1);
+        __m128 const z_r2 = _mm_permute_ps(m_r2, _MM_SHUFFLE(2, 2, 2, 2);
+        __m128 const w_r2 = _mm_permute_ps(m_r2, _MM_SHUFFLE(3, 3, 3, 3);
+#else
         __m128 const x_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 0);
         __m128 const y_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 1);
         __m128 const z_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 2);
         __m128 const w_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 3);
+#endif
 
         __m128 const abx_r2 = _mm_mul_ps(x_r2, b.M.R[0]);
         __m128 const aby_r2 = _mm_fmadd_ps(y_r2, b.M.R[1], abx_r2);
         __m128 const abz_r2 = _mm_fmadd_ps(z_r2, b.M.R[2], aby_r2);
         __m128 const abw_r2 = _mm_fmadd_ps(w_r2, b.M.R[3], abz_r2);
 
+#if GRAPHYTE_HW_AVX2
+        __m128 const m_r3 = a.M.R[3];
+        __m128 const x_r3 = _mm_broadcastss_ps(m_r3);
+        __m128 const y_r3 = _mm_permute_ps(m_r3, _MM_SHUFFLE(1, 1, 1, 1);
+        __m128 const z_r3 = _mm_permute_ps(m_r3, _MM_SHUFFLE(2, 2, 2, 2);
+        __m128 const w_r3 = _mm_permute_ps(m_r3, _MM_SHUFFLE(3, 3, 3, 3);
+#else
         __m128 const x_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 0);
         __m128 const y_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 1);
         __m128 const z_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 2);
         __m128 const w_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 3);
+#endif
 
         __m128 const abx_r3 = _mm_mul_ps(x_r3, b.M.R[0]);
         __m128 const aby_r3 = _mm_fmadd_ps(y_r3, b.M.R[1], abx_r3);
@@ -7956,40 +8060,74 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         Matrix result;
 
+
+#if GRAPHYTE_HW_AVX2
+        __m128 const m_r0 = a.M.R[0];
+        __m128 const x_r0 = _mm_broadcastss_ps(m_r0);
+        __m128 const y_r0 = _mm_permute_ps(m_r0, _MM_SHUFFLE(1, 1, 1, 1);
+        __m128 const z_r0 = _mm_permute_ps(m_r0, _MM_SHUFFLE(2, 2, 2, 2);
+        __m128 const w_r0 = _mm_permute_ps(m_r0, _MM_SHUFFLE(3, 3, 3, 3);
+#else
         __m128 const x_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 0);
         __m128 const y_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 1);
         __m128 const z_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 2);
         __m128 const w_r0 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[0]) + 3);
+#endif
 
         __m128 const abx_r0 = _mm_mul_ps(x_r0, b.M.R[0]);
         __m128 const aby_r0 = _mm_fmadd_ps(y_r0, b.M.R[1], abx_r0);
         __m128 const abz_r0 = _mm_fmadd_ps(z_r0, b.M.R[2], aby_r0);
         __m128 const abw_r0 = _mm_fmadd_ps(w_r0, b.M.R[3], abz_r0);
 
+#if GRAPHYTE_HW_AVX2
+        __m128 const m_r1 = a.M.R[1];
+        __m128 const x_r1 = _mm_broadcastss_ps(m_r1);
+        __m128 const y_r1 = _mm_permute_ps(m_r1, _MM_SHUFFLE(1, 1, 1, 1);
+        __m128 const z_r1 = _mm_permute_ps(m_r1, _MM_SHUFFLE(2, 2, 2, 2);
+        __m128 const w_r1 = _mm_permute_ps(m_r1, _MM_SHUFFLE(3, 3, 3, 3);
+#else
         __m128 const x_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 0);
         __m128 const y_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 1);
         __m128 const z_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 2);
         __m128 const w_r1 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[1]) + 3);
+#endif
 
         __m128 const abx_r1 = _mm_mul_ps(x_r1, b.M.R[0]);
         __m128 const aby_r1 = _mm_fmadd_ps(y_r1, b.M.R[1], abx_r1);
         __m128 const abz_r1 = _mm_fmadd_ps(z_r1, b.M.R[2], aby_r1);
         __m128 const abw_r1 = _mm_fmadd_ps(w_r1, b.M.R[3], abz_r1);
 
+
+#if GRAPHYTE_HW_AVX2
+        __m128 const m_r2 = a.M.R[2];
+        __m128 const x_r2 = _mm_broadcastss_ps(m_r2);
+        __m128 const y_r2 = _mm_permute_ps(m_r2, _MM_SHUFFLE(1, 1, 1, 1);
+        __m128 const z_r2 = _mm_permute_ps(m_r2, _MM_SHUFFLE(2, 2, 2, 2);
+        __m128 const w_r2 = _mm_permute_ps(m_r2, _MM_SHUFFLE(3, 3, 3, 3);
+#else
         __m128 const x_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 0);
         __m128 const y_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 1);
         __m128 const z_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 2);
         __m128 const w_r2 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[2]) + 3);
+#endif
 
         __m128 const abx_r2 = _mm_mul_ps(x_r2, b.M.R[0]);
         __m128 const aby_r2 = _mm_fmadd_ps(y_r2, b.M.R[1], abx_r2);
         __m128 const abz_r2 = _mm_fmadd_ps(z_r2, b.M.R[2], aby_r2);
         __m128 const abw_r2 = _mm_fmadd_ps(w_r2, b.M.R[3], abz_r2);
 
+#if GRAPHYTE_HW_AVX2
+        __m128 const m_r3 = a.M.R[3];
+        __m128 const x_r3 = _mm_broadcastss_ps(m_r3);
+        __m128 const y_r3 = _mm_permute_ps(m_r3, _MM_SHUFFLE(1, 1, 1, 1);
+        __m128 const z_r3 = _mm_permute_ps(m_r3, _MM_SHUFFLE(2, 2, 2, 2);
+        __m128 const w_r3 = _mm_permute_ps(m_r3, _MM_SHUFFLE(3, 3, 3, 3);
+#else
         __m128 const x_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 0);
         __m128 const y_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 1);
         __m128 const z_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 2);
         __m128 const w_r3 = _mm_broadcast_ss(reinterpret_cast<float const*>(&a.M.R[3]) + 3);
+#endif
 
         __m128 const abx_r3 = _mm_mul_ps(x_r3, b.M.R[0]);
         __m128 const aby_r3 = _mm_fmadd_ps(y_r3, b.M.R[1], abx_r3);
@@ -8282,6 +8420,166 @@ namespace Graphyte::Maths
     mathinline Vector4 mathcall GetBaseW(Matrix m) noexcept
     {
         return { m.M.R[3] };
+    }
+
+    //
+    // Transforms
+    //
+
+    mathinline Matrix mathcall CreateTranslation(float x, float y, float z) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Matrix result;
+
+        result.M.M[0][0] = 1.0F;
+        result.M.M[0][1] = 0.0F;
+        result.M.M[0][2] = 0.0F;
+        result.M.M[0][3] = 0.0F;
+
+        result.M.M[1][0] = 0.0F;
+        result.M.M[1][1] = 1.0F;
+        result.M.M[1][2] = 0.0F;
+        result.M.M[1][3] = 0.0F;
+
+        result.M.M[2][0] = 0.0F;
+        result.M.M[2][1] = 0.0F;
+        result.M.M[2][2] = 1.0F;
+        result.M.M[2][3] = 0.0F;
+
+        result.M.M[3][0] = x;
+        result.M.M[3][1] = y;
+        result.M.M[3][2] = z;
+        result.M.M[3][3] = 1.0F;
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+
+        Matrix result;
+        result.M.R[0] = Impl::VEC4_POSITIVE_UNIT_X.V;
+        result.M.R[1] = Impl::VEC4_POSITIVE_UNIT_Y.V;
+        result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
+        result.M.R[3] = _mm_set_ps(1.0F, z, y, x);
+
+        return result;
+#endif
+    }
+
+    mathinline Matrix mathcall CreateTranslation(Vector3 translation) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Matrix result;
+
+        result.M.M[0][0] = 1.0F;
+        result.M.M[0][1] = 0.0F;
+        result.M.M[0][2] = 0.0F;
+        result.M.M[0][3] = 0.0F;
+
+        result.M.M[1][0] = 0.0F;
+        result.M.M[1][1] = 1.0F;
+        result.M.M[1][2] = 0.0F;
+        result.M.M[1][3] = 0.0F;
+
+        result.M.M[2][0] = 0.0F;
+        result.M.M[2][1] = 0.0F;
+        result.M.M[2][2] = 1.0F;
+        result.M.M[2][3] = 0.0F;
+
+        result.M.M[3][0] = translation.V.F[0];
+        result.M.M[3][1] = translation.V.F[1];
+        result.M.M[3][2] = translation.V.F[2];
+        result.M.M[3][3] = 1.0F;
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+
+        Matrix result;
+        result.M.R[0] = Impl::VEC4_POSITIVE_UNIT_X.V;
+        result.M.R[1] = Impl::VEC4_POSITIVE_UNIT_Y.V;
+        result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
+        result.M.R[3] = _mm_and_ps(translation.V, Impl::VEC4_MASK_SELECT_1110.V);
+
+        return result;
+#endif
+    }
+
+    mathinline Matrix mathcall CreateScaling(float x, float y, float z) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Matrix result;
+
+        result.M.M[0][0] = x;
+        result.M.M[0][1] = 0.0F;
+        result.M.M[0][2] = 0.0F;
+        result.M.M[0][3] = 0.0F;
+
+        result.M.M[1][0] = 0.0F;
+        result.M.M[1][1] = y;
+        result.M.M[1][2] = 0.0F;
+        result.M.M[1][3] = 0.0F;
+
+        result.M.M[2][0] = 0.0F;
+        result.M.M[2][1] = 0.0F;
+        result.M.M[2][2] = z;
+        result.M.M[2][3] = 0.0F;
+
+        result.M.M[3][0] = 0.0F;
+        result.M.M[3][1] = 0.0F;
+        result.M.M[3][2] = 0.0F;
+        result.M.M[3][3] = 1.0F;
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+
+        Matrix result;
+        result.M.R[0] = _mm_set_ps(0.0F, 0.0F, 0.0F, x);
+        result.M.R[1] = _mm_set_ps(0.0F, 0.0F, y, 0.0F);
+        result.M.R[2] = _mm_set_ps(0.0F, z, 0.0F, 0.0F);
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        return result;
+#endif
+    }
+
+    mathinline Matrix mathcall CreateScaling(Vector3 scale) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Matrix result;
+
+        result.M.M[0][0] = scale.V.F[0];
+        result.M.M[0][1] = 0.0F;
+        result.M.M[0][2] = 0.0F;
+        result.M.M[0][3] = 0.0F;
+
+        result.M.M[1][0] = 0.0F;
+        result.M.M[1][1] = scale.V.F[1];
+        result.M.M[1][2] = 0.0F;
+        result.M.M[1][3] = 0.0F;
+
+        result.M.M[2][0] = 0.0F;
+        result.M.M[2][1] = 0.0F;
+        result.M.M[2][2] = scale.V.F[2];
+        result.M.M[2][3] = 0.0F;
+
+        result.M.M[3][0] = 0.0F;
+        result.M.M[3][1] = 0.0F;
+        result.M.M[3][2] = 0.0F;
+        result.M.M[3][3] = 1.0F;
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+
+        Matrix result;
+        result.M.R[0] = _mm_and_ps(scale.V, Impl::VEC4_MASK_COMPONENT_X.V);
+        result.M.R[1] = _mm_and_ps(scale.V, Impl::VEC4_MASK_COMPONENT_Y.V);
+        result.M.R[2] = _mm_and_ps(scale.V, Impl::VEC4_MASK_COMPONENT_Z.V);
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        return result;
+#endif
     }
 }
 

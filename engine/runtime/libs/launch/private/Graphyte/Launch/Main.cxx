@@ -15,6 +15,68 @@
 GX_DECLARE_LOG_CATEGORY(LogInit, Trace, Trace);
 GX_DEFINE_LOG_CATEGORY(LogInit);
 
+
+inline bool XMVerifyAVX2Support()
+{
+    // Should return true for AMD "Excavator", Intel "Haswell" or later processors
+    // with OS support for AVX (Windows 7 Service Pack 1, Windows Server 2008 R2 Service Pack 1, Windows 8, Windows Server 2012)
+
+    // See http://msdn.microsoft.com/en-us/library/hskdteyh.aspx
+    int CPUInfo[4] = { -1 };
+#ifdef __clang__
+    __cpuid(0, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
+    __cpuid(CPUInfo, 0);
+#endif
+
+    if (CPUInfo[0] < 7)
+        return false;
+
+#ifdef __clang__
+    __cpuid(1, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
+    __cpuid(CPUInfo, 1);
+#endif
+
+    // We check for F16C, FMA3, AVX, OSXSAVE, SSSE4.1, and SSE3
+    if ((CPUInfo[2] & 0x38081001) != 0x38081001)
+        return false;
+
+#ifdef __clang__
+    __cpuid_count(7, 0, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
+    __cpuidex(CPUInfo, 7, 0);
+#endif
+
+    return ((CPUInfo[1] & 0x20) == 0x20);
+}
+
+inline bool XMVerifyAVXSupport()
+{
+    // Should return true for AMD Bulldozer, Intel "Sandy Bridge", and Intel "Ivy Bridge" or later processors
+    // with OS support for AVX (Windows 7 Service Pack 1, Windows Server 2008 R2 Service Pack 1, Windows 8, Windows Server 2012)
+
+    // See http://msdn.microsoft.com/en-us/library/hskdteyh.aspx
+    int CPUInfo[4] = { -1 };
+#ifdef __clang__
+    __cpuid(0, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
+    __cpuid(CPUInfo, 0);
+#endif
+
+    if (CPUInfo[0] < 1)
+        return false;
+
+#ifdef __clang__
+    __cpuid(1, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
+#else
+    __cpuid(CPUInfo, 1);
+#endif
+
+    // We check for AVX, OSXSAVE, SSSE4.1, and SSE3
+    return ((CPUInfo[2] & 0x18080001) == 0x18080001);
+}
+
 namespace Graphyte::Launch
 {
     extern void InitializeErrorHandling() noexcept;
@@ -29,6 +91,8 @@ namespace Graphyte::Launch
 
         using Graphyte::System::ProcessorFeature;
         using Graphyte::Flags;
+
+        // F16C, FMA3, AVX, OSXSAVE, SSSE4.1, and SSE3
 
 #   if GRAPHYTE_HW_SSE2
         GX_ABORT_UNLESS(
