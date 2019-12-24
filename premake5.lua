@@ -165,7 +165,7 @@ workspace "graphyte"
         toolset "msc"
 
     filter { "system:linux" }
-        toolset "clang"
+        toolset "gcc"
 
     filter { "system:android" }
         toolset "clang"
@@ -177,10 +177,15 @@ workspace "graphyte"
     filter { "language:C" }
         cdialect "C11"
 
-    filter { "system:linux", "language:C++", "toolset:clang*" }
+    filter { "system:linux", "language:C++", "toolset:clang* or gcc*" }
         buildoptions {
             "-std=c++2a",
-            "-Wno-c99-extensions",
+            "-Wno-parentheses",
+        }
+
+    filter { "toolset:gcc", "language:C++" }
+        buildoptions {
+            "-fconcepts",
         }
 
     -- use specific C/C++ features

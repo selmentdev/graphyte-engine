@@ -217,7 +217,7 @@ namespace Graphyte::Threading
     bool Thread::Start(
         IRunnable* runnable,
         std::string_view name,
-        size_t stacksize,
+        [[maybe_unused]] size_t stacksize,
         ThreadPriority priority,
         ThreadAffinity affinity
     ) noexcept
@@ -300,10 +300,11 @@ namespace Graphyte::Threading
 #if GRAPHYTE_PLATFORM_WINDOWS
 
         CloseHandle(m_Handle.Value);
-
+        m_Handle.Value = nullptr;
+#elif GRAPHYTE_PLATFORM_POSIX
+        m_Handle.Value = 0;
 #endif
 
-        m_Handle.Value = nullptr;
 
         return true;
     }
@@ -355,7 +356,7 @@ namespace Graphyte::Threading
 #elif GRAPHYTE_PLATFORM_POSIX
 
         sched_param sched{};
-        int32_t policy = SHED_RR;
+        int32_t policy = SCHED_RR;
         pthread_getschedparam(m_Handle.Value, &policy, &sched);
         sched.sched_priority = Impl::ConvertThreadPriority(priority);
         pthread_setschedparam(m_Handle.Value, policy, &sched);

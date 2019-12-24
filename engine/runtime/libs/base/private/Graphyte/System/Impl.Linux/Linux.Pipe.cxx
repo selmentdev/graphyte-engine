@@ -1,8 +1,8 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform.hxx>
-#include <Graphyte/Platform/Pipe.hxx>
+#include <Graphyte/System.hxx>
+#include <Graphyte/System/Pipe.hxx>
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     bool Pipe::Create(
         PipeHandle& read,

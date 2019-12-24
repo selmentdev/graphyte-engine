@@ -1,6 +1,6 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform.hxx>
-#include <Graphyte/Platform/Process.hxx>
+#include <Graphyte/System.hxx>
+#include <Graphyte/System/Process.hxx>
 #include <Graphyte/String.hxx>
 #include <Graphyte/Storage/Path.hxx>
 #include <Graphyte/Storage/FileManager.hxx>
@@ -14,7 +14,7 @@
 #include <spawn.h>
 #include <link.h>
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     ProcessHandle Process::Create(
         const char* path,
@@ -337,7 +337,7 @@ namespace Graphyte::Platform
                 do
                 {
                     Pipe::Read(outputs.data(), pipe_read.data(), 2);
-                    Threading::Thread::Yield();
+                    Threading::YieldThread();
                 } while (Process::IsRunning(handle, exit_code));
 
                 Pipe::Read(outputs.data(), pipe_read.data(), 2);

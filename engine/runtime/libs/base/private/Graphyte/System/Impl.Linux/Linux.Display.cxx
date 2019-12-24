@@ -1,13 +1,13 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform.hxx>
-#include <Graphyte/Types.hxx>
-#include <Graphyte/Math/Scalar.hxx>
+#include <Graphyte/System.hxx>
+#include <Graphyte/Maths.hxx>
+//#include <Graphyte/Math/Scalar.hxx>
 
 #include "../Platform.impl.hxx"
 
 #include <SDL2/SDL.h>
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     BASE_API Status GetDisplayMetrics(
         DisplayMetrics& result
@@ -96,7 +96,7 @@ namespace Graphyte::Platform
         return DeviceScreenOrientation::Landscape;
     }
 
-    BASE_API Float4 GetScreenPixel(
+    BASE_API ColorF GetScreenPixel(
         Point position,
         float gamma
     ) noexcept

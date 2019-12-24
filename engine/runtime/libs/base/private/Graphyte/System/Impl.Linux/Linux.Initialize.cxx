@@ -5,7 +5,7 @@
 
 #include <SDL2/SDL.h>
 
-namespace Graphyte::Platform::Impl
+namespace Graphyte::System::Impl
 {
     void InitializePlatform() noexcept
     {

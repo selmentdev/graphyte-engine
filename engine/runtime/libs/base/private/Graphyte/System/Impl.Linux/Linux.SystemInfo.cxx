@@ -1,5 +1,5 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform.hxx>
+#include <Graphyte/System.hxx>
 #include <Graphyte/Storage/Path.hxx>
 #include <Graphyte/Diagnostics.hxx>
 
@@ -14,7 +14,7 @@
 #include <pwd.h>
 #include <fstream>
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     BASE_API std::string GetUserDirectory() noexcept
     {

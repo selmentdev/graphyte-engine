@@ -1,6 +1,10 @@
 #include "Base.pch.hxx"
 #include <Graphyte/Uuid.hxx>
 
+#if GRAPHYTE_PLATFORM_LINUX
+#include <uuid/uuid.h>
+#endif
+
 namespace Graphyte
 {
     BASE_API Uuid Uuid::Create() noexcept
@@ -23,7 +27,7 @@ namespace Graphyte
         uuid_t uuid;
         uuid_generate(uuid);
 
-        std::memcpy(result.AsU8, uuid, sizeof(Uuid));
+        std::memcpy(&result, uuid, sizeof(Uuid));
 
 #else
 #error Not implemented

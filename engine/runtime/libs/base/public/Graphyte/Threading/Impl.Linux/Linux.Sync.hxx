@@ -1,7 +1,7 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Threading/Sync.hxx>
-#include <Graphyte/Platform/Impl.Posix/Posix.Types.hxx>
+#include <Graphyte/System/Impl.Posix/Posix.Types.hxx>
 
 namespace Graphyte::Threading
 {
@@ -96,7 +96,7 @@ namespace Graphyte::Threading
 
         bool Wait(LinuxCriticalSection& lock, uint32_t timeout) noexcept
         {
-            auto ts = Platform::TypeConverter<timespec>::ConvertMilliseconds(timeout);
+            auto ts = System::TypeConverter<timespec>::ConvertMilliseconds(timeout);
 
             return pthread_cond_timedwait(&m_ConditionVariable, &lock.m_CriticalSection, &ts);
         }
@@ -139,7 +139,7 @@ namespace Graphyte::Threading
 
         bool Wait(uint32_t timeout) noexcept
         {
-            auto ts = Platform::TypeConverter<timespec>::ConvertMilliseconds(timeout);
+            auto ts = System::TypeConverter<timespec>::ConvertMilliseconds(timeout);
             return sem_timedwait(&m_Handle, &ts) == 0;
         }
 

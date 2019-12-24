@@ -713,7 +713,7 @@
 #endif
 
 #if !defined(GRAPHYTE_MATH_SVML)
-#   define GRAPHYTE_MATH_SVML
+#   define GRAPHYTE_MATH_SVML 0
 #endif
 
 #if !defined(GRAPHYTE_MATH_FAST_FUNCTIONS)
@@ -896,6 +896,11 @@
 #define GX_OPTIMIZE_ENABLE      _Pragma("clang optimize on")
 #define GX_OPTIMIZE_DISABLE     _Pragma("clang optimize off")
 
+#elif GRAPHYTE_COMPILER_GCC
+
+#define GX_OPTIMIZE_ENABLE      /* not supported */
+#define GX_OPTIMIZE_DISABLE     /* not supported */
+
 #else
 #error "Not supported compiler"
 #endif
@@ -920,7 +925,7 @@
 using char8_t = unsigned char;
 #endif
 #elif GRAPHYTE_COMPILER_GCC
-using char8_t = unsigned char;
+//using char8_t = unsigned char;
 #endif
 
 

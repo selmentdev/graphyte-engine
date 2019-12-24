@@ -1,6 +1,6 @@
 #include "Graphics.pch.hxx"
 #include <Graphyte/CommandLine.hxx>
-#include <Graphyte/Platform.hxx>
+#include <Graphyte/System.hxx>
 #include <Graphyte/Graphics/Gpu/GpuDevice.hxx>
 
 namespace Graphyte::Graphics::Impl

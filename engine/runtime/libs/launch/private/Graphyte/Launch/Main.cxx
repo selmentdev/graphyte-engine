@@ -15,7 +15,7 @@
 GX_DECLARE_LOG_CATEGORY(LogInit, Trace, Trace);
 GX_DEFINE_LOG_CATEGORY(LogInit);
 
-
+#if false
 inline bool XMVerifyAVX2Support()
 {
     // Should return true for AMD "Excavator", Intel "Haswell" or later processors
@@ -76,6 +76,7 @@ inline bool XMVerifyAVXSupport()
     // We check for AVX, OSXSAVE, SSSE4.1, and SSE3
     return ((CPUInfo[2] & 0x18080001) == 0x18080001);
 }
+#endif
 
 namespace Graphyte::Launch
 {

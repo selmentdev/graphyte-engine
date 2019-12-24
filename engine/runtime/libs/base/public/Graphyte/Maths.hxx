@@ -1934,19 +1934,19 @@ namespace Graphyte::Maths::Impl
     {
         if constexpr (X == false && Y == false && Z == false && W == false)
         {
-            return { _mm_permute_ps(v1, S) };
+            return _mm_permute_ps(v1, S);
         }
         else if constexpr (X == true && Y == true && Z == true && W == true)
         {
-            return { _mm_permute_ps(v2, S) };
+            return _mm_permute_ps(v2, S);
         }
         else if constexpr (X == false && Y == false && Z == true && W == true)
         {
-            return { _mm_shuffle_ps(v1, v2, S) };
+            return _mm_shuffle_ps(v1, v2, S);
         }
         else if constexpr (X == true && Y == true && Z == false && W == false)
         {
-            return { _mm_shuffle_ps(v2, v1, S) };
+            return _mm_shuffle_ps(v2, v1, S);
         }
         else
         {
@@ -1962,7 +1962,7 @@ namespace Graphyte::Maths::Impl
             __m128 const masked_v1 = _mm_andnot_ps(select_mask.V, shuffled_v1);
             __m128 const masked_v2 = _mm_and_ps(select_mask.V, shuffled_v2);
             __m128 const result = _mm_or_ps(masked_v1, masked_v2);
-            return { result };
+            return result;
         }
     }
 }
@@ -2724,7 +2724,7 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        __m128i const v_xy = _mm_loadl_epi64(reinterpret_cast<__m128i* const*>(source));
+        __m128i const v_xy = _mm_loadl_epi64(reinterpret_cast<__m128i const*>(source));
         return { _mm_castsi128_ps(v_xy) };
 #endif
     }
@@ -3934,7 +3934,7 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        __m128 const ivec = _mm_set1_epi32(static_cast<int>(value));
+        __m128i const ivec = _mm_set1_epi32(static_cast<int>(value));
         return { _mm_castsi128_ps(ivec) };
 #endif
     }
@@ -4244,7 +4244,7 @@ namespace Graphyte::Maths
             return (a.V.U[0] == b.V.U[0]);
         }
 #elif GRAPHYTE_HW_AVX
-        __m128i const mask = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
+        __m128 const mask = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V)));
         static constexpr const int movemask = (1 << T::Components) - 1;
 
         if constexpr (T::Components == 4)
@@ -4285,7 +4285,7 @@ namespace Graphyte::Maths
             return (a.V.U[0] != b.V.U[0]);
         }
 #elif GRAPHYTE_HW_AVX
-        __m128i const mask = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
+        __m128 const mask = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V)));
         static constexpr const int movemask = (1 << T::Components) - 1;
 
         if constexpr (T::Components == 4)
@@ -4512,6 +4512,16 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_MATH_SVML
         return { _mm_cos_ps(v.V) };
+#else
+        Impl::ConstFloat32x4 const components{ .V = v.V };
+        Impl::ConstFloat32x4 const result{ { {
+                cosf(components.F[0]),
+                cosf(components.F[1]),
+                cosf(components.F[2]),
+                cosf(components.F[3]),
+            } } };
+            
+        return { result.V };
 #endif
     }
 
@@ -9091,7 +9101,7 @@ namespace Graphyte::Maths
         Vector3 const plane_normal = Normalize(plane_perpendicular);
 
         Vector4 const neg_plane_distance = DotNormal(As<Plane>(plane_normal), p1);
-        Vector4 const plane_distance = Negate(plane_distance);
+        Vector4 const plane_distance = Negate(neg_plane_distance);
 
         Vector4 const result = Select<Vector4>(plane_distance, As<Vector4>(plane_normal), Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
         Plane const plane = As<Plane>(result);

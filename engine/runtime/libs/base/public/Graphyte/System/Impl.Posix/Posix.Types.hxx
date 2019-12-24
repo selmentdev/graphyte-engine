@@ -1,8 +1,8 @@
 #pragma once
-#include <Graphyte/Platform.hxx>
-#include <Graphyte/Platform/DateTime.hxx>
+#include <Graphyte/System.hxx>
+#include <Graphyte/DateTime.hxx>
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     template <>
     struct TypeConverter<struct timeval> final
@@ -65,15 +65,15 @@ namespace Graphyte::Platform
         __forceinline static DateTime ConvertDateTime(struct timespec value) noexcept
         {
             const auto ticks
-                = (value.tv_sec * Impl::TicksInSecond)
+                = (value.tv_sec * Impl::GTicksInSecond)
                 + (value.tv_nsec / 100);
-            return DateTime{ Impl::UnixAdjustOffset + ticks };
+            return DateTime{ Impl::GUnixAdjustOffset + ticks };
         }
         __forceinline static struct timespec ConvertDateTime(DateTime value) noexcept
         {
             const auto ticks = value.Value;
-            const auto sec = ticks / Impl::TicksInSecond;
-            const auto nsec = (ticks % Impl::TicksInSecond) / Impl::TicksInMicrosecond;
+            const auto sec = ticks / Impl::GTicksInSecond;
+            const auto nsec = (ticks % Impl::GTicksInSecond) / Impl::GTicksInMicrosecond;
 
             struct timespec result {};
             result.tv_sec = sec;

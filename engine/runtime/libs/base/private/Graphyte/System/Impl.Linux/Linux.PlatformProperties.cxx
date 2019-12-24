@@ -1,5 +1,6 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform.hxx>
+#include <Graphyte/System.hxx>
+#include <Graphyte/String.hxx>
 
 #include "../Platform.impl.hxx"
 
@@ -10,7 +11,7 @@
 
 #include <SDL2/SDL.h>
 
-namespace Graphyte::Platform::Impl
+namespace Graphyte::System::Impl
 {
     void DetectPlatformFeatures() noexcept
     {

@@ -1,12 +1,12 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform.hxx>
+#include <Graphyte/System.hxx>
 #include <Graphyte/Diagnostics.hxx>
 
 #include "../Platform.impl.hxx"
 
 #include <SDL2/SDL.h>
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     BASE_API Status GetBatteryState(
         BatteryState& state,

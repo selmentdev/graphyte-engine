@@ -1,5 +1,5 @@
 #include "Base.pch.hxx"
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
 }

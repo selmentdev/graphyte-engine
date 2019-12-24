@@ -1,5 +1,5 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform/Impl.Posix/Posix.Types.hxx>
+#include <Graphyte/System/Impl.Posix/Posix.Types.hxx>
 #include <Graphyte/ByteAccess.hxx>
 #include <Graphyte/Diagnostics.hxx>
 #include <Graphyte/Storage/Path.hxx>
@@ -182,9 +182,9 @@ namespace Graphyte::Storage
         struct stat fileinfo{};
         if (stat(path.c_str(), &fileinfo) == -1)
         {
-            result.CreationTime = Platform::DateTime::FromUnixTimestamp(fileinfo.st_ctime);
-            result.AccessTime = Platform::DateTime::FromUnixTimestamp(fileinfo.st_atime);
-            result.ModificationTime = Platform::DateTime::FromUnixTimestamp(fileinfo.st_mtime);
+            result.CreationTime = DateTime::FromUnixTimestamp(fileinfo.st_ctime);
+            result.AccessTime = DateTime::FromUnixTimestamp(fileinfo.st_atime);
+            result.ModificationTime = DateTime::FromUnixTimestamp(fileinfo.st_mtime);
             result.FileSize = static_cast<int64_t>(fileinfo.st_size);
             result.IsDirectory = S_ISDIR(fileinfo.st_mode);
             result.IsValid = true;

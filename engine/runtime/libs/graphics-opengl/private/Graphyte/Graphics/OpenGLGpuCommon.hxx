@@ -16,6 +16,8 @@
 #undef Success
 #undef Always
 #undef Complex
+#undef True
+#undef False
 #else
 #error "Unsupported platform"
 #endif

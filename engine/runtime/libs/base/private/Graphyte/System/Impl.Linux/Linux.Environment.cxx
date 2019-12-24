@@ -1,5 +1,5 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform.hxx>
+#include <Graphyte/System.hxx>
 #include <Graphyte/Storage/IFileSystem.hxx>
 #include <Graphyte/Storage/Path.hxx>
 
@@ -7,7 +7,7 @@
 
 #include <SDL2/SDL.h>
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     BASE_API Status GetClipboardContent(
         std::string& content

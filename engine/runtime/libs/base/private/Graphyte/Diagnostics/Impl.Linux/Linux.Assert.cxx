@@ -1,6 +1,6 @@
 #include "Base.pch.hxx"
 #include <Graphyte/Diagnostics.hxx>
-#include <Graphyte/Platform.hxx>
+#include <Graphyte/System.hxx>
 
 #include "../Diagnostics.Impl.hxx"
 

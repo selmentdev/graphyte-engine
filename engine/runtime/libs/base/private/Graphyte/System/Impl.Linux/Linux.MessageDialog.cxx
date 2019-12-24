@@ -1,12 +1,12 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform.hxx>
+#include <Graphyte/System.hxx>
 #include "../Platform.impl.hxx"
 
 #include <Graphyte/Span.hxx>
 
 #include <SDL2/SDL.h>
 
-namespace Graphyte::Platform::Impl
+namespace Graphyte::System::Impl
 {
     const std::array<const SDL_MessageBoxButtonData, 1> MessageDialogButtons_Ok = {
         {
@@ -124,7 +124,7 @@ namespace Graphyte::Platform::Impl
     }
 }
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     BASE_API MessageDialogResult ShowMessageDialog(
         std::string_view title,

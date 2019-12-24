@@ -2,6 +2,8 @@
 #include <Graphyte/System/Library.hxx>
 #include <Graphyte/Diagnostics.hxx>
 
+#include <dlfcn.h>
+
 namespace Graphyte::System
 {
     Status Library::Load(std::string_view path) noexcept

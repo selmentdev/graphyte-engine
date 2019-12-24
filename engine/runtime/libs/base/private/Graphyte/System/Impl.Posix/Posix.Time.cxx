@@ -1,8 +1,8 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform.hxx>
-#include <Graphyte/Platform/Impl.Posix/Posix.Types.hxx>
+#include <Graphyte/System.hxx>
+#include <Graphyte/System/Impl.Posix/Posix.Types.hxx>
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     BASE_API void GetSystemTime(
         CalendarTime& time
@@ -50,7 +50,7 @@ namespace Graphyte::Platform
 
     BASE_API uint64_t GetTimestampResolution() noexcept
     {
-        return SecondsToNanoseconds;
+        return GSecondsToNanoseconds;
     }
 
     BASE_API uint64_t GetTimestamp() noexcept

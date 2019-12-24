@@ -41,15 +41,6 @@ namespace Graphyte::Network
     }
 
     IpAddress::IpAddress(
-        const IpAddress& address
-    ) noexcept
-        : m_address(address.m_address)
-        , m_scope_id{ address.m_scope_id }
-        , m_family{ address.m_family }
-    {
-    }
-
-    IpAddress::IpAddress(
         AddressFamily family
     ) noexcept
         : m_address{}

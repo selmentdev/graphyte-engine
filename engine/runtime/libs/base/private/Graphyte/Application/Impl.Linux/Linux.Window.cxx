@@ -102,7 +102,7 @@ namespace Graphyte::Application::Impl
     }
 
     void LinuxWindow::Move(
-        Platform::Point location
+        System::Point location
     ) noexcept
     {
         SDL_SetWindowPosition(
@@ -113,7 +113,7 @@ namespace Graphyte::Application::Impl
     }
 
     void LinuxWindow::Resize(
-        Platform::Size size
+        System::Size size
     ) noexcept
     {
         SDL_SetWindowSize(
@@ -240,7 +240,7 @@ namespace Graphyte::Application::Impl
         SDL_SetWindowTitle(m_Handle, text);
     }
 
-    void LinuxWindow::SetPlacement(Platform::Rect placement) noexcept
+    void LinuxWindow::SetPlacement(System::Rect placement) noexcept
     {
         switch (GetWindowMode())
         {
@@ -316,7 +316,7 @@ namespace Graphyte::Application::Impl
     }
 
     bool LinuxWindow::GetRestoredPlacement(
-        Platform::Rect& placement
+        System::Rect& placement
     ) noexcept
     {
         SDL_GetWindowPosition(m_Handle, &placement.Left, &placement.Top);
@@ -326,7 +326,7 @@ namespace Graphyte::Application::Impl
     }
 
     bool LinuxWindow::GetFullscreenInfo(
-        Platform::Rect& placement
+        System::Rect& placement
     ) noexcept
     {
         SDL_Rect rc{};
@@ -346,9 +346,9 @@ namespace Graphyte::Application::Impl
         return false;
     }
 
-    Platform::Size LinuxWindow::GetViewportSize() noexcept
+    System::Size LinuxWindow::GetViewportSize() noexcept
     {
-        Platform::Size result{};
+        System::Size result{};
 
         SDL_GetWindowSize(m_Handle, &result.Width, &result.Height);
 
@@ -364,7 +364,7 @@ namespace Graphyte::Application::Impl
     }
 
     bool LinuxWindow::IsPointInside(
-        Platform::Point location
+        System::Point location
     ) noexcept
     {
         SDL_Point point{ location.Left, location.Top };

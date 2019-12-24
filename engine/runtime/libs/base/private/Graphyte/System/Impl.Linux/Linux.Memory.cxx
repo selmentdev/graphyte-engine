@@ -1,8 +1,8 @@
 #include "Base.pch.hxx"
-#include <Graphyte/Platform.hxx>
+#include <Graphyte/System.hxx>
 #include "../Platform.impl.hxx"
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     BASE_API MemoryUsage GetMemoryUsage() noexcept
     {

@@ -24,8 +24,8 @@ namespace Graphyte::Application::Impl
         void Destroy() noexcept override;
 
     public:
-        void Move(Platform::Point location) noexcept override;
-        void Resize(Platform::Size size) noexcept override;
+        void Move(System::Point location) noexcept override;
+        void Resize(System::Size size) noexcept override;
         void Focus() noexcept override;
         void BringToFront(bool force) noexcept override;
         void Minimize() noexcept override;
@@ -38,8 +38,8 @@ namespace Graphyte::Application::Impl
         void SetWindowMode(WindowMode value) noexcept override;
         WindowMode GetWindowMode() noexcept override;
         void SetCaption(const char* text) noexcept override;
-        void SetPlacement(Platform::Rect placement) noexcept override;
-        //void GetPlacement(Platform::Rect& placement) noexcept override;
+        void SetPlacement(System::Rect placement) noexcept override;
+        //void GetPlacement(System::Rect& placement) noexcept override;
         bool IsMaximized() noexcept override;
         bool IsMinimized() noexcept override;
         bool IsVisible() noexcept override;
@@ -47,10 +47,10 @@ namespace Graphyte::Application::Impl
         bool IsFocused() noexcept override;
         void* GetNativeHandle() noexcept override;
         int32_t GetBorderSize() noexcept override;
-        bool GetRestoredPlacement(Platform::Rect& placement) noexcept override;
-        bool GetFullscreenInfo(Platform::Rect& screen_rect) noexcept override;
-        Platform::Size GetViewportSize() noexcept override;
-        bool IsPointInside(Platform::Point value) noexcept override;
+        bool GetRestoredPlacement(System::Rect& placement) noexcept override;
+        bool GetFullscreenInfo(System::Rect& screen_rect) noexcept override;
+        System::Size GetViewportSize() noexcept override;
+        bool IsPointInside(System::Point value) noexcept override;
         void OnParentWindowMinimized() noexcept override;
         void OnParentWindowRestored() noexcept override;
     };

@@ -5,7 +5,7 @@
 
 // =================================================================================================
 //
-// Parallel For 
+// Parallel For
 //
 
 namespace Graphyte::Threading
@@ -110,7 +110,13 @@ namespace Graphyte::Threading
 
         bool IsValid() const noexcept
         {
+#if GRAPHYTE_PLATFORM_WINDOWS
             return Value != nullptr;
+#elif GRAPHYTE_PLATFORM_POSIX
+            return Value != 0;
+#else
+#error Not supported
+#endif
         }
     };
 
@@ -183,7 +189,7 @@ namespace Graphyte::Threading
 
 #elif GRAPHYTE_PLATFORM_POSIX
 
-        return ::pthread_self();
+        return ThreadId{ ::pthread_self() };
 
 #else
 #error Not implemented
