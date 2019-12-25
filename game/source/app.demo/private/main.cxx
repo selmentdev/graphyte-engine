@@ -33,5 +33,7 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     Graphyte::Converter<Graphyte::Uuid>::FromString(u1, "000000000000000dupadupadupadupad");
     Graphyte::Converter<Graphyte::Uuid>::FromString(u1, "00000000000000dupadupadupadupadu");
 
+    GX_LOG(LogAssetsCompiler, Info, "username: {}\n", Graphyte::System::GetUserName());
+
     return 0;
 }

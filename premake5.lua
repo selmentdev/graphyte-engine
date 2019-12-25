@@ -206,6 +206,14 @@ workspace "graphyte"
         defines {
             "GRAPHYTE_MATH_NO_INTRINSICS=0",
         }
+    --[[
+    -- FMA is not supported on VirtualBox machines for some reason. Rewrite SIMD code to proper detection of CPU features
+    filter { "architecture:x86*", "toolset:gcc or clang" }
+        buildoptions {
+            "-mfma",
+            "-mno-fma4"
+        }
+    ]]--
 
     filter { "architecture:arm64 or arm" }
         editandcontinue "off"

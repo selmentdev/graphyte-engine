@@ -77,7 +77,7 @@ namespace Graphyte::System
     }
 }
 
-namespace Graphyte::Platform
+namespace Graphyte::System
 {
     BASE_API void* OsMalloc(
         size_t size
