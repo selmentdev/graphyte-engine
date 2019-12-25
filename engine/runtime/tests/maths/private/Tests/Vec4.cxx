@@ -1,6 +1,272 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / Plane / Normalized")
+{
+    using namespace Graphyte::Maths;
+
+    Plane const p = CreateFromPoints(
+        Add(UnitX<Vector3>(), UnitY<Vector3>()),
+        Add(Zero<Vector3>(), UnitY<Vector3>()),
+        Add(UnitZ<Vector3>(), UnitY<Vector3>())
+    );
+
+    CHECK(GetX(p) == Approx{ 0.0F });
+    CHECK(GetY(p) == Approx{ 1.0F });
+    CHECK(GetZ(p) == Approx{ 0.0F });
+    CHECK(GetW(p) == Approx{ -1.0F });
+}
+
+TEST_CASE("Maths / Vector / Horizontal operations")
+{
+    using namespace Graphyte::Maths;
+
+
+    SECTION("Vector4")
+    {
+        Vector4 const v0 = Make<Vector4>(1.0F, 2.0F, 3.0F, 4.0F);
+        Vector4 const v1 = Make<Vector4>(4.0F, 1.0F, 2.0F, 3.0F);
+        Vector4 const v2 = Make<Vector4>(3.0F, 4.0F, 1.0F, 2.0F);
+        Vector4 const v3 = Make<Vector4>(2.0F, 3.0F, 4.0F, 1.0F);
+
+        SECTION("Horizontal min")
+        {
+            Vector4 const h0 = Hmin(v0);
+            Vector4 const h1 = Hmin(v1);
+            Vector4 const h2 = Hmin(v2);
+            Vector4 const h3 = Hmin(v3);
+
+            CHECK(GetX(h0) == 1.0F);
+            CHECK(GetY(h0) == 1.0F);
+            CHECK(GetZ(h0) == 1.0F);
+            CHECK(GetW(h0) == 1.0F);
+
+            CHECK(GetX(h1) == 1.0F);
+            CHECK(GetY(h1) == 1.0F);
+            CHECK(GetZ(h1) == 1.0F);
+            CHECK(GetW(h1) == 1.0F);
+
+            CHECK(GetX(h2) == 1.0F);
+            CHECK(GetY(h2) == 1.0F);
+            CHECK(GetZ(h2) == 1.0F);
+            CHECK(GetW(h2) == 1.0F);
+
+            CHECK(GetX(h3) == 1.0F);
+            CHECK(GetY(h3) == 1.0F);
+            CHECK(GetZ(h3) == 1.0F);
+            CHECK(GetW(h3) == 1.0F);
+        }
+
+        SECTION("Horizontal max")
+        {
+            Vector4 const h0 = Hmax(v0);
+            Vector4 const h1 = Hmax(v1);
+            Vector4 const h2 = Hmax(v2);
+            Vector4 const h3 = Hmax(v3);
+
+            CHECK(GetX(h0) == 4.0F);
+            CHECK(GetY(h0) == 4.0F);
+            CHECK(GetZ(h0) == 4.0F);
+            CHECK(GetW(h0) == 4.0F);
+
+            CHECK(GetX(h1) == 4.0F);
+            CHECK(GetY(h1) == 4.0F);
+            CHECK(GetZ(h1) == 4.0F);
+            CHECK(GetW(h1) == 4.0F);
+
+            CHECK(GetX(h2) == 4.0F);
+            CHECK(GetY(h2) == 4.0F);
+            CHECK(GetZ(h2) == 4.0F);
+            CHECK(GetW(h2) == 4.0F);
+
+            CHECK(GetX(h3) == 4.0F);
+            CHECK(GetY(h3) == 4.0F);
+            CHECK(GetZ(h3) == 4.0F);
+            CHECK(GetW(h3) == 4.0F);
+        }
+
+        SECTION("Horizontal sum")
+        {
+            Vector4 const h0 = Hsum(v0);
+            Vector4 const h1 = Hsum(v1);
+            Vector4 const h2 = Hsum(v2);
+            Vector4 const h3 = Hsum(v3);
+
+            CHECK(GetX(h0) == 10.0F);
+            CHECK(GetY(h0) == 10.0F);
+            CHECK(GetZ(h0) == 10.0F);
+            CHECK(GetW(h0) == 10.0F);
+
+            CHECK(GetX(h1) == 10.0F);
+            CHECK(GetY(h1) == 10.0F);
+            CHECK(GetZ(h1) == 10.0F);
+            CHECK(GetW(h1) == 10.0F);
+
+            CHECK(GetX(h2) == 10.0F);
+            CHECK(GetY(h2) == 10.0F);
+            CHECK(GetZ(h2) == 10.0F);
+            CHECK(GetW(h2) == 10.0F);
+
+            CHECK(GetX(h3) == 10.0F);
+            CHECK(GetY(h3) == 10.0F);
+            CHECK(GetZ(h3) == 10.0F);
+            CHECK(GetW(h3) == 10.0F);
+        }
+    }
+
+
+    SECTION("Horizontal Min / Vector3")
+    {
+        Vector3 const v0 = Make<Vector3>(1.0F, 2.0F, 3.0F);
+        Vector3 const v1 = Make<Vector3>(4.0F, 3.0F, 2.0F);
+        Vector3 const v2 = Make<Vector3>(5.0F, 3.0F, 4.0F);
+
+        SECTION("Horizontal min")
+        {
+            Vector4 const h0 = Hmin(v0);
+            Vector4 const h1 = Hmin(v1);
+            Vector4 const h2 = Hmin(v2);
+
+            CHECK(GetX(h0) == 1.0F);
+            CHECK(GetY(h0) == 1.0F);
+            CHECK(GetZ(h0) == 1.0F);
+            CHECK(GetW(h0) == 1.0F);
+
+            CHECK(GetX(h1) == 2.0F);
+            CHECK(GetY(h1) == 2.0F);
+            CHECK(GetZ(h1) == 2.0F);
+            CHECK(GetW(h1) == 2.0F);
+
+            CHECK(GetX(h2) == 3.0F);
+            CHECK(GetY(h2) == 3.0F);
+            CHECK(GetZ(h2) == 3.0F);
+            CHECK(GetW(h2) == 3.0F);
+        }
+
+        SECTION("Horizontal max")
+        {
+            Vector4 const h0 = Hmax(v0);
+            Vector4 const h1 = Hmax(v1);
+            Vector4 const h2 = Hmax(v2);
+
+            CHECK(GetX(h0) == 3.0F);
+            CHECK(GetY(h0) == 3.0F);
+            CHECK(GetZ(h0) == 3.0F);
+            CHECK(GetW(h0) == 3.0F);
+
+            CHECK(GetX(h1) == 4.0F);
+            CHECK(GetY(h1) == 4.0F);
+            CHECK(GetZ(h1) == 4.0F);
+            CHECK(GetW(h1) == 4.0F);
+
+            CHECK(GetX(h2) == 5.0F);
+            CHECK(GetY(h2) == 5.0F);
+            CHECK(GetZ(h2) == 5.0F);
+            CHECK(GetW(h2) == 5.0F);
+        }
+
+        SECTION("Horizontal sum")
+        {
+            Vector4 const h0 = Hsum(v0);
+            Vector4 const h1 = Hsum(v1);
+            Vector4 const h2 = Hsum(v2);
+
+            CHECK(GetX(h0) == 6.0F);
+            CHECK(GetY(h0) == 6.0F);
+            CHECK(GetZ(h0) == 6.0F);
+            CHECK(GetW(h0) == 6.0F);
+
+            CHECK(GetX(h1) == 9.0F);
+            CHECK(GetY(h1) == 9.0F);
+            CHECK(GetZ(h1) == 9.0F);
+            CHECK(GetW(h1) == 9.0F);
+
+            CHECK(GetX(h2) == 12.0F);
+            CHECK(GetY(h2) == 12.0F);
+            CHECK(GetZ(h2) == 12.0F);
+            CHECK(GetW(h2) == 12.0F);
+        }
+    }
+
+
+    SECTION("Horizontal Min / Vector2")
+    {
+        Vector2 const v0 = Make<Vector2>(1.0F, 2.0F);
+        Vector2 const v1 = Make<Vector2>(4.0F, 3.0F);
+
+        SECTION("Horizontal min")
+        {
+            Vector4 const h0 = Hmin(v0);
+            Vector4 const h1 = Hmin(v1);
+
+            CHECK(GetX(h0) == 1.0F);
+            CHECK(GetY(h0) == 1.0F);
+            CHECK(GetZ(h0) == 1.0F);
+            CHECK(GetW(h0) == 1.0F);
+
+            CHECK(GetX(h1) == 3.0F);
+            CHECK(GetY(h1) == 3.0F);
+            CHECK(GetZ(h1) == 3.0F);
+            CHECK(GetW(h1) == 3.0F);
+        }
+
+        SECTION("Horizontal max")
+        {
+            Vector4 const h0 = Hmax(v0);
+            Vector4 const h1 = Hmax(v1);
+
+            CHECK(GetX(h0) == 2.0F);
+            CHECK(GetY(h0) == 2.0F);
+            CHECK(GetZ(h0) == 2.0F);
+            CHECK(GetW(h0) == 2.0F);
+
+            CHECK(GetX(h1) == 4.0F);
+            CHECK(GetY(h1) == 4.0F);
+            CHECK(GetZ(h1) == 4.0F);
+            CHECK(GetW(h1) == 4.0F);
+        }
+
+        SECTION("Horizontal sum")
+        {
+            Vector4 const h0 = Hsum(v0);
+            Vector4 const h1 = Hsum(v1);
+
+            CHECK(GetX(h0) == 3.0F);
+            CHECK(GetY(h0) == 3.0F);
+            CHECK(GetZ(h0) == 3.0F);
+            CHECK(GetW(h0) == 3.0F);
+
+            CHECK(GetX(h1) == 7.0F);
+            CHECK(GetY(h1) == 7.0F);
+            CHECK(GetZ(h1) == 7.0F);
+            CHECK(GetW(h1) == 7.0F);
+        }
+    }
+}
+
+
+TEST_CASE("Maths / Quaternion / exp log identity")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Identity quaternion exp+log")
+    {
+        Quaternion const qi = Make<Quaternion>(1.2F, -2.6F, 3.1F, 6.0F);
+        Quaternion const ql = Log(qi);
+        Quaternion const qe = Exp(ql);
+
+        CHECK(GetX(ql) == Approx{ 0.174299479F }.margin(0.0001F));
+        CHECK(GetY(ql) == Approx{ -0.377526760F }.margin(0.0001F));
+        CHECK(GetZ(ql) == Approx{ 0.450128078F }.margin(0.0001F));
+        CHECK(GetW(ql) == Approx{ 1.99272966F }.margin(0.0001F));
+
+        CHECK(GetX(qi) == Approx{ GetX(qe) }.margin(0.001F));
+        CHECK(GetY(qi) == Approx{ GetY(qe) }.margin(0.001F));
+        CHECK(GetZ(qi) == Approx{ GetZ(qe) }.margin(0.001F));
+        CHECK(GetW(qi) == Approx{ GetW(qe) }.margin(0.001F));
+    }
+}
+
 TEST_CASE("Maths / Vector / Interpolation")
 {
     using namespace Graphyte::Maths;

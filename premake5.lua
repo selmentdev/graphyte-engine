@@ -96,7 +96,7 @@ function graphyte_test()
         }
 
     filter { "toolset:msc*" }
-        optimize "off"
+        --optimize "off"
 
     filter {}
 end
