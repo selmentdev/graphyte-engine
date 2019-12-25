@@ -5779,74 +5779,6 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall MapRange(T value, T from_min, T from_max, T to_min, T to_max) noexcept
-        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        T const from_abs = Subtract(value, from_min);
-        T const from_max_abs = Subtract(from_max, from_min);
-
-        T const normal = Divide(from_abs, from_max_abs);
-
-        T const to_max_abs = Subtract(to_max, to_min);
-
-        T const to = MultiplyAdd(to_max_abs, normal, to_min);
-
-        return to;
-#elif GRAPHYTE_HW_AVX
-        __m128 const from_abs = _mm_sub_ps(value.V, from_min.V);
-        __m128 const from_max_abs = _mm_sub_ps(from_max.V, from_min.V);
-
-        __m128 const normal = _mm_div_ps(from_abs, from_max_abs);
-
-        __m128 const to_max_abs = _mm_sub_ps(to_max.V, to_min.V);
-        __m128 const to = _mm_fmadd_ps(to_max_abs, normal, to_min.V);
-
-        return { to };
-#endif
-    }
-
-    mathinline float mathcall MapRange(float value, float from_min, float from_max, float to_min, float to_max) noexcept
-    {
-        float const from_abs = (value - from_min);
-        float const from_max_abs = (from_max - from_min);
-
-        float const normal = (from_abs / from_max_abs);
-
-        float const to_max_abs = (to_max - to_min);
-        float const to_abs = (to_max_abs * normal);
-
-        float const to = (to_abs + to_min);
-
-        return to;
-    }
-
-    template <typename T>
-    mathinline T mathcall NormalizeRange(T value, T min, T max) noexcept
-        requires VectorLike<T> and Arithmetic<T>
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        T const base = Subtract(value, min);
-        T const range = Subtract(max, min);
-        T const result = Divide(base, range);
-        return result;
-#elif GRAPHYTE_HW_AVX
-        __m128 const base = _mm_sub_ps(value.V, min.V);
-        __m128 const range = _mm_sub_ps(max.V, min.V);
-        __m128 const result = _mm_div_ps(base, range);
-        return { result };
-#endif
-    }
-
-    mathinline float mathcall NormalizeRange(float value, float min, float max) noexcept
-    {
-        float const base = (value - min);
-        float const range = (max - min);
-        float const result = (base / range);
-        return result;
-    }
-
-    template <typename T>
     mathinline T mathcall Square(T v) noexcept
         requires VectorLike<T> and Arithmetic<T>
     {
@@ -6288,6 +6220,76 @@ namespace Graphyte::Maths
 
         return r3;
     }
+
+
+
+    template <typename T>
+    mathinline T mathcall Remap(T value, T from_min, T from_max, T to_min, T to_max) noexcept
+        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const from_abs = Subtract(value, from_min);
+        T const from_max_abs = Subtract(from_max, from_min);
+
+        T const normal = Divide(from_abs, from_max_abs);
+
+        T const to_max_abs = Subtract(to_max, to_min);
+
+        T const to = MultiplyAdd(to_max_abs, normal, to_min);
+
+        return to;
+#elif GRAPHYTE_HW_AVX
+        __m128 const from_abs = _mm_sub_ps(value.V, from_min.V);
+        __m128 const from_max_abs = _mm_sub_ps(from_max.V, from_min.V);
+
+        __m128 const normal = _mm_div_ps(from_abs, from_max_abs);
+
+        __m128 const to_max_abs = _mm_sub_ps(to_max.V, to_min.V);
+        __m128 const to = _mm_fmadd_ps(to_max_abs, normal, to_min.V);
+
+        return { to };
+#endif
+    }
+
+    mathinline float mathcall Remap(float value, float from_min, float from_max, float to_min, float to_max) noexcept
+    {
+        float const from_abs = (value - from_min);
+        float const from_max_abs = (from_max - from_min);
+
+        float const normal = (from_abs / from_max_abs);
+
+        float const to_max_abs = (to_max - to_min);
+        float const to_abs = (to_max_abs * normal);
+
+        float const to = (to_abs + to_min);
+
+        return to;
+    }
+
+    template <typename T>
+    mathinline T mathcall Unlerp(T value, T min, T max) noexcept
+        requires VectorLike<T>and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const base = Subtract(value, min);
+        T const range = Subtract(max, min);
+        T const result = Divide(base, range);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const base = _mm_sub_ps(value.V, min.V);
+        __m128 const range = _mm_sub_ps(max.V, min.V);
+        __m128 const result = _mm_div_ps(base, range);
+        return { result };
+#endif
+    }
+
+    mathinline float mathcall Unlerp(float value, float min, float max) noexcept
+    {
+        float const base = (value - min);
+        float const range = (max - min);
+        float const result = (base / range);
+        return result;
+    }
 }
 
 
@@ -6660,7 +6662,6 @@ namespace Graphyte::Maths
 #endif
     }
 }
-
 
 // =================================================================================================
 //
@@ -7620,6 +7621,39 @@ namespace Graphyte::Maths
 
 // =================================================================================================
 //
+// Easing functions
+//
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall Smoothstep(T a, T b, T x) noexcept
+    {
+        T const length = Subtract(x, a);
+        T const base = Subtract(b, a);
+        T const t = Divide(length, base);
+        T const r0 = NegateMultiplyAdd(t, Replicate<T>(2.0F), Replicate<T>(3.0F));
+        T const r1 = Multiply(r0, t);
+        T const r2 = Multiply(r1, t);
+        return r2;
+    }
+
+    template <typename T>
+    mathinline T mathcall Smoothstep(T a, T b, float x) noexcept
+    {
+        return Smoothstep(a, b, Replicate<T>(x));
+    }
+
+    mathinline float mathcall Smoothstep(float a, float b, float x) noexcept
+    {
+        float const t = Saturate((x - a) / (b - a));
+        return t * (t * NegateMultiplyAdd(t, 2.0F, 3.0F));
+    }
+}
+
+
+// =================================================================================================
+//
 // Vector space operations
 //
 
@@ -7832,6 +7866,36 @@ namespace Graphyte::Maths
             return { length };
         }
 #endif
+    }
+
+    template <typename T>
+    mathinline Vector4 mathcall Distance(T a, T b) noexcept
+        requires VectorLike<T> and Arithmetic<T>
+    {
+        Vector4 const difference = Subtract(b, a);
+        Vector4 const result = Length(difference);
+        return result;
+    }
+
+    mathinline float mathcall Distance(float a, float b) noexcept
+    {
+        return fabsf(b - a);
+    }
+
+    template <typename T>
+    mathinline Vector4 mathcall DistanceSquared(T a, T b) noexcept
+        requires VectorLike<T> and Arithmetic<T>
+    {
+        Vector4 const difference = Subtract(b, a);
+        Vector4 const result = LengthSquared(difference);
+        return result;
+    }
+
+    mathinline float mathcall DistanceSquared(float a, float b) noexcept
+    {
+        float const difference = b - a;
+        float const result = difference * difference;
+        return result;
     }
 
     template <typename T>
