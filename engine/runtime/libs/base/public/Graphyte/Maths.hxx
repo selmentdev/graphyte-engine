@@ -1901,6 +1901,12 @@ namespace Graphyte::Maths
         return { v.V };
     }
 
+    template <typename TTo>
+    mathinline TTo mathcall As(Impl::SimdFloat32x4 v) noexcept
+    {
+        return { v };
+    }
+
     mathinline Vector4 mathcall AsVector4(Vector3 v) noexcept
     {
         return { v.V };
@@ -8575,6 +8581,110 @@ namespace Graphyte::Maths
         return { r2 };
 #endif
     }
+
+    mathinline Quaternion mathcall CreateFromEuler(Vector3 angles) noexcept
+    {
+        static Impl::ConstFloat32x4 const sign{ { {
+                1.0F,
+                -1.0F,
+                -1.0F,
+                1.0F,
+            } } };
+
+        Vector4 const half_angles = Multiply(Vector4{ angles.V }, { Impl::VEC4_ONE_HALF_4.V });
+
+        Vector4 sin_angles;
+        Vector4 cos_angles;
+        SinCos(sin_angles, cos_angles, half_angles);
+
+        Vector4 const sccc_xxxx = Permute<0, 4, 4, 4>(sin_angles, cos_angles);
+        Vector4 const cscc_yyyy = Permute<5, 1, 5, 5>(sin_angles, cos_angles);
+        Vector4 const ccsc_zzzz = Permute<6, 6, 2, 6>(sin_angles, cos_angles);
+
+        Vector4 const csss_xxxx = Permute<0, 4, 4, 4>(cos_angles, sin_angles);
+        Vector4 const scss_yyyy = Permute<5, 1, 5, 5>(cos_angles, sin_angles);
+        Vector4 const sscs_zzzz = Permute<6, 6, 2, 6>(cos_angles, sin_angles);
+
+        Vector4 const qa0 = Multiply(csss_xxxx, Vector4{ sign.V });
+        Vector4 const qb0 = Multiply(sccc_xxxx, cscc_yyyy);
+        Vector4 const qa1 = Multiply(qa0, scss_yyyy);
+        Vector4 const qb1 = Multiply(qb0, ccsc_zzzz);
+        Vector4 const q = MultiplyAdd(qa1, sscs_zzzz, qb1);
+        return Quaternion{ q.V };
+    }
+
+    mathinline Quaternion mathcall CreateFromEuler(float x, float y, float z) noexcept
+    {
+        Vector3 const angles = Make<Vector3>(x, y, z);
+        Quaternion const result = CreateFromEuler(angles);
+        return result;
+    }
+
+    mathinline Quaternion mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Vector4 qv = Select(Vector4{ Impl::VEC4_ONE_4.V }, Vector4{ normal.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+
+        float fsin;
+        float fcos;
+        SinCos(fsin, fcos, 0.5F * angle);
+
+        Vector4 const scale = Make<Vector4>(fsin, fsin, fsin, fcos);
+        Vector4 const result = Multiply(qv, scale);
+        return As<Quaternion>(result);
+#elif GRAPHYTE_HW_AVX
+        __m128 const normal_xyz = _mm_and_ps(normal.V, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 const normal_xyz1 = _mm_or_ps(normal_xyz, Impl::VEC4_POSITIVE_UNIT_W.V);
+        __m128 const scale = _mm_set_ps1(0.5F * angle);
+
+        Vector4 vsin;
+        Vector4 vcos;
+        SinCos(vsin, vcos, Vector4{ scale });
+
+        __m128 const sin_xyzn = _mm_and_ps(vsin.V, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 const cos_nnnw = _mm_and_ps(vcos.V, Impl::VEC4_MASK_COMPONENT_W.V);
+
+        __m128 const sincos_xyzw = _mm_or_ps(sin_xyzn, cos_nnnw);
+        __m128 const result = _mm_mul_ps(normal_xyz1, sincos_xyzw);
+        return { result };
+#endif
+    }
+
+    mathinline Quaternion mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept
+    {
+        GX_ASSERT(IsNotEqual(axis, Zero<Vector3>()));
+        GX_ASSERT(!IsInfinity<Vector3>(axis));
+
+        Vector3 const normal = Normalize(axis);
+        Quaternion const result = CreateFromNormalAngle(normal, angle);
+        return result;
+    }
+
+    mathinline void mathcall ToAxisAngle(Vector3& axis, float& angle, Quaternion q) noexcept
+    {
+        axis = As<Vector3>(q);
+        angle = 2.0F * Acos(GetW(q));
+    }
+
+    mathinline Vector3 Rotate(Vector3 v, Quaternion q) noexcept
+    {
+        Quaternion const a = Select(Quaternion{ Impl::VEC4_MASK_SELECT_1110.V }, Quaternion{ v.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+
+        Quaternion const qn = Conjugate(q);
+        Quaternion const qa = Multiply(q, a);
+        Quaternion const qaqn = Multiply(qa, qn);
+        return As<Vector3>(qaqn);
+    }
+
+    mathinline Vector3 InverseRotate(Vector3 v, Quaternion q) noexcept
+    {
+        Quaternion const a = Select(Quaternion{ Impl::VEC4_MASK_SELECT_1110.V }, Quaternion{ v.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+
+        Quaternion const qn = Conjugate(q);
+        Quaternion const qna = Multiply(qn, a);
+        Quaternion const qnaq = Multiply(qna, q);
+        return As<Vector3>(qnaq);
+    }
 }
 
 
@@ -9659,5 +9769,166 @@ namespace Graphyte::Maths
         Bool3 const control = CompareEqual(As<Vector3>(diff), zero, Epsilon<Vector3>());
         Vector3 const result = Select(point_on_plane, Nan<Vector3>(), control);
         return result;
+    }
+}
+
+
+// =================================================================================================
+//
+// Degrees / Radians conversion
+//
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall RevolutionsToDegrees(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(360.0F);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(360.0F);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return As<T>(result);
+#endif
+    }
+
+    mathinline float mathcall RevolutionsToDegrees(float value) noexcept
+    {
+        return value * 360.0F;
+    }
+
+    template <typename T>
+    mathinline T mathcall RevolutionsToRadians(float value) noexcept
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier{ Impl::VEC4_PI.V };
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = Impl::VEC4_PI.V;
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return As<T>(result);
+#endif
+    }
+
+    mathinline float mathcall RevolutionsToRadians(float value) noexcept
+    {
+        return value * Maths::PI<float>;
+    }
+
+    template <typename T>
+    mathinline T mathcall RevolutionsToGradians(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T> = delete;
+
+    mathinline float mathcall RevolutionsToGradians(float value) noexcept
+    {
+        return value * 400.0F;
+    }
+    
+    template <typename T>
+    mathinline T mathcall DegreesToRevolutions(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T> = delete;
+
+    mathinline float mathcall DegreesToRevolutions(float value) noexcept
+    {
+        return value / 360.0F;
+    }
+    
+    template <typename T>
+    mathinline T mathcall RadiansToRevolutions(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T> = delete;
+
+    mathinline float mathcall RadiansToRevolutions(float value) noexcept
+    {
+        return value / Maths::PI2<float>;
+    }
+    
+    template <typename T>
+    mathinline T mathcall GradiansToRevolutions(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T> = delete;
+
+    mathinline float mathcall GradiansToRevolutions(float value) noexcept
+    {
+        return value / 400.0F;
+    }
+    
+    template <typename T>
+    mathinline T mathcall RadiansToGradians(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T> = delete;
+
+    mathinline float mathcall RadiansToGradians(float value) noexcept
+    {
+        return value * (200.0F / Maths::PI<float>);
+    }
+    
+    template <typename T>
+    mathinline T mathcall GradiansToRadians(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T> = delete;
+
+    mathinline float mathcall GradiansToRadians(float value) noexcept
+    {
+        return value * (Maths::PI<float> / 200.0F);
+    }
+
+    template <typename T>
+    mathinline T mathcall RadiansToDegrees(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(180.0F / Maths::PI<float>);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(180.0F / Maths::PI<float>);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return As<T>(result);
+#endif
+    }
+
+    mathinline float mathcall RadiansToDegrees(float value) noexcept
+    {
+        return value * (180.0F / Maths::PI<float>);
+    }
+    
+    template <typename T>
+    mathinline T mathcall DegreesToRadians(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(Maths::PI<float> / 180.0F);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(Maths::PI<float> / 180.0F);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return As<T>(result);
+#endif
+    }
+
+    mathinline float mathcall DegreesToRadians(float value) noexcept
+    {
+        return value * (Maths::PI<float> / 180.0F);
+    }
+    
+    template <typename T>
+    mathinline T mathcall GradiansToDegrees(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T> = delete;
+
+    mathinline float mathcall GradiansToDegrees(float value) noexcept
+    {
+        return value * (9.0F / 10.0F);
+    }
+    
+    template <typename T>
+    mathinline T mathcall DegreesToGradians(T value) noexcept
+        requires VectorLike<T> and Arithmetic<T> = delete;
+
+    mathinline float mathcall DegreesToGradians(float value) noexcept
+    {
+        return value * (10.0F / 9.0F);
     }
 }

@@ -1,6 +1,530 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Unit X")
+    {
+        Vector3 const x0 = UnitX<Vector3>();
+
+        SECTION("Around X")
+        {
+            Quaternion const q = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(90.0F));
+            Vector3 const x1 = Rotate(x0, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x1) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x1) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x1) }.margin(0.001F));
+
+            Vector3 const x2 = Rotate(x1, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x2) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x2) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x2) }.margin(0.001F));
+
+            Vector3 const x3 = Rotate(x2, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x3) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x3) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x3) }.margin(0.001F));
+
+            Vector3 const x4 = Rotate(x3, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x4) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x4) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x4) }.margin(0.001F));
+        }
+
+        SECTION("Around Y")
+        {
+            Quaternion const q = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(90.0F));
+            Vector3 const x1 = Rotate(x0, q);
+
+            CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x1) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x1) == Approx{ -1.0F }.margin(0.001F));
+
+            Vector3 const x2 = Rotate(x1, q);
+
+            CHECK(GetX(x2) == Approx{ -1.0F }.margin(0.001F));
+            CHECK(GetY(x2) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x2) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x3 = Rotate(x2, q);
+
+            CHECK(GetX(x3) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x3) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x3) == Approx{ 1.0F }.margin(0.001F));
+
+            Vector3 const x4 = Rotate(x3, q);
+
+            CHECK(GetX(x4) == Approx{ 1.0F }.margin(0.001F));
+            CHECK(GetY(x4) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x4) == Approx{ 0.0F }.margin(0.001F));
+        }
+
+        SECTION("Around Z")
+        {
+            Quaternion const q = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(90.0F));
+            Vector3 const x1 = Rotate(x0, q);
+
+            CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x1) == Approx{ 1.0F }.margin(0.001F));
+            CHECK(GetZ(x1) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x2 = Rotate(x1, q);
+
+            CHECK(GetX(x2) == Approx{ -1.0F }.margin(0.001F));
+            CHECK(GetY(x2) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x2) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x3 = Rotate(x2, q);
+
+            CHECK(GetX(x3) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x3) == Approx{ -1.0F }.margin(0.001F));
+            CHECK(GetZ(x3) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x4 = Rotate(x3, q);
+
+            CHECK(GetX(x4) == Approx{ 1.0F }.margin(0.001F));
+            CHECK(GetY(x4) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x4) == Approx{ 0.0F }.margin(0.001F));
+        }
+    }
+
+    SECTION("Unit Y")
+    {
+        Vector3 const x0 = UnitY<Vector3>();
+
+        SECTION("Around X")
+        {
+            Quaternion const q = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(90.0F));
+            Vector3 const x1 = Rotate(x0, q);
+
+            CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x1) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x1) == Approx{ 1.0F }.margin(0.001F));
+
+            Vector3 const x2 = Rotate(x1, q);
+
+            CHECK(GetX(x2) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x2) == Approx{ -1.0F }.margin(0.001F));
+            CHECK(GetZ(x2) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x3 = Rotate(x2, q);
+
+            CHECK(GetX(x3) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x3) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x3) == Approx{ -1.0F }.margin(0.001F));
+
+            Vector3 const x4 = Rotate(x3, q);
+
+            CHECK(GetX(x4) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x4) == Approx{ 1.0F }.margin(0.001F));
+            CHECK(GetZ(x4) == Approx{ 0.0F }.margin(0.001F));
+        }
+
+        SECTION("Around Y")
+        {
+            Quaternion const q = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(90.0F));
+            Vector3 const x1 = Rotate(x0, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x1) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x1) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x1) }.margin(0.001F));
+
+            Vector3 const x2 = Rotate(x1, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x2) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x2) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x2) }.margin(0.001F));
+
+            Vector3 const x3 = Rotate(x2, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x3) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x3) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x3) }.margin(0.001F));
+
+            Vector3 const x4 = Rotate(x3, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x4) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x4) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x4) }.margin(0.001F));
+        }
+
+        SECTION("Around Z")
+        {
+            Quaternion const q = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(90.0F));
+            Vector3 const x1 = Rotate(x0, q);
+
+            CHECK(GetX(x1) == Approx{ -1.0F }.margin(0.001F));
+            CHECK(GetY(x1) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x1) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x2 = Rotate(x1, q);
+
+            CHECK(GetX(x2) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x2) == Approx{ -1.0F }.margin(0.001F));
+            CHECK(GetZ(x2) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x3 = Rotate(x2, q);
+
+            CHECK(GetX(x3) == Approx{ 1.0F }.margin(0.001F));
+            CHECK(GetY(x3) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x3) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x4 = Rotate(x3, q);
+
+            CHECK(GetX(x4) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x4) == Approx{ 1.0F }.margin(0.001F));
+            CHECK(GetZ(x4) == Approx{ 0.0F }.margin(0.001F));
+        }
+    }
+
+    SECTION("Unit Z")
+    {
+        Vector3 const x0 = UnitZ<Vector3>();
+
+        SECTION("Around X")
+        {
+            Quaternion const q = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(90.0F));
+            Vector3 const x1 = Rotate(x0, q);
+
+            CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x1) == Approx{ -1.0F }.margin(0.001F));
+            CHECK(GetZ(x1) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x2 = Rotate(x1, q);
+
+            CHECK(GetX(x2) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x2) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x2) == Approx{ -1.0F }.margin(0.001F));
+
+            Vector3 const x3 = Rotate(x2, q);
+
+            CHECK(GetX(x3) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x3) == Approx{ 1.0F }.margin(0.001F));
+            CHECK(GetZ(x3) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x4 = Rotate(x3, q);
+
+            CHECK(GetX(x4) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x4) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x4) == Approx{ 1.0F }.margin(0.001F));
+        }
+
+        SECTION("Around Y")
+        {
+            Quaternion const q = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(90.0F));
+            Vector3 const x1 = Rotate(x0, q);
+
+            CHECK(GetX(x1) == Approx{ 1.0F }.margin(0.001F));
+            CHECK(GetY(x1) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x1) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x2 = Rotate(x1, q);
+
+            CHECK(GetX(x2) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x2) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x2) == Approx{ -1.0F }.margin(0.001F));
+
+            Vector3 const x3 = Rotate(x2, q);
+
+            CHECK(GetX(x3) == Approx{ -1.0F }.margin(0.001F));
+            CHECK(GetY(x3) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x3) == Approx{ 0.0F }.margin(0.001F));
+
+            Vector3 const x4 = Rotate(x3, q);
+
+            CHECK(GetX(x4) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetY(x4) == Approx{ 0.0F }.margin(0.001F));
+            CHECK(GetZ(x4) == Approx{ 1.0F }.margin(0.001F));
+        }
+
+        SECTION("Around Z")
+        {
+            Quaternion const q = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(90.0F));
+            Vector3 const x1 = Rotate(x0, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x1) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x1) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x1) }.margin(0.001F));
+
+            Vector3 const x2 = Rotate(x1, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x2) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x2) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x2) }.margin(0.001F));
+
+            Vector3 const x3 = Rotate(x2, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x3) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x3) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x3) }.margin(0.001F));
+
+            Vector3 const x4 = Rotate(x3, q);
+
+            CHECK(GetX(x0) == Approx{ GetX(x4) }.margin(0.001F));
+            CHECK(GetY(x0) == Approx{ GetY(x4) }.margin(0.001F));
+            CHECK(GetZ(x0) == Approx{ GetZ(x4) }.margin(0.001F));
+        }
+    }
+}
+
+TEST_CASE("Maths / Quaternion / Rotation from axis angle")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Axis X")
+    {
+        Quaternion const q000 = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(0.0F));
+        Quaternion const q090 = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(90.0F));
+        Quaternion const q180 = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(180.0F));
+        Quaternion const q270 = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(270.0F));
+
+        CHECK(GetX(q000) == Approx{ 0.0F });
+        CHECK(GetY(q000) == Approx{ 0.0F });
+        CHECK(GetZ(q000) == Approx{ 0.0F });
+        CHECK(GetW(q000) == Approx{ 1.0F });
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q000);
+
+            CHECK(GetX(axis) == 0.0F);
+            CHECK(GetY(axis) == 0.0F);
+            CHECK(GetZ(axis) == 0.0F);
+            CHECK(angle == 0.0F);
+        }
+
+        CHECK(GetX(q090) == Approx{ 0.70711F });
+        CHECK(GetY(q090) == Approx{ 0.0F });
+        CHECK(GetZ(q090) == Approx{ 0.0F });
+        CHECK(GetW(q090) == Approx{ 0.70711F });
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q090);
+
+            Vector3 normal = Normalize(axis);
+
+            CHECK(GetX(normal) == 1.0F);
+            CHECK(GetY(normal) == 0.0F);
+            CHECK(GetZ(normal) == 0.0F);
+            CHECK(angle == Approx{ DegreesToRadians(90.0F) }.margin(0.0001F));
+        }
+
+        CHECK(GetX(q180) == Approx{ 1.0F });
+        CHECK(GetY(q180) == Approx{ 0.0F });
+        CHECK(GetZ(q180) == Approx{ 0.0F });
+        CHECK(GetW(q180) == Approx{ 0.0F }.margin(0.001F));
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q180);
+
+            Vector3 normal = Normalize(axis);
+
+            CHECK(GetX(normal) == 1.0F);
+            CHECK(GetY(normal) == 0.0F);
+            CHECK(GetZ(normal) == 0.0F);
+            CHECK(angle == Approx{ DegreesToRadians(180.0F) }.margin(0.0001F));
+        }
+
+        CHECK(GetX(q270) == Approx{ 0.70711F });
+        CHECK(GetY(q270) == Approx{ 0.0F });
+        CHECK(GetZ(q270) == Approx{ 0.0F });
+        CHECK(GetW(q270) == Approx{ -0.70711F });
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q270);
+
+            Vector3 normal = Normalize(axis);
+
+            CHECK(GetX(normal) == 1.0F);
+            CHECK(GetY(normal) == 0.0F);
+            CHECK(GetZ(normal) == 0.0F);
+            CHECK(angle == Approx{ DegreesToRadians(270.0F) }.margin(0.0001F));
+        }
+    }
+
+    SECTION("Axis Y")
+    {
+        Quaternion const q000 = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(0.0F));
+        Quaternion const q090 = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(90.0F));
+        Quaternion const q180 = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(180.0F));
+        Quaternion const q270 = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(270.0F));
+
+        CHECK(GetX(q000) == Approx{ 0.0F });
+        CHECK(GetY(q000) == Approx{ 0.0F });
+        CHECK(GetZ(q000) == Approx{ 0.0F });
+        CHECK(GetW(q000) == Approx{ 1.0F });
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q000);
+
+            CHECK(GetX(axis) == 0.0F);
+            CHECK(GetY(axis) == 0.0F);
+            CHECK(GetZ(axis) == 0.0F);
+            CHECK(angle == 0.0F);
+        }
+
+        CHECK(GetX(q090) == Approx{ 0.0F });
+        CHECK(GetY(q090) == Approx{ 0.70711F });
+        CHECK(GetZ(q090) == Approx{ 0.0F });
+        CHECK(GetW(q090) == Approx{ 0.70711F });
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q090);
+
+            Vector3 normal = Normalize(axis);
+
+            CHECK(GetX(normal) == 0.0F);
+            CHECK(GetY(normal) == 1.0F);
+            CHECK(GetZ(normal) == 0.0F);
+            CHECK(angle == Approx{ DegreesToRadians(90.0F) }.margin(0.0001F));
+        }
+
+        CHECK(GetX(q180) == Approx{ 0.0F });
+        CHECK(GetY(q180) == Approx{ 1.0F });
+        CHECK(GetZ(q180) == Approx{ 0.0F });
+        CHECK(GetW(q180) == Approx{ 0.0F }.margin(0.001F));
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q180);
+
+            Vector3 normal = Normalize(axis);
+
+            CHECK(GetX(normal) == 0.0F);
+            CHECK(GetY(normal) == 1.0F);
+            CHECK(GetZ(normal) == 0.0F);
+            CHECK(angle == Approx{ DegreesToRadians(180.0F) }.margin(0.0001F));
+        }
+
+        CHECK(GetX(q270) == Approx{ 0.0F });
+        CHECK(GetY(q270) == Approx{ 0.70711F });
+        CHECK(GetZ(q270) == Approx{ 0.0F });
+        CHECK(GetW(q270) == Approx{ -0.70711F });
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q270);
+
+            Vector3 normal = Normalize(axis);
+
+            CHECK(GetX(normal) == 0.0F);
+            CHECK(GetY(normal) == 1.0F);
+            CHECK(GetZ(normal) == 0.0F);
+            CHECK(angle == Approx{ DegreesToRadians(270.0F) }.margin(0.0001F));
+        }
+    }
+
+    SECTION("Axis Z")
+    {
+        Quaternion const q000 = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(0.0F));
+        Quaternion const q090 = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(90.0F));
+        Quaternion const q180 = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(180.0F));
+        Quaternion const q270 = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(270.0F));
+
+        CHECK(GetX(q000) == Approx{ 0.0F });
+        CHECK(GetY(q000) == Approx{ 0.0F });
+        CHECK(GetZ(q000) == Approx{ 0.0F });
+        CHECK(GetW(q000) == Approx{ 1.0F });
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q000);
+
+            CHECK(GetX(axis) == 0.0F);
+            CHECK(GetY(axis) == 0.0F);
+            CHECK(GetZ(axis) == 0.0F);
+            CHECK(angle == 0.0F);
+        }
+
+        CHECK(GetX(q090) == Approx{ 0.0F });
+        CHECK(GetY(q090) == Approx{ 0.0F });
+        CHECK(GetZ(q090) == Approx{ 0.70711F });
+        CHECK(GetW(q090) == Approx{ 0.70711F });
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q090);
+
+            Vector3 normal = Normalize(axis);
+
+            CHECK(GetX(normal) == 0.0F);
+            CHECK(GetY(normal) == 0.0F);
+            CHECK(GetZ(normal) == 1.0F);
+            CHECK(angle == Approx{ DegreesToRadians(90.0F) }.margin(0.0001F));
+        }
+
+        CHECK(GetX(q180) == Approx{ 0.0F });
+        CHECK(GetY(q180) == Approx{ 0.0F });
+        CHECK(GetZ(q180) == Approx{ 1.0F });
+        CHECK(GetW(q180) == Approx{ 0.0F }.margin(0.001F));
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q180);
+
+            Vector3 normal = Normalize(axis);
+
+            CHECK(GetX(normal) == 0.0F);
+            CHECK(GetY(normal) == 0.0F);
+            CHECK(GetZ(normal) == 1.0F);
+            CHECK(angle == Approx{ DegreesToRadians(180.0F) }.margin(0.0001F));
+        }
+
+        CHECK(GetX(q270) == Approx{ 0.0F });
+        CHECK(GetY(q270) == Approx{ 0.0F });
+        CHECK(GetZ(q270) == Approx{ 0.70711F });
+        CHECK(GetW(q270) == Approx{ -0.70711F });
+
+        {
+            Vector3 axis;
+            float angle;
+
+            ToAxisAngle(axis, angle, q270);
+
+            Vector3 normal = Normalize(axis);
+
+            CHECK(GetX(normal) == 0.0F);
+            CHECK(GetY(normal) == 0.0F);
+            CHECK(GetZ(normal) == 1.0F);
+            CHECK(angle == Approx{ DegreesToRadians(270.0F) }.margin(0.0001F));
+        }
+    }
+}
+
+
 TEST_CASE("Maths / Quaternion / Multiply")
 {
     using namespace Graphyte::Maths;
