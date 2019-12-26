@@ -374,7 +374,7 @@ namespace Graphyte::Launch
 
     static void LoadModules() noexcept
     {
-        Graphyte::ModuleManager::LoadChecked("com.graphyte.base");
+        //Graphyte::ModuleManager::LoadChecked("com.graphyte.base");
         //Graphyte::ModuleManager::LoadChecked("com.graphyte.framework");
         //Graphyte::ModuleManager::LoadChecked("com.graphyte.ai");
         //Graphyte::ModuleManager::LoadChecked("com.graphyte.entities");

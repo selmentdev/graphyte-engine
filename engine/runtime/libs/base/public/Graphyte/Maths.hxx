@@ -4608,16 +4608,14 @@ namespace Graphyte::Maths
                 sinf(components.F[1]),
                 sinf(components.F[2]),
                 sinf(components.F[3]),
-            } } };
+            } } }.V;
 
         result_cos.V = Impl::ConstFloat32x4{ { {
                 cosf(components.F[0]),
                 cosf(components.F[1]),
                 cosf(components.F[2]),
                 cosf(components.F[3]),
-            } } };
-
-        return { result.V };
+            } } }.V;
 #endif
     }
 
@@ -5240,12 +5238,13 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_MATH_SVML
         return { _mm_pow_ps(x.V, y.V) };
 #else
-        Impl::ConstFloat32x4 const components{ .V = v.V };
+        Impl::ConstFloat32x4 const components_x{ .V = x.V };
+        Impl::ConstFloat32x4 const components_y{ .V = y.V };
         Impl::ConstFloat32x4 const result{ { {
-                powf(components.F[0]),
-                powf(components.F[1]),
-                powf(components.F[2]),
-                powf(components.F[3]),
+                powf(components_x.F[0], components_y.F[0]),
+                powf(components_x.F[1], components_y.F[1]),
+                powf(components_x.F[2], components_y.F[2]),
+                powf(components_x.F[3], components_y.F[3]),
             } } };
 
         return { result.V };
@@ -5273,12 +5272,13 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_MATH_SVML
         return { _mm_hypot_ps(x.V, y.V) };
 #else
-        Impl::ConstFloat32x4 const components{ .V = v.V };
+        Impl::ConstFloat32x4 const components_x{ .V = x.V };
+        Impl::ConstFloat32x4 const components_y{ .V = y.V };
         Impl::ConstFloat32x4 const result{ { {
-                hypotf(components.F[0]),
-                hypotf(components.F[1]),
-                hypotf(components.F[2]),
-                hypotf(components.F[3]),
+                hypotf(components_x.F[0], components_y.F[0]),
+                hypotf(components_x.F[1], components_y.F[1]),
+                hypotf(components_x.F[2], components_y.F[2]),
+                hypotf(components_x.F[3], components_y.F[3]),
             } } };
 
         return { result.V };
@@ -8491,8 +8491,17 @@ namespace Graphyte::Maths
         __m128 const v_len_sq = _mm_dp_ps(q.V, q.V, 0x7F);
         __m128 const v_rcp_len = _mm_rsqrt_ps(v_len_sq);
         __m128 const v_len = _mm_rcp_ps(v_rcp_len);
+        
+#if GRAPHYTE_MATH_SVML
         __m128 coslen;
         __m128 const sinlen = _mm_sincos_ps(&coslen, v_len);
+#else
+        Vector4 vsinlen;
+        Vector4 vcoslen;
+        SinCos(vsinlen, vcoslen, Vector4{ v_len });
+        __m128 const coslen = vcoslen.V;
+        __m128 const sinlen = vsinlen.V;
+#endif
         __m128 const r_xyzw = _mm_mul_ps(_mm_mul_ps(q.V, v_rcp_len), sinlen);
 
         // {x,y,z,coslen}
@@ -8504,7 +8513,11 @@ namespace Graphyte::Maths
         __m128 const q_w = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
 
         // exp(w)
+#if GRAPHYTE_MATH_SVML
         __m128 const q_w_exp = _mm_exp_ps(q_w);
+#else
+        __m128 const q_w_exp = Exp(Vector4{ q_w }).V;
+#endif
 
         __m128 const result = _mm_mul_ps(r2, q_w_exp);
 
@@ -8541,10 +8554,18 @@ namespace Graphyte::Maths
 
         __m128 const rcp = _mm_mul_ps(q_w, _mm_rsqrt_ps(q_len_sq));
         __m128 const clamped = _mm_max_ps(_mm_min_ps(rcp, pone), none);
+#if GRAPHYTE_MATH_SVML
         __m128 const acos_clamped = _mm_acos_ps(clamped);
+#else
+        __m128 const acos_clamped = Acos(Vector4{ clamped }).V;
+#endif
         __m128 const s = _mm_mul_ps(acos_clamped, _mm_rsqrt_ps(v_len_sq));
         __m128 const q_xyz_s = _mm_mul_ps(q.V, s);
+#if GRAPHYTE_MATH_SVML
         __m128 const w = _mm_mul_ps(_mm_log_ps(q_len_sq), _mm_set_ps1(0.5F));
+#else
+        __m128 const w = _mm_mul_ps(Log(Vector4{ q_len_sq }).V, _mm_set_ps1(0.5F));
+#endif
         __m128 const r0 = _mm_and_ps(q_xyz_s, Impl::VEC4_MASK_SELECT_1110.V);
         __m128 const r1 = _mm_andnot_ps(Impl::VEC4_MASK_SELECT_1110.V, w);
         __m128 const r2 = _mm_or_ps(r0, r1);

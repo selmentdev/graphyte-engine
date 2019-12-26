@@ -1,4 +1,5 @@
 #include "Base.pch.hxx"
+#include <Graphyte/System.hxx>
 #include <Graphyte/System/Library.hxx>
 #include <Graphyte/Diagnostics.hxx>
 
@@ -34,7 +35,13 @@ namespace Graphyte::System
             return Status::Success;
         }
 
-        return Diagnostics::GetStatusFromErrno(errno);
+        auto const error = errno;
+        GX_LOG(LogPlatform, Error, "Failed to unload library. Errno = {}, `{}`",
+            error,
+            dlerror()
+        );
+
+        return Diagnostics::GetStatusFromErrno(error);
     }
 
     void* Library::Resolve(const char* name) const noexcept

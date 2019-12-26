@@ -212,17 +212,11 @@
 #include <pmmintrin.h>
 // SSSE3
 #include <tmmintrin.h>
-// SSE4
-#include <smmintrin.h>
 // SSE4.1
 #include <smmintrin.h>
 // SSE4.2
 #include <nmmintrin.h>
 // AVX
-#include <immintrin.h>
-#endif
-
-#if GRAPHYTE_HW_AVX2
 #include <immintrin.h>
 #endif
 

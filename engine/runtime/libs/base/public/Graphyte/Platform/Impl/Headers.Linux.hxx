@@ -33,26 +33,6 @@
 #include <unistd.h>
 #include <utime.h>
 
-//
-// NEON Support for ARM.
-//
-#if defined(__aarch64__) || defined(__arm__)
-
-#include <arm_neon.h> // For all ARMS but not for TEGRA/ATOM
-
-#elif defined(__x86_64__) || defined(__i386__)
-
-#include <immintrin.h>
-#include <mmintrin.h>
-#include <smmintrin.h>
-#include <x86intrin.h>
-#include <xmmintrin.h>
-
-#else
-
-#error Unknown target architecture.
-
-#endif
 
 //
 // STL Headers.
@@ -100,6 +80,37 @@
 //
 
 #include <fmt/format.h>
+
+
+//
+// SIMD support
+//
+
+#if GRAPHYTE_HW_AVX
+// SSE
+#include <xmmintrin.h>
+// SSE2
+#include <emmintrin.h>
+// SSE3
+#include <pmmintrin.h>
+// SSSE3
+#include <tmmintrin.h>
+// SSE4.1
+#include <smmintrin.h>
+// SSE4.2
+#include <nmmintrin.h>
+// AVX
+#include <immintrin.h>
+#endif
+
+#if GRAPHYTE_HW_AESNI
+#include <wmmintrin.h>
+#endif
+
+#if GRAPHYTE_HW_NEON
+#include <arm_neon.h>
+#endif
+
 
 #if defined(__GNUC__)
 #pragma GCC diagnostic pop
