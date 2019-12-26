@@ -3,29 +3,6 @@
 #include <Graphyte/Diagnostics.hxx>
 #include <Graphyte/Bitwise.hxx>
 
-// =================================================================================================
-//
-// AVX support headers.
-//
-
-#if GRAPHYTE_HW_AVX
-#include <xmmintrin.h>
-#include <emmintrin.h>
-#endif
-
-// =================================================================================================
-//
-// ARM64 NEON support headers.
-//
-
-#if GRAPHYTE_HW_NEON && GRAPHYTE_COMPILER_MSVC
-#if defined(_M_ARM)
-#include <arm_neon.h>
-#elif defined(_M_ARM64)
-#include <arm64_neon.h>
-#endif
-#endif
-
 
 // =================================================================================================
 //
@@ -75,6 +52,61 @@ namespace Graphyte::Maths::Impl
     {
         return ((bits & uint32_t{ 0x7fffffff }) == uint32_t{ 0x7f800000 });
     }
+
+#if GRAPHYTE_HW_AVX2
+    mathinline __m128 mathcall avx_fmadd_ps(__m128 a, __m128 b, __m128 c) noexcept
+    {
+        return _mm_fmadd_ps(a, b, c);
+    }
+    mathinline __m128 mathcall avx_fmsub_ps(__m128 a, __m128 b, __m128 c) noexcept
+    {
+        return _mm_fmsub_ps(a, b, c);
+    }
+    mathinline __m128 mathcall avx_fnmadd_ps(__m128 a, __m128 b, __m128 c) noexcept
+    {
+        return _mm_fnmadd_ps(a, b, c);
+    }
+    mathinline __m128 mathcall avx_fnmsub_ps(__m128 a, __m128 b, __m128 c) noexcept
+    {
+        return _mm_fnmsub_ps(a, b, c);
+    }
+#elif GRAPHYTE_HW_AVX
+    mathinline __m128 mathcall avx_fmadd_ps(__m128 a, __m128 b, __m128 c) noexcept
+    {
+        // (a * b)
+        __m128 const ab = _mm_mul_ps(a, b);
+        // (a * b) + c
+        __m128 const result = _mm_add_ps(ab, c);
+        return result;
+    }
+    mathinline __m128 mathcall avx_fmsub_ps(__m128 a, __m128 b, __m128 c) noexcept
+    {
+        // (a * b)
+        __m128 const ab = _mm_mul_ps(a, b);
+        // (a * b) - c
+        __m128 const result = _mm_sub_ps(ab, c);
+        return result;
+    }
+    mathinline __m128 mathcall avx_fnmadd_ps(__m128 a, __m128 b, __m128 c) noexcept
+    {
+        // (a * b)
+        __m128 const ab = _mm_mul_ps(a, b);
+        // -(a * b) + c
+        __m128 const result = _mm_sub_ps(c, ab);
+        return result;
+    }
+    mathinline __m128 mathcall avx_fnmsub_ps(__m128 a, __m128 b, __m128 c) noexcept
+    {
+        // (a * b)
+        __m128 const ab = _mm_mul_ps(a, b);
+        __m128 const zero = _mm_setzero_ps();
+        // -(a * b)
+        __m128 const neg_ab = _mm_sub_ps(zero, ab);
+        // -(a * b) - c
+        __m128 const result = _mm_sub_ps(neg_ab, c);
+        return result;
+    }
+#endif
 }
 
 // =================================================================================================
@@ -5667,7 +5699,7 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        return { _mm_fmadd_ps(a.V, b.V, c.V) };
+        return { Impl::avx_fmadd_ps(a.V, b.V, c.V) };
 #elif GRAPHYTE_HW_NEON
         return { vfmaq_f32(c.V, a.V, b.V) };
 #endif
@@ -5695,7 +5727,7 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        return { _mm_fmsub_ps(a.V, b.V, c.V) };
+        return { Impl::avx_fmsub_ps(a.V, b.V, c.V) };
 #endif
     }
 
@@ -5721,7 +5753,7 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        return { _mm_fnmadd_ps(a.V, b.V, c.V) };
+        return { Impl::avx_fnmadd_ps(a.V, b.V, c.V) };
 #elif GRAPHYTE_HW_NEON
         return { vfmsq_f32(c.V, a.V, b.V) };
 #endif
@@ -5749,7 +5781,7 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        return { _mm_fnmsub_ps(a.V, b.V, c.V) };
+        return { Impl::avx_fnmsub_ps(a.V, b.V, c.V) };
 #endif
     }
 
@@ -5854,7 +5886,7 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const length = _mm_sub_ps(b.V, a.V);
         __m128 const scale = _mm_set_ps1(t);
-        __m128 const result = _mm_fmadd_ps(length, scale, a.V);
+        __m128 const result = Impl::avx_fmadd_ps(length, scale, a.V);
         return { result };
 #endif
     }
@@ -5869,7 +5901,7 @@ namespace Graphyte::Maths
         return result;
 #elif GRAPHYTE_HW_AVX
         __m128 const length = _mm_sub_ps(b.V, a.V);
-        __m128 const result = _mm_fmadd_ps(length, t.V, a.V);
+        __m128 const result = Impl::avx_fmadd_ps(length, t.V, a.V);
         return { result };
 #endif
     }
@@ -5914,9 +5946,9 @@ namespace Graphyte::Maths
         __m128 const t1 = _mm_set_ps1(t3 - t2);
 
         __m128 const r0 = _mm_mul_ps(p0, position0.V);
-        __m128 const r1 = _mm_fmadd_ps(t0, tangent0.V, r0);
-        __m128 const r2 = _mm_fmadd_ps(p1, position1.V, r1);
-        __m128 const r3 = _mm_fmadd_ps(t1, tangent1.V, r2);
+        __m128 const r1 = Impl::avx_fmadd_ps(t0, tangent0.V, r0);
+        __m128 const r2 = Impl::avx_fmadd_ps(p1, position1.V, r1);
+        __m128 const r3 = Impl::avx_fmadd_ps(t1, tangent1.V, r2);
 
         return { r3 };
 #endif
@@ -5972,13 +6004,13 @@ namespace Graphyte::Maths
         __m128 const f0 = _mm_mul_ps(r0, position0.V);
 
         __m128 const r1 = _mm_permute_ps(tfinal, _MM_SHUFFLE(1, 1, 1, 1));
-        __m128 const f1 = _mm_fmadd_ps(r1, tangent0.V, f0);
+        __m128 const f1 = Impl::avx_fmadd_ps(r1, tangent0.V, f0);
 
         __m128 const r2 = _mm_permute_ps(tfinal, _MM_SHUFFLE(2, 2, 2, 2));
-        __m128 const f2 = _mm_fmadd_ps(r2, position1.V, f1);
+        __m128 const f2 = Impl::avx_fmadd_ps(r2, position1.V, f1);
 
         __m128 const r3 = _mm_permute_ps(tfinal, _MM_SHUFFLE(3, 3, 3, 3));
-        __m128 const f3 = _mm_fmadd_ps(r3, tangent1.V, f2);
+        __m128 const f3 = Impl::avx_fmadd_ps(r3, tangent1.V, f2);
 
         return { f3 };
 #endif
@@ -6019,8 +6051,9 @@ namespace Graphyte::Maths
         __m128 const pca = _mm_sub_ps(c.V, a.V);
         __m128 const sf = _mm_set_ps1(f);
         __m128 const sg = _mm_set_ps1(g);
-        __m128 const accum = _mm_fmadd_ps(pba, sf, a.V);
-        __m128 const result = _mm_fmadd_ps(pca, sg, accum);
+
+        __m128 const accum = Impl::avx_fmadd_ps(pba, sf, a.V);
+        __m128 const result = Impl::avx_fmadd_ps(pca, sg, accum);
         return { result };
 #elif GRAPHYTE_HW_NEON
         float32x4_t const pba = vsubq_f32(b.V, a.V);
@@ -6053,8 +6086,8 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const pba = _mm_sub_ps(b.V, a.V);
         __m128 const pca = _mm_sub_ps(c.V, a.V);
-        __m128 const accum = _mm_fmadd_ps(pba, f.V, a.V);
-        __m128 const result = _mm_fmadd_ps(pca, g.V, accum);
+        __m128 const accum = Impl::avx_fmadd_ps(pba, f.V, a.V);
+        __m128 const result = Impl::avx_fmadd_ps(pca, g.V, accum);
         return { result };
 #elif GRAPHYTE_HW_NEON
         float32x4_t const pba = vsubq_f32(b.V, a.V);
@@ -6094,9 +6127,9 @@ namespace Graphyte::Maths
         __m128 const f3 = _mm_set_ps1((t3 - t2) * 0.5F);
 
         __m128 const r0 = _mm_mul_ps(f0, p0.V);
-        __m128 const r1 = _mm_fmadd_ps(f1, p1.V, r0);
-        __m128 const r2 = _mm_fmadd_ps(f2, p2.V, r1);
-        __m128 const r3 = _mm_fmadd_ps(f3, p3.V, r2);
+        __m128 const r1 = Impl::avx_fmadd_ps(f1, p1.V, r0);
+        __m128 const r2 = Impl::avx_fmadd_ps(f2, p2.V, r1);
+        __m128 const r3 = Impl::avx_fmadd_ps(f3, p3.V, r2);
 
         return { r3 };
 #endif
@@ -6232,7 +6265,7 @@ namespace Graphyte::Maths
         __m128 const normal = _mm_div_ps(from_abs, from_max_abs);
 
         __m128 const to_max_abs = _mm_sub_ps(to_max.V, to_min.V);
-        __m128 const to = _mm_fmadd_ps(to_max_abs, normal, to_min.V);
+        __m128 const to = Impl::avx_fmadd_ps(to_max_abs, normal, to_min.V);
 
         return { to };
 #endif
@@ -6446,7 +6479,7 @@ namespace Graphyte::Maths
         __m128 const q = _mm_div_ps(x.V, y.V);
         __m128 const t = _mm_round_ps(q, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
         __m128 const c = _mm_cvtepi32_ps(_mm_cvttps_epi32(t));
-        __m128 const result = _mm_fnmadd_ps(c, y.V, x.V);
+        __m128 const result = Impl::avx_fnmadd_ps(c, y.V, x.V);
         return { result };
 #else
         Impl::ConstFloat32x4 const components_x{ .V = x.V };
@@ -7409,7 +7442,8 @@ namespace Graphyte::Maths
 
         __m128 const base = _mm_floor_ps(ratio);
 
-        __m128 const addend = _mm_fmadd_ps(range, base, progress);
+        __m128 const addend = Impl::avx_fmadd_ps(range, base, progress);
+
         __m128 const result = _mm_add_ps(min.V, addend);
 
         return { result };
@@ -8079,11 +8113,11 @@ namespace Graphyte::Maths
         __m128 const wwww = _mm_permute_ps(v.V, _MM_SHUFFLE(3, 3, 3, 3));
         __m128 const r0 = _mm_mul_ps(wwww, m.M.R[3]);
         __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
-        __m128 const r1 = _mm_fmadd_ps(zzzz, m.M.R[2], r0);
+        __m128 const r1 = Impl::avx_fmadd_ps(zzzz, m.M.R[2], r0);
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
-        __m128 const r2 = _mm_fmadd_ps(yyyy, m.M.R[1], r1);
+        __m128 const r2 = Impl::avx_fmadd_ps(yyyy, m.M.R[1], r1);
         __m128 const xxxx = _mm_broadcastss_ps(v.V);
-        __m128 const r3 = _mm_fmadd_ps(xxxx, m.M.R[0], r2);
+        __m128 const r3 = Impl::avx_fmadd_ps(xxxx, m.M.R[0], r2);
         return { r3 };
 #endif
     }
@@ -8157,19 +8191,19 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const v4 = As<Vector4>(v);
         Vector4 const zzzz = SplatZ(v4);
-        Vector4 const yyyy = SplatY(v4);
-        Vector4 const xxxx = SplatX(v4);
         Vector4 const r0 = MultiplyAdd<Vector4>(zzzz, { m.M.R[2] }, { m.M.R[3] });
+        Vector4 const yyyy = SplatY(v4);
         Vector4 const r1 = MultiplyAdd<Vector4>(yyyy, { m.M.R[1] }, r0);
+        Vector4 const xxxx = SplatX(v4);
         Vector4 const r2 = MultiplyAdd<Vector4>(xxxx, { m.M.R[0] }, r1);
         return As<Vector3>(r2);
 #elif GRAPHYTE_HW_AVX
         __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
+        __m128 const r0 = Impl::avx_fmadd_ps(zzzz, m.M.R[2], m.M.R[3]);
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const r1 = Impl::avx_fmadd_ps(yyyy, m.M.R[1], r0);
         __m128 const xxxx = _mm_broadcastss_ps(v.V);
-        __m128 const r0 = _mm_fmadd_ps(zzzz, m.M.R[2], m.M.R[3]);
-        __m128 const r1 = _mm_fmadd_ps(yyyy, m.M.R[1], r0);
-        __m128 const r2 = _mm_fmadd_ps(xxxx, m.M.R[0], r1);
+        __m128 const r2 = Impl::avx_fmadd_ps(xxxx, m.M.R[0], r1);
         return { r2 };
 #endif
     }
@@ -8179,21 +8213,21 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const v4 = As<Vector4>(v);
         Vector4 const zzzz = SplatZ(v4);
-        Vector4 const yyyy = SplatY(v4);
-        Vector4 const xxxx = SplatX(v4);
         Vector4 const r0 = MultiplyAdd<Vector4>(zzzz, { m.M.R[2] }, { m.M.R[3] });
+        Vector4 const yyyy = SplatY(v4);
         Vector4 const r1 = MultiplyAdd<Vector4>(yyyy, { m.M.R[1] }, r0);
+        Vector4 const xxxx = SplatX(v4);
         Vector4 const r2 = MultiplyAdd<Vector4>(xxxx, { m.M.R[0] }, r1);
         Vector4 const wwww = SplatW(r2);
         Vector4 const result = Divide(r2, wwww);
         return As<Vector3>(result);
 #elif GRAPHYTE_HW_AVX
         __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
-        __m128 const r0 = _mm_fmadd_ps(zzzz, m.M.R[2], m.M.R[3]);
+        __m128 const r0 = Impl::avx_fmadd_ps(zzzz, m.M.R[2], m.M.R[3]);
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
-        __m128 const r1 = _mm_fmadd_ps(yyyy, m.M.R[1], r0);
+        __m128 const r1 = Impl::avx_fmadd_ps(yyyy, m.M.R[1], r0);
         __m128 const xxxx = _mm_broadcastss_ps(v.V);
-        __m128 const r2 = _mm_fmadd_ps(xxxx, m.M.R[0], r1);
+        __m128 const r2 = Impl::avx_fmadd_ps(xxxx, m.M.R[0], r1);
         __m128 const wwww = _mm_permute_ps(r2, _MM_SHUFFLE(3, 3, 3, 3));
         __m128 const r3 = _mm_div_ps(r2, wwww);
         return { r3 };
@@ -8205,19 +8239,19 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const v4 = As<Vector4>(v);
         Vector4 const zzzz = SplatZ(v4);
-        Vector4 const yyyy = SplatY(v4);
-        Vector4 const xxxx = SplatX(v4);
         Vector4 const r0 = Multiply<Vector4>(zzzz, { m.M.R[2] });
+        Vector4 const yyyy = SplatY(v4);
         Vector4 const r1 = MultiplyAdd<Vector4>(yyyy, { m.M.R[1] }, r0);
+        Vector4 const xxxx = SplatX(v4);
         Vector4 const r2 = MultiplyAdd<Vector4>(xxxx, { m.M.R[0] }, r1);
         return As<Vector3>(r2);
 #elif GRAPHYTE_HW_AVX
         __m128 const xxxx = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
         __m128 const r0 = _mm_mul_ps(xxxx, m.M.R[2]);
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
-        __m128 const r1 = _mm_fmadd_ps(yyyy, m.M.R[1], r0);
+        __m128 const r1 = Impl::avx_fmadd_ps(yyyy, m.M.R[1], r0);
         __m128 const zzzz = _mm_broadcastss_ps(v.V);
-        __m128 const r2 = _mm_fmadd_ps(zzzz, m.M.R[0], r1);
+        __m128 const r2 = Impl::avx_fmadd_ps(zzzz, m.M.R[0], r1);
         return { r2 };
 #endif
     }
@@ -8289,15 +8323,15 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const v4 = As<Vector4>(v);
         Vector4 const yyyy = SplatY(v4);
-        Vector4 const xxxx = SplatX(v4);
         Vector4 const r0 = MultiplyAdd(yyyy, { m.M.R[1] }, { m.M.R[3] });
+        Vector4 const xxxx = SplatX(v4);
         Vector4 const r1 = MultiplyAdd(xxxx, { m.M.R[0] }, r0);
         return As<Vector2>(r1);
 #elif GRAPHYTE_HW_AVX
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const r0 = Impl::avx_fmadd_ps(yyyy, m.M.R[1], m.M.R[3]);
         __m128 const xxxx = _mm_broadcastss_ps(v.V);
-        __m128 const r0 = _mm_fmadd_ps(yyyy, m.M.R[1], m.M.R[3]);
-        __m128 const r1 = _mm_fmadd_ps(xxxx, m.M.R[0], r0);
+        __m128 const r1 = Impl::avx_fmadd_ps(xxxx, m.M.R[0], r0);
         return { r1 };
 #endif
     }
@@ -8307,17 +8341,17 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const v4 = As<Vector4>(v);
         Vector4 const yyyy = SplatY(v4);
-        Vector4 const xxxx = SplatX(v4);
         Vector4 const r0 = MultiplyAdd(yyyy, { m.M.R[1] }, { m.M.R[3] });
+        Vector4 const xxxx = SplatX(v4);
         Vector4 const r1 = MultiplyAdd(xxxx, { m.M.R[0] }, r0);
         Vector4 const wwww = SplatW(r1);
         Vector4 const r2 = Divide(r1, wwww);
         return As<Vector2>(r2);
 #elif GRAPHYTE_HW_AVX
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const r0 = Impl::avx_fmadd_ps(yyyy, m.M.R[1], m.M.R[3]);
         __m128 const xxxx = _mm_broadcastss_ps(v.V);
-        __m128 const r0 = _mm_fmadd_ps(yyyy, m.M.R[1], m.M.R[3]);
-        __m128 const r1 = _mm_fmadd_ps(xxxx, m.M.R[0], r0);
+        __m128 const r1 = Impl::avx_fmadd_ps(xxxx, m.M.R[0], r0);
         __m128 const wwww = _mm_permute_ps(r1, _MM_SHUFFLE(3, 3, 3, 3));
         __m128 const r2 = _mm_div_ps(r1, wwww);
         return { r2 };
@@ -8329,15 +8363,15 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const v4 = As<Vector4>(v);
         Vector4 const yyyy = SplatY(v4);
-        Vector4 const xxxx = SplatX(v4);
         Vector4 const r0 = Multiply(yyyy, { m.M.R[1] });
+        Vector4 const xxxx = SplatX(v4);
         Vector4 const r1 = MultiplyAdd(xxxx, { m.M.R[0] }, r0);
         return As<Vector2>(r1);
 #elif GRAPHYTE_HW_AVX
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
-        __m128 const xxxx = _mm_broadcastss_ps(v.V);
         __m128 const r0 = _mm_mul_ps(yyyy, m.M.R[1]);
-        __m128 const r1 = _mm_fmadd_ps(xxxx, m.M.R[0], r0);
+        __m128 const xxxx = _mm_broadcastss_ps(v.V);
+        __m128 const r1 = Impl::avx_fmadd_ps(xxxx, m.M.R[0], r0);
         return { r1 };
 #endif
     }
@@ -8422,24 +8456,12 @@ namespace Graphyte::Maths
         __m128 const q2_zxyy = _mm_permute_ps(q2_xyzw, _MM_SHUFFLE(1, 1, 0, 2));
         __m128 const q1_yzxy = _mm_permute_ps(q1_xyzw, _MM_SHUFFLE(1, 0, 2, 1));
 
-#if GRAPHYTE_HW_AVX2
-        __m128 const r4 = _mm_fmadd_ps(q1_yzxy, q2_zxyy, r1);
-        __m128 const r6 = _mm_fmadd_ps(r4, control.V, r0);
-#else
-        __m128 const r2 = _mm_mul_ps(q1_yzxy, q2_zxyy);
-        __m128 const r4 = _mm_add_ps(r1, r2);
-        __m128 const r5 = _mm_mul_ps(r4, control.V);
-        __m128 const r6 = _mm_add_ps(r0, r5);
-#endif
+        __m128 const r4 = Impl::avx_fmadd_ps(q1_yzxy, q2_zxyy, r1);
+        __m128 const r6 = Impl::avx_fmadd_ps(r4, control.V, r0);
         __m128 const q1_zxyz = _mm_permute_ps(q1_xyzw, _MM_SHUFFLE(2, 1, 0, 2));
         __m128 const q2_yzxz = _mm_permute_ps(q2_xyzw, _MM_SHUFFLE(2, 0, 2, 1));
 
-#if GRAPHYTE_HW_AVX2
-        __m128 const r7 = _mm_fnmadd_ps(q1_zxyz, q2_yzxz, r6);
-#else
-        __m128 const r3 = _mm_mul_ps(q1_zxyz, q2_yzxz);
-        __m128 const r7 = _mm_sub_ps(r6, r3);
-#endif
+        __m128 const r7 = Impl::avx_fnmadd_ps(q1_zxyz, q2_yzxz, r6);
 
         return { r7 };
 #endif
@@ -8511,7 +8533,8 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const v_len_sq = _mm_dp_ps(q.V, q.V, 0x7F);
         __m128 const q_w = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
-        __m128 const q_len_sq = _mm_fmadd_ps(q_w, q_w, v_len_sq);
+
+        __m128 const q_len_sq = Impl::avx_fmadd_ps(q_w, q_w, v_len_sq);
 
         __m128 const none = _mm_set_ps1(-1.0F);
         __m128 const pone = _mm_set_ps1(1.0F);
@@ -8741,9 +8764,10 @@ namespace Graphyte::Maths
 #endif
 
         __m128 const abx_r0 = _mm_mul_ps(x_r0, b.M.R[0]);
-        __m128 const aby_r0 = _mm_fmadd_ps(y_r0, b.M.R[1], abx_r0);
-        __m128 const abz_r0 = _mm_fmadd_ps(z_r0, b.M.R[2], aby_r0);
-        __m128 const abw_r0 = _mm_fmadd_ps(w_r0, b.M.R[3], abz_r0);
+        __m128 const aby_r0 = Impl::avx_fmadd_ps(y_r0, b.M.R[1], abx_r0);
+        __m128 const abz_r0 = Impl::avx_fmadd_ps(z_r0, b.M.R[2], aby_r0);
+        __m128 const abw_r0 = Impl::avx_fmadd_ps(w_r0, b.M.R[3], abz_r0);
+
 
 #if GRAPHYTE_HW_AVX2
         __m128 const m_r1 = a.M.R[1];
@@ -8759,9 +8783,9 @@ namespace Graphyte::Maths
 #endif
 
         __m128 const abx_r1 = _mm_mul_ps(x_r1, b.M.R[0]);
-        __m128 const aby_r1 = _mm_fmadd_ps(y_r1, b.M.R[1], abx_r1);
-        __m128 const abz_r1 = _mm_fmadd_ps(z_r1, b.M.R[2], aby_r1);
-        __m128 const abw_r1 = _mm_fmadd_ps(w_r1, b.M.R[3], abz_r1);
+        __m128 const aby_r1 = Impl::avx_fmadd_ps(y_r1, b.M.R[1], abx_r1);
+        __m128 const abz_r1 = Impl::avx_fmadd_ps(z_r1, b.M.R[2], aby_r1);
+        __m128 const abw_r1 = Impl::avx_fmadd_ps(w_r1, b.M.R[3], abz_r1);
 
 
 #if GRAPHYTE_HW_AVX2
@@ -8778,9 +8802,9 @@ namespace Graphyte::Maths
 #endif
 
         __m128 const abx_r2 = _mm_mul_ps(x_r2, b.M.R[0]);
-        __m128 const aby_r2 = _mm_fmadd_ps(y_r2, b.M.R[1], abx_r2);
-        __m128 const abz_r2 = _mm_fmadd_ps(z_r2, b.M.R[2], aby_r2);
-        __m128 const abw_r2 = _mm_fmadd_ps(w_r2, b.M.R[3], abz_r2);
+        __m128 const aby_r2 = Impl::avx_fmadd_ps(y_r2, b.M.R[1], abx_r2);
+        __m128 const abz_r2 = Impl::avx_fmadd_ps(z_r2, b.M.R[2], aby_r2);
+        __m128 const abw_r2 = Impl::avx_fmadd_ps(w_r2, b.M.R[3], abz_r2);
 
 #if GRAPHYTE_HW_AVX2
         __m128 const m_r3 = a.M.R[3];
@@ -8796,9 +8820,9 @@ namespace Graphyte::Maths
 #endif
 
         __m128 const abx_r3 = _mm_mul_ps(x_r3, b.M.R[0]);
-        __m128 const aby_r3 = _mm_fmadd_ps(y_r3, b.M.R[1], abx_r3);
-        __m128 const abz_r3 = _mm_fmadd_ps(z_r3, b.M.R[2], aby_r3);
-        __m128 const abw_r3 = _mm_fmadd_ps(w_r3, b.M.R[3], abz_r3);
+        __m128 const aby_r3 = Impl::avx_fmadd_ps(y_r3, b.M.R[1], abx_r3);
+        __m128 const abz_r3 = Impl::avx_fmadd_ps(z_r3, b.M.R[2], aby_r3);
+        __m128 const abw_r3 = Impl::avx_fmadd_ps(w_r3, b.M.R[3], abz_r3);
 
         result.M.R[0] = abw_r0;
         result.M.R[1] = abw_r1;
@@ -8884,9 +8908,9 @@ namespace Graphyte::Maths
 #endif
 
         __m128 const abx_r0 = _mm_mul_ps(x_r0, b.M.R[0]);
-        __m128 const aby_r0 = _mm_fmadd_ps(y_r0, b.M.R[1], abx_r0);
-        __m128 const abz_r0 = _mm_fmadd_ps(z_r0, b.M.R[2], aby_r0);
-        __m128 const abw_r0 = _mm_fmadd_ps(w_r0, b.M.R[3], abz_r0);
+        __m128 const aby_r0 = Impl::avx_fmadd_ps(y_r0, b.M.R[1], abx_r0);
+        __m128 const abz_r0 = Impl::avx_fmadd_ps(z_r0, b.M.R[2], aby_r0);
+        __m128 const abw_r0 = Impl::avx_fmadd_ps(w_r0, b.M.R[3], abz_r0);
 
 #if GRAPHYTE_HW_AVX2
         __m128 const m_r1 = a.M.R[1];
@@ -8902,10 +8926,9 @@ namespace Graphyte::Maths
 #endif
 
         __m128 const abx_r1 = _mm_mul_ps(x_r1, b.M.R[0]);
-        __m128 const aby_r1 = _mm_fmadd_ps(y_r1, b.M.R[1], abx_r1);
-        __m128 const abz_r1 = _mm_fmadd_ps(z_r1, b.M.R[2], aby_r1);
-        __m128 const abw_r1 = _mm_fmadd_ps(w_r1, b.M.R[3], abz_r1);
-
+        __m128 const aby_r1 = Impl::avx_fmadd_ps(y_r1, b.M.R[1], abx_r1);
+        __m128 const abz_r1 = Impl::avx_fmadd_ps(z_r1, b.M.R[2], aby_r1);
+        __m128 const abw_r1 = Impl::avx_fmadd_ps(w_r1, b.M.R[3], abz_r1);
 
 #if GRAPHYTE_HW_AVX2
         __m128 const m_r2 = a.M.R[2];
@@ -8921,9 +8944,9 @@ namespace Graphyte::Maths
 #endif
 
         __m128 const abx_r2 = _mm_mul_ps(x_r2, b.M.R[0]);
-        __m128 const aby_r2 = _mm_fmadd_ps(y_r2, b.M.R[1], abx_r2);
-        __m128 const abz_r2 = _mm_fmadd_ps(z_r2, b.M.R[2], aby_r2);
-        __m128 const abw_r2 = _mm_fmadd_ps(w_r2, b.M.R[3], abz_r2);
+        __m128 const aby_r2 = Impl::avx_fmadd_ps(y_r2, b.M.R[1], abx_r2);
+        __m128 const abz_r2 = Impl::avx_fmadd_ps(z_r2, b.M.R[2], aby_r2);
+        __m128 const abw_r2 = Impl::avx_fmadd_ps(w_r2, b.M.R[3], abz_r2);
 
 #if GRAPHYTE_HW_AVX2
         __m128 const m_r3 = a.M.R[3];
@@ -8939,9 +8962,9 @@ namespace Graphyte::Maths
 #endif
 
         __m128 const abx_r3 = _mm_mul_ps(x_r3, b.M.R[0]);
-        __m128 const aby_r3 = _mm_fmadd_ps(y_r3, b.M.R[1], abx_r3);
-        __m128 const abz_r3 = _mm_fmadd_ps(z_r3, b.M.R[2], aby_r3);
-        __m128 const abw_r3 = _mm_fmadd_ps(w_r3, b.M.R[3], abz_r3);
+        __m128 const aby_r3 = Impl::avx_fmadd_ps(y_r3, b.M.R[1], abx_r3);
+        __m128 const abz_r3 = Impl::avx_fmadd_ps(z_r3, b.M.R[2], aby_r3);
+        __m128 const abw_r3 = Impl::avx_fmadd_ps(w_r3, b.M.R[3], abz_r3);
 
         __m128 const trn_r0 = _mm_shuffle_ps(abw_r0, abw_r1, _MM_SHUFFLE(1, 0, 1, 0));
         __m128 const trn_r2 = _mm_shuffle_ps(abw_r0, abw_r1, _MM_SHUFFLE(3, 2, 3, 2));
@@ -9448,7 +9471,7 @@ namespace Graphyte::Maths
         __m128 const vfactor = _mm_dp_ps(v.V, luminance.V, 0x3F);
         __m128 const vsaturation = _mm_set_ps1(saturation);
         __m128 const r0 = _mm_sub_ps(v.V, vfactor);
-        __m128 const r1 = _mm_fmadd_ps(r0, vsaturation, vfactor);
+        __m128 const r1 = Impl::avx_fmadd_ps(r0, vsaturation, vfactor);
         __m128 const r2 = _mm_shuffle_ps(r1, v.V, _MM_SHUFFLE(3, 2, 2, 2));
         __m128 const r3 = _mm_shuffle_ps(r1, r2, _MM_SHUFFLE(3, 0, 1, 0));
         return { r3 };
@@ -9468,7 +9491,7 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const vcontrast = _mm_set_ps1(contrast);
         __m128 const r0 = _mm_sub_ps(v.V, Impl::VEC4_ONE_HALF_4.V);
-        __m128 const r1 = _mm_fmadd_ps(r0, vcontrast, Impl::VEC4_ONE_HALF_4.V);
+        __m128 const r1 = Impl::avx_fmadd_ps(r0, vcontrast, Impl::VEC4_ONE_HALF_4.V);
         __m128 const r2 = _mm_shuffle_ps(r1, v.V, _MM_SHUFFLE(3, 2, 2, 2));
         __m128 const r3 = _mm_shuffle_ps(r1, r2, _MM_SHUFFLE(3, 0, 1, 0));
         return { r3 };

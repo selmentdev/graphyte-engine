@@ -202,23 +202,40 @@
 //
 // SIMD support
 //
-#if GRAPHYTE_PLATFORM_WINDOWS
-#   if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
-#       include <mmintrin.h>
-#       include <xmmintrin.h>
-#       include <emmintrin.h>
-#       include <pmmintrin.h>
-#       include <tmmintrin.h>
-#       include <smmintrin.h>
-#       include <nmmintrin.h>
-#       include <ammintrin.h>
-#       include <wmmintrin.h>
-#       include <immintrin.h>
-#   elif GRAPHYTE_CPU_ARM_32
-#       include <arm_neon.h>
-#       include <armintr.h>
-#   elif GRAPHYTE_CPU_ARM_64
-#       include <arm64_neon.h>
-#       include <arm64intr.h>
-#   endif
+
+#if GRAPHYTE_HW_AVX
+// SSE
+#include <xmmintrin.h>
+// SSE2
+#include <emmintrin.h>
+// SSE3
+#include <pmmintrin.h>
+// SSSE3
+#include <tmmintrin.h>
+// SSE4
+#include <smmintrin.h>
+// SSE4.1
+#include <smmintrin.h>
+// SSE4.2
+#include <nmmintrin.h>
+// AVX
+#include <immintrin.h>
+#endif
+
+#if GRAPHYTE_HW_AVX2
+#include <immintrin.h>
+#endif
+
+#if GRAPHYTE_HW_AESNI
+#include <wmmintrin.h>
+#endif
+
+#if GRAPHYTE_HW_NEON
+#if GRAPHYTE_CPU_ARM_32
+#include <arm_neon.h>
+#include <armintr.h>
+#elif GRAPHYTE_CPU_ARM_64
+#include <arm64_neon.h>
+#include <arm64intr.h>
+#endif
 #endif
