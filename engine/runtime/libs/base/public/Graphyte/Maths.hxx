@@ -8496,11 +8496,9 @@ namespace Graphyte::Maths
         __m128 coslen;
         __m128 const sinlen = _mm_sincos_ps(&coslen, v_len);
 #else
-        Vector4 vsinlen;
-        Vector4 vcoslen;
-        SinCos(vsinlen, vcoslen, Vector4{ v_len });
-        __m128 const coslen = vcoslen.V;
-        __m128 const sinlen = vsinlen.V;
+        float const f_len = _mm_cvtss_f32(v_len);
+        __m128 const coslen = _mm_set_ps1(cosf(f_len));
+        __m128 const sinlen = _mm_set_ps1(sinf(f_len));
 #endif
         __m128 const r_xyzw = _mm_mul_ps(_mm_mul_ps(q.V, v_rcp_len), sinlen);
 
@@ -8511,12 +8509,13 @@ namespace Graphyte::Maths
 
         // w = q.wwww
         __m128 const q_w = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
-
+        
         // exp(w)
 #if GRAPHYTE_MATH_SVML
         __m128 const q_w_exp = _mm_exp_ps(q_w);
 #else
-        __m128 const q_w_exp = Exp(Vector4{ q_w }).V;
+        float const f_q_w = _mm_cvtss_f32(q_w);
+        __m128 const q_w_exp = _mm_set_ps1(expf(f_q_w));
 #endif
 
         __m128 const result = _mm_mul_ps(r2, q_w_exp);
@@ -8554,18 +8553,22 @@ namespace Graphyte::Maths
 
         __m128 const rcp = _mm_mul_ps(q_w, _mm_rsqrt_ps(q_len_sq));
         __m128 const clamped = _mm_max_ps(_mm_min_ps(rcp, pone), none);
+        
 #if GRAPHYTE_MATH_SVML
         __m128 const acos_clamped = _mm_acos_ps(clamped);
 #else
-        __m128 const acos_clamped = Acos(Vector4{ clamped }).V;
+        __m128 const acos_clamped = _mm_set_ps1(acosf(_mm_cvtss_f32(clamped)));
 #endif
+
         __m128 const s = _mm_mul_ps(acos_clamped, _mm_rsqrt_ps(v_len_sq));
         __m128 const q_xyz_s = _mm_mul_ps(q.V, s);
+
 #if GRAPHYTE_MATH_SVML
         __m128 const w = _mm_mul_ps(_mm_log_ps(q_len_sq), _mm_set_ps1(0.5F));
 #else
-        __m128 const w = _mm_mul_ps(Log(Vector4{ q_len_sq }).V, _mm_set_ps1(0.5F));
+        __m128 const w = _mm_set_ps1(logf(_mm_cvtss_f32(q_len_sq)) * 0.5F);
 #endif
+
         __m128 const r0 = _mm_and_ps(q_xyz_s, Impl::VEC4_MASK_SELECT_1110.V);
         __m128 const r1 = _mm_andnot_ps(Impl::VEC4_MASK_SELECT_1110.V, w);
         __m128 const r2 = _mm_or_ps(r0, r1);
