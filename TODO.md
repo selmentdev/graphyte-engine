@@ -6,6 +6,7 @@
 [ ] check clang-cl toolchain
 [ ] unit tests for math sublibrary
 [ ] refactor `SplatN` in way which will allow to specify target type too
+[ ] fmadd_ps and friends are wrongly reported as AVX instead of AVX2+FMA
 [ ] think over removing not supported configurations: we should support just
     [ ] windows-x64
     [ ] windows-arm64

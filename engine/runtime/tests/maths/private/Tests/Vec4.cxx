@@ -1,6 +1,160 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / Quaternion / Multiply")
+{
+    using namespace Graphyte::Maths;
+
+    Quaternion const qx = UnitX<Quaternion>();
+    Quaternion const qy = UnitY<Quaternion>();
+    Quaternion const qz = UnitZ<Quaternion>();
+    Quaternion const qw = UnitW<Quaternion>();
+
+    SECTION("x*x")
+    {
+        Quaternion const qq = Multiply(qx, qx);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == -1.0F);
+    }
+
+    SECTION("x*y")
+    {
+        Quaternion const qq = Multiply(qx, qy);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 1.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("x*z")
+    {
+        Quaternion const qq = Multiply(qx, qz);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == -1.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("x*w")
+    {
+        Quaternion const qq = Multiply(qx, qw);
+        CHECK(GetX(qq) == 1.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("y*x")
+    {
+        Quaternion const qq = Multiply(qy, qx);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == -1.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("y*y")
+    {
+        Quaternion const qq = Multiply(qy, qy);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == -1.0F);
+    }
+
+    SECTION("y*z")
+    {
+        Quaternion const qq = Multiply(qy, qz);
+        CHECK(GetX(qq) == 1.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("y*w")
+    {
+        Quaternion const qq = Multiply(qy, qw);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 1.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("z*x")
+    {
+        Quaternion const qq = Multiply(qz, qx);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 1.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("z*y")
+    {
+        Quaternion const qq = Multiply(qz, qy);
+        CHECK(GetX(qq) == -1.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("z*z")
+    {
+        Quaternion const qq = Multiply(qz, qz);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == -1.0F);
+    }
+
+    SECTION("z*w")
+    {
+        Quaternion const qq = Multiply(qz, qw);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 1.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("w*x")
+    {
+        Quaternion const qq = Multiply(qw, qx);
+        CHECK(GetX(qq) == 1.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("w*y")
+    {
+        Quaternion const qq = Multiply(qw, qy);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 1.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("w*z")
+    {
+        Quaternion const qq = Multiply(qw, qz);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 1.0F);
+        CHECK(GetW(qq) == 0.0F);
+    }
+
+    SECTION("w*w")
+    {
+        Quaternion const qq = Multiply(qw, qw);
+        CHECK(GetX(qq) == 0.0F);
+        CHECK(GetY(qq) == 0.0F);
+        CHECK(GetZ(qq) == 0.0F);
+        CHECK(GetW(qq) == 1.0F);
+    }
+}
+
 TEST_CASE("Maths / Plane / Normalized")
 {
     using namespace Graphyte::Maths;
@@ -255,10 +409,10 @@ TEST_CASE("Maths / Quaternion / exp log identity")
         Quaternion const ql = Log(qi);
         Quaternion const qe = Exp(ql);
 
-        CHECK(GetX(ql) == Approx{ 0.174299479F }.margin(0.0001F));
-        CHECK(GetY(ql) == Approx{ -0.377526760F }.margin(0.0001F));
-        CHECK(GetZ(ql) == Approx{ 0.450128078F }.margin(0.0001F));
-        CHECK(GetW(ql) == Approx{ 1.99272966F }.margin(0.0001F));
+        CHECK(GetX(ql) == Approx{ 0.174299479F }.margin(0.0005F));
+        CHECK(GetY(ql) == Approx{ -0.377526760F }.margin(0.0005F));
+        CHECK(GetZ(ql) == Approx{ 0.450128078F }.margin(0.0005F));
+        CHECK(GetW(ql) == Approx{ 1.99272966F }.margin(0.0005F));
 
         CHECK(GetX(qi) == Approx{ GetX(qe) }.margin(0.001F));
         CHECK(GetY(qi) == Approx{ GetY(qe) }.margin(0.001F));
