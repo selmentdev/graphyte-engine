@@ -1,6 +1,202 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / Vector / Refraction")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Vector2")
+    {
+        Vector2 const n = Normalize(Make<Vector2>(1.0F, 1.0F));
+        Vector2 const i = NegativeUnitY<Vector2>();
+
+        SECTION("index = 0.5")
+        {
+            Vector2 const r = Refract(i, n, 0.5F);
+
+            CHECK(GetX(r) == Approx{ -0.411437869F });
+            CHECK(GetY(r) == Approx{ -0.911437869F });
+        }
+
+        SECTION("index = 1")
+        {
+            Vector2 const r = Refract(i, n, 1.0F);
+
+            CHECK(GetX(r) == Approx{ 0.0F });
+            CHECK(GetY(r) == Approx{ -1.0F });
+        }
+
+        SECTION("index = 1.2")
+        {
+            Vector2 const r = Refract(i, n, 1.2F);
+
+            CHECK(GetX(r) == Approx{ 0.225834280F });
+            CHECK(GetY(r) == Approx{ -0.974165797F });
+        }
+
+        SECTION("index = 1.4")
+        {
+            Vector2 const r = Refract(i, n, 1.4F);
+
+            CHECK(GetX(r) == Approx{ 0.599999845F });
+            CHECK(GetY(r) == Approx{ -0.800000131F });
+        }
+
+        SECTION("index = 1.5")
+        {
+            Vector2 const r = Refract(i, n, 1.5F);
+
+            CHECK(GetX(r) == Approx{ 0.0F });
+            CHECK(GetY(r) == Approx{ 0.0F });
+        }
+    }
+
+    SECTION("Vector3")
+    {
+        Vector3 const n = Normalize(Make<Vector3>(1.0F, 1.0F, 1.0F));
+        Vector3 const i = NegativeUnitY<Vector3>();
+
+        SECTION("index = 0.5")
+        {
+            Vector3 const r = Refract(i, n, 0.5F);
+
+            CHECK(GetX(r) == Approx{ -0.360379606F });
+            CHECK(GetY(r) == Approx{ -0.860379577F });
+            CHECK(GetZ(r) == Approx{ -0.360379606F });
+        }
+
+        SECTION("index = 1")
+        {
+            Vector3 const r = Refract(i, n, 1.0F);
+
+            CHECK(GetX(r) == Approx{ 0.0F });
+            CHECK(GetY(r) == Approx{ -1.0F });
+            CHECK(GetZ(r) == Approx{ 0.0F });
+        }
+
+        SECTION("index = 1.2")
+        {
+            Vector3 const r = Refract(i, n, 1.2F);
+
+            CHECK(GetX(r) == Approx{ 0.284530073F });
+            CHECK(GetY(r) == Approx{ -0.915470004F });
+            CHECK(GetZ(r) == Approx{ 0.284530073F });
+        }
+
+        SECTION("index = 1.4")
+        {
+            Vector3 const r = Refract(i, n, 1.4F);
+
+            CHECK(GetX(r) == Approx{ 0.0F });
+            CHECK(GetY(r) == Approx{ 0.0F });
+            CHECK(GetZ(r) == Approx{ 0.0F });
+        }
+
+        SECTION("index = 1.5")
+        {
+            Vector3 const r = Refract(i, n, 1.5F);
+
+            CHECK(GetX(r) == Approx{ 0.0F });
+            CHECK(GetY(r) == Approx{ 0.0F });
+            CHECK(GetZ(r) == Approx{ 0.0F });
+        }
+    }
+
+    SECTION("Vector4")
+    {
+        Vector4 const n = Normalize(Make<Vector4>(1.0F, 1.0F, 1.0F, 1.0F));
+        Vector4 const i = NegativeUnitY<Vector4>();
+
+        SECTION("index = 0.5")
+        {
+            Vector4 const r = Refract(i, n, 0.5F);
+
+            CHECK(GetX(r) == Approx{ -0.325693905F });
+            CHECK(GetY(r) == Approx{ -0.825693905F });
+            CHECK(GetZ(r) == Approx{ -0.325693905F });
+            CHECK(GetW(r) == Approx{ -0.325693905F });
+        }
+
+        SECTION("index = 1")
+        {
+            Vector4 const r = Refract(i, n, 1.0F);
+
+            CHECK(GetX(r) == Approx{ 0.0F });
+            CHECK(GetY(r) == Approx{ -1.0F });
+            CHECK(GetZ(r) == Approx{ 0.0F });
+            CHECK(GetW(r) == Approx{ 0.0F });
+        }
+
+        SECTION("index = 1.2")
+        {
+            Vector4 const r = Refract(i, n, 1.2F);
+
+            CHECK(GetX(r) == Approx{ 0.0F });
+            CHECK(GetY(r) == Approx{ 0.0F });
+            CHECK(GetZ(r) == Approx{ 0.0F });
+            CHECK(GetW(r) == Approx{ 0.0F });
+        }
+
+        SECTION("index = 1.4")
+        {
+            Vector4 const r = Refract(i, n, 1.4F);
+
+            CHECK(GetX(r) == Approx{ 0.0F });
+            CHECK(GetY(r) == Approx{ 0.0F });
+            CHECK(GetZ(r) == Approx{ 0.0F });
+            CHECK(GetW(r) == Approx{ 0.0F });
+        }
+
+        SECTION("index = 1.5")
+        {
+            Vector4 const r = Refract(i, n, 1.5F);
+
+            CHECK(GetX(r) == Approx{ 0.0F });
+            CHECK(GetY(r) == Approx{ 0.0F });
+            CHECK(GetZ(r) == Approx{ 0.0F });
+            CHECK(GetW(r) == Approx{ 0.0F });
+        }
+    }
+}
+
+TEST_CASE("Maths / Vector / Reflection")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("-45 deg Z reflection")
+    {
+        Vector3 const n = Normalize(Make<Vector3>(1.0F, 1.0F, 0.0));
+        Vector3 const i = NegativeUnitX<Vector3>();
+        Vector3 const r = Reflect(i, n);
+
+        CHECK(GetX(r) == Approx{ 0.0F }.margin(0.001F));
+        CHECK(GetY(r) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetZ(r) == Approx{ 0.0F }.margin(0.001F));
+    }
+
+    SECTION("incident perpendicular to normal - not reflected")
+    {
+        Vector3 const n = Normalize(Make<Vector3>(0.0F, 1.0F, 0.0));
+        Vector3 const i = UnitX<Vector3>();
+        Vector3 const r = Reflect(i, n);
+
+        CHECK(GetX(r) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetY(r) == Approx{ 0.0F }.margin(0.001F));
+        CHECK(GetZ(r) == Approx{ 0.0F }.margin(0.001F));
+    }
+
+    SECTION("parallel to normal reflection")
+    {
+        Vector3 const n = UnitY<Vector3>();
+        Vector3 const i = NegativeUnitY<Vector3>();
+        Vector3 const r = Reflect(i, n);
+
+        CHECK(GetX(r) == Approx{ 0.0F }.margin(0.001F));
+        CHECK(GetY(r) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetZ(r) == Approx{ 0.0F }.margin(0.001F));
+    }
+}
+
 TEST_CASE("Maths / Vector / Plane Intersection")
 {
     using namespace Graphyte::Maths;

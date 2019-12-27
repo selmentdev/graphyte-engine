@@ -8289,13 +8289,115 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall ClampLength(T v, float min, float max) noexcept
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
     {
         Vector4 const vmin = Replicate<Vector4>(min);
         Vector4 const vmax = Replicate<Vector4>(max);
 
         return ClampLength(v, vmin, vmax);
     }
+
+    template <typename T>
+    mathinline T mathcall Reflect(T incident, T normal) noexcept
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
+    {
+        // result = incident - (2 * dot(incident, normal) * normal
+        Vector4 const dot = Dot(incident, normal);
+        Vector4 const dot2 = Add(dot, dot);
+        T const result = NegateMultiplyAdd(As<T>(dot2), normal, incident);
+        return result;
+    }
+
+    template <typename T>
+    mathinline T mathcall Refract(T incident, T normal, Vector4 index) noexcept
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
+    {
+        //
+        // k = 1.0 - index * index * (1.0 - dot(N, I) * dot(N, I));
+        // if (k < 0.0)
+        //     R = T(0.0);
+        // else
+        //     R = index * I - (index * dot(N, I) + sqrt(k)) * N;
+        //
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        // r0 = i dot n
+        T const i_dot_n{ Dot(incident, normal).V };
+
+        T const one{ Impl::VEC4_ONE_4.V };
+
+        // r1 = 1 - (r0 * r0)
+        T const r1 = NegateMultiplyAdd(i_dot_n, i_dot_n, one);
+
+        // r2 = r1 * index
+        T const r2 = Mulitply(r1, index);
+
+        // r3 = 1 - (index * r2)
+        T const r3 = NegateMultiplyAdd(r2, index, one);
+
+        // Check for zero
+        T const zero = Zero<T>();
+
+        if (IsLessEqual(r3, zero))
+        {
+            // internal refraction
+            return zero;
+        }
+        else
+        {
+            // r4 = sqrt(r3)
+            T const r4 = Sqrt(r3);
+
+            // r5 = (index * i_dot_n) + r4
+            T const r5 = MultiplyAdd(index, i_dot_n, r4);
+
+            // r6 = index * incident
+            T const r6 = Multiply(index, incident);
+
+            // r7 = r6 - (normal * r5)
+            T const r7 = NegateMultiplyAdd(normal, r5, r6);
+
+            return r7;
+        }
+#elif GRAPHYTE_HW_AVX
+        constexpr int const dpmask = (0xFF >> (4 - T::Components));
+
+        __m128 const i_dot_n = _mm_dp_ps(incident.V, normal.V, dpmask);
+        __m128 const one = Impl::VEC4_ONE_4.V;
+        __m128 const r1 = Impl::avx_fnmadd_ps(i_dot_n, i_dot_n, one);
+        __m128 const r2 = _mm_mul_ps(r1, index.V);
+        __m128 const r3 = Impl::avx_fnmadd_ps(r2, index.V, one);
+        __m128 const zero = _mm_setzero_ps();
+
+        __m128 const mask = _mm_cmple_ps(r3, zero);
+
+        int const cmpmask = _mm_movemask_ps(mask);
+
+        if (cmpmask == 0xF)
+        {
+            return T{ zero };
+        }
+        else
+        {
+            __m128 const r4 = _mm_sqrt_ps(r3);
+            __m128 const r5 = Impl::avx_fmadd_ps(index.V, i_dot_n, r4);
+            __m128 const r6 = _mm_mul_ps(index.V, incident.V);
+            __m128 const r7 = Impl::avx_fnmadd_ps(normal.V, r5, r6);
+
+            return T{ r7 };
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Refract(T incident, T normal, float index) noexcept
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
+    {
+        Vector4 const vindex = Replicate<Vector4>(index);
+        return Refract(incident, normal, vindex);
+    }
 }
+
 
 // =================================================================================================
 //
@@ -8377,15 +8479,6 @@ namespace Graphyte::Maths
         __m128 const result = _mm_mul_ps(zwxy, flip_zw.V);
         return { result };
 #endif
-    }
-
-    mathinline Vector4 mathcall Reflect(Vector4 incident, Vector4 normal) noexcept
-    {
-        // result = incident - (2 * dot(incident, normal)) * normal
-        Vector4 const dot = Dot(incident, normal);
-        Vector4 const dot_2 = Add(dot, dot);
-        Vector4 const result = NegateMultiplyAdd(dot_2, normal, incident);
-        return result;
     }
 
     mathinline Vector4 mathcall Transform(Vector4 v, Matrix m) noexcept
@@ -8470,15 +8563,6 @@ namespace Graphyte::Maths
         Vector4 const result = Select(r1, r0, Bool4{ select.V });
 
         return AsVector3(result);
-    }
-
-    mathinline Vector3 mathcall Reflect(Vector3 incident, Vector3 normal) noexcept
-    {
-        // result = incident - (2 * dot(incident, normal)) * normal
-        Vector3 const dot = AsVector3(Dot(incident, normal));
-        Vector3 const dot_2 = Add(dot, dot);
-        Vector3 const result = NegateMultiplyAdd(dot_2, normal, incident);
-        return result;
     }
 
     mathinline Vector3 mathcall Transform(Vector3 v, Matrix m) noexcept
@@ -8602,15 +8686,6 @@ namespace Graphyte::Maths
         __m128 const result = _mm_mul_ps(partial, Impl::VEC4_NEGATE_X.V);
         return { result };
 #endif
-    }
-
-    mathinline Vector2 mathcall Reflect(Vector2 incident, Vector2 normal) noexcept
-    {
-        // result = incident - (2 * dot(incident, normal)) * normal
-        Vector2 const dot = AsVector2(Dot(incident, normal));
-        Vector2 const dot_2 = Add(dot, dot);
-        Vector2 const result = NegateMultiplyAdd(dot_2, normal, incident);
-        return result;
     }
 
     mathinline Vector2 mathcall Transform(Vector2 v, Matrix m) noexcept
