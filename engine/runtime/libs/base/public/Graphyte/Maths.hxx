@@ -2363,16 +2363,50 @@ namespace Graphyte::Maths
 #endif
     }
 
+    template <uint32_t Count>
+    mathinline Vector4 mathcall ShiftLeft(Vector4 a, Vector4 b) noexcept
+    {
+        static_assert(Count < 4);
+        return Permute<
+            Count + 0,
+            Count + 1,
+            Count + 2,
+            Count + 3>(a, b);
+    }
+
     mathinline Vector4 mathcall ShiftLeft(Vector4 a, Vector4 b, uint32_t count) noexcept
     {
         GX_ASSERT(count < 4);
         return Permute(a, b, count + 0, count + 1, count + 2, count + 3);
     }
 
+    template <uint32_t Count>
+    mathinline Vector4 mathcall RotateLeft(Vector4 v) noexcept
+    {
+        static_assert(Count < 4);
+
+        return Swizzle<
+            (Count + 0) & 0b11,
+            (Count + 1) & 0b11,
+            (Count + 2) & 0b11,
+            (Count + 3) & 0b11>(v);
+    }
+
     mathinline Vector4 mathcall RotateLeft(Vector4 v, uint32_t count) noexcept
     {
         GX_ASSERT(count < 4);
         return Swizzle(v, (count + 0) & 0b11, (count + 1) & 0b11, (count + 2) & 0b11, (count + 3) & 0b11);
+    }
+
+    template <uint32_t Count>
+    mathinline Vector4 mathcall RotateRight(Vector4 v) noexcept
+    {
+        static_assert(Count < 4);
+        return Swizzle<
+            (4 - Count) & 0b11,
+            (5 - Count) & 0b11,
+            (6 - Count) & 0b11,
+            (7 - Count) & 0b11>(v);
     }
 
     mathinline Vector4 mathcall RotateRight(Vector4 v, uint32_t count) noexcept
@@ -2798,7 +2832,38 @@ namespace Graphyte::Maths
 #endif
     }
 
+    template <typename T>
+    mathinline T mathcall Load(float const* source) noexcept
+        requires VectorLike<T> and Loadable<T> and (T::Components >= 1)
+    {
+        GX_ASSERT(source != nullptr);
 
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                *source,
+                0.0F,
+                0.0F,
+                0.0F,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_load_ss(source) };
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(float* destination, T v) noexcept
+        requires VectorLike<T> and Storable<T> and (T::Components >= 1)
+    {
+        GX_ASSERT(destination != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        (*destination) = v.V.F[0];
+#elif GRAPHYTE_HW_AVX
+        _mm_store_ss(destination, v.V);
+#endif
+    }
 }
 
 
@@ -4200,6 +4265,44 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
+    mathinline typename T::MaskType mathcall BitCompareEqual(T a, T b) noexcept
+        requires VectorLike<T> and EqualComparable<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                (a.V.U[0] == b.V.U[0]) ? SELECT_1 : SELECT_0,
+                (a.V.U[1] == b.V.U[1]) ? SELECT_1 : SELECT_0,
+                (a.V.U[2] == b.V.U[2]) ? SELECT_1 : SELECT_0,
+                (a.V.U[3] == b.V.U[3]) ? SELECT_1 : SELECT_0,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const result = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
+        return { _mm_castsi128_ps(result) };
+#endif
+    }
+
+    template <typename T>
+    mathinline typename T::MaskType mathcall BitCompareNotEqual(T a, T b) noexcept
+        requires VectorLike<T> and EqualComparable<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                (a.V.U[0] != b.V.U[0]) ? SELECT_1 : SELECT_0,
+                (a.V.U[1] != b.V.U[1]) ? SELECT_1 : SELECT_0,
+                (a.V.U[2] != b.V.U[2]) ? SELECT_1 : SELECT_0,
+                (a.V.U[3] != b.V.U[3]) ? SELECT_1 : SELECT_0,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const result = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
+        return { _mm_xor_ps(_mm_castsi128_ps(result), Impl::VEC4_MASK_NEGATIVE_ONE.V) };
+#endif
+    }
+
+    template <typename T>
     mathinline T mathcall CompareEqual(T a, T b) noexcept
         requires VectorLike<T> and Bitwisable<T>
     {
@@ -4281,6 +4384,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall IsNotEqual(T a, T b) noexcept
+        requires VectorLike<T> and Bitwisable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -6316,6 +6420,23 @@ namespace Graphyte::Maths
         float const result = (base / range);
         return result;
     }
+
+    mathinline float mathcall Bezier(float a, float b, float c, float t) noexcept
+    {
+        float const t2 = t * t;
+        float const t1 = 1.0F - t;
+        float const t12 = t1 * t1;
+        return (a * t12) + (2.0F * b * t1 * t) + (c * t2);
+    }
+
+    mathinline float mathcall Bezier(float a, float b, float c, float d, float t) noexcept
+    {
+        float const t1 = 1.0F - t;
+        float const t13 = t1 * t1 * t1;
+        float const t3 = t * t * t;
+
+        return (t13 * a) + (3.0F * t * t1 * t1 * b) + (3.0F * t * t * t1 * c) + (t3 * d);
+    }
 }
 
 
@@ -7702,6 +7823,123 @@ namespace Graphyte::Maths
         float const t = Saturate((x - a) / (b - a));
         return t * (t * NegateMultiplyAdd(t, 2.0F, 3.0F));
     }
+
+    mathinline float mathcall Cosine(float a, float b, float t) noexcept
+    {
+        float const t0 = (1.0F - Cos(t * PI<float>)) * 0.5F;
+        return Lerp(a, b, t0);
+    }
+
+    mathinline float mathcall EaseSmoothC2(float x) noexcept
+    {
+        return (x * x * x) * (x * ((x * 6.0F) - 15.0F) + 10.0F);
+    }
+
+    mathinline float mathcall Smooth(float min, float max, float x) noexcept
+    {
+        if (x <= min)
+        {
+            return min;
+        }
+        else if (x >= max)
+        {
+            return max;
+        }
+
+        float const xx = (x - min) / (max - min);
+        return (xx * (xx * (3.0F - (2.0F * x))));
+    }
+
+    mathinline float mathcall SmoothSquared(float min, float max, float x) noexcept
+    {
+        if (x <= min)
+        {
+            return min;
+        }
+        else if (x >= max)
+        {
+            return max;
+        }
+
+        float const xx = (x * x);
+        return Lerp(min, max, xx);
+    }
+
+    mathinline float mathcall SmoothInvSquared(float min, float max, float x) noexcept
+    {
+        if (x <= min)
+        {
+            return min;
+        }
+        else if (x >= max)
+        {
+            return max;
+        }
+
+        float const ox = 1.0F - x;
+        float const oxox = ox * ox;
+        float const xx = 1.0F - oxox;
+        return Lerp(min, max, xx);
+    }
+
+    mathinline float mathcall SmoothCubed(float min, float max, float x) noexcept
+    {
+        if (x <= min)
+        {
+            return min;
+        }
+        else if (x >= max)
+        {
+            return max;
+        }
+
+        float const xx = (x * x * x);
+        return Lerp(min, max, xx);
+    }
+
+    mathinline float mathcall SmoothInvCubed(float min, float max, float x) noexcept
+    {
+        if (x <= min)
+        {
+            return min;
+        }
+        else if (x >= max)
+        {
+            return max;
+        }
+
+        float const ox = 1.0F - x;
+        float const oxoxox = ox * ox * ox;
+        float const xx = 1.0F - oxoxox;
+        return Lerp(min, max, xx);
+    }
+
+    mathinline float mathcall Trapezoid(float a, float b, float c, float d, float t) noexcept
+    {
+        if (t <= a)
+        {
+            return 0.0F;
+        }
+        else if (t < b)
+        {
+            return (t - a) / (b - a);
+        }
+        else if (t < c)
+        {
+            return 1.0F;
+        }
+        else if (t < d)
+        {
+            return 1.0F - ((t - c) / (d - c));
+        }
+
+        return 0.0F;
+    }
+
+    mathinline float mathcall Trapezoid(float a, float b, float c, float d, float t, float min, float max) noexcept
+    {
+        return Lerp(min, max, Trapezoid(a, b, c, d, t));
+    }
 }
 
 
@@ -7861,7 +8099,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const length_squared = LengthSquared<T>(v);
-        Vector4 const rcp_length = ReciprocalSqrt<T>(v);
+        Vector4 const rcp_length = InvSqrt<T>(v);
         return rcp_length;
 #elif GRAPHYTE_HW_AVX
         if constexpr (T::Components == 4)
@@ -7897,7 +8135,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const length_squared = LengthSquared<T>(v);
-        Vector4 const rcp_length = ReciprocalSqrtEst<T>(v);
+        Vector4 const rcp_length = InvSqrtEst<T>(v);
         return rcp_length;
 #elif GRAPHYTE_HW_AVX
         if constexpr (T::Components == 4)
@@ -7992,6 +8230,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall NormalizeEst(T v) noexcept
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         T const rcp_length = ReciprocalLength(v);
@@ -8005,6 +8244,56 @@ namespace Graphyte::Maths
         __m128 const result = _mm_mul_ps(length, v.V);
         return { result };
 #endif
+    }
+
+    template <typename T>
+    mathinline T mathcall ClampLength(T v, Vector4 min, Vector4 max) noexcept
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
+    {
+        GX_ASSERT(GetX(min) == GetY(min));
+        GX_ASSERT(GetX(max) == GetY(max));
+        GX_ASSERT(GetX(min) == GetZ(min))
+        GX_ASSERT(GetX(max) == GetZ(max))
+        GX_ASSERT(GetX(min) == GetW(min));
+        GX_ASSERT(GetX(max) == GetW(max));
+
+        GX_ASSERT(IsGreaterEqual(min, Vector4{ Impl::VEC4_ZERO_4.V }));
+        GX_ASSERT(IsGreaterEqual(max, Vector4{ Impl::VEC4_ZERO_4.V }));
+        GX_ASSERT(IsGreaterEqual(max, min));
+
+        Vector4 const length_squared = LengthSquared(v);
+        Vector4 const zero = Zero<Vector4>();
+
+        Vector4 const rcp_length = InvSqrt(length_squared);
+        Bool4 const mask_inf_length = BitCompareEqual(length_squared, Vector4{ Impl::VEC4_INFINITY.V });
+        Bool4 const masK_zero_length = CompareEqual(length_squared, zero);
+
+        Vector4 const normal = Multiply(As<Vector4>(v), rcp_length);
+        Vector4 const length = Multiply(length_squared, rcp_length);
+
+        Bool4 const select = BitCompareEqual(mask_inf_length, masK_zero_length);
+        Vector4 const select_length = Select(length_squared, length, select);
+        Vector4 const select_normal = Select(length_squared, normal, select);
+
+        Bool4 const control_max = CompareGreater(select_length, max);
+        Bool4 const control_min = CompareLess(select_length, min);
+
+        Vector4 const clamp_length_0 = Select(select_length, max, control_max);
+        Vector4 const clamp_length_1 = Select(clamp_length_0, min, control_min);
+
+        Vector4 const clamped = Multiply(normal, clamp_length_1);
+        Bool4 const control = CompareEqual(control_max, control_min);
+        Vector4 const result = Select(clamped, As<Vector4>(v), control);
+        return As<T>(result);
+    }
+
+    template <typename T>
+    mathinline T mathcall ClampLength(T v, float min, float max) noexcept
+    {
+        Vector4 const vmin = Replicate<Vector4>(min);
+        Vector4 const vmax = Replicate<Vector4>(max);
+
+        return ClampLength(v, vmin, vmax);
     }
 }
 
@@ -8781,49 +9070,6 @@ namespace Graphyte::Maths
 #endif
     }
 
-#if false
-    template <typename T>
-    mathinline T mathcall Load(Float4x3A const* source) noexcept
-    {
-        GX_ASSERT(source != nullptr);
-        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
-
-#if GRAPHYTE_MATH_NO_INTRINSICS
-
-        Matrix result;
-
-        result.M.R[0].F[0] = source->M[0][0];
-        result.M.R[0].F[1] = source->M[0][1];
-        result.M.R[0].F[2] = source->M[0][2];
-        result.M.R[0].F[3] = 0.0F;
-
-        result.M.R[1].F[0] = source->M[1][0];
-        result.M.R[1].F[1] = source->M[1][1];
-        result.M.R[1].F[2] = source->M[1][2];
-        result.M.R[1].F[3] = 0.0F;
-
-        result.M.R[2].F[0] = source->M[2][0];
-        result.M.R[2].F[1] = source->M[2][1];
-        result.M.R[2].F[2] = source->M[2][2];
-        result.M.R[2].F[3] = 0.0F;
-
-        result.M.R[3].F[0] = source->M[3][0];
-        result.M.R[3].F[1] = source->M[3][1];
-        result.M.R[3].F[2] = source->M[3][2];
-        result.M.R[3].F[3] = 1.0F;
-
-        return result;
-
-#elif GRAPHYTE_HW_AVX
-#endif
-    }
-#endif
-
-    //mathinline Matrix mathcall Load(Float4x3A const* source) noexcept;
-    //mathinline Matrix mathcall Load(Float3x4A const* source) noexcept;
-    //mathinline Matrix mathcall
-    //mathinline Matrix mathcall Load(Float3x3 const* source) noexcept;
-
     mathinline Matrix mathcall Multiply(Matrix a, Matrix b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -9547,6 +9793,16 @@ namespace Graphyte::Maths
         return result;
 #endif
     }
+
+    //mathinline Matrix mathcall CreateRotationX(float angle) noexcept;
+    //mathinline Matrix mathcall CreateRotationY(float angle) noexcept;
+    //mathinline Matrix mathcall CreateRotationZ(float angle) noexcept;
+
+    //mathinline Matrix mathcall CreateFromEuler(float x, float y, float z) noexcept;
+    //mathinline Matrix mathcall CreateFromEuler(Vector3 angles) noexcept;
+    //mathinline Matrix mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept;
+    //mathinline Matrix mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept;
+    //mathinline Matrix mathcall CreateFromQuaternion(Quaternion q) noexcept;
 }
 
 // =================================================================================================
@@ -9575,7 +9831,17 @@ namespace Graphyte::Maths
 
     mathinline Color mathcall Modulate(Color a, Color b) noexcept
     {
-        return As<Color>(Multiply(As<Vector4>(a), As<Vector4>(b)));
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                a.V.F[0] * b.V.F[0],
+                a.V.F[1] * b.V.F[1],
+                a.V.F[2] * b.V.F[2],
+                a.V.F[3] * b.V.F[3],
+            } } };
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_mul_ps(a.V, b.V) };
+#endif
     }
 
     mathinline Color mathcall AdjustSaturation(Color v, float saturation) noexcept
@@ -9651,7 +9917,7 @@ namespace Graphyte::Maths
         __m128 const mask = Impl::VEC4_MASK_SELECT_1110.V;
 
         // select {_,_,_,1}
-        __m128 const one4 = _mm_andnot_ps(Impl::VEC4_ONE_4.V, mask);
+        __m128 const one4 = _mm_andnot_ps(mask, Impl::VEC4_ONE_4.V);
         // select {a,b,c,_}
         __m128 const abcn = _mm_and_ps(v.V, mask);
         // select {a,b,c,1}
@@ -9700,6 +9966,20 @@ namespace Graphyte::Maths
         __m128 const mask = _mm_cmpneq_ps(length_sq, Impl::VEC4_INFINITY.V);
         __m128 const normalized = _mm_div_ps(p.V, length);
         __m128 const result = _mm_and_ps(normalized, mask);
+        return { result };
+#endif
+    }
+
+    mathinline Plane mathcall NormalizeEst(Plane p) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Vector4 const length = ReciprocalLengthEst(As<Vector3>(p));
+        Vector4 const result = Multiply(As<Vector4>(p), length);
+        return As<Plane>(result);
+#elif GRAPHYTE_HW_AVX
+        __m128 const length = _mm_dp_ps(p.V, p.V, 0x7F);
+        __m128 const rcp_length = _mm_rsqrt_ps(length);
+        __m128 const result = _mm_mul_ps(p.V, rcp_length);
         return { result };
 #endif
     }
@@ -9770,6 +10050,24 @@ namespace Graphyte::Maths
         Vector3 const result = Select(point_on_plane, Nan<Vector3>(), control);
         return result;
     }
+
+    mathinline void PlanePlaneIntersection(Vector3& out_line1, Vector3& out_line2, Plane plane1, Plane plane2) noexcept
+    {
+        Vector3 const cross0 = Cross(As<Vector3>(plane2), As<Vector3>(plane1));
+        Vector4 const cross0_length = Length(cross0);
+        Vector3 const cross1 = Cross(As<Vector3>(plane2), cross0);
+        Vector4 const plane1_wwww = SplatW(As<Vector4>(plane1));
+        Vector4 const point0 = Multiply(As<Vector4>(cross1), plane1_wwww);
+        Vector3 const cross2 = Cross(cross0, As<Vector3>(plane1));
+        Vector4 const plane2_wwww = SplatW(As<Vector4>(plane2));
+        Vector4 const point1 = MultiplyAdd(As<Vector4>(cross2), plane2_wwww, point0);
+        Vector4 const linepoint1 = Divide(point1, cross0_length);
+        Vector4 const linepoint2 = Add(linepoint1, As<Vector4>(cross0));
+        Bool4 const control = CompareLessEqual(cross0_length, Vector4{ Impl::VEC4_EPSILON.V });
+
+        out_line1 = As<Vector3>(Select(linepoint1, Nan<Vector4>(), control));
+        out_line2 = As<Vector3>(Select(linepoint2, Nan<Vector4>(), control));
+    }
 }
 
 
@@ -9822,7 +10120,18 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall RevolutionsToGradians(T value) noexcept
-        requires VectorLike<T> and Arithmetic<T> = delete;
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(400.0F);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(400.0F);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return { result };
+#endif
+    }
 
     mathinline float mathcall RevolutionsToGradians(float value) noexcept
     {
@@ -9831,7 +10140,18 @@ namespace Graphyte::Maths
     
     template <typename T>
     mathinline T mathcall DegreesToRevolutions(T value) noexcept
-        requires VectorLike<T> and Arithmetic<T> = delete;
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(1.0F / 360.0F);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(1.0F / 360.0F);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return { result };
+#endif
+    }
 
     mathinline float mathcall DegreesToRevolutions(float value) noexcept
     {
@@ -9840,7 +10160,18 @@ namespace Graphyte::Maths
     
     template <typename T>
     mathinline T mathcall RadiansToRevolutions(T value) noexcept
-        requires VectorLike<T> and Arithmetic<T> = delete;
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(1.0F / Maths::PI2<float>);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(1.0F / Maths::PI2<float>);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return { result };
+#endif
+    }
 
     mathinline float mathcall RadiansToRevolutions(float value) noexcept
     {
@@ -9849,7 +10180,18 @@ namespace Graphyte::Maths
     
     template <typename T>
     mathinline T mathcall GradiansToRevolutions(T value) noexcept
-        requires VectorLike<T> and Arithmetic<T> = delete;
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(1.0F / 400.0F);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(1.0F / 400.0F);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return { result };
+#endif
+    }
 
     mathinline float mathcall GradiansToRevolutions(float value) noexcept
     {
@@ -9858,7 +10200,18 @@ namespace Graphyte::Maths
     
     template <typename T>
     mathinline T mathcall RadiansToGradians(T value) noexcept
-        requires VectorLike<T> and Arithmetic<T> = delete;
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(200.0F / Maths::PI<float>);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(200.0F / Maths::PI<float>);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return { result };
+#endif
+    }
 
     mathinline float mathcall RadiansToGradians(float value) noexcept
     {
@@ -9867,7 +10220,18 @@ namespace Graphyte::Maths
     
     template <typename T>
     mathinline T mathcall GradiansToRadians(T value) noexcept
-        requires VectorLike<T> and Arithmetic<T> = delete;
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(Maths::PI<float> / 200.0F);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(Maths::PI<float> / 200.0F);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return { result };
+#endif
+    }
 
     mathinline float mathcall GradiansToRadians(float value) noexcept
     {
@@ -9916,7 +10280,18 @@ namespace Graphyte::Maths
     
     template <typename T>
     mathinline T mathcall GradiansToDegrees(T value) noexcept
-        requires VectorLike<T> and Arithmetic<T> = delete;
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(9.0F / 10.0F);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(9.0F / 10.0F);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return { result };
+#endif
+    }
 
     mathinline float mathcall GradiansToDegrees(float value) noexcept
     {
@@ -9925,10 +10300,320 @@ namespace Graphyte::Maths
     
     template <typename T>
     mathinline T mathcall DegreesToGradians(T value) noexcept
-        requires VectorLike<T> and Arithmetic<T> = delete;
+        requires VectorLike<T> and Arithmetic<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T const multiplier = Replicate<T>(10.0F / 9.0F);
+        T const result = Multiply(value, multiplier);
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const multiplier = _mm_set_ps1(10.0F / 9.0F);
+        __m128 const result = _mm_mul_ps(value.V, multiplier);
+        return { result };
+#endif
+    }
 
     mathinline float mathcall DegreesToGradians(float value) noexcept
     {
         return value * (10.0F / 9.0F);
+    }
+}
+
+// =================================================================================================
+//
+// ULP Near Equal
+//
+
+namespace Graphyte::Maths
+{
+    mathinline bool mathcall IsNearEqual(float a, float b, int32_t tolerance) noexcept
+    {
+        using Graphyte::Impl::Ieee754::FloatBits;
+
+        if (IsZero(a - b))
+        {
+            return true;
+        }
+
+        int32_t const ia = FloatBits{ .AsFloat32 = a, }.AsInt32;
+        int32_t const ib = FloatBits{ .AsFloat32 = b, }.AsInt32;
+
+        if ((ia < 0) != (ib < 0))
+        {
+            return false;
+        }
+
+        int32_t const ulp = abs(ia - ib);
+
+        return ulp <= tolerance;
+    }
+
+    mathinline bool mathcall IsNearEqual(float value1, float value2) noexcept
+    {
+        static constexpr const int32_t tolerance{ 4 };
+        return IsNearEqual(value1, value2, tolerance);
+    }
+}
+
+
+// =================================================================================================
+//
+// Fixed/Float conversion.
+//
+
+namespace Graphyte::Maths
+{
+    mathinline uint32_t mathcall FixedToFixed(uint32_t value, uint32_t n, uint32_t p) noexcept
+    {
+        if (n > p)
+        {
+            value >>= (n - p);
+        }
+        else if (n < p)
+        {
+            if (value == (static_cast<uint32_t>(1) << n) - 1)
+            {
+                value = static_cast<uint32_t>((1 << p) - 1);
+            }
+            else
+            {
+                value = static_cast<uint32_t>((value * (1 << p)) / ((1 << n) - 1));
+            }
+        }
+
+        return value;
+    }
+
+    mathinline uint32_t mathcall FloatToFixed(float value, uint32_t bits) noexcept
+    {
+        if (value <= 0.0F)
+        {
+            return 0;
+        }
+        else if (value >= 1.0F)
+        {
+            return static_cast<uint32_t>((1 << bits) - 1);
+        }
+        
+
+        return static_cast<uint32_t>(value * (1U << bits));
+    }
+
+    mathinline float mathcall FixedToFloat(uint32_t value, uint32_t bits) noexcept
+    {
+        return static_cast<float>(value) / static_cast<float>((1 << bits) - 1);
+    }
+}
+
+
+// =================================================================================================
+//
+// Coordinate systems
+//
+
+namespace Graphyte::Maths
+{
+    mathinline Float3A mathcall CartesianToSpherical(const Float3A& value) noexcept
+    {
+        const auto radius = Sqrt(
+            value.X * value.X +
+            value.Y * value.Y +
+            value.Z * value.Z
+        );
+        const auto theta = Acos(
+            value.Z / radius
+        );
+        const auto phi = Atan(
+            value.Y / value.X
+        );
+
+        return { radius, theta, phi };
+    }
+
+    mathinline Float3A mathcall SphericalToCartesian(const Float3A& value) noexcept
+    {
+        float sin_theta;
+        float cos_theta;
+        float sin_phi;
+        float cos_phi;
+        const auto radius = value.X;
+        SinCos(sin_theta, cos_theta, value.Y);
+        SinCos(sin_phi, cos_phi, value.Z);
+
+        const auto partial = radius * sin_theta;
+
+        return { partial * cos_phi, partial * sin_phi, radius * cos_theta };
+    }
+
+    mathinline Float3A mathcall CartesianToCylindrical(const Float3A& value) noexcept
+    {
+        const auto radius = Sqrt(
+            value.X * value.X +
+            value.Y * value.Y
+        );
+        const auto angle = Atan(
+            value.Y / value.X
+        );
+        const auto elevation = value.Z;
+
+        return { radius, angle, elevation };
+    }
+
+    mathinline Float3A mathcall CylindricalToCartesian(const Float3A& value) noexcept
+    {
+        const auto radius = value.X;
+        const auto angle = value.Y;
+        const auto elevation = value.Z;
+
+        float sin_angle;
+        float cos_angle;
+        SinCos(sin_angle, cos_angle, angle);
+
+        return { radius * cos_angle, radius * sin_angle, elevation };
+    }
+
+    mathinline Float2A mathcall PolarToCartesian(const Float2A& value) noexcept
+    {
+        const auto radius = value.X;
+        const auto angle = value.Y;
+
+        float sin_angle;
+        float cos_angle;
+        SinCos(sin_angle, cos_angle, angle);
+
+        const auto x = radius * cos_angle;
+        const auto y = radius * sin_angle;
+
+        return { x, y };
+    }
+
+    mathinline Float2A mathcall CartesianToPolar(const Float2A& value) noexcept
+    {
+        const auto radius = Sqrt(
+            value.X * value.X +
+            value.Y * value.Y
+        );
+        const auto angle = Atan2(value.Y, value.X);
+
+        return { radius, angle };
+    }
+}
+
+
+// =================================================================================================
+//
+// Common functions TODO: CATALOG
+//
+
+namespace Graphyte::Maths
+{
+    mathinline float mathcall Gain(float value, float gain) noexcept
+    {
+        const auto g = -Log2(1.0F - gain);
+        const auto c = Power(value, gain);
+        return c / (c + Power(1.0F - value, g));
+    }
+
+    mathinline float mathcall Bias(float value, float base) noexcept
+    {
+        return Power(value, -Log2(base));
+    }
+
+    mathinline float mathcall Step(float value1, float value2) noexcept
+    {
+        return (value1 <= value2)
+            ? 0.0F
+            : 1.0F;
+    }
+
+    mathinline int mathcall QuadricEquation(float a, float b, float c, float& out_x1, float& out_x2) noexcept
+    {
+        const auto delta = (b * b) - (4.0F * a * c);
+
+        if (delta < 0.0F)
+        {
+            out_x1 = out_x2 = std::numeric_limits<float>::infinity();
+            return 0;
+        }
+        else if (IsZero(delta))
+        {
+            out_x1 = out_x2 = (-b / (2.0F * a));
+            return 1;
+        }
+
+        const auto denominator = 1.0F / (2.0F * a);
+        const auto delta_sqrt = Sqrt(delta);
+
+        out_x1 = (-b - delta_sqrt) * denominator;
+        out_x2 = (-b + delta_sqrt) * denominator;
+
+        return 2;
+    }
+
+    mathinline float mathcall SnapToGrid(float value, float grid_size) noexcept
+    {
+        if (grid_size == 0.0F)
+        {
+            return value;
+        }
+        else
+        {
+            return Floor((value + 0.5F * grid_size) / grid_size) * grid_size;
+        }
+    }
+
+    mathinline float mathcall WangHashNoise(uint32_t u, uint32_t v, uint32_t s) noexcept
+    {
+        uint32_t seed = (u * 1664525U + v) + s;
+
+        seed = (seed ^ 61U) ^ (seed >> 16U);
+        seed *= 9U;
+        seed = seed ^ (seed >> 4U);
+        seed *= 0x27d4eb2d;
+        seed = seed ^ (seed >> 15U);
+
+        auto value = static_cast<float>(seed);
+        value = static_cast<float>(static_cast<double>(value)* (1.0 / 4294967296.0));
+        return value;
+    }
+
+    mathinline float mathcall WrapAngle(float value) noexcept
+    {
+        const auto raw = value + Maths::PI<float>;
+        auto abs = Abs(raw);
+
+        const auto scaled = static_cast<float>(static_cast<int32_t>(abs / Maths::PI<float>));
+
+        abs -= Maths::PI<float> * scaled;
+        abs -= Maths::PI<float>;
+
+        if (raw < 0.0F)
+        {
+            abs = -abs;
+        }
+
+        return abs;
+    }
+
+    mathinline float mathcall DiffAngle(float angle1, float angle2) noexcept
+    {
+        const auto r1 = angle2 - angle1;
+        const auto r2 = r1 - Maths::PI2<float>;
+        const auto r3 = r1 + Maths::PI2<float>;
+
+        const auto a1 = Abs(r1);
+        const auto a2 = Abs(r2);
+        const auto a3 = Abs(r3);
+
+        if ((a1 < a2) && (a1 < a3))
+        {
+            return r1;
+        }
+        else if (a2 < a3)
+        {
+            return r2;
+        }
+
+        return r3;
     }
 }

@@ -6,6 +6,7 @@
 [ ] check clang-cl toolchain
 [ ] unit tests for math sublibrary
 [ ] refactor `SplatN` in way which will allow to specify target type too
+[ ] `BitCompareEquals` - rethink this API for booleans, because in few cases we need to explicitely compare VectorN by bits! Not just BoolN
 [ ] think over removing not supported configurations: we should support just
     [ ] windows-x64
     [ ] windows-arm64

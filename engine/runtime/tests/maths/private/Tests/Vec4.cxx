@@ -1,6 +1,190 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / Vector / Plane Intersection")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("+X -> point")
+    {
+        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitX<Vector3>());
+        Vector3 const a = Make<Vector3>(-5.0F, 1.0F, 1.0F);
+        Vector3 const b = Make<Vector3>(5.0F, 1.0F, 1.0F);
+
+        Vector3 const r = LinePlaneIntersection(p, a, b);
+
+        CHECK(GetX(r) == Approx{ 1.0F });
+        CHECK(GetY(r) == Approx{ 1.0F });
+        CHECK(GetZ(r) == Approx{ 1.0F });
+    }
+
+    SECTION("+X -> nan")
+    {
+        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitX<Vector3>());
+        Vector3 const a = Make<Vector3>(1.0F, -5.0F, 1.0F);
+        Vector3 const b = Make<Vector3>(1.0F, 5.0F, 1.0F);
+
+        Vector3 const r = LinePlaneIntersection(p, a, b);
+
+        CHECK(std::isnan(GetX(r)));
+        CHECK(std::isnan(GetY(r)));
+        CHECK(std::isnan(GetZ(r)));
+    }
+
+    SECTION("+Y -> point")
+    {
+        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitY<Vector3>());
+        Vector3 const a = Make<Vector3>(1.0F, -5.0F, 1.0F);
+        Vector3 const b = Make<Vector3>(1.0F, 5.0F, 1.0F);
+
+        Vector3 const r = LinePlaneIntersection(p, a, b);
+
+        CHECK(GetX(r) == Approx{ 1.0F });
+        CHECK(GetY(r) == Approx{ 1.0F });
+        CHECK(GetZ(r) == Approx{ 1.0F });
+    }
+
+    SECTION("+Y -> nan")
+    {
+        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitY<Vector3>());
+        Vector3 const a = Make<Vector3>(-5.0F, 1.0F, 1.0F);
+        Vector3 const b = Make<Vector3>(5.0F, 1.0F, 1.0F);
+
+        Vector3 const r = LinePlaneIntersection(p, a, b);
+
+        CHECK(std::isnan(GetX(r)));
+        CHECK(std::isnan(GetY(r)));
+        CHECK(std::isnan(GetZ(r)));
+    }
+
+    SECTION("+Z -> point")
+    {
+        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitZ<Vector3>());
+        Vector3 const a = Make<Vector3>(1.0F, 1.0F, -5.0F);
+        Vector3 const b = Make<Vector3>(1.0F, 1.0F, 5.0F);
+
+        Vector3 const r = LinePlaneIntersection(p, a, b);
+
+        CHECK(GetX(r) == Approx{ 1.0F });
+        CHECK(GetY(r) == Approx{ 1.0F });
+        CHECK(GetZ(r) == Approx{ 1.0F });
+    }
+
+    SECTION("+Z -> nan")
+    {
+        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitZ<Vector3>());
+        Vector3 const a = Make<Vector3>(1.0F, -5.0F, 1.0F);
+        Vector3 const b = Make<Vector3>(1.0F, 5.0F, 1.0F);
+
+        Vector3 const r = LinePlaneIntersection(p, a, b);
+
+        CHECK(std::isnan(GetX(r)));
+        CHECK(std::isnan(GetY(r)));
+        CHECK(std::isnan(GetZ(r)));
+    }
+}
+
+TEST_CASE("Maths / Vector / Clamp length")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Vector2")
+    {
+        for (float x = -5.0F; x <= 5.0F; x += 1.0F)
+        {
+            for (float y = -5.0F; y <= 5.0F; y += 1.0F)
+            {
+                if (IsZero(x, 0.001F) && IsZero(y, 0.001F))
+                {
+                    continue;
+                }
+
+                Vector2 const v = Make<Vector2>(x, y);
+                Vector2 const c = ClampLength(v, 0.5F, 1.5F);
+
+                // Normalize vector and get original length
+                Vector2 const n = Normalize(v);
+                Vector4 const l = Length(v);
+
+                // Compute clamped expected length
+                Vector4 const cl = Clamp(l, Replicate<Vector4>(0.5F), Replicate<Vector4>(1.5F));
+
+                // And expected vector
+                Vector2 const e = As<Vector2>(Multiply(As<Vector4>(n), cl));
+
+                CHECK(IsEqual(c, e, Replicate<Vector2>(0.001F)));
+            }
+        }
+    }
+
+    SECTION("Vector3")
+    {
+        for (float x = -5.0F; x <= 5.0F; x += 1.0F)
+        {
+            for (float y = -5.0F; y <= 5.0F; y += 1.0F)
+            {
+                for (float z = -5.0F; z <= 5.0F; z += 1.0F)
+                {
+                    if (IsZero(x, 0.001F) && IsZero(y, 0.001F) && IsZero(z, 0.001F))
+                    {
+                        continue;
+                    }
+
+                    Vector3 const v = Make<Vector3>(x, y, z);
+                    Vector3 const c = ClampLength(v, 0.5F, 1.5F);
+
+                    // Normalize vector and get original length
+                    Vector3 const n = Normalize(v);
+                    Vector4 const l = Length(v);
+
+                    // Compute clamped expected length
+                    Vector4 const cl = Clamp(l, Replicate<Vector4>(0.5F), Replicate<Vector4>(1.5F));
+
+                    // And expected vector
+                    Vector3 const e = As<Vector3>(Multiply(As<Vector4>(n), cl));
+
+                    CHECK(IsEqual(c, e, Replicate<Vector3>(0.001F)));
+                }
+            }
+        }
+    }
+
+    SECTION("Vector4")
+    {
+        for (float x = -5.0F; x <= 5.0F; x += 1.0F)
+        {
+            for (float y = -5.0F; y <= 5.0F; y += 1.0F)
+            {
+                for (float z = -5.0F; z <= 5.0F; z += 1.0F)
+                {
+                    for (float w = -5.0F; w <= 5.0F; w += 1.0F)
+                    {
+                        if (IsZero(x, 0.001F) && IsZero(y, 0.001F) && IsZero(z, 0.001F) && IsZero(w, 0.001F))
+                        {
+                            continue;
+                        }
+
+                        Vector4 const v = Make<Vector4>(x, y, z, w);
+                        Vector4 const c = ClampLength(v, 0.5F, 1.5F);
+
+                        // Normalize vector and get original length
+                        Vector4 const n = Normalize(v);
+                        Vector4 const l = Length(v);
+
+                        // Compute clamped expected length
+                        Vector4 const cl = Clamp(l, Replicate<Vector4>(0.5F), Replicate<Vector4>(1.5F));
+
+                        // And expected vector
+                        Vector4 const e = As<Vector4>(Multiply(As<Vector4>(n), cl));
+
+                        CHECK(IsEqual(c, e, Replicate<Vector4>(0.001F)));
+                    }
+                }
+            }
+        }
+    }
+}
+
 TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 {
     using namespace Graphyte::Maths;
