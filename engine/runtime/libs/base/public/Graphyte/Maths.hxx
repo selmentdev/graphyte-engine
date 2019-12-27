@@ -8135,7 +8135,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const length_squared = LengthSquared<T>(v);
-        Vector4 const rcp_length = InvSqrtEst<T>(v);
+        Vector4 const rcp_length = InvSqrtEst<Vector4>(length_squared);
         return rcp_length;
 #elif GRAPHYTE_HW_AVX
         if constexpr (T::Components == 4)

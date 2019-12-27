@@ -1,6 +1,10 @@
-group "engine/tests"
+if _OPTIONS["with-tests"] == "yes" then
 
-include "base"
-include "entities"
-include "graphics"
-include 'maths'
+    group "engine/tests"
+
+    include "base"
+    include "entities"
+    include "graphics"
+    include 'maths'
+
+end

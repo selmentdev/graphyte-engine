@@ -498,7 +498,7 @@ TEST_CASE("Maths / Quaternion / Rotation from axis angle")
 
             Vector3 normal = Normalize(axis);
 
-            CHECK(GetX(normal) == 1.0F);
+            CHECK(GetX(normal) == Approx{ 1.0F });
             CHECK(GetY(normal) == 0.0F);
             CHECK(GetZ(normal) == 0.0F);
             CHECK(angle == Approx{ DegreesToRadians(90.0F) }.margin(0.0001F));
@@ -536,7 +536,7 @@ TEST_CASE("Maths / Quaternion / Rotation from axis angle")
 
             Vector3 normal = Normalize(axis);
 
-            CHECK(GetX(normal) == 1.0F);
+            CHECK(GetX(normal) == Approx{ 1.0F });
             CHECK(GetY(normal) == 0.0F);
             CHECK(GetZ(normal) == 0.0F);
             CHECK(angle == Approx{ DegreesToRadians(270.0F) }.margin(0.0001F));
@@ -581,7 +581,7 @@ TEST_CASE("Maths / Quaternion / Rotation from axis angle")
             Vector3 normal = Normalize(axis);
 
             CHECK(GetX(normal) == 0.0F);
-            CHECK(GetY(normal) == 1.0F);
+            CHECK(GetY(normal) == Approx{ 1.0F });
             CHECK(GetZ(normal) == 0.0F);
             CHECK(angle == Approx{ DegreesToRadians(90.0F) }.margin(0.0001F));
         }
@@ -619,7 +619,7 @@ TEST_CASE("Maths / Quaternion / Rotation from axis angle")
             Vector3 normal = Normalize(axis);
 
             CHECK(GetX(normal) == 0.0F);
-            CHECK(GetY(normal) == 1.0F);
+            CHECK(GetY(normal) == Approx{ 1.0F });
             CHECK(GetZ(normal) == 0.0F);
             CHECK(angle == Approx{ DegreesToRadians(270.0F) }.margin(0.0001F));
         }
@@ -664,7 +664,7 @@ TEST_CASE("Maths / Quaternion / Rotation from axis angle")
 
             CHECK(GetX(normal) == 0.0F);
             CHECK(GetY(normal) == 0.0F);
-            CHECK(GetZ(normal) == 1.0F);
+            CHECK(GetZ(normal) == Approx{ 1.0F });
             CHECK(angle == Approx{ DegreesToRadians(90.0F) }.margin(0.0001F));
         }
 
@@ -702,7 +702,7 @@ TEST_CASE("Maths / Quaternion / Rotation from axis angle")
 
             CHECK(GetX(normal) == 0.0F);
             CHECK(GetY(normal) == 0.0F);
-            CHECK(GetZ(normal) == 1.0F);
+            CHECK(GetZ(normal) == Approx{ 1.0F });
             CHECK(angle == Approx{ DegreesToRadians(270.0F) }.margin(0.0001F));
         }
     }

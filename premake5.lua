@@ -1,11 +1,26 @@
 newoption {
     trigger = "with-tests",
-    description = "Generate project files for unit tests"
+    description = "Generate project files for unit tests",
+    default = "yes",
+    allowed = {
+        { "yes", "Enabled" },
+        { "no", "Disabled" },
+    }
 }
 
 newoption {
     trigger = "with-cc",
     description = "Generate project files for Content Creation Tools"
+}
+
+newoption {
+    trigger = "with-math-simd",
+    description = "Enables SIMD math library optimizations",
+    default = "yes",
+    allowed = {
+        { "yes", "Detect supported FPU" },
+        { "no", "Disable optimizations" },
+    }
 }
 
 function graphyte_common()
@@ -203,21 +218,16 @@ workspace "graphyte"
     filter { "architecture:x86*" }
         vectorextensions "avx"
 
-        defines {
-            "GRAPHYTE_MATH_NO_INTRINSICS=0",
-        }
-    --[[
-    -- FMA is not supported on VirtualBox machines for some reason. Rewrite SIMD code to proper detection of CPU features
-    filter { "architecture:x86*", "toolset:gcc or clang" }
-        buildoptions {
-            "-mfma",
-            "-mno-fma4"
-        }
-    ]]--
+        if _OPTIONS["with-math-simd"] == "no" then
+            defines {
+                "GRAPHYTE_MATH_NO_INTRINSICS=1",
+            }
+        end
 
     filter { "architecture:arm64 or arm" }
         editandcontinue "off"
 
+        -- We don't support SIMD on non-X64 builds.
         defines {
             "GRAPHYTE_MATH_NO_INTRINSICS=1",
         }
