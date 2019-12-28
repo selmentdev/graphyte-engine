@@ -4,11 +4,6 @@
 
 namespace Graphyte::Maths
 {
-    mathinline Color mathcall Color::Load(const float4a* source) noexcept
-    {
-        return { Vector4::Load(source).V };
-    }
-
     mathinline Color mathcall Color::Load(const Packed::color32* source) noexcept
     {
         GX_ASSERT(source != nullptr);
@@ -33,11 +28,6 @@ namespace Graphyte::Maths
         v_temp      = _mm_mul_ps(v_temp, Detail::VEC4_NORMALIZE_A8R8G8B8.V);
         return { v_temp };
 #endif
-    }
-
-    mathinline Color mathcall Color::LoadPacked(const float4* source) noexcept
-    {
-        return { Vector4::LoadPacked(source).V };
     }
 
     mathinline void mathcall Color::Store(float4a* destination, Color c) noexcept

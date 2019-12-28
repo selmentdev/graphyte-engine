@@ -152,7 +152,7 @@
 #pragma warning(error   : 4868) // compiler may not enforce left-to-right evaluation order in braced initializer list
 #pragma warning(error   : 5038) // data member 'member1' will be initialized after data member 'member2'
 #pragma warning(error   : 4146) // unary minus operator applied to unsigned integer type, result still unsigned
-#pragma warning(error   : 4723) // potential divide by 0
+#pragma warning(disable : 4723) // potential divide by 0 (disabled because on release builds codegen fails math functions)
 #pragma warning(disable : 5045) // compiler will insert spectre mitigation
 #pragma warning(disable : 5026) // `x` move constructor was implicitly defined as deleted
 #pragma warning(disable : 5027) // `x` move assignment operator was implicitly defined as deleted

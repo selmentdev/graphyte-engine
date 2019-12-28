@@ -1819,24 +1819,25 @@ namespace Graphyte::Maths
         Select1 = UINT32_C(0xffffffff),
     };
 
+    // Order: X, Y, Z, W
     enum class InsertMask : uint8_t
     {
-        _0000 = 0b0000,
-        _0001 = 0b0001,
-        _0010 = 0b0010,
-        _0011 = 0b0011,
-        _0100 = 0b0100,
-        _0101 = 0b0101,
-        _0110 = 0b0110,
-        _0111 = 0b0111,
-        _1000 = 0b1000,
-        _1001 = 0b1001,
-        _1010 = 0b1010,
-        _1011 = 0b1011,
-        _1100 = 0b1100,
-        _1101 = 0b1101,
-        _1110 = 0b1110,
-        _1111 = 0b1111,
+        AAAA = 0b0000,
+        AAAB = 0b0001,
+        AABA = 0b0010,
+        AABB = 0b0011,
+        ABAA = 0b0100,
+        ABAB = 0b0101,
+        ABBA = 0b0110,
+        ABBB = 0b0111,
+        BAAA = 0b0000,
+        BAAB = 0b0001,
+        BABA = 0b0010,
+        BABB = 0b0011,
+        BBAA = 0b0100,
+        BBAB = 0b0101,
+        BBBA = 0b0110,
+        BBBB = 0b0111,
     };
 
     enum class SwizzleMask
@@ -2177,7 +2178,87 @@ namespace Graphyte::Maths::Impl
 
 // =================================================================================================
 //
-// Vector4 permutations
+// Select control mask
+//
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall SelectControl(uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
+        requires VectorLike<T> and Bitwisable<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        GX_ASSERT(x < 2);
+        GX_ASSERT(y < 2);
+        GX_ASSERT(z < 2);
+        GX_ASSERT(w < 4);
+
+        uint32_t const control[2]{ SELECT_0, SELECT_1 };
+
+        Impl::ConstUInt32x4 const result{ { {
+                control[x],
+                control[y],
+                control[z],
+                control[w],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const xyzw = _mm_set_epi32(
+            static_cast<int>(w),
+            static_cast<int>(z),
+            static_cast<int>(y),
+            static_cast<int>(x)
+        );
+        __m128i const zero = _mm_setzero_si128();
+        __m128i const control = _mm_cmpgt_epi32(xyzw, zero);
+        __m128 const result = _mm_castsi128_ps(control);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        int32x2_t const xy = vcreate_s32(static_cast<uint64_t>(x) | static_cast<uint64_t>(y) << 32);
+        int32x2_t const zw = vcreate_s32(static_cast<uint64_t>(z) | static_cast<uint64_t>(w) << 32);
+        int32x4_t const xyzw = vcombine_s32(xy, zw);
+        int32x4_t const zero = vdupq_n_s32(0);
+        int32x4_t const result = vcgtq_s32(xyzw, zero);
+        return { vreinterpretq_f32_s32(result) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Select(T a, T b, typename T::MaskType control) noexcept
+        requires VectorLike<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        Impl::ConstUInt32x4 const result{ { {
+                (a.V.U[0] & ~control.V.U[0]) | (b.V.U[0] & control.V.U[0]),
+                (a.V.U[1] & ~control.V.U[1]) | (b.V.U[1] & control.V.U[1]),
+                (a.V.U[2] & ~control.V.U[2]) | (b.V.U[2] & control.V.U[2]),
+                (a.V.U[3] & ~control.V.U[3]) | (b.V.U[3] & control.V.U[3]),
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const masked1 = _mm_andnot_ps(control.V, a.V);
+        __m128 const masked2 = _mm_and_ps(b.V, control.V);
+        __m128 const result = _mm_or_ps(masked1, masked2);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const result = _vbslq_f32(control.V, b.V, a.V);
+        return { result };
+#endif
+    }
+
+    mathinline float mathcall Select(float a, float b, float control) noexcept
+    {
+        return (control >= 0.0F) ? a : b;
+    }
+}
+
+
+// =================================================================================================
+//
+// Permutations
 //
 
 namespace Graphyte::Maths
@@ -2658,6 +2739,61 @@ namespace Graphyte::Maths
         float32x4_t const result = vpaddq_f32(partial, partial);
         return { result };
 #endif
+    }
+}
+
+
+// =================================================================================================
+//
+// Vector insertion
+//
+
+namespace Graphyte::Maths
+{
+    template <bool X, bool Y, bool Z, bool W>
+    mathinline Vector4 mathcall Insert(Vector4 a, Vector4 b) noexcept
+    {
+        return Permute<
+            0 + (X ? 4 : 0),
+            1 + (Y ? 4 : 0),
+            2 + (Z ? 4 : 0),
+            3 + (W ? 4 : 0)>(a, b);
+    }
+
+    template <InsertMask Mask>
+    mathinline Vector4 mathcall Insert(Vector4 a, Vector4 b) noexcept
+    {
+        constexpr bool x = ((static_cast<uint32_t>(Mask) >> 3) & 1) != 0;
+        constexpr bool y = ((static_cast<uint32_t>(Mask) >> 2) & 1) != 0;
+        constexpr bool z = ((static_cast<uint32_t>(Mask) >> 1) & 1) != 0;
+        constexpr bool w = ((static_cast<uint32_t>(Mask) >> 0) & 0) != 0;
+
+        return Premute<x, y, z, w>(a, b);
+    }
+
+    mathinline Vector4 mathcall Insert(Vector4 a, Vector4 b, bool x, bool y, bool z, bool w) noexcept
+    {
+        Bool4 const control = SelectControl<Bool4>(
+            x ? 1 : 0,
+            y ? 1 : 0,
+            z ? 1 : 0,
+            w ? 1 : 0
+            );
+
+        return Select(a, b, control);
+    }
+
+    mathinline Vector4 mathcall Insert(Vector4 a, Vector4 b, uint32_t rotate_left_count, bool x, bool y, bool z, bool w) noexcept
+    {
+        Bool4 const control = SelectControl<Bool4>(
+            x ? 1 : 0,
+            y ? 1 : 0,
+            z ? 1 : 0,
+            w ? 1 : 0
+            );
+
+
+        return Select(a, Maths::RotateLeft(b, rotate_left_count), control);
     }
 }
 
@@ -4404,77 +4540,6 @@ namespace Graphyte::Maths
         __m128i const result = _mm_andnot_si128(partial, _mm_castps_si128(Impl::VEC4_MASK_NEGATIVE_ONE.V));
         return { _mm_castsi128_ps(result) };
 #endif
-    }
-
-    template <typename T>
-    mathinline T mathcall SelectControl(uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
-        requires VectorLike<T> and Bitwisable<T>
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        GX_ASSERT(x < 2);
-        GX_ASSERT(y < 2);
-        GX_ASSERT(z < 2);
-        GX_ASSERT(w < 4);
-
-        uint32_t const control[2]{ SELECT_0, SELECT_1 };
-
-        Impl::ConstUInt32x4 const result{ { {
-                control[x],
-                control[y],
-                control[z],
-                control[w],
-            } } };
-
-        return { result.V };
-#elif GRAPHYTE_HW_AVX
-        __m128i const xyzw = _mm_set_epi32(
-            static_cast<int>(w),
-            static_cast<int>(z),
-            static_cast<int>(y),
-            static_cast<int>(x)
-        );
-        __m128i const zero = _mm_setzero_si128();
-        __m128i const control = _mm_cmpgt_epi32(xyzw, zero);
-        __m128 const result = _mm_castsi128_ps(control);
-        return { result };
-#elif GRAPHYTE_HW_NEON
-        int32x2_t const xy = vcreate_s32(static_cast<uint64_t>(x) | static_cast<uint64_t>(y) << 32);
-        int32x2_t const zw = vcreate_s32(static_cast<uint64_t>(z) | static_cast<uint64_t>(w) << 32);
-        int32x4_t const xyzw = vcombine_s32(xy, zw);
-        int32x4_t const zero = vdupq_n_s32(0);
-        int32x4_t const result = vcgtq_s32(xyzw, zero);
-        return { vreinterpretq_f32_s32(result) };
-#endif
-    }
-
-    template <typename T>
-    mathinline T mathcall Select(T a, T b, typename T::MaskType control) noexcept
-        requires VectorLike<T>
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-
-        Impl::ConstUInt32x4 const result{ { {
-                (a.V.U[0] & ~control.V.U[0]) | (b.V.U[0] & control.V.U[0]),
-                (a.V.U[1] & ~control.V.U[1]) | (b.V.U[1] & control.V.U[1]),
-                (a.V.U[2] & ~control.V.U[2]) | (b.V.U[2] & control.V.U[2]),
-                (a.V.U[3] & ~control.V.U[3]) | (b.V.U[3] & control.V.U[3]),
-            } } };
-
-        return { result.V };
-#elif GRAPHYTE_HW_AVX
-        __m128 const masked1 = _mm_andnot_ps(control.V, a.V);
-        __m128 const masked2 = _mm_and_ps(b.V, control.V);
-        __m128 const result = _mm_or_ps(masked1, masked2);
-        return { result };
-#elif GRAPHYTE_HW_NEON
-        float32x4_t const result = _vbslq_f32(control.V, b.V, a.V);
-        return { result };
-#endif
-    }
-
-    mathinline float mathcall Select(float a, float b, float control) noexcept
-    {
-        return (control >= 0.0F) ? a : b;
     }
 }
 
@@ -7170,7 +7235,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsEqual(T a, T b) noexcept
-        requires VectorLike<T>and EqualComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -8815,6 +8880,15 @@ namespace Graphyte::Maths
         return As<Vector3>(result);
     }
 
+    mathinline void mathcall ComponentsFromNormal(Vector3& out_parallel, Vector3& out_perpendicular, Vector3 v, Vector3 n) noexcept
+    {
+        Vector4 const scale = Dot(v, n);
+        Vector3 const parallel = Multiply(n, As<Vector3>(scale));
+
+        out_parallel = parallel;
+        out_perpendicular = Subtract(v, parallel);
+    }
+
     mathinline Vector3 mathcall Transform(Vector3 v, Matrix m) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -8884,8 +8958,6 @@ namespace Graphyte::Maths
         return { r2 };
 #endif
     }
-
-
 }
 
 // =================================================================================================
@@ -9754,6 +9826,221 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Matrix mathcall Inverse(Matrix m, Vector4* determinant = nullptr) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Matrix const mt = Transpose(m);
+
+        Vector4 const ca0 = Swizzle<0, 0, 1, 1>({ mt.M.R[2] });
+        Vector4 const ca1 = Swizzle<2, 3, 2, 3>({ mt.M.R[3] });
+        Vector4 const cb0 = Swizzle<0, 0, 1, 1>({ mt.M.R[0] });
+        Vector4 const cb1 = Swizzle<2, 3, 2, 3>({ mt.M.R[1] });
+        Vector4 const cc0 = Permute<PERMUTE_0X, PERMUTE_0Z, PERMUTE_1X, PERMUTE_1Z>({ mt.M.R[2] }, { mt.M.R[0] });
+        Vector4 const cc1 = Permute<PERMUTE_0Y, PERMUTE_0W, PERMUTE_1Y, PERMUTE_1W>({ mt.M.R[3] }, { mt.M.R[1] });
+
+        Vector4 const ra0 = Multiply(ca0, ca1);
+        Vector4 const rb0 = Multiply(cb0, cb1);
+        Vector4 const rc0 = Multiply(cc0, cc1);
+
+        Vector4 const da0 = Swizzle<2, 3, 2, 3>({ mt.M.R[2] });
+        Vector4 const da1 = Swizzle<0, 0, 1, 1>({ mt.M.R[3] });
+        Vector4 const db0 = Swizzle<2, 3, 2, 3>({ mt.M.R[0] });
+        Vector4 const db1 = Swizzle<0, 0, 1, 1>({ mt.M.R[1] });
+        Vector4 const dc0 = Permute<PERMUTE_0Y, PERMUTE_0W, PERMUTE_1Y, PERMUTE_1W>({ mt.M.R[2] }, { mt.M.R[0] });
+        Vector4 const dc1 = Permute<PERMUTE_0X, PERMUTE_0Z, PERMUTE_1X, PERMUTE_1Z>({ mt.M.R[3] }, { mt.M.R[1] });
+
+        Vector4 const ra1 = NegateMultiplyAdd(da0, da1, ra0);
+        Vector4 const rb1 = NegateMultiplyAdd(db0, db1, rb0);
+        Vector4 const rc1 = NegateMultiplyAdd(dc0, dc1, rc0);
+
+        Vector4 const ea0 = Swizzle<1, 2, 0, 1>({ mt.M.R[1] });
+        Vector4 const ea1 = Permute<PERMUTE_1Y, PERMUTE_0Y, PERMUTE_0W, PERMUTE_0X>(ra1, rc1);
+        Vector4 const eb0 = Swizzle<2, 0, 1, 0>({ mt.M.R[0] });
+        Vector4 const eb1 = Permute<PERMUTE_0W, PERMUTE_1Y, PERMUTE_0Y, PERMUTE_0Z>(ra1, rc1);
+        Vector4 const ec0 = Swizzle<1, 2, 0, 1>({ mt.M.R[3] });
+        Vector4 const ec1 = Permute<PERMUTE_1W, PERMUTE_0Y, PERMUTE_0W, PERMUTE_0X>(rb1, rc1);
+        Vector4 const ed0 = Swizzle<2, 0, 1, 0>({ mt.M.R[2] });
+        Vector4 const ed1 = Permute<PERMUTE_0W, PERMUTE_1W, PERMUTE_0Y, PERMUTE_0Z>(rb1, rc1);
+
+        Vector4 const fa0 = Multiply(ea0, ea1);
+        Vector4 const fb0 = Multiply(eb0, eb1);
+        Vector4 const fc0 = Multiply(ec0, ec1);
+        Vector4 const fd0 = Multiply(ed0, ed1);
+
+        Vector4 const ga0 = Swizzle<2, 3, 1, 2>({ mt.M.R[1] });
+        Vector4 const ga1 = Permute<PERMUTE_0W, PERMUTE_0X, PERMUTE_0Y, PERMUTE_1X>(ra1, rc1);
+        Vector4 const gb0 = Swizzle<3, 2, 3, 1>({ mt.M.R[0] });
+        Vector4 const gb1 = Permute<PERMUTE_0Z, PERMUTE_0Y, PERMUTE_1X, PERMUTE_0X>(ra1, rc1);
+        Vector4 const gc0 = Swizzle<2, 3, 1, 2>({ mt.M.R[3] });
+        Vector4 const gc1 = Permute<PERMUTE_0W, PERMUTE_0X, PERMUTE_0Y, PERMUTE_1Z>(rb1, rc1);
+        Vector4 const gd0 = Swizzle<3, 2, 3, 1>({ mt.M.R[2] });
+        Vector4 const gd1 = Permute<PERMUTE_0Z, PERMUTE_0Y, PERMUTE_1Z, PERMUTE_0X>(rb1, rc1);
+
+        Vector4 const fa1 = NegateMultiplyAdd(ga0, ga1, fa0);
+        Vector4 const fb1 = NegateMultiplyAdd(gb0, gb1, fb0);
+        Vector4 const fc1 = NegateMultiplyAdd(gc0, gc1, fc0);
+        Vector4 const fd1 = NegateMultiplyAdd(gd0, gd1, fd0);
+
+        Vector4 const ha0 = Swizzle<3, 0, 3, 0>({ mt.M.R[1] });
+        Vector4 const ha1 = Permute<PERMUTE_0Z, PERMUTE_1Y, PERMUTE_1X, PERMUTE_0Z>(ra1, rc1);
+        Vector4 const hb0 = Swizzle<1, 3, 0, 2>({ mt.M.R[0] });
+        Vector4 const hb1 = Permute<PERMUTE_1Y, PERMUTE_0X, PERMUTE_0W, PERMUTE_1X>(ra1, rc1);
+        Vector4 const hc0 = Swizzle<3, 0, 3, 0>({ mt.M.R[3] });
+        Vector4 const hc1 = Permute<PERMUTE_0Z, PERMUTE_1W, PERMUTE_1Z, PERMUTE_0Z>(rb1, rc1);
+        Vector4 const hd0 = Swizzle<1, 3, 0, 2>({ mt.M.R[2] });
+        Vector4 const hd1 = Permute<PERMUTE_1W, PERMUTE_0X, PERMUTE_0W, PERMUTE_1Z>(rb1, rc1);
+
+        Vector4 const r1 = NegateMultiplyAdd(ha0, ha1, fa1);
+        Vector4 const r0 = MultiplyAdd(ha0, ha1, fa1);
+        Vector4 const r3 = MultiplyAdd(hb0, hb1, fb1);
+        Vector4 const r2 = NegateMultiplyAdd(hb0, hb1, fb1);
+        Vector4 const r5 = NegateMultiplyAdd(hc0, hc1, fc1);
+        Vector4 const r4 = MultiplyAdd(hc0, hc1, fc1);
+        Vector4 const r7 = MultiplyAdd(hd0, hd1, fd1);
+        Vector4 const r6 = NegateMultiplyAdd(hd0, hd1, fd1);
+
+        Matrix partial;
+        partial.M.R[0] = Select(r0, r1, Bool4{ Impl::VEC4_MASK_SELECT_0101.V }).V;
+        partial.M.R[1] = Select(r2, r3, Bool4{ Impl::VEC4_MASK_SELECT_0101.V }).V;
+        partial.M.R[2] = Select(r4, r5, Bool4{ Impl::VEC4_MASK_SELECT_0101.V }).V;
+        partial.M.R[3] = Select(r6, r7, Bool4{ Impl::VEC4_MASK_SELECT_0101.V }).V;
+
+        Vector4 const det = Dot(Vector4{ partial.M.R[0] }, Vector4{ mt.M.R[0] });
+
+        if (determinant != nullptr)
+        {
+            (*determinant) = det;
+        }
+
+        Vector4 const rcp_det = Reciprocal(det);
+
+        Matrix result;
+        result.M.R[0] = Multiply(Vector4{ partial.M.R[0] }, rcp_det).V;
+        result.M.R[1] = Multiply(Vector4{ partial.M.R[1] }, rcp_det).V;
+        result.M.R[2] = Multiply(Vector4{ partial.M.R[2] }, rcp_det).V;
+        result.M.R[3] = Multiply(Vector4{ partial.M.R[3] }, rcp_det).V;
+
+        return result;
+#elif GRAPHYTE_HW_AVX
+
+        Matrix mt = Transpose(m);
+
+        __m128 const ca0 = _mm_permute_ps(mt.M.R[2], _MM_SHUFFLE(1, 1, 0, 0));
+        __m128 const ca1 = _mm_permute_ps(mt.M.R[3], _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const cb0 = _mm_permute_ps(mt.M.R[0], _MM_SHUFFLE(1, 1, 0, 0));
+        __m128 const cb1 = _mm_permute_ps(mt.M.R[1], _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const cc0 = _mm_shuffle_ps(mt.M.R[2], mt.M.R[0], _MM_SHUFFLE(2, 0, 2, 0));
+        __m128 const cc1 = _mm_shuffle_ps(mt.M.R[3], mt.M.R[1], _MM_SHUFFLE(3, 1, 3, 1));
+
+        __m128 const ra0 = _mm_mul_ps(ca0, ca1);
+        __m128 const rb0 = _mm_mul_ps(cb0, cb1);
+        __m128 const rc0 = _mm_mul_ps(cc0, cc1);
+
+        __m128 const da0 = _mm_permute_ps(mt.M.R[2], _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const da1 = _mm_permute_ps(mt.M.R[3], _MM_SHUFFLE(1, 1, 0, 0));
+        __m128 const db0 = _mm_permute_ps(mt.M.R[0], _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const db1 = _mm_permute_ps(mt.M.R[1], _MM_SHUFFLE(1, 1, 0, 0));
+        __m128 const dc0 = _mm_shuffle_ps(mt.M.R[2], mt.M.R[0], _MM_SHUFFLE(3, 1, 3, 1));
+        __m128 const dc1 = _mm_shuffle_ps(mt.M.R[3], mt.M.R[1], _MM_SHUFFLE(2, 0, 2, 0));
+
+        __m128 const ra1 = Impl::avx_fnmadd_ps(da0, da1, ra0);
+        __m128 const rb1 = Impl::avx_fnmadd_ps(db0, db1, rb0);
+        __m128 const rc1 = Impl::avx_fnmadd_ps(dc0, dc1, rc0);
+
+
+        __m128 const tmp1 = _mm_shuffle_ps(ra1, rc1, _MM_SHUFFLE(1, 1, 3, 1));
+        __m128 const tmp2 = _mm_shuffle_ps(rb1, rc1, _MM_SHUFFLE(3, 3, 3, 1));
+        __m128 const ea0 = _mm_permute_ps(mt.M.R[1], _MM_SHUFFLE(1, 0, 2, 1));
+        __m128 const ea1 = _mm_shuffle_ps(tmp1, ra1, _MM_SHUFFLE(0, 3, 0, 2));
+        __m128 const eb0 = _mm_permute_ps(mt.M.R[0], _MM_SHUFFLE(0, 1, 0, 2));
+        __m128 const eb1 = _mm_shuffle_ps(tmp1, ra1, _MM_SHUFFLE(2, 1, 2, 1));
+        __m128 const ec0 = _mm_permute_ps(mt.M.R[3], _MM_SHUFFLE(1, 0, 2, 1));
+        __m128 const ec1 = _mm_shuffle_ps(tmp2, rb1, _MM_SHUFFLE(0, 3, 0, 2));
+        __m128 const ed0 = _mm_permute_ps(mt.M.R[2], _MM_SHUFFLE(0, 1, 0, 2));
+        __m128 const ed1 = _mm_shuffle_ps(tmp2, rb1, _MM_SHUFFLE(2, 1, 2, 1));
+
+        __m128 const fa0 = _mm_mul_ps(ea0, ea1);
+        __m128 const fb0 = _mm_mul_ps(eb0, eb1);
+        __m128 const fc0 = _mm_mul_ps(ec0, ec1);
+        __m128 const fd0 = _mm_mul_ps(ed0, ed1);
+
+        __m128 const tmp3 = _mm_shuffle_ps(ra1, rc1, _MM_SHUFFLE(0, 0, 1, 0));
+        __m128 const ga0 = _mm_permute_ps(mt.M.R[1], _MM_SHUFFLE(2, 1, 3, 2));
+        __m128 const ga1 = _mm_shuffle_ps(ra1, tmp3, _MM_SHUFFLE(2, 1, 0, 3));
+        __m128 const gb0 = _mm_permute_ps(mt.M.R[0], _MM_SHUFFLE(1, 3, 2, 3));
+        __m128 const gb1 = _mm_shuffle_ps(ra1, tmp3, _MM_SHUFFLE(0, 2, 1, 2));
+
+        __m128 const tmp4 = _mm_shuffle_ps(rb1, rc1, _MM_SHUFFLE(2, 2, 1, 0));
+        __m128 const gc0 = _mm_permute_ps(mt.M.R[3], _MM_SHUFFLE(2, 1, 3, 2));
+        __m128 const gc1 = _mm_shuffle_ps(rb1, tmp4, _MM_SHUFFLE(2, 1, 0, 3));
+        __m128 const gd0 = _mm_permute_ps(mt.M.R[2], _MM_SHUFFLE(1, 3, 2, 3));
+        __m128 const gd1 = _mm_shuffle_ps(rb1, tmp4, _MM_SHUFFLE(0, 2, 1, 2));
+
+        __m128 const fa1 = Impl::avx_fnmadd_ps(ga0, ga1, fa0);
+        __m128 const fb1 = Impl::avx_fnmadd_ps(gb0, gb1, fb0);
+        __m128 const fc1 = Impl::avx_fnmadd_ps(gc0, gc1, fc0);
+        __m128 const fd1 = Impl::avx_fnmadd_ps(gd0, gd1, fd0);
+
+        __m128 const ha0 = _mm_permute_ps(mt.M.R[1], _MM_SHUFFLE(0, 3, 0, 3));
+
+        __m128 const tmp5 = _mm_shuffle_ps(ra1, rc1, _MM_SHUFFLE(1, 0, 2, 2));
+        __m128 const ha1 = _mm_permute_ps(tmp5, _MM_SHUFFLE(0, 2, 3, 0));
+        __m128 const hb0 = _mm_permute_ps(mt.M.R[0], _MM_SHUFFLE(2, 0, 3, 1));
+
+        __m128 const tmp6 = _mm_shuffle_ps(ra1, rc1, _MM_SHUFFLE(1, 0, 3, 0));
+        __m128 const hb1 = _mm_permute_ps(tmp6, _MM_SHUFFLE(2, 1, 0, 3));
+        __m128 const hc0 = _mm_permute_ps(mt.M.R[3], _MM_SHUFFLE(0, 3, 0, 3));
+
+        __m128 const tmp7 = _mm_shuffle_ps(rb1, rc1, _MM_SHUFFLE(3, 2, 2, 2));
+        __m128 const hc1 = _mm_permute_ps(tmp7, _MM_SHUFFLE(0, 2, 3, 0));
+        __m128 const hd0 = _mm_permute_ps(mt.M.R[2], _MM_SHUFFLE(2, 0, 3, 1));
+
+        __m128 const tmp8 = _mm_shuffle_ps(rb1, rc1, _MM_SHUFFLE(3, 2, 3, 0));
+        __m128 const hd1 = _mm_permute_ps(tmp8, _MM_SHUFFLE(2, 1, 0, 3));
+
+        __m128 const k0 = _mm_mul_ps(ha0, ha1);
+        __m128 const k1 = _mm_mul_ps(hb0, hb1);
+        __m128 const k2 = _mm_mul_ps(hc0, hc1);
+        __m128 const k3 = _mm_mul_ps(hd0, hd1);
+
+        __m128 const t1 = _mm_sub_ps(fa1, k0);
+        __m128 const t0 = _mm_add_ps(fa1, k0);
+        __m128 const t3 = _mm_add_ps(fb1, k1);
+        __m128 const t2 = _mm_sub_ps(fb1, k1);
+        __m128 const t5 = _mm_sub_ps(fc1, k2);
+        __m128 const t4 = _mm_add_ps(fc1, k2);
+        __m128 const t7 = _mm_add_ps(fd1, k3);
+        __m128 const t6 = _mm_sub_ps(fd1, k3);
+
+        __m128 const w0 = _mm_shuffle_ps(t0, t1, _MM_SHUFFLE(3, 1, 2, 0));
+        __m128 const w2 = _mm_shuffle_ps(t2, t3, _MM_SHUFFLE(3, 1, 2, 0));
+        __m128 const w4 = _mm_shuffle_ps(t4, t5, _MM_SHUFFLE(3, 1, 2, 0));
+        __m128 const w6 = _mm_shuffle_ps(t6, t7, _MM_SHUFFLE(3, 1, 2, 0));
+
+        __m128 const r0 = _mm_permute_ps(w0, _MM_SHUFFLE(3, 1, 2, 0));
+        __m128 const r2 = _mm_permute_ps(w2, _MM_SHUFFLE(3, 1, 2, 0));
+        __m128 const r4 = _mm_permute_ps(w4, _MM_SHUFFLE(3, 1, 2, 0));
+        __m128 const r6 = _mm_permute_ps(w6, _MM_SHUFFLE(3, 1, 2, 0));
+
+        // determinant
+        __m128 const det = _mm_dp_ps(r0, mt.M.R[0], 0xFF);
+
+        if (determinant != nullptr)
+        {
+            determinant->V = det;
+        }
+
+        __m128 const rcp_det = _mm_div_ps(Impl::VEC4_ONE_4.V, det);
+
+        Matrix result;
+        result.M.R[0] = _mm_mul_ps(r0, rcp_det);
+        result.M.R[1] = _mm_mul_ps(r2, rcp_det);
+        result.M.R[2] = _mm_mul_ps(r4, rcp_det);
+        result.M.R[3] = _mm_mul_ps(r6, rcp_det);
+        return result;
+#endif
+    }
+
     template <typename T>
     mathinline T mathcall Nan() noexcept
         requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
@@ -10402,7 +10689,12 @@ namespace Graphyte::Maths
         return result;
     }
 
-    mathinline void PlanePlaneIntersection(Vector3& out_line1, Vector3& out_line2, Plane plane1, Plane plane2) noexcept
+    mathinline void PlanePlaneIntersection(
+        Vector3& out_line1,
+        Vector3& out_line2,
+        Plane plane1,
+        Plane plane2
+    ) noexcept
     {
         Vector3 const cross0 = Cross(As<Vector3>(plane2), As<Vector3>(plane1));
         Vector4 const cross0_length = Length(cross0);
@@ -10418,6 +10710,83 @@ namespace Graphyte::Maths
 
         out_line1 = As<Vector3>(Select(linepoint1, Nan<Vector4>(), control));
         out_line2 = As<Vector3>(Select(linepoint2, Nan<Vector4>(), control));
+    }
+
+    mathinline Vector2 mathcall LineLineIntersection(
+        Vector2 line1_start,
+        Vector2 line1_end,
+        Vector2 line2_start,
+        Vector2 line2_end
+    ) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Vector2 const line1 = Subtract(line1_end, line1_start);
+        Vector2 const line2 = Subtract(line2_end, line2_start);
+        Vector2 const line12 = Subtract(line1_start, line2_start);
+
+        Vector2 const c0 = Cross(line1, line2);
+        Vector2 const c1 = Cross(line2, line12);
+
+        Vector2 const zero = Zero<Vector2>();
+
+        Vector2 result;
+
+        if (IsEqual(c0, zero, Epsilon<Vector2>()))
+        {
+            if (IsEqual(c1, zero, Epsilon<Vector2>()))
+            {
+                // concident
+                result = Infinity<Vector2>();
+            }
+            else
+            {
+                // parallel
+                result = Nan<Vector2>();
+            }
+        }
+        else
+        {
+            Vector2 const rcp_c0 = Reciprocal(c0);
+            Vector2 const c1_div_c0 = Multiply(c1, rcp_c0);
+            result = MultiplyAdd(line1, c1_div_c0, line1_start);
+        }
+
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const line1 = _mm_sub_ps(line1_end.V, line1_start.V);
+        __m128 const line2 = _mm_sub_ps(line2_end.V, line2_start.V);
+        __m128 const line12 = _mm_sub_ps(line1_start.V, line2_start.V);
+
+        __m128 const c0 = Cross(Vector2{ line1 }, Vector2{ line2 }).V;
+        __m128 const c1 = Cross(Vector2{ line2 }, Vector2{ line12 }).V;
+
+        // check c0 for zero
+        __m128 const cmp0 = _mm_setzero_ps();
+        __m128 const cmp1 = _mm_sub_ps(cmp0, c0);
+        __m128 const cmp2 = _mm_max_ps(cmp1, c0);
+        __m128 const succ = _mm_cmpgt_ps(cmp2, Impl::VEC4_EPSILON.V);
+
+        // check c1 for zero
+        __m128 const fail0 = _mm_setzero_ps();
+        __m128 const fail1 = _mm_sub_ps(fail0, c1);
+        __m128 const fail2 = _mm_max_ps(fail1, c1);
+        __m128 const fail3 = _mm_cmple_ps(fail2, Impl::VEC4_EPSILON.V);
+
+        // select inf or nan based on result of comparison
+        __m128 const fail4 = _mm_and_ps(fail3, Impl::VEC4_INFINITY.V);
+        __m128 const fail5 = _mm_andnot_ps(fail3, Impl::VEC4_QNAN.V);
+        __m128 const fail = _mm_or_ps(fail4, fail5);
+
+        // compute intersection
+        __m128 const c1_div_c0 = _mm_div_ps(c1, c0);
+        __m128 const result = Impl::avx_fmadd_ps(c1_div_c0, line1, line1_start.V);
+
+        // select result or failure value
+        __m128 const r0 = _mm_and_ps(result, succ);
+        __m128 const r1 = _mm_andnot_ps(succ, fail);
+        __m128 const r2 = _mm_or_ps(r0, r1);
+        return { r2 };
+#endif
     }
 
     template <typename T>
@@ -11081,5 +11450,97 @@ namespace Graphyte::Maths
         __m128 const rmax = _mm_min_ps(rmin, one);
         return { rmax };
 #endif
+    }
+}
+
+
+// =================================================================================================
+//
+// Vector projection on viewport
+//
+
+namespace Graphyte::Maths
+{
+
+    // TODO: make Viewport struct instead of this
+    mathinline Vector3 mathcall Project(
+        Vector3 v,
+        float viewport_x,
+        float viewport_y,
+        float viewport_width,
+        float viewport_height,
+        float viewport_min_z,
+        float viewport_max_z,
+        Matrix projection,
+        Matrix view,
+        Matrix world
+    ) noexcept
+    {
+        float const half_width = viewport_width * 0.5F;
+        float const half_height = viewport_height * 0.5F;
+
+        Vector3 const scale = Make<Vector3>(
+            half_width,
+            -half_height,
+            viewport_max_z - viewport_min_z
+        );
+
+        Vector3 const offset = Make<Vector3>(
+            viewport_x + half_width,
+            viewport_y + half_height,
+            viewport_min_z
+        );
+
+        Matrix const wv = Multiply(world, view);
+        Matrix const wvp = Multiply(wv, projection);
+
+        Vector3 const tv = TransformCoord(v, wvp);
+        Vector3 const result = MultiplyAdd(tv, scale, offset);
+        return result;
+    }
+
+    mathinline Vector3 mathcall Unproject(
+        Vector3 v,
+        float viewport_x,
+        float viewport_y,
+        float viewport_width,
+        float viewport_height,
+        float viewport_min_z,
+        float viewport_max_z,
+        Matrix projection,
+        Matrix view,
+        Matrix world
+    ) noexcept
+    {
+        static Impl::ConstFloat32x4 const d{ { {
+                -1.0F,
+                1.0F,
+                0.0F,
+                0.0F,
+            } } };
+
+        Vector3 const scale = Make<Vector3>(
+            viewport_width * 0.5F,
+            -viewport_height * 0.5F,
+            viewport_max_z - viewport_min_z
+        );
+
+        Vector3 const rcp_scale = Reciprocal(scale);
+
+        Vector3 const offset = Make<Vector3>(
+            -viewport_x,
+            -viewport_y,
+            -viewport_min_z
+        );
+
+        Vector3 const r0 = MultiplyAdd(rcp_scale, offset, Vector3{ d.V });
+
+        Matrix const mv = Multiply(world, view);
+        Matrix const mvp = Multiply(mv, projection);
+        Matrix const inv_mvp = Inverse(mvp);
+
+        Vector3 const coord = MultiplyAdd(v, rcp_scale, offset);
+        Vector3 const result = TransformCoord(coord, mvp);
+        return result;
     }
 }

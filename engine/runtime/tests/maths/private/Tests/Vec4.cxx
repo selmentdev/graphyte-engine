@@ -1,6 +1,73 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / Matrix Invertability")
+{
+    using namespace Graphyte::Maths;
+
+    auto test = [](Float4x4A const& src, Vector4 cdet1, Vector4 cdet2, Vector4 epsilon)
+    {
+        Vector4 det1{};
+        Vector4 det2{};
+
+        Float4x4A work{};
+        Matrix original = Load<Matrix>(&src);
+
+        Matrix inverted = Inverse(original, &det1);
+        Store<Matrix>(&work, inverted);
+
+        CHECK(IsEqual(det1, cdet1, epsilon));
+
+
+        Matrix reconstructed = Inverse(inverted, &det2);
+        Store<Matrix>(&work, reconstructed);
+
+        CHECK(IsEqual(det2, cdet2, epsilon));
+
+        CHECK(IsEqual(GetBaseX(reconstructed), GetBaseX(original), epsilon));
+        CHECK(IsEqual(GetBaseY(reconstructed), GetBaseY(original), epsilon));
+        CHECK(IsEqual(GetBaseZ(reconstructed), GetBaseZ(original), epsilon));
+        CHECK(IsEqual(GetBaseW(reconstructed), GetBaseW(original), epsilon));
+    };
+
+    test(
+        Float4x4A{ { {
+            2.0F, 0.0F, 0.0F, 0.0F,
+            0.0F, 1.0F, 0.0F, 0.0F,
+            0.0F, 0.0F, 1.0F, 0.0F,
+            0.0F, 0.0F, 0.0F, 1.0F,
+        } } },
+        Replicate<Vector4>(2.0F),
+        Replicate<Vector4>(0.5F),
+        Epsilon<Vector4>()
+    );
+
+    test(
+        Float4x4A{ { {
+            1.0F, 3.0F, 1.0F, 4.0F,
+            3.0F, 9.0F, 5.0F, 15.0F,
+            0.0F, 2.0F, 1.0F, 1.0F,
+            0.0F, 4.0F, 2.0F, 3.0F,
+        } } },
+        Replicate<Vector4>(-4.0F),
+        Replicate<Vector4>(-0.25F),
+        Epsilon<Vector4>()
+    );
+
+    test(
+        Float4x4A{ { {
+            5.0F, -7.0F, 2.0F, 2.0F,
+            0.0F, 3.0F, 0.0F, -4.0F,
+            -5.0F, -8.0F, 0.0F, 3.0F,
+            0.0F, 5.0F, 0.0F, -6.0F,
+        } } },
+        Replicate<Vector4>(20.0F),
+        Replicate<Vector4>(0.05F),
+        Replicate<Vector4>(0.01F)
+    );
+
+}
+
 TEST_CASE("Maths / Fresnel Term")
 {
     using namespace Graphyte::Maths;
