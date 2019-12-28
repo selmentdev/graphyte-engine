@@ -1,3 +1,5 @@
+build_variant = ""
+
 newoption {
     trigger = "with-tests",
     description = "Generate project files for unit tests",
@@ -22,6 +24,10 @@ newoption {
         { "no", "Disable optimizations" },
     }
 }
+
+if _OPTIONS["with-math-simd"] == "no" then
+    build_variant = build_variant .. "-fpu"
+end
 
 function graphyte_common()
 
@@ -134,8 +140,8 @@ workspace "graphyte"
     defaultplatform "x64"
 
     -- common directories
-    objdir "%{wks.location}/build/%{cfg.buildcfg}-%{cfg.system}-%{cfg.platform}/obj"
-    targetdir "%{wks.location}/build/%{cfg.buildcfg}-%{cfg.system}-%{cfg.platform}/bin"
+    objdir ("%{wks.location}/build/%{cfg.buildcfg}-%{cfg.system}-%{cfg.platform}" .. build_variant .. "/obj")
+    targetdir ("%{wks.location}/build/%{cfg.buildcfg}-%{cfg.system}-%{cfg.platform}" .. build_variant .. "/bin")
     debugdir "$(TargetDir)"
 
     systemversion "latest"
