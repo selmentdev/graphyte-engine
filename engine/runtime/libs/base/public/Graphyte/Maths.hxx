@@ -1254,6 +1254,30 @@ namespace Graphyte::Maths
 
     template <typename T>
     concept MatrixLike = IsMatrixLike<T>::value;
+
+    template <typename T>
+    struct IsAffineSpace : std::false_type { };
+
+    template <typename T>
+    concept AffineSpace = IsAffineSpace<T>::value;
+    
+    template <typename T>
+    struct IsVectorSpace : std::false_type { };
+
+    template <typename T>
+    concept VectorSpace = IsAffineSpace<T>::value;
+    
+    template <typename T>
+    struct IsQuaternionSpace : std::false_type { };
+
+    template <typename T>
+    concept QuaternionSpace = IsAffineSpace<T>::value;
+
+    template <typename T>
+    struct IsGeometric : std::false_type { };
+
+    template <typename T>
+    concept Geometric = IsGeometric<T>::value;
 }
 
 // =================================================================================================
@@ -1337,6 +1361,8 @@ namespace Graphyte::Maths
     template <> struct IsComponentwise<Vector4> : std::true_type { };
     template <> struct IsRoundable<Vector4> : std::true_type { };
     template <> struct IsInterpolable<Vector4> : std::true_type { };
+    template <> struct IsVectorSpace<Vector4> : std::true_type { };
+    template <> struct IsGeometric<Vector4> : std::true_type { };
 
     struct Vector3 final
     {
@@ -1356,6 +1382,8 @@ namespace Graphyte::Maths
     template <> struct IsComponentwise<Vector3> : std::true_type { };
     template <> struct IsRoundable<Vector3> : std::true_type { };
     template <> struct IsInterpolable<Vector3> : std::true_type { };
+    template <> struct IsVectorSpace<Vector3> : std::true_type { };
+    template <> struct IsGeometric<Vector3> : std::true_type { };
 
     struct Vector2 final
     {
@@ -1375,6 +1403,8 @@ namespace Graphyte::Maths
     template <> struct IsComponentwise<Vector2> : std::true_type { };
     template <> struct IsRoundable<Vector2> : std::true_type { };
     template <> struct IsInterpolable<Vector2> : std::true_type { };
+    template <> struct IsVectorSpace<Vector2> : std::true_type { };
+    template <> struct IsGeometric<Vector2> : std::true_type { };
 
     struct Vector1 final
     {
@@ -1393,6 +1423,8 @@ namespace Graphyte::Maths
     template <> struct IsComponentwise<Vector1> : std::true_type { };
     template <> struct IsRoundable<Vector1> : std::true_type { };
     template <> struct IsInterpolable<Vector1> : std::true_type { };
+    template <> struct IsVectorSpace<Vector1> : std::true_type { };
+    template <> struct IsGeometric<Vector1> : std::true_type { };
 
 
     struct Quaternion final
@@ -1404,11 +1436,12 @@ namespace Graphyte::Maths
         using MaskType = Bool4;
     };
 
-    template <> struct IsVectorLike<Quaternion> : std::true_type {};
-    template <> struct IsEqualComparable<Quaternion> : std::true_type {};
-    template <> struct IsLoadable<Quaternion> : std::true_type {};
-    template <> struct IsStorable<Quaternion> : std::true_type {};
-    template <> struct IsArithmetic<Quaternion> : std::true_type {};
+    template <> struct IsVectorLike<Quaternion> : std::true_type { };
+    template <> struct IsEqualComparable<Quaternion> : std::true_type { };
+    template <> struct IsLoadable<Quaternion> : std::true_type { };
+    template <> struct IsStorable<Quaternion> : std::true_type { };
+    template <> struct IsArithmetic<Quaternion> : std::true_type { };
+    template <> struct IsQuaternionSpace<Quaternion> : std::true_type { };
 
     struct Plane final
     {
@@ -1906,55 +1939,238 @@ namespace Graphyte::Maths
     {
         return { v };
     }
+}
 
-    mathinline Vector4 mathcall AsVector4(Vector3 v) noexcept
+
+// =================================================================================================
+//
+// Constant splatting
+//
+
+namespace Graphyte::Maths::Impl
+{
+    mathinline SimdFloat32x4 mathcall ConvertIntToFloat(SimdFloat32x4 vint, uint32_t exponent) noexcept
     {
-        return { v.V };
+        GX_ASSERT(exponent < 32);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const scale = 1.0F / static_cast<float>(1U << exponent);
+
+        ConstFloat32x4 const result{ { {
+                static_cast<float>(static_cast<int32_t>(vint.U[0]))* scale,
+                static_cast<float>(static_cast<int32_t>(vint.U[1]))* scale,
+                static_cast<float>(static_cast<int32_t>(vint.U[2]))* scale,
+                static_cast<float>(static_cast<int32_t>(vint.U[3]))* scale,
+            } } };
+
+        return result.V;
+#elif GRAPHYTE_HW_NEON
+        float const scale = 1.0F / static_cast<float>(1U << exponent);
+        float32x4_t const r0 = vcvtq_f32_s32(vint);
+        float32x4_t const r1 = vmulq_n_f32(r0, scale);
+        return r1;
+#elif GRAPHYTE_HW_AVX
+        __m128 const r0 = _mm_cvtepi32_ps(_mm_castps_si128(vint));
+        uint32_t uscale = 0x3F800000U - (exponent << 23);
+        __m128i const scale = _mm_set1_epi32(static_cast<int>(uscale));
+        __m128 const r1 = _mm_mul_ps(r0, _mm_castsi128_ps(scale));
+        return r1;
+#endif
     }
 
-    mathinline Vector4 mathcall AsVector4(Vector2 v) noexcept
+    mathinline SimdFloat32x4 mathcall ConvertFloatToInt(SimdFloat32x4 vfloat, uint32_t exponent) noexcept
     {
-        return { v.V };
+        GX_ASSERT(exponent < 32);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const scale = static_cast<float>(1U << exponent);
+
+        SimdFloat32x4 result;
+
+        for (size_t index = 0; index < 4; ++index)
+        {
+            float const t = vfloat.F[index] * scale;
+            int32_t r;
+
+            if (t <= -(65536.0F * 32768.0F))
+            {
+                r = (-0x7FFFFFFF) - 1;
+            }
+            else if (t > ((65536.0f * 32768.0f) - 128.0f))
+            {
+                r = 0x7FFFFFFF;
+            }
+            else
+            {
+                r = static_cast<int32_t>(t);
+            }
+
+            result.I[index] = r;
+        }
+
+        return result;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const r0 = vmulq_n_f32(vfloat, static_cast<float>(1U << exponent));
+        uint32x4_t const overflow = vcgtq_f32(r0, VEC4_INTMAX.V);
+        int32x4_t const r1 = vcvtq_s32_f32(r0);
+        uint32x4_t const r2 = vandq_u32(overflow, VEC4_MASK_ABS.V);
+        uint32x4_t const r3 = vbicq_u32(r1, overflow);
+        uint32x4_t const r4 = vorrq_u32(r3, r2);
+        return vreinterpretq_f32_u32(r4);
+#elif GRAPHYTE_HW_AVX
+        __m128 const r0 = _mm_set_ps1(static_cast<float>(1U << exponent));
+        __m128 const r1 = _mm_mul_ps(r0, vfloat);
+        __m128 const overflow = _mm_cmpgt_ps(r0, VEC4_INTMAX.V);
+        __m128i const r2 = _mm_cvttps_epi32(r1);
+        __m128 const r3 = _mm_and_ps(overflow, VEC4_MASK_ABS.V);
+        __m128 const r4 = _mm_andnot_ps(overflow, _mm_castsi128_ps(r2));
+        __m128 const r5 = _mm_or_ps(r4, r3);
+        return r5;
+#endif
     }
 
-    mathinline Vector4 mathcall AsVector4(Quaternion v) noexcept
+    mathinline SimdFloat32x4 mathcall ConvertUIntToFloat(SimdFloat32x4 vuint, uint32_t exponent) noexcept
     {
-        return { v.V };
+        GX_ASSERT(exponent < 32);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const scale = 1.0F / static_cast<float>(1U << exponent);
+
+        ConstFloat32x4 const result{ { {
+                static_cast<float>(vuint.U[0]))* scale,
+                static_cast<float>(vuint.U[1]))* scale,
+                static_cast<float>(vuint.U[2]))* scale,
+                static_cast<float>(vuint.U[3]))* scale,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_NEON
+        float const scale = 1.0F / static_cast<float>(1U << exponent);
+        float32x4_t const r0 = vcvtq_f32_u32(vuint);
+        float32x4_t const r1 = vmulq_n_f32(r0, scale);
+        return r1;
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask0 = _mm_and_ps(vuint, VEC4_NEGATIVE_ZERO.V);
+        __m128 const r0 = _mm_xor_ps(vuint, mask0);
+        __m128 const r1 = _mm_cvtepi32_ps(_mm_castps_si128(r0));
+        __m128i const mask1 = _mm_srai_epi32(_mm_castps_si128(mask0), 31);
+        __m128 const mask2 = _mm_and_ps(_mm_castsi128_ps(mask1), VEC4_UNSIGNED_FIX.V);
+        __m128 const r2 = _mm_add_ps(r1, mask2);
+        uint32_t const uscale = 0x3F800000U - (exponent << 23);
+        __m128i const iscale = _mm_set1_epi32(static_cast<int>(uscale));
+        __m128 const r3 = _mm_mul_ps(r2, _mm_castsi128_ps(iscale));
+        return r3;
+#endif
     }
 
-    mathinline Vector4 mathcall AsVector4(Plane v) noexcept
+    mathinline SimdFloat32x4 mathcall ConvertFloatToUInt(SimdFloat32x4 vfloat, uint32_t exponent)
     {
-        return { v.V };
+        GX_ASSERT(exponent < 32);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const scale = static_cast<float>(1U << exponent);
+
+        SimdFloat32x4 result;
+
+        for (size_t index = 0; index < 4; ++index)
+        {
+            float const t = vfloat.F[index] * scale;
+            uint32_t r;
+
+            if (t <= 0.0F)
+            {
+                r = 0;
+            }
+            else if (t > (65536.0F * 65536.0F))
+            {
+                r = 0xFFFFFFFF;
+            }
+            else
+            {
+                r = static_cast<uint32_t>(t);
+            }
+
+            result.U[index] = r;
+        }
+
+        return result;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const r0 = vmulq_n_f32(vfloat, static_cast<float>(1U << exponent));
+        uint32x4_t const overflow = vcgtq_f32(r0, VEC4_UINTMAX.V);
+        uint32x4_t const r1 = vcvtq_u32_f32(r0);
+        uint32x4_t const r2 = vbicq_u32(r1, overflow);
+        uint32x4_t const r3 = vorrq_u32(overflow, r2);
+        return vreinterpretq_f32_u32(r3)
+#elif GRAPHYTE_HW_AVX
+        __m128 const r0 = _mm_set_ps1(static_cast<float>(1U << exponent));
+        __m128 const r1 = _mm_mul_ps(r0, vfloat);
+        __m128 const r2 = _mm_max_ps(r1, _mm_setzero_ps());
+        __m128 const overflow = _mm_cmpgt_ps(r2, VEC4_UINTMAX.V);
+        __m128 const fix = VEC4_UNSIGNED_FIX.V;
+        __m128 const mask = _mm_cmpge_ps(r2, fix);
+        __m128 const max = _mm_and_ps(fix, mask);
+        __m128 const r3 = _mm_sub_ps(r2, max);
+        __m128i const r4 = _mm_cvttps_epi32(r3);
+        __m128 const r5 = _mm_and_ps(mask, VEC4_NEGATIVE_ZERO.V);
+        __m128 const r6 = _mm_xor_ps(_mm_castsi128_ps(r4), r5);
+        __m128 const r7 = _mm_or_ps(r6, overflow);
+        return r7;
+#endif
     }
 
-    mathinline Vector4 mathcall AsVector4(Color v) noexcept
+    mathinline SimdFloat32x4 mathcall SplatConstant(int32_t c, uint32_t exponent) noexcept
     {
-        return { v.V };
+        GX_ASSERT(-16 <= c && c < 16);
+        GX_ASSERT(exponent < 32);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        ConstInt32x4 const result{ { {
+                c,
+                c,
+                c,
+                c,
+            } } };
+
+        return result.V;
+#elif GRAPHYTE_HW_NEON
+        int32x4_t const fscale = vdupq_n_s32(c);
+        float32x4_t const vfscale = vcvtq_f32_s32(fscale);
+        uint32_t const uscale = 0x3F800000U - (exponent << 23);
+        uint32x4_t const vuscale = vdupq_n_u32(uscale);
+        float32x4_t const result = vmulq_f32(vfscale, vreinterpretq_f32_u32(vuscale));
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128i const fscale = _mm_set1_epi32(c);
+        __m128 const vfscale = _mm_cvtepi32_ps(fscale);
+        uint32_t uscale = 0x3F800000u - (exponent << 23);
+        __m128i const vuscale = _mm_set1_epi32(static_cast<int>(uscale));
+        __m128 const result = _mm_mul_ps(vfscale, _mm_castsi128_ps(vuscale));
+        return result;
+#endif
     }
 
-    mathinline Quaternion mathcall AsQuaternion(Vector4 v) noexcept
+    mathinline SimdFloat32x4 mathcall SplatConstant(int32_t c) noexcept
     {
-        return { v.V };
-    }
+        GX_ASSERT(-16 <= c && c < 16);
 
-    mathinline Plane mathcall AsPlane(Vector4 v) noexcept
-    {
-        return { v.V };
-    }
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        ConstInt32x4 const result{ { {
+                c,
+                c,
+                c,
+                c,
+            } } };
 
-    mathinline Color mathcall AsColor(Vector4 v) noexcept
-    {
-        return { v.V };
-    }
-
-    mathinline Vector3 mathcall AsVector3(Vector4 v) noexcept
-    {
-        return { v.V };
-    }
-
-    mathinline Vector2 mathcall AsVector2(Vector4 v) noexcept
-    {
-        return { v.V };
+        return result.V;
+#elif GRAPHYTE_HW_NEON
+        int32x4_t const r0 = vdupq_n_s32(c);
+        float32x4_t const r1 = vreinterpretq_f32_s32(r0);
+        return r1;
+#elif GRAPHYTE_HW_AVX
+        __m128i const r0 = _mm_set1_epi32(c);
+        __m128 const r1 = _mm_castsi128_ps(r0);
+        return r1;
+#endif
     }
 }
 
@@ -8396,6 +8612,35 @@ namespace Graphyte::Maths
         Vector4 const vindex = Replicate<Vector4>(index);
         return Refract(incident, normal, vindex);
     }
+
+    template <typename T>
+    mathinline Vector4 mathcall AngleBetweenNormals(T a, T b) noexcept
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
+    {
+        Vector4 const cos_angle = Dot(a, b);
+
+        // Clamp to Acos range
+        Vector4 const cos_angle_clamped = Clamp<Vector4>(cos_angle, { Impl::VEC4_NEGATIVE_ONE_4.V }, { Impl::VEC4_ONE_4.V });
+        Vector4 const angle = Acos(cos_angle_clamped);
+        return angle;
+    }
+
+    template <typename T>
+    mathinline Vector4 mathcall AngleBetweenVectors(T a, T b) noexcept
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
+    {
+        Vector4 const rcp_len_a = ReciprocalLength(a);
+        Vector4 const rcp_len_b = ReciprocalLength(b);
+
+        Vector4 const a_dot_b = Dot(a, b);
+        Vector4 const rcp_len_ab_sq = Multiply(rcp_len_a, rcp_len_b);
+        Vector4 const cos_angle = Multiply(a_dot_b, rcp_len_ab_sq);
+
+        // Clamp to Acos range
+        Vector4 const cos_angle_clamped = Clamp<Vector4>(cos_angle, { Impl::VEC4_NEGATIVE_ONE_4.V }, { Impl::VEC4_ONE_4.V });
+        Vector4 const angle = Acos(cos_angle_clamped);
+        return angle;
+    }
 }
 
 
@@ -8545,7 +8790,7 @@ namespace Graphyte::Maths
     mathinline Vector3 mathcall Orthogonal(Vector3 v) noexcept
     {
         Vector3 const zzz = SplatZ(v);
-        Vector3 const yzy = AsVector3(Swizzle<1, 2, 1, 1>(AsVector4(v)));
+        Vector3 const yzy = As<Vector3>(Swizzle<1, 2, 1, 1>(As<Vector4>(v)));
         Vector3 const negv = Negate<Vector3>(v);
         Vector3 const zero = Zero<Vector3>();
 
@@ -8557,12 +8802,12 @@ namespace Graphyte::Maths
 
         Bool3 const select = CompareEqual<Bool3>(cmp_zzz_negative, cmp_yzy_negative);
 
-        Vector4 const r0 = Permute<4, 0, 0, 0>(AsVector4(negv), AsVector4(s));
-        Vector4 const r1 = Permute<4, 0, 0, 0>(AsVector4(v), AsVector4(d));
+        Vector4 const r0 = Permute<4, 0, 0, 0>(As<Vector4>(negv), As<Vector4>(s));
+        Vector4 const r1 = Permute<4, 0, 0, 0>(As<Vector4>(v), As<Vector4>(d));
 
         Vector4 const result = Select(r1, r0, Bool4{ select.V });
 
-        return AsVector3(result);
+        return As<Vector3>(result);
     }
 
     mathinline Vector3 mathcall Transform(Vector3 v, Matrix m) noexcept
@@ -8763,7 +9008,7 @@ namespace Graphyte::Maths
     template <>
     mathinline bool mathcall IsIdentity<Quaternion>(Quaternion v) noexcept
     {
-        return IsEqual<Vector4>(AsVector4(v), { Impl::VEC4_POSITIVE_UNIT_W.V });
+        return IsEqual<Vector4>(As<Vector4>(v), { Impl::VEC4_POSITIVE_UNIT_W.V });
     }
 
     mathinline Quaternion mathcall Conjugate(Quaternion q) noexcept
@@ -9049,6 +9294,25 @@ namespace Graphyte::Maths
         Quaternion const qnaq = Multiply(qna, q);
         return As<Vector3>(qnaq);
     }
+
+
+    //
+    // N.B.
+    //  Laws of reflection and refraction for quaternions are well defined (at least I've seen
+    //  physics paper for this somewhere in google scholar). For game engine, we disable them
+    //  explicitely.
+    //
+
+    Quaternion mathcall Reflect(Quaternion incident, Quaternion normal) noexcept = delete;
+    Quaternion mathcall Refract(Quaternion incident, Quaternion normal, Vector4 index) noexcept = delete;
+
+    //
+    // N.B.
+    //  Computing angles between two quaternions makes sense, but not by this API.
+    //
+
+    Vector4 mathcall AngleBetweenNormals(Quaternion a, Quaternion b) noexcept = delete;
+    Vector4 mathcall AngleBetweenVectors(Quaternion a, Quaternion b) noexcept = delete;
 }
 
 
@@ -10107,7 +10371,15 @@ namespace Graphyte::Maths
         Plane const plane = As<Plane>(result);
         return plane;
     }
+}
 
+// =================================================================================================
+//
+// Intersections
+//
+
+namespace Graphyte::Maths
+{
     mathinline Vector3 mathcall LinePlaneIntersection(Plane plane, Vector3 start, Vector3 end) noexcept
     {
         Vector3 const plane_normal = As<Vector3>(plane);
@@ -10142,6 +10414,22 @@ namespace Graphyte::Maths
 
         out_line1 = As<Vector3>(Select(linepoint1, Nan<Vector4>(), control));
         out_line2 = As<Vector3>(Select(linepoint2, Nan<Vector4>(), control));
+    }
+
+    template <typename T>
+    mathinline Vector4 mathcall LinePointDistance(T line1, T line2, T point) noexcept
+        requires VectorLike<T> and Arithmetic<T> and Geometric<T> and (T::Components >= 2) and (T::Components <= 3)
+    {
+        T const vec_line_point = Subtract(point, line1);
+        T const vec_line_line = Subtract(line2, line1);
+        Vector4 const length_squared = LengthSquared(vec_line_line);
+
+        Vector4 const projection_scale_0 = Dot(vec_line_point, vec_line_line);
+        T const projection_scale_1 = As<T>(Divide(projection_scale_0, length_squared));
+
+        T const distance_0 = Multiply(vec_line_line, projection_scale_1);
+        T const distance_1 = Subtract(vec_line_point, distance_0);
+        return Length(As<T>(distance_1));
     }
 }
 
@@ -10690,5 +10978,104 @@ namespace Graphyte::Maths
         }
 
         return r3;
+    }
+}
+
+
+// =================================================================================================
+//
+// Fresnel Term
+//
+
+
+namespace Graphyte::Maths
+{
+    mathinline Vector4 mathcall FresnelTerm(Vector4 cos_incident_angle, Vector4 refraction_index) noexcept
+    {
+        // c = cos_incident_angle
+        // g = sqrt(c^2 + refraction_index^2 - 1)
+        // r = 0.5f * (g - c)^2 / (g + c)^2 * ((c * (g + c) - 1)^2 / (c * (g - c) + 1)^2 + 1)
+
+        GX_ASSERT(!IsInfinity(cos_incident_angle));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        // = refraction_index^2 - 1
+        Vector4 const g0 = MultiplyAdd(refraction_index, refraction_index, Vector4{ Impl::VEC4_NEGATIVE_ONE_4.V });
+
+        // = c^2 + refraction_index^2 - 1
+        Vector4 const g1 = MultiplyAdd(cos_incident_angle, cos_incident_angle, g0);
+        Vector4 const g2 = Abs(g1);
+        Vector4 const g3 = Sqrt(g2);
+
+        // = (g + c)^2
+        Vector4 const s0 = Add(g3, cos_incident_angle);
+        Vector4 const s1 = Multiply(s0, s0);
+
+        // = (g - c)^2
+        Vector4 const d0 = Subtract(g3, cos_incident_angle);
+        Vector4 const d1 = Multiply(d0, d0);
+
+        // = 0.5f * (g - c)^2 / (g + c)^2
+        Vector4 const rcp_s1 = Reciprocal(s1);
+        Vector4 const half_d1 = Multiply(Vector4{ Impl::VEC4_HALF_4.V }, d1);
+        Vector4 const r0 = Multiply(half_d1, rcp_s1);
+
+        // = (c * (g + c) - 1)^2
+        Vector4 const ca0 = MultiplyAdd(cos_incident_angle, s0, Vector4{ Impl::VEC4_NEGATIVE_ONE_4.V });
+        Vector4 const ca1 = Multiply(ca0, ca0);
+
+        // = (c * (g - c) + 1)^2
+        Vector4 const cb0 = MultiplyAdd(cos_incident_angle, d0, Vector4{ Impl::VEC4_ONE_4.V });
+        Vector4 const cb1 = Multiply(cb0, cb0);
+        Vector4 const cb2 = Reciprocal(cb1);
+
+        Vector4 const r1 = MultiplyAdd(ca1, cb2, Vector4{ Impl::VEC4_ONE_4.V });
+        Vector4 const r2 = Multiply(r0, r1);
+        Vector4 const r3 = Saturate(r2);
+
+        return r3;
+
+#elif GRAPHYTE_HW_AVX
+
+        __m128 const one = Impl::VEC4_ONE_4.V;
+
+        // NOTE: possible optimization; instead of storing `zero` in register whole time, we may insert it later
+        __m128 const zero = _mm_setzero_ps();
+
+        // = c^2 + refraction_index^2 - 1
+        __m128 const g0 = Impl::avx_fmsub_ps(refraction_index.V, refraction_index.V, one);
+        __m128 const g1 = Impl::avx_fmadd_ps(cos_incident_angle.V, cos_incident_angle.V, g0);
+        __m128 const g2 = _mm_sub_ps(zero, g1);
+        __m128 const g3 = _mm_max_ps(g2, g1);
+        __m128 const g4 = _mm_sqrt_ps(g3);
+
+        // s = (g + c)^2
+        // d = (g - c)^2
+        __m128 const s0 = _mm_add_ps(g4, cos_incident_angle.V);
+        __m128 const d0 = _mm_sub_ps(g4, cos_incident_angle.V);
+        __m128 const s1 = _mm_mul_ps(s0, s0);
+        __m128 const d1 = _mm_mul_ps(d0, d0);
+
+        // = 0.5f * (g - c)^2 / (g + c)^2
+        __m128 const half_d1 = _mm_mul_ps(d1, Impl::VEC4_ONE_HALF_4.V);
+        __m128 const r0 = _mm_div_ps(half_d1, s1);
+
+        // = (c * (g + c) - 1)^2
+        __m128 const ca0 = Impl::avx_fmsub_ps(cos_incident_angle.V, s0, one);
+        __m128 const ca1 = _mm_mul_ps(ca0, ca0);
+
+        // = (c * (g - c) + 1)^2
+        __m128 const cb0 = Impl::avx_fmadd_ps(cos_incident_angle.V, d0, one);
+        __m128 const cb1 = _mm_mul_ps(cb0, cb0);
+
+        __m128 const r1 = _mm_div_ps(ca1, cb1);
+        __m128 const r2 = _mm_add_ps(r1, one);
+        __m128 const r3 = _mm_mul_ps(r0, r2);
+
+        __m128 const rmin = _mm_max_ps(r3, zero);
+        __m128 const rmax = _mm_min_ps(rmin, one);
+        return { rmax };
+#endif
     }
 }

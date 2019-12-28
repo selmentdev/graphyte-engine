@@ -1,6 +1,189 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / Fresnel Term")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("index = 0.5")
+    {
+        Vector4 const r0a = FresnelTerm(
+            Cos(Make<Vector4>(
+                DegreesToRadians(0.0F),
+                DegreesToRadians(30.0F),
+                DegreesToRadians(45.0F),
+                DegreesToRadians(60.0F)
+                )),
+            Replicate<Vector4>(0.5F)
+        );
+
+        CHECK(GetX(r0a) == Approx{ 0.111111112F }.margin(0.001F));
+        CHECK(GetY(r0a) == Approx{ 1.0F }.margin(0.01F));
+        CHECK(GetZ(r0a) == Approx{ 0.0151518816F }.margin(0.001F));
+        CHECK(GetW(r0a) == Approx{ 0.0166181885F }.margin(0.001F));
+
+        Vector4 const r0b = FresnelTerm(
+            Cos(Make<Vector4>(
+                DegreesToRadians(90.0F),
+                DegreesToRadians(135.0F),
+                DegreesToRadians(180.0F),
+                DegreesToRadians(225.0F)
+                )),
+            Replicate<Vector4>(0.5F)
+        );
+
+        CHECK(GetX(r0b) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetY(r0b) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetZ(r0b) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetW(r0b) == Approx{ 1.0F }.margin(0.001F));
+
+        Vector4 const r0c = FresnelTerm(
+            Cos(Make<Vector4>(
+                DegreesToRadians(-30.0F),
+                DegreesToRadians(-45.0F),
+                DegreesToRadians(-60.0F),
+                DegreesToRadians(-90.0F)
+                )),
+            Replicate<Vector4>(0.5F)
+        );
+
+        CHECK(GetX(r0c) == Approx{ 1.0F }.margin(0.01F));
+        CHECK(GetY(r0c) == Approx{ 0.0151518816F }.margin(0.001F));
+        CHECK(GetZ(r0c) == Approx{ 0.0166181885F }.margin(0.001F));
+        CHECK(GetW(r0c) == Approx{ 1.0F }.margin(0.001F));
+    }
+
+    SECTION("index = 1")
+    {
+        Vector4 const r0a = FresnelTerm(
+            Cos(Make<Vector4>(
+                DegreesToRadians( 0.0F),
+                DegreesToRadians(30.0F),
+                DegreesToRadians(45.0F),
+                DegreesToRadians(60.0F)
+                )),
+            Replicate<Vector4>(1.0F)
+        );
+
+        CHECK(GetX(r0a) == Approx{ 0.0F }.margin(0.001F));
+        CHECK(GetY(r0a) == Approx{ 0.0F }.margin(0.001F));
+        CHECK(GetZ(r0a) == Approx{ 0.0F }.margin(0.001F));
+        CHECK(GetW(r0a) == Approx{ 0.0F }.margin(0.001F));
+
+        Vector4 const r0b = FresnelTerm(
+            Cos(Make<Vector4>(
+                DegreesToRadians( 90.0F),
+                DegreesToRadians(135.0F),
+                DegreesToRadians(180.0F),
+                DegreesToRadians(225.0F)
+                )),
+            Replicate<Vector4>(1.0F)
+        );
+
+        CHECK(GetX(r0b) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetY(r0b) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetZ(r0b) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetW(r0b) == Approx{ 1.0F }.margin(0.001F));
+
+        Vector4 const r0c = FresnelTerm(
+            Cos(Make<Vector4>(
+                DegreesToRadians(-30.0F),
+                DegreesToRadians(-45.0F),
+                DegreesToRadians(-60.0F),
+                DegreesToRadians(-90.0F)
+                )),
+            Replicate<Vector4>(1.0F)
+        );
+
+        CHECK(GetX(r0c) == Approx{ 0.0F }.margin(0.001F));
+        CHECK(GetY(r0c) == Approx{ 0.0F }.margin(0.001F));
+        CHECK(GetZ(r0c) == Approx{ 0.0F }.margin(0.001F));
+        CHECK(GetW(r0c) == Approx{ 1.0F }.margin(0.001F));
+    }
+
+    SECTION("index = 1.5")
+    {
+        Vector4 const r0a = FresnelTerm(
+            Cos(Make<Vector4>(
+                DegreesToRadians( 0.0F),
+                DegreesToRadians(30.0F),
+                DegreesToRadians(45.0F),
+                DegreesToRadians(60.0F)
+                )),
+            Replicate<Vector4>(1.5F)
+        );
+
+        CHECK(GetX(r0a) == Approx{ 0.0399999991F }.margin(0.001F));
+        CHECK(GetY(r0a) == Approx{ 0.0415226296F }.margin(0.01F));
+        CHECK(GetZ(r0a) == Approx{ 0.0502399169F }.margin(0.001F));
+        CHECK(GetW(r0a) == Approx{ 0.0891867429F }.margin(0.001F));
+
+        Vector4 const r0b = FresnelTerm(
+            Cos(Make<Vector4>(
+                DegreesToRadians( 90.0F),
+                DegreesToRadians(135.0F),
+                DegreesToRadians(180.0F),
+                DegreesToRadians(225.0F)
+                )),
+            Replicate<Vector4>(1.5F)
+        );
+
+        CHECK(GetX(r0b) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetY(r0b) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetZ(r0b) == Approx{ 1.0F }.margin(0.001F));
+        CHECK(GetW(r0b) == Approx{ 1.0F }.margin(0.001F));
+
+        Vector4 const r0c = FresnelTerm(
+            Cos(Make<Vector4>(
+                DegreesToRadians(-30.0F),
+                DegreesToRadians(-45.0F),
+                DegreesToRadians(-60.0F),
+                DegreesToRadians(-90.0F)
+                )),
+            Replicate<Vector4>(1.5F)
+        );
+
+        CHECK(GetX(r0c) == Approx{ 0.0415226296F }.margin(0.01F));
+        CHECK(GetY(r0c) == Approx{ 0.0502399169F }.margin(0.001F));
+        CHECK(GetZ(r0c) == Approx{ 0.0891867429F }.margin(0.001F));
+        CHECK(GetW(r0c) == Approx{ 1.0F }.margin(0.001F));
+    }
+}
+
+
+TEST_CASE("Maths / Vector / Line - point distance")
+{
+    using namespace Graphyte::Maths;
+
+    Vector3 const p0 = Make<Vector3>(-1.0F, -1.0F, -1.0F);
+    Vector3 const p7 = Make<Vector3>(+1.0F, +1.0F, +1.0F);
+
+    Vector3 const p1 = Make<Vector3>(+1.0F, -1.0F, -1.0F);
+    Vector3 const p2 = Make<Vector3>(-1.0F, +1.0F, -1.0F);
+    Vector3 const p3 = Make<Vector3>(+1.0F, +1.0F, -1.0F);
+    Vector3 const p4 = Make<Vector3>(-1.0F, -1.0F, +1.0F);
+    Vector3 const p5 = Make<Vector3>(+1.0F, -1.0F, +1.0F);
+    Vector3 const p6 = Make<Vector3>(-1.0F, +1.0F, +1.0F);
+
+    Vector4 const r0 = LinePointDistance(p0, p7, p0);
+    Vector4 const r1 = LinePointDistance(p0, p7, p1);
+    Vector4 const r2 = LinePointDistance(p0, p7, p2);
+    Vector4 const r3 = LinePointDistance(p0, p7, p3);
+    Vector4 const r4 = LinePointDistance(p0, p7, p4);
+    Vector4 const r5 = LinePointDistance(p0, p7, p5);
+    Vector4 const r6 = LinePointDistance(p0, p7, p6);
+    Vector4 const r7 = LinePointDistance(p0, p7, p7);
+
+    CHECK(GetX(r0) == Approx{ 0.0F });
+    CHECK(GetX(r1) == Approx{ 1.6329931618554518F });
+    CHECK(GetX(r2) == Approx{ 1.6329931618554518F });
+    CHECK(GetX(r3) == Approx{ 1.6329931618554518F });
+    CHECK(GetX(r4) == Approx{ 1.6329931618554518F });
+    CHECK(GetX(r5) == Approx{ 1.6329931618554518F });
+    CHECK(GetX(r6) == Approx{ 1.6329931618554518F });
+    CHECK(GetX(r7) == Approx{ 0.0F });
+}
+
 TEST_CASE("Maths / Vector / Refraction")
 {
     using namespace Graphyte::Maths;
