@@ -96,7 +96,11 @@ namespace Graphyte::Threading
 
         bool Wait(LinuxCriticalSection& lock, uint32_t timeout) noexcept
         {
-            auto ts = System::TypeConverter<timespec>::ConvertMilliseconds(timeout);
+            timespec const offset = System::TypeConverter<timespec>::ConvertMilliseconds(timeout);
+
+            timespec current;
+            clock_gettime(CLOCK_MONOTONIC, &current);
+            timespec const ts = System::TypeConverter<timespec>::Add(current, offset);
 
             return pthread_cond_timedwait(&m_ConditionVariable, &lock.m_CriticalSection, &ts);
         }
@@ -139,7 +143,12 @@ namespace Graphyte::Threading
 
         bool Wait(uint32_t timeout) noexcept
         {
-            auto ts = System::TypeConverter<timespec>::ConvertMilliseconds(timeout);
+            timespec const offset = System::TypeConverter<timespec>::ConvertMilliseconds(timeout);
+
+            timespec current;
+            clock_gettime(CLOCK_MONOTONIC, &current);
+            timespec const ts = System::TypeConverter<timespec>::Add(current, offset);
+
             return sem_timedwait(&m_Handle, &ts) == 0;
         }
 

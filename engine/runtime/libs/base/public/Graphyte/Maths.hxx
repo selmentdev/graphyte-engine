@@ -10835,7 +10835,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall RevolutionsToRadians(float value) noexcept
+    mathinline T mathcall RevolutionsToRadians(T value) noexcept
         requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -11533,14 +11533,14 @@ namespace Graphyte::Maths
             -viewport_min_z
         );
 
-        Vector3 const r0 = MultiplyAdd(rcp_scale, offset, Vector3{ d.V });
+        Vector3 const projected = MultiplyAdd(rcp_scale, offset, Vector3{ d.V });
 
         Matrix const mv = Multiply(world, view);
         Matrix const mvp = Multiply(mv, projection);
         Matrix const inv_mvp = Inverse(mvp);
 
-        Vector3 const coord = MultiplyAdd(v, rcp_scale, offset);
-        Vector3 const result = TransformCoord(coord, mvp);
+        Vector3 const coord = MultiplyAdd(v, rcp_scale, projected);
+        Vector3 const result = TransformCoord(coord, inv_mvp);
         return result;
     }
 }

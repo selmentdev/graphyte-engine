@@ -33,10 +33,10 @@ namespace Graphyte::System
                 temp.tv_sec -= nsec;
             }
 
-            struct timeval result {};
-            result.tv_sec = value1.tv_sec - temp.tv_sec;
-            result.tv_usec = value1.tv_usec - temp.tv_usec;
-            return result;
+            return timeval{
+                .tv_sec = value1.tv_sec - temp.tv_sec,
+                .tv_usec = value1.tv_usec - temp.tv_usec,
+            };
         }
 
         __forceinline static uint64_t ConvertToTicks(struct timeval tv) noexcept
@@ -51,10 +51,10 @@ namespace Graphyte::System
     {
         __forceinline static struct timespec ConvertMilliseconds(uint64_t value) noexcept
         {
-            struct timespec result {};
-            result.tv_sec = value / 1000;
-            result.tv_nsec = (value % 1000) * 1000000;
-            return result;
+            return timespec{
+                .tv_sec = (__kernel_time_t)(value / 1000),
+                .tv_nsec = (long)((value % 1000) * 1000000),
+            };
         }
 
         __forceinline static uint64_t ConvertNanoseconds(struct timespec value) noexcept
@@ -75,10 +75,28 @@ namespace Graphyte::System
             const auto sec = ticks / Impl::GTicksInSecond;
             const auto nsec = (ticks % Impl::GTicksInSecond) / Impl::GTicksInMicrosecond;
 
-            struct timespec result {};
-            result.tv_sec = sec;
-            result.tv_nsec = nsec;
-            return result;
+            return timespec{
+                .tv_sec = sec,
+                .tv_nsec = nsec,
+            };
+        }
+
+        constexpr static struct timespec Add(struct timespec const& lhs, struct timespec const& rhs) noexcept
+        {
+            constexpr const long OneSecond = 1000000000;
+            auto sec = rhs.tv_sec + lhs.tv_sec;
+            auto nsec = rhs.tv_nsec + lhs.tv_nsec;
+
+            if (nsec >= OneSecond)
+            {
+                nsec -= OneSecond;
+                ++sec;
+            }
+
+            return timespec{
+                .tv_sec = sec,
+                .tv_nsec = nsec,
+            };
         }
     };
 
