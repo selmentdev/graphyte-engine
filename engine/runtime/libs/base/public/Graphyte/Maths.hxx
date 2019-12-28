@@ -2180,193 +2180,8 @@ namespace Graphyte::Maths::Impl
 // Vector4 permutations
 //
 
-#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
-
-namespace Graphyte::Maths::Impl
-{
-    template <uint32_t S, bool X, bool Y, bool Z, bool W>
-    mathinline __m128 mathcall PermuteHelper(__m128 v1, __m128 v2) noexcept
-    {
-        if constexpr (X == false && Y == false && Z == false && W == false)
-        {
-            return _mm_permute_ps(v1, S);
-        }
-        else if constexpr (X == true && Y == true && Z == true && W == true)
-        {
-            return _mm_permute_ps(v2, S);
-        }
-        else if constexpr (X == false && Y == false && Z == true && W == true)
-        {
-            return _mm_shuffle_ps(v1, v2, S);
-        }
-        else if constexpr (X == true && Y == true && Z == false && W == false)
-        {
-            return _mm_shuffle_ps(v2, v1, S);
-        }
-        else
-        {
-            static constexpr Impl::ConstUInt32x4 const select_mask{ { {
-                    X ? SELECT_1 : SELECT_0,
-                    Y ? SELECT_1 : SELECT_0,
-                    Z ? SELECT_1 : SELECT_0,
-                    W ? SELECT_1 : SELECT_0,
-                } } };
-
-            __m128 const shuffled_v1 = _mm_permute_ps(v1, S);
-            __m128 const shuffled_v2 = _mm_permute_ps(v2, S);
-            __m128 const masked_v1 = _mm_andnot_ps(select_mask.V, shuffled_v1);
-            __m128 const masked_v2 = _mm_and_ps(select_mask.V, shuffled_v2);
-            __m128 const result = _mm_or_ps(masked_v1, masked_v2);
-            return result;
-        }
-    }
-}
-
-#endif
-
 namespace Graphyte::Maths
 {
-    template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
-    mathinline Vector4 mathcall XXX_Permute(Vector4 a, Vector4 b) noexcept
-    {
-        static_assert(X < 8);
-        static_assert(Y < 8);
-        static_assert(Z < 8);
-        static_assert(W < 8);
-
-#if GRAPHYTE_MATH_NO_INTRINSICS
-
-        //
-        // Common case: select exactly first or second vector
-        //
-
-        if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3) { return a; }
-        else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 7) { return b; }
-
-        return Permute(a, b, X, Y, Z, W);
-#elif GRAPHYTE_HW_AVX
-
-        constexpr bool x_up = (X >= 4);
-        constexpr bool y_up = (Y >= 4);
-        constexpr bool z_up = (Z >= 4);
-        constexpr bool w_up = (W >= 4);
-
-        constexpr uint32_t shuffle = _MM_SHUFFLE(W & 3, Z & 3, Y & 3, X & 3);
-        
-
-        //
-        // Common case: select exactly first or second vector
-        //
-
-        if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3) { return a; }
-        else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 7) { return b; }
-        else if constexpr (X == 4 and Y == 1 and Z == 2 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x1) }; }
-        else if constexpr (X == 0 and Y == 5 and Z == 2 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x2) }; }
-        else if constexpr (X == 4 and Y == 5 and Z == 2 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x3) }; }
-        else if constexpr (X == 0 and Y == 1 and Z == 6 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x4) }; }
-        else if constexpr (X == 4 and Y == 1 and Z == 6 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x5) }; }
-        else if constexpr (X == 0 and Y == 5 and Z == 6 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x6) }; }
-        else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 3) { return { _mm_blend_ps(a.V, b.V, 0x7) }; }
-        else if constexpr (X == 0 and Y == 1 and Z == 2 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0x8) }; }
-        else if constexpr (X == 4 and Y == 1 and Z == 2 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0x9) }; }
-        else if constexpr (X == 0 and Y == 5 and Z == 2 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0xA) }; }
-        else if constexpr (X == 4 and Y == 5 and Z == 2 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0xB) }; }
-        else if constexpr (X == 0 and Y == 1 and Z == 6 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0xC) }; }
-        else if constexpr (X == 4 and Y == 1 and Z == 6 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0xD) }; }
-        else if constexpr (X == 0 and Y == 5 and Z == 6 and W == 7) { return { _mm_blend_ps(a.V, b.V, 0xE) }; }
-
-        else if constexpr (X == 0 and Y == 1 and Z == 0 and W == 1) { return { _mm_movelh_ps(a.V, a.V) }; }
-        else if constexpr (X == 4 and Y == 5 and Z == 4 and W == 5) { return { _mm_movelh_ps(b.V, b.V) }; }
-        else if constexpr (X == 2 and Y == 3 and Z == 2 and W == 3) { return { _mm_movehl_ps(a.V, a.V) }; }
-        else if constexpr (X == 6 and Y == 7 and Z == 6 and W == 7) { return { _mm_movehl_ps(b.V, b.V) }; }
-
-        else if constexpr (X == 0 and Y == 0 and Z == 1 and W == 1) { return { _mm_unpacklo_ps(a.V, a.V) }; }
-        else if constexpr (X == 4 and Y == 4 and Z == 5 and W == 5) { return { _mm_unpacklo_ps(b.V, b.V) }; }
-        else if constexpr (X == 2 and Y == 2 and Z == 3 and W == 3) { return { _mm_unpackhi_ps(a.V, a.V) }; }
-        else if constexpr (X == 6 and Y == 6 and Z == 7 and W == 7) { return { _mm_unpackhi_ps(b.V, b.V) }; }
-
-        else if constexpr (X == 0 and Y == 0 and Z == 2 and W == 2) { return { _mm_moveldup_ps(a.V) }; }
-        else if constexpr (X == 1 and Y == 1 and Z == 3 and W == 3) { return { _mm_movehdup_ps(a.V) }; }
-
-        else if constexpr (X == 4 and Y == 4 and Z == 6 and W == 6) { return { _mm_moveldup_ps(b.V) }; }
-        else if constexpr (X == 5 and Y == 5 and Z == 7 and W == 7) { return { _mm_movehdup_ps(b.V) }; }
-
-
-        else if constexpr (X == 0 and Y == 0 and Z == 0 and W == 0) { return { _mm_broadcastss_ps(a.V) }; }
-        else if constexpr (X == 4 and Y == 4 and Z == 4 and W == 4) { return { _mm_broadcastss_ps(b.V) }; }
-
-        else if constexpr (!x_up and !y_up and !z_up and !w_up) { return { _mm_permute_ps(a.V, shuffle) }; }
-        else if constexpr (x_up and y_up and z_up and w_up) { return { _mm_permute_ps(b.V, shuffle) }; }
-        else if constexpr (!x_up and !y_up and z_up and w_up) { return { _mm_shuffle_ps(a.V, b.V, shuffle) }; }
-        else if constexpr (x_up and y_up and !z_up and !w_up) { return { _mm_shuffle_ps(b.V, a.V, shuffle) }; }
-        else
-        {
-            //
-            // General case.
-            //
-
-            static constexpr Impl::ConstUInt32x4 const select_mask{ { {
-                    x_up ? SELECT_1 : SELECT_0,
-                    y_up ? SELECT_1 : SELECT_0,
-                    z_up ? SELECT_1 : SELECT_0,
-                    w_up ? SELECT_1 : SELECT_0,
-                } } };
-
-            __m128 const shuffled_v1 = _mm_permute_ps(a.V, shuffle);
-            __m128 const shuffled_v2 = _mm_permute_ps(b.V, shuffle);
-            __m128 const masked_v1 = _mm_andnot_ps(select_mask.V, shuffled_v1);
-            __m128 const masked_v2 = _mm_and_ps(select_mask.V, shuffled_v2);
-            __m128 const result = _mm_or_ps(masked_v1, masked_v2);
-
-            return { result };
-        }
-#endif
-    }
-}
-
-namespace Graphyte::Maths
-{
-    template <uint32_t X, uint32_t Y, uint32_t Z, uint32_t W>
-    mathinline Vector4 mathcall Permute(Vector4 a, Vector4 b) noexcept
-    {
-        static_assert(X < 8);
-        static_assert(Y < 8);
-        static_assert(Z < 8);
-        static_assert(W < 8);
-
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        return Permute(a, b, X, Y, Z, W);
-#elif GRAPHYTE_HW_AVX
-        constexpr uint32_t shuffle = _MM_SHUFFLE(W & 3, Z & 3, Y & 3, X & 3);
-        constexpr bool x = (X >= 4);
-        constexpr bool y = (Y >= 4);
-        constexpr bool z = (Z >= 4);
-        constexpr bool w = (W >= 4);
-
-        return { Impl::PermuteHelper<shuffle, x, y, z, w>(a.V, b.V) };
-#endif
-    }
-
-    template <> mathinline Vector4 mathcall Permute<0, 1, 2, 3>(Vector4 a, [[maybe_unused]] Vector4 b) noexcept { return a; }
-    template <> mathinline Vector4 mathcall Permute<4, 5, 6, 7>([[maybe_unused]] Vector4 a, Vector4 b) noexcept { return b; }
-
-#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
-    template <> mathinline Vector4 mathcall Permute<4,1,2,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x1) }; }
-    template <> mathinline Vector4 mathcall Permute<0,5,2,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x2) }; }
-    template <> mathinline Vector4 mathcall Permute<4,5,2,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x3) }; }
-    template <> mathinline Vector4 mathcall Permute<0,1,6,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x4) }; }
-    template <> mathinline Vector4 mathcall Permute<4,1,6,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x5) }; }
-    template <> mathinline Vector4 mathcall Permute<0,5,6,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x6) }; }
-    template <> mathinline Vector4 mathcall Permute<4,5,6,3>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x7) }; }
-    template <> mathinline Vector4 mathcall Permute<0,1,2,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x8) }; }
-    template <> mathinline Vector4 mathcall Permute<4,1,2,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0x9) }; }
-    template <> mathinline Vector4 mathcall Permute<0,5,2,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0xA) }; }
-    template <> mathinline Vector4 mathcall Permute<4,5,2,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0xB) }; }
-    template <> mathinline Vector4 mathcall Permute<0,1,6,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0xC) }; }
-    template <> mathinline Vector4 mathcall Permute<4,1,6,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0xD) }; }
-    template <> mathinline Vector4 mathcall Permute<0,5,6,7>(Vector4 a, Vector4 b) { return { _mm_blend_ps(a.V, b.V, 0xE) }; }
-#endif
-
     mathinline Vector4 mathcall Permute(Vector4 a, Vector4 b, uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
     {
         GX_ASSERT(x < 8);
@@ -2431,7 +2246,188 @@ namespace Graphyte::Maths
         return { result };
 #endif
     }
+
+
+    template <size_t X, size_t Y, size_t Z, size_t W>
+    mathinline Vector4 mathcall Permute(Vector4 a, Vector4 b) noexcept
+        requires (X < 8) and (Y < 8) and (Z < 8) and (W < 8)
+    {
+        if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
+        {
+            return a;
+        }
+        else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 7)
+        {
+            return b;
+        }
+        else
+        {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+            return Permute(a, b, X, Y, Z, W);
+#elif GRAPHYTE_HW_AVX
+            constexpr bool x_up = (X >= 4);
+            constexpr bool y_up = (Y >= 4);
+            constexpr bool z_up = (Z >= 4);
+            constexpr bool w_up = (W >= 4);
+
+            constexpr int shuffle = _MM_SHUFFLE(W & 3, Z & 3, Y & 3, X & 3);
+
+            if constexpr (X == 4 and Y == 1 and Z == 2 and W == 3)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0x1) };
+            }
+            else if constexpr (X == 0 and Y == 5 and Z == 2 and W == 3)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0x2) };
+            }
+            else if constexpr (X == 4 and Y == 5 and Z == 2 and W == 3)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0x3) };
+            }
+            else if constexpr (X == 0 and Y == 1 and Z == 6 and W == 3)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0x4) };
+            }
+            else if constexpr (X == 4 and Y == 1 and Z == 6 and W == 3)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0x5) };
+            }
+            else if constexpr (X == 0 and Y == 5 and Z == 6 and W == 3)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0x6) };
+            }
+            else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 3)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0x7) };
+            }
+            else if constexpr (X == 0 and Y == 1 and Z == 2 and W == 7)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0x8) };
+            }
+            else if constexpr (X == 4 and Y == 1 and Z == 2 and W == 7)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0x9) };
+            }
+            else if constexpr (X == 0 and Y == 5 and Z == 2 and W == 7)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0xA) };
+            }
+            else if constexpr (X == 4 and Y == 5 and Z == 2 and W == 7)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0xB) };
+            }
+            else if constexpr (X == 0 and Y == 1 and Z == 6 and W == 7)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0xC) };
+            }
+            else if constexpr (X == 4 and Y == 1 and Z == 6 and W == 7)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0xD) };
+            }
+            else if constexpr (X == 0 and Y == 5 and Z == 6 and W == 7)
+            {
+                return { _mm_blend_ps(a.V, b.V, 0xE) };
+            }
+            else if constexpr (X == 0 and Y == 1 and Z == 0 and W == 1)
+            {
+                return { _mm_movelh_ps(a.V, a.V) };
+            }
+            else if constexpr (X == 4 and Y == 5 and Z == 4 and W == 5)
+            {
+                return { _mm_movelh_ps(b.V, b.V) };
+            }
+            else if constexpr (X == 2 and Y == 3 and Z == 2 and W == 3)
+            {
+                return { _mm_movehl_ps(a.V, a.V) };
+            }
+            else if constexpr (X == 6 and Y == 7 and Z == 6 and W == 7)
+            {
+                return { _mm_movehl_ps(b.V, b.V) };
+            }
+            else if constexpr (X == 0 and Y == 0 and Z == 1 and W == 1)
+            {
+                return { _mm_unpacklo_ps(a.V, a.V) };
+            }
+            else if constexpr (X == 4 and Y == 4 and Z == 5 and W == 5)
+            {
+                return { _mm_unpacklo_ps(b.V, b.V) };
+            }
+            else if constexpr (X == 2 and Y == 2 and Z == 3 and W == 3)
+            {
+                return { _mm_unpackhi_ps(a.V, a.V) };
+            }
+            else if constexpr (X == 6 and Y == 6 and Z == 7 and W == 7)
+            {
+                return { _mm_unpackhi_ps(b.V, b.V) };
+            }
+            else if constexpr (X == 0 and Y == 0 and Z == 2 and W == 2)
+            {
+                return { _mm_moveldup_ps(a.V) };
+            }
+            else if constexpr (X == 1 and Y == 1 and Z == 3 and W == 3)
+            {
+                return { _mm_movehdup_ps(a.V) };
+            }
+            else if constexpr (X == 4 and Y == 4 and Z == 6 and W == 6)
+            {
+                return { _mm_moveldup_ps(b.V) };
+            }
+            else if constexpr (X == 5 and Y == 5 and Z == 7 and W == 7)
+            {
+                return { _mm_movehdup_ps(b.V) };
+            }
+#if GRAPHYTE_HW_AVX2
+            else if constexpr (X == 0 and Y == 0 and Z == 0 and W == 0)
+            {
+                return { _mm_broadcastss_ps(a.V, shuffle) };
+            }
+            else if constexpr (X == 4 and Y == 4 and Z == 4 and W == 4)
+            {
+                return { _mm_broadcastss_ps(b.V, shuffle) };
+            }
+#endif
+            else if constexpr (!x_up and !y_up and !z_up and !w_up)
+            {
+                return { _mm_permute_ps(a.V, shuffle) };
+            }
+            else if constexpr (x_up and y_up and z_up and w_up)
+            {
+                return { _mm_permute_ps(b.V, shuffle) };
+            }
+            else if constexpr (!x_up and !y_up and z_up and w_up)
+            {
+                return { _mm_shuffle_ps(a.V, b.V, shuffle) };
+            }
+            else if constexpr (x_up and y_up and !z_up and !w_up)
+            {
+                return { _mm_shuffle_ps(b.V, a.V, shuffle) };
+            }
+            else
+            {
+                //
+                // General case.
+                //
+
+                static constexpr Impl::ConstUInt32x4 const select_mask{ { {
+                        x_up ? SELECT_1 : SELECT_0,
+                        y_up ? SELECT_1 : SELECT_0,
+                        z_up ? SELECT_1 : SELECT_0,
+                        w_up ? SELECT_1 : SELECT_0,
+                    } } };
+
+                __m128 const shuffled_v1 = _mm_permute_ps(a.V, shuffle);
+                __m128 const shuffled_v2 = _mm_permute_ps(b.V, shuffle);
+                __m128 const masked_v1 = _mm_andnot_ps(select_mask.V, shuffled_v1);
+                __m128 const masked_v2 = _mm_and_ps(select_mask.V, shuffled_v2);
+                __m128 const result = _mm_or_ps(masked_v1, masked_v2);
+
+                return { result };
+            }
+#endif
+        }
+    }
 }
+
 
 // =================================================================================================
 //
@@ -2442,67 +2438,76 @@ namespace Graphyte::Maths
 {
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline Vector4 mathcall Swizzle(Vector4 v) noexcept
+        requires (X < 4) and (Y < 4) and (Z < 4) and (W < 4)
     {
-        static_assert(X < 4);
-        static_assert(Y < 4);
-        static_assert(Z < 4);
-        static_assert(W < 4);
-
+        if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
+        {
+            return v;
+        }
+        else
+        {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 const result{ { {
-                v.V.F[X],
-                v.V.F[Y],
-                v.V.F[Z],
-                v.V.F[W],
-            } } };
+            Impl::ConstFloat32x4 const result{ { {
+                    v.V.F[X],
+                    v.V.F[Y],
+                    v.V.F[Z],
+                    v.V.F[W],
+                } } };
+            return { result.V };
 #elif GRAPHYTE_HW_AVX
-        return { _mm_permute_ps(v.V, _MM_SHUFFLE(W, Z, Y, X)) };
+            if constexpr (X == 0 and Y == 1 and Z == 0 and W == 1)
+            {
+                return { _mm_movelh_ps(v.V, v.V) };
+            }
+            else if constexpr (X == 2 and Y == 3 and Z == 2 and W == 3)
+            {
+                return { _mm_movehl_ps(v.V, v.V) };
+            }
+            else if constexpr (X == 0 and Y == 0 and Z == 1 and W == 1)
+            {
+                return { _mm_unpacklo_ps(v.V, v.V) };
+            }
+            else if constexpr (X == 2 and Y == 2 and Z == 3 and W == 3)
+            {
+                return { _mm_unpackhi_ps(v.V, v.V) };
+            }
+            else if constexpr (X == 0 and Y == 0 and Z == 2 and W == 2)
+            {
+                return { _mm_moveldup_ps(v.V) };
+            }
+            else if constexpr (X == 1 and Y == 1 and Z == 3 and W == 3)
+            {
+                return { _mm_movehdup_ps(v.V) };
+            }
+#if GRAPHYTE_HW_AVX2
+            else if constexpr (X == 0 and Y == 0 and Z == 0 and W == 0)
+            {
+                return { _mm_broadcastss_ps(v.V) };
+            }
 #endif
-    }
+            else
+            {
+                //
+                // General case.
+                //
 
-    template<> mathinline Vector4 mathcall Swizzle<0, 1, 2, 3>(Vector4 v) noexcept
-    {
-        return v;
-    }
-
-#if GRAPHYTE_HW_AVX && !GRAPHYTE_MATH_NO_INTRINSICS
-    template<> mathinline Vector4 mathcall Swizzle<0, 1, 0, 1>(Vector4 v) noexcept
-    {
-        return { _mm_movelh_ps(v.V, v.V) };
-    }
-
-    template<> mathinline Vector4 mathcall Swizzle<2, 3, 2, 3>(Vector4 v) noexcept
-    {
-        return { _mm_movehl_ps(v.V, v.V) };
-    }
-
-    template<> mathinline Vector4 mathcall Swizzle<0, 0, 1, 1>(Vector4 v) noexcept
-    {
-        return { _mm_unpacklo_ps(v.V, v.V) };
-    }
-
-    template<> mathinline Vector4 mathcall Swizzle<2, 2, 3, 3>(Vector4 v) noexcept
-    {
-        return { _mm_unpackhi_ps(v.V, v.V) };
-    }
-
-    template<> mathinline Vector4 mathcall Swizzle<0, 0, 2, 2>(Vector4 v) noexcept
-    {
-        return { _mm_moveldup_ps(v.V) };
-    }
-
-    template<> mathinline Vector4 mathcall Swizzle<1, 1, 3, 3>(Vector4 v) noexcept
-    {
-        return { _mm_movehdup_ps(v.V) };
-    }
+                return { _mm_permute_ps(v.V, _MM_SHUFFLE(W,Z,Y,X)) };
+            }
 #endif
-
-#if GRAPHYTE_HW_AVX2 && !GRAPHYTE_MATH_NO_INTRINSICS
-    template <> mathinline Vector4 mathcall Vector4::Swizzle<0, 0, 0, 0>(Vector4 v) noexcept
-    {
-        return { _mm_broadcastss_ps(v.V) };
+        }
     }
-#endif
+
+    template <size_t X, size_t Y, size_t Z>
+    mathinline Vector3 mathcall Swizzle(Vector3 v) noexcept
+    {
+        return As<Vector3>(Swizzle<X, Y, Z, X>(As<Vector4>(v)));
+    }
+
+    template <size_t X, size_t Y>
+    mathinline Vector2 mathcall Swizzle(Vector2 v) noexcept
+    {
+        return As<Vector2>(Swizzle<X, Y, X, Y>(As<Vector2>(v)));
+    }
 
     template <SwizzleMask M>
     mathinline Vector4 mathcall Swizzle(Vector4 v) noexcept

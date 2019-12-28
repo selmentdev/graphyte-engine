@@ -1745,6 +1745,35 @@ TEST_CASE("Maths / Vector / Swizzle")
     }
 }
 
+TEST_CASE("Maths / Vector / Compiled swizzles")
+{
+    using namespace Graphyte::Maths;
+
+    Vector4 const a = Make<Vector4>(1.0F, 2.0F, 3.0F, 4.0F);
+
+    SECTION("Generic case")
+    {
+        CHECK(IsEqual(Swizzle<3, 2, 1, 0>(a), Make<Vector4>(4.0F, 3.0F, 2.0F, 1.0F)));
+        CHECK(IsEqual(Swizzle<0, 1, 2, 3>(a), Make<Vector4>(1.0F, 2.0F, 3.0F, 4.0F)));
+    }
+
+    SECTION("AVX specializations")
+    {
+        CHECK(IsEqual(Swizzle<0, 1, 0, 1>(a), Make<Vector4>(1.0F, 2.0F, 1.0F, 2.0F)));
+        CHECK(IsEqual(Swizzle<2, 3, 2, 3>(a), Make<Vector4>(3.0F, 4.0F, 3.0F, 4.0F)));
+        CHECK(IsEqual(Swizzle<0, 0, 1, 1>(a), Make<Vector4>(1.0F, 1.0F, 2.0F, 2.0F)));
+        CHECK(IsEqual(Swizzle<2, 2, 3, 3>(a), Make<Vector4>(3.0F, 3.0F, 4.0F, 4.0F)));
+        CHECK(IsEqual(Swizzle<0, 0, 2, 2>(a), Make<Vector4>(1.0F, 1.0F, 3.0F, 3.0F)));
+        CHECK(IsEqual(Swizzle<1, 1, 3, 3>(a), Make<Vector4>(2.0F, 2.0F, 4.0F, 4.0F)));
+    }
+
+    SECTION("AVX2 specializations")
+    {
+        CHECK(IsEqual(Swizzle<0, 0, 0, 0>(a), Make<Vector4>(1.0F, 1.0F, 1.0F, 1.0F)));
+    }
+
+}
+
 
 TEST_CASE("Maths / Vector / Orthogonal")
 {
