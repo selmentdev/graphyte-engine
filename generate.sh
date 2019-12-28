@@ -1,1 +1,1 @@
-./tools/premake/linux-$(uname -m)/premake5 gmake2 --os=linux
+./tools/premake/linux-$(uname -m)/premake5 gmake2 --os=linux $@

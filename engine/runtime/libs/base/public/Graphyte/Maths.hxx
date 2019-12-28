@@ -2037,10 +2037,10 @@ namespace Graphyte::Maths::Impl
         float const scale = 1.0F / static_cast<float>(1U << exponent);
 
         ConstFloat32x4 const result{ { {
-                static_cast<float>(vuint.U[0]))* scale,
-                static_cast<float>(vuint.U[1]))* scale,
-                static_cast<float>(vuint.U[2]))* scale,
-                static_cast<float>(vuint.U[3]))* scale,
+                static_cast<float>(vuint.U[0]) * scale,
+                static_cast<float>(vuint.U[1]) * scale,
+                static_cast<float>(vuint.U[2]) * scale,
+                static_cast<float>(vuint.U[3]) * scale,
             } } };
 
         return { result.V };
@@ -9159,9 +9159,8 @@ namespace Graphyte::Maths
         Vector4 const q_xyz_s = Multiply(qv, s);
         Vector4 const w = Multiply(Log(q_len_sq), 0.5F);
 
-        Quaternion r0{ q_xyz_s.V };
-        Quaternion r1{ Select(w, Vector4{ q_xyz_s.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V }).V };
-        return r1;
+        Quaternion r0{ Select(w, Vector4{ q_xyz_s.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V }).V };
+        return r0;
 #elif GRAPHYTE_HW_AVX
         __m128 const v_len_sq = _mm_dp_ps(q.V, q.V, 0x7F);
         __m128 const q_w = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
