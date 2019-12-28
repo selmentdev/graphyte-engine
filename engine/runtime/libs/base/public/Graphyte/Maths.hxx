@@ -8551,10 +8551,10 @@ namespace Graphyte::Maths
         T const r1 = NegateMultiplyAdd(i_dot_n, i_dot_n, one);
 
         // r2 = r1 * index
-        T const r2 = Mulitply(r1, index);
+        T const r2 = Multiply(r1, As<T>(index));
 
         // r3 = 1 - (index * r2)
-        T const r3 = NegateMultiplyAdd(r2, index, one);
+        T const r3 = NegateMultiplyAdd(r2, As<T>(index), one);
 
         // Check for zero
         T const zero = Zero<T>();
@@ -8570,10 +8570,10 @@ namespace Graphyte::Maths
             T const r4 = Sqrt(r3);
 
             // r5 = (index * i_dot_n) + r4
-            T const r5 = MultiplyAdd(index, i_dot_n, r4);
+            T const r5 = MultiplyAdd(As<T>(index), i_dot_n, r4);
 
             // r6 = index * incident
-            T const r6 = Multiply(index, incident);
+            T const r6 = Multiply(As<T>(index), incident);
 
             // r7 = r6 - (normal * r5)
             T const r7 = NegateMultiplyAdd(normal, r5, r6);
