@@ -2,7 +2,7 @@
 #include <Graphyte/Graphics.module.hxx>
 #include <Graphyte/Graphics/PixelFormat.hxx>
 #include <Graphyte/Graphics/Gpu/GpuDefinitions.hxx>
-#include <Graphyte/Maths/Types.hxx>
+#include <Graphyte/Maths.hxx>
 
 namespace Graphyte::Graphics
 {

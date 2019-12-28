@@ -1,6 +1,6 @@
 #include "Graphics.pch.hxx"
 #include <Graphyte/Graphics/ImageHistogram.hxx>
-#include <Graphyte/Maths/Types.hxx>
+#include <Graphyte/Maths.hxx>
 
 namespace Graphyte::Graphics
 {

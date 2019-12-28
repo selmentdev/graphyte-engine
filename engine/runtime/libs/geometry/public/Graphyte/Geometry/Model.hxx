@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphyte/Geometry.module.hxx>
-#include <Graphyte/Maths/Types.hxx>
+#include <Graphyte/Maths.hxx>
 #include <Graphyte/Geometry/Mesh.hxx>
-#include <Graphyte/Maths/Types.hxx>
 
 namespace Graphyte::Geometry
 {
