@@ -2,6 +2,7 @@
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Diagnostics.hxx>
 #include <Graphyte/Bitwise.hxx>
+#include <Graphyte/Half.hxx>
 
 
 // =================================================================================================
@@ -44,13 +45,13 @@ namespace Graphyte::Maths::Impl
 {
     constexpr bool mathcall BitIsNan(uint32_t bits) noexcept
     {
-        return ((bits & uint32_t{ 0x7f800000 }) == uint32_t{0x7f800000})
-            && ((bits & uint32_t{ 0x007fffff }) != 0);
+        return ((bits & Ieee754::F32_EXPONENT) == Ieee754::F32_EXPONENT)
+            && ((bits & Ieee754::F32_MANTISSA) != 0);
     }
 
     constexpr bool mathcall BitIsInf(uint32_t bits) noexcept
     {
-        return ((bits & uint32_t{ 0x7fffffff }) == uint32_t{ 0x7f800000 });
+        return ((bits & ~Ieee754::F32_SIGN) == Ieee754::F32_EXPONENT);
     }
 
 #if GRAPHYTE_HW_AVX2
@@ -450,38 +451,38 @@ namespace Graphyte::Maths::Impl
         } } };
 
     mathconst ConstUInt32x4 VEC4_INFINITY = { { {
-            0x7F800000,
-            0x7F800000,
-            0x7F800000,
-            0x7F800000,
+            Ieee754::F32_INFINITY,
+            Ieee754::F32_INFINITY,
+            Ieee754::F32_INFINITY,
+            Ieee754::F32_INFINITY,
         } } };
 
     mathconst ConstUInt32x4 VEC4_QNAN = { { {
-            0x7FC00000,
-            0x7FC00000,
-            0x7FC00000,
-            0x7FC00000,
+            Ieee754::F32_QNAN,
+            Ieee754::F32_QNAN,
+            Ieee754::F32_QNAN,
+            Ieee754::F32_QNAN,
         } } };
 
     mathconst ConstUInt32x4 VEC4_QNAN_TEST = { { {
-            0x007FFFFF,
-            0x007FFFFF,
-            0x007FFFFF,
-            0x007FFFFF,
+            Ieee754::F32_MANTISSA,
+            Ieee754::F32_MANTISSA,
+            Ieee754::F32_MANTISSA,
+            Ieee754::F32_MANTISSA,
         } } };
 
     mathconst ConstUInt32x4 VEC4_FLOAT_MIN = { { {
-            0x00800000,
-            0x00800000,
-            0x00800000,
-            0x00800000,
+            Ieee754::F32_MIN_NORMAL,
+            Ieee754::F32_MIN_NORMAL,
+            Ieee754::F32_MIN_NORMAL,
+            Ieee754::F32_MIN_NORMAL,
         } } };
 
     mathconst ConstUInt32x4 VEC4_FLOAT_MAX = { { {
-            0x7F7FFFFF,
-            0x7F7FFFFF,
-            0x7F7FFFFF,
-            0x7F7FFFFF,
+            Ieee754::F32_MAX,
+            Ieee754::F32_MAX,
+            Ieee754::F32_MAX,
+            Ieee754::F32_MAX,
         } } };
 
     mathconst ConstFloat32x4 VEC4_EPSILON = { { {
@@ -787,17 +788,17 @@ namespace Graphyte::Maths::Impl
         } } };
 
     mathconst ConstUInt32x4 VEC4_MASK_QNAN = { { {
-            0x007FFFFF,
-            0x007FFFFF,
-            0x007FFFFF,
-            0x007FFFFF,
+            Ieee754::F32_MANTISSA,
+            Ieee754::F32_MANTISSA,
+            Ieee754::F32_MANTISSA,
+            Ieee754::F32_MANTISSA,
         } } };
 
     mathconst ConstUInt32x4 VEC4_MASK_ABS = { { {
-            0x7FFFFFFF,
-            0x7FFFFFFF,
-            0x7FFFFFFF,
-            0x7FFFFFFF,
+            ~Ieee754::F32_SIGN,
+            ~Ieee754::F32_SIGN,
+            ~Ieee754::F32_SIGN,
+            ~Ieee754::F32_SIGN,
         } } };
 
     mathconst ConstUInt32x4 VEC4_MASK_NEGATIVE_ONE = { { {
@@ -955,24 +956,24 @@ namespace Graphyte::Maths::Impl
         } } };
 
     mathconst ConstInt32x4 VEC4_MIN_NORMAL = { { {
-            0x00800000,
-            0x00800000,
-            0x00800000,
-            0x00800000,
+            Ieee754::F32_MIN_NORMAL,
+            Ieee754::F32_MIN_NORMAL,
+            Ieee754::F32_MIN_NORMAL,
+            Ieee754::F32_MIN_NORMAL,
         } } };
 
     mathconst ConstUInt32x4 VEC4_NEGATIVE_INFINITY = { { {
-            0xFF800000,
-            0xFF800000,
-            0xFF800000,
-            0xFF800000,
+            Ieee754::F32_SIGN | Ieee754::F32_INFINITY,
+            Ieee754::F32_SIGN | Ieee754::F32_INFINITY,
+            Ieee754::F32_SIGN | Ieee754::F32_INFINITY,
+            Ieee754::F32_SIGN | Ieee754::F32_INFINITY,
         } } };
 
     mathconst ConstUInt32x4 VEC4_NEGATIVE_QNAN = { { {
-            0xFFC00000,
-            0xFFC00000,
-            0xFFC00000,
-            0xFFC00000,
+            Ieee754::F32_SIGN | Ieee754::F32_QNAN,
+            Ieee754::F32_SIGN | Ieee754::F32_QNAN,
+            Ieee754::F32_SIGN | Ieee754::F32_QNAN,
+            Ieee754::F32_SIGN | Ieee754::F32_QNAN,
         } } };
 
     mathconst ConstInt32x4 VEC4_BIN_128 = { { {
@@ -1513,11 +1514,6 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    struct Half final
-    {
-        uint16_t Value;
-    };
-
     using Half1 = Half;
 
     struct Half2 final
@@ -4210,8 +4206,7 @@ namespace Graphyte::Maths
             } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        auto v_temp = _mm_set1_epi32(static_cast<int>(0x80000000));
-        return { _mm_castsi128_ps(v_temp) };
+        return { _mm_castsi128_ps(_mm_set1_epi32(static_cast<int>(0x80000000))) };
 #elif GRAPHYTE_HW_NEON
         return { vdupq_n_u32(0x80000000U) };
 #endif
@@ -6763,6 +6758,31 @@ namespace Graphyte::Maths::Impl
 
 namespace Graphyte::Maths
 {
+    template <typename T>
+    mathinline T mathcall CopySign(T number, T sign) noexcept
+        requires VectorLike<T>
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 result{ { {
+                copysignf(number.V.F[0], sign.V.F[0]),
+                copysignf(number.V.F[1], sign.V.F[1]),
+                copysignf(number.V.F[2], sign.V.F[2]),
+                copysignf(number.V.F[3], sign.V.F[3]),
+            } } };
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_castsi128_ps(_mm_set1_epi32(static_cast<int>(0x80000000)));
+        __m128 const sign_mask = _mm_and_ps(sign.V, mask);
+        __m128 const abs_number = _mm_andnot_ps(mask, number.V);
+        __m128 const result = _mm_or_ps(abs_number, sign_mask);
+        return { result };
+#endif
+    }
+
+    mathinline float mathcall CopySign(float number, float sign) noexcept
+    {
+        return copysignf(number, sign);
+    }
+
     template <typename T>
     mathinline T mathcall Ceiling(T v) noexcept
         requires VectorLike<T> and Roundable<T>
@@ -11064,15 +11084,13 @@ namespace Graphyte::Maths
 {
     mathinline bool mathcall IsNearEqual(float a, float b, int32_t tolerance) noexcept
     {
-        using Graphyte::Impl::Ieee754::FloatBits;
-
         if (IsZero(a - b))
         {
             return true;
         }
 
-        int32_t const ia = FloatBits{ .AsFloat32 = a, }.AsInt32;
-        int32_t const ib = FloatBits{ .AsFloat32 = b, }.AsInt32;
+        int32_t const ia = BitCast<int32_t>(a);
+        int32_t const ib = BitCast<int32_t>(b);
 
         if ((ia < 0) != (ib < 0))
         {

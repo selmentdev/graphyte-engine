@@ -1,101 +1,126 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
-
-#if false
-#include <Graphyte/Maths/Simd.hxx>
-#include <Graphyte/Maths/Types.hxx>
+#include <Graphyte/Bitwise.hxx>
 
 namespace Graphyte
 {
-    mathinline float mathcall FromHalf(Maths::half value) noexcept
+    struct Half final
+    {
+        uint16_t Value;
+    };
+
+    __forceinline float FromHalf(Half v) noexcept
     {
 #if GRAPHYTE_HW_F16C
-        __m128i v1 = _mm_cvtsi32_si128(static_cast<int32_t>(value.Value));
-        __m128 v2 = _mm_cvtph_ps(v1);
-        return _mm_cvtss_f32(v2);
+        __m128i const vh = _mm_cvtsi32_si128(static_cast<int>(v.Value));
+        __m128 const vf = _mm_cvtph_ps(vh);
+        return _mm_cvtss_f32(vf);
+#elif GRAPHYTE_HW_NEON
+        uint16x4_t vh = vdup_n_u16(v.Value);
+        float32x4_t vf = vcvt_f32_f16(vreinterpret_f16_u16(vh));
+        return vgetq_lane_f32(vf, 0);
 #else
-        uint32_t mantissa = static_cast<uint32_t>(value.Value & UINT32_C(0x03ff));
-        uint32_t exponent = static_cast<uint32_t>(value.Value & UINT32_C(0x7c00));
+        uint32_t const value = v.Value;
 
-        if (exponent == UINT32_C(0x7c00))
+        uint32_t mantissa = static_cast<uint32_t>(value & 0x03FFu);
+        uint32_t exponent = (value & Ieee754::F16_EXPONENT);
+
+        if (exponent == Ieee754::F16_INFINITY)
         {
-            exponent = UINT32_C(0x8f);
+            // Infinity / NaN
+            exponent = 0x8Fu;
         }
         else if (exponent != 0)
         {
-            exponent = static_cast<uint32_t>((value.Value >> 10) & 0x1f);
+            // normalized
+            exponent = static_cast<uint32_t>((static_cast<int>(value) >> Ieee754::F16_MANTISSA_BITS) & 0x1F);
         }
         else if (mantissa != 0)
         {
+            // denormalized -> normalized
+
             exponent = 1;
 
             do
             {
                 --exponent;
                 mantissa <<= 1;
-            } while ((mantissa & UINT32_C(0x0400)) == 0);
+            } while ((mantissa & Ieee754::F16_MIN_NORMAL) == 0);
 
-            mantissa &= UINT32_C(0x03ff);
-        }
+            mantissa &= Ieee754::F16_MANTISSA;
+    }
         else
         {
             exponent = static_cast<uint32_t>(-112);
         }
 
-        uint32_t result = ((value.Value & UINT32_C(0x8000)) << 16)
-            | ((exponent + 112) << 23)
-            | (mantissa << 13);
+        uint32_t const f32_sign = (value & Ieee754::F16_SIGN) << 16;
+        uint32_t const f32_exponent = ((exponent + 112) << 23);
+        uint32_t const f32_mantissa = (mantissa << 13);
 
-        Impl::Ieee754::FloatBits pun;
-        pun.AsUInt32 = result;
-        return pun.AsFloat;
+        uint32_t const result
+            = f32_sign
+            | f32_exponent
+            | f32_mantissa;
+
+        return BitCast<float>(result);
 #endif
     }
 
-    mathinline Maths::half mathcall ToHalf(float value) noexcept
+    __forceinline Half ToHalf(float value) noexcept
     {
 #if GRAPHYTE_HW_F16C
-        __m128 v1 = _mm_set_ss(value);
-        __m128i v2 = _mm_cvtps_ph(v1, 0);
-        return { static_cast<uint16_t>(_mm_cvtsi128_si32(v2)) };
+        __m128 const vf = _mm_set_ss(value);
+        __m128i const vh = _mm_cvtps_ph(vf, 0);
+
+        return Graphyte::Half{
+            .Value = static_cast<uint16_t>(_mm_cvtsi128_si32(vh))
+        };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const vf = vdupq_n_f32(value);
+        float16x4_t const vh = vcvt_f16_f32(vf);
+
+        return Graphyte::Half{
+            .Value = static_cast<uint16_t>(vget_lane_u16(vreinterpret_u16_f16(vh), 0))
+        };
 #else
-        Impl::Ieee754::FloatBits pun;
-        pun.AsFloat = value;
-
-        uint32_t uvalue = pun.AsUInt32;
-        uint32_t sign = (uvalue & UINT32_C(0x80000000)) >> UINT32_C(16);
-        uvalue &= UINT32_C(0x7fffffff);
-
         uint32_t result;
+        uint32_t const uvalue1 = BitCast<uint32_t>(value);
+        uint32_t sign = (uvalue1 & Ieee754::F32_SIGN) >> 16u;
+        uint32_t uvalue2 = (uvalue1 & ~Ieee754::F32_SIGN);
 
-        if (uvalue > UINT32_C(0x477fe000))
+        if (uvalue2 > 0x477FE000u) // 65504.0f
         {
-            if (((uvalue & UINT32_C(0x7f800000)) == UINT32_C(0x7f800000)) && ((uvalue & UINT32_C(0x007fffff)) != 0))
+            if (((uvalue2 & Ieee754::F32_EXPONENT) == Ieee754::F32_EXPONENT) && ((uvalue2 & Ieee754::F32_MANTISSA) != 0))
             {
-                result = UINT32_C(0x7fff);
+                result = Ieee754::F16_QNAN;
             }
             else
             {
-                result = UINT32_C(0x7c00);
+                result = Ieee754::F16_INFINITY;
             }
+        }
+        else if (uvalue2 == 0)
+        {
+            result = 0;
         }
         else
         {
-            if (uvalue < UINT32_C(0x38800000))
+            if (uvalue2 < 0x38800000u)
             {
-                uint32_t shift = UINT32_C(113) - (uvalue >> UINT32_C(23));
-                uvalue = (UINT32_C(0x00800000) | (uvalue & UINT32_C(0x007fffff))) >> shift;
+                // convert to denormalized
+                uint32_t const shift = 113u - (uvalue2 >> 23u);
+                uvalue2 = (Ieee754::F32_MIN_NORMAL | ((uvalue2 & Ieee754::F32_MANTISSA) >> shift));
             }
             else
             {
-                uvalue += UINT32_C(0xc8000000);
+                uvalue2 += 0xC8000000u;
             }
 
-            result = ((uvalue + UINT32_C(0x0fff) + ((uvalue >> UINT32_C(13)) & UINT32_C(1))) >> UINT32_C(13)) & UINT32_C(0x7fff);
+            result = ((uvalue2 + 0x0FFFu + ((uvalue2 >> 13u) & 1u)) >> 13u) & ~Ieee754::F16_SIGN;
         }
 
-        return Maths::half{ static_cast<uint16_t>(result | sign) };
+        return Graphyte::Half{ .Value = static_cast<uint16_t>(result | sign) };
 #endif
     }
 }
-#endif

@@ -1,36 +1,22 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
+#include <Graphyte/Ieee754.hxx>
 
 namespace Graphyte
 {
-    template <typename TValue, typename TBits>
-    constexpr TValue FromBits(TBits bits) noexcept = delete;
-
-    template <typename TValue, typename TBits>
-    constexpr TBits ToBits(TValue value) noexcept = delete;
-
-    template <>
-    constexpr float FromBits<float, uint32_t>(uint32_t bits) noexcept
+    template <typename TTo, typename TFrom>
+    inline TTo BitCast(const TFrom& source)
     {
-        return Impl::Ieee754::FloatBits{ .AsUInt32 = bits }.AsFloat32;
-    }
+        static_assert(sizeof(TTo) == sizeof(TFrom),
+            "bit_cast requires source and destination to be the same size");
+        static_assert(std::is_trivially_copyable_v<TTo>,
+            "bit_cast requires the destination type to be copyable");
+        static_assert(std::is_trivially_copyable_v<TFrom>,
+            "bit_cast requires the source type to be copyable");
 
-    template <>
-    constexpr double FromBits<double, uint64_t>(uint64_t bits) noexcept
-    {
-        return Impl::Ieee754::DoubleBits{ .AsUInt64 = bits }.AsFloat64;
-    }
-
-    template <>
-    constexpr uint32_t ToBits<float, uint32_t>(float value) noexcept
-    {
-        return Impl::Ieee754::FloatBits{ .AsFloat32 = value }.AsUInt32;
-    }
-
-    template <>
-    constexpr uint64_t ToBits<double, uint64_t>(double value) noexcept
-    {
-        return Impl::Ieee754::DoubleBits{ .AsFloat64 = value }.AsUInt64;
+        TTo destination;
+        memcpy(&destination, &source, sizeof(destination));
+        return destination;
     }
 }
 
@@ -49,38 +35,6 @@ namespace Graphyte
 #   error "Unknown endianess"
 #endif
     };
-
-    //
-    // Float conversion.
-    //
-
-    constexpr __forceinline float ToFloat32(uint32_t value) noexcept
-    {
-        Impl::Ieee754::FloatBits pun{};
-        pun.AsUInt32 = value;
-        return pun.AsFloat32;
-    }
-
-    constexpr __forceinline double ToFloat64(uint64_t value) noexcept
-    {
-        Impl::Ieee754::DoubleBits pun{};
-        pun.AsUInt64 = value;
-        return pun.AsFloat64;
-    }
-
-    constexpr __forceinline uint32_t FromFloat32(float value) noexcept
-    {
-        Impl::Ieee754::FloatBits pun{};
-        pun.AsFloat32 = value;
-        return pun.AsUInt32;
-    }
-
-    constexpr __forceinline uint64_t FromFloat64(double value) noexcept
-    {
-        Impl::Ieee754::DoubleBits pun{};
-        pun.AsFloat64 = value;
-        return pun.AsUInt64;
-    }
 
 
     //
@@ -262,32 +216,32 @@ namespace Graphyte
 
     template <> __forceinline float ReadLittleEndian<float>(const void* source) noexcept
     {
-        return ToFloat32(FromLittleEndian<uint32_t>(FromUnaligned<uint32_t>(source)));
+        return BitCast<float>(FromLittleEndian<uint32_t>(FromUnaligned<uint32_t>(source)));
     }
 
     template <> __forceinline float ReadBigEndian<float>(const void* source) noexcept
     {
-        return ToFloat32(FromBigEndian<uint32_t>(FromUnaligned<uint32_t>(source)));
+        return BitCast<float>(FromBigEndian<uint32_t>(FromUnaligned<uint32_t>(source)));
     }
 
     template <> __forceinline void ReadLittleEndian<float>(float& value, const void* source) noexcept
     {
-        value = ToFloat32(FromLittleEndian<uint32_t>(FromUnaligned<uint32_t>(source)));
+        value = BitCast<float>(FromLittleEndian<uint32_t>(FromUnaligned<uint32_t>(source)));
     }
 
     template <> __forceinline void ReadBigEndian<float>(float& value, const void* source) noexcept
     {
-        value = ToFloat32(FromBigEndian<uint32_t>(FromUnaligned<uint32_t>(source)));
+        value = BitCast<float>(FromBigEndian<uint32_t>(FromUnaligned<uint32_t>(source)));
     }
 
     template <> __forceinline void WriteLittleEndian<float>(void* destination, float value) noexcept
     {
-        ToUnaligned<uint32_t>(destination, ToLittleEndian<uint32_t>(FromFloat32(value)));
+        ToUnaligned<uint32_t>(destination, ToLittleEndian<uint32_t>(BitCast<uint32_t>(value)));
     }
 
     template <> __forceinline void WriteBigEndian<float>(void* destination, float value) noexcept
     {
-        ToUnaligned<uint32_t>(destination, ToBigEndian<uint32_t>(FromFloat32(value)));
+        ToUnaligned<uint32_t>(destination, ToBigEndian<uint32_t>(BitCast<uint32_t>(value)));
     }
 
     //
@@ -296,32 +250,32 @@ namespace Graphyte
 
     template <> __forceinline double ReadLittleEndian<double>(const void* source) noexcept
     {
-        return ToFloat64(FromLittleEndian<uint64_t>(FromUnaligned<uint64_t>(source)));
+        return BitCast<double>(FromLittleEndian<uint64_t>(FromUnaligned<uint64_t>(source)));
     }
 
     template <> __forceinline double ReadBigEndian<double>(const void* source) noexcept
     {
-        return ToFloat64(FromBigEndian<uint64_t>(FromUnaligned<uint64_t>(source)));
+        return BitCast<double>(FromBigEndian<uint64_t>(FromUnaligned<uint64_t>(source)));
     }
 
     template <> __forceinline void ReadLittleEndian<double>(double& value, const void* source) noexcept
     {
-        value = ToFloat64(FromLittleEndian<uint64_t>(FromUnaligned<uint64_t>(source)));
+        value = BitCast<double>(FromLittleEndian<uint64_t>(FromUnaligned<uint64_t>(source)));
     }
 
     template <> __forceinline void ReadBigEndian<double>(double& value, const void* source) noexcept
     {
-        value = ToFloat64(FromBigEndian<uint64_t>(FromUnaligned<uint64_t>(source)));
+        value = BitCast<double>(FromBigEndian<uint64_t>(FromUnaligned<uint64_t>(source)));
     }
 
     template <> __forceinline void WriteLittleEndian<double>(void* destination, double value) noexcept
     {
-        ToUnaligned<uint64_t>(destination, ToLittleEndian<uint64_t>(FromFloat64(value)));
+        ToUnaligned<uint64_t>(destination, ToLittleEndian<uint64_t>(BitCast<uint64_t>(value)));
     }
 
     template <> __forceinline void WriteBigEndian<double>(void* destination, double value) noexcept
     {
-        ToUnaligned<uint64_t>(destination, ToBigEndian<uint64_t>(FromFloat64(value)));
+        ToUnaligned<uint64_t>(destination, ToBigEndian<uint64_t>(BitCast<uint64_t>(value)));
     }
 
     //

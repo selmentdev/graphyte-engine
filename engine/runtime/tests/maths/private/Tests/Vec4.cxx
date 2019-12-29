@@ -1,6 +1,43 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+
+TEST_CASE("BitCast between floating type")
+{
+    using namespace Graphyte;
+
+    CHECK(BitCast<uint32_t>(1.0f) == 0x3f800000u);
+    CHECK(BitCast<uint32_t>(12.5f) == 0x41480000u);
+    CHECK(BitCast<uint32_t>(1337.0f) == 0x44a72000u);
+    CHECK(BitCast<uint32_t>(-14.25f) == 0xc1640000u);
+
+    CHECK(BitCast<float>(0x3f800000u) == 1.0f);
+    CHECK(BitCast<float>(0x41480000u) == 12.5f);
+    CHECK(BitCast<float>(0x44a72000u) == 1337.0f);
+    CHECK(BitCast<float>(0xc1640000u) == -14.25f);
+}
+
+
+TEST_CASE("Maths / Vector / Copy Sign")
+{
+    using namespace Graphyte::Maths;
+
+    Vector4 const vn = Make<Vector4>(-1.0F, 2.0F, 3.0F, -4.0F);
+    Vector4 const vs = Make<Vector4>(1.0F, 1.0F, -1.0F, -1.0F);
+    Vector4 const vc = CopySign(vn, vs);
+
+    CHECK(GetX(vc) == 1.0F);
+    CHECK(GetY(vc) == 2.0F);
+    CHECK(GetZ(vc) == -3.0F);
+    CHECK(GetW(vc) == -4.0F);
+
+    float const sn = -1.0F;
+    float const ss = 1.0F;
+    float const sc = CopySign(sn, ss);
+
+    CHECK(sc == 1.0F);
+}
+
 TEST_CASE("Maths / Matrix Invertability")
 {
     using namespace Graphyte::Maths;
