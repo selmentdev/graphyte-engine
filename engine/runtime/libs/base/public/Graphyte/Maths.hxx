@@ -8752,43 +8752,54 @@ namespace Graphyte::Maths
             } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
+        // r0 = ((b.zwyz * c.wzwy) - (b.wzwy * c.zwyz)) * a.yxxx
 
-        auto v_result1  = _mm_permute_ps(b.V, _MM_SHUFFLE(2, 1, 3, 2));
-        auto v_temp3    = _mm_permute_ps(c.V, _MM_SHUFFLE(1, 3, 2, 3));
-        auto v_result   = _mm_mul_ps(v_result1, v_temp3);
+        __m128 const b0 = _mm_permute_ps(b.V, _MM_SHUFFLE(2, 1, 3, 2));
+        __m128 const c0 = _mm_permute_ps(c.V, _MM_SHUFFLE(1, 3, 2, 3));
+        __m128 const m0 = _mm_mul_ps(b0, c0);
 
-        auto v_temp2    = _mm_permute_ps(b.V, _MM_SHUFFLE(1, 3, 2, 3));
-        v_temp3         = _mm_permute_ps(v_temp3, _MM_SHUFFLE(1, 3, 0, 1));
-        v_temp2         = _mm_mul_ps(v_temp2, v_temp3);
-        v_result        = _mm_sub_ps(v_result, v_temp2);
+        __m128 const b1 = _mm_permute_ps(b.V, _MM_SHUFFLE(1, 3, 2, 3));
+        __m128 const c1 = _mm_permute_ps(c0, _MM_SHUFFLE(1, 3, 0, 1)); // wzwy -> zwyz
+        __m128 const m1 = _mm_mul_ps(b1, c1);
 
-        auto v_temp1    = _mm_permute_ps(a.V, _MM_SHUFFLE(0, 0, 0, 1));
-        v_result        = _mm_mul_ps(v_result, v_temp1);
+        __m128 const s0 = _mm_sub_ps(m0, m1);
+        __m128 const a0 = _mm_permute_ps(a.V, _MM_SHUFFLE(0, 0, 0, 1));
+        __m128 const r0 = _mm_mul_ps(s0, a0);
 
-        v_temp2         = _mm_permute_ps(b.V, _MM_SHUFFLE(2, 0, 3, 1));
-        v_temp3         = _mm_permute_ps(c.V, _MM_SHUFFLE(0, 3, 0, 3));
-        v_temp3         = _mm_mul_ps(v_temp3, v_temp2);
-        v_temp2         = _mm_permute_ps(v_temp2, _MM_SHUFFLE(2, 1, 2, 1));
-        v_temp1         = _mm_permute_ps(c.V, _MM_SHUFFLE(2, 0, 3, 1));
-        v_temp2         = _mm_mul_ps(v_temp2, v_temp1);
-        v_temp3         = _mm_sub_ps(v_temp3, v_temp2);
-        v_temp1         = _mm_permute_ps(a.V, _MM_SHUFFLE(1, 1, 2, 2));
-        v_temp1         = _mm_mul_ps(v_temp1, v_temp3);
+        // r1 = ((b.ywxz * c.wxwx) - (b.wxwx * c.ywxz)) * a.zzyy
+        __m128 const b2 = _mm_permute_ps(b.V, _MM_SHUFFLE(2, 0, 3, 1));
+        __m128 const c2 = _mm_permute_ps(c.V, _MM_SHUFFLE(0, 3, 0, 3));
+        __m128 const m2 = _mm_mul_ps(b2, c2);
 
-        v_result        = _mm_sub_ps(v_result, v_temp1);
-        v_temp2         = _mm_permute_ps(b.V, _MM_SHUFFLE(1, 0, 2, 1));
-        v_temp3         = _mm_permute_ps(c.V, _MM_SHUFFLE(0, 1, 0, 2));
-        v_temp3         = _mm_mul_ps(v_temp3, v_temp2);
-        v_temp2         = _mm_permute_ps(v_temp2, _MM_SHUFFLE(2, 0, 2, 1));
-        v_temp1         = _mm_permute_ps(c.V, _MM_SHUFFLE(1, 0, 2, 1));
-        v_temp1         = _mm_mul_ps(v_temp1, v_temp2);
-        v_temp3         = _mm_sub_ps(v_temp3, v_temp1);
-        v_temp1         = _mm_permute_ps(a.V, _MM_SHUFFLE(2, 3, 3, 3));
-        v_temp3         = _mm_mul_ps(v_temp3, v_temp1);
+        __m128 const b3 = _mm_permute_ps(b2, _MM_SHUFFLE(2, 1, 2, 1)); // ywxz -> wxwx
+        __m128 const c3 = _mm_permute_ps(c.V, _MM_SHUFFLE(2, 0, 3, 1));
+        __m128 const m3 = _mm_mul_ps(b3, c3);
 
-        v_result        = _mm_add_ps(v_result, v_temp3);
+        __m128 const s1 = _mm_sub_ps(m2, m3);
+        __m128 const a1 = _mm_permute_ps(a.V, _MM_SHUFFLE(1, 1, 2, 2));
+        __m128 const r1 = _mm_mul_ps(s1, a1);
 
-        return { v_result };
+        // t0 = r0 - r1
+        __m128 const t0 = _mm_sub_ps(r0, r1);
+
+        // r2 = ((b.yzxy * c.zxyx) - (b.zxyx * c.yzxy)) * a.wwwz
+        __m128 const b4 = _mm_permute_ps(b.V, _MM_SHUFFLE(1, 0, 2, 1));
+        __m128 const c4 = _mm_permute_ps(c.V, _MM_SHUFFLE(0, 1, 0, 2));
+        __m128 const m4 = _mm_mul_ps(b4, c4);
+
+        // yzxy ->  zxyx
+        __m128 const b5 = _mm_permute_ps(b4, _MM_SHUFFLE(2, 0, 2, 1));
+        __m128 const c5 = _mm_permute_ps(c.V, _MM_SHUFFLE(1, 0, 2, 1));
+        __m128 const m5 = _mm_mul_ps(b5, c5);
+
+        __m128 const s2 = _mm_sub_ps(m4, m5);
+        __m128 const a2 = _mm_permute_ps(a.V, _MM_SHUFFLE(2, 3, 3, 3));
+        __m128 const r2 = _mm_mul_ps(s2, a2);
+
+        // t1 = t0 + r2
+        __m128 const result = _mm_add_ps(t0, r2);
+
+        return { result };
 #endif
     }
 

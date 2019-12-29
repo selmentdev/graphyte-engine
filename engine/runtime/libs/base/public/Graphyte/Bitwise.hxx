@@ -4,15 +4,23 @@
 
 namespace Graphyte
 {
+    /// Performs safe bit casting between two types.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// float f = BitCast(0x3F80'0000);
+    /// GX_ASSERT(f == 1.0F);
+    /// ```
     template <typename TTo, typename TFrom>
     inline TTo BitCast(const TFrom& source)
     {
         static_assert(sizeof(TTo) == sizeof(TFrom),
-            "bit_cast requires source and destination to be the same size");
+            "BitCast requires source and destination to be the same size");
         static_assert(std::is_trivially_copyable_v<TTo>,
-            "bit_cast requires the destination type to be copyable");
+            "BitCast requires the destination type to be copyable");
         static_assert(std::is_trivially_copyable_v<TFrom>,
-            "bit_cast requires the source type to be copyable");
+            "BitCast requires the source type to be copyable");
 
         TTo destination;
         memcpy(&destination, &source, sizeof(destination));
