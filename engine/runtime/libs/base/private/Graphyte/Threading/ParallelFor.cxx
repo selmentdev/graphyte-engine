@@ -10,7 +10,7 @@ namespace Graphyte::Threading
     struct ParallelForData final
     {
     public:
-        Delegate<void(uint32_t)> Code;
+        std::function<void(uint32_t)> Code;
         Threading::Event Sync;
         std::atomic<uint32_t> Index;
         std::atomic<uint32_t> Completed;
@@ -26,7 +26,7 @@ namespace Graphyte::Threading
             uint32_t count,
             uint32_t threads,
             bool last_block_for_master,
-            Delegate<void(uint32_t)> code
+            std::function<void(uint32_t)> code
         ) noexcept
             : Code{ code }
             , Sync{ false, Threading::EventType::ManualReset }
@@ -123,7 +123,7 @@ namespace Graphyte::Threading
         uint32_t local_count = Count;
         bool local_last_block_for_master = LastBlockForMaster;
 
-        Delegate<void(uint32_t)> local_code{ Code };
+        std::function<void(uint32_t)> local_code{ Code };
 
         for (;;)
         {
@@ -180,13 +180,14 @@ namespace Graphyte::Threading
 
     void ParallelFor(
         uint32_t count,
-        Delegate<void(uint32_t)> code,
+        std::function<void(uint32_t)> code,
         bool singlethreaded
     ) noexcept
     {
         GX_PROFILE_REGION("parallel-for");
 
         uint32_t threads = 0;
+
         if (count > 1 && !singlethreaded)
         {
             threads = std::min<uint32_t>(
@@ -206,7 +207,7 @@ namespace Graphyte::Threading
 
         GX_ASSERT(count != 0);
 
-        auto data = std::make_shared<ParallelForData>(count, threads + 1, count > (threads + 1), code);
+        auto data = std::make_shared<ParallelForData>(count, threads + 1, count > (threads + 1), std::move(code));
 
         Task<ParallelForTask>::CreateTask().Dispatch(data, threads - 1);
 
@@ -227,8 +228,8 @@ namespace Graphyte::Threading
 
     void ParallelFor(
         uint32_t count,
-        Delegate<void(uint32_t)> code,
-        Delegate<void(void)> preprocess,
+        std::function<void(uint32_t)> code,
+        std::function<void(void)> preprocess,
         bool singlethreaded
     ) noexcept
     {
@@ -253,11 +254,11 @@ namespace Graphyte::Threading
 
         GX_ASSERT(count != 0);
 
-        auto data = std::make_shared<ParallelForData>(count, threads, false, code);
-
-        Task<ParallelForTask>::CreateTask().Dispatch(data, threads - 1);
+        auto data = std::make_shared<ParallelForData>(count, threads, false, std::move(code));
 
         preprocess();
+
+        Task<ParallelForTask>::CreateTask().Dispatch(data, threads - 1);
 
         if (!data->Process(0, data, true))
         {

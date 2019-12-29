@@ -6,6 +6,26 @@
 #include <Graphyte/Threading.hxx>
 #include <Graphyte/Diagnostics/Stopwatch.hxx>
 
+TEST_CASE("Threading / Parallel For")
+{
+    constexpr uint32_t const N = 40'000u;
+
+    // counting in parallel
+
+    std::atomic<uint32_t> counter{};
+    std::atomic<uint32_t> multiplier{};
+
+    Graphyte::Threading::ParallelFor(N, [&](uint32_t index)
+        {
+            ++counter;
+            multiplier += index;
+        }
+    );
+
+    REQUIRE(multiplier == (N * (N - 1)) / 2);
+    REQUIRE(counter == N);
+}
+
 TEST_CASE("ReaderWriterLockCase", "[.][performance]")
 {
     using namespace Graphyte::Threading;

@@ -7,9 +7,9 @@ namespace Graphyte::Threading
     class BASE_API Thread final
     {
     private:
-        ThreadHandle m_Handle;
-        ThreadId m_Id;
-        IRunnable* m_Runnable;
+        ThreadHandle m_Handle{};
+        ThreadId m_Id{};
+        IRunnable* m_Runnable{};
 
     public:
         Thread() noexcept;

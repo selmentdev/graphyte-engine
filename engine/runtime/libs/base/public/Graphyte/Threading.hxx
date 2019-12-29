@@ -19,7 +19,7 @@ namespace Graphyte::Threading
      */
     BASE_API void ParallelFor(
         uint32_t count,
-        Delegate<void(uint32_t)> code,
+        std::function<void(uint32_t)> code,
         bool singlethreaded = false
     ) noexcept;
 
@@ -33,8 +33,8 @@ namespace Graphyte::Threading
      */
     BASE_API void ParallelFor(
         uint32_t count,
-        Delegate<void(uint32_t)> code,
-        Delegate<void(void)> preprocess,
+        std::function<void(uint32_t)> code,
+        std::function<void(void)> preprocess,
         bool singlethreaded = false
     ) noexcept;
 }
