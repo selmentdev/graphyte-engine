@@ -44,6 +44,17 @@ namespace Graphyte::Ieee754
         };
     };
     static_assert(sizeof(Float16Bits) == sizeof(uint16_t));
+
+    constexpr bool BitIsNan(uint16_t bits) noexcept
+    {
+        return ((bits & F16_EXPONENT) == F16_EXPONENT)
+            && ((bits & F16_MANTISSA) != 0);
+    }
+
+    constexpr bool BitIsInf(uint16_t bits) noexcept
+    {
+        return ((bits & ~F16_SIGN) == F16_EXPONENT);
+    }
 }
 
 namespace Graphyte::Ieee754
@@ -91,6 +102,18 @@ namespace Graphyte::Ieee754
         };
     };
     static_assert(sizeof(Float32Bits) == sizeof(float));
+
+
+    constexpr bool BitIsNan(uint32_t bits) noexcept
+    {
+        return ((bits & F32_EXPONENT) == F32_EXPONENT)
+            && ((bits & F32_MANTISSA) != 0);
+    }
+
+    constexpr bool BitIsInf(uint32_t bits) noexcept
+    {
+        return ((bits & ~F32_SIGN) == F32_EXPONENT);
+    }
 }
 
 namespace Graphyte::Ieee754
@@ -138,4 +161,15 @@ namespace Graphyte::Ieee754
         };
     };
     static_assert(sizeof(Float64Bits) == sizeof(double));
+
+    constexpr bool BitIsNan(uint64_t bits) noexcept
+    {
+        return ((bits & F64_EXPONENT) == F64_EXPONENT)
+            && ((bits & F64_MANTISSA) != 0);
+    }
+
+    constexpr bool BitIsInf(uint64_t bits) noexcept
+    {
+        return ((bits & ~F64_SIGN) == F64_EXPONENT);
+    }
 }

@@ -2,7 +2,7 @@
 
 // =================================================================================================
 //
-// This module implements NEON specific helper intrinsics
+// This module implements NEON specific helper functions
 //
 
 namespace Graphyte::Maths::Impl
@@ -399,7 +399,7 @@ namespace Graphyte::Maths::Impl
 namespace Graphyte::Maths::Impl
 {
     // (a * b) + c
-    mathinline float32x4_t mathcall neon_mul_add(
+    mathinline float32x4_t mathcall neon_fmadd_f32x4(
         float32x4_t a,
         float32x4_t b,
         float32x4_t c
@@ -409,7 +409,7 @@ namespace Graphyte::Maths::Impl
     }
 
     // (a * b) - c
-    mathinline float32x4_t mathcall neon_mul_sub(
+    mathinline float32x4_t mathcall neon_fmsub_f32x4(
         float32x4_t a,
         float32x4_t b,
         float32x4_t c
@@ -420,7 +420,7 @@ namespace Graphyte::Maths::Impl
     }
 
     // -(a * b) + c
-    mathinline float32x4_t mathcall neon_neg_mul_add(
+    mathinline float32x4_t mathcall neon_fnmadd_f32x4(
         float32x4_t a,
         float32x4_t b,
         float32x4_t c
@@ -430,7 +430,7 @@ namespace Graphyte::Maths::Impl
     }
 
     // -(a * b) - c
-    mathinline float32x4_t mathcall neon_neg_mul_sub(
+    mathinline float32x4_t mathcall neon_fnmsub_f32x4(
         float32x4_t a,
         float32x4_t b,
         float32x4_t c
