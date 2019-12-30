@@ -1218,10 +1218,10 @@ namespace Graphyte::Maths
     concept Arithmetic = IsArithmetic<T>::value;
 
     template <typename T>
-    struct IsBitwisable : std::false_type { };
+    struct IsLogical : std::false_type { };
 
     template <typename T>
-    concept Bitwisable = IsBitwisable<T>::value;
+    concept Logical = IsLogical<T>::value;
 
     template <typename T>
     struct IsComponentwise : std::false_type { };
@@ -1261,13 +1261,13 @@ namespace Graphyte::Maths
 
     template <typename T>
     concept AffineSpace = IsAffineSpace<T>::value;
-    
+
     template <typename T>
     struct IsVectorSpace : std::false_type { };
 
     template <typename T>
     concept VectorSpace = IsAffineSpace<T>::value;
-    
+
     template <typename T>
     struct IsQuaternionSpace : std::false_type { };
 
@@ -1299,7 +1299,7 @@ namespace Graphyte::Maths
 
     template <> struct IsVectorLike<Bool4> : std::true_type { };
     template <> struct IsEqualComparable<Bool4> : std::true_type { };
-    template <> struct IsBitwisable<Bool4> : std::true_type { };
+    template <> struct IsLogical<Bool4> : std::true_type { };
 
 
     struct Bool3 final
@@ -1314,7 +1314,7 @@ namespace Graphyte::Maths
 
     template <> struct IsVectorLike<Bool3> : std::true_type { };
     template <> struct IsEqualComparable<Bool3> : std::true_type { };
-    template <> struct IsBitwisable<Bool3> : std::true_type { };
+    template <> struct IsLogical<Bool3> : std::true_type { };
 
 
     struct Bool2 final
@@ -1328,7 +1328,7 @@ namespace Graphyte::Maths
 
     template <> struct IsVectorLike<Bool2> : std::true_type { };
     template <> struct IsEqualComparable<Bool2> : std::true_type { };
-    template <> struct IsBitwisable<Bool2> : std::true_type { };
+    template <> struct IsLogical<Bool2> : std::true_type { };
 
 
     struct Bool1 final
@@ -1342,7 +1342,7 @@ namespace Graphyte::Maths
 
     template <> struct IsVectorLike<Bool1> : std::true_type { };
     template <> struct IsEqualComparable<Bool1> : std::true_type { };
-    template <> struct IsBitwisable<Bool1> : std::true_type { };
+    template <> struct IsLogical<Bool1> : std::true_type { };
 
     struct Vector4 final
     {
@@ -2181,7 +2181,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall SelectControl(uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         GX_ASSERT(x < 2);
@@ -3666,7 +3666,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline uint32_t mathcall GetUIntByIndex(T v, size_t index) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
         GX_ASSERT(index < 4);
         GX_COMPILER_ASSUME(index < 4);
@@ -3682,7 +3682,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetUIntByIndex(T v, uint32_t value, size_t index) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
         GX_ASSERT(index < 4);
         GX_COMPILER_ASSUME(index < 4);
@@ -3695,7 +3695,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall GetUIntByIndex(uint32_t* result, T v, size_t index) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
         GX_ASSERT(index < 4);
         GX_COMPILER_ASSUME(index < 4);
@@ -3711,7 +3711,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetUIntByIndex(T v, uint32_t const* value, size_t index) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
         GX_ASSERT(index < 4);
         GX_COMPILER_ASSUME(index < 4);
@@ -3724,7 +3724,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline uint32_t mathcall GetUIntX(T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 1)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 1)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.U[0];
@@ -3737,7 +3737,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline uint32_t mathcall GetUIntY(T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 2)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.U[1];
@@ -3751,7 +3751,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline uint32_t mathcall GetUIntZ(T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 3)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 3)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.U[2];
@@ -3765,7 +3765,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline uint32_t mathcall GetUIntW(T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 4)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.U[3];
@@ -3779,7 +3779,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall GetUIntX(uint32_t* result, T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 1)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 1)
     {
         GX_ASSERT(result != nullptr);
 
@@ -3788,13 +3788,13 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         _mm_store_ss(reinterpret_cast<float*>(result), v.V);
 #elif GRAPHYTE_HW_NEON
-        vst1q_lane_u32(result, *reinterpret_cast<uint32x4_t const*>(&v.V), 0);
+        vst1q_lane_u32(result, vreinterpretq_u32_f32(v.V), 0);
 #endif
     }
 
     template <typename T>
     mathinline void mathcall GetUIntY(uint32_t* result, T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 2)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 2)
     {
         GX_ASSERT(result != nullptr);
 
@@ -3804,13 +3804,13 @@ namespace Graphyte::Maths
         __m128i const r = _mm_castps_si128(v.V);
         (*result) = static_cast<uint32_t>(_mm_extract_epi32(r, 1));
 #elif GRAPHYTE_HW_NEON
-        vst1q_lane_u32(result, *reinterpret_cast<uint32x4_t const*>(&v.V), 1);
+        vst1q_lane_u32(result, vreinterpretq_u32_f32(v.V), 1);
 #endif
     }
 
     template <typename T>
     mathinline void mathcall GetUIntZ(uint32_t* result, T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 3)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 3)
     {
         GX_ASSERT(result != nullptr);
 
@@ -3820,13 +3820,13 @@ namespace Graphyte::Maths
         __m128i const r = _mm_castps_si128(v.V);
         (*result) = static_cast<uint32_t>(_mm_extract_epi32(r, 2));
 #elif GRAPHYTE_HW_NEON
-        vst1q_lane_u32(result, *reinterpret_cast<uint32x4_t const*>(&v.V), 2);
+        vst1q_lane_u32(result, vreinterpretq_u32_f32(v.V), 2);
 #endif
     }
 
     template <typename T>
     mathinline void mathcall GetUIntW(uint32_t* result, T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 4)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 4)
     {
         GX_ASSERT(result != nullptr);
 
@@ -3836,13 +3836,13 @@ namespace Graphyte::Maths
         __m128i const r = _mm_castps_si128(v.V);
         (*result) = static_cast<uint32_t>(_mm_extract_epi32(r, 3));
 #elif GRAPHYTE_HW_NEON
-        vst1q_lane_u32(result, *reinterpret_cast<uint32x4_t const*>(&v.V), 3);
+        vst1q_lane_u32(result, vreinterpretq_u32_f32(v.V), 3);
 #endif
     }
 
     template <typename T>
     mathinline T mathcall SetUIntX(T v, uint32_t value) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 1)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 1)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -3864,7 +3864,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetUIntY(T v, uint32_t value) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 2)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -3887,7 +3887,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetUIntZ(T v, uint32_t value) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 3)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 3)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -3910,7 +3910,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetUIntW(T v, uint32_t value) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 4)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -3933,7 +3933,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SetUIntX(T v, uint32_t const* value) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 1)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 1)
     {
         GX_ASSERT(value != nullptr);
 
@@ -3951,13 +3951,13 @@ namespace Graphyte::Maths
         __m128 const result = _mm_move_ss(v.V, vx);
         return { result };
 #elif GRAPHYTE_HW_NEON
-        return { vld1q_lane_u32(value, *reinterpret_cast<uint32x4_t const*>(&v.V), 0) };
+        return { vld1q_lane_u32(value, vreinterpretq_u32_f32(v.V), 0) };
 #endif
     }
 
     template <typename T>
     mathinline T mathcall SetUIntY(T v, uint32_t const* value) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 2)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 2)
     {
         GX_ASSERT(value != nullptr);
 
@@ -3977,13 +3977,13 @@ namespace Graphyte::Maths
         __m128 const result = _mm_permute_ps(x_yxzw, _MM_SHUFFLE(3, 2, 0, 1));
         return { result };
 #elif GRAPHYTE_HW_NEON
-        return { vld1q_lane_u32(value, *reinterpret_cast<uint32x4_t const*>(&v.V), 1) };
+        return { vld1q_lane_u32(value, vreinterpretq_u32_f32(v.V), 1) };
 #endif
     }
 
     template <typename T>
     mathinline T mathcall SetUIntZ(T v, uint32_t const* value) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 3)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 3)
     {
         GX_ASSERT(value != nullptr);
 
@@ -4003,13 +4003,13 @@ namespace Graphyte::Maths
         __m128 const result = _mm_permute_ps(z_zyxw, _MM_SHUFFLE(3, 0, 1, 2));
         return { result };
 #elif GRAPHYTE_HW_NEON
-        return { vld1q_lane_u32(value, *reinterpret_cast<uint32x4_t const*>(&v.V), 2) };
+        return { vld1q_lane_u32(value, vreinterpretq_u32_f32(v.V), 2) };
 #endif
     }
 
     template <typename T>
     mathinline T mathcall SetUIntW(T v, uint32_t const* value) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components >= 4)
+        requires VectorLike<T> and Logical<T> and (T::Components >= 4)
     {
         GX_ASSERT(value != nullptr);
 
@@ -4029,7 +4029,7 @@ namespace Graphyte::Maths
         __m128 const result = _mm_permute_ps(w_wyzx, _MM_SHUFFLE(0, 2, 1, 3));
         return { result };
 #elif GRAPHYTE_HW_NEON
-        return { vld1q_lane_u32(value, *reinterpret_cast<uint32x4_t const*>(&v.V), 3) };
+        return { vld1q_lane_u32(value, vreinterpretq_u32_f32(v.V), 3) };
 #endif
     }
 }
@@ -4195,7 +4195,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SignMask() noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4337,7 +4337,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall MakeUInt(uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components == 4)
+        requires VectorLike<T> and Logical<T> and (T::Components == 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4360,7 +4360,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall ReplicateUInt(uint32_t value) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components == 4)
+        requires VectorLike<T> and Logical<T> and (T::Components == 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4379,7 +4379,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall ReplicateUInt(uint32_t const* source) noexcept
-        requires VectorLike<T> and Bitwisable<T> and (T::Components == 4)
+        requires VectorLike<T> and Logical<T> and (T::Components == 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         uint32_t const value = (*source);
@@ -4408,7 +4408,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall True() noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4427,7 +4427,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall False() noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result = { { {
@@ -4445,7 +4445,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall And(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4464,7 +4464,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall AndNot(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result = { { {
@@ -4482,7 +4482,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Or(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4501,7 +4501,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Xor(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4520,7 +4520,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Nor(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4585,7 +4585,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CompareEqual(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4604,7 +4604,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CompareNotEqual(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4623,7 +4623,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall IsEqual(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -4665,7 +4665,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall IsNotEqual(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T>
+        requires VectorLike<T> and Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -4716,7 +4716,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline bool mathcall AllTrue(T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
+        requires VectorLike<T> and Logical<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -4757,7 +4757,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall AllFalse(T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
+        requires VectorLike<T> and Logical<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -4798,7 +4798,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall AnyTrue(T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
+        requires VectorLike<T> and Logical<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -4838,7 +4838,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall AnyFalse(T v) noexcept
-        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
+        requires VectorLike<T> and Logical<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -4879,7 +4879,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsEqual(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T>
+        requires VectorLike<T> and Logical<T> and EqualComparable<T>
     {
         T const result = Maths::CompareEqual(a, b);
         return AllTrue(result);
@@ -4887,7 +4887,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsNotEqual(T a, T b) noexcept
-        requires VectorLike<T> and Bitwisable<T> and EqualComparable<T>
+        requires VectorLike<T> and Logical<T> and EqualComparable<T>
     {
         T const result = Maths::CompareNotEqual(a, b);
         return AllTrue(result);
@@ -4926,7 +4926,7 @@ namespace Graphyte::Maths
                 cosf(components.F[2]),
                 cosf(components.F[3]),
             } } };
-            
+
         return { result.V };
 #endif
     }
@@ -4970,7 +4970,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall SinCos(T& result_sin, T& result_cos, T v) noexcept
-        requires VectorLike<T>and Componentwise<T>
+        requires VectorLike<T> and Componentwise<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const vsin{ { {
@@ -6679,7 +6679,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Unlerp(T value, T min, T max) noexcept
-        requires VectorLike<T>and Arithmetic<T>
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         T const base = Subtract(value, min);
@@ -6946,7 +6946,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline typename T::MaskType mathcall CompareEqual(T a, T b) noexcept
-        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T>
+        requires VectorLike<T> and EqualComparable<T> and !Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -6964,7 +6964,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareEqual(T a, T b, T epsilon) noexcept
-        requires VectorLike<T>and EqualComparable<T> and !Bitwisable<T>
+        requires VectorLike<T> and EqualComparable<T> and !Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const dx = (a.V.F[0] - b.V.F[0]);
@@ -6997,7 +6997,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareNotEqual(T a, T b) noexcept
-        requires VectorLike<T>and EqualComparable<T> and !Bitwisable<T>
+        requires VectorLike<T> and EqualComparable<T> and !Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -7015,7 +7015,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareGreater(T a, T b) noexcept
-        requires VectorLike<T>and OrderComparable<T> and !Bitwisable<T>
+        requires VectorLike<T> and OrderComparable<T> and !Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -7033,7 +7033,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareGreaterEqual(T a, T b) noexcept
-        requires VectorLike<T>and OrderComparable<T> and !Bitwisable<T>
+        requires VectorLike<T> and OrderComparable<T> and !Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -7051,7 +7051,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareLess(T a, T b) noexcept
-        requires VectorLike<T>and OrderComparable<T> and !Bitwisable<T>
+        requires VectorLike<T> and OrderComparable<T> and !Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -7071,7 +7071,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareLessEqual(T a, T b) noexcept
-        requires VectorLike<T>and OrderComparable<T> and !Bitwisable<T>
+        requires VectorLike<T> and OrderComparable<T> and !Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -7094,7 +7094,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareNan(T v) noexcept
-        requires VectorLike<T> and !Bitwisable<T>
+        requires VectorLike<T> and !Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -7116,7 +7116,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareInfinite(T v) noexcept
-        requires VectorLike<T> and !Bitwisable<T>
+        requires VectorLike<T> and !Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -7135,7 +7135,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline typename T::MaskType mathcall CompareInBounds(T v, T bounds) noexcept
-        requires VectorLike<T> and !Bitwisable<T>
+        requires VectorLike<T> and !Logical<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -7157,7 +7157,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsZero(T v) noexcept
-        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and EqualComparable<T> and !Logical<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -7205,7 +7205,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsZero(T v, T epsilon) noexcept
-        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and EqualComparable<T> and !Logical<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -7257,7 +7257,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsEqual(T a, T b) noexcept
-        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and EqualComparable<T> and !Logical<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -7304,7 +7304,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsEqual(T a, T b, T epsilon) noexcept
-        requires VectorLike<T> and EqualComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and EqualComparable<T> and !Logical<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -7370,7 +7370,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsNotEqual(T a, T b) noexcept
-        requires VectorLike<T>and EqualComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and EqualComparable<T> and !Logical<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -7417,7 +7417,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsGreater(T a, T b) noexcept
-        requires VectorLike<T> and OrderComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and OrderComparable<T> and !Logical<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -7464,7 +7464,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsGreaterEqual(T a, T b) noexcept
-        requires VectorLike<T> and Comparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and Comparable<T> and !Logical<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -7512,7 +7512,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsLess(T a, T b) noexcept
-        requires VectorLike<T> and OrderComparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and OrderComparable<T> and !Logical<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -7559,7 +7559,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsLessEqual(T a, T b) noexcept
-        requires VectorLike<T> and Comparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and Comparable<T> and !Logical<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -7606,7 +7606,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool InBounds(T v, T bounds) noexcept
-        requires VectorLike<T> and Comparable<T> and !Bitwisable<T> and (T::Components >= 1 && T::Components <= 4)
+        requires VectorLike<T> and Comparable<T> and !Logical<T> and (T::Components >= 1 && T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         if constexpr (T::Components == 4)
@@ -7745,7 +7745,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Min(T a, T b) noexcept
-        requires VectorLike<T>and Comparable<T>
+        requires VectorLike<T> and Comparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -7769,7 +7769,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Max(T a, T b) noexcept
-        requires VectorLike<T>and Comparable<T>
+        requires VectorLike<T> and Comparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -7794,7 +7794,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Clamp(T v, T min, T max) noexcept
-        requires VectorLike<T>and Comparable<T>
+        requires VectorLike<T> and Comparable<T>
     {
         GX_ASSERT(IsLessEqual(min, max));
 
@@ -9221,7 +9221,7 @@ namespace Graphyte::Maths
         __m128 const v_len_sq = _mm_dp_ps(q.V, q.V, 0x7F);
         __m128 const v_rcp_len = _mm_rsqrt_ps(v_len_sq);
         __m128 const v_len = _mm_rcp_ps(v_rcp_len);
-        
+
 #if GRAPHYTE_MATH_SVML
         __m128 coslen;
         __m128 const sinlen = _mm_sincos_ps(&coslen, v_len);
@@ -9239,7 +9239,7 @@ namespace Graphyte::Maths
 
         // w = q.wwww
         __m128 const q_w = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
-        
+
         // exp(w)
 #if GRAPHYTE_MATH_SVML
         __m128 const q_w_exp = _mm_exp_ps(q_w);
@@ -9282,7 +9282,7 @@ namespace Graphyte::Maths
 
         __m128 const rcp = _mm_mul_ps(q_w, _mm_rsqrt_ps(q_len_sq));
         __m128 const clamped = _mm_max_ps(_mm_min_ps(rcp, pone), none);
-        
+
 #if GRAPHYTE_MATH_SVML
         __m128 const acos_clamped = _mm_acos_ps(clamped);
 #else
@@ -10911,7 +10911,7 @@ namespace Graphyte::Maths
     {
         return value * 400.0F;
     }
-    
+
     template <typename T>
     mathinline T mathcall DegreesToRevolutions(T value) noexcept
         requires VectorLike<T> and Arithmetic<T>
@@ -10931,7 +10931,7 @@ namespace Graphyte::Maths
     {
         return value / 360.0F;
     }
-    
+
     template <typename T>
     mathinline T mathcall RadiansToRevolutions(T value) noexcept
         requires VectorLike<T> and Arithmetic<T>
@@ -10951,7 +10951,7 @@ namespace Graphyte::Maths
     {
         return value / Maths::PI2<float>;
     }
-    
+
     template <typename T>
     mathinline T mathcall GradiansToRevolutions(T value) noexcept
         requires VectorLike<T> and Arithmetic<T>
@@ -10971,7 +10971,7 @@ namespace Graphyte::Maths
     {
         return value / 400.0F;
     }
-    
+
     template <typename T>
     mathinline T mathcall RadiansToGradians(T value) noexcept
         requires VectorLike<T> and Arithmetic<T>
@@ -10991,7 +10991,7 @@ namespace Graphyte::Maths
     {
         return value * (200.0F / Maths::PI<float>);
     }
-    
+
     template <typename T>
     mathinline T mathcall GradiansToRadians(T value) noexcept
         requires VectorLike<T> and Arithmetic<T>
@@ -11031,7 +11031,7 @@ namespace Graphyte::Maths
     {
         return value * (180.0F / Maths::PI<float>);
     }
-    
+
     template <typename T>
     mathinline T mathcall DegreesToRadians(T value) noexcept
         requires VectorLike<T> and Arithmetic<T>
@@ -11051,7 +11051,7 @@ namespace Graphyte::Maths
     {
         return value * (Maths::PI<float> / 180.0F);
     }
-    
+
     template <typename T>
     mathinline T mathcall GradiansToDegrees(T value) noexcept
         requires VectorLike<T> and Arithmetic<T>
@@ -11071,7 +11071,7 @@ namespace Graphyte::Maths
     {
         return value * (9.0F / 10.0F);
     }
-    
+
     template <typename T>
     mathinline T mathcall DegreesToGradians(T value) noexcept
         requires VectorLike<T> and Arithmetic<T>
@@ -11166,7 +11166,7 @@ namespace Graphyte::Maths
         {
             return static_cast<uint32_t>((1 << bits) - 1);
         }
-        
+
 
         return static_cast<uint32_t>(value * (1U << bits));
     }
