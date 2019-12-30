@@ -1,6 +1,56 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / Vector4 / Vector4 Cross Product")
+{
+    using namespace Graphyte::Maths;
+
+    Vector4 v0 = Make<Vector4>(1.0F, 2.0F, 1.0F, 3.0F);
+    Vector4 v1 = Make<Vector4>(3.0F, 1.0F, 3.0F, 5.0F);
+    Vector4 v2 = Make<Vector4>(2.0F, 2.0F, 3.0F, 2.0F);
+    Vector4 v3 = Make<Vector4>(-2.0F, 2.0F, -3.0F, 2.0F);
+
+    SECTION("cross(v0, v1, v2)")
+    {
+        Vector4 r = Cross(v0, v1, v2);
+
+        CHECK(GetX(r) == -19.0F);
+        CHECK(GetY(r) == -4.0F);
+        CHECK(GetZ(r) == 12.0F);
+        CHECK(GetW(r) == 5.0F);
+    }
+
+    SECTION("cross(v1, v0, v2)")
+    {
+        Vector4 r = Cross(v1, v0, v2);
+
+        CHECK(GetX(r) == 19.0F);
+        CHECK(GetY(r) == 4.0F);
+        CHECK(GetZ(r) == -12.0F);
+        CHECK(GetW(r) == -5.0F);
+    }
+
+    SECTION("cross(v1, v2, v3)")
+    {
+        Vector4 r = Cross(v1, v2, v3);
+
+        CHECK(GetX(r) == -48.0F);
+        CHECK(GetY(r) == -12.0F);
+        CHECK(GetZ(r) == 32.0F);
+        CHECK(GetW(r) == 12.0F);
+    }
+
+    SECTION("cross(v2, v3, v0)")
+    {
+        Vector4 r = Cross(v2, v3, v0);
+
+        CHECK(GetX(r) == -12.0F);
+        CHECK(GetY(r) == -4.0F);
+        CHECK(GetZ(r) == 8.0F);
+        CHECK(GetW(r) == 4.0F);
+    }
+}
+
 
 TEST_CASE("BitCast between floating type")
 {

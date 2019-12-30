@@ -6769,6 +6769,8 @@ namespace Graphyte::Maths
                 copysignf(number.V.F[2], sign.V.F[2]),
                 copysignf(number.V.F[3], sign.V.F[3]),
             } } };
+
+        return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const mask = _mm_castsi128_ps(_mm_set1_epi32(static_cast<int>(0x80000000)));
         __m128 const sign_mask = _mm_and_ps(sign.V, mask);
@@ -8876,14 +8878,19 @@ namespace Graphyte::Maths
             } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        __m128 const a_yzxw = _mm_permute_ps(a.V, _MM_SHUFFLE(3, 0, 2, 1));
-        __m128 const b_zxyw = _mm_permute_ps(b.V, _MM_SHUFFLE(3, 1, 0, 2));
-        __m128 const mul_a_yzxw_b_zxyw = _mm_mul_ps(a_yzxw, b_zxyw);
-        __m128 const a_zxyw = _mm_permute_ps(a_yzxw, _MM_SHUFFLE(3, 0, 2, 1));
-        __m128 const b_yzxw = _mm_permute_ps(b_zxyw, _MM_SHUFFLE(3, 1, 0, 2));
-        __m128 const mul_a_zxyw_b_yzxw = _mm_mul_ps(a_zxyw, b_yzxw);
-        __m128 const sub_ab_ba = _mm_sub_ps(mul_a_yzxw_b_zxyw, mul_a_zxyw_b_yzxw);
-        __m128 const result = _mm_and_ps(sub_ab_ba, Impl::VEC4_MASK_COMPONENTS_3.V);
+        // m0 = (a.yzx * b.zxy)
+        __m128 const a0 = _mm_permute_ps(a.V, _MM_SHUFFLE(3, 0, 2, 1));
+        __m128 const b0 = _mm_permute_ps(b.V, _MM_SHUFFLE(3, 1, 0, 2));
+        __m128 const m0 = _mm_mul_ps(a0, b0);
+
+        // m1 = (a.zxy * b.yzx)
+        __m128 const a1 = _mm_permute_ps(a0, _MM_SHUFFLE(3, 0, 2, 1));
+        __m128 const b1 = _mm_permute_ps(b0, _MM_SHUFFLE(3, 1, 0, 2));
+        __m128 const m1 = _mm_mul_ps(a1, b1);
+
+        // r0 = m0 - m1
+        __m128 const r0 = _mm_sub_ps(m0, m1);
+        __m128 const result = _mm_and_ps(r0, Impl::VEC4_MASK_COMPONENTS_3.V);
         return { result };
 #endif
     }
