@@ -198,10 +198,12 @@ workspace "graphyte"
     filter { "language:C" }
         cdialect "C11"
 
-    filter { "system:linux", "language:C++", "toolset:clang* or gcc*" }
+    filter { "language:C++", "toolset:clang* or gcc*" }
         buildoptions {
             "-std=c++2a",
             "-Wno-parentheses",
+            "-ffunction-sections",
+            "-fdata-sections",
         }
 
     filter { "toolset:gcc", "language:C++" }
