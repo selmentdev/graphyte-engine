@@ -200,10 +200,12 @@ namespace Graphyte::Maths
 // Include some internal specific implementation details.
 //
 
+#if !GRAPHYTE_MATH_NO_INTRINSICS
 #if GRAPHYTE_HW_AVX
 #include <Graphyte/Maths/Impl/Avx.impl.hxx>
 #elif GRAPHYTE_HW_NEON
 #include <Graphyte/Maths/Impl/Neon.impl.hxx>
+#endif
 #endif
 
 

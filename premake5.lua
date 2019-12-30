@@ -104,8 +104,6 @@ function graphyte_test()
         "%{wks.location}/sdks/catch2/include"
     }
 
-    filter { "toolset:msc*" }
-        -- ufinclude {} -- this breaks unit tests line numbering feature
 
     filter { "toolset:msc*" }
         files {
@@ -161,12 +159,9 @@ workspace "graphyte"
     jmcenabled(false)
 
     ufenabled(true)
-    ufsamefolder(true)
-    ufminsources(4)
-    ufmaxsources(50)
 
     flags {
-        "MultiProcessorCompile",
+        --"MultiProcessorCompile",
         "FatalWarnings",
         "NoManifest",
         "UndefinedIdentifiers",

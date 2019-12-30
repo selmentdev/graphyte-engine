@@ -1,6 +1,6 @@
 if _OPTIONS["with-tests"] == "yes" then
 
-    group "engine/tests"
+    group "runtime/tests"
 
     include "base"
     include "entities"
