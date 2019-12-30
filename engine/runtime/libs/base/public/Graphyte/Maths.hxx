@@ -1251,10 +1251,52 @@ namespace Graphyte::Maths
     concept VectorLike = IsVectorLike<T>::value;
 
     template <typename T>
+    struct IsFloatVector : std::false_type { };
+
+    template <typename T>
+    concept FloatVector = IsFloatVector<T>::value;
+
+    template <typename T>
+    struct IsDoubleVector : std::false_type { };
+
+    template <typename T>
+    concept DoubleVector = IsDoubleVector<T>::value;
+
+    template <typename T>
+    struct IsUIntVector : std::false_type { };
+
+    template <typename T>
+    concept UIntVector = IsUIntVector<T>::value;
+
+    template <typename T>
+    struct IsIntVector : std::false_type { };
+
+    template <typename T>
+    concept IntVector = IsIntVector<T>::value;
+
+    template <typename T>
+    struct IsBoolVector : std::false_type { };
+
+    template <typename T>
+    concept BoolVector = IsBoolVector<T>::value;
+
+    template <typename T>
     struct IsMatrixLike : std::false_type { };
 
     template <typename T>
     concept MatrixLike = IsMatrixLike<T>::value;
+
+    template <typename T>
+    struct IsFloatMatrix : std::false_type { };
+
+    template <typename T>
+    concept FloatMatrix = IsFloatMatrix<T>::value;
+
+    template <typename T>
+    struct IsDoubleMatrix : std::false_type { };
+
+    template <typename T>
+    concept DoubleMatrix = IsDoubleMatrix<T>::value;
 
     template <typename T>
     struct IsAffineSpace : std::false_type { };
