@@ -89,9 +89,6 @@ function graphyte_app()
     graphyte_common {}
 
     filter { "toolset:msc*" }
-        ufinclude {}
-
-    filter { "toolset:msc*" }
         files {
             "%{wks.location}/engine/resources/*.h",
             "%{wks.location}/engine/resources/*.rc*",
@@ -161,8 +158,12 @@ workspace "graphyte"
     startproject "game"
     exceptionhandling "off"
 
-    jmcdisabled {}
-    ufenabled {}
+    jmcenabled(false)
+
+    ufenabled(true)
+    ufsamefolder(true)
+    ufminsources(4)
+    ufmaxsources(50)
 
     flags {
         "MultiProcessorCompile",

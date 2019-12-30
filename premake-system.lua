@@ -46,6 +46,13 @@ require "vstudio"
     }
 
     api.register {
+        name = "ufmaxsources",
+        scope = "config",
+        kind = "number",
+        default = 0
+    }
+
+    api.register {
         name = "ufoutput",
         scope = "config",
         kind = "path",
@@ -84,7 +91,7 @@ require "vstudio"
     }
 
     api.register {
-        name = "jmcdisabled",
+        name = "jmcenabled",
         scope = "config",
         kind = "boolean",
     }
@@ -106,40 +113,59 @@ require "vstudio"
     local vstudio = p.vstudio
     local m = vstudio.vc2010
 
-    -- Enable modules experimental support
     p.override(p.vstudio.vc2010.elements, "clCompile", function(base, cfg)
         local calls = base(cfg)
-        if cfg.enablemodules then
-            table.insert(calls, function(cfg)
-                p.vstudio.vc2010.element("EnableModules", nil, "true")
-            end)
-        end
-        return calls
-    end)
 
-    -- Disable support for JustMyCode for scope
-    p.override(p.vstudio.vc2010.elements, "clCompile", function(base, cfg)
-        local calls = base(cfg)
-        if cfg.jmcdisabled then
+        -- Enable modules experimental support
+        if cfg.enablemodules ~= nil then
             table.insert(calls, function(cfg)
-                p.vstudio.vc2010.element("SupportJustMyCode", nil, "false")
+                p.vstudio.vc2010.element("EnableModules", nil, tostring(cfg.enablemodules))
             end)
         end
+
+        -- Disable support for JustMyCode for scope
+        if cfg.jmcenabled ~= nil then
+            table.insert(calls, function(cfg)
+                p.vstudio.vc2010.element("SupportJustMyCode", nil, tostring(cfg.jmcenabled))
+            end)
+        end
+
+        -- Unity Build Same Folder setting
+        if cfg.ufsamefolder ~= nil then
+            table.insert(calls, function(cfg)
+                p.vstudio.vc2010.element("CombineFilesOnlyFromTheSameFolder", nil, tostring(cfg.ufsamefolder))
+            end)
+        end
+
+        -- Unity Build min source files per unity file
+        if cfg.ufminsources ~= nil then
+            table.insert(calls, function(cfg)
+                p.vstudio.vc2010.element("MinFilesInUnityFile", nil, tostring(cfg.ufminsources))
+            end)
+        end
+
+        -- Unity Build max source files per unity file
+        if cfg.ufmaxsources ~= nil then
+            table.insert(calls, function(cfg)
+                p.vstudio.vc2010.element("MaxFilesInUnityFile", nil, tostring(cfg.ufmaxsources))
+            end)
+        end
+
         return calls
     end)
 
     -- Set the required global property value to true
     p.override(p.vstudio.vc2010.elements, "globals", function(base, proj)
         local calls = base(proj)
-        if proj.ufenabled then
+        if proj.ufenabled ~= nil then
             table.insertafter(calls, m.projectName, function()
-                m.element("EnableUnitySupport", nil, "true")
+                m.element("EnableUnitySupport", nil, tostring(proj.ufenabled))
             end)
         end
 
         if proj.EnableClangTidyCodeAnalysis then
             table.insertafter(calls, m.projectName, function()
-                m.element("EnableClangTidyCodeAnalysis", nil, "true")
+                m.element("EnableClangTidyCodeAnalysis", nil, tostring(proj.EnableClangTidyCodeAnalysis))
             end)
         end
 
