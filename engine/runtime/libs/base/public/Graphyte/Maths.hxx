@@ -9520,100 +9520,71 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-    static Impl::ConstFloat32x4 const XMPMMP = { { { +1.0f, -1.0f, -1.0f, +1.0f } } };
-    static Impl::ConstFloat32x4 const XMMPMP = { { { -1.0f, +1.0f, -1.0f, +1.0f } } };
-    static Impl::ConstFloat32x4 const XMMMPP = { { { -1.0f, -1.0f, +1.0f, +1.0f } } };
+    static Impl::ConstFloat32x4 const const_p1_m1_m1_p1{ { { +1.0f, -1.0f, -1.0f, +1.0f } } };
+    static Impl::ConstFloat32x4 const const_m1_p1_m1_p1{ { { -1.0f, +1.0f, -1.0f, +1.0f } } };
+    static Impl::ConstFloat32x4 const const_m1_m1_p1_p1{ { { -1.0f, -1.0f, +1.0f, +1.0f } } };
 
-    __m128 r0 = m.M.R[0];  // (r00, r01, r02, 0)
-    __m128 r1 = m.M.R[1];  // (r10, r11, r12, 0)
-    __m128 r2 = m.M.R[2];  // (r20, r21, r22, 0)
+    __m128 const r0_xyz = m.M.R[0];
+    __m128 const r1_xyz = m.M.R[1];
+    __m128 const r2_xyz = m.M.R[2];
 
-    // (r00, r00, r00, r00)
-    __m128 r00 = _mm_permute_ps(r0, _MM_SHUFFLE(0,0,0,0));
-    // (r11, r11, r11, r11)
-    __m128 r11 = _mm_permute_ps(r1, _MM_SHUFFLE(1,1,1,1));
-    // (r22, r22, r22, r22)
-    __m128 r22 = _mm_permute_ps(r2, _MM_SHUFFLE(2,2,2,2));
+    __m128 const r0_xxx = _mm_permute_ps(r0_xyz, _MM_SHUFFLE(0,0,0,0));
+    __m128 const r1_yyy = _mm_permute_ps(r1_xyz, _MM_SHUFFLE(1,1,1,1));
+    __m128 const r2_zzz = _mm_permute_ps(r2_xyz, _MM_SHUFFLE(2,2,2,2));
 
-    // x^2 >= y^2 equivalent to r11 - r00 <= 0
-    // (r11 - r00, r11 - r00, r11 - r00, r11 - r00)
-    __m128 r11mr00 = _mm_sub_ps(r11, r00);
-    __m128 x2gey2 = _mm_cmple_ps(r11mr00, _mm_setzero_ps());
+    __m128 const sub_m11_m00 = _mm_sub_ps(r1_yyy, r0_xxx);
+    __m128 const mask_x2_ge_y2 = _mm_cmple_ps(sub_m11_m00, _mm_setzero_ps());
 
-    // z^2 >= w^2 equivalent to r11 + r00 <= 0
-    // (r11 + r00, r11 + r00, r11 + r00, r11 + r00)
-    __m128 r11pr00 = _mm_add_ps(r11, r00);
-    __m128 z2gew2 = _mm_cmple_ps(r11pr00, _mm_setzero_ps());
+    __m128 const add_m11_m00 = _mm_add_ps(r1_yyy, r0_xxx);
+    __m128 const mask_z2_ge_w2 = _mm_cmple_ps(add_m11_m00, _mm_setzero_ps());
 
-    // x^2 + y^2 >= z^2 + w^2 equivalent to r22 <= 0
-    __m128 x2py2gez2pw2 = _mm_cmple_ps(r22, _mm_setzero_ps());
+    __m128 const mask_x2y2_ge_z2w2 = _mm_cmple_ps(r2_zzz, _mm_setzero_ps());
 
-    // (+r00, -r00, -r00, +r00)
-    __m128 t0 = _mm_mul_ps(XMPMMP.V, r00);
+    __m128 const t0_0 = _mm_mul_ps(const_p1_m1_m1_p1.V, r0_xxx);
+    __m128 const t1_0 = _mm_mul_ps(const_m1_p1_m1_p1.V, r1_yyy);
+    __m128 const t2_0 = _mm_mul_ps(const_m1_m1_p1_p1.V, r2_zzz);
 
-    // (-r11, +r11, -r11, +r11)
-    __m128 t1 = _mm_mul_ps(XMMPMP.V, r11);
+    __m128 const x2y2z2w2_0 = _mm_add_ps(t0_0, t1_0);
+    __m128 const x2y2z2w2_1 = _mm_add_ps(t2_0, x2y2z2w2_0);
+    __m128 const x2y2z2w2_2 = _mm_add_ps(x2y2z2w2_1, Impl::VEC4_ONE_4.V);
 
-    // (-r22, -r22, +r22, +r22)
-    __m128 t2 = _mm_mul_ps(XMMMPP.V, r22);
+    __m128 const t0_1 = _mm_shuffle_ps(r0_xyz, r1_xyz, _MM_SHUFFLE(1,2,2,1));
+    __m128 const t1_1_a = _mm_shuffle_ps(r1_xyz, r2_xyz, _MM_SHUFFLE(1,0,0,0));
+    __m128 const t1_1 = _mm_permute_ps(t1_1_a, _MM_SHUFFLE(1,3,2,0));
 
-    // (4*x^2, 4*y^2, 4*z^2, 4*w^2)
-    __m128 x2y2z2w2 = _mm_add_ps(t0, t1);
-    x2y2z2w2 = _mm_add_ps(t2, x2y2z2w2);
-    x2y2z2w2 = _mm_add_ps(x2y2z2w2, Impl::VEC4_ONE_4.V);
+    __m128 const xyxzyz = _mm_add_ps(t0_1, t1_1);
 
-    // (r01, r02, r12, r11)
-    t0 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(1,2,2,1));
-    // (r10, r10, r20, r21)
-    t1 = _mm_shuffle_ps(r1, r2, _MM_SHUFFLE(1,0,0,0));
-    // (r10, r20, r21, r10)
-    t1 = _mm_permute_ps(t1, _MM_SHUFFLE(1,3,2,0));
-    // (4*x*y, 4*x*z, 4*y*z, unused)
-    __m128 xyxzyz = _mm_add_ps(t0, t1);
+    __m128 const t0_2 = _mm_shuffle_ps(r2_xyz, r1_xyz, _MM_SHUFFLE(0,0,0,1));
+    __m128 const t1_2_a = _mm_shuffle_ps(r1_xyz, r0_xyz, _MM_SHUFFLE(1,2,2,2));
+    __m128 const t1_2 = _mm_permute_ps(t1_2_a, _MM_SHUFFLE(1,3,2,0));
 
-    // (r21, r20, r10, r10)
-    t0 = _mm_shuffle_ps(r2, r1, _MM_SHUFFLE(0,0,0,1));
-    // (r12, r12, r02, r01)
-    t1 = _mm_shuffle_ps(r1, r0, _MM_SHUFFLE(1,2,2,2));
-    // (r12, r02, r01, r12)
-    t1 = _mm_permute_ps(t1, _MM_SHUFFLE(1,3,2,0));
-    // (4*x*w, 4*y*w, 4*z*w, unused)
-    __m128 xwywzw = _mm_sub_ps(t0, t1);
-    xwywzw = _mm_mul_ps(XMMPMP.V, xwywzw);
+    __m128 const xwywzw_0 = _mm_sub_ps(t0_2, t1_2);
+    __m128 const xwywzw_1 = _mm_mul_ps(const_m1_p1_m1_p1.V, xwywzw_0);
 
-    // (4*x^2, 4*y^2, 4*x*y, unused)
-    t0 = _mm_shuffle_ps(x2y2z2w2, xyxzyz, _MM_SHUFFLE(0,0,1,0));
-    // (4*z^2, 4*w^2, 4*z*w, unused)
-    t1 = _mm_shuffle_ps(x2y2z2w2, xwywzw, _MM_SHUFFLE(0,2,3,2));
-    // (4*x*z, 4*y*z, 4*x*w, 4*y*w)
-    t2 = _mm_shuffle_ps(xyxzyz, xwywzw, _MM_SHUFFLE(1,0,2,1));
+    __m128 const t0_3 = _mm_shuffle_ps(x2y2z2w2_2, xyxzyz, _MM_SHUFFLE(0,0,1,0));
+    __m128 const t1_3 = _mm_shuffle_ps(x2y2z2w2_2, xwywzw_1, _MM_SHUFFLE(0,2,3,2));
+    __m128 const t2_3 = _mm_shuffle_ps(xyxzyz, xwywzw_1, _MM_SHUFFLE(1,0,2,1));
 
-    // (4*x*x, 4*x*y, 4*x*z, 4*x*w)
-    __m128 tensor0 = _mm_shuffle_ps(t0, t2, _MM_SHUFFLE(2,0,2,0));
-    // (4*y*x, 4*y*y, 4*y*z, 4*y*w)
-    __m128 tensor1 = _mm_shuffle_ps(t0, t2, _MM_SHUFFLE(3,1,1,2));
-    // (4*z*x, 4*z*y, 4*z*z, 4*z*w)
-    __m128 tensor2 = _mm_shuffle_ps(t2, t1, _MM_SHUFFLE(2,0,1,0));
-    // (4*w*x, 4*w*y, 4*w*z, 4*w*w)
-    __m128 tensor3 = _mm_shuffle_ps(t2, t1, _MM_SHUFFLE(1,2,3,2));
+    __m128 const tensor0 = _mm_shuffle_ps(t0_3, t2_3, _MM_SHUFFLE(2,0,2,0));
+    __m128 const tensor1 = _mm_shuffle_ps(t0_3, t2_3, _MM_SHUFFLE(3,1,1,2));
+    __m128 const tensor2 = _mm_shuffle_ps(t2_3, t1_3, _MM_SHUFFLE(2,0,1,0));
+    __m128 const tensor3 = _mm_shuffle_ps(t2_3, t1_3, _MM_SHUFFLE(1,2,3,2));
 
-    // Select the row of the tensor-product matrix that has the largest
-    // magnitude.
-    t0 = _mm_and_ps(x2gey2, tensor0);
-    t1 = _mm_andnot_ps(x2gey2, tensor1);
-    t0 = _mm_or_ps(t0, t1);
-    t1 = _mm_and_ps(z2gew2, tensor2);
-    t2 = _mm_andnot_ps(z2gew2, tensor3);
-    t1 = _mm_or_ps(t1, t2);
-    t0 = _mm_and_ps(x2py2gez2pw2, t0);
-    t1 = _mm_andnot_ps(x2py2gez2pw2, t1);
-    t2 = _mm_or_ps(t0, t1);
+    __m128 const ga0 = _mm_and_ps(mask_x2_ge_y2, tensor0);
+    __m128 const gb0 = _mm_andnot_ps(mask_x2_ge_y2, tensor1);
+    __m128 const t0 = _mm_or_ps(ga0, gb0);
 
-    // Normalize the row.  No division by zero is possible because the
-    // quaternion is unit-length (and the row is a nonzero multiple of
-    // the quaternion).
-    t0 = Length(As<Vector4>(t2)).V;
-    return { _mm_div_ps(t2, t0) };
+    __m128 const ga1 = _mm_and_ps(mask_z2_ge_w2, tensor2);
+    __m128 const gb1 = _mm_andnot_ps(mask_z2_ge_w2, tensor3);
+    __m128 const t1 = _mm_or_ps(ga1, gb1);
+
+    __m128 const m0 = _mm_and_ps(mask_x2y2_ge_z2w2, t0);
+    __m128 const m1 = _mm_andnot_ps(mask_x2y2_ge_z2w2, t1);
+    __m128 const m2 = _mm_or_ps(m0, m1);
+
+    __m128 const length = Length(As<Vector4>(m2)).V;
+
+    return { _mm_div_ps(m2, length) };
 #endif
     }
 
@@ -10951,35 +10922,6 @@ namespace Graphyte::Maths
         result.M.R[2] = Permute<4, 5, 2, 3>(s0, r3).V;
         result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
         return result;
-
-        //XMVECTOR Q0 = XMVectorAdd(Quaternion, Quaternion);
-        //XMVECTOR Q1 = XMVectorMultiply(Quaternion, Q0);
-
-        //XMVECTOR V0 = XMVectorPermute<XM_PERMUTE_0Y, XM_PERMUTE_0X, XM_PERMUTE_0X, XM_PERMUTE_1W>(Q1, VEC4_ONE_3.v);
-        //XMVECTOR V1 = XMVectorPermute<XM_PERMUTE_0Z, XM_PERMUTE_0Z, XM_PERMUTE_0Y, XM_PERMUTE_1W>(Q1, VEC4_ONE_3.v);
-        //XMVECTOR R0 = XMVectorSubtract(Impl::VEC4_ONE_3, V0);
-        //R0 = XMVectorSubtract(R0, V1);
-
-        //V0 = XMVectorSwizzle<XM_SWIZZLE_X, XM_SWIZZLE_X, XM_SWIZZLE_Y, XM_SWIZZLE_W>(Quaternion);
-        //V1 = XMVectorSwizzle<XM_SWIZZLE_Z, XM_SWIZZLE_Y, XM_SWIZZLE_Z, XM_SWIZZLE_W>(Q0);
-        //V0 = XMVectorMultiply(V0, V1);
-
-        //V1 = XMVectorSplatW(Quaternion);
-        //XMVECTOR V2 = XMVectorSwizzle<XM_SWIZZLE_Y, XM_SWIZZLE_Z, XM_SWIZZLE_X, XM_SWIZZLE_W>(Q0);
-        //V1 = XMVectorMultiply(V1, V2);
-
-        //XMVECTOR R1 = XMVectorAdd(V0, V1);
-        //XMVECTOR R2 = XMVectorSubtract(V0, V1);
-
-        //V0 = XMVectorPermute<XM_PERMUTE_0Y, XM_PERMUTE_1X, XM_PERMUTE_1Y, XM_PERMUTE_0Z>(R1, R2);
-        //V1 = XMVectorPermute<XM_PERMUTE_0X, XM_PERMUTE_1Z, XM_PERMUTE_0X, XM_PERMUTE_1Z>(R1, R2);
-
-        //XMMATRIX M;
-        //M.r[0] = XMVectorPermute<XM_PERMUTE_0X, XM_PERMUTE_1X, XM_PERMUTE_1Y, XM_PERMUTE_0W>(R0, V0);
-        //M.r[1] = XMVectorPermute<XM_PERMUTE_1Z, XM_PERMUTE_0Y, XM_PERMUTE_1W, XM_PERMUTE_0W>(R0, V0);
-        //M.r[2] = XMVectorPermute<XM_PERMUTE_1X, XM_PERMUTE_1Y, XM_PERMUTE_0Z, XM_PERMUTE_0W>(R0, V1);
-        //M.r[3] = g_XMIdentityR3.v;
-        //return M;
 
 #elif GRAPHYTE_HW_AVX
         static Impl::ConstFloat32x4 const Constant1110 = { { { 1.0f, 1.0f, 1.0f, 0.0f } } };
