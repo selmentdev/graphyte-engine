@@ -60,6 +60,9 @@ namespace Graphyte::Maths::Impl
 #else
 #error Unknown architecture
 #endif
+
+    static_assert(alignof(NativeFloat32x4) == 16);
+    static_assert(sizeof(NativeFloat32x4) == 16);
 }
 
 
@@ -94,7 +97,12 @@ namespace Graphyte::Maths::Impl
         NativeFloat32x4 R[4];
     };
 #endif
+
+    static_assert(alignof(NativeFloat32x4x4) == 16);
+    static_assert(sizeof(NativeFloat32x4x4) == 64);
 }
+
+
 // =================================================================================================
 //
 // Constant types
@@ -112,6 +120,8 @@ namespace Graphyte::Maths::Impl
     };
 
     static_assert(std::is_pod_v<ConstFloat32x4>);
+    static_assert(alignof(ConstFloat32x4) == 16);
+    static_assert(sizeof(ConstFloat32x4) == 16);
 
     struct alignas(16) ConstInt32x4 final
     {
@@ -122,6 +132,8 @@ namespace Graphyte::Maths::Impl
         };
     };
     static_assert(std::is_pod_v<ConstInt32x4>);
+    static_assert(alignof(ConstInt32x4) == 16);
+    static_assert(sizeof(ConstInt32x4) == 16);
 
     struct alignas(16) ConstUInt32x4 final
     {
@@ -132,6 +144,8 @@ namespace Graphyte::Maths::Impl
         };
     };
     static_assert(std::is_pod_v<ConstUInt32x4>);
+    static_assert(alignof(ConstUInt32x4) == 16);
+    static_assert(sizeof(ConstUInt32x4) == 16);
 
     struct alignas(16) ConstUInt8x16 final
     {
@@ -142,6 +156,8 @@ namespace Graphyte::Maths::Impl
         };
     };
     static_assert(std::is_pod_v<ConstUInt8x16>);
+    static_assert(alignof(ConstUInt8x16) == 16);
+    static_assert(sizeof(ConstUInt8x16) == 16);
 }
 
 // =================================================================================================
@@ -213,6 +229,7 @@ namespace Graphyte::Maths
 //
 // Vector constants
 //
+
 namespace Graphyte::Maths::Impl
 {
     mathconst ConstFloat32x4 VEC4_POSITIVE_UNIT_X = { { {
@@ -1281,7 +1298,8 @@ namespace Graphyte::Maths
 
     template <> struct IsVectorLike<Bool4> : std::true_type { };
     template <> struct IsEqualComparable<Bool4> : std::true_type { };
-    template <> struct IsLogical<Bool4> : std::true_type { };
+    template <> struct IsLogical<Bool4> : std::true_type { }; // deprecate
+    template <> struct IsBoolVector<Bool4> : std::true_type { };
 
 
     struct Bool3 final
@@ -1297,6 +1315,7 @@ namespace Graphyte::Maths
     template <> struct IsVectorLike<Bool3> : std::true_type { };
     template <> struct IsEqualComparable<Bool3> : std::true_type { };
     template <> struct IsLogical<Bool3> : std::true_type { };
+    template <> struct IsBoolVector<Bool3> : std::true_type { };
 
 
     struct Bool2 final
@@ -1311,6 +1330,7 @@ namespace Graphyte::Maths
     template <> struct IsVectorLike<Bool2> : std::true_type { };
     template <> struct IsEqualComparable<Bool2> : std::true_type { };
     template <> struct IsLogical<Bool2> : std::true_type { };
+    template <> struct IsBoolVector<Bool2> : std::true_type { };
 
 
     struct Bool1 final
@@ -1325,6 +1345,7 @@ namespace Graphyte::Maths
     template <> struct IsVectorLike<Bool1> : std::true_type { };
     template <> struct IsEqualComparable<Bool1> : std::true_type { };
     template <> struct IsLogical<Bool1> : std::true_type { };
+    template <> struct IsBoolVector<Bool1> : std::true_type { };
 
     struct Vector4 final
     {
@@ -1346,6 +1367,7 @@ namespace Graphyte::Maths
     template <> struct IsInterpolable<Vector4> : std::true_type { };
     template <> struct IsVectorSpace<Vector4> : std::true_type { };
     template <> struct IsGeometric<Vector4> : std::true_type { };
+    template <> struct IsFloatVector<Vector4> : std::true_type { };
 
     struct Vector3 final
     {
@@ -1367,6 +1389,7 @@ namespace Graphyte::Maths
     template <> struct IsInterpolable<Vector3> : std::true_type { };
     template <> struct IsVectorSpace<Vector3> : std::true_type { };
     template <> struct IsGeometric<Vector3> : std::true_type { };
+    template <> struct IsFloatVector<Vector3> : std::true_type { };
 
     struct Vector2 final
     {
@@ -1388,6 +1411,7 @@ namespace Graphyte::Maths
     template <> struct IsInterpolable<Vector2> : std::true_type { };
     template <> struct IsVectorSpace<Vector2> : std::true_type { };
     template <> struct IsGeometric<Vector2> : std::true_type { };
+    template <> struct IsFloatVector<Vector2> : std::true_type { };
 
     struct Vector1 final
     {
@@ -1408,6 +1432,7 @@ namespace Graphyte::Maths
     template <> struct IsInterpolable<Vector1> : std::true_type { };
     template <> struct IsVectorSpace<Vector1> : std::true_type { };
     template <> struct IsGeometric<Vector1> : std::true_type { };
+    template <> struct IsFloatVector<Vector1> : std::true_type { };
 
 
     struct Quaternion final
@@ -1425,6 +1450,7 @@ namespace Graphyte::Maths
     template <> struct IsStorable<Quaternion> : std::true_type { };
     template <> struct IsArithmetic<Quaternion> : std::true_type { };
     template <> struct IsQuaternionSpace<Quaternion> : std::true_type { };
+    template <> struct IsFloatVector<Quaternion> : std::true_type { };
 
     struct Plane final
     {
@@ -1439,6 +1465,7 @@ namespace Graphyte::Maths
     template <> struct IsEqualComparable<Plane> : std::true_type { };
     template <> struct IsLoadable<Plane> : std::true_type { };
     template <> struct IsStorable<Plane> : std::true_type { };
+    template <> struct IsFloatVector<Plane> : std::true_type { };
 
     struct Sphere final
     {
@@ -1453,6 +1480,7 @@ namespace Graphyte::Maths
     template <> struct IsEqualComparable<Sphere> : std::true_type { };
     template <> struct IsLoadable<Sphere> : std::true_type { };
     template <> struct IsStorable<Sphere> : std::true_type { };
+    template <> struct IsFloatVector<Sphere> : std::true_type { };
 
     struct Matrix final
     {
@@ -1470,6 +1498,7 @@ namespace Graphyte::Maths
     template <> struct IsStorable<Matrix> : std::true_type { };
     template <> struct IsArithmetic<Matrix> : std::true_type { };
     template <> struct IsRoundable<Matrix> : std::true_type { };
+    template <> struct IsFloatMatrix<Matrix> : std::true_type { };
 
     struct Color final
     {
@@ -1486,6 +1515,7 @@ namespace Graphyte::Maths
     template <> struct IsOrderComparable<Color> : std::true_type { };
     template <> struct IsEqualComparable<Color> : std::true_type { };
     template <> struct IsInterpolable<Color> : std::true_type { };
+    template <> struct IsFloatVector<Color> : std::true_type { };
 }
 
 
@@ -2311,7 +2341,6 @@ namespace Graphyte::Maths
         return { Impl::neon_permute(a.V, b.V, x, y, z, w);
 #endif
     }
-
 
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline Vector4 mathcall Permute(Vector4 a, Vector4 b) noexcept
@@ -8092,6 +8121,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Smoothstep(T a, T b, T x) noexcept
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
     {
         T const length = Subtract(x, a);
         T const base = Subtract(b, a);
@@ -9388,6 +9418,205 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Quaternion mathcall CreateFromMatrix(Matrix m) noexcept
+    {
+        //
+        // Converting a Rotation Matrix to a Quaternion
+        // Mike Day, Insomniac Gamesmday@insomniacgames.com
+        //
+        //  if (m22 < 0)
+        //  {
+        //      if (m00 > m11)
+        //      {
+        //          t = 1 + m00 - m11 - m22;
+        //          q = quat(t, m01 + m10, m20 + m02, m12 - m21);
+        //      }
+        //      else
+        //      {
+        //          t = 1 - m00 + m11 - m22;
+        //          q = quat(m01 + m10, t, m12 + m21, m20 - m02);
+        //      }
+        //  }
+        //  else
+        //  {
+        //      if (m00 < -m11)
+        //      {
+        //          t = 1 - m00 - m11 + m22;
+        //          q = quat(m20 + m02, m12 + m21, t, m01 - m10);
+        //      }
+        //      else
+        //      {
+        //          t = 1 + m00 + m11 + m22;
+        //          q = quat(m12 - m21, m20 - m02, m01 - m10, t);
+        //      }
+        //  }
+        //
+        //  q *= 0.5 / Sqrt(t);
+        //
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 result;
+
+        float const m22 = m.M.M[2][2];
+
+        if (m22 <= 0.0f)
+        {
+            // (x*x + y*y) >= (z*z + w*w)
+            float const diff_m11_m00 = m.M.M[1][1] - m.M.M[0][0];
+            float const diff_one_m22 = 1.0f - m22;
+
+            if (diff_m11_m00 <= 0.0f)
+            {
+                // (x*x) >= (y*y)
+                float const x_sqr = diff_one_m22 - diff_m11_m00;
+                float const x_inv = 0.5f / sqrtf(x_sqr);
+
+                result.F[0] = x_sqr * x_inv;
+                result.F[1] = (m.M.M[0][1] + m.M.M[1][0]) * x_inv;
+                result.F[2] = (m.M.M[0][2] + m.M.M[2][0]) * x_inv;
+                result.F[3] = (m.M.M[1][2] - m.M.M[2][1]) * x_inv;
+            }
+            else
+            {
+                // (y*y) >= (x*x)
+                float const y_sqr = diff_one_m22 + diff_m11_m00;
+                float const y_inv = 0.5f / sqrtf(y_sqr);
+
+                result.F[0] = (m.M.M[0][1] + m.M.M[1][0]) * y_inv;
+                result.F[1] = y_sqr * y_inv;
+                result.F[2] = (m.M.M[1][2] + m.M.M[2][1]) * y_inv;
+                result.F[3] = (m.M.M[2][0] - m.M.M[0][2]) * y_inv;
+            }
+        }
+        else
+        {
+            // (z*z + w*w) >= (x*x + y*y)
+            float const sum_m11_m00 = m.M.M[1][1] + m.M.M[0][0];
+            float const sum_one_m22 = 1.0f + m22;
+
+            if (sum_m11_m00 <= 0.0f)
+            {
+                // (z*z) >= (w*w)
+                float const z_sqr = sum_one_m22 - sum_m11_m00;
+                float const z_inv = 0.5f / sqrtf(z_sqr);
+
+                result.F[0] = (m.M.M[0][2] + m.M.M[2][0]) * z_inv;
+                result.F[1] = (m.M.M[1][2] + m.M.M[2][1]) * z_inv;
+                result.F[2] = z_sqr * z_inv;
+                result.F[3] = (m.M.M[0][1] - m.M.M[1][0]) * z_inv;
+            }
+            else
+            {
+                // (w*w) >= (z*z)
+                float const w_sqr = sum_one_m22 + sum_m11_m00;
+                float const w_inv = 0.5f / sqrtf(w_sqr);
+
+                result.F[0] = (m.M.M[1][2] - m.M.M[2][1]) * w_inv;
+                result.F[1] = (m.M.M[2][0] - m.M.M[0][2]) * w_inv;
+                result.F[2] = (m.M.M[0][1] - m.M.M[1][0]) * w_inv;
+                result.F[3] = w_sqr * w_inv;
+            }
+        }
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+    static Impl::ConstFloat32x4 const XMPMMP = { { { +1.0f, -1.0f, -1.0f, +1.0f } } };
+    static Impl::ConstFloat32x4 const XMMPMP = { { { -1.0f, +1.0f, -1.0f, +1.0f } } };
+    static Impl::ConstFloat32x4 const XMMMPP = { { { -1.0f, -1.0f, +1.0f, +1.0f } } };
+
+    __m128 r0 = m.M.R[0];  // (r00, r01, r02, 0)
+    __m128 r1 = m.M.R[1];  // (r10, r11, r12, 0)
+    __m128 r2 = m.M.R[2];  // (r20, r21, r22, 0)
+
+    // (r00, r00, r00, r00)
+    __m128 r00 = _mm_permute_ps(r0, _MM_SHUFFLE(0,0,0,0));
+    // (r11, r11, r11, r11)
+    __m128 r11 = _mm_permute_ps(r1, _MM_SHUFFLE(1,1,1,1));
+    // (r22, r22, r22, r22)
+    __m128 r22 = _mm_permute_ps(r2, _MM_SHUFFLE(2,2,2,2));
+
+    // x^2 >= y^2 equivalent to r11 - r00 <= 0
+    // (r11 - r00, r11 - r00, r11 - r00, r11 - r00)
+    __m128 r11mr00 = _mm_sub_ps(r11, r00);
+    __m128 x2gey2 = _mm_cmple_ps(r11mr00, _mm_setzero_ps());
+
+    // z^2 >= w^2 equivalent to r11 + r00 <= 0
+    // (r11 + r00, r11 + r00, r11 + r00, r11 + r00)
+    __m128 r11pr00 = _mm_add_ps(r11, r00);
+    __m128 z2gew2 = _mm_cmple_ps(r11pr00, _mm_setzero_ps());
+
+    // x^2 + y^2 >= z^2 + w^2 equivalent to r22 <= 0
+    __m128 x2py2gez2pw2 = _mm_cmple_ps(r22, _mm_setzero_ps());
+
+    // (+r00, -r00, -r00, +r00)
+    __m128 t0 = _mm_mul_ps(XMPMMP.V, r00);
+
+    // (-r11, +r11, -r11, +r11)
+    __m128 t1 = _mm_mul_ps(XMMPMP.V, r11);
+
+    // (-r22, -r22, +r22, +r22)
+    __m128 t2 = _mm_mul_ps(XMMMPP.V, r22);
+
+    // (4*x^2, 4*y^2, 4*z^2, 4*w^2)
+    __m128 x2y2z2w2 = _mm_add_ps(t0, t1);
+    x2y2z2w2 = _mm_add_ps(t2, x2y2z2w2);
+    x2y2z2w2 = _mm_add_ps(x2y2z2w2, Impl::VEC4_ONE_4.V);
+
+    // (r01, r02, r12, r11)
+    t0 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(1,2,2,1));
+    // (r10, r10, r20, r21)
+    t1 = _mm_shuffle_ps(r1, r2, _MM_SHUFFLE(1,0,0,0));
+    // (r10, r20, r21, r10)
+    t1 = _mm_permute_ps(t1, _MM_SHUFFLE(1,3,2,0));
+    // (4*x*y, 4*x*z, 4*y*z, unused)
+    __m128 xyxzyz = _mm_add_ps(t0, t1);
+
+    // (r21, r20, r10, r10)
+    t0 = _mm_shuffle_ps(r2, r1, _MM_SHUFFLE(0,0,0,1));
+    // (r12, r12, r02, r01)
+    t1 = _mm_shuffle_ps(r1, r0, _MM_SHUFFLE(1,2,2,2));
+    // (r12, r02, r01, r12)
+    t1 = _mm_permute_ps(t1, _MM_SHUFFLE(1,3,2,0));
+    // (4*x*w, 4*y*w, 4*z*w, unused)
+    __m128 xwywzw = _mm_sub_ps(t0, t1);
+    xwywzw = _mm_mul_ps(XMMPMP.V, xwywzw);
+
+    // (4*x^2, 4*y^2, 4*x*y, unused)
+    t0 = _mm_shuffle_ps(x2y2z2w2, xyxzyz, _MM_SHUFFLE(0,0,1,0));
+    // (4*z^2, 4*w^2, 4*z*w, unused)
+    t1 = _mm_shuffle_ps(x2y2z2w2, xwywzw, _MM_SHUFFLE(0,2,3,2));
+    // (4*x*z, 4*y*z, 4*x*w, 4*y*w)
+    t2 = _mm_shuffle_ps(xyxzyz, xwywzw, _MM_SHUFFLE(1,0,2,1));
+
+    // (4*x*x, 4*x*y, 4*x*z, 4*x*w)
+    __m128 tensor0 = _mm_shuffle_ps(t0, t2, _MM_SHUFFLE(2,0,2,0));
+    // (4*y*x, 4*y*y, 4*y*z, 4*y*w)
+    __m128 tensor1 = _mm_shuffle_ps(t0, t2, _MM_SHUFFLE(3,1,1,2));
+    // (4*z*x, 4*z*y, 4*z*z, 4*z*w)
+    __m128 tensor2 = _mm_shuffle_ps(t2, t1, _MM_SHUFFLE(2,0,1,0));
+    // (4*w*x, 4*w*y, 4*w*z, 4*w*w)
+    __m128 tensor3 = _mm_shuffle_ps(t2, t1, _MM_SHUFFLE(1,2,3,2));
+
+    // Select the row of the tensor-product matrix that has the largest
+    // magnitude.
+    t0 = _mm_and_ps(x2gey2, tensor0);
+    t1 = _mm_andnot_ps(x2gey2, tensor1);
+    t0 = _mm_or_ps(t0, t1);
+    t1 = _mm_and_ps(z2gew2, tensor2);
+    t2 = _mm_andnot_ps(z2gew2, tensor3);
+    t1 = _mm_or_ps(t1, t2);
+    t0 = _mm_and_ps(x2py2gez2pw2, t0);
+    t1 = _mm_andnot_ps(x2py2gez2pw2, t1);
+    t2 = _mm_or_ps(t0, t1);
+
+    // Normalize the row.  No division by zero is possible because the
+    // quaternion is unit-length (and the row is a nonzero multiple of
+    // the quaternion).
+    t0 = Length(As<Vector4>(t2)).V;
+    return { _mm_div_ps(t2, t0) };
+#endif
+    }
+
     mathinline Quaternion mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept
     {
         GX_ASSERT(IsNotEqual(axis, Zero<Vector3>()));
@@ -10522,15 +10751,281 @@ namespace Graphyte::Maths
 #endif
     }
 
-    //mathinline Matrix mathcall CreateRotationX(float angle) noexcept;
-    //mathinline Matrix mathcall CreateRotationY(float angle) noexcept;
-    //mathinline Matrix mathcall CreateRotationZ(float angle) noexcept;
+    mathinline Matrix mathcall CreateRotationX(float angle) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float sin_angle;
+        float cos_angle;
+        SinCos(sin_angle, cos_angle, angle);
+
+        Matrix result;
+        result.M.M[0][0] = 1.0f;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = cos_angle;
+        result.M.M[1][2] = sin_angle;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = 0.0f;
+        result.M.M[2][1] = -sin_angle;
+        result.M.M[2][2] = cos_angle;
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = 0.0f;
+        result.M.M[3][3] = 1.0f;
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+        float sin_angle;
+        float cos_angle;
+        SinCos(sin_angle, cos_angle, angle);
+
+        __m128 const ssin = _mm_set_ss(sin_angle);
+        __m128 const scos = _mm_set_ss(cos_angle);
+
+        __m128 const vcos = _mm_shuffle_ps(scos, ssin, _MM_SHUFFLE(3, 0, 0, 3));
+
+        Matrix result;
+        result.M.R[0] = Impl::VEC4_POSITIVE_UNIT_X.V;
+        result.M.R[1] = vcos;
+
+        __m128 const temp = _mm_permute_ps(vcos, _MM_SHUFFLE(3, 1, 2, 0));
+        __m128 const vsin = _mm_mul_ps(temp, Impl::VEC4_NEGATE_Y.V);
+
+        result.M.R[2] = vsin;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        return result;
+#endif
+    }
+
+    mathinline Matrix mathcall CreateRotationY(float angle) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float sin_angle;
+        float cos_angle;
+        SinCos(sin_angle, cos_angle, angle);
+
+        Matrix result;
+        result.M.M[0][0] = cos_angle;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = -sin_angle;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = 1.0f;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = sin_angle;
+        result.M.M[2][1] = 0.0f;
+        result.M.M[2][2] = cos_angle;
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = 0.0f;
+        result.M.M[3][3] = 1.0f;
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+        float sin_angle;
+        float cos_angle;
+        SinCos(sin_angle, cos_angle, angle);
+
+        __m128 const ssin = _mm_set_ss(sin_angle);
+        __m128 const scos = _mm_set_ss(cos_angle);
+
+        __m128 const vsin = _mm_shuffle_ps(ssin, scos, _MM_SHUFFLE(3, 0, 3, 0));
+
+        Matrix result;
+        result.M.R[2] = vsin;
+        result.M.R[1] = Impl::VEC4_POSITIVE_UNIT_Y.V;
+
+        __m128 const temp = _mm_permute_ps(vsin, _MM_SHUFFLE(3, 0, 1, 2));
+        __m128 const vcos = _mm_mul_ps(temp, Impl::VEC4_NEGATE_Z.V);
+
+        result.M.R[0] = vcos;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        return result;
+#endif
+    }
+
+    mathinline Matrix mathcall CreateRotationZ(float angle) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float sin_angle;
+        float cos_angle;
+        SinCos(sin_angle, cos_angle, angle);
+
+        Matrix result;
+        result.M.M[0][0] = cos_angle;
+        result.M.M[0][1] = sin_angle;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = -sin_angle;
+        result.M.M[1][1] = cos_angle;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = 0.0f;
+        result.M.M[2][1] = 0.0f;
+        result.M.M[2][2] = 1.0f;
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = 0.0f;
+        result.M.M[3][3] = 1.0f;
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+        float sin_angle;
+        float cos_angle;
+        SinCos(sin_angle, cos_angle, angle);
+
+        __m128 const ssin = _mm_set_ss(sin_angle);
+        __m128 const scos = _mm_set_ss(cos_angle);
+
+        __m128 const vcos = _mm_unpacklo_ps(scos, ssin);
+
+        Matrix result;
+        result.M.R[0] = vcos;
+
+        __m128 const temp = _mm_permute_ps(vcos, _MM_SHUFFLE(3, 2, 0, 1));
+        __m128 const vsin = _mm_mul_ps(temp, Impl::VEC4_NEGATE_X.V);
+
+        result.M.R[1] = vsin;
+        result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        return result;
+#endif
+    }
 
     //mathinline Matrix mathcall CreateFromEuler(float x, float y, float z) noexcept;
     //mathinline Matrix mathcall CreateFromEuler(Vector3 angles) noexcept;
     //mathinline Matrix mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept;
     //mathinline Matrix mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept;
-    //mathinline Matrix mathcall CreateFromQuaternion(Quaternion q) noexcept;
+
+    mathinline Matrix mathcall CreateFromQuaternion(Quaternion q) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Vector4 const q_xyzw = As<Vector4>(q);
+
+        Vector4 const q0 = Add(q_xyzw, q_xyzw);
+        Vector4 const q1 = Multiply(q_xyzw, q0);
+
+        Vector4 const q1_yxx_1 = Permute<1, 0, 0, 7>(q1, As<Vector4>(Impl::VEC4_ONE_3.V));
+        Vector4 const q1_zzy_1 = Permute<2, 2, 1, 7>(q1, As<Vector4>(Impl::VEC4_ONE_3.V));
+        Vector4 const o0 = Subtract(As<Vector4>(Impl::VEC4_ONE_3.V), q1_yxx_1);
+        Vector4 const s0 = Subtract(o0, q1_zzy_1);
+
+        Vector4 const q_xxyw = Swizzle<0, 0, 1, 3>(q_xyzw);
+        Vector4 const q0_zyzw = Swizzle<2, 1, 2, 3>(q0);
+        Vector4 const m0 = Multiply(q_xxyw, q0_zyzw);
+
+        Vector4 const q_wwww = SplatW(q_xyzw);
+        Vector4 const q0_yzxw = Swizzle<1, 2, 0, 3>(q0);
+        Vector4 const m1 = Multiply(q_wwww, q0_yzxw);
+
+        Vector4 const r0 = Add(m0, m1);
+        Vector4 const r1 = Subtract(m0, m1);
+
+        Vector4 const r2 = Permute<1, 4, 5, 2>(r0, r1);
+        Vector4 const r3 = Permute<0, 6, 0, 6>(r0, r1);
+
+        Matrix result;
+        result.M.R[0] = Permute<0, 4, 5, 3>(s0, r2).V;
+        result.M.R[1] = Permute<6, 1, 7, 3>(s0, r2).V;
+        result.M.R[2] = Permute<4, 5, 2, 3>(s0, r3).V;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        return result;
+
+        //XMVECTOR Q0 = XMVectorAdd(Quaternion, Quaternion);
+        //XMVECTOR Q1 = XMVectorMultiply(Quaternion, Q0);
+
+        //XMVECTOR V0 = XMVectorPermute<XM_PERMUTE_0Y, XM_PERMUTE_0X, XM_PERMUTE_0X, XM_PERMUTE_1W>(Q1, VEC4_ONE_3.v);
+        //XMVECTOR V1 = XMVectorPermute<XM_PERMUTE_0Z, XM_PERMUTE_0Z, XM_PERMUTE_0Y, XM_PERMUTE_1W>(Q1, VEC4_ONE_3.v);
+        //XMVECTOR R0 = XMVectorSubtract(Impl::VEC4_ONE_3, V0);
+        //R0 = XMVectorSubtract(R0, V1);
+
+        //V0 = XMVectorSwizzle<XM_SWIZZLE_X, XM_SWIZZLE_X, XM_SWIZZLE_Y, XM_SWIZZLE_W>(Quaternion);
+        //V1 = XMVectorSwizzle<XM_SWIZZLE_Z, XM_SWIZZLE_Y, XM_SWIZZLE_Z, XM_SWIZZLE_W>(Q0);
+        //V0 = XMVectorMultiply(V0, V1);
+
+        //V1 = XMVectorSplatW(Quaternion);
+        //XMVECTOR V2 = XMVectorSwizzle<XM_SWIZZLE_Y, XM_SWIZZLE_Z, XM_SWIZZLE_X, XM_SWIZZLE_W>(Q0);
+        //V1 = XMVectorMultiply(V1, V2);
+
+        //XMVECTOR R1 = XMVectorAdd(V0, V1);
+        //XMVECTOR R2 = XMVectorSubtract(V0, V1);
+
+        //V0 = XMVectorPermute<XM_PERMUTE_0Y, XM_PERMUTE_1X, XM_PERMUTE_1Y, XM_PERMUTE_0Z>(R1, R2);
+        //V1 = XMVectorPermute<XM_PERMUTE_0X, XM_PERMUTE_1Z, XM_PERMUTE_0X, XM_PERMUTE_1Z>(R1, R2);
+
+        //XMMATRIX M;
+        //M.r[0] = XMVectorPermute<XM_PERMUTE_0X, XM_PERMUTE_1X, XM_PERMUTE_1Y, XM_PERMUTE_0W>(R0, V0);
+        //M.r[1] = XMVectorPermute<XM_PERMUTE_1Z, XM_PERMUTE_0Y, XM_PERMUTE_1W, XM_PERMUTE_0W>(R0, V0);
+        //M.r[2] = XMVectorPermute<XM_PERMUTE_1X, XM_PERMUTE_1Y, XM_PERMUTE_0Z, XM_PERMUTE_0W>(R0, V1);
+        //M.r[3] = g_XMIdentityR3.v;
+        //return M;
+
+#elif GRAPHYTE_HW_AVX
+        static Impl::ConstFloat32x4 const Constant1110 = { { { 1.0f, 1.0f, 1.0f, 0.0f } } };
+
+        __m128 Q0 = _mm_add_ps(q.V, q.V);
+        __m128 Q1 = _mm_mul_ps(q.V, Q0);
+
+        __m128 V0 = _mm_permute_ps(Q1, _MM_SHUFFLE(3, 0, 0, 1));
+        V0 = _mm_and_ps(V0, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 V1 = _mm_permute_ps(Q1, _MM_SHUFFLE(3, 1, 2, 2));
+        V1 = _mm_and_ps(V1, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 R0 = _mm_sub_ps(Constant1110.V, V0);
+        R0 = _mm_sub_ps(R0, V1);
+
+        V0 = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 1, 0, 0));
+        V1 = _mm_permute_ps(Q0, _MM_SHUFFLE(3, 2, 1, 2));
+        V0 = _mm_mul_ps(V0, V1);
+
+        V1 = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
+        __m128 V2 = _mm_permute_ps(Q0, _MM_SHUFFLE(3, 0, 2, 1));
+        V1 = _mm_mul_ps(V1, V2);
+
+        __m128 R1 = _mm_add_ps(V0, V1);
+        __m128 R2 = _mm_sub_ps(V0, V1);
+
+        V0 = _mm_shuffle_ps(R1, R2, _MM_SHUFFLE(1, 0, 2, 1));
+        V0 = _mm_permute_ps(V0, _MM_SHUFFLE(1, 3, 2, 0));
+        V1 = _mm_shuffle_ps(R1, R2, _MM_SHUFFLE(2, 2, 0, 0));
+        V1 = _mm_permute_ps(V1, _MM_SHUFFLE(2, 0, 2, 0));
+
+        Q1 = _mm_shuffle_ps(R0, V0, _MM_SHUFFLE(1, 0, 3, 0));
+        Q1 = _mm_permute_ps(Q1, _MM_SHUFFLE(1, 3, 2, 0));
+
+        Matrix m;
+        m.M.R[0] = Q1;
+
+        Q1 = _mm_shuffle_ps(R0, V0, _MM_SHUFFLE(3, 2, 3, 1));
+        Q1 = _mm_permute_ps(Q1, _MM_SHUFFLE(1, 3, 0, 2));
+        m.M.R[1] = Q1;
+
+        Q1 = _mm_shuffle_ps(V1, R0, _MM_SHUFFLE(3, 2, 1, 0));
+        m.M.R[2] = Q1;
+        m.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        return m;
+#endif
+    }
 }
 
 // =================================================================================================
@@ -11557,7 +12052,6 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-
     // TODO: make Viewport struct instead of this
     mathinline Vector3 mathcall Project(
         Vector3 v,
@@ -11638,5 +12132,32 @@ namespace Graphyte::Maths
         Vector3 const coord = MultiplyAdd(v, rcp_scale, projected);
         Vector3 const result = TransformCoord(coord, inv_mvp);
         return result;
+    }
+}
+
+
+//==================================================================================================
+//
+// Unsequential algorithms
+//
+
+namespace Graphyte::Maths::Unsequential
+{
+    mathinline Vector4 mathcall Dot4(
+        Vector4 x1,
+        Vector4 y1,
+        Vector4 z1,
+        Vector4 w1,
+        Vector4 x2,
+        Vector4 y2,
+        Vector4 z2,
+        Vector4 w2
+    ) noexcept
+    {
+        Vector4 const r0 = Multiply(x1, x2);
+        Vector4 const r1 = MultiplyAdd(y1, y2, r0);
+        Vector4 const r2 = MultiplyAdd(z1, z2, r1);
+        Vector4 const r3 = MultiplyAdd(w1, w2, r2);
+        return r3;
     }
 }

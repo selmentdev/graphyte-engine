@@ -1,6 +1,837 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
+{
+    using namespace Graphyte::Maths;
+
+    constexpr float const angle_step = 5.0f;
+
+    Vector3 const v = Make<Vector3>(1.0f, -2.0f, 3.0f);
+
+    SECTION("Rotation X")
+    {
+        Vector3 const axis = UnitX<Vector3>();
+
+        for (float angle = -360.0f; angle <= 360.0f; angle += angle_step)
+        {
+            float const radians = DegreesToRadians(angle);
+            Matrix const m = CreateRotationX(radians);
+            Quaternion const q = CreateFromNormalAngle(axis, radians);
+
+            //
+            // Check if quaternion rotates vector as well as matrix.
+            //
+
+            Vector3 const vm = Transform(v, m);
+            Vector3 const vq = Rotate(v, q);
+
+            CHECK(GetX(vm) == Approx{ GetX(vq) });
+            CHECK(GetY(vm) == Approx{ GetY(vq) });
+            CHECK(GetZ(vm) == Approx{ GetZ(vq) });
+
+
+            //
+            // Convert quaternion back to matrix and check whether rotation will match.
+            //
+
+            Quaternion const mq = CreateFromMatrix(m);
+            Vector3 const vmq = Rotate(v, mq);
+
+            CHECK(GetX(vmq) == Approx{ GetX(vq) });
+            CHECK(GetY(vmq) == Approx{ GetY(vq) });
+            CHECK(GetZ(vmq) == Approx{ GetZ(vq) });
+
+            Matrix const qm = CreateFromQuaternion(q);
+            Vector3 const vqm = Transform(v, qm);
+
+            CHECK(GetX(vqm) == Approx{ GetX(vq) });
+            CHECK(GetY(vqm) == Approx{ GetY(vq) });
+            CHECK(GetZ(vqm) == Approx{ GetZ(vq) });
+        }
+    }
+
+    SECTION("Rotation Y")
+    {
+        Vector3 const axis = UnitY<Vector3>();
+
+        for (float angle = -360.0f; angle <= 360.0f; angle += angle_step)
+        {
+            float const radians = DegreesToRadians(angle);
+            Matrix const m = CreateRotationY(radians);
+            Quaternion const q = CreateFromNormalAngle(axis, radians);
+
+            //
+            // Check if quaternion rotates vector as well as matrix.
+            //
+
+            Vector3 const vm = Transform(v, m);
+            Vector3 const vq = Rotate(v, q);
+
+            CHECK(GetX(vm) == Approx{ GetX(vq) });
+            CHECK(GetY(vm) == Approx{ GetY(vq) });
+            CHECK(GetZ(vm) == Approx{ GetZ(vq) });
+
+
+            //
+            // Convert quaternion back to matrix and check whether rotation will match.
+            //
+
+            Quaternion const mq = CreateFromMatrix(m);
+            Vector3 const vmq = Rotate(v, mq);
+
+            CHECK(GetX(vmq) == Approx{ GetX(vq) });
+            CHECK(GetY(vmq) == Approx{ GetY(vq) });
+            CHECK(GetZ(vmq) == Approx{ GetZ(vq) });
+
+            Matrix const qm = CreateFromQuaternion(q);
+            Vector3 const vqm = Transform(v, qm);
+
+            CHECK(GetX(vqm) == Approx{ GetX(vq) });
+            CHECK(GetY(vqm) == Approx{ GetY(vq) });
+            CHECK(GetZ(vqm) == Approx{ GetZ(vq) });
+        }
+    }
+
+    SECTION("Rotation Z")
+    {
+        Vector3 const axis = UnitZ<Vector3>();
+
+        for (float angle = -360.0f; angle <= 360.0f; angle += angle_step)
+        {
+            float const radians = DegreesToRadians(angle);
+            Matrix const m = CreateRotationZ(radians);
+            Quaternion const q = CreateFromNormalAngle(axis, radians);
+
+            //
+            // Check if quaternion rotates vector as well as matrix.
+            //
+
+            Vector3 const vm = Transform(v, m);
+            Vector3 const vq = Rotate(v, q);
+
+            CHECK(GetX(vm) == Approx{ GetX(vq) });
+            CHECK(GetY(vm) == Approx{ GetY(vq) });
+            CHECK(GetZ(vm) == Approx{ GetZ(vq) });
+
+
+            //
+            // Convert quaternion back to matrix and check whether rotation will match.
+            //
+
+            Quaternion const mq = CreateFromMatrix(m);
+            Vector3 const vmq = Rotate(v, mq);
+
+            CHECK(GetX(vmq) == Approx{ GetX(vq) });
+            CHECK(GetY(vmq) == Approx{ GetY(vq) });
+            CHECK(GetZ(vmq) == Approx{ GetZ(vq) });
+
+            Matrix const qm = CreateFromQuaternion(q);
+            Vector3 const vqm = Transform(v, qm);
+
+            CHECK(GetX(vqm) == Approx{ GetX(vq) });
+            CHECK(GetY(vqm) == Approx{ GetY(vq) });
+            CHECK(GetZ(vqm) == Approx{ GetZ(vq) });
+        }
+    }
+}
+
+TEST_CASE("Maths / Matrix / Rotations")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Rotation X")
+    {
+        Vector3 const v = Make<Vector3>(1.0f, -2.0f, 3.0f);
+
+        SECTION("angle = 0 deg")
+        {
+            Matrix const m = CreateRotationX(DegreesToRadians(0.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 1.0F });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0F });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -30 deg")
+        {
+            Matrix const m = CreateRotationX(DegreesToRadians(-30.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.866025f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ -0.5F });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.5F });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.866025f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 30 deg")
+        {
+            Matrix const m = CreateRotationX(DegreesToRadians(30.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.866025f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.5f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ -0.5f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.866025f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -45 deg")
+        {
+            Matrix const m = CreateRotationX(DegreesToRadians(-45.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.7071067f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ -0.7071067f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.7071067f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.7071067f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 45 deg")
+        {
+            Matrix const m = CreateRotationX(DegreesToRadians(45.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.7071067f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.7071067f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ -0.7071067f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.7071067f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -90 deg")
+        {
+            Matrix const m = CreateRotationX(DegreesToRadians(-90.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.0f }.margin(0.001f));
+            CHECK(GetZ(GetBaseY(m)) == Approx{ -1.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.0f }.margin(0.001f));
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 90 deg")
+        {
+            Matrix const m = CreateRotationX(DegreesToRadians(90.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.0f }.margin(0.001f));
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ -1.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.0f }.margin(0.001f));
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -135 deg")
+        {
+            Matrix const m = CreateRotationX(DegreesToRadians(-135.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ -0.7071067f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ -0.7071067f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.7071067f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ -0.7071067f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 135 deg")
+        {
+            Matrix const m = CreateRotationX(DegreesToRadians(135.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ -0.7071067f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.7071067f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ -0.7071067f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ -0.7071067f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+    }
+
+    SECTION("Rotation Y")
+    {
+        Vector3 const v = Make<Vector3>(3.0f, 1.0f, -2.0);
+
+        SECTION("angle = 0 deg")
+        {
+            Matrix const m = CreateRotationY(DegreesToRadians(0.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 1.0F });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0F });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -30 deg")
+        {
+            Matrix const m = CreateRotationY(DegreesToRadians(-30.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.866025f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.5F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 1.0f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ -0.5f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.866025f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 30 deg")
+        {
+            Matrix const m = CreateRotationY(DegreesToRadians(30.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.866025f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ -0.5f });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 1.0f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.5f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.866025f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -45 deg")
+        {
+            Matrix const m = CreateRotationY(DegreesToRadians(-45.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.7071067f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.7071067f });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 1.0f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ -0.7071067f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.7071067f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 45 deg")
+        {
+            Matrix const m = CreateRotationY(DegreesToRadians(45.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.7071067f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ -0.7071067f });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 1.0f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.7071067f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.7071067f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -90 deg")
+        {
+            Matrix const m = CreateRotationY(DegreesToRadians(-90.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.0F }.margin(0.001f));
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 1.0f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ -1.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.0f }.margin(0.001f));
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 90 deg")
+        {
+            Matrix const m = CreateRotationY(DegreesToRadians(90.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.0F }.margin(0.001f));
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ -1.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 1.0f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.0f }.margin(0.001f));
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -135 deg")
+        {
+            Matrix const m = CreateRotationY(DegreesToRadians(-135.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ -0.7071067f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.7071067f });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 1.0f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ -0.7071067f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ -0.7071067f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 135 deg")
+        {
+            Matrix const m = CreateRotationX(DegreesToRadians(135.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ -0.7071067f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.7071067f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ -0.7071067f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ -0.7071067f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+    }
+
+    SECTION("Rotation Z")
+    {
+        Vector3 const v = Make<Vector3>(-2.0f, 3.0f, 1.0f);
+
+        SECTION("angle = 0 deg")
+        {
+            Matrix const m = CreateRotationZ(DegreesToRadians(0.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 1.0F });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0F });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -30 deg")
+        {
+            Matrix const m = CreateRotationZ(DegreesToRadians(-30.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.866025f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ -0.5F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.5F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.866025f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 30 deg")
+        {
+            Matrix const m = CreateRotationZ(DegreesToRadians(30.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.866025f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.5F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ -0.5F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.866025f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -45 deg")
+        {
+            Matrix const m = CreateRotationZ(DegreesToRadians(-45.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.7071067f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ -0.7071067f });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.7071067f });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.7071067f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 45 deg")
+        {
+            Matrix const m = CreateRotationZ(DegreesToRadians(45.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.7071067f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.7071067f });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ -0.7071067f });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.7071067f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -90 deg")
+        {
+            Matrix const m = CreateRotationZ(DegreesToRadians(-90.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.0F }.margin(0.001f));
+            CHECK(GetY(GetBaseX(m)) == Approx{ -1.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 1.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.0f }.margin(0.001f));
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 90 deg")
+        {
+            Matrix const m = CreateRotationZ(DegreesToRadians(90.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.0F }.margin(0.001f));
+            CHECK(GetY(GetBaseX(m)) == Approx{ 1.0F });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ -1.0F });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.0f }.margin(0.001f));
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = -135 deg")
+        {
+            Matrix const m = CreateRotationZ(DegreesToRadians(-135.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ -0.7071067f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ -0.7071067f });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.7071067f });
+            CHECK(GetY(GetBaseY(m)) == Approx{ -0.7071067f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0F });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0F });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0F });
+        }
+
+        SECTION("angle = 135 deg")
+        {
+            Matrix const m = CreateRotationZ(DegreesToRadians(135.0f));
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ -0.7071067f});
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.7071067f });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ -0.7071067f });
+            CHECK(GetY(GetBaseY(m)) == Approx{ -0.7071067f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 0.0f });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0f });
+        }
+    }
+}
+
+
 TEST_CASE("Maths / Vector4 / Vector4 Cross Product")
 {
     using namespace Graphyte::Maths;
