@@ -3048,6 +3048,86 @@ namespace Graphyte::Maths
     }
 }
 
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall Load(Half4 const* source) noexcept
+        requires FloatVector<T> and Loadable<T> and (T::Components == 4)
+    {
+        GX_ASSERT(source != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_AVX || GRAPHYTE_HW_NEON
+        Impl::ConstFloat32x4 const result{ { {
+                FromHalf(source->X),
+                FromHalf(source->Y),
+                FromHalf(source->Z),
+                FromHalf(source->W),
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX2
+        __m128 const h0 = _mm_loadl_epi64(reinterpret_cast<__m128i const*>(source));
+        __m128 const h1 = _mm_cvtph_ps(_mm_castps_si128(h0));
+        return { h1 };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Store(Half4* destination, T v) noexcept
+        requires FloatVector<T> and Storable<T> and (T::Components == 4)
+    {
+        GX_ASSERT(destination != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_AVX || GRAPHYTE_HW_NEON
+        destination->X = ToHalf(v.V.F[0]);
+        destination->Y = ToHalf(v.V.F[1]);
+        destination->Z = ToHalf(v.V.F[2]);
+        destination->W = ToHalf(v.V.F[3]);
+#elif GRAPHYTE_HW_AVX2
+        __m128 const h0 = _mm_cvtps_ph(v.V, 0);
+        _mm_storel_epi64(reinterpret_cast<__m128i*>(destination), h0);
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Load(Half2 const* source) noexcept
+        requires FloatVector<T> and Loadable<T> and (T::Components >= 2)
+    {
+        GX_ASSERT(source != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_AVX || GRAPHYTE_HW_NEON
+        Impl::ConstFloat32x4 const result{ { {
+                FromHalf(source->X),
+                FromHalf(source->Y),
+                0.0f,
+                0.0f,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX2
+        __m128 const h0 = _mm_load_ss(reinterpret_cast<float const*>(source));
+        __m128 const h1 = _mm_cvtph_ps(_mm_castps_si128(h0));
+        return { h1 };
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Half2* destination, T v) noexcept
+        requires FloatVector<T> and Storable<T> and (T::Components >= 2)
+    {
+        GX_ASSERT(destination != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_AVX || GRAPHYTE_HW_NEON
+        destination->X = ToHalf(v.V.F[0]);
+        destination->Y = ToHalf(v.V.F[1]);
+#else GRAPHYTE_HW_AVX2
+        __m128 const h0 = _mm_cvtps_ph(v.V, 0);
+        __m128 const h1 = _mm_castsi128_ps(h0);
+        _mm_store_ss(reinterpret_cast<float*>(destination), h1);
+#endif
+    }
+}
+
 
 // =================================================================================================
 //
@@ -10889,6 +10969,101 @@ namespace Graphyte::Maths
     //mathinline Matrix mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept;
     //mathinline Matrix mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept;
 
+    mathinline Matrix mathcall Matrix_CreateFromNormalAngle(Vector3 normal, float angle) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+        float sin_angle;
+        float cos_angle;
+
+        SinCos(sin_angle, cos_angle, angle);
+
+        Vector4 const a = Make<Vector4>(sin_angle, cos_angle, 1.0f - cos_angle);
+
+        Vector4 const c0 = SplatX(a);
+        Vector4 const c1 = SplatY(a);
+        Vector4 const c2 = SplatZ(a);
+
+        Vector4 const n0 = Swizzle<1, 2, 0, 3>(As<Vector4>(normal));
+        Vector4 const n1 = Swizzle<2, 0, 1, 3>(As<Vector4>(normal));
+
+        Vector4 const g0 = Multiply(c2, n0);
+        Vector4 const g1 = Multiply(g0, n1);
+
+        Vector4 const h0 = Multiply(c2, As<Vector4>(normal));
+        Vector4 const h1 = MultiplyAdd(h0, As<Vector4>(normal), c1);
+
+        Vector4 const i0 = MultiplyAdd(c0, As<Vector4>(normal), g1);
+        Vector4 const i1 = NegateMultiplyAdd(c0, As<Vector4>(normal), g1);
+
+        Vector4 const r0 = Select(a, h1, As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V));
+
+        Vector4 const r1 = Permute<2, 5, 6, 0>(i0, i1);
+        Vector4 const r2 = Permute<1, 4, 1, 4>(i0, i1);
+
+        Matrix result;
+        result.M.R[0] = Permute<0, 4, 5, 3>(r0, r1).V;
+        result.M.R[1] = Permute<6, 1, 7, 3>(r0, r1).V;
+        result.M.R[2] = Permute<4, 5, 2, 3>(r0, r2).V;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        return result;
+#elif GRAPHYTE_HW_AVX
+        float sin_angle;
+        float cos_angle;
+
+        SinCos(sin_angle, cos_angle, angle);
+
+        __m128 const c0 = _mm_set_ps1(sin_angle);
+        __m128 const c1 = _mm_set_ps1(cos_angle);
+        __m128 const c2 = _mm_set_ps1(1.0f - cos_angle);
+
+        __m128 const n0 = _mm_permute_ps(normal.V, _MM_SHUFFLE(3, 0, 2, 1));
+        __m128 const n1 = _mm_permute_ps(normal.V, _MM_SHUFFLE(3, 1, 0, 2));
+
+        __m128 const g0 = _mm_mul_ps(c2, n0);
+        __m128 const g1 = _mm_mul_ps(g0, n1);
+
+        __m128 const h0 = _mm_mul_ps(c2, normal.V);
+
+        __m128 const i0 = Impl::avx_fmadd_f32x4(h0, normal.V, c1);
+        __m128 const i1 = Impl::avx_fmadd_f32x4(c0, normal.V, g1);
+        __m128 const i2 = Impl::avx_fnmadd_f32x4(c0, normal.V, g1);
+
+        __m128 const r0 = _mm_and_ps(i0, Impl::VEC4_MASK_SELECT_1110.V);
+
+        __m128 const t0 = _mm_shuffle_ps(i1, i2, _MM_SHUFFLE(2, 1, 2, 0));
+        __m128 const r1 = _mm_permute_ps(t0, _MM_SHUFFLE(0, 3, 2, 1));
+
+        __m128 const t1 = _mm_shuffle_ps(i1, i2, _MM_SHUFFLE(0, 0, 1, 1));
+        __m128 const r2 = _mm_permute_ps(t1, _MM_SHUFFLE(2, 0, 2, 0));
+
+        __m128 const t2 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(1, 0, 3, 0));
+        __m128 const r3 = _mm_permute_ps(t2, _MM_SHUFFLE(1, 3, 2, 0));
+
+        Matrix result;
+        result.M.R[0] = r3;
+
+        __m128 const t3 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(3, 2, 3, 1));
+        __m128 const r4 = _mm_permute_ps(t3, _MM_SHUFFLE(1, 3, 0, 2));
+
+        result.M.R[1] = r4;
+
+        __m128 const r5 = _mm_shuffle_ps(r2, r0, _MM_SHUFFLE(3, 2, 1, 0));
+        result.M.R[2] = r5;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        return result;
+#endif
+    }
+
+    mathinline Matrix mathcall Matrix_CreateFromAxisAngle(Vector3 axis, float angle) noexcept
+    {
+        GX_ASSERT(!IsEqual(axis, Zero<Vector3>()));
+        GX_ASSERT(!IsInfinity(axis));
+
+        Vector3 const normal = Normalize(axis);
+        return Matrix_CreateFromNormalAngle(normal, angle);
+    }
+
     mathinline Matrix mathcall CreateFromQuaternion(Quaternion q) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -12075,6 +12250,81 @@ namespace Graphyte::Maths
         Vector3 const result = TransformCoord(coord, inv_mvp);
         return result;
     }
+}
+
+
+// =================================================================================================
+//
+// Load / Store for packed types
+//
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall Load(ColorBGRA const* source) noexcept
+        requires FloatVector<T> and (T::Components == 4)
+    {
+        GX_ASSERT(source != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        uint32_t const value = source->Value;
+
+        Impl::ConstFloat32x4 const result{ { {
+                (1.0f / 255.0f) * static_cast<float>((value >> 16) & 0xFFu),
+                (1.0f / 255.0f)* static_cast<float>((value >> 8) & 0xFFu),
+                (1.0f / 255.0f)* static_cast<float>(value & 0xFFu),
+                (1.0f / 255.0f)* static_cast<float>((value >> 24) & 0xFFu),
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        // {c0}[#bgra, #bgra, #bgra, #bgra]
+        __m128i const c0 = _mm_set1_epi32(static_cast<int>(source->Value));
+        // {c1}[#__r_, #_g__, #b___, #___a]
+        __m128i const c1 = _mm_and_si128(c0, Impl::VEC4_MASK_A8R8G8B8.V);
+        __m128i const c2 = _mm_xor_si128(c1, Impl::VEC4_FLIP_A_A8R8G8B8.V);
+        __m128 const c3 = _mm_cvtepi32_ps(c2);
+        __m128 const c4 = _mm_add_ps(c3, Impl::VEC4_FIX_A_A8R8G8B8.V);
+        __m128 const c5 = _mm_mul_ps(c4, Impl::VEC4_NORMALIZE_A8R8G8B8.V);
+        return { c5 };
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(ColorBGRA* destination, T color) noexcept
+    {
+        GX_ASSERT(destination != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Vector4 const c0 = Saturate(As<Vector4>(color));
+        Vector4 const c1 = Multiply(c0, As<Vector4>(Impl::VEC4_UBYTE_MAX.V));
+        Vector4 const c2 = Round(c1);
+
+        Float4A buffer;
+        Store(&buffer, c2);
+
+        uint32_t const a = static_cast<uint32_t>(buffer.W) << 24;
+        uint32_t const r = static_cast<uint32_t>(buffer.X) << 16;
+        uint32_t const g = static_cast<uint32_t>(buffer.Y) << 8;
+        uint32_t const b = static_cast<uint32_t>(buffer.X);
+
+        destination->Value = a | r | g | b;
+#elif GRAPHYTE_HW_AVX
+        // Saturate
+        __m128 const color_max = _mm_max_ps(color.V, _mm_setzero_ps());
+        __m128 const color_min = _mm_min_ps(color_max, Impl::VEC4_ONE_4.V);
+
+        // RGBA -> ARGB
+        __m128 const c0 = _mm_mul_ps(color_min, Impl::VEC4_UBYTE_MAX.V);
+        __m128 const c1 = _mm_permute_ps(c0, _MM_SHUFFLE(3, 0, 1, 2));
+        __m128i const c2 = _mm_cvtps_epi32(c1);
+        __m128i const c3 = _mm_packs_epi32(c2);
+        __m128i const c4 = _mm_packus_epi16(c3);
+
+        _mm_store_ss(reinterpret_cast<float*>(&destination->Value), _mm_castsi128_ps(c4));
+#endif
+    }
+
 }
 
 

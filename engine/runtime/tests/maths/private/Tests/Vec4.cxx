@@ -1,6 +1,76 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+#include <DirectXMath.h>
+
+TEST_CASE("gggg")
+{
+    using namespace DirectX;
+
+    XMVECTOR axis = XMVectorSet(-1.0f, 3.0f, -3.0f, 0.0f);
+    XMMATRIX m = XMMatrixRotationAxis(axis, Graphyte::Maths::DegreesToRadians(60.0f));
+
+}
+
+TEST_CASE("Maths / Rotations / Matrix rotations around arbitrary axis")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Case 1")
+    {
+        Vector3 const axis = Make<Vector3>(1.0f, -2.0f, 3.0f);
+
+        Matrix m = Matrix_CreateFromAxisAngle(axis, DegreesToRadians(45.0f));
+
+        CHECK(GetX(GetBaseX(m)) == Approx{ 0.7280276f });
+        CHECK(GetY(GetBaseX(m)) == Approx{ 0.5251047f });
+        CHECK(GetZ(GetBaseX(m)) == Approx{ 0.44072793f });
+        CHECK(GetW(GetBaseX(m)) == Approx{ 0.0f });
+
+        CHECK(GetX(GetBaseY(m)) == Approx{ -0.608788610f });
+        CHECK(GetY(GetBaseY(m)) == Approx{ 0.790790498f });
+        CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0634565353f });
+        CHECK(GetW(GetBaseY(m)) == Approx{ 0.0f });
+
+        CHECK(GetX(GetBaseZ(m)) == Approx{ -0.315201640f });
+        CHECK(GetY(GetBaseZ(m)) == Approx{ -0.31507931f }.margin(0.001f));
+        CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.895395219f });
+        CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0f });
+
+        CHECK(GetX(GetBaseW(m)) == Approx{ 0.0f });
+        CHECK(GetY(GetBaseW(m)) == Approx{ 0.0f });
+        CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0f });
+        CHECK(GetW(GetBaseW(m)) == Approx{ 1.0f });
+    }
+
+    SECTION("Case 2")
+    {
+        Vector3 const axis = Make<Vector3>(-1.0f, 3.0f, -3.0f);
+
+        Matrix m = Matrix_CreateFromAxisAngle(axis, DegreesToRadians(60.0f));
+
+        CHECK(GetX(GetBaseX(m)) == Approx{ 0.526315749f });
+        CHECK(GetY(GetBaseX(m)) == Approx{ -0.674986959f });
+        CHECK(GetZ(GetBaseX(m)) == Approx{ -0.517092228f });
+        CHECK(GetW(GetBaseX(m)) == Approx{ 0.0f });
+
+        CHECK(GetX(GetBaseY(m)) == Approx{ 0.517092228f });
+        CHECK(GetY(GetBaseY(m)) == Approx{ 0.736842036f });
+        CHECK(GetZ(GetBaseY(m)) == Approx{ -0.43552199f});
+        CHECK(GetW(GetBaseY(m)) == Approx{ 0.0f });
+
+        CHECK(GetX(GetBaseZ(m)) == Approx{ 0.674986959f });
+        CHECK(GetY(GetBaseZ(m)) == Approx{ -0.0381622612f });
+        CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.736842036 });
+        CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0f });
+
+        CHECK(GetX(GetBaseW(m)) == Approx{ 0.0f });
+        CHECK(GetY(GetBaseW(m)) == Approx{ 0.0f });
+        CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0f });
+        CHECK(GetW(GetBaseW(m)) == Approx{ 1.0f });
+    }
+}
+
 TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
 {
     using namespace Graphyte::Maths;
