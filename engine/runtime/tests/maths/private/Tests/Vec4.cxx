@@ -1,15 +1,163 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
-#include <DirectXMath.h>
-
-TEST_CASE("gggg")
+TEST_CASE("Maths / Transforms")
 {
-    using namespace DirectX;
+    using namespace Graphyte::Maths;
 
-    XMVECTOR axis = XMVectorSet(-1.0f, 3.0f, -3.0f, 0.0f);
-    XMMATRIX m = XMMatrixRotationAxis(axis, Graphyte::Maths::DegreesToRadians(60.0f));
+    SECTION("Affine Transforms")
+    {
+        SECTION("2D")
+        {
+            Vector2 const scaling = Make<Vector2>(1.3f, -3.4f);
+            Vector2 const rotation_origin = Make<Vector2>(3.4f, 1.7f);
+            float const rotation = DegreesToRadians(-60.0f);
+            Vector2 const translation = Make<Vector2>(-2.3f, 3.3f);
 
+            Matrix const m = CreateAffineTransform2D(
+                scaling,
+                rotation_origin,
+                rotation,
+                translation
+            );
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.649999917f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ -1.12583303f });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ -2.94448662f });
+            CHECK(GetY(GetBaseY(m)) == Approx{ -1.69999981f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ -2.07224298f });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 7.09448671f });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0f });
+        }
+
+        SECTION("3D")
+        {
+            Vector3 const scaling = Make<Vector3>(1.1f, 1.1f, 1.1f);
+            Vector3 const rotation_origin = Make<Vector3>(3.4f, 1.7f, -2.3f);
+            Quaternion const rotation = CreateFromAxisAngle(Make<Vector3>(2.1f, 1.1f, -3.3f), DegreesToRadians(-60.0f));
+            Vector3 const translation = Make<Vector3>(3.3f, -1.3f, 2.1f);
+
+            Matrix const m = CreateAffineTransform(
+                scaling,
+                rotation_origin,
+                rotation,
+                translation
+            );
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.696910977f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.850637615f });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0270346422f });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ -0.696730852f });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.590308905f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ -0.613271236f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ -0.488754869f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.371417761f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.912780166f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 4.60073566f });
+            CHECK(GetY(GetBaseW(m)) == Approx{ -2.36493826f });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 2.57276130f });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0f });
+        }
+    }
+
+    SECTION("Transforms")
+    {
+        SECTION("2D")
+        {
+            Vector2 const scaling_origin = Make<Vector2>(-2.1f, 1.3f);
+            float const scaling_orientation = DegreesToRadians(45.0f);
+            Vector2 const scaling = Make<Vector2>(1.1f, 1.1f);
+            Vector2 const rotation_origin = Make<Vector2>(3.4f, 1.7f);
+            float const rotation = DegreesToRadians(-60.0f);
+            Vector2 const translation = Make<Vector2>(3.3f, -1.3f);
+
+            Matrix const m = CreateTransform2D(
+                scaling_origin,
+                scaling_orientation,
+                scaling,
+                rotation_origin,
+                rotation,
+                translation
+            );
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.549999893f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ -0.952627897f });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ 0.952627897f });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.549999893f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.0f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 1.0f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 3.52017379f });
+            CHECK(GetY(GetBaseW(m)) == Approx{ 2.24762177f });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 0.0f });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0f });
+        }
+
+        SECTION("3D")
+        {
+            Vector3 const scaling_origin = Make<Vector3>(-2.1f, 1.3f, -3.4f);
+            Quaternion const scaling_orientation = CreateFromAxisAngle(Make<Vector3>(-2.1f, 1.1f, 2.3f), DegreesToRadians(45.0f));
+            Vector3 const scaling = Make<Vector3>(1.1f, 1.1f, 1.1f);
+            Vector3 const rotation_origin = Make<Vector3>(3.4f, 1.7f, -2.3f);
+            Quaternion const rotation = CreateFromAxisAngle(Make<Vector3>(2.1f, 1.1f, -3.3f), DegreesToRadians(-60.0f));
+            Vector3 const translation = Make<Vector3>(3.3f, -1.3f, 2.1f);
+
+            Matrix const m = CreateTransform(
+                scaling_origin,
+                scaling_orientation,
+                scaling,
+                rotation_origin,
+                rotation,
+                translation
+            );
+
+            CHECK(GetX(GetBaseX(m)) == Approx{ 0.696911037f });
+            CHECK(GetY(GetBaseX(m)) == Approx{ 0.850637555f });
+            CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0270346627f });
+            CHECK(GetW(GetBaseX(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseY(m)) == Approx{ -0.696730852f });
+            CHECK(GetY(GetBaseY(m)) == Approx{ 0.590308845f });
+            CHECK(GetZ(GetBaseY(m)) == Approx{ -0.613271236f });
+            CHECK(GetW(GetBaseY(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseZ(m)) == Approx{ -0.488754809f });
+            CHECK(GetY(GetBaseZ(m)) == Approx{ 0.371417731f });
+            CHECK(GetZ(GetBaseZ(m)) == Approx{ 0.912780046f });
+            CHECK(GetW(GetBaseZ(m)) == Approx{ 0.0f });
+
+            CHECK(GetX(GetBaseW(m)) == Approx{ 4.66505337f });
+            CHECK(GetY(GetBaseW(m)) == Approx{ -2.15750575f });
+            CHECK(GetZ(GetBaseW(m)) == Approx{ 2.93253255f });
+            CHECK(GetW(GetBaseW(m)) == Approx{ 1.0f });
+        }
+    }
 }
 
 TEST_CASE("Maths / Rotations / Matrix rotations around arbitrary axis")

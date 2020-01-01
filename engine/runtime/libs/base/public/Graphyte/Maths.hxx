@@ -9733,6 +9733,48 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
+    mathinline T mathcall Make(
+        float m00, float m01, float m02, float m03,
+        float m10, float m11, float m12, float m13,
+        float m20, float m21, float m22, float m23,
+        float m30, float m31, float m32, float m33
+    ) noexcept
+        requires FloatMatrix<T> and (T::Components == 16)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Matrix result;
+        result.M.M[0][0] = m00;
+        result.M.M[0][1] = m01;
+        result.M.M[0][2] = m02;
+        result.M.M[0][3] = m03;
+
+        result.M.M[1][0] = m10;
+        result.M.M[1][1] = m11;
+        result.M.M[1][2] = m12;
+        result.M.M[1][3] = m13;
+
+        result.M.M[2][0] = m20;
+        result.M.M[2][1] = m21;
+        result.M.M[2][2] = m22;
+        result.M.M[2][3] = m23;
+
+        result.M.M[3][0] = m30;
+        result.M.M[3][1] = m31;
+        result.M.M[3][2] = m32;
+        result.M.M[3][3] = m33;
+
+        return result;
+#elif GRAPHTYTE_HW_AVX
+        Matrix result;
+        result.M.R[0] = _mm_set_ps(m03, m02, m01, m00);
+        result.M.R[1] = _mm_set_ps(m13, m12, m11, m10);
+        result.M.R[2] = _mm_set_ps(m23, m22, m21, m20);
+        result.M.R[3] = _mm_set_ps(m33, m32, m31, m30);
+        return result;
+#endif
+    }
+
+    template <typename T>
     mathinline T mathcall Load(Float4x4A const* source) noexcept
         requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
     {
@@ -10642,6 +10684,182 @@ namespace Graphyte::Maths
         return { m.M.R[3] };
     }
 
+    mathinline Matrix mathcall Matrix_CreateFromNormalAngle(Vector3 normal, float angle) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+        float sin_angle;
+        float cos_angle;
+
+        SinCos(sin_angle, cos_angle, angle);
+
+        Vector4 const a = Make<Vector4>(sin_angle, cos_angle, 1.0f - cos_angle);
+
+        Vector4 const c0 = SplatX(a);
+        Vector4 const c1 = SplatY(a);
+        Vector4 const c2 = SplatZ(a);
+
+        Vector4 const n0 = Swizzle<1, 2, 0, 3>(As<Vector4>(normal));
+        Vector4 const n1 = Swizzle<2, 0, 1, 3>(As<Vector4>(normal));
+
+        Vector4 const g0 = Multiply(c2, n0);
+        Vector4 const g1 = Multiply(g0, n1);
+
+        Vector4 const h0 = Multiply(c2, As<Vector4>(normal));
+        Vector4 const h1 = MultiplyAdd(h0, As<Vector4>(normal), c1);
+
+        Vector4 const i0 = MultiplyAdd(c0, As<Vector4>(normal), g1);
+        Vector4 const i1 = NegateMultiplyAdd(c0, As<Vector4>(normal), g1);
+
+        Vector4 const r0 = Select(a, h1, As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V));
+
+        Vector4 const r1 = Permute<2, 5, 6, 0>(i0, i1);
+        Vector4 const r2 = Permute<1, 4, 1, 4>(i0, i1);
+
+        Matrix result;
+        result.M.R[0] = Permute<0, 4, 5, 3>(r0, r1).V;
+        result.M.R[1] = Permute<6, 1, 7, 3>(r0, r1).V;
+        result.M.R[2] = Permute<4, 5, 2, 3>(r0, r2).V;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        return result;
+#elif GRAPHYTE_HW_AVX
+        float sin_angle;
+        float cos_angle;
+
+        SinCos(sin_angle, cos_angle, angle);
+
+        __m128 const c0 = _mm_set_ps1(sin_angle);
+        __m128 const c1 = _mm_set_ps1(cos_angle);
+        __m128 const c2 = _mm_set_ps1(1.0f - cos_angle);
+
+        __m128 const n0 = _mm_permute_ps(normal.V, _MM_SHUFFLE(3, 0, 2, 1));
+        __m128 const n1 = _mm_permute_ps(normal.V, _MM_SHUFFLE(3, 1, 0, 2));
+
+        __m128 const g0 = _mm_mul_ps(c2, n0);
+        __m128 const g1 = _mm_mul_ps(g0, n1);
+
+        __m128 const h0 = _mm_mul_ps(c2, normal.V);
+
+        __m128 const i0 = Impl::avx_fmadd_f32x4(h0, normal.V, c1);
+        __m128 const i1 = Impl::avx_fmadd_f32x4(c0, normal.V, g1);
+        __m128 const i2 = Impl::avx_fnmadd_f32x4(c0, normal.V, g1);
+
+        __m128 const r0 = _mm_and_ps(i0, Impl::VEC4_MASK_SELECT_1110.V);
+
+        __m128 const t0 = _mm_shuffle_ps(i1, i2, _MM_SHUFFLE(2, 1, 2, 0));
+        __m128 const r1 = _mm_permute_ps(t0, _MM_SHUFFLE(0, 3, 2, 1));
+
+        __m128 const t1 = _mm_shuffle_ps(i1, i2, _MM_SHUFFLE(0, 0, 1, 1));
+        __m128 const r2 = _mm_permute_ps(t1, _MM_SHUFFLE(2, 0, 2, 0));
+
+        __m128 const t2 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(1, 0, 3, 0));
+        __m128 const r3 = _mm_permute_ps(t2, _MM_SHUFFLE(1, 3, 2, 0));
+
+        Matrix result;
+        result.M.R[0] = r3;
+
+        __m128 const t3 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(3, 2, 3, 1));
+        __m128 const r4 = _mm_permute_ps(t3, _MM_SHUFFLE(1, 3, 0, 2));
+
+        result.M.R[1] = r4;
+
+        __m128 const r5 = _mm_shuffle_ps(r2, r0, _MM_SHUFFLE(3, 2, 1, 0));
+        result.M.R[2] = r5;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        return result;
+#endif
+    }
+
+    mathinline Matrix mathcall Matrix_CreateFromAxisAngle(Vector3 axis, float angle) noexcept
+    {
+        GX_ASSERT(!IsEqual(axis, Zero<Vector3>()));
+        GX_ASSERT(!IsInfinity(axis));
+
+        Vector3 const normal = Normalize(axis);
+        return Matrix_CreateFromNormalAngle(normal, angle);
+    }
+
+    mathinline Matrix mathcall CreateFromQuaternion(Quaternion q) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Vector4 const q_xyzw = As<Vector4>(q);
+
+        Vector4 const q0 = Add(q_xyzw, q_xyzw);
+        Vector4 const q1 = Multiply(q_xyzw, q0);
+
+        Vector4 const q1_yxx_1 = Permute<1, 0, 0, 7>(q1, As<Vector4>(Impl::VEC4_ONE_3.V));
+        Vector4 const q1_zzy_1 = Permute<2, 2, 1, 7>(q1, As<Vector4>(Impl::VEC4_ONE_3.V));
+        Vector4 const o0 = Subtract(As<Vector4>(Impl::VEC4_ONE_3.V), q1_yxx_1);
+        Vector4 const s0 = Subtract(o0, q1_zzy_1);
+
+        Vector4 const q_xxyw = Swizzle<0, 0, 1, 3>(q_xyzw);
+        Vector4 const q0_zyzw = Swizzle<2, 1, 2, 3>(q0);
+        Vector4 const m0 = Multiply(q_xxyw, q0_zyzw);
+
+        Vector4 const q_wwww = SplatW(q_xyzw);
+        Vector4 const q0_yzxw = Swizzle<1, 2, 0, 3>(q0);
+        Vector4 const m1 = Multiply(q_wwww, q0_yzxw);
+
+        Vector4 const r0 = Add(m0, m1);
+        Vector4 const r1 = Subtract(m0, m1);
+
+        Vector4 const r2 = Permute<1, 4, 5, 2>(r0, r1);
+        Vector4 const r3 = Permute<0, 6, 0, 6>(r0, r1);
+
+        Matrix result;
+        result.M.R[0] = Permute<0, 4, 5, 3>(s0, r2).V;
+        result.M.R[1] = Permute<6, 1, 7, 3>(s0, r2).V;
+        result.M.R[2] = Permute<4, 5, 2, 3>(s0, r3).V;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+        static Impl::ConstFloat32x4 const Constant1110 = { { { 1.0f, 1.0f, 1.0f, 0.0f } } };
+
+        __m128 Q0 = _mm_add_ps(q.V, q.V);
+        __m128 Q1 = _mm_mul_ps(q.V, Q0);
+
+        __m128 V0 = _mm_permute_ps(Q1, _MM_SHUFFLE(3, 0, 0, 1));
+        V0 = _mm_and_ps(V0, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 V1 = _mm_permute_ps(Q1, _MM_SHUFFLE(3, 1, 2, 2));
+        V1 = _mm_and_ps(V1, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 R0 = _mm_sub_ps(Constant1110.V, V0);
+        R0 = _mm_sub_ps(R0, V1);
+
+        V0 = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 1, 0, 0));
+        V1 = _mm_permute_ps(Q0, _MM_SHUFFLE(3, 2, 1, 2));
+        V0 = _mm_mul_ps(V0, V1);
+
+        V1 = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
+        __m128 V2 = _mm_permute_ps(Q0, _MM_SHUFFLE(3, 0, 2, 1));
+        V1 = _mm_mul_ps(V1, V2);
+
+        __m128 R1 = _mm_add_ps(V0, V1);
+        __m128 R2 = _mm_sub_ps(V0, V1);
+
+        V0 = _mm_shuffle_ps(R1, R2, _MM_SHUFFLE(1, 0, 2, 1));
+        V0 = _mm_permute_ps(V0, _MM_SHUFFLE(1, 3, 2, 0));
+        V1 = _mm_shuffle_ps(R1, R2, _MM_SHUFFLE(2, 2, 0, 0));
+        V1 = _mm_permute_ps(V1, _MM_SHUFFLE(2, 0, 2, 0));
+
+        Q1 = _mm_shuffle_ps(R0, V0, _MM_SHUFFLE(1, 0, 3, 0));
+        Q1 = _mm_permute_ps(Q1, _MM_SHUFFLE(1, 3, 2, 0));
+
+        Matrix m;
+        m.M.R[0] = Q1;
+
+        Q1 = _mm_shuffle_ps(R0, V0, _MM_SHUFFLE(3, 2, 3, 1));
+        Q1 = _mm_permute_ps(Q1, _MM_SHUFFLE(1, 3, 0, 2));
+        m.M.R[1] = Q1;
+
+        Q1 = _mm_shuffle_ps(V1, R0, _MM_SHUFFLE(3, 2, 1, 0));
+        m.M.R[2] = Q1;
+        m.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        return m;
+#endif
+    }
+
+
     //
     // Transforms
     //
@@ -10964,184 +11182,181 @@ namespace Graphyte::Maths
 #endif
     }
 
-    //mathinline Matrix mathcall CreateFromEuler(float x, float y, float z) noexcept;
-    //mathinline Matrix mathcall CreateFromEuler(Vector3 angles) noexcept;
-    //mathinline Matrix mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept;
-    //mathinline Matrix mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept;
-
-    mathinline Matrix mathcall Matrix_CreateFromNormalAngle(Vector3 normal, float angle) noexcept
+    mathinline Matrix mathcall CreateTransform2D(
+        Vector2 scaling_origin,
+        float scaling_orientation,
+        Vector2 scaling,
+        Vector2 rotation_origin,
+        float rotation,
+        Vector2 translation
+    ) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
-        float sin_angle;
-        float cos_angle;
+        Vector3 const v_scaling_origin = Select(
+            As<Vector3>(Impl::VEC4_MASK_SELECT_1100.V),
+            As<Vector3>(scaling_origin),
+            As<Bool3>(Impl::VEC4_MASK_SELECT_1100.V)
+        );
 
-        SinCos(sin_angle, cos_angle, angle);
+        // Create scanling origin transform
+        Vector3 const v_scaling_origin_negated = Negate(v_scaling_origin);
+        Matrix const m_scaling_origin = CreateTranslation(v_scaling_origin_negated);
 
-        Vector4 const a = Make<Vector4>(sin_angle, cos_angle, 1.0f - cos_angle);
+        // Create scaling orientation transform
+        Matrix const m_scaling_orientation = CreateRotationZ(scaling_orientation);
+        Matrix const m_scaling_orientation_trn = Transpose(m_scaling_orientation);
 
-        Vector4 const c0 = SplatX(a);
-        Vector4 const c1 = SplatY(a);
-        Vector4 const c2 = SplatZ(a);
+        // Create scaling transform
+        Vector3 const v_scaling_xy1 = Select(
+            As<Vector3>(Impl::VEC4_ONE_4.V),
+            As<Vector3>(scaling),
+            As<Bool3>(Impl::VEC4_MASK_SELECT_1100.V)
+        );
 
-        Vector4 const n0 = Swizzle<1, 2, 0, 3>(As<Vector4>(normal));
-        Vector4 const n1 = Swizzle<2, 0, 1, 3>(As<Vector4>(normal));
+        Matrix const m_scaling = CreateScaling(v_scaling_xy1);
 
-        Vector4 const g0 = Multiply(c2, n0);
-        Vector4 const g1 = Multiply(g0, n1);
+        // Create rotation origin
+        Vector4 const v_rotation_origin = Select(
+            As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
+            As<Vector4>(rotation_origin),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+        );
 
-        Vector4 const h0 = Multiply(c2, As<Vector4>(normal));
-        Vector4 const h1 = MultiplyAdd(h0, As<Vector4>(normal), c1);
+        // Create rotation transform
+        Matrix const m_rotation = CreateRotationZ(rotation);
 
-        Vector4 const i0 = MultiplyAdd(c0, As<Vector4>(normal), g1);
-        Vector4 const i1 = NegateMultiplyAdd(c0, As<Vector4>(normal), g1);
+        // Create translation vector
+        Vector4 const v_translation = Select(
+            As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
+            As<Vector4>(translation),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+        );
 
-        Vector4 const r0 = Select(a, h1, As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V));
+        Matrix const m0 = Multiply(m_scaling_origin, m_scaling_orientation_trn);
+        Matrix const m1 = Multiply(m0, m_scaling);
 
-        Vector4 const r1 = Permute<2, 5, 6, 0>(i0, i1);
-        Vector4 const r2 = Permute<1, 4, 1, 4>(i0, i1);
+        Matrix m2 = Multiply(m1, m_scaling_orientation);
+        m2.M.R[3] = Add(As<Vector4>(m2.M.R[3]), As<Vector4>(v_scaling_origin)).V;
+        m2.M.R[3] = Subtract(As<Vector4>(m2.M.R[3]), v_rotation_origin).V;
 
-        Matrix result;
-        result.M.R[0] = Permute<0, 4, 5, 3>(r0, r1).V;
-        result.M.R[1] = Permute<6, 1, 7, 3>(r0, r1).V;
-        result.M.R[2] = Permute<4, 5, 2, 3>(r0, r2).V;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
-        return result;
-#elif GRAPHYTE_HW_AVX
-        float sin_angle;
-        float cos_angle;
+        Matrix m3 = Multiply(m2, m_rotation);
+        m3.M.R[3] = Add(As<Vector4>(m3.M.R[3]), v_rotation_origin).V;
+        m3.M.R[3] = Add(As<Vector4>(m3.M.R[3]), v_translation).V;
 
-        SinCos(sin_angle, cos_angle, angle);
-
-        __m128 const c0 = _mm_set_ps1(sin_angle);
-        __m128 const c1 = _mm_set_ps1(cos_angle);
-        __m128 const c2 = _mm_set_ps1(1.0f - cos_angle);
-
-        __m128 const n0 = _mm_permute_ps(normal.V, _MM_SHUFFLE(3, 0, 2, 1));
-        __m128 const n1 = _mm_permute_ps(normal.V, _MM_SHUFFLE(3, 1, 0, 2));
-
-        __m128 const g0 = _mm_mul_ps(c2, n0);
-        __m128 const g1 = _mm_mul_ps(g0, n1);
-
-        __m128 const h0 = _mm_mul_ps(c2, normal.V);
-
-        __m128 const i0 = Impl::avx_fmadd_f32x4(h0, normal.V, c1);
-        __m128 const i1 = Impl::avx_fmadd_f32x4(c0, normal.V, g1);
-        __m128 const i2 = Impl::avx_fnmadd_f32x4(c0, normal.V, g1);
-
-        __m128 const r0 = _mm_and_ps(i0, Impl::VEC4_MASK_SELECT_1110.V);
-
-        __m128 const t0 = _mm_shuffle_ps(i1, i2, _MM_SHUFFLE(2, 1, 2, 0));
-        __m128 const r1 = _mm_permute_ps(t0, _MM_SHUFFLE(0, 3, 2, 1));
-
-        __m128 const t1 = _mm_shuffle_ps(i1, i2, _MM_SHUFFLE(0, 0, 1, 1));
-        __m128 const r2 = _mm_permute_ps(t1, _MM_SHUFFLE(2, 0, 2, 0));
-
-        __m128 const t2 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(1, 0, 3, 0));
-        __m128 const r3 = _mm_permute_ps(t2, _MM_SHUFFLE(1, 3, 2, 0));
-
-        Matrix result;
-        result.M.R[0] = r3;
-
-        __m128 const t3 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(3, 2, 3, 1));
-        __m128 const r4 = _mm_permute_ps(t3, _MM_SHUFFLE(1, 3, 0, 2));
-
-        result.M.R[1] = r4;
-
-        __m128 const r5 = _mm_shuffle_ps(r2, r0, _MM_SHUFFLE(3, 2, 1, 0));
-        result.M.R[2] = r5;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
-
-        return result;
-#endif
+        return m3;
     }
 
-    mathinline Matrix mathcall Matrix_CreateFromAxisAngle(Vector3 axis, float angle) noexcept
+    mathinline Matrix mathcall CreateAffineTransform2D(
+        Vector2 scaling,
+        Vector2 rotation_origin,
+        float rotation,
+        Vector2 translation
+    ) noexcept
     {
-        GX_ASSERT(!IsEqual(axis, Zero<Vector3>()));
-        GX_ASSERT(!IsInfinity(axis));
+        Vector3 const v_scaling = Select(
+            As<Vector3>(Impl::VEC4_ONE_4.V),
+            As<Vector3>(scaling),
+            As<Bool3>(Impl::VEC4_MASK_SELECT_1100.V)
+        );
 
-        Vector3 const normal = Normalize(axis);
-        return Matrix_CreateFromNormalAngle(normal, angle);
+        Vector4 const v_rotation_origin = Select(
+            As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
+            As<Vector4>(rotation_origin),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+        );
+
+        Vector4 const v_translation = Select(
+            As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
+            As<Vector4>(translation),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+        );
+
+        Matrix const m_rotation = CreateRotationZ(rotation);
+
+        Matrix result = CreateScaling(v_scaling);
+        result.M.R[3] = Subtract(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
+        result = Multiply(result, m_rotation);
+        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
+        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_translation).V;
+
+        return result;
     }
 
-    mathinline Matrix mathcall CreateFromQuaternion(Quaternion q) noexcept
+    mathinline Matrix mathcall CreateTransform(
+        Vector3 scaling_origin,
+        Quaternion scaling_orientation,
+        Vector3 scaling,
+        Vector3 rotation_origin,
+        Quaternion rotation,
+        Vector3 translation
+    ) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const q_xyzw = As<Vector4>(q);
+        Vector3 const v_scaling_origin = Select(
+            As<Vector3>(Impl::VEC4_MASK_SELECT_1110.V),
+            scaling_origin,
+            As<Bool3>(Impl::VEC4_MASK_SELECT_1110.V)
+        );
 
-        Vector4 const q0 = Add(q_xyzw, q_xyzw);
-        Vector4 const q1 = Multiply(q_xyzw, q0);
+        Vector3 const v_scaling_origin_negated = Negate(v_scaling_origin);
 
-        Vector4 const q1_yxx_1 = Permute<1, 0, 0, 7>(q1, As<Vector4>(Impl::VEC4_ONE_3.V));
-        Vector4 const q1_zzy_1 = Permute<2, 2, 1, 7>(q1, As<Vector4>(Impl::VEC4_ONE_3.V));
-        Vector4 const o0 = Subtract(As<Vector4>(Impl::VEC4_ONE_3.V), q1_yxx_1);
-        Vector4 const s0 = Subtract(o0, q1_zzy_1);
+        Vector4 const v_rotation_origin = Select(
+            As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
+            As<Vector4>(rotation_origin),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+        );
 
-        Vector4 const q_xxyw = Swizzle<0, 0, 1, 3>(q_xyzw);
-        Vector4 const q0_zyzw = Swizzle<2, 1, 2, 3>(q0);
-        Vector4 const m0 = Multiply(q_xxyw, q0_zyzw);
+        Vector4 const v_translation = Select(
+            As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
+            As<Vector4>(translation),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+        );  
 
-        Vector4 const q_wwww = SplatW(q_xyzw);
-        Vector4 const q0_yzxw = Swizzle<1, 2, 0, 3>(q0);
-        Vector4 const m1 = Multiply(q_wwww, q0_yzxw);
+        Matrix const m_scaling_origin = CreateTranslation(v_scaling_origin_negated);
+        Matrix const m_scaling_orientation = CreateFromQuaternion(scaling_orientation);
+        Matrix const m_scaling_orientation_trn = Transpose(m_scaling_orientation);
+        Matrix const m_scaling = CreateScaling(scaling);
+        Matrix const m_rotation = CreateFromQuaternion(rotation);
 
-        Vector4 const r0 = Add(m0, m1);
-        Vector4 const r1 = Subtract(m0, m1);
+        Matrix result = Multiply(m_scaling_origin, m_scaling_orientation_trn);
+        result = Multiply(result, m_scaling);
+        result = Multiply(result, m_scaling_orientation);
+        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), As<Vector4>(v_scaling_origin)).V;
+        result.M.R[3] = Subtract(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
+        result = Multiply(result, m_rotation);
+        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
+        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_translation).V;
 
-        Vector4 const r2 = Permute<1, 4, 5, 2>(r0, r1);
-        Vector4 const r3 = Permute<0, 6, 0, 6>(r0, r1);
-
-        Matrix result;
-        result.M.R[0] = Permute<0, 4, 5, 3>(s0, r2).V;
-        result.M.R[1] = Permute<6, 1, 7, 3>(s0, r2).V;
-        result.M.R[2] = Permute<4, 5, 2, 3>(s0, r3).V;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
         return result;
+    }
 
-#elif GRAPHYTE_HW_AVX
-        static Impl::ConstFloat32x4 const Constant1110 = { { { 1.0f, 1.0f, 1.0f, 0.0f } } };
+    mathinline Matrix mathcall CreateAffineTransform(
+        Vector3 scaling,
+        Vector3 rotation_origin,
+        Quaternion rotation,
+        Vector3 translation
+    ) noexcept
+    {
 
-        __m128 Q0 = _mm_add_ps(q.V, q.V);
-        __m128 Q1 = _mm_mul_ps(q.V, Q0);
+        Vector4 const v_rotation_origin = Select(
+            As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
+            As<Vector4>(rotation_origin),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+        );
 
-        __m128 V0 = _mm_permute_ps(Q1, _MM_SHUFFLE(3, 0, 0, 1));
-        V0 = _mm_and_ps(V0, Impl::VEC4_MASK_SELECT_1110.V);
-        __m128 V1 = _mm_permute_ps(Q1, _MM_SHUFFLE(3, 1, 2, 2));
-        V1 = _mm_and_ps(V1, Impl::VEC4_MASK_SELECT_1110.V);
-        __m128 R0 = _mm_sub_ps(Constant1110.V, V0);
-        R0 = _mm_sub_ps(R0, V1);
+        Vector4 const v_translation = Select(
+            As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
+            As<Vector4>(translation),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+        );
 
-        V0 = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 1, 0, 0));
-        V1 = _mm_permute_ps(Q0, _MM_SHUFFLE(3, 2, 1, 2));
-        V0 = _mm_mul_ps(V0, V1);
+        Matrix const m_rotation = CreateFromQuaternion(rotation);
 
-        V1 = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
-        __m128 V2 = _mm_permute_ps(Q0, _MM_SHUFFLE(3, 0, 2, 1));
-        V1 = _mm_mul_ps(V1, V2);
+        Matrix result = CreateScaling(scaling);
+        result.M.R[3] = Subtract(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
+        result = Multiply(result, m_rotation);
+        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
+        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_translation).V;
 
-        __m128 R1 = _mm_add_ps(V0, V1);
-        __m128 R2 = _mm_sub_ps(V0, V1);
-
-        V0 = _mm_shuffle_ps(R1, R2, _MM_SHUFFLE(1, 0, 2, 1));
-        V0 = _mm_permute_ps(V0, _MM_SHUFFLE(1, 3, 2, 0));
-        V1 = _mm_shuffle_ps(R1, R2, _MM_SHUFFLE(2, 2, 0, 0));
-        V1 = _mm_permute_ps(V1, _MM_SHUFFLE(2, 0, 2, 0));
-
-        Q1 = _mm_shuffle_ps(R0, V0, _MM_SHUFFLE(1, 0, 3, 0));
-        Q1 = _mm_permute_ps(Q1, _MM_SHUFFLE(1, 3, 2, 0));
-
-        Matrix m;
-        m.M.R[0] = Q1;
-
-        Q1 = _mm_shuffle_ps(R0, V0, _MM_SHUFFLE(3, 2, 3, 1));
-        Q1 = _mm_permute_ps(Q1, _MM_SHUFFLE(1, 3, 0, 2));
-        m.M.R[1] = Q1;
-
-        Q1 = _mm_shuffle_ps(V1, R0, _MM_SHUFFLE(3, 2, 1, 0));
-        m.M.R[2] = Q1;
-        m.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
-        return m;
-#endif
+        return result;
     }
 }
 

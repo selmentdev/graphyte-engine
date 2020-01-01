@@ -600,35 +600,6 @@
 
 #undef MATH_RANK_DECOMPOSE
 
-    mathinline Matrix mathcall Matrix::Make(float m00, float m01, float m02, float m03, float m10, float m11, float m12, float m13, float m20, float m21, float m22, float m23, float m30, float m31, float m32, float m33) noexcept
-    {
-        Matrix m_result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        m_result.M.M[0][0] = m00;
-        m_result.M.M[0][1] = m01;
-        m_result.M.M[0][2] = m02;
-        m_result.M.M[0][3] = m03;
-        m_result.M.M[1][0] = m10;
-        m_result.M.M[1][1] = m11;
-        m_result.M.M[1][2] = m12;
-        m_result.M.M[1][3] = m13;
-        m_result.M.M[2][0] = m20;
-        m_result.M.M[2][1] = m21;
-        m_result.M.M[2][2] = m22;
-        m_result.M.M[2][3] = m23;
-        m_result.M.M[3][0] = m30;
-        m_result.M.M[3][1] = m31;
-        m_result.M.M[3][2] = m32;
-        m_result.M.M[3][3] = m33;
-#elif GRAPHYTE_HW_AVX
-        m_result.M.R[0] = _mm_set_ps(m03, m02, m01, m00);
-        m_result.M.R[1] = _mm_set_ps(m13, m12, m11, m10);
-        m_result.M.R[2] = _mm_set_ps(m23, m22, m21, m20);
-        m_result.M.R[3] = _mm_set_ps(m33, m32, m31, m30);
-#endif
-        return m_result;
-    }
-
     mathinline Matrix mathcall Matrix::FromRollPitchYaw(float pitch, float yaw, float roll) noexcept
     {
         auto v_angles = Vector3::Make(pitch, yaw, roll);
@@ -639,89 +610,6 @@
     {
         auto q_rotation = Quaternion::RotationFromRollPitchYaw(angles);
         return Matrix::FromRotationQuaternion(q_rotation);
-    }
-
-    mathinline Matrix mathcall Matrix::Transformation2D(Vector2 scaling_origin, float scaling_orientation, Vector2 scaling, Vector2 rotation_origin, float rotation, Vector2 translation) noexcept
-    {
-        auto v_scaling_origin = Vector4::Select({ Detail::VEC4_MASK_SELECT_1100.V }, { scaling_origin.V }, { Detail::VEC4_MASK_SELECT_1100.V });
-        auto v_neg_scaling_origin = Vector4::Negate(v_scaling_origin);
-
-        auto m_scaling_origin_i = Matrix::Translation({ v_neg_scaling_origin.V });
-        auto m_scaling_orientation = Matrix::RotationZ(scaling_orientation);
-        auto m_scaling_orientation_t = Matrix::Transpose(m_scaling_orientation);
-        auto v_scaling = Vector4::Select({ Detail::VEC4_ONE_4.V }, { scaling.V }, { Detail::VEC4_MASK_SELECT_1100.V });
-        auto m_scaling = Matrix::Scaling(Vector3{ v_scaling.V });
-        auto v_rotation_origin = Vector4::Select({ Detail::VEC4_MASK_SELECT_1100.V }, { rotation_origin.V }, { Detail::VEC4_MASK_SELECT_1100.V });
-        auto m_rotation = Matrix::RotationZ(rotation);
-        auto v_translation = Vector4::Select({ Detail::VEC4_MASK_SELECT_1100.V }, { translation.V }, { Detail::VEC4_MASK_SELECT_1100.V });
-
-        auto m_result = Matrix::Multiply(m_scaling_origin_i, m_scaling_orientation_t);
-        m_result = Matrix::Multiply(m_result, m_scaling);
-        m_result = Matrix::Multiply(m_result, m_scaling_orientation);
-        m_result.M.R[3] = Vector4::Add({ m_result.M.R[3] }, v_scaling_origin).V;
-        m_result.M.R[3] = Vector4::Subtract({ m_result.M.R[3] }, v_rotation_origin).V;
-        m_result = Matrix::Multiply(m_result, m_rotation);
-        m_result.M.R[3] = Vector4::Add({ m_result.M.R[3] }, v_rotation_origin).V;
-        m_result.M.R[3] = Vector4::Add({ m_result.M.R[3] }, v_translation).V;
-
-        return m_result;
-    }
-
-    mathinline Matrix mathcall Matrix::AffineTransformation2D(Vector2 scaling, Vector2 rotation_origin, float rotation, Vector2 translation) noexcept
-    {
-        auto v_scaling = Vector4::Select({ Detail::VEC4_ONE_4.V }, { scaling.V }, { Detail::VEC4_MASK_SELECT_1100.V });
-        auto m_result = Matrix::Scaling(Vector3{ v_scaling.V });
-        auto v_rotation_origin = Vector4::Select({ Detail::VEC4_ONE_4.V }, { rotation_origin.V }, { Detail::VEC4_MASK_SELECT_1100.V });
-        auto m_rotation = Matrix::RotationZ(rotation);
-        auto v_translation = Vector4::Select({ Detail::VEC4_MASK_SELECT_1100.V }, { translation.V }, { Detail::VEC4_MASK_SELECT_1100.V });
-
-        m_result.M.R[3] = Vector4::Subtract({ m_result.M.R[3] }, v_rotation_origin).V;
-        m_result = Matrix::Multiply(m_result, m_rotation);
-        m_result.M.R[3] = Vector4::Add({ m_result.M.R[3] }, v_rotation_origin).V;
-        m_result.M.R[3] = Vector4::Add({ m_result.M.R[3] }, v_translation).V;
-
-        return m_result;
-    }
-
-    mathinline Matrix mathcall Matrix::Transformation(Vector3 scaling_origin, Quaternion scaling_orientation_quaternion, Vector3 scaling, Vector3 rotation_origin, Quaternion rotation_quaternion, Vector3 translation) noexcept
-    {
-        auto v_scaling_origin = Vector4::Select({ Detail::VEC4_MASK_SELECT_1110.V }, { scaling_origin.V }, { Detail::VEC4_MASK_SELECT_1110.V });
-        auto v_neg_scaling_origin = Vector4::Negate(v_scaling_origin);
-
-        auto m_scaling_origin_i = Matrix::Translation({ v_neg_scaling_origin.V });
-        auto m_scaling_orientation = Matrix::FromRotationQuaternion(scaling_orientation_quaternion);
-        auto m_scaling_orientation_t = Matrix::Transpose(m_scaling_orientation);
-        auto m_scaling = Matrix::Scaling(scaling);
-        auto v_rotation_origin = Vector4::Select({ Detail::VEC4_MASK_SELECT_1110.V }, { rotation_origin.V }, { Detail::VEC4_MASK_SELECT_1110.V });
-        auto m_rotation = Matrix::FromRotationQuaternion(rotation_quaternion);
-        auto v_translation = Vector4::Select({ Detail::VEC4_MASK_SELECT_1110.V }, { translation.V }, { Detail::VEC4_MASK_SELECT_1110.V });
-
-        Matrix m_result = Matrix::Multiply(m_scaling_origin_i, m_scaling_orientation_t);
-
-        m_result = Matrix::Multiply(m_result, m_scaling);
-        m_result = Matrix::Multiply(m_result, m_scaling_orientation);
-        m_result.M.R[3] = Vector4::Add({ m_result.M.R[3] }, v_scaling_origin).V;
-        m_result.M.R[3] = Vector4::Subtract({ m_result.M.R[3] }, v_rotation_origin).V;
-        m_result = Matrix::Multiply(m_result, m_rotation);
-        m_result.M.R[3] = Vector4::Add({ m_result.M.R[3] }, v_rotation_origin).V;
-        m_result.M.R[3] = Vector4::Add({ m_result.M.R[3] }, v_translation).V;
-
-        return m_result;
-    }
-
-    mathinline Matrix mathcall Matrix::AffineTransformation(Vector3 scaling, Vector3 rotation_origin, Quaternion rotation_quaternion, Vector3 translation) noexcept
-    {
-        auto m_result = Matrix::Scaling(scaling);
-        auto v_rotation_origin = Vector4::Select({ Detail::VEC4_MASK_SELECT_1110.V }, { rotation_origin.V }, { Detail::VEC4_MASK_SELECT_1110.V });
-        auto m_rotation = Matrix::FromRotationQuaternion(rotation_quaternion);
-        auto v_translation = Vector4::Select({ Detail::VEC4_MASK_SELECT_1110.V }, { translation.V }, { Detail::VEC4_MASK_SELECT_1110.V });
-
-        m_result.M.R[3] = Vector4::Subtract({ m_result.M.R[3] }, v_rotation_origin).V;
-        m_result = Matrix::Multiply(m_result, m_rotation);
-        m_result.M.R[3] = Vector4::Add({ m_result.M.R[3] }, { v_rotation_origin.V }).V;
-        m_result.M.R[3] = Vector4::Add({ m_result.M.R[3] }, v_translation).V;
-
-        return m_result;
     }
 
 #if false
