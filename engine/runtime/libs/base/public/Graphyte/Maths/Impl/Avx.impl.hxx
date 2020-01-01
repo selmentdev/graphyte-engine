@@ -13,7 +13,9 @@ namespace Graphyte::Maths::Impl
         __m128 c
     ) noexcept
     {
-#if GRAPHYTE_HW_AVX2
+#if GRAPHYTE_HW_FMA4
+        return _mm_macc_ps(a, b, c);
+#elif GRAPHYTE_HW_AVX2
         return _mm_fmadd_ps(a, b, c);
 #else
         // (a * b)
@@ -30,7 +32,9 @@ namespace Graphyte::Maths::Impl
         __m128 c
     ) noexcept
     {
-#if GRAPHYTE_HW_AVX2
+#if GRAPHYTE_HW_FMA4
+        return _mm_msub_ps(a, b, c);
+#elif GRAPHYTE_HW_AVX2
         return _mm_fmsub_ps(a, b, c);
 #else
         // (a * b)
@@ -47,7 +51,9 @@ namespace Graphyte::Maths::Impl
         __m128 c
     ) noexcept
     {
-#if GRAPHYTE_HW_AVX2
+#if GRAPHYTE_HW_FMA4
+        return _mm_nmacc_ps(a, b, c);
+#elif GRAPHYTE_HW_AVX2
         return _mm_fnmadd_ps(a, b, c);
 #else
         // (a * b)
@@ -64,7 +70,9 @@ namespace Graphyte::Maths::Impl
         __m128 c
     ) noexcept
     {
-#if GRAPHYTE_HW_AVX2
+#if GRAPHYTE_HW_FMA4
+        return _mm_nmsub_ps(a, b, c);
+#elif GRAPHYTE_HW_AVX2
         return _mm_fnmsub_ps(a, b, c);
 #else
         // (a * b)
