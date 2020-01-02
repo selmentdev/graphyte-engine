@@ -3,6 +3,8 @@
 #include <Graphyte/Diagnostics.hxx>
 #include <Graphyte/Bitwise.hxx>
 #include <Graphyte/Half.hxx>
+#include <concepts>
+#include <ranges>
 
 // =================================================================================================
 //
@@ -1117,18 +1119,38 @@ namespace Graphyte::Maths::Impl
 // Type traits
 //
 
-namespace Graphyte::Maths::Impl
+namespace Graphyte::Maths::Traits
 {
-    template <size_t Components>
-    struct BitMaskFromComponents;
+    template <typename T> concept OrderComparable = requires { typename T::IsOrderComparable; };
+    template <typename T> concept EqualComparable = requires { typename T::IsEqualComparable; };
+    template <typename T> concept Comparable = OrderComparable<T> and EqualComparable<T>;
+    template <typename T> concept Loadable = requires { typename T::IsLoadable; };
+    template <typename T> concept Storable = requires { typename T::IsStorable; };
+    template <typename T> concept Roundable = requires { typename T::IsRoundable; };
+    template <typename T> concept Componentwise = requires { typename T::IsComponentwise; };
+    template <typename T> concept Interpolable = requires { typename T::IsInterpolable; };
+    template <typename T> concept FloatScalar = std::same_as<float>;
+    template <typename T> concept FloatVector = requires { typename T::IsFloatVector; };
+    template <typename T> concept FloatMatrix = requires { typename T::IsFloatMatrix; };
+    template <typename T> concept BoolVector = requires { typename T::IsBoolVector; };
 
-    template <> struct BitMaskFromComponents<4> final { static constexpr size_t Mask = 0b1111; };
-    template <> struct BitMaskFromComponents<3> final { static constexpr size_t Mask = 0b0111; };
-    template <> struct BitMaskFromComponents<2> final { static constexpr size_t Mask = 0b0011; };
-    template <> struct BitMaskFromComponents<1> final { static constexpr size_t Mask = 0b0001; };
+    template <typename T> concept OpAdd = requires { typename T::OpAdd; };
+    template <typename T> concept OpSub = requires { typename T::OpSub; };
+    template <typename T> concept OpMul = requires { typename T::OpMul; };
+    template <typename T> concept OpDiv = requires { typename T::OpDiv; };
+    template <typename T> concept OpNeg = requires { typename T::OpNeg; };
+    template <typename T> concept OpRem = requires { typename T::OpRem; };
+    template <typename T> concept OpRcp = requires { typename T::OpRcp; };
+    template <typename T> concept OpBitAnd = requires { typename T::OpBitAnd; };
+    template <typename T> concept OpBitOr = requires { typename T::OpBitOr; };
+    template <typename T> concept OpBitXor = requires { typename T::OpBitXor; };
+    template <typename T> concept OpBitNot = requires { typename T::OpBitNot; };
 
-    template <size_t Components>
-    constexpr size_t ComponentsBitMask = BitMaskFromComponents<Components>::Mask;
+    // supports length / normalize / 
+    template <typename T> concept NormedSpace = requires { typename T::IsNormedSpace; };
+
+    // supports distance, angle between
+    template <typename T> concept EuclideanSpace = requires { typename T::IsEuclideanSpace; };
 }
 
 // =================================================================================================

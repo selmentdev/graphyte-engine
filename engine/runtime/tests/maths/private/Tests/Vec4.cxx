@@ -1,6 +1,45 @@
 #include "Test.Maths.pch.hxx"
 #include <Graphyte/Maths.hxx>
 
+namespace Tests
+{
+    template <typename T> concept OrderComparable = requires { typename T::IsOrderComparable; };
+    template <typename T> concept EqualComparable = requires { typename T::IsEqualComparable; };
+    template <typename T> concept Comparable = OrderComparable<T> and EqualComparable<T>;
+
+    struct Vector4 final
+    {
+        __m128 V;
+        using IsOrderComparable = void;
+    };
+
+    struct Vector3 final
+    {
+        __m128 V;
+        using IsEqualComparable = void;
+    };
+
+    struct Vector2 final
+    {
+        __m128 V;
+        using IsOrderComparable = void;
+        using IsEqualComparable = void;
+    };
+
+}
+
+static_assert(Tests::OrderComparable<Tests::Vector4>);
+static_assert(!Tests::OrderComparable<Tests::Vector3>);
+static_assert(Tests::OrderComparable<Tests::Vector2>);
+
+static_assert(!Tests::EqualComparable<Tests::Vector4>);
+static_assert(Tests::EqualComparable<Tests::Vector3>);
+static_assert(Tests::EqualComparable<Tests::Vector2>);
+
+static_assert(!Tests::Comparable<Tests::Vector4>);
+static_assert(!Tests::Comparable<Tests::Vector3>);
+static_assert(Tests::Comparable<Tests::Vector2>);
+
 TEST_CASE("Maths / Transforms")
 {
     using namespace Graphyte::Maths;
