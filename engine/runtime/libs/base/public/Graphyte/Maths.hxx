@@ -9742,7 +9742,7 @@ namespace Graphyte::Maths
         requires FloatMatrix<T> and (T::Components == 16)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Matrix result;
+        T result;
         result.M.M[0][0] = m00;
         result.M.M[0][1] = m01;
         result.M.M[0][2] = m02;
@@ -9765,7 +9765,7 @@ namespace Graphyte::Maths
 
         return result;
 #elif GRAPHTYTE_HW_AVX
-        Matrix result;
+        T result;
         result.M.R[0] = _mm_set_ps(m03, m02, m01, m00);
         result.M.R[1] = _mm_set_ps(m13, m12, m11, m10);
         result.M.R[2] = _mm_set_ps(m23, m22, m21, m20);
@@ -9776,14 +9776,14 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Load(Float4x4A const* source) noexcept
-        requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
+        requires MatrixLike<T> and Loadable<T> and (T::Rows == 4) and (T::Columns == 4)
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
 
-        Matrix result;
+        T result;
 
         result.M.R[0].F[0] = source->M[0][0];
         result.M.R[0].F[1] = source->M[0][1];
@@ -9809,7 +9809,7 @@ namespace Graphyte::Maths
 
 #elif GRAPHYTE_HW_AVX
 
-        Matrix result;
+        T result;
 
         result.M.R[0] = _mm_load_ps(&source->M11);
         result.M.R[1] = _mm_load_ps(&source->M21);
@@ -9823,7 +9823,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float4x4A* destination, T m) noexcept
-        requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
+        requires MatrixLike<T> and Storable<T> and (T::Rows == 4) and (T::Columns == 4)
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
@@ -9857,6 +9857,589 @@ namespace Graphyte::Maths
         _mm_store_ps(&destination->M31, m.M.R[2]);
         _mm_store_ps(&destination->M41, m.M.R[3]);
 
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Load(Float4x3A const* source) noexcept
+        requires FloatMatrix<T> and Loadable<T> and (T::Rows == 4) and (T::Columnts == 4)
+    {
+        GX_ASSERT(source != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T result;
+
+        result.M.M[0][0] = source->M[0][0];
+        result.M.M[0][1] = source->M[0][1];
+        result.M.M[0][2] = source->M[0][2];
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = source->M[1][0];
+        result.M.M[1][1] = source->M[1][1];
+        result.M.M[1][2] = source->M[1][2];
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = source->M[2][0];
+        result.M.M[2][1] = source->M[2][1];
+        result.M.M[2][2] = source->M[2][2];
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = source->M[3][0];
+        result.M.M[3][1] = source->M[3][1];
+        result.M.M[3][2] = source->M[3][2];
+        result.M.M[3][3] = 1.0f;
+
+        return result;
+#elif GRAPHYTE_HW_AVX
+        // = [r0.xyz, r1.x]
+        __m128 const r0 = _mm_load_ps(&source->M[0][0]);
+        // = [r1.yz, r2.xy]
+        __m128 const t0 = _mm_load_ps(&source->M[1][1]);
+        // = [r2.z, r3.xyz]
+        __m128 const t2 = _mm_load_ps(&source->M[2][2]);
+
+        // = [r2.xyzz]
+        __m128 const r2 = _mm_shuffle_ps(t0, t2, _MM_SHUFFLE(0, 0, 3, 2));
+        // = [r1.yzxx]
+        __m128 const t1 = _mm_shuffle_ps(t0, r0, _MM_SHUFFLE(3, 3, 1, 0));
+        // = [r1.xyzz]
+        __m128 const r1 = _mm_permute_ps(t1, _MM_SHUFFLE(1, 1, 0, 2));
+
+        // = [r0.xyz, 0]
+        __m128 const m0 = _mm_and_ps(r0, Impl::VEC4_MASK_COMPONENTS_3.V);
+        // = [r1.xyz, 0]
+        __m128 const m1 = _mm_and_ps(r1, Impl::VEC4_MASK_COMPONENTS_3.V);
+        // = [r2.xyz, 0]
+        __m128 const m2 = _mm_and_ps(r2, Impl::VEC4_MASK_COMPONENTS_3.V);
+
+        // = [r2.z, r3.xyz] >> 4 bytes = [r3.xyz]
+        __m128 const t3 = _mm_srli_si128(_mm_castps_si128(t2), 32 / 8);
+        // = [r3.xyz, 1]
+        __m128 const m3 = _mm_or_si128(t3, _mm_castps_si128(Impl::VEC4_POSITIVE_UNIT_W.V));
+
+        T result;
+        result.M.R[0] = m0;
+        result.M.R[1] = m1;
+        result.M.R[2] = m2;
+        result.M.R[3] = m3;
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float4x3A* destination, T m) noexcept
+        requires FloatMatrix<T> and Storable<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(destination != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->M[0][0] = m.M.M[0][0];
+        destination->M[0][1] = m.M.M[0][1];
+        destination->M[0][2] = m.M.M[0][2];
+
+        destination->M[1][0] = m.M.M[1][0];
+        destination->M[1][1] = m.M.M[1][1];
+        destination->M[1][2] = m.M.M[1][2];
+
+        destination->M[2][0] = m.M.M[2][0];
+        destination->M[2][1] = m.M.M[2][1];
+        destination->M[2][2] = m.M.M[2][2];
+
+        destination->M[3][0] = m.M.M[3][0];
+        destination->M[3][1] = m.M.M[3][1];
+        destination->M[3][2] = m.M.M[3][2];
+#elif GRAPHYTE_HW_AVX
+        // = [r0.xyzw]
+        __m128 const r0 = m.M.R[0];
+        // = [r1.xyzw]
+        __m128 const r1 = m.M.R[1];
+        // = [r2.xyzw]
+        __m128 const r2 = m.M.R[2];
+        // = [r3.xyzw]
+        __m128 const r3 = m.M.R[3];
+
+        // = [r1.yz, r2.xy]
+        __m128 const t0 = _mm_shuffle_ps(r1, r2, _MM_SHUFFLE(1, 0, 2, 1));
+        // = [r1.xx, r0.zz]
+        __m128 const t1 = _mm_shuffle_ps(r1, r0, _MM_SHUFFLE(2, 2, 0, 0));
+        // = [r0.xyz, r1.x]
+        __m128 const t2 = _mm_shuffle_ps(r0, t1, _MM_SHUFFLE(0, 2, 1, 0));
+        // = [r2.zz, r3.xx]
+        __m128 const t3 = _mm_shuffle_ps(r2, r3, _MM_SHUFFLE(0, 0, 2, 2));
+        // = [r2.z, r3.xyz]
+        __m128 const t4 = _mm_shuffle_ps(t3, r3, _MM_SHUFFLE(2, 1, 2, 0));
+
+        // = [r0.xyz, r1.x]
+        _mm_store_ps(&destination->M[0][0], t2);
+        // = [r1.yz, r2.xy]
+        _mm_store_ps(&destination->M[1][1], t0);
+        // = [r2.z, r3.xyz]
+        _mm_store_ps(&destination->M[2][2], t4);
+#endif
+    }
+
+    /// \note   Float3x4 is stored as transposed Float4x3
+    template <typename T>
+    mathinline T mathcall Load(Float3x4A const* source) noexcept
+        requires FloatMatrix<T> and Loadable<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(source != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        T result;
+
+        result.M.M[0][0] = source->M[0][0];
+        result.M.M[0][1] = source->M[1][0];
+        result.M.M[0][2] = source->M[2][0];
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = source->M[0][1];
+        result.M.M[1][1] = source->M[1][1];
+        result.M.M[1][2] = source->M[2][1];
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = source->M[0][2];
+        result.M.M[2][1] = source->M[1][2];
+        result.M.M[2][2] = source->M[2][2];
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = source->M[0][3];
+        result.M.M[3][1] = source->M[1][3];
+        result.M.M[3][2] = source->M[2][3];
+        result.M.M[3][3] = 1.0f;
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+        // = []
+        __m128 const r0 = _mm_load_ps(&source->M[0][0]);
+        __m128 const r1 = _mm_load_ps(&source->M[1][0]);
+        __m128 const r2 = _mm_load_ps(&source->M[2][0]);
+        __m128 const r3 = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        __m128 const t0 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const t2 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const t1 = _mm_shuffle_ps(r2, r3, _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const t3 = _mm_shuffle_ps(r2, r3, _MM_SHUFFLE(3, 2, 3, 2));
+
+        T result;
+        result.M.R[0] = _mm_shuffle_ps(t0, t1, _MM_SHUFFLE(2, 0, 2, 0));
+        result.M.R[1] = _mm_shuffle_ps(t0, t1, _MM_SHUFFLE(3, 1, 3, 1));
+        result.M.R[2] = _mm_shuffle_ps(t2, t3, _MM_SHUFFLE(2, 0, 2, 0));
+        result.M.R[3] = _mm_shuffle_ps(t2, t3, _MM_SHUFFLE(3, 1, 3, 1));
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float3x4A* destination, Matrix m) noexcept
+        requires FloatMatrix<T> and Storable<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(destination != nullptr);
+        GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->M[0][0] = m.M.R[0].F[0];
+        destination->M[0][1] = m.M.R[1].F[0];
+        destination->M[0][2] = m.M.R[2].F[0];
+        destination->M[0][3] = m.M.R[3].F[0];
+
+        destination->M[1][0] = m.M.R[0].F[1];
+        destination->M[1][1] = m.M.R[1].F[1];
+        destination->M[1][2] = m.M.R[2].F[1];
+        destination->M[1][3] = m.M.R[3].F[1];
+
+        destination->M[2][0] = m.M.R[0].F[2];
+        destination->M[2][1] = m.M.R[1].F[2];
+        destination->M[2][2] = m.M.R[2].F[2];
+        destination->M[2][3] = m.M.R[3].F[2];
+#elif GRAPHYTE_HW_AVX
+        // load & transpose
+        __m128 const t1 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const t3 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const t2 = _mm_shuffle_ps(m.M.R[2], m.M.R[3], _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const t4 = _mm_shuffle_ps(m.M.R[2], m.M.R[3], _MM_SHUFFLE(3, 2, 3, 2));
+
+        __m128 const r0 = _mm_shuffle_ps(t1, t2, _MM_SHUFFLE(2, 0, 2, 0));
+        __m128 const r1 = _mm_shuffle_ps(t1, t2, _MM_SHUFFLE(3, 1, 3, 1));
+        __m128 const r2 = _mm_shuffle_ps(t3, t4, _MM_SHUFFLE(2, 0, 2, 0));
+
+        _mm_store_ps(&destination->M[0][0], r0);
+        _mm_store_ps(&destination->M[1][0], r1);
+        _mm_store_ps(&destination->M[2][0], r2);
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Load(Float4x4 const* source) noexcept
+        requires FloatMatrix<T> and Loadable<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(source != nullptr)
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T m;
+
+        result.M.M[0][0] = source->M[0][0];
+        result.M.M[0][1] = source->M[0][1];
+        result.M.M[0][2] = source->M[0][2];
+        result.M.M[0][3] = source->M[0][3];
+
+        result.M.M[1][0] = source->M[1][0];
+        result.M.M[1][1] = source->M[1][1];
+        result.M.M[1][2] = source->M[1][2];
+        result.M.M[1][3] = source->M[1][3];
+
+        result.M.M[2][0] = source->M[2][0];
+        result.M.M[2][1] = source->M[2][1];
+        result.M.M[2][2] = source->M[2][2];
+        result.M.M[2][3] = source->M[2][3];
+
+        result.M.M[3][0] = source->M[3][0];
+        result.M.M[3][1] = source->M[3][1];
+        result.M.M[3][2] = source->M[3][2];
+        result.M.M[3][3] = source->M[3][3];
+
+        return result;
+#elif GRAPHYTE_HW_AVX
+        T result;
+
+        result.M.R[0] = _mm_loadu_ps(&source->M[0][0]);
+        result.M.R[1] = _mm_loadu_ps(&source->M[1][0]);
+        result.M.R[2] = _mm_loadu_ps(&source->M[2][0]);
+        result.M.R[3] = _mm_loadu_ps(&source->M[3][0]);
+
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float4x4* destination, Matrix m) noexcept
+        requires FloatMatrix<T> and Storable<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(destination != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->M[0][0] = m.M.M[0][0];
+        destination->M[0][1] = m.M.M[0][1];
+        destination->M[0][2] = m.M.M[0][2];
+        destination->M[0][3] = m.M.M[0][3];
+
+        destination->M[1][0] = m.M.M[1][0];
+        destination->M[1][1] = m.M.M[1][1];
+        destination->M[1][2] = m.M.M[1][2];
+        destination->M[1][3] = m.M.M[1][3];
+
+        destination->M[2][0] = m.M.M[2][0];
+        destination->M[2][1] = m.M.M[2][1];
+        destination->M[2][2] = m.M.M[2][2];
+        destination->M[2][3] = m.M.M[2][3];
+
+        destination->M[3][0] = m.M.M[3][0];
+        destination->M[3][1] = m.M.M[3][1];
+        destination->M[3][2] = m.M.M[3][2];
+        destination->M[3][3] = m.M.M[3][3];
+#elif GRAPHYTE_HW_AVX
+        _mm_storeu_ps(&destination->M[0][0], m.M.R[0]);
+        _mm_storeu_ps(&destination->M[1][0], m.M.R[1]);
+        _mm_storeu_ps(&destination->M[2][0], m.M.R[2]);
+        _mm_storeu_ps(&destination->M[3][0], m.M.R[3]);
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Load(Float4x3 const* source) noexcept
+        requires FloatMatrix<T> and Loadable<T> and (T::Rows == 4) and (T::Columnts == 4)
+    {
+        GX_ASSERT(source != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        T result;
+
+        result.M.M[0][0] = source->M[0][0];
+        result.M.M[0][1] = source->M[0][1];
+        result.M.M[0][2] = source->M[0][2];
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = source->M[1][0];
+        result.M.M[1][1] = source->M[1][1];
+        result.M.M[1][2] = source->M[1][2];
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = source->M[2][0];
+        result.M.M[2][1] = source->M[2][1];
+        result.M.M[2][2] = source->M[2][2];
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = source->M[3][0];
+        result.M.M[3][1] = source->M[3][1];
+        result.M.M[3][2] = source->M[3][2];
+        result.M.M[3][3] = 1.0f;
+
+        return result;
+#elif GRAPHYTE_HW_AVX
+        // = [r0.xyz, r1.x]
+        __m128 const r0 = _mm_loadu_ps(&source->M[0][0]);
+        // = [r1.yz, r2.xy]
+        __m128 const t0 = _mm_loadu_ps(&source->M[1][1]);
+        // = [r2.z, r3.xyz]
+        __m128 const t2 = _mm_loadu_ps(&source->M[2][2]);
+
+        // = [r2.xyzz]
+        __m128 const r2 = _mm_shuffle_ps(t0, t2, _MM_SHUFFLE(0, 0, 3, 2));
+        // = [r1.yzxx]
+        __m128 const t1 = _mm_shuffle_ps(t0, r0, _MM_SHUFFLE(3, 3, 1, 0));
+        // = [r1.xyzz]
+        __m128 const r1 = _mm_permute_ps(t1, _MM_SHUFFLE(1, 1, 0, 2));
+
+        // = [r0.xyz, 0]
+        __m128 const m0 = _mm_and_ps(r0, Impl::VEC4_MASK_COMPONENTS_3.V);
+        // = [r1.xyz, 0]
+        __m128 const m1 = _mm_and_ps(r1, Impl::VEC4_MASK_COMPONENTS_3.V);
+        // = [r2.xyz, 0]
+        __m128 const m2 = _mm_and_ps(r2, Impl::VEC4_MASK_COMPONENTS_3.V);
+
+        // = [r2.z, r3.xyz] >> 4 bytes = [r3.xyz]
+        __m128 const t3 = _mm_srli_si128(_mm_castps_si128(t2), 32 / 8);
+        // = [r3.xyz, 1]
+        __m128 const m3 = _mm_or_si128(t3, _mm_castps_si128(Impl::VEC4_POSITIVE_UNIT_W.V));
+
+        T result;
+        result.M.R[0] = m0;
+        result.M.R[1] = m1;
+        result.M.R[2] = m2;
+        result.M.R[3] = m3;
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float4x3* destination, T m) noexcept
+        requires FloatMatrix<T> and Storable<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(destination != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->M[0][0] = m.M.M[0][0];
+        destination->M[0][1] = m.M.M[0][1];
+        destination->M[0][2] = m.M.M[0][2];
+
+        destination->M[1][0] = m.M.M[1][0];
+        destination->M[1][1] = m.M.M[1][1];
+        destination->M[1][2] = m.M.M[1][2];
+
+        destination->M[2][0] = m.M.M[2][0];
+        destination->M[2][1] = m.M.M[2][1];
+        destination->M[2][2] = m.M.M[2][2];
+
+        destination->M[3][0] = m.M.M[3][0];
+        destination->M[3][1] = m.M.M[3][1];
+        destination->M[3][2] = m.M.M[3][2];
+#elif GRAPHYTE_HW_AVX
+        // = [r0.xyzw]
+        __m128 const r0 = m.M.R[0];
+        // = [r1.xyzw]
+        __m128 const r1 = m.M.R[1];
+        // = [r2.xyzw]
+        __m128 const r2 = m.M.R[2];
+        // = [r3.xyzw]
+        __m128 const r3 = m.M.R[3];
+
+        // = [r1.yz, r2.xy]
+        __m128 const t0 = _mm_shuffle_ps(r1, r2, _MM_SHUFFLE(1, 0, 2, 1));
+        // = [r1.xx, r0.zz]
+        __m128 const t1 = _mm_shuffle_ps(r1, r0, _MM_SHUFFLE(2, 2, 0, 0));
+        // = [r0.xyz, r1.x]
+        __m128 const t2 = _mm_shuffle_ps(r0, t1, _MM_SHUFFLE(0, 2, 1, 0));
+        // = [r2.zz, r3.xx]
+        __m128 const t3 = _mm_shuffle_ps(r2, r3, _MM_SHUFFLE(0, 0, 2, 2));
+        // = [r2.z, r3.xyz]
+        __m128 const t4 = _mm_shuffle_ps(t3, r3, _MM_SHUFFLE(2, 1, 2, 0));
+
+        // = [r0.xyz, r1.x]
+        _mm_storeu_ps(&destination->M[0][0], t2);
+        // = [r1.yz, r2.xy]
+        _mm_storeu_ps(&destination->M[1][1], t0);
+        // = [r2.z, r3.xyz]
+        _mm_storeu_ps(&destination->M[2][2], t4);
+#endif
+    }
+
+    /// \note   Float3x4 is stored as transposed Float4x3
+    template <typename T>
+    mathinline T mathcall Load(Float3x4 const* source) noexcept
+        requires FloatMatrix<T> and Loadable<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(source != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        T result;
+
+        result.M.M[0][0] = source->M[0][0];
+        result.M.M[0][1] = source->M[1][0];
+        result.M.M[0][2] = source->M[2][0];
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = source->M[0][1];
+        result.M.M[1][1] = source->M[1][1];
+        result.M.M[1][2] = source->M[2][1];
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = source->M[0][2];
+        result.M.M[2][1] = source->M[1][2];
+        result.M.M[2][2] = source->M[2][2];
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = source->M[0][3];
+        result.M.M[3][1] = source->M[1][3];
+        result.M.M[3][2] = source->M[2][3];
+        result.M.M[3][3] = 1.0f;
+
+        return result;
+
+#elif GRAPHYTE_HW_AVX
+        // = []
+        __m128 const r0 = _mm_loadu_ps(&source->M[0][0]);
+        __m128 const r1 = _mm_loadu_ps(&source->M[1][0]);
+        __m128 const r2 = _mm_loadu_ps(&source->M[2][0]);
+        __m128 const r3 = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        __m128 const t0 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const t2 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const t1 = _mm_shuffle_ps(r2, r3, _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const t3 = _mm_shuffle_ps(r2, r3, _MM_SHUFFLE(3, 2, 3, 2));
+
+        T result;
+        result.M.R[0] = _mm_shuffle_ps(t0, t1, _MM_SHUFFLE(2, 0, 2, 0));
+        result.M.R[1] = _mm_shuffle_ps(t0, t1, _MM_SHUFFLE(3, 1, 3, 1));
+        result.M.R[2] = _mm_shuffle_ps(t2, t3, _MM_SHUFFLE(2, 0, 2, 0));
+        result.M.R[3] = _mm_shuffle_ps(t2, t3, _MM_SHUFFLE(3, 1, 3, 1));
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float3x4* destination, Matrix m) noexcept
+        requires FloatMatrix<T> and Storable<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(destination != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->M[0][0] = m.M.R[0].F[0];
+        destination->M[0][1] = m.M.R[1].F[0];
+        destination->M[0][2] = m.M.R[2].F[0];
+        destination->M[0][3] = m.M.R[3].F[0];
+
+        destination->M[1][0] = m.M.R[0].F[1];
+        destination->M[1][1] = m.M.R[1].F[1];
+        destination->M[1][2] = m.M.R[2].F[1];
+        destination->M[1][3] = m.M.R[3].F[1];
+
+        destination->M[2][0] = m.M.R[0].F[2];
+        destination->M[2][1] = m.M.R[1].F[2];
+        destination->M[2][2] = m.M.R[2].F[2];
+        destination->M[2][3] = m.M.R[3].F[2];
+#elif GRAPHYTE_HW_AVX
+        // load & transpose
+        __m128 const t1 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const t3 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const t2 = _mm_shuffle_ps(m.M.R[2], m.M.R[3], _MM_SHUFFLE(1, 0, 1, 0));
+        __m128 const t4 = _mm_shuffle_ps(m.M.R[2], m.M.R[3], _MM_SHUFFLE(3, 2, 3, 2));
+
+        __m128 const r0 = _mm_shuffle_ps(t1, t2, _MM_SHUFFLE(2, 0, 2, 0));
+        __m128 const r1 = _mm_shuffle_ps(t1, t2, _MM_SHUFFLE(3, 1, 3, 1));
+        __m128 const r2 = _mm_shuffle_ps(t3, t4, _MM_SHUFFLE(2, 0, 2, 0));
+
+        _mm_storeu_ps(&destination->M[0][0], r0);
+        _mm_storeu_ps(&destination->M[1][0], r1);
+        _mm_storeu_ps(&destination->M[2][0], r2);
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Load(Float3x3 const* source) noexcept
+        requires FloatMatrix<T> and Loadable<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(source != nullptr);
+#if GRAPHYTE_MATH_NO_INTRINSICS
+
+        T result;
+
+        result.M[0][0] = source->M[0][0];
+        result.M[0][1] = source->M[0][1];
+        result.M[0][2] = source->M[0][2];
+        result.M[0][3] = 0.0f;
+
+        result.M[1][0] = source->M[1][0];
+        result.M[1][1] = source->M[1][1];
+        result.M[1][2] = source->M[1][2];
+        result.M[1][3] = 0.0f;
+
+        result.M[2][0] = source->M[2][0];
+        result.M[2][1] = source->M[2][1];
+        result.M[2][2] = source->M[2][2];
+        result.M[2][3] = 0.0f;
+
+        result.M[3][0] = 0.0f;
+        result.M[3][1] = 0.0f;
+        result.M[3][2] = 0.0f;
+        result.M[3][3] = 1.0f;
+
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128 const zero = _mm_setzero_ps();
+
+        __m128 const t0 = _mm_loadu_ps(&source->M[0][0]);
+        __m128 const t1 = _mm_loadu_ps(&source->M[1][1]);
+        __m128 const t2 = _mm_load_ss(&source->M[2][2]);
+
+        __m128 const t3 = _mm_unpackhi_ps(t0, zero);
+        __m128 const t4 = _mm_unpacklo_ps(t1, zero);
+        __m128 const t5 = _mm_shuffle_ps(t2, t4, _MM_SHUFFLE(0, 1, 0, 0));
+        __m128 const t6 = _mm_movehl_ps(t4, t5);
+        __m128 const t7 = _mm_movehl_ps(zero, t3);
+
+        T result;
+        result.M.R[0] = _mm_movelh_ps(t0, t3);
+        result.M.R[1] = _mm_add_ps(t6, t7);
+        result.M.R[2] = _mm_shuffle_ps(t1, t2, _MM_SHUFFLE(1, 0, 3, 2));
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline void mathcall Store(Float3x3* destination, T m) noexcept
+        requires FloatMatrix<T> and Storable<T> and (T::Rows == 4) and (T::Columns == 4)
+    {
+        GX_ASSERT(destination != nullptr);
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        destination->M[0][0] = m.M.M[0][0];
+        destination->M[0][1] = m.M.M[0][1];
+        destination->M[0][2] = m.M.M[0][2];
+
+        destination->M[1][0] = m.M.M[1][0];
+        destination->M[1][1] = m.M.M[1][1];
+        destination->M[1][2] = m.M.M[1][2];
+
+        destination->M[2][0] = m.M.M[2][0];
+        destination->M[2][1] = m.M.M[2][1];
+        destination->M[2][2] = m.M.M[2][2];
+#elif GRAPHYTE_HW_AVX
+        __m128 const r0 = m.M.R[0];
+        __m128 const r1 = m.M.R[1];
+        __m128 const r2 = m.M.R[2];
+        __m128 const t0 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(0, 0, 2, 2));
+        __m128 const m0 = _mm_shuffle_ps(r0, t0, _MM_SHUFFLE(2, 0, 1, 0));
+        _mm_storeu_ps(&destination->M[0][0], m0);
+        __m128 const m1 = _mm_shuffle_ps(r1, r2, _MM_SHUFFLE(1, 0, 2, 1));
+        _mm_storeu_ps(&destination->M[1][1], m1);
+        __m128 const m2 = _mm_permute_ps(r2, _MM_SHUFFLE(2, 2, 2, 2));
+        _mm_store_ss(&destination->M[2][2], m2);
 #endif
     }
 
@@ -11308,7 +11891,7 @@ namespace Graphyte::Maths
             As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
             As<Vector4>(translation),
             As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
-        );  
+        );
 
         Matrix const m_scaling_origin = CreateTranslation(v_scaling_origin_negated);
         Matrix const m_scaling_orientation = CreateFromQuaternion(scaling_orientation);
