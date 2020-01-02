@@ -3120,7 +3120,7 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_AVX || GRAPHYTE_HW_NEON
         destination->X = ToHalf(v.V.F[0]);
         destination->Y = ToHalf(v.V.F[1]);
-#else GRAPHYTE_HW_AVX2
+#elif GRAPHYTE_HW_AVX2
         __m128 const h0 = _mm_cvtps_ph(v.V, 0);
         __m128 const h1 = _mm_castsi128_ps(h0);
         _mm_store_ss(reinterpret_cast<float*>(destination), h1);
@@ -9056,7 +9056,7 @@ namespace Graphyte::Maths
         __m128 const r0 = Impl::avx_fmadd_f32x4(zzzz, m.M.R[2], m.M.R[3]);
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
         __m128 const r1 = Impl::avx_fmadd_f32x4(yyyy, m.M.R[1], r0);
-        __m128 const xxxx = _mm_broadcastss_ps(v.V);
+        __m128 const xxxx = _mm_permute_ps(v.V, _MM_SHUFFLE(0, 0, 0, 0));
         __m128 const r2 = Impl::avx_fmadd_f32x4(xxxx, m.M.R[0], r1);
         return { r2 };
 #elif GRAPHYTE_HW_NEON
@@ -9764,7 +9764,7 @@ namespace Graphyte::Maths
         result.M.M[3][3] = m33;
 
         return result;
-#elif GRAPHTYTE_HW_AVX
+#elif GRAPHYTE_HW_AVX
         T result;
         result.M.R[0] = _mm_set_ps(m03, m02, m01, m00);
         result.M.R[1] = _mm_set_ps(m13, m12, m11, m10);
@@ -9914,7 +9914,7 @@ namespace Graphyte::Maths
         __m128 const m2 = _mm_and_ps(r2, Impl::VEC4_MASK_COMPONENTS_3.V);
 
         // = [r2.z, r3.xyz] >> 4 bytes = [r3.xyz]
-        __m128 const t3 = _mm_srli_si128(_mm_castps_si128(t2), 32 / 8);
+        __m128i const t3 = _mm_srli_si128(_mm_castps_si128(t2), 32 / 8);
         // = [r3.xyz, 1]
         __m128 const m3 = _mm_or_si128(t3, _mm_castps_si128(Impl::VEC4_POSITIVE_UNIT_W.V));
 
@@ -10202,7 +10202,7 @@ namespace Graphyte::Maths
         __m128 const m2 = _mm_and_ps(r2, Impl::VEC4_MASK_COMPONENTS_3.V);
 
         // = [r2.z, r3.xyz] >> 4 bytes = [r3.xyz]
-        __m128 const t3 = _mm_srli_si128(_mm_castps_si128(t2), 32 / 8);
+        __m128i const t3 = _mm_srli_si128(_mm_castps_si128(t2), 32 / 8);
         // = [r3.xyz, 1]
         __m128 const m3 = _mm_or_si128(t3, _mm_castps_si128(Impl::VEC4_POSITIVE_UNIT_W.V));
 
@@ -11513,13 +11513,17 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GRAPHYTE_HW_AVX || GRAPHYTE_HW_NEON
 
         Matrix result;
         result.M.R[0] = Impl::VEC4_POSITIVE_UNIT_X.V;
         result.M.R[1] = Impl::VEC4_POSITIVE_UNIT_Y.V;
         result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
-        result.M.R[3] = _mm_and_ps(translation.V, Impl::VEC4_MASK_SELECT_1110.V);
+        result.M.R[3] = Select(
+            As<Vector4>(Impl::VEC4_POSITIVE_UNIT_W.V),
+            As<Vector4>(translation),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+        ).V;
 
         return result;
 #endif
@@ -13079,8 +13083,8 @@ namespace Graphyte::Maths
         // {c0}[#bgra, #bgra, #bgra, #bgra]
         __m128i const c0 = _mm_set1_epi32(static_cast<int>(source->Value));
         // {c1}[#__r_, #_g__, #b___, #___a]
-        __m128i const c1 = _mm_and_si128(c0, Impl::VEC4_MASK_A8R8G8B8.V);
-        __m128i const c2 = _mm_xor_si128(c1, Impl::VEC4_FLIP_A_A8R8G8B8.V);
+        __m128i const c1 = _mm_and_si128(c0, _mm_castps_si128(Impl::VEC4_MASK_A8R8G8B8.V));
+        __m128i const c2 = _mm_xor_si128(c1, _mm_castps_si128(Impl::VEC4_FLIP_A_A8R8G8B8.V));
         __m128 const c3 = _mm_cvtepi32_ps(c2);
         __m128 const c4 = _mm_add_ps(c3, Impl::VEC4_FIX_A_A8R8G8B8.V);
         __m128 const c5 = _mm_mul_ps(c4, Impl::VEC4_NORMALIZE_A8R8G8B8.V);
@@ -13116,8 +13120,8 @@ namespace Graphyte::Maths
         __m128 const c0 = _mm_mul_ps(color_min, Impl::VEC4_UBYTE_MAX.V);
         __m128 const c1 = _mm_permute_ps(c0, _MM_SHUFFLE(3, 0, 1, 2));
         __m128i const c2 = _mm_cvtps_epi32(c1);
-        __m128i const c3 = _mm_packs_epi32(c2);
-        __m128i const c4 = _mm_packus_epi16(c3);
+        __m128i const c3 = _mm_packs_epi32(c2, c2);
+        __m128i const c4 = _mm_packus_epi16(c3, c3);
 
         _mm_store_ss(reinterpret_cast<float*>(&destination->Value), _mm_castsi128_ps(c4));
 #endif
