@@ -2234,10 +2234,9 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Select(T a, T b, typename T::MaskType control) noexcept
-        requires VectorLike<T>
+        requires FloatVector<T> and (T::Components <= 4)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-
         Impl::ConstUInt32x4 const result{ { {
                 (a.V.U[0] & ~control.V.U[0]) | (b.V.U[0] & control.V.U[0]),
                 (a.V.U[1] & ~control.V.U[1]) | (b.V.U[1] & control.V.U[1]),
@@ -2247,9 +2246,7 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        __m128 const masked1 = _mm_andnot_ps(control.V, a.V);
-        __m128 const masked2 = _mm_and_ps(b.V, control.V);
-        __m128 const result = _mm_or_ps(masked1, masked2);
+        __m128 const result = _mm_blendv_ps(a.V, b.V, control.V);
         return { result };
 #elif GRAPHYTE_HW_NEON
         float32x4_t const result = vbslq_f32(
@@ -4473,7 +4470,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Or(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T>
+        requires BoolVector<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4499,7 +4496,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Xor(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T>
+        requires BoolVector<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4525,7 +4522,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Nor(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T>
+        requires BoolVector<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4539,7 +4536,7 @@ namespace Graphyte::Maths
         __m128i const partial = _mm_or_si128(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
         __m128i const result = _mm_andnot_si128(partial, _mm_castps_si128(Impl::VEC4_MASK_NEGATIVE_ONE.V));
         return { _mm_castsi128_ps(result) };
-#elif GRAPHYTE_HW_AVX
+#elif GRAPHYTE_HW_NEON
         uint32x4_t const partial = vorrq_u32(
             vreinterpretq_u32_f32(a.V),
             vreinterpretq_u32_f32(b.V)
@@ -12201,6 +12198,63 @@ namespace Graphyte::Maths
         Vector4 const result = Select<Vector4>(plane_distance, As<Vector4>(plane_normal), Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
         Plane const plane = As<Plane>(result);
         return plane;
+    }
+
+    mathinline Matrix mathcall Reflect(Plane reflection) noexcept
+    {
+        GX_ASSERT(!IsEqual(As<Vector3>(reflection), Zero<Vector3>()));
+        GX_ASSERT(!IsInfinity(reflection));
+
+        static Impl::ConstFloat32x4 const negative_two{ { {
+                -2.0f,
+                -2.0f,
+                -2.0f,
+                0.0f
+            } } };
+
+        Vector4 const vp = As<Vector4>(Normalize(reflection));
+        Vector4 const vs = Multiply(vp, As<Vector4>(negative_two.V));
+
+        Vector4 const p_aaaa = SplatX(vp);
+        Vector4 const p_bbbb = SplatY(vp);
+        Vector4 const p_cccc = SplatZ(vp);
+        Vector4 const p_dddd = SplatW(vp);
+
+        Matrix result;
+
+        result.M.R[0] = MultiplyAdd(p_aaaa, vs, UnitX<Vector4>()).V;
+        result.M.R[1] = MultiplyAdd(p_bbbb, vs, UnitY<Vector4>()).V;
+        result.M.R[2] = MultiplyAdd(p_cccc, vs, UnitZ<Vector4>()).V;
+        result.M.R[3] = MultiplyAdd(p_dddd, vs, UnitW<Vector4>()).V;
+
+        return result;
+    }
+
+    mathinline Matrix mathcall Shadow(Plane shadow, Vector4 light) noexcept
+    {
+        GX_ASSERT(!IsEqual(As<Vector3>(shadow), Zero<Vector3>()));
+        GX_ASSERT(!IsInfinity(shadow));
+
+        Vector4 const vp = As<Vector4>(Normalize(shadow));
+        Vector4 const pp = Negate(vp);
+        Vector4 const p_aaaa = SplatX(pp);
+        Vector4 const p_bbbb = SplatY(pp);
+        Vector4 const p_cccc = SplatZ(pp);
+        Vector4 const p_dddd = SplatW(pp);
+
+        Vector4 dot = Dot(vp, light);
+        dot = Select(As<Vector4>(Impl::VEC4_MASK_SELECT_0001.V), dot, As<Bool4>(Impl::VEC4_MASK_SELECT_0001.V));
+
+        Matrix result;
+        result.M.R[3] = MultiplyAdd(p_dddd, light, dot).V;
+        dot = RotateLeft<1>(dot);
+        result.M.R[2] = MultiplyAdd(p_cccc, light, dot).V;
+        dot = RotateLeft<1>(dot);
+        result.M.R[1] = MultiplyAdd(p_bbbb, light, dot).V;
+        dot = RotateLeft<1>(dot);
+        result.M.R[0] = MultiplyAdd(p_aaaa, light, dot).V;
+
+        return result;
     }
 }
 
