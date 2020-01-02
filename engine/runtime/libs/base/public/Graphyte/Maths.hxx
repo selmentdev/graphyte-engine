@@ -9234,6 +9234,28 @@ namespace Graphyte::Maths
 
 // =================================================================================================
 //
+// Create rotation from axis/angle or normal/angle / euler angles
+//
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    T CreateFromAxisAngle(Vector3 axis, float angle) = delete;
+
+    template <typename T>
+    T CreateFromNormalAngle(Vector3 normal, float angle) = delete;
+
+    template <typename T>
+    T CreateFromEuler(Vector3 angles) = delete;
+
+    template <typename T>
+    T CreateFromEuler(float x, float y, float z) = delete;
+}
+
+
+
+// =================================================================================================
+//
 // Quaternion operations
 //
 
@@ -9430,7 +9452,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Quaternion mathcall CreateFromEuler(Vector3 angles) noexcept
+    template <>
+    mathinline Quaternion mathcall CreateFromEuler<Quaternion>(Vector3 angles) noexcept
     {
         static Impl::ConstFloat32x4 const sign{ { {
                 1.0F,
@@ -9461,14 +9484,16 @@ namespace Graphyte::Maths
         return Quaternion{ q.V };
     }
 
-    mathinline Quaternion mathcall CreateFromEuler(float x, float y, float z) noexcept
+    template <>
+    mathinline Quaternion mathcall CreateFromEuler<Quaternion>(float x, float y, float z) noexcept
     {
         Vector3 const angles = Make<Vector3>(x, y, z);
-        Quaternion const result = CreateFromEuler(angles);
+        Quaternion const result = CreateFromEuler<Quaternion>(angles);
         return result;
     }
 
-    mathinline Quaternion mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept
+    template <>
+    mathinline Quaternion mathcall CreateFromNormalAngle<Quaternion>(Vector3 normal, float angle) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 qv = Select(Vector4{ Impl::VEC4_ONE_4.V }, Vector4{ normal.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
@@ -9668,13 +9693,14 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Quaternion mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept
+    template <>
+    mathinline Quaternion mathcall CreateFromAxisAngle<Quaternion>(Vector3 axis, float angle) noexcept
     {
         GX_ASSERT(IsNotEqual(axis, Zero<Vector3>()));
         GX_ASSERT(!IsInfinity<Vector3>(axis));
 
         Vector3 const normal = Normalize(axis);
-        Quaternion const result = CreateFromNormalAngle(normal, angle);
+        Quaternion const result = CreateFromNormalAngle<Quaternion>(normal, angle);
         return result;
     }
 
@@ -10081,7 +10107,7 @@ namespace Graphyte::Maths
         GX_ASSERT(source != nullptr)
 #if GRAPHYTE_MATH_NO_INTRINSICS
         T result;
-        
+
         result.M.M[0][0] = source->M[0][0];
         result.M.M[0][1] = source->M[0][1];
         result.M.M[0][2] = source->M[0][2];
@@ -11267,7 +11293,8 @@ namespace Graphyte::Maths
         return { m.M.R[3] };
     }
 
-    mathinline Matrix mathcall Matrix_CreateFromNormalAngle(Vector3 normal, float angle) noexcept
+    template <>
+    mathinline Matrix mathcall CreateFromNormalAngle<Matrix>(Vector3 normal, float angle) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
         float sin_angle;
@@ -11353,13 +11380,14 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Matrix mathcall Matrix_CreateFromAxisAngle(Vector3 axis, float angle) noexcept
+    template <>
+    mathinline Matrix mathcall CreateFromAxisAngle<Matrix>(Vector3 axis, float angle) noexcept
     {
         GX_ASSERT(!IsEqual(axis, Zero<Vector3>()));
         GX_ASSERT(!IsInfinity(axis));
 
         Vector3 const normal = Normalize(axis);
-        return Matrix_CreateFromNormalAngle(normal, angle);
+        return CreateFromNormalAngle<Matrix>(normal, angle);
     }
 
     mathinline Matrix mathcall CreateFromQuaternion(Quaternion q) noexcept

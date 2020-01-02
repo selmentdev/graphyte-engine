@@ -46,7 +46,7 @@ TEST_CASE("Maths / Transforms")
         {
             Vector3 const scaling = Make<Vector3>(1.1f, 1.1f, 1.1f);
             Vector3 const rotation_origin = Make<Vector3>(3.4f, 1.7f, -2.3f);
-            Quaternion const rotation = CreateFromAxisAngle(Make<Vector3>(2.1f, 1.1f, -3.3f), DegreesToRadians(-60.0f));
+            Quaternion const rotation = CreateFromAxisAngle<Quaternion>(Make<Vector3>(2.1f, 1.1f, -3.3f), DegreesToRadians(-60.0f));
             Vector3 const translation = Make<Vector3>(3.3f, -1.3f, 2.1f);
 
             Matrix const m = CreateAffineTransform(
@@ -122,10 +122,10 @@ TEST_CASE("Maths / Transforms")
         SECTION("3D")
         {
             Vector3 const scaling_origin = Make<Vector3>(-2.1f, 1.3f, -3.4f);
-            Quaternion const scaling_orientation = CreateFromAxisAngle(Make<Vector3>(-2.1f, 1.1f, 2.3f), DegreesToRadians(45.0f));
+            Quaternion const scaling_orientation = CreateFromAxisAngle<Quaternion>(Make<Vector3>(-2.1f, 1.1f, 2.3f), DegreesToRadians(45.0f));
             Vector3 const scaling = Make<Vector3>(1.1f, 1.1f, 1.1f);
             Vector3 const rotation_origin = Make<Vector3>(3.4f, 1.7f, -2.3f);
-            Quaternion const rotation = CreateFromAxisAngle(Make<Vector3>(2.1f, 1.1f, -3.3f), DegreesToRadians(-60.0f));
+            Quaternion const rotation = CreateFromAxisAngle<Quaternion>(Make<Vector3>(2.1f, 1.1f, -3.3f), DegreesToRadians(-60.0f));
             Vector3 const translation = Make<Vector3>(3.3f, -1.3f, 2.1f);
 
             Matrix const m = CreateTransform(
@@ -168,7 +168,7 @@ TEST_CASE("Maths / Rotations / Matrix rotations around arbitrary axis")
     {
         Vector3 const axis = Make<Vector3>(1.0f, -2.0f, 3.0f);
 
-        Matrix m = Matrix_CreateFromAxisAngle(axis, DegreesToRadians(45.0f));
+        Matrix m = CreateFromAxisAngle<Matrix>(axis, DegreesToRadians(45.0f));
 
         CHECK(GetX(GetBaseX(m)) == Approx{ 0.7280276f });
         CHECK(GetY(GetBaseX(m)) == Approx{ 0.5251047f });
@@ -195,7 +195,7 @@ TEST_CASE("Maths / Rotations / Matrix rotations around arbitrary axis")
     {
         Vector3 const axis = Make<Vector3>(-1.0f, 3.0f, -3.0f);
 
-        Matrix m = Matrix_CreateFromAxisAngle(axis, DegreesToRadians(60.0f));
+        Matrix m = CreateFromAxisAngle<Matrix>(axis, DegreesToRadians(60.0f));
 
         CHECK(GetX(GetBaseX(m)) == Approx{ 0.526315749f });
         CHECK(GetY(GetBaseX(m)) == Approx{ -0.674986959f });
@@ -235,7 +235,7 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
         {
             float const radians = DegreesToRadians(angle);
             Matrix const m = CreateRotationX(radians);
-            Quaternion const q = CreateFromNormalAngle(axis, radians);
+            Quaternion const q = CreateFromNormalAngle<Quaternion>(axis, radians);
 
             //
             // Check if quaternion rotates vector as well as matrix.
@@ -277,7 +277,7 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
         {
             float const radians = DegreesToRadians(angle);
             Matrix const m = CreateRotationY(radians);
-            Quaternion const q = CreateFromNormalAngle(axis, radians);
+            Quaternion const q = CreateFromNormalAngle<Quaternion>(axis, radians);
 
             //
             // Check if quaternion rotates vector as well as matrix.
@@ -319,7 +319,7 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
         {
             float const radians = DegreesToRadians(angle);
             Matrix const m = CreateRotationZ(radians);
-            Quaternion const q = CreateFromNormalAngle(axis, radians);
+            Quaternion const q = CreateFromNormalAngle<Quaternion>(axis, radians);
 
             //
             // Check if quaternion rotates vector as well as matrix.
@@ -1777,7 +1777,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 
         SECTION("Around X")
         {
-            Quaternion const q = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(90.0F));
+            Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitX<Vector3>(), DegreesToRadians(90.0F));
             Vector3 const x1 = Rotate(x0, q);
 
             CHECK(GetX(x0) == Approx{ GetX(x1) }.margin(0.001F));
@@ -1805,7 +1805,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 
         SECTION("Around Y")
         {
-            Quaternion const q = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(90.0F));
+            Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitY<Vector3>(), DegreesToRadians(90.0F));
             Vector3 const x1 = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
@@ -1833,7 +1833,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 
         SECTION("Around Z")
         {
-            Quaternion const q = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(90.0F));
+            Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitZ<Vector3>(), DegreesToRadians(90.0F));
             Vector3 const x1 = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
@@ -1866,7 +1866,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 
         SECTION("Around X")
         {
-            Quaternion const q = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(90.0F));
+            Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitX<Vector3>(), DegreesToRadians(90.0F));
             Vector3 const x1 = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
@@ -1894,7 +1894,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 
         SECTION("Around Y")
         {
-            Quaternion const q = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(90.0F));
+            Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitY<Vector3>(), DegreesToRadians(90.0F));
             Vector3 const x1 = Rotate(x0, q);
 
             CHECK(GetX(x0) == Approx{ GetX(x1) }.margin(0.001F));
@@ -1922,7 +1922,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 
         SECTION("Around Z")
         {
-            Quaternion const q = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(90.0F));
+            Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitZ<Vector3>(), DegreesToRadians(90.0F));
             Vector3 const x1 = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ -1.0F }.margin(0.001F));
@@ -1955,7 +1955,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 
         SECTION("Around X")
         {
-            Quaternion const q = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(90.0F));
+            Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitX<Vector3>(), DegreesToRadians(90.0F));
             Vector3 const x1 = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
@@ -1983,7 +1983,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 
         SECTION("Around Y")
         {
-            Quaternion const q = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(90.0F));
+            Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitY<Vector3>(), DegreesToRadians(90.0F));
             Vector3 const x1 = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ 1.0F }.margin(0.001F));
@@ -2011,7 +2011,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 
         SECTION("Around Z")
         {
-            Quaternion const q = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(90.0F));
+            Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitZ<Vector3>(), DegreesToRadians(90.0F));
             Vector3 const x1 = Rotate(x0, q);
 
             CHECK(GetX(x0) == Approx{ GetX(x1) }.margin(0.001F));
@@ -2045,10 +2045,10 @@ TEST_CASE("Maths / Quaternion / Rotation from axis angle")
 
     SECTION("Axis X")
     {
-        Quaternion const q000 = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(0.0F));
-        Quaternion const q090 = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(90.0F));
-        Quaternion const q180 = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(180.0F));
-        Quaternion const q270 = CreateFromAxisAngle(UnitX<Vector3>(), DegreesToRadians(270.0F));
+        Quaternion const q000 = CreateFromAxisAngle<Quaternion>(UnitX<Vector3>(), DegreesToRadians(0.0F));
+        Quaternion const q090 = CreateFromAxisAngle<Quaternion>(UnitX<Vector3>(), DegreesToRadians(90.0F));
+        Quaternion const q180 = CreateFromAxisAngle<Quaternion>(UnitX<Vector3>(), DegreesToRadians(180.0F));
+        Quaternion const q270 = CreateFromAxisAngle<Quaternion>(UnitX<Vector3>(), DegreesToRadians(270.0F));
 
         CHECK(GetX(q000) == Approx{ 0.0F });
         CHECK(GetY(q000) == Approx{ 0.0F });
@@ -2127,10 +2127,10 @@ TEST_CASE("Maths / Quaternion / Rotation from axis angle")
 
     SECTION("Axis Y")
     {
-        Quaternion const q000 = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(0.0F));
-        Quaternion const q090 = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(90.0F));
-        Quaternion const q180 = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(180.0F));
-        Quaternion const q270 = CreateFromAxisAngle(UnitY<Vector3>(), DegreesToRadians(270.0F));
+        Quaternion const q000 = CreateFromAxisAngle<Quaternion>(UnitY<Vector3>(), DegreesToRadians(0.0F));
+        Quaternion const q090 = CreateFromAxisAngle<Quaternion>(UnitY<Vector3>(), DegreesToRadians(90.0F));
+        Quaternion const q180 = CreateFromAxisAngle<Quaternion>(UnitY<Vector3>(), DegreesToRadians(180.0F));
+        Quaternion const q270 = CreateFromAxisAngle<Quaternion>(UnitY<Vector3>(), DegreesToRadians(270.0F));
 
         CHECK(GetX(q000) == Approx{ 0.0F });
         CHECK(GetY(q000) == Approx{ 0.0F });
@@ -2209,10 +2209,10 @@ TEST_CASE("Maths / Quaternion / Rotation from axis angle")
 
     SECTION("Axis Z")
     {
-        Quaternion const q000 = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(0.0F));
-        Quaternion const q090 = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(90.0F));
-        Quaternion const q180 = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(180.0F));
-        Quaternion const q270 = CreateFromAxisAngle(UnitZ<Vector3>(), DegreesToRadians(270.0F));
+        Quaternion const q000 = CreateFromAxisAngle<Quaternion>(UnitZ<Vector3>(), DegreesToRadians(0.0F));
+        Quaternion const q090 = CreateFromAxisAngle<Quaternion>(UnitZ<Vector3>(), DegreesToRadians(90.0F));
+        Quaternion const q180 = CreateFromAxisAngle<Quaternion>(UnitZ<Vector3>(), DegreesToRadians(180.0F));
+        Quaternion const q270 = CreateFromAxisAngle<Quaternion>(UnitZ<Vector3>(), DegreesToRadians(270.0F));
 
         CHECK(GetX(q000) == Approx{ 0.0F });
         CHECK(GetY(q000) == Approx{ 0.0F });
