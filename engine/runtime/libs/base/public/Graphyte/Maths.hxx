@@ -10080,8 +10080,8 @@ namespace Graphyte::Maths
     {
         GX_ASSERT(source != nullptr)
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T m;
-
+        T result;
+        
         result.M.M[0][0] = source->M[0][0];
         result.M.M[0][1] = source->M[0][1];
         result.M.M[0][2] = source->M[0][2];
