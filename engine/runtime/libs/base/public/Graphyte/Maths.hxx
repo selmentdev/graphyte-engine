@@ -3,8 +3,6 @@
 #include <Graphyte/Diagnostics.hxx>
 #include <Graphyte/Bitwise.hxx>
 #include <Graphyte/Half.hxx>
-#include <concepts>
-#include <ranges>
 
 // =================================================================================================
 //
@@ -1129,7 +1127,7 @@ namespace Graphyte::Maths::Traits
     template <typename T> concept Roundable = requires { typename T::IsRoundable; };
     template <typename T> concept Componentwise = requires { typename T::IsComponentwise; };
     template <typename T> concept Interpolable = requires { typename T::IsInterpolable; };
-    template <typename T> concept FloatScalar = std::same_as<float>;
+    template <typename T> concept FloatScalar = std::is_same_v<float>;
     template <typename T> concept FloatVector = requires { typename T::IsFloatVector; };
     template <typename T> concept FloatMatrix = requires { typename T::IsFloatMatrix; };
     template <typename T> concept BoolVector = requires { typename T::IsBoolVector; };
