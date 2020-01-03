@@ -1144,7 +1144,7 @@ namespace Graphyte::Maths::Traits
     template <typename T> concept OpBitXor = requires { typename T::OpBitXor; };
     template <typename T> concept OpBitNot = requires { typename T::OpBitNot; };
 
-    // supports length / normalize / 
+    // supports length / normalize /
     template <typename T> concept NormedSpace = requires { typename T::IsNormedSpace; };
 
     // supports distance, angle between
@@ -7877,7 +7877,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Max(T a, T b) noexcept
-        requires VectorLike<T> and Comparable<T>
+        requires FloatVector<T> and Comparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -8529,7 +8529,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const length_squared = LengthSquared<T>(v);
-        Vector4 const rcp_length = InvSqrt<T>(v);
+        Vector4 const rcp_length = InvSqrt(length_squared);
         return rcp_length;
 #elif GRAPHYTE_HW_AVX
         if constexpr (T::Components == 4)
@@ -8540,7 +8540,7 @@ namespace Graphyte::Maths
             __m128 const length = _mm_div_ps(one, inv_length);
             return { length };
         }
-        else if constexpr (T::Components == 4)
+        else if constexpr (T::Components == 3)
         {
             __m128 const length_squared = _mm_dp_ps(v.V, v.V, 0x7F);
             __m128 const inv_length = _mm_sqrt_ps(length_squared);
@@ -8548,7 +8548,7 @@ namespace Graphyte::Maths
             __m128 const length = _mm_div_ps(one, inv_length);
             return { length };
         }
-        else if constexpr (T::Components == 4)
+        else if constexpr (T::Components == 2)
         {
             __m128 const length_squared = _mm_dp_ps(v.V, v.V, 0x3F);
             __m128 const inv_length = _mm_sqrt_ps(length_squared);
@@ -8565,7 +8565,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const length_squared = LengthSquared<T>(v);
-        Vector4 const rcp_length = InvSqrtEst<Vector4>(length_squared);
+        Vector4 const rcp_length = InvSqrtEst(length_squared);
         return rcp_length;
 #elif GRAPHYTE_HW_AVX
         if constexpr (T::Components == 4)
@@ -9007,6 +9007,52 @@ namespace Graphyte::Maths
                 0.0F,
             } } };
         return { result.V };
+#elif GRAPHYTE_HW_NEON
+        // = [x, y]
+        float32x2_t const a_xy = vget_low_f32(a);
+        float32x2_t const b_xy = vget_low_f32(b);
+
+        // = [y, x]
+        float32x2_t const a_yx = vrev64_f32(a_xy);
+        float32x2_t const b_yx = vrev64_f32(b_xy);
+
+        // = [z, z]
+        float32x2_t const a_zz = vdup_lane_f32(vget_high_f32(a), 0);
+        float32x2_t const b_zz = vdup_lane_f32(vget_high_f32(b), 0);
+
+        // = [y, x, x, y]
+        float32x4_t const a_yxxy = vcombine_f32(a_yx, a_xy);
+        float32x4_t const b_yxxy = vcombine_f32(b_yx, b_xy);
+
+        // = [z, z, y, x]
+        float32x4_t const b_zzyx = vcombine_f32(b_zz, b_yx);
+        float32x4_t const a_zzyx = vcombine_f32(a_zz, a_yx);
+
+        // = [
+        //      a.y * b.z,
+        //      a.x * b.z,
+        //      a.x * b.y,
+        //      a.y * b.x
+        // ]
+        float32x4_t const m0 = vmulq_f32(a_yxxy, b_zzyx);
+
+        // = [
+        //      (a.y * b.z) - (a.z * b.y),
+        //      (a.x * b.z) - (a.z * b.x),
+        //      (a.x * b.y) - (a.y * b.x),
+        //      (a.y * b.x) - (a.x * b.y),
+        // ]
+        float32x4_t const m1 = vmlsq_f32(m0, a_zzyx, b_yxxy);
+
+        // flip: m2.y = m1.y * -1
+        // m1: (a.x * b.z) - (a.z * b.x)
+        // m2: -(a.x * b.z) + (a.z * b.x) = (a.z * b.x) - (a.x * b.z)
+        uint32x4_t const m2 = veorq_u32(vreinpretq_u32_f32(m1), Impl::VEC4_MASK_FLIP_Y);
+
+        uint32x4_t const m3 = vandq_u32(m2, Impl::VEC4_MASK_SELECT_1110.V);
+
+        return { vreinterpretq_f32_u32(m3) };
+
 #elif GRAPHYTE_HW_AVX
         // m0 = (a.yzx * b.zxy)
         __m128 const a0 = _mm_permute_ps(a.V, _MM_SHUFFLE(3, 0, 2, 1));

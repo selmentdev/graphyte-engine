@@ -25,7 +25,6 @@ namespace Tests
         using IsOrderComparable = void;
         using IsEqualComparable = void;
     };
-
 }
 
 static_assert(Tests::OrderComparable<Tests::Vector4>);
@@ -39,6 +38,187 @@ static_assert(Tests::EqualComparable<Tests::Vector2>);
 static_assert(!Tests::Comparable<Tests::Vector4>);
 static_assert(!Tests::Comparable<Tests::Vector3>);
 static_assert(Tests::Comparable<Tests::Vector2>);
+
+TEST_CASE("Maths / Vector / Clamp")
+{
+    using namespace Graphyte::Maths;
+
+    Vector2 va2 = Make<Vector2>(1.0f, -2.0f);
+    Vector2 ra2 = Clamp(va2, Replicate<Vector2>(0.0f), Replicate<Vector2>(0.875f));
+    CHECK(GetX(ra2) == Approx{ 0.875f });
+    CHECK(GetY(ra2) == Approx{ 0.0f });
+}
+
+TEST_CASE("Maths / Vectors / Dot Product")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Vector2")
+    {
+        Vector2 const a = Make<Vector2>(1.0f, -1.0f);
+        Vector2 const b = Make<Vector2>(2.0f, 1.5f);
+
+        Vector4 const r = Dot(a, b);
+
+        CHECK(GetX(r) == Approx{ 0.5f });
+        CHECK(GetY(r) == Approx{ 0.5f });
+        CHECK(GetZ(r) == Approx{ 0.5f });
+        CHECK(GetW(r) == Approx{ 0.5f });
+    }
+
+    SECTION("Vector3")
+    {
+        Vector3 const a = Make<Vector3>(1.0f, -1.0f, 3.0f);
+        Vector3 const b = Make<Vector3>(2.0f, 1.5f, 1.25f);
+
+        Vector4 const r = Dot(a, b);
+
+        CHECK(GetX(r) == Approx{ 4.25f });
+        CHECK(GetY(r) == Approx{ 4.25f });
+        CHECK(GetZ(r) == Approx{ 4.25f });
+        CHECK(GetW(r) == Approx{ 4.25f });
+    }
+
+    SECTION("Vector4")
+    {
+        Vector4 const a = Make<Vector4>(1.0f, -1.0f, 3.0f, -1.5f);
+        Vector4 const b = Make<Vector4>(2.0f, 1.5f, 1.25f, 2.25f);
+
+        Vector4 const r = Dot(a, b);
+
+        CHECK(GetX(r) == Approx{ 0.875f });
+        CHECK(GetY(r) == Approx{ 0.875f });
+        CHECK(GetZ(r) == Approx{ 0.875f });
+        CHECK(GetW(r) == Approx{ 0.875f });
+    }
+}
+
+TEST_CASE("Maths / Vectors / Angles")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Angle between vectors")
+    {
+        SECTION("Vector2")
+        {
+            Vector2 const x = UnitX<Vector2>();
+            Vector2 const y = UnitY<Vector2>();
+
+            CHECK(GetX(AngleBetweenVectors(x, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(y, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(x, x)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenVectors(y, y)) == Approx{ DegreesToRadians(0.0f) });
+        }
+
+        SECTION("Vector3")
+        {
+            Vector3 const x = UnitX<Vector3>();
+            Vector3 const y = UnitY<Vector3>();
+            Vector3 const z = UnitY<Vector3>();
+
+            CHECK(GetX(AngleBetweenVectors(x, x)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenVectors(x, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(x, z)) == Approx{ DegreesToRadians(90.0f) });
+
+            CHECK(GetX(AngleBetweenVectors(y, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(y, y)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenVectors(y, z)) == Approx{ DegreesToRadians(90.0f) });
+
+            CHECK(GetX(AngleBetweenVectors(z, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(z, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(z, z)) == Approx{ DegreesToRadians(0.0f) });
+        }
+
+        SECTION("Vector4")
+        {
+            Vector4 const x = UnitX<Vector4>();
+            Vector4 const y = UnitY<Vector4>();
+            Vector4 const z = UnitY<Vector4>();
+            Vector4 const w = UnitY<Vector4>();
+
+            CHECK(GetX(AngleBetweenVectors(x, x)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenVectors(x, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(x, z)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(x, w)) == Approx{ DegreesToRadians(90.0f) });
+
+            CHECK(GetX(AngleBetweenVectors(y, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(y, y)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenVectors(y, z)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(y, w)) == Approx{ DegreesToRadians(90.0f) });
+
+            CHECK(GetX(AngleBetweenVectors(z, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(z, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(z, z)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenVectors(z, w)) == Approx{ DegreesToRadians(90.0f) });
+
+            CHECK(GetX(AngleBetweenVectors(w, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(w, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(w, z)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenVectors(w, w)) == Approx{ DegreesToRadians(0.0f) });
+        }
+    }
+
+    SECTION("Angle between normals")
+    {
+        SECTION("Vector2")
+        {
+            Vector2 const x = UnitX<Vector2>();
+            Vector2 const y = UnitY<Vector2>();
+
+            CHECK(GetX(AngleBetweenNormals(x, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(y, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(x, x)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenNormals(y, y)) == Approx{ DegreesToRadians(0.0f) });
+        }
+
+        SECTION("Vector3")
+        {
+            Vector3 const x = UnitX<Vector3>();
+            Vector3 const y = UnitY<Vector3>();
+            Vector3 const z = UnitY<Vector3>();
+
+            CHECK(GetX(AngleBetweenNormals(x, x)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenNormals(x, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(x, z)) == Approx{ DegreesToRadians(90.0f) });
+
+            CHECK(GetX(AngleBetweenNormals(y, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(y, y)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenNormals(y, z)) == Approx{ DegreesToRadians(90.0f) });
+
+            CHECK(GetX(AngleBetweenNormals(z, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(z, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(z, z)) == Approx{ DegreesToRadians(0.0f) });
+        }
+
+        SECTION("Vector4")
+        {
+            Vector4 const x = UnitX<Vector4>();
+            Vector4 const y = UnitY<Vector4>();
+            Vector4 const z = UnitY<Vector4>();
+            Vector4 const w = UnitY<Vector4>();
+
+            CHECK(GetX(AngleBetweenNormals(x, x)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenNormals(x, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(x, z)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(x, w)) == Approx{ DegreesToRadians(90.0f) });
+
+            CHECK(GetX(AngleBetweenNormals(y, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(y, y)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenNormals(y, z)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(y, w)) == Approx{ DegreesToRadians(90.0f) });
+
+            CHECK(GetX(AngleBetweenNormals(z, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(z, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(z, z)) == Approx{ DegreesToRadians(0.0f) });
+            CHECK(GetX(AngleBetweenNormals(z, w)) == Approx{ DegreesToRadians(90.0f) });
+
+            CHECK(GetX(AngleBetweenNormals(w, x)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(w, y)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(w, z)) == Approx{ DegreesToRadians(90.0f) });
+            CHECK(GetX(AngleBetweenNormals(w, w)) == Approx{ DegreesToRadians(0.0f) });
+        }
+    }
+}
 
 TEST_CASE("Maths / Transforms")
 {
@@ -3229,17 +3409,6 @@ TEST_CASE("Maths / Vector4 / Cross Product")
     CHECK(cc.F[1] == -66.0F);
     CHECK(cc.F[2] == 220.0F);
     CHECK(cc.F[3] == -44.0F);
-}
-
-TEST_CASE("Maths / Vector4 / Dot Product")
-{
-    using namespace Graphyte::Maths;
-
-    Vector4 const a = Make<Vector4>(1.0F, 5.0F, 3.0F, 4.0F);
-    Vector4 const b = Make<Vector4>(7.0F, 7.0F, 9.0F, 10.0F);
-    Vector4 const c = Make<Vector4>(3.0F, 7.0F, 4.0F, -1.0F);
-
-    //Vector4 Dot(a, b);
 }
 
 TEST_CASE("Maths / Vector / Rounding")
