@@ -9718,6 +9718,7 @@ namespace Graphyte::Maths
     __m128 const r1_xyz = m.M.R[1];
     __m128 const r2_xyz = m.M.R[2];
 
+    // compute trace of matrix: m00 + m11 + m22
     __m128 const r0_xxx = _mm_permute_ps(r0_xyz, _MM_SHUFFLE(0,0,0,0));
     __m128 const r1_yyy = _mm_permute_ps(r1_xyz, _MM_SHUFFLE(1,1,1,1));
     __m128 const r2_zzz = _mm_permute_ps(r2_xyz, _MM_SHUFFLE(2,2,2,2));
