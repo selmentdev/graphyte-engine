@@ -39,8 +39,6 @@ static_assert(!Tests::Comparable<Tests::Vector4>);
 static_assert(!Tests::Comparable<Tests::Vector3>);
 static_assert(Tests::Comparable<Tests::Vector2>);
 
-TEST_CASE("Maths / Quaternion ")
-
 TEST_CASE("Maths / Quaternion / q mul conj(q) = identity")
 {
     using namespace Graphyte::Maths;
