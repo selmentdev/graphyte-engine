@@ -4054,10 +4054,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Identity() noexcept = delete;
+    T Identity() noexcept = delete;
 
     template <typename T>
-    mathinline bool mathcall IsIdentity(T v) noexcept = delete;
+    bool IsIdentity(T v) noexcept = delete;
+
+    template <typename T>
+    bool IsIdentity(T v, T epsilon) noexcept = delete;
+
 
     template <typename T>
     mathinline T mathcall One() noexcept
@@ -9336,6 +9340,13 @@ namespace Graphyte::Maths
         return IsEqual<Vector4>(As<Vector4>(v), { Impl::VEC4_POSITIVE_UNIT_W.V });
     }
 
+
+    template <typename T>
+    mathinline bool mathcall IsIdentity(T v, Vector4 epsilon) noexcept
+    {
+        return IsEqual<Vector4>(As<Vector4>(v), { Impl::VEC4_POSITIVE_UNIT_W.V }, epsilon);
+    }
+
     mathinline Quaternion mathcall Conjugate(Quaternion q) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -9407,7 +9418,18 @@ namespace Graphyte::Maths
 #endif
     }
 
+    [[deprecated("Not supported on quaternion. Multiply by inverse.")]]
     mathinline Quaternion mathcall Divide(Quaternion q) noexcept = delete;
+
+    mathinline Quaternion mathcall Multiply(Quaternion q, Vector4 v) noexcept
+    {
+        return As<Quaternion>(Multiply(As<Vector4>(q), v));
+    }
+
+    mathinline Quaternion mathcall Divide(Quaternion q, Vector4 v) noexcept
+    {
+        return As<Quaternion>(Divide(As<Vector4>(q), v));
+    }
 
     mathinline Quaternion mathcall Exp(Quaternion q) noexcept
     {

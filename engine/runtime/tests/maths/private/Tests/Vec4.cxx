@@ -39,14 +39,30 @@ static_assert(!Tests::Comparable<Tests::Vector4>);
 static_assert(!Tests::Comparable<Tests::Vector3>);
 static_assert(Tests::Comparable<Tests::Vector2>);
 
+TEST_CASE("Maths / Quaternion ")
+
+TEST_CASE("Maths / Quaternion / q mul conj(q) = identity")
+{
+    using namespace Graphyte::Maths;
+
+    Vector3 const axis = Make<Vector3>(1.0f, 2.0f, -3.0f);
+
+    Quaternion const q = CreateFromAxisAngle<Quaternion>(axis, DegreesToRadians(30.0f));
+    Quaternion const qc = Conjugate(q);
+
+    Quaternion const r = Multiply(q, qc);
+
+    CHECK(IsIdentity(r, Epsilon<Vector4>()));
+}
+
 TEST_CASE("Maths / Vector / Clamp")
 {
     using namespace Graphyte::Maths;
 
     Vector2 va2 = Make<Vector2>(1.0f, -2.0f);
-    Vector2 ra2 = Clamp(va2, Replicate<Vector2>(0.0f), Replicate<Vector2>(0.875f));
+    Vector2 ra2 = Clamp(va2, Replicate<Vector2>(-0.1f), Replicate<Vector2>(0.875f));
     CHECK(GetX(ra2) == Approx{ 0.875f });
-    CHECK(GetY(ra2) == Approx{ 0.0f });
+    CHECK(GetY(ra2) == Approx{ -0.1f });
 }
 
 TEST_CASE("Maths / Vectors / Dot Product")
@@ -114,7 +130,7 @@ TEST_CASE("Maths / Vectors / Angles")
         {
             Vector3 const x = UnitX<Vector3>();
             Vector3 const y = UnitY<Vector3>();
-            Vector3 const z = UnitY<Vector3>();
+            Vector3 const z = UnitZ<Vector3>();
 
             CHECK(GetX(AngleBetweenVectors(x, x)) == Approx{ DegreesToRadians(0.0f) });
             CHECK(GetX(AngleBetweenVectors(x, y)) == Approx{ DegreesToRadians(90.0f) });
@@ -133,8 +149,8 @@ TEST_CASE("Maths / Vectors / Angles")
         {
             Vector4 const x = UnitX<Vector4>();
             Vector4 const y = UnitY<Vector4>();
-            Vector4 const z = UnitY<Vector4>();
-            Vector4 const w = UnitY<Vector4>();
+            Vector4 const z = UnitZ<Vector4>();
+            Vector4 const w = UnitW<Vector4>();
 
             CHECK(GetX(AngleBetweenVectors(x, x)) == Approx{ DegreesToRadians(0.0f) });
             CHECK(GetX(AngleBetweenVectors(x, y)) == Approx{ DegreesToRadians(90.0f) });
@@ -175,7 +191,7 @@ TEST_CASE("Maths / Vectors / Angles")
         {
             Vector3 const x = UnitX<Vector3>();
             Vector3 const y = UnitY<Vector3>();
-            Vector3 const z = UnitY<Vector3>();
+            Vector3 const z = UnitZ<Vector3>();
 
             CHECK(GetX(AngleBetweenNormals(x, x)) == Approx{ DegreesToRadians(0.0f) });
             CHECK(GetX(AngleBetweenNormals(x, y)) == Approx{ DegreesToRadians(90.0f) });
@@ -194,8 +210,8 @@ TEST_CASE("Maths / Vectors / Angles")
         {
             Vector4 const x = UnitX<Vector4>();
             Vector4 const y = UnitY<Vector4>();
-            Vector4 const z = UnitY<Vector4>();
-            Vector4 const w = UnitY<Vector4>();
+            Vector4 const z = UnitZ<Vector4>();
+            Vector4 const w = UnitW<Vector4>();
 
             CHECK(GetX(AngleBetweenNormals(x, x)) == Approx{ DegreesToRadians(0.0f) });
             CHECK(GetX(AngleBetweenNormals(x, y)) == Approx{ DegreesToRadians(90.0f) });
