@@ -1,13 +1,12 @@
 #include "Test.Graphics.pch.hxx"
-#if false
 #include <Graphyte/Graphics/PixelFormat.hxx>
 #include <Graphyte/Graphics/Image.hxx>
 #include <Graphyte/ByteAccess.hxx>
 #include <Graphyte/Hash/XXHash.hxx>
-#include <Graphyte/Maths/KnownColors.hxx>
 #include <Graphyte/Storage/FileManager.hxx>
 #include <Graphyte/Graphics/ImageCodecs/ImageCodec.DDS.hxx>
 #include <Graphyte/Storage/ArchiveMemoryReader.hxx>
+#include <Graphyte/Maths.hxx>
 
 using Graphyte::Graphics::PixelFormat;
 using Graphyte::Graphics::PixelFormatProperties;
@@ -18,8 +17,7 @@ using Graphyte::Graphics::ImageCodecDDS;
 using Graphyte::Graphics::ImagePixels;
 using Graphyte::Graphics::CubeFace;
 using Graphyte::Hash::XXHash64;
-using Graphyte::Maths::KnownColor;
-using Graphyte::Maths::Packed::color32;
+using Graphyte::Maths::ColorBGRA;
 using Graphyte::Storage::ArchiveMemoryReader;
 
 TEST_CASE("gen-1d.dds")
@@ -73,7 +71,7 @@ TEST_CASE("gen-1d.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 4);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x5CF2DEB4);
             CHECK(scanline_0[1].Value == 0x66048560);
             CHECK(scanline_0[2].Value == 0x8BEBEC78);
@@ -91,7 +89,7 @@ TEST_CASE("gen-1d.dds")
             CHECK(pixels_1->SlicePitch == 8);
             CHECK(pixels_1->Width == 2);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xCD4CBABF);
             CHECK(scanline_0[1].Value == 0x2C6F33C8);
         }
@@ -155,7 +153,7 @@ TEST_CASE("gen-1d-array.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 4);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x5CF2DEB4);
             CHECK(scanline_0[1].Value == 0x66048560);
             CHECK(scanline_0[2].Value == 0x8BEBEC78);
@@ -173,7 +171,7 @@ TEST_CASE("gen-1d-array.dds")
             CHECK(pixels_1->SlicePitch == 8);
             CHECK(pixels_1->Width == 2);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xCD4CBABF);
             CHECK(scanline_0[1].Value == 0x2C6F33C8);
         }
@@ -191,7 +189,7 @@ TEST_CASE("gen-1d-array.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 4);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xE45A4A9A);
             CHECK(scanline_0[1].Value == 0x79683F69);
             CHECK(scanline_0[2].Value == 0x4393E963);
@@ -209,7 +207,7 @@ TEST_CASE("gen-1d-array.dds")
             CHECK(pixels_1->SlicePitch == 8);
             CHECK(pixels_1->Width == 2);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xC0F514A5);
             CHECK(scanline_0[1].Value == 0xFD46606F);
         }
@@ -227,7 +225,7 @@ TEST_CASE("gen-1d-array.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 4);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x147BB6D9);
             CHECK(scanline_0[1].Value == 0xC2DBDAFA);
             CHECK(scanline_0[2].Value == 0x18E829BF);
@@ -245,7 +243,7 @@ TEST_CASE("gen-1d-array.dds")
             CHECK(pixels_1->SlicePitch == 8);
             CHECK(pixels_1->Width == 2);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xACACC364);
             CHECK(scanline_0[1].Value == 0xE758F160);
         }
@@ -263,7 +261,7 @@ TEST_CASE("gen-1d-array.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 4);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x8F5844F1);
             CHECK(scanline_0[1].Value == 0xD199254E);
             CHECK(scanline_0[2].Value == 0x9D0BC863);
@@ -281,7 +279,7 @@ TEST_CASE("gen-1d-array.dds")
             CHECK(pixels_1->SlicePitch == 8);
             CHECK(pixels_1->Width == 2);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x1327C4ED);
             CHECK(scanline_0[1].Value == 0x89F5A51D);
         }
@@ -339,11 +337,11 @@ TEST_CASE("gen-2d.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 2);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x5CF2DEB4);
             CHECK(scanline_0[1].Value == 0x66048560);
 
-            auto scanline_1 = pixels_0->GetScanline<color32>(1);
+            auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
             CHECK(scanline_1[0].Value == 0x8BEBEC78);
             CHECK(scanline_1[1].Value == 0xB751C400);
         }
@@ -359,7 +357,7 @@ TEST_CASE("gen-2d.dds")
             CHECK(pixels_1->SlicePitch == 4);
             CHECK(pixels_1->Width == 1);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xCD4CBABF);
         }
     }
@@ -417,13 +415,13 @@ TEST_CASE("gen-2d-array.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 2);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x5CF2DEB4);
             CHECK(scanline_0[1].Value == 0x66048560);
 
-            auto scanline_1 = pixels_0->GetScanline<color32>(0);
-            CHECK(scanline_1[2].Value == 0x8BEBEC78);
-            CHECK(scanline_1[3].Value == 0xB751C400);
+            auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
+            CHECK(scanline_1[0].Value == 0x8BEBEC78);
+            CHECK(scanline_1[1].Value == 0xB751C400);
         }
         {
             auto pixels_1 = image->GetPixels(0, 1);
@@ -437,7 +435,7 @@ TEST_CASE("gen-2d-array.dds")
             CHECK(pixels_1->SlicePitch == 4);
             CHECK(pixels_1->Width == 1);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xCD4CBABF);
         }
     }
@@ -454,13 +452,13 @@ TEST_CASE("gen-2d-array.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 2);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x6101473D);
             CHECK(scanline_0[1].Value == 0x1CDD6F55);
 
-            auto scanline_1 = pixels_0->GetScanline<color32>(0);
-            CHECK(scanline_1[2].Value == 0x0C99C3E2);
-            CHECK(scanline_1[3].Value == 0x4114FFC7);
+            auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
+            CHECK(scanline_1[0].Value == 0x0C99C3E2);
+            CHECK(scanline_1[1].Value == 0x4114FFC7);
         }
         {
             auto pixels_1 = image->GetPixels(1, 1);
@@ -474,7 +472,7 @@ TEST_CASE("gen-2d-array.dds")
             CHECK(pixels_1->SlicePitch == 4);
             CHECK(pixels_1->Width == 1);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x072EA6D1);
         }
     }
@@ -539,11 +537,11 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 2);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x5CF2DEB4);
             CHECK(scanline_0[1].Value == 0x66048560);
 
-            auto scanline_1 = pixels_0->GetScanline<color32>(1);
+            auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
             CHECK(scanline_1[0].Value == 0x8BEBEC78);
             CHECK(scanline_1[1].Value == 0xB751C400);
         }
@@ -559,7 +557,7 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_1->SlicePitch == 4);
             CHECK(pixels_1->Width == 1);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xCD4CBABF);
         }
     }
@@ -576,11 +574,11 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 2);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x6101473D);
             CHECK(scanline_0[1].Value == 0x1CDD6F55);
 
-            auto scanline_1 = pixels_0->GetScanline<color32>(1);
+            auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
             CHECK(scanline_1[0].Value == 0x0C99C3E2);
             CHECK(scanline_1[1].Value == 0x4114FFC7);
         }
@@ -596,7 +594,7 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_1->SlicePitch == 4);
             CHECK(pixels_1->Width == 1);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x072EA6D1);
         }
     }
@@ -613,11 +611,11 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 2);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x88A392E7);
             CHECK(scanline_0[1].Value == 0xF1CFAA7D);
 
-            auto scanline_1 = pixels_0->GetScanline<color32>(1);
+            auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
             CHECK(scanline_1[0].Value == 0x4D2A828A);
             CHECK(scanline_1[1].Value == 0x73676A9A);
         }
@@ -633,7 +631,7 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_1->SlicePitch == 4);
             CHECK(pixels_1->Width == 1);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xC02EE5BD);
         }
     }
@@ -650,11 +648,11 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 2);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xCA161B23);
             CHECK(scanline_0[1].Value == 0x4E45E148);
 
-            auto scanline_1 = pixels_0->GetScanline<color32>(1);
+            auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
             CHECK(scanline_1[0].Value == 0x527FA4C5);
             CHECK(scanline_1[1].Value == 0xCE0DB1B4);
         }
@@ -670,7 +668,7 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_1->SlicePitch == 4);
             CHECK(pixels_1->Width == 1);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0xCE988A20);
         }
     }
@@ -687,11 +685,11 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 2);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x4DFBBCF7);
             CHECK(scanline_0[1].Value == 0x49DC9899);
 
-            auto scanline_1 = pixels_0->GetScanline<color32>(1);
+            auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
             CHECK(scanline_1[0].Value == 0xEB9A39F9);
             CHECK(scanline_1[1].Value == 0xB004C28A);
         }
@@ -707,7 +705,7 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_1->SlicePitch == 4);
             CHECK(pixels_1->Width == 1);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x9254EC24);
         }
     }
@@ -724,11 +722,11 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 2);
 
-            auto scanline_0 = pixels_0->GetScanline<color32>(0);
+            auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x497E14C4);
             CHECK(scanline_0[1].Value == 0x1B96A2D2);
 
-            auto scanline_1 = pixels_0->GetScanline<color32>(1);
+            auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
             CHECK(scanline_1[0].Value == 0x2E3664F3);
             CHECK(scanline_1[1].Value == 0x94D9725A);
         }
@@ -744,7 +742,7 @@ TEST_CASE("gen-2d-cube.dds")
             CHECK(pixels_1->SlicePitch == 4);
             CHECK(pixels_1->Width == 1);
 
-            auto scanline_0 = pixels_1->GetScanline<color32>(0);
+            auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
             CHECK(scanline_0[0].Value == 0x97AA723B);
         }
     }
@@ -820,11 +818,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x5CF2DEB4);
                 CHECK(scanline_0[1].Value == 0x66048560);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0x8BEBEC78);
                 CHECK(scanline_1[1].Value == 0xB751C400);
             }
@@ -840,7 +838,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0xCD4CBABF);
             }
         }
@@ -857,11 +855,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x6101473D);
                 CHECK(scanline_0[1].Value == 0x1CDD6F55);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0x0C99C3E2);
                 CHECK(scanline_1[1].Value == 0x4114FFC7);
             }
@@ -877,7 +875,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x072EA6D1);
             }
         }
@@ -894,11 +892,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x88A392E7);
                 CHECK(scanline_0[1].Value == 0xF1CFAA7D);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0x4D2A828A);
                 CHECK(scanline_1[1].Value == 0x73676A9A);
             }
@@ -914,7 +912,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0xC02EE5BD);
             }
         }
@@ -931,11 +929,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0xCA161B23);
                 CHECK(scanline_0[1].Value == 0x4E45E148);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0x527FA4C5);
                 CHECK(scanline_1[1].Value == 0xCE0DB1B4);
             }
@@ -951,7 +949,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0xCE988A20);
             }
         }
@@ -968,11 +966,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x4DFBBCF7);
                 CHECK(scanline_0[1].Value == 0x49DC9899);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0xEB9A39F9);
                 CHECK(scanline_1[1].Value == 0xB004C28A);
             }
@@ -988,7 +986,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x9254EC24);
             }
         }
@@ -1005,11 +1003,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x497E14C4);
                 CHECK(scanline_0[1].Value == 0x1B96A2D2);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0x2E3664F3);
                 CHECK(scanline_1[1].Value == 0x94D9725A);
             }
@@ -1025,7 +1023,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x97AA723B);
             }
         }
@@ -1044,11 +1042,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x2D0DE0F9);
                 CHECK(scanline_0[1].Value == 0x5A26DB3D);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0xA375B537);
                 CHECK(scanline_1[1].Value == 0x4AABCDB6);
             }
@@ -1064,7 +1062,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0xCD70A852);
             }
         }
@@ -1081,11 +1079,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0xA7875A70);
                 CHECK(scanline_0[1].Value == 0xF4A39A29);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0x9DE0AB43);
                 CHECK(scanline_1[1].Value == 0x670CB6F1);
             }
@@ -1101,7 +1099,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0xCFAF52DD);
             }
         }
@@ -1118,11 +1116,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x34ACCA9C);
                 CHECK(scanline_0[1].Value == 0x26173CE2);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0x2F10060C);
                 CHECK(scanline_1[1].Value == 0x7504E1A6);
             }
@@ -1138,7 +1136,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x84C9BED8);
             }
         }
@@ -1155,11 +1153,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x7E6D48ED);
                 CHECK(scanline_0[1].Value == 0xB8DEAFD5);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0x7FB2AB38);
                 CHECK(scanline_1[1].Value == 0xD5134A32);
             }
@@ -1175,7 +1173,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x3E4F91C4);
             }
         }
@@ -1192,11 +1190,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0xDA3988F7);
                 CHECK(scanline_0[1].Value == 0x4C75BAA4);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0x08909550);
                 CHECK(scanline_1[1].Value == 0x7F3DEDEF);
             }
@@ -1212,7 +1210,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0xAFDD3E15);
             }
         }
@@ -1229,11 +1227,11 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_0->SlicePitch == 16);
                 CHECK(pixels_0->Width == 2);
 
-                auto scanline_0 = pixels_0->GetScanline<color32>(0);
+                auto scanline_0 = pixels_0->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x200E09E1);
                 CHECK(scanline_0[1].Value == 0x12F742F7);
 
-                auto scanline_1 = pixels_0->GetScanline<color32>(1);
+                auto scanline_1 = pixels_0->GetPixels<ColorBGRA>(1);
                 CHECK(scanline_1[0].Value == 0x9D3EB36C);
                 CHECK(scanline_1[1].Value == 0xCB65594E);
             }
@@ -1249,7 +1247,7 @@ TEST_CASE("gen-2d-cube-array.dds")
                 CHECK(pixels_1->SlicePitch == 4);
                 CHECK(pixels_1->Width == 1);
 
-                auto scanline_0 = pixels_1->GetScanline<color32>(0);
+                auto scanline_0 = pixels_1->GetPixels<ColorBGRA>(0);
                 CHECK(scanline_0[0].Value == 0x8EF03E50);
             }
         }
@@ -1308,19 +1306,19 @@ TEST_CASE("gen-3d.dds")
             CHECK(pixels_0->SlicePitch == 16);
             CHECK(pixels_0->Width == 2);
 
-            auto scanline_0_0 = pixels_0->GetScanline<color32>(0, 0);
+            auto scanline_0_0 = pixels_0->GetPixels<ColorBGRA>(0, 0);
             CHECK(scanline_0_0[0].Value == 0x5CF2DEB4);
             CHECK(scanline_0_0[1].Value == 0x66048560);
 
-            auto scanline_1_0 = pixels_0->GetScanline<color32>(1, 0);
+            auto scanline_1_0 = pixels_0->GetPixels<ColorBGRA>(1, 0);
             CHECK(scanline_1_0[0].Value == 0x8BEBEC78);
             CHECK(scanline_1_0[1].Value == 0xB751C400);
 
-            auto scanline_0_1 = pixels_0->GetScanline<color32>(0, 1);
+            auto scanline_0_1 = pixels_0->GetPixels<ColorBGRA>(0, 1);
             CHECK(scanline_0_1[0].Value == 0);
             CHECK(scanline_0_1[1].Value == 0);
 
-            auto scanline_1_1 = pixels_0->GetScanline<color32>(1, 1);
+            auto scanline_1_1 = pixels_0->GetPixels<ColorBGRA>(1, 1);
             CHECK(scanline_1_1[0].Value == 0);
             CHECK(scanline_1_1[1].Value == 0);
         }
@@ -1336,9 +1334,8 @@ TEST_CASE("gen-3d.dds")
             CHECK(pixels_1->SlicePitch == 4);
             CHECK(pixels_1->Width == 1);
 
-            auto scanline_0_0 = pixels_1->GetScanline<color32>(0, 0);
+            auto scanline_0_0 = pixels_1->GetPixels<ColorBGRA>(0, 0);
             CHECK(scanline_0_0[0].Value == 0xCD4CBABF);
         }
     }
 }
-#endif

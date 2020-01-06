@@ -2,6 +2,7 @@
 #include <Graphyte/Graphics.module.hxx>
 #include <Graphyte/Diagnostics.hxx>
 #include <Graphyte/Graphics/PixelFormat.hxx>
+#include <Graphyte/Span.hxx>
 
 namespace Graphyte::Graphics
 {
@@ -82,6 +83,28 @@ namespace Graphyte::Graphics
         uint32_t Height;
         uint32_t Depth;
         uint32_t MipLevel;
+
+        template <typename TPixel>
+        notstd::span<TPixel> GetPixels(
+            size_t line,
+            size_t slice = 0
+        ) noexcept
+        {
+            std::byte* typed_buffer = reinterpret_cast<std::byte*>(Buffer);
+
+            return { reinterpret_cast<TPixel*>(typed_buffer + slice * SlicePitch + line * LinePitch), Width };
+        }
+
+        template <typename TPixel>
+        notstd::span<TPixel const> GetPixels(
+            size_t line,
+            size_t slice = 0
+        ) const noexcept
+        {
+            std::byte const* typed_buffer = reinterpret_cast<std::byte const*>(Buffer);
+
+            return { reinterpret_cast<TPixel const*>(typed_buffer + slice * SlicePitch + line * LinePitch), Width };
+        }
 
         template <typename TPixel>
         TPixel* GetScanline(
@@ -186,6 +209,16 @@ namespace Graphyte::Graphics
         }
 
     public:
+        notstd::span<ImagePixels const> GetSubresources() const noexcept
+        {
+            return { &m_Subresources[0], m_SubresourcesCount };
+        }
+
+        notstd::span<ImagePixels> GetSubresources() noexcept
+        {
+            return { &m_Subresources[0], m_SubresourcesCount };
+        }
+
         const ImagePixels* GetSubresource(
             size_t index
         ) const noexcept
