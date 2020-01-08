@@ -11156,6 +11156,208 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector4 mathcall Determinant(Matrix m) noexcept
+    {
+        static Impl::ConstFloat32x4 const sign{ { {
+                1.0f,
+                -1.0f,
+                1.0f,
+                -1.0f
+            } } };
+
+        Vector4 const r2_yxxx = Swizzle<1, 0, 0, 0>(As<Vector4>(m.M.R[2]));
+        Vector4 const r3_zzyy = Swizzle<2, 2, 1, 1>(As<Vector4>(m.M.R[3]));
+        Vector4 const r3_wwwz = Swizzle<3, 3, 3, 2>(As<Vector4>(m.M.R[3]));
+        Vector4 const r2_zzyy = Swizzle<2, 2, 1, 1>(As<Vector4>(m.M.R[2]));
+
+        Vector4 const pa0 = Multiply(r2_yxxx, r3_zzyy);
+        Vector4 const pa1 = Multiply(r2_yxxx, r3_wwwz);
+        Vector4 const pa2 = Multiply(r2_zzyy, r3_wwwz);
+
+        Vector4 const r3_yxxx = Swizzle<1, 0, 0, 0>(As<Vector4>(m.M.R[3]));
+        Vector4 const r2_wwwz = Swizzle<3, 3, 3, 2>(As<Vector4>(m.M.R[2]));
+
+        Vector4 const pb0 = NegateMultiplyAdd(r2_zzyy, r3_yxxx, pa0);
+        Vector4 const pb1 = NegateMultiplyAdd(r2_wwwz, r3_yxxx, pa1);
+        Vector4 const pb2 = NegateMultiplyAdd(r2_wwwz, r3_zzyy, pa2);
+
+        Vector4 const r1_wwwz = Swizzle<3, 3, 3, 2>(As<Vector4>(m.M.R[1]));
+        Vector4 const r1_zzyy = Swizzle<2, 2, 1, 1>(As<Vector4>(m.M.R[1]));
+        Vector4 const r1_yxxx = Swizzle<1, 0, 0, 0>(As<Vector4>(m.M.R[1]));
+
+        Vector4 const s0 = Multiply(As<Vector4>(m.M.R[0]), As<Vector4>(sign.V));
+        Vector4 const t0 = Multiply(r1_wwwz, pb0);
+        Vector4 const t1 = NegateMultiplyAdd(r1_zzyy, pb1, t0);
+        Vector4 const t2 = MultiplyAdd(r1_yxxx, pb2, t1);
+
+        return Dot(s0, t2);
+    }
+
+    mathinline bool mathcall Decompose(
+        Vector4& out_scale,
+        Quaternion& out_rotation,
+        Vector4& out_translation,
+        Matrix m
+    ) noexcept
+    {
+        constexpr float const DecomposeEpsilon = 0.0001f;
+
+        constexpr Impl::NativeFloat32x4 const* canonical_basis[3]{
+            &Impl::VEC4_POSITIVE_UNIT_X.V,
+            &Impl::VEC4_POSITIVE_UNIT_Y.V,
+            &Impl::VEC4_POSITIVE_UNIT_Z.V,
+        };
+
+        out_translation.V = m.M.R[3];
+
+        Matrix temp;
+        temp.M.R[0] = m.M.R[0];
+        temp.M.R[1] = m.M.R[1];
+        temp.M.R[2] = m.M.R[2];
+        temp.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        Impl::NativeFloat32x4* basis[3]{
+            &temp.M.R[0],
+            &temp.M.R[1],
+            &temp.M.R[2],
+        };
+
+        float* scales = reinterpret_cast<float*>(&out_scale.V);
+        GetX(&scales[0], Length(As<Vector3>(*basis[0])));
+        GetX(&scales[1], Length(As<Vector3>(*basis[1])));
+        GetX(&scales[2], Length(As<Vector3>(*basis[2])));
+        scales[3] = 0.0f;
+
+        auto decompose_rank_abc = [](size_t& a, size_t& b, size_t& c, float x, float y, float z)
+        {
+            if (x < y)
+            {
+                if (y < z)
+                {
+                    a = 2;
+                    b = 1;
+                    c = 0;
+                }
+                else
+                {
+                    a = 1;
+
+                    if (x < z)
+                    {
+                        b = 2;
+                        c = 0;
+                    }
+                    else
+                    {
+                        b = 0;
+                        c = 2;
+                    }
+                }
+            }
+            else
+            {
+                if (x < z)
+                {
+                    a = 2;
+                    b = 0;
+                    c = 1;
+                }
+                else
+                {
+                    a = 0;
+
+                    if (y < z)
+                    {
+                        b = 2;
+                        c = 1;
+                    }
+                    else
+                    {
+                        b = 1;
+                        c = 2;
+                    }
+                }
+            }
+        };
+
+        size_t a;
+        size_t b;
+        size_t c;
+
+        decompose_rank_abc(a, b, c, scales[0], scales[1], scales[2]);
+
+        if (scales[a] < DecomposeEpsilon)
+        {
+            (*basis[a]) = (*canonical_basis[a]);
+        }
+
+        (*basis[a]) = Normalize(As<Vector3>(*basis[a])).V;
+
+        if (scales[b] < DecomposeEpsilon)
+        {
+            float const absx = fabsf(GetX(As<Vector4>(*basis[a])));
+            float const absy = fabsf(GetY(As<Vector4>(*basis[a])));
+            float const absz = fabsf(GetZ(As<Vector4>(*basis[a])));
+
+            size_t const cc = [](float x, float y, float z) -> size_t
+            {
+                if (x < y)
+                {
+                    if ((y < z) || (x < z))
+                    {
+                        return 0;
+                    }
+                    else
+                    {
+                        return 2;
+                    }
+                }
+                else
+                {
+                    if ((x < z) || (y < z))
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return 2;
+                    }
+                }
+            }(absx, absy, absz);
+
+            (*basis[b]) = Cross(As<Vector3>(*basis[a]), As<Vector3>(*canonical_basis[cc])).V;
+        }
+
+        (*basis[b]) = Normalize(As<Vector3>(*basis[b])).V;
+
+        if (scales[c] < DecomposeEpsilon)
+        {
+            (*basis[c]) = Cross(As<Vector3>(*basis[a]), As<Vector3>(*basis[b])).V;
+        }
+
+        (*basis[c]) = Normalize(As<Vector3>(*basis[c])).V;
+
+        float det = GetX(Determinant(temp));
+
+        if (det < 0.0f)
+        {
+            scales[a] = -scales[a];
+            (*basis[a]) = Negate(As<Vector4>(*basis[a])).V;
+            det = -det;
+        }
+
+        det -= 1.0f;
+        det *= det;
+
+        if (DecomposeEpsilon < det)
+        {
+            return false;
+        }
+
+        out_rotation = CreateFromMatrix(temp);
+        return true;
+    }
+
     template <typename T>
     mathinline T mathcall Nan() noexcept
         requires MatrixLike<T> and (T::Rows == 4) and (T::Columns == 4)
@@ -12059,6 +12261,847 @@ namespace Graphyte::Maths
 
         return result;
     }
+
+    //
+    // View matrices.
+    //
+
+    mathinline Matrix mathcall LookToLH(Vector3 eye_position, Vector3 eye_direction, Vector3 up_direction) noexcept
+    {
+        GX_ASSERT(!IsEqual(eye_direction, Zero<Vector3>()));
+        GX_ASSERT(!IsInfinity(eye_direction));
+        GX_ASSERT(!IsEqual(up_direction, Zero<Vector3>()));
+        GX_ASSERT(!IsInfinity(up_direction));
+
+        Vector3 const r2 = Normalize(eye_direction);
+
+        Vector3 const t0 = Cross(up_direction, r2);
+        Vector3 const r0 = Normalize(t0);
+
+        Vector3 const r1 = Cross(r2, r0);
+
+        Vector3 const neg_eye_position = Negate(eye_position);
+
+        Vector4 const d0 = Dot(r0, neg_eye_position);
+        Vector4 const d1 = Dot(r1, neg_eye_position);
+        Vector4 const d2 = Dot(r2, neg_eye_position);
+
+        Matrix result;
+        result.M.R[0] = Select(d0, As<Vector4>(r0), As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)).V;
+        result.M.R[1] = Select(d1, As<Vector4>(r1), As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)).V;
+        result.M.R[2] = Select(d2, As<Vector4>(r2), As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)).V;
+        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+
+        return Transpose(result);
+    }
+
+    mathinline Matrix mathcall LookToRH(Vector3 eye_position, Vector3 eye_direction, Vector3 up_direction) noexcept
+    {
+        Vector3 const neg_eye_direction = Negate(eye_direction);
+        return LookToLH(eye_position, neg_eye_direction, up_direction);
+    }
+
+    mathinline Matrix mathcall LookAtLH(Vector3 eye_position, Vector3 focus_position, Vector3 up_direction) noexcept
+    {
+        Vector3 const eye_direction = Subtract(eye_position, focus_position);
+        return LookToLH(eye_position, eye_direction, up_direction);
+    }
+
+    mathinline Matrix mathcall LookAtRH(Vector3 eye_position, Vector3 focus_position, Vector3 up_direction) noexcept
+    {
+        Vector3 const eye_direction = Subtract(eye_position, focus_position);
+        return LookToRH(eye_position, eye_direction, up_direction);
+    }
+
+    //
+    // Projection matrices.
+    //
+
+    mathinline Matrix mathcall PerspectiveLH(
+        float view_width,
+        float view_height,
+        float z_near,
+        float z_far
+    ) noexcept
+    {
+        GX_ASSERT(z_near > 0.0f and z_far > 0.0f);
+        GX_ASSERT(!IsEqual(view_width, 0.0f, 0.000001f));
+        GX_ASSERT(!IsEqual(view_height, 0.0f, 0.000001f));
+        GX_ASSERT(!IsEqual(z_far, z_near, 0.000001f));
+
+        float const z_near_2 = z_near + z_near;
+        float const range = z_far / (z_far - z_near);
+
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.M[0][0] = z_near_2 / view_width;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = z_near_2 / view_height;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = 0.0f;
+        result.M.M[2][1] = 0.0f;
+        result.M.M[2][2] = range;
+        result.M.M[2][3] = 1.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = -range * z_near;
+        result.M.M[3][3] = 0.0f;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0f);
+        result.M.R[0] = vsetq_lane_f32(z_near_2 / view_width, zero, 0);
+        result.M.R[1] = vsetq_lane_f32(z_near_2 / view_height, zero, 1);
+        result.M.R[2] = vsetq_lane_f32(range, Impl::VEC4_POSITIVE_UNIT_W.V, 2);
+        result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstFloat32x4 const mvalues{ { {
+                z_near_2 / view_width,
+                z_near_2 / view_height,
+                range,
+                -range * z_near,
+            } } };
+
+        __m128 const values = mvalues.V;
+        __m128 const zero = _mm_setzero_ps();
+
+        // [x, 0, 0, 0]
+        __m128 const r0_x = _mm_move_ss(zero, values);
+
+        // [0, y, 0, 0]
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+
+        // [range, -range * z_near, 0, 1]
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+
+        // [0, 0, range, 1]
+        __m128 const r2_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 0, 0, 0));
+
+        // [0, 0, -range * z_near, 0]
+        __m128 const r3_y = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(2, 1, 0, 0));
+
+        result.M.R[0] = r0_x;
+        result.M.R[1] = r1_y;
+        result.M.R[2] = r2_zw;
+        result.M.R[3] = r3_y;
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall PerspectiveRH(
+        float view_width,
+        float view_height,
+        float z_near,
+        float z_far
+    ) noexcept
+    {
+        GX_ASSERT(z_near > 0.0f and z_far > 0.0f);
+        GX_ASSERT(!IsEqual(view_width, 0.0f, 0.000001f));
+        GX_ASSERT(!IsEqual(view_height, 0.0f, 0.000001f));
+        GX_ASSERT(!IsEqual(z_far, z_near, 0.000001f));
+
+        float const z_near_2 = z_near + z_near;
+        float const range = z_far / (z_near - z_far);
+
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.M[0][0] = z_near_2 / view_width;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = z_near_2 / view_height;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = 0.0f;
+        result.M.M[2][1] = 0.0f;
+        result.M.M[2][2] = range;
+        result.M.M[2][3] = -1.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = range * z_near;
+        result.M.M[3][3] = 0.0f;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0f);
+        result.M.R[0] = vsetq_lane_f32(z_near_2 / view_width, zero, 0);
+        result.M.R[1] = vsetq_lane_f32(z_near_2 / view_height, zero, 1);
+        result.M.R[2] = vsetq_lane_f32(range, Impl::VEC4_NEGATIVE_UNIT_W.V, 2);
+        result.M.R[3] = vsetq_lane_f32(range * z_near, zero, 2);
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstFloat32x4 const mvalues{ { {
+                z_near_2 / view_width,
+                z_near_2 / view_height,
+                range,
+                range * z_near,
+            } } };
+
+        __m128 const values = mvalues.V;
+        __m128 const zero = _mm_setzero_ps();
+
+        // [x, 0, 0, 0]
+        __m128 const r0_x = _mm_move_ss(zero, values);
+
+        // [0, y, 0, 0]
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+
+        // [range, range * z_near, 0, -1]
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_NEGATIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+
+        // [0, 0, range, 1]
+        __m128 const r2_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 0, 0, 0));
+
+        // [0, 0, range * z_near, 0]
+        __m128 const r3_y = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(2, 1, 0, 0));
+
+        result.M.R[0] = r0_x;
+        result.M.R[1] = r1_y;
+        result.M.R[2] = r2_zw;
+        result.M.R[3] = r3_y;
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall PerspectiveFovLH(
+        float fov_angle_y,
+        float aspect_ratio,
+        float z_near,
+        float z_far
+    ) noexcept
+    {
+        GX_ASSERT(z_near > 0.0f and z_far > 0.0f);
+        GX_ASSERT(!IsEqual(fov_angle_y, 0.0f, 0.00001f * 2.0f));
+        GX_ASSERT(!IsEqual(aspect_ratio, 0.0f, 0.00001f));
+        GX_ASSERT(!IsEqual(z_far, z_near, 0.00001f));
+
+        float fov_sin;
+        float fov_cos;
+        SinCos(fov_sin, fov_cos, 0.5f * fov_angle_y);
+
+        float const height = fov_cos / fov_sin;
+        float const width = height / aspect_ratio;
+        float const range = z_far / (z_far - z_near);
+
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.M[0][0] = width;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = height;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = 0.0f;
+        result.M.M[2][1] = 0.0f;
+        result.M.M[2][2] = range;
+        result.M.M[2][3] = 1.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = -range * z_near;
+        result.M.M[3][3] = 0.0f;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0f);
+        result.M.R[0] = vsetq_lane_f32(width, zero, 0);
+        result.M.R[1] = vsetq_lane_f32(height, zero, 1);
+        result.M.R[2] = vsetq_lane_f32(range, Impl::VEC4_POSITIVE_UNIT_W.V, 2);
+        result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstFloat32x4 const mvalues{ { {
+                height / aspect_ratio,
+                height,
+                range,
+                -range * z_near,
+            } } };
+
+        __m128 const values = mvalues.V;
+        __m128 const zero = _mm_setzero_ps();
+
+        // [x, 0, 0, 0]
+        __m128 const r0_x = _mm_move_ss(zero, values);
+
+        // [0, y, 0, 0]
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+
+        // [range, -range * z_near, 0, 1]
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+
+        // [0, 0, range, 1]
+        __m128 const r2_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 0, 0, 0));
+
+        // [0, 0, -range * z_near, 0]
+        __m128 const r3_y = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(2, 1, 0, 0));
+
+        result.M.R[0] = r0_x;
+        result.M.R[1] = r1_y;
+        result.M.R[2] = r2_zw;
+        result.M.R[3] = r3_y;
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall PerspectiveFovRH(
+        float fov_angle_y,
+        float aspect_ratio,
+        float z_near,
+        float z_far
+    ) noexcept
+    {
+        GX_ASSERT(z_near > 0.0f and z_far > 0.0f);
+        GX_ASSERT(!IsEqual(fov_angle_y, 0.0f, 0.00001f * 2.0f));
+        GX_ASSERT(!IsEqual(aspect_ratio, 0.0f, 0.00001f));
+        GX_ASSERT(!IsEqual(z_far, z_near, 0.00001f));
+
+        float fov_sin;
+        float fov_cos;
+        SinCos(fov_sin, fov_cos, 0.5f * fov_angle_y);
+
+        float const height = fov_cos / fov_sin;
+        float const width = height / aspect_ratio;
+        float const range = z_far / (z_near - z_far);
+
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.M[0][0] = width;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = height;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = 0.0f;
+        result.M.M[2][1] = 0.0f;
+        result.M.M[2][2] = range;
+        result.M.M[2][3] = -1.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = range * z_near;
+        result.M.M[3][3] = 0.0f;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0f);
+        result.M.R[0] = vsetq_lane_f32(width, zero, 0);
+        result.M.R[1] = vsetq_lane_f32(height, zero, 1);
+        result.M.R[2] = vsetq_lane_f32(range, Impl::VEC4_NEGATIVE_UNIT_W.V, 2);
+        result.M.R[3] = vsetq_lane_f32(range * z_near, zero, 2);
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstFloat32x4 const mvalues{ { {
+                height / aspect_ratio,
+                height,
+                range,
+                range * z_near,
+            } } };
+
+        __m128 const values = mvalues.V;
+        __m128 const zero = _mm_setzero_ps();
+
+        // [x, 0, 0, 0]
+        __m128 const r0_x = _mm_move_ss(zero, values);
+
+        // [0, y, 0, 0]
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+
+        // [range, range * z_near, 0, -1]
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_NEGATIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+
+        // [0, 0, range, -1]
+        __m128 const r2_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 0, 0, 0));
+
+        // [0, 0, range * z_near, 0]
+        __m128 const r3_y = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(2, 1, 0, 0));
+
+        result.M.R[0] = r0_x;
+        result.M.R[1] = r1_y;
+        result.M.R[2] = r2_zw;
+        result.M.R[3] = r3_y;
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall PerspectiveOffsetLH(
+        float view_left,
+        float view_right,
+        float view_bottom,
+        float view_top,
+        float z_near,
+        float z_far
+    )
+    {
+        GX_ASSERT(z_near > 0.0f and z_far > 0.0f);
+        GX_ASSERT(!IsEqual(view_right, view_left, 0.00001f));
+        GX_ASSERT(!IsEqual(view_top, view_bottom, 0.00001f));
+        GX_ASSERT(!IsEqual(z_far, z_near, 0.0001f));
+
+        float const z_near_2 = z_near + z_near;
+        float const rcp_width = 1.0f / (view_right - view_left);
+        float const rcp_height = 1.0f / (view_top - view_bottom);
+        float const range = z_far / (z_far - z_near);
+
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.M[0][0] = z_near_2 * rcp_width;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = z_near_2 * rcp_height;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = -(view_left + view_right) * rcp_width;
+        result.M.M[2][1] = -(view_top + view_bottom) * rcp_height;
+        result.M.M[2][2] = range;
+        result.M.M[2][3] = 1.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = -range * z_near;
+        result.M.M[3][3] = 0.0f;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0f);
+        result.M.R[0] = vsetq_lane_f32(z_near_2 * rcp_width, zero, 0);
+        result.M.R[1] = vsetq_lane_f32(z_near_2 * rcp_height, zero, 1);
+        result.M.R[2] = Make<Vector4>(
+            -(view_left + view_right) * rcp_width,
+            -(view_top + view_bottom) * rcp_height,
+            range,
+            1.0f
+        ).V;
+        result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstFloat32x4 const mvalues{ { {
+                z_near_2 * rcp_width,
+                z_near_2 * rcp_height,
+                -range * z_near,
+                0.0f,
+            } } };
+
+        __m128 const values = mvalues.V;
+        __m128 const zero = _mm_setzero_ps();
+
+        // [z_near_2 * rcp_width, 0, 0, 0]
+        __m128 const r0_x = _mm_move_ss(zero, values);
+
+        // [0, z_near_2 * rcp_height, 0, 0]
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+
+        __m128 const r2_zw = Make<Vector4>(
+            -(view_left + view_right) * rcp_width,
+            -(view_top + view_bottom) * rcp_height,
+            range,
+            1.0f
+        ).V;
+
+        // [0, 0, -range * z_near, 0]
+        __m128 const r3_z = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0010.V);
+
+        result.M.R[0] = r0_x;
+        result.M.R[1] = r1_y;
+        result.M.R[2] = r2_zw;
+        result.M.R[3] = r3_z;
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall PerspectiveOffsetRH(
+        float view_left,
+        float view_right,
+        float view_bottom,
+        float view_top,
+        float z_near,
+        float z_far
+    )
+    {
+        GX_ASSERT(z_near > 0.0f and z_far > 0.0f);
+        GX_ASSERT(!IsEqual(view_right, view_left, 0.00001f));
+        GX_ASSERT(!IsEqual(view_top, view_bottom, 0.00001f));
+        GX_ASSERT(!IsEqual(z_far, z_near, 0.0001f));
+
+        float const z_near_2 = z_near + z_near;
+        float const rcp_width = 1.0f / (view_right - view_left);
+        float const rcp_height = 1.0f / (view_top - view_bottom);
+        float const range = z_far / (z_near - z_far);
+
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.M[0][0] = z_near_2 * rcp_width;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = z_near_2 * rcp_height;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = (view_left + view_right) * rcp_width;
+        result.M.M[2][1] = (view_top + view_bottom) * rcp_height;
+        result.M.M[2][2] = range;
+        result.M.M[2][3] = -1.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = range * z_near;
+        result.M.M[3][3] = 0.0f;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0f);
+        result.M.R[0] = vsetq_lane_f32(z_near_2 * rcp_width, zero, 0);
+        result.M.R[1] = vsetq_lane_f32(z_near_2 * rcp_height, zero, 1);
+        result.M.R[2] = Make<Vector4>(
+            (view_left + view_right) * rcp_width,
+            (view_top + view_bottom) * rcp_height,
+            range,
+            -1.0f
+        ).V;
+        result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstFloat32x4 const mvalues{ { {
+                z_near_2 * rcp_width,
+                z_near_2 * rcp_height,
+                range * z_near,
+                0.0f,
+            } } };
+
+        __m128 const values = mvalues.V;
+        __m128 const zero = _mm_setzero_ps();
+
+        // [z_near_2 * rcp_width, 0, 0, 0]
+        __m128 const r0_x = _mm_move_ss(zero, values);
+
+        // [0, z_near_2 * rcp_height, 0, 0]
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+
+        __m128 const r2_zw = Make<Vector4>(
+            (view_left + view_right) * rcp_width,
+            (view_top + view_bottom) * rcp_height,
+            range,
+            -1.0f
+        ).V;
+
+        // [0, 0, range * z_near, 0]
+        __m128 const r3_z = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0010.V);
+
+        result.M.R[0] = r0_x;
+        result.M.R[1] = r1_y;
+        result.M.R[2] = r2_zw;
+        result.M.R[3] = r3_z;
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall OrthographicLH(
+        float view_width,
+        float view_height,
+        float z_near,
+        float z_far
+    ) noexcept
+    {
+        GX_ASSERT(!IsEqual(view_width, 0.0f, 0.00001f));
+        GX_ASSERT(!IsEqual(view_height, 0.0f, 0.00001f));
+        GX_ASSERT(!IsEqual(z_far, z_near, 0.00001f));
+
+        float const range = 1.0f / (z_far - z_near);
+
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.M[0][0] = 2.0f / view_width;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = 2.0f / view_height;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = 0.0f;
+        result.M.M[2][1] = 0.0f;
+        result.M.M[2][2] = range;
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = -range * z_near;
+        result.M.M[3][3] = 1.0f;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0f);
+        result.M.R[0] = vsetq_lane_f32(2.0f / view_width, zero, 0);
+        result.M.R[1] = vsetq_lane_f32(2.0f / view_height, zero, 1);
+        result.M.R[2] = vsetq_lane_f32(range, zero, 2);
+        result.M.R[3] = vsetq_lane_f32(-range * z_near, Impl::VEC4_POSTIVE_UNIT_W.V, 2);
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstFloat32x4 const mvalues{ { {
+                2.0f / view_width,
+                2.0f / view_height,
+                range,
+                -range * z_near,
+            } } };
+
+        __m128 const values = mvalues.V;
+        __m128 const zero = _mm_setzero_ps();
+
+        __m128 const r0_x = _mm_move_ss(zero, values);
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const r2_z = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(2, 0, 0, 0));
+        __m128 const r3_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 1, 0, 0));
+
+        result.M.R[0] = r0_x;
+        result.M.R[1] = r1_y;
+        result.M.R[2] = r2_z;
+        result.M.R[3] = r3_zw;
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall OrthographicRH(
+        float view_width,
+        float view_height,
+        float z_near,
+        float z_far
+    ) noexcept
+    {
+        GX_ASSERT(!IsEqual(view_width, 0.0f, 0.00001f));
+        GX_ASSERT(!IsEqual(view_height, 0.0f, 0.00001f));
+        GX_ASSERT(!IsEqual(z_far, z_near, 0.00001f));
+
+        float const range = 1.0f / (z_near - z_far);
+
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.M[0][0] = 2.0f / view_width;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = 2.0f / view_height;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = 0.0f;
+        result.M.M[2][1] = 0.0f;
+        result.M.M[2][2] = range;
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = 0.0f;
+        result.M.M[3][1] = 0.0f;
+        result.M.M[3][2] = range * z_near;
+        result.M.M[3][3] = 1.0f;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0f);
+        result.M.R[0] = vsetq_lane_f32(2.0f / view_width, zero, 0);
+        result.M.R[1] = vsetq_lane_f32(2.0f / view_height, zero, 1);
+        result.M.R[2] = vsetq_lane_f32(range, zero, 2);
+        result.M.R[3] = vsetq_lane_f32(range * z_near, Impl::VEC4_POSTIVE_UNIT_W.V, 2);
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstFloat32x4 const mvalues{ { {
+                2.0f / view_width,
+                2.0f / view_height,
+                range,
+                range * z_near,
+            } } };
+
+        __m128 const values = mvalues.V;
+        __m128 const zero = _mm_setzero_ps();
+
+        __m128 const r0_x = _mm_move_ss(zero, values);
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const r2_z = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(2, 0, 0, 0));
+        __m128 const r3_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 1, 0, 0));
+
+        result.M.R[0] = r0_x;
+        result.M.R[1] = r1_y;
+        result.M.R[2] = r2_z;
+        result.M.R[3] = r3_zw;
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall OrthographicOffsetLH(
+        float view_left,
+        float view_right,
+        float view_bottom,
+        float view_top,
+        float z_near,
+        float z_far
+    ) noexcept
+    {
+        GX_ASSERT(!IsEqual(view_right, view_left, 0.00001f));
+        GX_ASSERT(!IsEqual(view_top, view_bottom, 0.00001f));
+        GX_ASSERT(!IsEqual(z_far, z_near, 0.00001f));
+
+        float const rcp_width = 1.0f / (view_right - view_left);
+        float const rcp_height = 1.0f / (view_top - view_bottom);
+        float const range = 1.0f / (z_far - z_near);
+
+        Matrix result;
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.M[0][0] = rcp_width + rcp_width;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = rcp_height + rcp_height;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = 0.0f;
+        result.M.M[2][1] = 0.0f;
+        result.M.M[2][2] = range;
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = -(view_left + view_right) * rcp_width;
+        result.M.M[3][1] = -(view_top + view_bottom) * rcp_height;
+        result.M.M[3][2] = -range * z_near;
+        result.M.M[3][3] = 1.0f;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0f);
+        result.M.R[0] = vsetq_lane_f32(rcp_width + rcp_width, zero, 0);
+        result.M.R[1] = vsetq_lane_f32(rcp_height + rcp_height, zero, 1);
+        result.M.R[2] = vsetq_lane_f32(range, zero, 2);
+        result.M.R[3] = Make<Vector4>(
+            -(view_left + view_right) * rcp_width,
+            -(view_top + view_bottom) * rcp_height,
+            -range * z_near,
+            1.0f
+        ).V;
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstFloat32x4 const mvalues{ { {
+                rcp_width,
+                rcp_height,
+                range,
+                1.0f,
+            } } };
+        Impl::ConstFloat32x4 const mvalues2{ { {
+                -(view_left + view_right),
+                -(view_top + view_bottom),
+                -near_z,
+                1.0f,
+            } } };
+
+        __m128 const values = mvalues.V;
+        __m128 const zero = _mm_setzero_ps();
+
+        __m128 const t0_x = _mm_move_ss(zero, values);
+        __m128 const r0_x = _mm_add_ss(t0_x, t0_x);
+
+        __m128 const t1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const r1_y = _mm_add_ps(t1_y, t1_y);
+
+        __m128 const r2_z = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0010.V);
+
+        __m128 const r3_xyzw = _mm_mul_ps(values, mvalues2.V);
+
+        result.M.R[0] = r0_x;
+        result.M.R[1] = r1_y;
+        result.M.R[2] = r2_z;
+        result.M.R[3] = r3_xyzw;
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall OrthographicOffsetRH(
+        float view_left,
+        float view_right,
+        float view_bottom,
+        float view_top,
+        float z_near,
+        float z_far
+    ) noexcept
+    {
+        GX_ASSERT(!IsEqual(view_right, view_left, 0.00001f));
+        GX_ASSERT(!IsEqual(view_top, view_bottom, 0.00001f));
+        GX_ASSERT(!IsEqual(z_far, z_near, 0.00001f));
+
+        float const rcp_width = 1.0f / (view_right - view_left);
+        float const rcp_height = 1.0f / (view_top - view_bottom);
+        float const range = 1.0f / (z_near - z_far);
+
+        Matrix result;
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.M[0][0] = rcp_width + rcp_width;
+        result.M.M[0][1] = 0.0f;
+        result.M.M[0][2] = 0.0f;
+        result.M.M[0][3] = 0.0f;
+
+        result.M.M[1][0] = 0.0f;
+        result.M.M[1][1] = rcp_height + rcp_height;
+        result.M.M[1][2] = 0.0f;
+        result.M.M[1][3] = 0.0f;
+
+        result.M.M[2][0] = 0.0f;
+        result.M.M[2][1] = 0.0f;
+        result.M.M[2][2] = range;
+        result.M.M[2][3] = 0.0f;
+
+        result.M.M[3][0] = -(view_left + view_right) * rcp_width;
+        result.M.M[3][1] = -(view_top + view_bottom) * rcp_height;
+        result.M.M[3][2] = range * z_near;
+        result.M.M[3][3] = 1.0f;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const zero = vdupq_n_f32(0.0f);
+        result.M.R[0] = vsetq_lane_f32(rcp_width + rcp_width, zero, 0);
+        result.M.R[1] = vsetq_lane_f32(rcp_height + rcp_height, zero, 1);
+        result.M.R[2] = vsetq_lane_f32(range, zero, 2);
+        result.M.R[3] = Make<Vector4>(
+            -(view_left + view_right) * rcp_width,
+            -(view_top + view_bottom) * rcp_height,
+            range * z_near,
+            1.0f
+        ).V;
+#elif GRAPHYTE_HW_AVX
+        Impl::ConstFloat32x4 const mvalues{ { {
+                rcp_width,
+                rcp_height,
+                range,
+                1.0f,
+            } } };
+        Impl::ConstFloat32x4 const mvalues2{ { {
+                -(view_left + view_right),
+                -(view_top + view_bottom),
+                near_z,
+                1.0f,
+            } } };
+
+        __m128 const values = mvalues.V;
+        __m128 const zero = _mm_setzero_ps();
+
+        __m128 const t0_x = _mm_move_ss(zero, values);
+        __m128 const r0_x = _mm_add_ss(t0_x, t0_x);
+
+        __m128 const t1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const r1_y = _mm_add_ps(t1_y, t1_y);
+
+        __m128 const r2_z = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0010.V);
+
+        __m128 const r3_xyzw = _mm_mul_ps(values, mvalues2.V);
+
+        result.M.R[0] = r0_x;
+        result.M.R[1] = r1_y;
+        result.M.R[2] = r2_z;
+        result.M.R[3] = r3_xyzw;
+#endif
+        return result;
+    }
 }
 
 // =================================================================================================
@@ -12343,6 +13386,133 @@ namespace Graphyte::Maths
         dot = RotateLeft<1>(dot);
         result.M.R[0] = MultiplyAdd(p_aaaa, light, dot).V;
 
+        return result;
+    }
+
+    mathinline Matrix mathcall Add(Matrix m1, Matrix m2) noexcept
+    {
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.R[0] = Add(As<Vector4>(m1.M.R[0]), As<Vector4>(m2.M.R[0])).V;
+        result.M.R[1] = Add(As<Vector4>(m1.M.R[1]), As<Vector4>(m2.M.R[1])).V;
+        result.M.R[2] = Add(As<Vector4>(m1.M.R[2]), As<Vector4>(m2.M.R[2])).V;
+        result.M.R[3] = Add(As<Vector4>(m1.M.R[3]), As<Vector4>(m2.M.R[3])).V;
+#elif GRAPHYTE_HW_NEON
+        result.M.R[0] = vaddq_f32(m1.M.R[0], m2.M.R[0]);
+        result.M.R[1] = vaddq_f32(m1.M.R[1], m2.M.R[1]);
+        result.M.R[2] = vaddq_f32(m1.M.R[2], m2.M.R[2]);
+        result.M.R[3] = vaddq_f32(m1.M.R[3], m2.M.R[3]);
+#elif GRAPHYTE_HW_AVX
+        result.M.R[0] = _mm_add_ps(m1.M.R[0], m2.M.R[0]);
+        result.M.R[1] = _mm_add_ps(m1.M.R[1], m2.M.R[1]);
+        result.M.R[2] = _mm_add_ps(m1.M.R[2], m2.M.R[2]);
+        result.M.R[3] = _mm_add_ps(m1.M.R[3], m2.M.R[3]);
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall Subtract(Matrix m1, Matrix m2) noexcept
+    {
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.R[0] = Subtract(As<Vector4>(m1.M.R[0]), As<Vector4>(m2.M.R[0])).V;
+        result.M.R[1] = Subtract(As<Vector4>(m1.M.R[1]), As<Vector4>(m2.M.R[1])).V;
+        result.M.R[2] = Subtract(As<Vector4>(m1.M.R[2]), As<Vector4>(m2.M.R[2])).V;
+        result.M.R[3] = Subtract(As<Vector4>(m1.M.R[3]), As<Vector4>(m2.M.R[3])).V;
+#elif GRAPHYTE_HW_NEON
+        result.M.R[0] = vsubq_f32(m1.M.R[0], m2.M.R[0]);
+        result.M.R[1] = vsubq_f32(m1.M.R[1], m2.M.R[1]);
+        result.M.R[2] = vsubq_f32(m1.M.R[2], m2.M.R[2]);
+        result.M.R[3] = vsubq_f32(m1.M.R[3], m2.M.R[3]);
+#elif GRAPHYTE_HW_AVX
+        result.M.R[0] = _mm_sub_ps(m1.M.R[0], m2.M.R[0]);
+        result.M.R[1] = _mm_sub_ps(m1.M.R[1], m2.M.R[1]);
+        result.M.R[2] = _mm_sub_ps(m1.M.R[2], m2.M.R[2]);
+        result.M.R[3] = _mm_sub_ps(m1.M.R[3], m2.M.R[3]);
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall Negate(Matrix m) noexcept
+    {
+        Matrix result;
+        result.M.R[0] = Negate(As<Vector4>(m.M.R[0])).V;
+        result.M.R[1] = Negate(As<Vector4>(m.M.R[1])).V;
+        result.M.R[2] = Negate(As<Vector4>(m.M.R[2])).V;
+        result.M.R[3] = Negate(As<Vector4>(m.M.R[3])).V;
+        return result;
+    }
+
+    mathinline Matrix mathcall Multiply(float s, Matrix m) noexcept
+    {
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.R[0] = Multiply(As<Vector4>(m.M.R[0]), s).V;
+        result.M.R[1] = Multiply(As<Vector4>(m.M.R[1]), s).V;
+        result.M.R[2] = Multiply(As<Vector4>(m.M.R[2]), s).V;
+        result.M.R[3] = Multiply(As<Vector4>(m.M.R[3]), s).V;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const sv = vdupq_n_f32(s);
+        result.M.R[0] = vmulq_f32(m.M.R[0], sv);
+        result.M.R[1] = vmulq_f32(m.M.R[1], sv);
+        result.M.R[2] = vmulq_f32(m.M.R[2], sv);
+        result.M.R[3] = vmulq_f32(m.M.R[3], sv);
+#elif GRAPHYTE_HW_AVX
+        __m128 const sv = _mm_set1_ps(s);
+        result.M.R[0] = _mm_mul_ps(m.M.R[0], sv);
+        result.M.R[1] = _mm_mul_ps(m.M.R[1], sv);
+        result.M.R[2] = _mm_mul_ps(m.M.R[2], sv);
+        result.M.R[3] = _mm_mul_ps(m.M.R[3], sv);
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall Multiply(Matrix m, float s) noexcept
+    {
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.R[0] = Multiply(As<Vector4>(m.M.R[0]), s).V;
+        result.M.R[1] = Multiply(As<Vector4>(m.M.R[1]), s).V;
+        result.M.R[2] = Multiply(As<Vector4>(m.M.R[2]), s).V;
+        result.M.R[3] = Multiply(As<Vector4>(m.M.R[3]), s).V;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const sv = vdupq_n_f32(s);
+        result.M.R[0] = vmulq_f32(m.M.R[0], sv);
+        result.M.R[1] = vmulq_f32(m.M.R[1], sv);
+        result.M.R[2] = vmulq_f32(m.M.R[2], sv);
+        result.M.R[3] = vmulq_f32(m.M.R[3], sv);
+#elif GRAPHYTE_HW_AVX
+        __m128 const sv = _mm_set1_ps(s);
+        result.M.R[0] = _mm_mul_ps(m.M.R[0], sv);
+        result.M.R[1] = _mm_mul_ps(m.M.R[1], sv);
+        result.M.R[2] = _mm_mul_ps(m.M.R[2], sv);
+        result.M.R[3] = _mm_mul_ps(m.M.R[3], sv);
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall Divide(Matrix m, float s) noexcept
+    {
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Vector4 const sv = Replicate<Vector4>(s);
+        result.M.R[0] = Divide(As<Vector4>(m.M.R[0]), sv).V;
+        result.M.R[1] = Divide(As<Vector4>(m.M.R[1]), sv).V;
+        result.M.R[2] = Divide(As<Vector4>(m.M.R[2]), sv).V;
+        result.M.R[3] = Divide(As<Vector4>(m.M.R[3]), sv).V;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const sv = vdupq_n_f32(s);
+        result.M.R[0] = vdivq_f32(m.M.R[0], sv);
+        result.M.R[1] = vdivq_f32(m.M.R[1], sv);
+        result.M.R[2] = vdivq_f32(m.M.R[2], sv);
+        result.M.R[3] = vdivq_f32(m.M.R[3], sv);
+#elif GRAPHYTE_HW_AVX
+        __m128 const sv = _mm_set1_ps(s);
+        result.M.R[0] = _mm_div_ps(m.M.R[0], sv);
+        result.M.R[1] = _mm_div_ps(m.M.R[1], sv);
+        result.M.R[2] = _mm_div_ps(m.M.R[2], sv);
+        result.M.R[3] = _mm_div_ps(m.M.R[3], sv);
+#endif
         return result;
     }
 }
