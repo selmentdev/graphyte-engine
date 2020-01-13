@@ -512,6 +512,13 @@ namespace Graphyte::Maths::Impl
             PI_OVER_2<float>,
         } } };
 
+    mathconst ConstFloat32x4 VEC4_UNIT_EPSILON = { { {
+            1.0e-4f,
+            1.0e-4f,
+            1.0e-4f,
+            1.0e-4f,
+        } } };
+
     // sin cos log exp implementation: http://gruntthepeon.free.fr/ssemath/
     mathconst ConstFloat32x4 VEC4_PI_CONSTANTS_0 = { { {
             PI<float>,
@@ -1127,10 +1134,44 @@ namespace Graphyte::Maths::Traits
     template <typename T> concept Roundable = requires { typename T::IsRoundable; };
     template <typename T> concept Componentwise = requires { typename T::IsComponentwise; };
     template <typename T> concept Interpolable = requires { typename T::IsInterpolable; };
-    template <typename T> concept FloatScalar = std::is_same_v<float>;
+    template <typename T> concept FloatScalar = std::is_same_v<T, float>;
     template <typename T> concept FloatVector = requires { typename T::IsFloatVector; };
-    template <typename T> concept FloatMatrix = requires { typename T::IsFloatMatrix; };
+    template <typename T> concept FloatMatrix = requires { typename T::IsFloatMatrix; } and T::Components == (T::Rows * T::Columns) and T::Components >= 1;
     template <typename T> concept BoolVector = requires { typename T::IsBoolVector; };
+
+    /// NOTES:
+    ///     Every `vector-space` type contains these properties:
+    ///
+    ///         * component type
+    ///         * number of components
+    ///         * number of rows
+    ///         * number of columns
+    ///
+    ///     In our case:
+    ///
+    ///     Vector2:    { float, 2, 1, 2 }
+    ///         * vector-space
+    ///         * normed-space
+    ///         * euclidean-space
+    ///     Vector3:    { float, 3, 1, 3 }
+    ///         * vector-space
+    ///         * normed-space
+    ///         * euclidean-space
+    ///     Vector4:    { float, 4, 1, 4 }
+    ///         * vector-space
+    ///         * normed-space
+    ///         * euclidean-space
+    ///     Quaternion: { float 4, 1, 4 }
+    ///         * vector-space
+    ///         * normed-space
+    ///     Sphere:     { float, 4, 1, 4 }
+    ///     Plane:      { float, 4, 1, 4 }
+    ///     Matrix:     { float, 16, 4, 4 }
+    ///         * vector-space
+    ///
+    ///
+    /// Vector<N> = Matrix<1, N> or Matrix<N, 1>
+    ///
 
     template <typename T> concept OpAdd = requires { typename T::OpAdd; };
     template <typename T> concept OpSub = requires { typename T::OpSub; };
@@ -2647,146 +2688,243 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    mathinline Vector4 mathcall ToVector4(float x, Vector3 v) noexcept
+    template <typename T, typename U>
+    mathinline T mathcall To(float x, U yzw) noexcept
+        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 3)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 result{ { {
+        Impl::ConstFloat32x4 const result{ { {
                 x,
-                v.V.F[0],
-                v.V.F[1],
-                v.V.F[2],
+                yzw.V.F[0],
+                yzw.V.F[1],
+                yzw.V.F[2],
             } } };
-
         return { result.V };
+#elif GRAPHYTE_HW_NEON
+        // = [_, vx, vy, vz]
+        float32x4_t const wxyz = Impl::neon_swizzle<3, 0, 1, 2>(yzw.V);
+        // = [x, vx, vy, vz]
+        float32x4_t const result = vsetq_lane_f32(x, wxyz, 0);
+        return { result };
 #elif GRAPHYTE_HW_AVX
-        // [x, y, z, w] -> [w, x, y, z]
-        __m128 const wxyz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 1, 0, 3));
+        // = [_, vx, vy, vz]
+        __m128 const wxyz = _mm_permute_ps(yzw.V, _MM_SHUFFLE(2, 1, 0, 3));
+        // = [x, _, _, _]
         __m128 const xxxx = _mm_set_ss(x);
+        // = [x, vx, vy, vz]
         __m128 const result = _mm_move_ss(wxyz, xxxx);
         return { result };
 #endif
     }
 
-    mathinline Vector4 mathcall ToVector4(Vector3 v, float w) noexcept
+    template <typename T, typename U>
+    mathinline T mathcall To(U xyz, float w) noexcept
+        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 3)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 result{ { {
-                v.V.F[0],
-                v.V.F[1],
-                v.V.F[2],
-                w
+        Impl::ConstFloat32x4 const result{ { {
+                xyz.V.F[0],
+                xyz.V.F[1],
+                xyz.V.F[2],
+                w,
             } } };
-
         return { result.V };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const xyzw = vsetq_lane_f32(w, xyz.V, 3);
+        return { xyzw };
 #elif GRAPHYTE_HW_AVX
+        // = [w, _, _, _]
         __m128 const wwww = _mm_set_ss(w);
-        __m128 const result = _mm_insert_ps(v.V, wwww, 0x30);
+        // = [vx, vy, vz, w]
+        __m128 const result = _mm_insert_ps(xyz.V, wwww, 0x30);
         return { result };
 #endif
     }
 
-    mathinline Vector4 mathcall ToVector4(float x, float y, Vector2 v) noexcept
+    template <typename T, typename U>
+    mathinline T mathcall To(float x, float y, U zw) noexcept
+        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 result{ { {
+        Impl::ConstFloat32x4 const result{ { {
                 x,
                 y,
-                v.V.F[0],
-                v.V.F[1],
+                zw.V.F[0],
+                zw.V.F[1],
             } } };
-
         return { result.V };
+#elif GRAPHYTE_HW_NEON
+        // = [x, y]
+        float32x2_t const r0 = vcreate_f32(
+            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&y)) << 32)
+        );
+        // = [vx, vy]
+        float32x4_t const r1 = vget_high_f32(zw.V);
+        // = [x, y, vx, vy]
+        return { vcombine_f32(r0, r1) };
 #elif GRAPHYTE_HW_AVX
-        __m128 const xy00 = _mm_set_ps(0.0F, 0.0F, y, x);
-        __m128 const xyxy = _mm_shuffle_ps(xy00, v.V, _MM_SHUFFLE(1, 0, 1, 0));
-        return { xyxy };
+        // = [x, y, 0, 0]
+        __m128 const r0 = _mm_set_ps(0.0f, 0.0f, y, x);
+        // = [x, y, vx, vy]
+        __m128 const r1 = _mm_shuffle_ps(r0, zw.V, _MM_SHUFFLE(1, 0, 1, 0));
+        return { r1 };
 #endif
     }
 
-    mathinline Vector4 mathcall ToVector4(float x, Vector2 v, float w) noexcept
+    template <typename T, typename U>
+    mathinline T mathcall To(float x, U yz, float w) noexcept
+        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 result{ { {
+        Impl::ConstFloat32x4 const result{ { {
                 x,
-                v.V.F[0],
-                v.V.F[1],
+                yz.V.F[0],
+                yz.V.F[1],
                 w,
             } } };
-
         return { result.V };
+#elif GRAPHYTE_HW_NEON
+        // = [_, vx, vy, _]
+        float32x4_t const r0 = Impl::neon_swizzle<0, 0, 1, 3>(yz.V);
+        // = [x, vx, vy, _]
+        float32x4_t const r1 = vsetq_lane_f32(x, r0, 0);
+        // = [x, vx, vy, w]
+        float32x4_t const r2 = vsetq_lane_f32(w, r1, 3);
+        return { r2 };
 #elif GRAPHYTE_HW_AVX
-
-        // [_, x, y, _]
-        __m128 const nxyn = _mm_permute_ps(v.V, _MM_SHUFFLE(3, 1, 0, 0));
-        // [x', x, y, _]
-        __m128 const xxyn = _mm_insert_ps(nxyn, _mm_set_ps1(x), 0x00);
-        // [x', x, y, w']
-        __m128 const xxyw = _mm_insert_ps(xxyn, _mm_set_ps1(w), 0x30);
-
-        return { xxyw };
+        // = [_, vx, vy, _]
+        __m128 const r0 = _mm_permute_ps(yz.V, _MM_SHUFFLE(3, 1, 0, 0));
+        // = [x, vx, vy, _]
+        __m128 const r1 = _mm_insert_ps(r0, _mm_set_ps1(x), 0x00);
+        // = [x, vx, vy, w]
+        __m128 const r2 = _mm_insert_ps(r1, _mm_set_ps1(w), 0x30);
+        return { r2 };
 #endif
     }
 
-    mathinline Vector4 mathcall ToVector4(Vector2 v, float z, float w) noexcept
+    template <typename T, typename U>
+    mathinline T mathcall To(U xy, float z, float w) noexcept
+        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 result{ { {
-                v.V.F[0],
-                v.V.F[1],
+        Impl::ConstFloat32x4 const result{ { {
+                xy.V.F[0],
+                xy.V.F[1],
                 z,
                 w,
             } } };
-
         return { result.V };
+#elif GRAPHYTE_HW_NEON
+        // = [vx, vy]
+        float32x2_t const r0 = vget_low_f32(xy.V);
+
+        // = [z, w]
+        float32x2_t const r1 = vcreate_f32(
+            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&z)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&w)) << 32)
+        );
+
+        // = [vx, vy, z, w]
+        return { vcombine_f32(r0, r1) };
 #elif GRAPHYTE_HW_AVX
-        // [_, _, z, w]
-        __m128 const nnzw = _mm_set_ps(0.0F, 0.0F, w, z);
-        // [x, y, z, w]
-        __m128 const xyzw = _mm_shuffle_ps(nnzw, v.V, _MM_SHUFFLE(1, 0, 1, 0));
-        return { xyzw };
+        // = [z, w, _, _]
+        __m128 const r0 = _mm_set_ps(0.0f, 0.0f, w, z);
+        // = [vx, vy, z, w]
+        __m128 const r1 = _mm_shuffle_ps(r0, xy.V, _MM_SHUFFLE(1, 0, 1, 0));
+        return { r1 };
 #endif
     }
 
-    mathinline Vector3 mathcall ToVector3(float x, Vector2 v) noexcept
+    template <typename T, typename U>
+    mathinline T mathcall To(U xy, U zw) noexcept
+        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 result{ { {
+        Impl::ConstFloat32x4 const result{ { {
+                xy.V.F[0],
+                xy.V.F[1],
+                zw.V.F[0],
+                zw.V.F[1],
+            } } };
+        return { result.V };
+#elif GRAPHYTE_HW_NEON
+        // = [vx, vy]
+        float32x2_t const r0 = vget_low_f32(xy.V);
+        // = [vz, vw]
+        float32x2_t const r1 = vget_low_f32(zw.V);
+        // = [vx, vy, vz, vw]
+        float32x4_t const r2 = vcombine_f32(r0, r1);
+        return { r2 };
+#elif GRAPHYTE_HW_AVX
+        __m128 const r0 = _mm_shuffle_ps(xy.V, zw.V, _MM_SHUFFLE(1, 0, 1, 0);
+        return { r0 };
+#endif
+    }
+
+    template <typename T, typename U>
+    mathinline T mathcall To(float x, U yz) noexcept
+        requires VectorLike<T> and VectorLike<U> and (T::Components == 3) and (U::Components == 2)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
                 x,
-                v.V.F[0],
-                v.V.F[1],
-                v.V.F[1],
+                yz.V.F[0],
+                yz.V.F[1],
+                0.0f,
             } } };
-
         return { result.V };
+#elif GRAPHYTE_HW_NEON
+        // = [_, vy, vz, _]
+        float32x4_t const r0 = Impl::neon_swizzle<0, 0, 1, 1>(yz.V);
+        // = [x, vy, vz, _]
+        float32x4_t const r1 = vsetq_lane_f32(x, r0, 0);
+        // = [x, vy, vz, 0]
+        float32x4_t const r2 = vreinterpretq_f32_u32(vandq_u32(
+            vreinterpretq_u32_f32(r1),
+            vreinterpretq_u32_f32(Impl::VEC4_MASK_SELECT_1110.V)
+        ));
+        return { r2 };
 #elif GRAPHYTE_HW_AVX
-        // [_, x, y, y]
-        __m128 const nxyn = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 0, 0));
-        // [x', x, y, _]
-        __m128 const xxyn = _mm_insert_ps(nxyn, _mm_set_ps1(x), 0x00);
-
-        return { xxyn };
+        // = [_, vy, vz, _]
+        __m128 const r0 = _mm_permute_ps(yz.V, _MM_SHUFFLE(1, 1, 0, 0));
+        // = [x, vy, vz, _]
+        __m128 const r1 = _mm_insert_ps(r0, _mm_set_ps1(x), 0x00);
+        // = [x, vy, vz, 0]
+        __m128 const r2 = _mm_and_ps(r1, Impl::VEC4_MASK_SELECT_1110.V);
+        return { r2 };
 #endif
     }
 
-    mathinline Vector3 mathcall ToVector3(Vector2 v, float z) noexcept
+    template <typename T, typename U>
+    mathinline T mathcall To(U xy, float z) noexcept
+        requires VectorLike<T> and VectorLike<U> and (T::Components == 3) and (U::Components == 2)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 result{ { {
-                v.V.F[0],
-                v.V.F[1],
+        Impl::ConstFloat32x4 const result{ { {
+                xy.V.F[0],
+                xy.V.F[1],
                 z,
-                z,
+                0.0f,
             } } };
-
         return { result.V };
+#elif GRAPHYTE_HW_NEON
+        // = [vx, vy]
+        float32x2_t const r0 = vget_low_f32(xy.V);
+        // = [z, 0]
+        float32x2_t const r1 = vcreate_f32(
+            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&z))
+        );
+        // = [vx, vy, z, 0]
+        float32x4_t const r2 = vcombine_f32(r0, r1);
+        return { r2 };
 #elif GRAPHYTE_HW_AVX
-        __m128 const zzzz = _mm_set_ps1(z);
-        __m128 const xyzz = _mm_shuffle_ps(v.V, zzzz, _MM_SHUFFLE(1, 0, 1, 0));
-        return { xyzz };
+        // = [z, 0, 0, 0]
+        __m128 const r0 = _mm_set_ps1(z);
+        // = [vx, vy, z, 0]
+        __m128 const r1 = _mm_shuffle_ps(xy.V, r0, _MM_SHUFFLE(1, 0, 1, 0));
+        return { r1 };
 #endif
     }
 }
-
 
 // =================================================================================================
 //
@@ -8624,6 +8762,20 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
+    mathinline bool mathcall IsUnit(T v) noexcept
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
+    {
+        // = |v|
+        Vector4 const length = Length<T>(v);
+        // = |v| - 1
+        Vector4 const difference = Subtract(length, One<Vector4>());
+        // = | |v| - 1 |
+        Vector4 const abs_difference = Abs(difference);
+        // = (| |v| - 1 |) < eps
+        return IsLess<Vector4>(abs_difference, As<Vector4>(Impl::VEC4_UNIT_EPSILON.V));
+    }
+
+    template <typename T>
     mathinline T mathcall Normalize(T v) noexcept
         requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 4)
     {
@@ -10555,6 +10707,133 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Matrix mathcall Add(Matrix m1, Matrix m2) noexcept
+    {
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.R[0] = Add(As<Vector4>(m1.M.R[0]), As<Vector4>(m2.M.R[0])).V;
+        result.M.R[1] = Add(As<Vector4>(m1.M.R[1]), As<Vector4>(m2.M.R[1])).V;
+        result.M.R[2] = Add(As<Vector4>(m1.M.R[2]), As<Vector4>(m2.M.R[2])).V;
+        result.M.R[3] = Add(As<Vector4>(m1.M.R[3]), As<Vector4>(m2.M.R[3])).V;
+#elif GRAPHYTE_HW_NEON
+        result.M.R[0] = vaddq_f32(m1.M.R[0], m2.M.R[0]);
+        result.M.R[1] = vaddq_f32(m1.M.R[1], m2.M.R[1]);
+        result.M.R[2] = vaddq_f32(m1.M.R[2], m2.M.R[2]);
+        result.M.R[3] = vaddq_f32(m1.M.R[3], m2.M.R[3]);
+#elif GRAPHYTE_HW_AVX
+        result.M.R[0] = _mm_add_ps(m1.M.R[0], m2.M.R[0]);
+        result.M.R[1] = _mm_add_ps(m1.M.R[1], m2.M.R[1]);
+        result.M.R[2] = _mm_add_ps(m1.M.R[2], m2.M.R[2]);
+        result.M.R[3] = _mm_add_ps(m1.M.R[3], m2.M.R[3]);
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall Subtract(Matrix m1, Matrix m2) noexcept
+    {
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.R[0] = Subtract(As<Vector4>(m1.M.R[0]), As<Vector4>(m2.M.R[0])).V;
+        result.M.R[1] = Subtract(As<Vector4>(m1.M.R[1]), As<Vector4>(m2.M.R[1])).V;
+        result.M.R[2] = Subtract(As<Vector4>(m1.M.R[2]), As<Vector4>(m2.M.R[2])).V;
+        result.M.R[3] = Subtract(As<Vector4>(m1.M.R[3]), As<Vector4>(m2.M.R[3])).V;
+#elif GRAPHYTE_HW_NEON
+        result.M.R[0] = vsubq_f32(m1.M.R[0], m2.M.R[0]);
+        result.M.R[1] = vsubq_f32(m1.M.R[1], m2.M.R[1]);
+        result.M.R[2] = vsubq_f32(m1.M.R[2], m2.M.R[2]);
+        result.M.R[3] = vsubq_f32(m1.M.R[3], m2.M.R[3]);
+#elif GRAPHYTE_HW_AVX
+        result.M.R[0] = _mm_sub_ps(m1.M.R[0], m2.M.R[0]);
+        result.M.R[1] = _mm_sub_ps(m1.M.R[1], m2.M.R[1]);
+        result.M.R[2] = _mm_sub_ps(m1.M.R[2], m2.M.R[2]);
+        result.M.R[3] = _mm_sub_ps(m1.M.R[3], m2.M.R[3]);
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall Negate(Matrix m) noexcept
+    {
+        Matrix result;
+        result.M.R[0] = Negate(As<Vector4>(m.M.R[0])).V;
+        result.M.R[1] = Negate(As<Vector4>(m.M.R[1])).V;
+        result.M.R[2] = Negate(As<Vector4>(m.M.R[2])).V;
+        result.M.R[3] = Negate(As<Vector4>(m.M.R[3])).V;
+        return result;
+    }
+
+    mathinline Matrix mathcall Multiply(float s, Matrix m) noexcept
+    {
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.R[0] = Multiply(As<Vector4>(m.M.R[0]), s).V;
+        result.M.R[1] = Multiply(As<Vector4>(m.M.R[1]), s).V;
+        result.M.R[2] = Multiply(As<Vector4>(m.M.R[2]), s).V;
+        result.M.R[3] = Multiply(As<Vector4>(m.M.R[3]), s).V;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const sv = vdupq_n_f32(s);
+        result.M.R[0] = vmulq_f32(m.M.R[0], sv);
+        result.M.R[1] = vmulq_f32(m.M.R[1], sv);
+        result.M.R[2] = vmulq_f32(m.M.R[2], sv);
+        result.M.R[3] = vmulq_f32(m.M.R[3], sv);
+#elif GRAPHYTE_HW_AVX
+        __m128 const sv = _mm_set1_ps(s);
+        result.M.R[0] = _mm_mul_ps(m.M.R[0], sv);
+        result.M.R[1] = _mm_mul_ps(m.M.R[1], sv);
+        result.M.R[2] = _mm_mul_ps(m.M.R[2], sv);
+        result.M.R[3] = _mm_mul_ps(m.M.R[3], sv);
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall Multiply(Matrix m, float s) noexcept
+    {
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        result.M.R[0] = Multiply(As<Vector4>(m.M.R[0]), s).V;
+        result.M.R[1] = Multiply(As<Vector4>(m.M.R[1]), s).V;
+        result.M.R[2] = Multiply(As<Vector4>(m.M.R[2]), s).V;
+        result.M.R[3] = Multiply(As<Vector4>(m.M.R[3]), s).V;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const sv = vdupq_n_f32(s);
+        result.M.R[0] = vmulq_f32(m.M.R[0], sv);
+        result.M.R[1] = vmulq_f32(m.M.R[1], sv);
+        result.M.R[2] = vmulq_f32(m.M.R[2], sv);
+        result.M.R[3] = vmulq_f32(m.M.R[3], sv);
+#elif GRAPHYTE_HW_AVX
+        __m128 const sv = _mm_set1_ps(s);
+        result.M.R[0] = _mm_mul_ps(m.M.R[0], sv);
+        result.M.R[1] = _mm_mul_ps(m.M.R[1], sv);
+        result.M.R[2] = _mm_mul_ps(m.M.R[2], sv);
+        result.M.R[3] = _mm_mul_ps(m.M.R[3], sv);
+#endif
+        return result;
+    }
+
+    mathinline Matrix mathcall Divide(Matrix m, float s) noexcept
+    {
+        Matrix result;
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Vector4 const sv = Replicate<Vector4>(s);
+        result.M.R[0] = Divide(As<Vector4>(m.M.R[0]), sv).V;
+        result.M.R[1] = Divide(As<Vector4>(m.M.R[1]), sv).V;
+        result.M.R[2] = Divide(As<Vector4>(m.M.R[2]), sv).V;
+        result.M.R[3] = Divide(As<Vector4>(m.M.R[3]), sv).V;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const sv = vdupq_n_f32(s);
+        result.M.R[0] = vdivq_f32(m.M.R[0], sv);
+        result.M.R[1] = vdivq_f32(m.M.R[1], sv);
+        result.M.R[2] = vdivq_f32(m.M.R[2], sv);
+        result.M.R[3] = vdivq_f32(m.M.R[3], sv);
+#elif GRAPHYTE_HW_AVX
+        __m128 const sv = _mm_set1_ps(s);
+        result.M.R[0] = _mm_div_ps(m.M.R[0], sv);
+        result.M.R[1] = _mm_div_ps(m.M.R[1], sv);
+        result.M.R[2] = _mm_div_ps(m.M.R[2], sv);
+        result.M.R[3] = _mm_div_ps(m.M.R[3], sv);
+#endif
+        return result;
+    }
+
     mathinline Matrix mathcall Multiply(Matrix a, Matrix b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -11756,6 +12035,21 @@ namespace Graphyte::Maths
         m.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
         return m;
 #endif
+    }
+
+
+    template <>
+    mathinline Matrix mathcall CreateFromEuler<Matrix>(Vector3 angles) noexcept
+    {
+        Quaternion const q = CreateFromEuler<Quaternion>(angles);
+        return CreateFromQuaternion(q);
+    }
+
+    template <>
+    mathinline Matrix mathcall CreateFromEuler<Matrix>(float x, float y, float z) noexcept
+    {
+        Vector3 const v = Make<Vector3>(x, y, z);
+        return CreateFromEuler<Matrix>(v);
     }
 
 
@@ -13388,133 +13682,6 @@ namespace Graphyte::Maths
 
         return result;
     }
-
-    mathinline Matrix mathcall Add(Matrix m1, Matrix m2) noexcept
-    {
-        Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        result.M.R[0] = Add(As<Vector4>(m1.M.R[0]), As<Vector4>(m2.M.R[0])).V;
-        result.M.R[1] = Add(As<Vector4>(m1.M.R[1]), As<Vector4>(m2.M.R[1])).V;
-        result.M.R[2] = Add(As<Vector4>(m1.M.R[2]), As<Vector4>(m2.M.R[2])).V;
-        result.M.R[3] = Add(As<Vector4>(m1.M.R[3]), As<Vector4>(m2.M.R[3])).V;
-#elif GRAPHYTE_HW_NEON
-        result.M.R[0] = vaddq_f32(m1.M.R[0], m2.M.R[0]);
-        result.M.R[1] = vaddq_f32(m1.M.R[1], m2.M.R[1]);
-        result.M.R[2] = vaddq_f32(m1.M.R[2], m2.M.R[2]);
-        result.M.R[3] = vaddq_f32(m1.M.R[3], m2.M.R[3]);
-#elif GRAPHYTE_HW_AVX
-        result.M.R[0] = _mm_add_ps(m1.M.R[0], m2.M.R[0]);
-        result.M.R[1] = _mm_add_ps(m1.M.R[1], m2.M.R[1]);
-        result.M.R[2] = _mm_add_ps(m1.M.R[2], m2.M.R[2]);
-        result.M.R[3] = _mm_add_ps(m1.M.R[3], m2.M.R[3]);
-#endif
-        return result;
-    }
-
-    mathinline Matrix mathcall Subtract(Matrix m1, Matrix m2) noexcept
-    {
-        Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        result.M.R[0] = Subtract(As<Vector4>(m1.M.R[0]), As<Vector4>(m2.M.R[0])).V;
-        result.M.R[1] = Subtract(As<Vector4>(m1.M.R[1]), As<Vector4>(m2.M.R[1])).V;
-        result.M.R[2] = Subtract(As<Vector4>(m1.M.R[2]), As<Vector4>(m2.M.R[2])).V;
-        result.M.R[3] = Subtract(As<Vector4>(m1.M.R[3]), As<Vector4>(m2.M.R[3])).V;
-#elif GRAPHYTE_HW_NEON
-        result.M.R[0] = vsubq_f32(m1.M.R[0], m2.M.R[0]);
-        result.M.R[1] = vsubq_f32(m1.M.R[1], m2.M.R[1]);
-        result.M.R[2] = vsubq_f32(m1.M.R[2], m2.M.R[2]);
-        result.M.R[3] = vsubq_f32(m1.M.R[3], m2.M.R[3]);
-#elif GRAPHYTE_HW_AVX
-        result.M.R[0] = _mm_sub_ps(m1.M.R[0], m2.M.R[0]);
-        result.M.R[1] = _mm_sub_ps(m1.M.R[1], m2.M.R[1]);
-        result.M.R[2] = _mm_sub_ps(m1.M.R[2], m2.M.R[2]);
-        result.M.R[3] = _mm_sub_ps(m1.M.R[3], m2.M.R[3]);
-#endif
-        return result;
-    }
-
-    mathinline Matrix mathcall Negate(Matrix m) noexcept
-    {
-        Matrix result;
-        result.M.R[0] = Negate(As<Vector4>(m.M.R[0])).V;
-        result.M.R[1] = Negate(As<Vector4>(m.M.R[1])).V;
-        result.M.R[2] = Negate(As<Vector4>(m.M.R[2])).V;
-        result.M.R[3] = Negate(As<Vector4>(m.M.R[3])).V;
-        return result;
-    }
-
-    mathinline Matrix mathcall Multiply(float s, Matrix m) noexcept
-    {
-        Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        result.M.R[0] = Multiply(As<Vector4>(m.M.R[0]), s).V;
-        result.M.R[1] = Multiply(As<Vector4>(m.M.R[1]), s).V;
-        result.M.R[2] = Multiply(As<Vector4>(m.M.R[2]), s).V;
-        result.M.R[3] = Multiply(As<Vector4>(m.M.R[3]), s).V;
-#elif GRAPHYTE_HW_NEON
-        float32x4_t const sv = vdupq_n_f32(s);
-        result.M.R[0] = vmulq_f32(m.M.R[0], sv);
-        result.M.R[1] = vmulq_f32(m.M.R[1], sv);
-        result.M.R[2] = vmulq_f32(m.M.R[2], sv);
-        result.M.R[3] = vmulq_f32(m.M.R[3], sv);
-#elif GRAPHYTE_HW_AVX
-        __m128 const sv = _mm_set1_ps(s);
-        result.M.R[0] = _mm_mul_ps(m.M.R[0], sv);
-        result.M.R[1] = _mm_mul_ps(m.M.R[1], sv);
-        result.M.R[2] = _mm_mul_ps(m.M.R[2], sv);
-        result.M.R[3] = _mm_mul_ps(m.M.R[3], sv);
-#endif
-        return result;
-    }
-
-    mathinline Matrix mathcall Multiply(Matrix m, float s) noexcept
-    {
-        Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        result.M.R[0] = Multiply(As<Vector4>(m.M.R[0]), s).V;
-        result.M.R[1] = Multiply(As<Vector4>(m.M.R[1]), s).V;
-        result.M.R[2] = Multiply(As<Vector4>(m.M.R[2]), s).V;
-        result.M.R[3] = Multiply(As<Vector4>(m.M.R[3]), s).V;
-#elif GRAPHYTE_HW_NEON
-        float32x4_t const sv = vdupq_n_f32(s);
-        result.M.R[0] = vmulq_f32(m.M.R[0], sv);
-        result.M.R[1] = vmulq_f32(m.M.R[1], sv);
-        result.M.R[2] = vmulq_f32(m.M.R[2], sv);
-        result.M.R[3] = vmulq_f32(m.M.R[3], sv);
-#elif GRAPHYTE_HW_AVX
-        __m128 const sv = _mm_set1_ps(s);
-        result.M.R[0] = _mm_mul_ps(m.M.R[0], sv);
-        result.M.R[1] = _mm_mul_ps(m.M.R[1], sv);
-        result.M.R[2] = _mm_mul_ps(m.M.R[2], sv);
-        result.M.R[3] = _mm_mul_ps(m.M.R[3], sv);
-#endif
-        return result;
-    }
-
-    mathinline Matrix mathcall Divide(Matrix m, float s) noexcept
-    {
-        Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const sv = Replicate<Vector4>(s);
-        result.M.R[0] = Divide(As<Vector4>(m.M.R[0]), sv).V;
-        result.M.R[1] = Divide(As<Vector4>(m.M.R[1]), sv).V;
-        result.M.R[2] = Divide(As<Vector4>(m.M.R[2]), sv).V;
-        result.M.R[3] = Divide(As<Vector4>(m.M.R[3]), sv).V;
-#elif GRAPHYTE_HW_NEON
-        float32x4_t const sv = vdupq_n_f32(s);
-        result.M.R[0] = vdivq_f32(m.M.R[0], sv);
-        result.M.R[1] = vdivq_f32(m.M.R[1], sv);
-        result.M.R[2] = vdivq_f32(m.M.R[2], sv);
-        result.M.R[3] = vdivq_f32(m.M.R[3], sv);
-#elif GRAPHYTE_HW_AVX
-        __m128 const sv = _mm_set1_ps(s);
-        result.M.R[0] = _mm_div_ps(m.M.R[0], sv);
-        result.M.R[1] = _mm_div_ps(m.M.R[1], sv);
-        result.M.R[2] = _mm_div_ps(m.M.R[2], sv);
-        result.M.R[3] = _mm_div_ps(m.M.R[3], sv);
-#endif
-        return result;
-    }
 }
 
 // =================================================================================================
@@ -14414,9 +14581,9 @@ namespace Graphyte::Maths
 
         Impl::ConstFloat32x4 const result{ { {
                 (1.0f / 255.0f) * static_cast<float>((value >> 16) & 0xFFu),
-                (1.0f / 255.0f)* static_cast<float>((value >> 8) & 0xFFu),
-                (1.0f / 255.0f)* static_cast<float>(value & 0xFFu),
-                (1.0f / 255.0f)* static_cast<float>((value >> 24) & 0xFFu),
+                (1.0f / 255.0f) * static_cast<float>((value >> 8) & 0xFFu),
+                (1.0f / 255.0f) * static_cast<float>(value & 0xFFu),
+                (1.0f / 255.0f) * static_cast<float>((value >> 24) & 0xFFu),
             } } };
 
         return { result.V };
@@ -14478,7 +14645,7 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths::Unsequential
 {
-    mathinline Vector4 mathcall Dot4(
+    mathinline Vector4 mathcall Dot(
         Vector4 x1,
         Vector4 y1,
         Vector4 z1,
@@ -14494,5 +14661,32 @@ namespace Graphyte::Maths::Unsequential
         Vector4 const r2 = MultiplyAdd(z1, z2, r1);
         Vector4 const r3 = MultiplyAdd(w1, w2, r2);
         return r3;
+    }
+
+    mathinline Vector4 mathcall Dot(
+        Vector4 x1,
+        Vector4 y1,
+        Vector4 z1,
+        Vector4 x2,
+        Vector4 y2,
+        Vector4 z2
+    ) noexcept
+    {
+        Vector4 const r0 = Multiply(x1, x2);
+        Vector4 const r1 = MultiplyAdd(y1, y2, r0);
+        Vector4 const r2 = MultiplyAdd(z1, z2, r1);
+        return r2;
+    }
+
+    mathinline Vector4 mathcall Dot(
+        Vector4 x1,
+        Vector4 y1,
+        Vector4 x2,
+        Vector4 y2
+    ) noexcept
+    {
+        Vector4 const r0 = Multiply(x1, x2);
+        Vector4 const r1 = MultiplyAdd(y1, y2, r0);
+        return r1;
     }
 }
