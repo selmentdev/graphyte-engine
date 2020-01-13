@@ -12668,7 +12668,7 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, y, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
 
         // [range, -range * z_near, 0, 1]
         __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
@@ -12744,7 +12744,7 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, y, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
 
         // [range, range * z_near, 0, -1]
         __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_NEGATIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
@@ -12812,7 +12812,7 @@ namespace Graphyte::Maths
         result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
 #elif GRAPHYTE_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
-                height / aspect_ratio,
+                width,
                 height,
                 range,
                 -range * z_near,
@@ -12825,7 +12825,7 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, y, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
 
         // [range, -range * z_near, 0, 1]
         __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
@@ -12893,7 +12893,7 @@ namespace Graphyte::Maths
         result.M.R[3] = vsetq_lane_f32(range * z_near, zero, 2);
 #elif GRAPHYTE_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
-                height / aspect_ratio,
+                width,
                 height,
                 range,
                 range * z_near,
@@ -12906,7 +12906,7 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, y, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
 
         // [range, range * z_near, 0, -1]
         __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_NEGATIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
@@ -12991,7 +12991,7 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, z_near_2 * rcp_height, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
 
         __m128 const r2_zw = Make<Vector4>(
             -(view_left + view_right) * rcp_width,
@@ -13001,7 +13001,7 @@ namespace Graphyte::Maths
         ).V;
 
         // [0, 0, -range * z_near, 0]
-        __m128 const r3_z = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0010.V);
+        __m128 const r3_z = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Z.V);
 
         result.M.R[0] = r0_x;
         result.M.R[1] = r1_y;
@@ -13077,7 +13077,7 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, z_near_2 * rcp_height, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
 
         __m128 const r2_zw = Make<Vector4>(
             (view_left + view_right) * rcp_width,
@@ -13087,7 +13087,7 @@ namespace Graphyte::Maths
         ).V;
 
         // [0, 0, range * z_near, 0]
-        __m128 const r3_z = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0010.V);
+        __m128 const r3_z = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Z.V);
 
         result.M.R[0] = r0_x;
         result.M.R[1] = r1_y;
@@ -13149,7 +13149,7 @@ namespace Graphyte::Maths
         __m128 const zero = _mm_setzero_ps();
 
         __m128 const r0_x = _mm_move_ss(zero, values);
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
         __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
         __m128 const r2_z = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(2, 0, 0, 0));
         __m128 const r3_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 1, 0, 0));
@@ -13214,7 +13214,7 @@ namespace Graphyte::Maths
         __m128 const zero = _mm_setzero_ps();
 
         __m128 const r0_x = _mm_move_ss(zero, values);
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
         __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
         __m128 const r2_z = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(2, 0, 0, 0));
         __m128 const r3_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 1, 0, 0));
@@ -13287,7 +13287,7 @@ namespace Graphyte::Maths
         Impl::ConstFloat32x4 const mvalues2{ { {
                 -(view_left + view_right),
                 -(view_top + view_bottom),
-                -near_z,
+                -z_near,
                 1.0f,
             } } };
 
@@ -13297,10 +13297,10 @@ namespace Graphyte::Maths
         __m128 const t0_x = _mm_move_ss(zero, values);
         __m128 const r0_x = _mm_add_ss(t0_x, t0_x);
 
-        __m128 const t1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const t1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
         __m128 const r1_y = _mm_add_ps(t1_y, t1_y);
 
-        __m128 const r2_z = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0010.V);
+        __m128 const r2_z = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Z.V);
 
         __m128 const r3_xyzw = _mm_mul_ps(values, mvalues2.V);
 
@@ -13372,7 +13372,7 @@ namespace Graphyte::Maths
         Impl::ConstFloat32x4 const mvalues2{ { {
                 -(view_left + view_right),
                 -(view_top + view_bottom),
-                near_z,
+                z_near,
                 1.0f,
             } } };
 
@@ -13382,10 +13382,10 @@ namespace Graphyte::Maths
         __m128 const t0_x = _mm_move_ss(zero, values);
         __m128 const r0_x = _mm_add_ss(t0_x, t0_x);
 
-        __m128 const t1_y = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0100.V);
+        __m128 const t1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
         __m128 const r1_y = _mm_add_ps(t1_y, t1_y);
 
-        __m128 const r2_z = _mm_and_ps(values, Impl::VEC4_MASK_SELECT_0010.V);
+        __m128 const r2_z = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Z.V);
 
         __m128 const r3_xyzw = _mm_mul_ps(values, mvalues2.V);
 
