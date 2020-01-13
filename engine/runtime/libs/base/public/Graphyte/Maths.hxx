@@ -5887,15 +5887,6 @@ namespace Graphyte::Maths
             } } };
 
         return { result.V };
-#elif GRAPHYTE_HW_AVX
-        return { _mm_sqrt_ps(v.V) };
-#endif
-    }
-
-    mathinline float mathcall Sqrt(float v) noexcept
-    {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        return sqrtf(v);
 #elif GRAPHYTE_HW_NEON
         float32x4_t const s0 = vrsqrteq_f32(v);
         float32x4_t const p0 = vmulq_f32(v, s0);
@@ -5917,6 +5908,15 @@ namespace Graphyte::Maths
         uint32x4_t const select_mask = vceqq_u32(inf_mask, zero_mask);
         float32x4_t const final_result = vbslq_f32(select_mask, result, v);
         return { final_result };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_sqrt_ps(v.V) };
+#endif
+    }
+
+    mathinline float mathcall Sqrt(float v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+        return sqrtf(v);
 #elif GRAPHYTE_HW_AVX
         __m128 const s = _mm_sqrt_ss(_mm_set_ss(v));
         float result;
@@ -6298,7 +6298,7 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GRAPHYTE_HW_NEON
-        return { vdivq_f32(a.V, b.V) };
+        return { vdivq_n_f32(a.V, b) };
 #elif GRAPHYTE_HW_AVX
         __m128 const invb = _mm_set_ps1(1.0F / b);
         return { _mm_mul_ps(a.V, invb) };
@@ -6430,6 +6430,8 @@ namespace Graphyte::Maths
             } } };
 
         return { result.V };
+#elif GRAPHYTE_HW_NEON
+        return { vmulq_f32(v.V, v.V) };
 #elif GRAPHYTE_HW_AVX
         return { _mm_mul_ps(v.V, v.V) };
 #endif
@@ -6453,6 +6455,10 @@ namespace Graphyte::Maths
             } } };
 
         return { result.V };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const r0 = vabsq_f32(v.V);
+        float32x4_t const r1 = vmulq_f32(r0, v.V);
+        return { r1 };
 #elif GRAPHYTE_HW_AVX
         __m128 const zero = _mm_setzero_ps();
         __m128 const negative = _mm_sub_ps(zero, v.V);
@@ -6470,6 +6476,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Cube(T v) noexcept
+        requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6478,6 +6485,10 @@ namespace Graphyte::Maths
                 v.V.F[2] * v.V.F[2] * v.V.F[2],
                 v.V.F[3] * v.V.F[3] * v.V.F[3],
             } } };
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const r0 = vmulq_f32(v.V, v.V);
+        float32x4_t const r1 = vmulq_f32(r0, v.V);
+        return { r1 };
 #elif GRAPHYTE_HW_AVX
         __m128 const v2 = _mm_mul_ps(v.V, v.V);
         __m128 const v3 = _mm_mul_ps(v.V, v2);
@@ -8072,6 +8083,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Saturate(T v) noexcept
+        requires VectorLike<T> and Comparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         T const zero = Zero<T>();
@@ -8101,6 +8113,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Wrap(T v, T min, T max) noexcept
+        requires VectorLike<T> and Comparable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const range0 = (max.V.F[0] - min.V.F[0]);
@@ -14602,6 +14615,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(ColorBGRA* destination, T color) noexcept
+        requires VectorLike<T> and (T::Components == 4)
     {
         GX_ASSERT(destination != nullptr);
 
