@@ -408,38 +408,38 @@ namespace Graphyte::Maths::Impl
         } } };
 
     mathconst ConstUInt32x4 VEC4_INFINITY = { { {
-            Ieee754::F32_INFINITY,
-            Ieee754::F32_INFINITY,
-            Ieee754::F32_INFINITY,
-            Ieee754::F32_INFINITY,
+            FloatTraits<float>::Infinity,
+            FloatTraits<float>::Infinity,
+            FloatTraits<float>::Infinity,
+            FloatTraits<float>::Infinity,
         } } };
 
     mathconst ConstUInt32x4 VEC4_QNAN = { { {
-            Ieee754::F32_QNAN,
-            Ieee754::F32_QNAN,
-            Ieee754::F32_QNAN,
-            Ieee754::F32_QNAN,
+            FloatTraits<float>::QNaN,
+            FloatTraits<float>::QNaN,
+            FloatTraits<float>::QNaN,
+            FloatTraits<float>::QNaN,
         } } };
 
     mathconst ConstUInt32x4 VEC4_QNAN_TEST = { { {
-            Ieee754::F32_MANTISSA,
-            Ieee754::F32_MANTISSA,
-            Ieee754::F32_MANTISSA,
-            Ieee754::F32_MANTISSA,
+            FloatTraits<float>::Mantissa,
+            FloatTraits<float>::Mantissa,
+            FloatTraits<float>::Mantissa,
+            FloatTraits<float>::Mantissa,
         } } };
 
     mathconst ConstUInt32x4 VEC4_FLOAT_MIN = { { {
-            Ieee754::F32_MIN_NORMAL,
-            Ieee754::F32_MIN_NORMAL,
-            Ieee754::F32_MIN_NORMAL,
-            Ieee754::F32_MIN_NORMAL,
+            FloatTraits<float>::MinNormal,
+            FloatTraits<float>::MinNormal,
+            FloatTraits<float>::MinNormal,
+            FloatTraits<float>::MinNormal,
         } } };
 
     mathconst ConstUInt32x4 VEC4_FLOAT_MAX = { { {
-            Ieee754::F32_MAX,
-            Ieee754::F32_MAX,
-            Ieee754::F32_MAX,
-            Ieee754::F32_MAX,
+            FloatTraits<float>::Max,
+            FloatTraits<float>::Max,
+            FloatTraits<float>::Max,
+            FloatTraits<float>::Max,
         } } };
 
     mathconst ConstFloat32x4 VEC4_EPSILON = { { {
@@ -752,17 +752,17 @@ namespace Graphyte::Maths::Impl
         } } };
 
     mathconst ConstUInt32x4 VEC4_MASK_QNAN = { { {
-            Ieee754::F32_MANTISSA,
-            Ieee754::F32_MANTISSA,
-            Ieee754::F32_MANTISSA,
-            Ieee754::F32_MANTISSA,
+            FloatTraits<float>::Mantissa,
+            FloatTraits<float>::Mantissa,
+            FloatTraits<float>::Mantissa,
+            FloatTraits<float>::Mantissa,
         } } };
 
     mathconst ConstUInt32x4 VEC4_MASK_ABS = { { {
-            ~Ieee754::F32_SIGN,
-            ~Ieee754::F32_SIGN,
-            ~Ieee754::F32_SIGN,
-            ~Ieee754::F32_SIGN,
+            FloatTraits<float>::Sign,
+            FloatTraits<float>::Sign,
+            FloatTraits<float>::Sign,
+            FloatTraits<float>::Sign,
         } } };
 
     mathconst ConstUInt32x4 VEC4_MASK_NEGATIVE_ONE = { { {
@@ -920,24 +920,24 @@ namespace Graphyte::Maths::Impl
         } } };
 
     mathconst ConstInt32x4 VEC4_MIN_NORMAL = { { {
-            Ieee754::F32_MIN_NORMAL,
-            Ieee754::F32_MIN_NORMAL,
-            Ieee754::F32_MIN_NORMAL,
-            Ieee754::F32_MIN_NORMAL,
+            FloatTraits<float>::MinNormal,
+            FloatTraits<float>::MinNormal,
+            FloatTraits<float>::MinNormal,
+            FloatTraits<float>::MinNormal,
         } } };
 
     mathconst ConstUInt32x4 VEC4_NEGATIVE_INFINITY = { { {
-            Ieee754::F32_SIGN | Ieee754::F32_INFINITY,
-            Ieee754::F32_SIGN | Ieee754::F32_INFINITY,
-            Ieee754::F32_SIGN | Ieee754::F32_INFINITY,
-            Ieee754::F32_SIGN | Ieee754::F32_INFINITY,
+            FloatTraits<float>::Sign | FloatTraits<float>::Infinity,
+            FloatTraits<float>::Sign | FloatTraits<float>::Infinity,
+            FloatTraits<float>::Sign | FloatTraits<float>::Infinity,
+            FloatTraits<float>::Sign | FloatTraits<float>::Infinity,
         } } };
 
     mathconst ConstUInt32x4 VEC4_NEGATIVE_QNAN = { { {
-            Ieee754::F32_SIGN | Ieee754::F32_QNAN,
-            Ieee754::F32_SIGN | Ieee754::F32_QNAN,
-            Ieee754::F32_SIGN | Ieee754::F32_QNAN,
-            Ieee754::F32_SIGN | Ieee754::F32_QNAN,
+            FloatTraits<float>::Sign | FloatTraits<float>::QNaN,
+            FloatTraits<float>::Sign | FloatTraits<float>::QNaN,
+            FloatTraits<float>::Sign | FloatTraits<float>::QNaN,
+            FloatTraits<float>::Sign | FloatTraits<float>::QNaN,
         } } };
 
     mathconst ConstInt32x4 VEC4_BIN_128 = { { {
@@ -7130,7 +7130,7 @@ namespace Graphyte::Maths
 
         for (size_t i = 0; i < 4; ++i)
         {
-            if (Ieee754::BitIsNan(v.V.U[i]))
+            if (FloatTraits<float>::BitIsNan(v.V.U[i]))
             {
                 result.V.U[i] = 0x7fc00000U;
             }
@@ -7412,10 +7412,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                Ieee754::BitIsNan(v.V.U[0]) ? SELECT_1 : SELECT_0,
-                Ieee754::BitIsNan(v.V.U[1]) ? SELECT_1 : SELECT_0,
-                Ieee754::BitIsNan(v.V.U[2]) ? SELECT_1 : SELECT_0,
-                Ieee754::BitIsNan(v.V.U[3]) ? SELECT_1 : SELECT_0,
+                FloatTraits<float>::BitIsNan(v.V.U[0]) ? SELECT_1 : SELECT_0,
+                FloatTraits<float>::BitIsNan(v.V.U[1]) ? SELECT_1 : SELECT_0,
+                FloatTraits<float>::BitIsNan(v.V.U[2]) ? SELECT_1 : SELECT_0,
+                FloatTraits<float>::BitIsNan(v.V.U[3]) ? SELECT_1 : SELECT_0,
             } } };
 
         return { result.V };
@@ -7434,10 +7434,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                Ieee754::BitIsInf(v.V.U[0]) ? SELECT_1 : SELECT_0,
-                Ieee754::BitIsInf(v.V.U[1]) ? SELECT_1 : SELECT_0,
-                Ieee754::BitIsInf(v.V.U[2]) ? SELECT_1 : SELECT_0,
-                Ieee754::BitIsInf(v.V.U[3]) ? SELECT_1 : SELECT_0,
+                FloatTraits<float>::BitIsInf(v.V.U[0]) ? SELECT_1 : SELECT_0,
+                FloatTraits<float>::BitIsInf(v.V.U[1]) ? SELECT_1 : SELECT_0,
+                FloatTraits<float>::BitIsInf(v.V.U[2]) ? SELECT_1 : SELECT_0,
+                FloatTraits<float>::BitIsInf(v.V.U[3]) ? SELECT_1 : SELECT_0,
             } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
