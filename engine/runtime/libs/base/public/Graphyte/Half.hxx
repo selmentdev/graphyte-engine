@@ -1,14 +1,10 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Bitwise.hxx>
+#include <Graphyte/Ieee754.hxx>
 
 namespace Graphyte
 {
-    struct Half final
-    {
-        uint16_t Value;
-    };
-
     __forceinline float FromHalf(Half v) noexcept
     {
 #if GRAPHYTE_HW_F16C
