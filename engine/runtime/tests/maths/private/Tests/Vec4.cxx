@@ -478,7 +478,7 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
             Vector3 const vq = Rotate(v, q);
 
             CHECK(GetX(vm) == Approx{ GetX(vq) });
-            CHECK(GetY(vm) == Approx{ GetY(vq) });
+            CHECK(GetY(vm) == Approx{ GetY(vq) }.margin(0.00001f));
             CHECK(GetZ(vm) == Approx{ GetZ(vq) });
 
 
@@ -490,7 +490,7 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
             Vector3 const vmq = Rotate(v, mq);
 
             CHECK(GetX(vmq) == Approx{ GetX(vq) });
-            CHECK(GetY(vmq) == Approx{ GetY(vq) });
+            CHECK(GetY(vmq) == Approx{ GetY(vq) }.margin(0.00001f));
             CHECK(GetZ(vmq) == Approx{ GetZ(vq) });
 
             Matrix const qm = CreateFromQuaternion(q);
@@ -3583,12 +3583,12 @@ TEST_CASE("Maths / Vector / Rounding")
         CHECK(Ceiling(-0.9F) == Approx{ -0.0F });
     }
 
-    SECTION("Fraction")
+    SECTION("Remainder")
     {
-        Vector4 const r1 = Fraction(v1, One<Vector4>());
-        Vector4 const r2 = Fraction(v2, One<Vector4>());
-        Vector4 const r3 = Fraction(v3, One<Vector4>());
-        Vector4 const r4 = Fraction(v4, One<Vector4>());
+        Vector4 const r1 = Remainder(v1, One<Vector4>());
+        Vector4 const r2 = Remainder(v2, One<Vector4>());
+        Vector4 const r3 = Remainder(v3, One<Vector4>());
+        Vector4 const r4 = Remainder(v4, One<Vector4>());
 
         CHECK(GetX(r1) == Approx{ 0.1F });
         CHECK(GetY(r1) == Approx{ 0.4F });
@@ -3610,14 +3610,14 @@ TEST_CASE("Maths / Vector / Rounding")
         CHECK(GetZ(r4) == Approx{ -0.5F });
         CHECK(GetW(r4) == Approx{ -0.9F }.margin(0.01F));
 
-        CHECK(Fraction(0.1F, 1.0F) == Approx{ 0.1F });
-        CHECK(Fraction(0.4F, 1.0F) == Approx{ 0.4F });
-        CHECK(Fraction(0.6F, 1.0F) == Approx{ 0.6F });
-        CHECK(Fraction(0.9F, 1.0F) == Approx{ 0.9F });
-        CHECK(Fraction(-0.1F, 1.0F) == Approx{ -0.1F });
-        CHECK(Fraction(0.5F, 1.0F) == Approx{ 0.5F });
-        CHECK(Fraction(-0.5F, 1.0F) == Approx{ -0.5F });
-        CHECK(Fraction(-0.9F, 1.0F) == Approx{ -0.9F });
+        CHECK(Remainder(0.1F, 1.0F) == Approx{ 0.1F });
+        CHECK(Remainder(0.4F, 1.0F) == Approx{ 0.4F });
+        CHECK(Remainder(0.6F, 1.0F) == Approx{ 0.6F });
+        CHECK(Remainder(0.9F, 1.0F) == Approx{ 0.9F });
+        CHECK(Remainder(-0.1F, 1.0F) == Approx{ -0.1F });
+        CHECK(Remainder(0.5F, 1.0F) == Approx{ 0.5F });
+        CHECK(Remainder(-0.5F, 1.0F) == Approx{ -0.5F });
+        CHECK(Remainder(-0.9F, 1.0F) == Approx{ -0.9F });
     }
 }
 

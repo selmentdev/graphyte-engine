@@ -2855,7 +2855,7 @@ namespace Graphyte::Maths
         float32x4_t const r2 = vcombine_f32(r0, r1);
         return { r2 };
 #elif GRAPHYTE_HW_AVX
-        __m128 const r0 = _mm_shuffle_ps(xy.V, zw.V, _MM_SHUFFLE(1, 0, 1, 0);
+        __m128 const r0 = _mm_shuffle_ps(xy.V, zw.V, _MM_SHUFFLE(1, 0, 1, 0));
         return { r0 };
 #endif
     }
@@ -7142,7 +7142,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Fraction(T x, T y) noexcept
+    mathinline T mathcall Remainder(T x, T y) noexcept
         requires VectorLike<T> and Roundable<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -7175,9 +7175,21 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline float mathcall Fraction(float x, float y) noexcept
+    mathinline float mathcall Remainder(float x, float y) noexcept
     {
         return fmodf(x, y);
+    }
+
+    template <typename T>
+    mathinline T mathcall Fraction(T x) noexcept
+        requires VectorLike<T> and Roundable<T>
+    {
+        return Subtract(x, Floor(x));
+    }
+
+    mathinline float mathcall Fraction(float x) noexcept
+    {
+        return x - Floor(x);
     }
 }
 
