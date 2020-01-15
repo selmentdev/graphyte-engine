@@ -20,9 +20,28 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp
 
 #include <Graphyte/Uuid.hxx>
 
+#include <Graphyte/System/Dialogs.hxx>
 
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {
+    std::vector<std::string> paths{};
+    std::vector<Graphyte::System::FileDialogFilter> filters{
+        { "Text Files", "*.txt", },
+        { "All Files", "*.*", },
+    };
+
+    if (Graphyte::System::OpenFile(paths, filters, "Open Chujemuje") == Graphyte::Status::Success)
+    {
+        for (auto const& path : paths)
+        {
+            GX_LOG(LogAssetsCompiler, Info, "file: {}\n", path);
+        }
+    }
+    else
+    {
+        GX_LOG(LogAssetsCompiler, Info, "failed to get path\n");
+    }
+
     Graphyte::Uuid u = Graphyte::Uuid::Create();
     std::string s{};
     Graphyte::Converter<Graphyte::Uuid>::ToString(s, u);
