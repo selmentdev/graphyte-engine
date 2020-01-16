@@ -278,4 +278,23 @@ TEST_CASE("Random Generator")
 
         REQUIRE(total == 1'000'000'000u);
     }
+
+    SECTION("Generating random bytes")
+    {
+        Graphyte::Random::RandomState state{};
+        Initialize(state, 0);
+
+        std::array<uint64_t, 8> buffer{};
+
+        Generate(state, notstd::as_writable_bytes(notstd::span<uint64_t>{ buffer } ));
+
+        CHECK(buffer[0] == 0x53175d61490b23df);
+        CHECK(buffer[1] == 0x61da6f3dc380d507);
+        CHECK(buffer[2] == 0x5c0fdf91ec9a7bfc);
+        CHECK(buffer[3] == 0x2eebf8c3bbe5e1a);
+        CHECK(buffer[4] == 0x7eca04ebaf4a5eea);
+        CHECK(buffer[5] == 0x543c37757f08d9a);
+        CHECK(buffer[6] == 0xdb7490c75ab5026e);
+        CHECK(buffer[7] == 0xd87343e6464bc959);
+    }
 }

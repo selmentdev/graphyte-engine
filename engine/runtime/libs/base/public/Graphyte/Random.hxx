@@ -1,6 +1,7 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Maths.hxx>
+#include <Graphyte/Span.hxx>
 
 namespace Graphyte::Random::Impl
 {
@@ -38,6 +39,8 @@ namespace Graphyte::Random
         uint32_t const result = hi ^ lo;
         return result;
     }
+
+    extern BASE_API void Generate(RandomState& state, notstd::span<std::byte> buffer) noexcept;
 
     /// Skips 2^128 generations.
     ///

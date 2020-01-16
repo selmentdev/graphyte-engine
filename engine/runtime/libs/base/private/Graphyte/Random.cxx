@@ -45,6 +45,23 @@ namespace Graphyte::Random
         return result;
     }
 
+    extern BASE_API void Generate(RandomState& state, notstd::span<std::byte> buffer) noexcept
+    {
+        while (buffer.size() >= sizeof(uint64_t))
+        {
+            uint64_t const sample = Generate64(state);
+            memcpy(buffer.data(), &sample, sizeof(uint64_t));
+
+            buffer.remove_prefix(sizeof(uint64_t));
+        }
+
+        if (!buffer.empty())
+        {
+            uint64_t const sample = Generate64(state);
+            memcpy(buffer.data(), &sample, buffer.size());
+        }
+    }
+
     extern BASE_API void Skip2p128(RandomState& state) noexcept
     {
         static uint64_t const indices[] = {
