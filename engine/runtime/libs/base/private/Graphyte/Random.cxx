@@ -28,7 +28,7 @@ namespace Graphyte::Random
         state.State[3] = Impl::SplitMix64(seed);
     }
 
-    extern BASE_API uint64_t Generate(RandomState& state) noexcept
+    extern BASE_API uint64_t Generate64(RandomState& state) noexcept
     {
         uint64_t const result = RotateLeft<uint64_t>(state.State[0] + state.State[3], 23) + state.State[0];
 
@@ -71,7 +71,7 @@ namespace Graphyte::Random
                     s3 ^= state.State[3];
                 }
 
-                Generate(state);
+                Generate64(state);
             }
         }
 
@@ -102,7 +102,7 @@ namespace Graphyte::Random
                     s3 ^= state.State[3];
                 }
 
-                Generate(state);
+                Generate64(state);
             }
         }
 
