@@ -261,8 +261,8 @@ VCXProject('base')
         'engine/runtime/libs/base'
     }
 
-    //.OutputDirectory = 'build-x/bin'
-    //.IntermediateDirectory = 'build-x/obj'
+    .OutputDirectory = 'build-x/vcxproj-output-dir'
+    .IntermediateDirectory = 'build-x/vcxproj-intermediate-dir'
 
     .ProjectBasePath = 'engine/runtime/libs/base'
     .ProjectAllowedFileExtensions = {
