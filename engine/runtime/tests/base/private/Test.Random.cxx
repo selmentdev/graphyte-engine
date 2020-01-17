@@ -2,104 +2,56 @@
 #include <Graphyte/Random.hxx>
 #include <Graphyte/Ieee754.hxx>
 
-/// Random number between range [0;1)
-GX_NOINLINE
-float NextF32(Graphyte::Random::RandomState& state) noexcept
+TEST_CASE("Float Traits")
 {
-    // Generate sample from range 1.0f..2.0f
-    uint32_t const sample
-        = Graphyte::FloatTraits<float>::One
-        | Graphyte::FloatTraits<float>::Mantissa & Graphyte::Random::Generate32(state);
-
-    float const range = Graphyte::FloatTraits<float>::FromBits(sample);
-    return range - 1.0f;
-}
-
-double NextF64(Graphyte::Random::RandomState& state) noexcept
-{
-    // Generate sample from range 1.0..2.0
-    uint64_t const sample
-        = Graphyte::FloatTraits<double>::One
-        | Graphyte::FloatTraits<double>::Mantissa & Graphyte::Random::Generate64(state);
-
-    double const range = Graphyte::FloatTraits<double>::FromBits(sample);
-    return range - 1.0;
-}
-
-TEST_CASE("Floating point assumptions")
-{
-    using namespace Graphyte;
+    using Graphyte::FloatTraits;
 
     SECTION("float")
     {
-        SECTION("perfect 1.0f")
+        using Trait = FloatTraits<float>;
+
+        SECTION("Basics")
         {
-            uint32_t const sample
-                = FloatTraits<float>::One
-                | FloatTraits<float>::Mantissa & 0x0000'0000u;
-
-            float const value = FloatTraits<float>::FromBits(sample);
-
-            REQUIRE(value == 1.0f);
-            REQUIRE(FloatTraits<float>::ToBits(1.0f) == 0x3F80'0000u);
+            CHECK(Trait::ToBits(0.0f) == 0u);
+            CHECK(Trait::ToBits(1.0f) == Trait::One);
+            CHECK(Trait::ToBits(2.0f) == 0x4000'0000);
         }
 
-        SECTION("perfect 2.0f")
+        SECTION("Range12FromHighBits")
         {
-            uint32_t const sample
-                = FloatTraits<float>::One
-                | FloatTraits<float>::Mantissa & 0xFFFF'FFFFu;
+            float const one = Trait::Range12FromHighBits(0u);
+            float const almost_two = Trait::Range12FromHighBits(0xFFFFFFFFu);
+            float const exact_two = std::nexttowardf(almost_two, 10.0f);
 
-            REQUIRE(sample == 0x3FFF'FFFFu);
-
-            float const value = FloatTraits<float>::FromBits(sample);
-
-            REQUIRE(value < 2.0f);
-
-            uint32_t const perfect_sample = sample + 1;
-
-            float const perfect_value = FloatTraits<float>::FromBits(perfect_sample);
-
-            REQUIRE(perfect_value == 2.0f);
-            REQUIRE((perfect_value - 1.0f) == 1.0f);
-
-            REQUIRE(FloatTraits<float>::ToBits(2.0f) == 0x4000'0000u);
-            REQUIRE(FloatTraits<float>::ToBits(std::nextafter(2.0f, 1.0f)) == 0x3FFF'FFFFu);
+            CHECK(one == 1.0f);
+            CHECK(almost_two < 2.0f);
+            CHECK(exact_two == 2.0f);
         }
     }
 
     SECTION("double")
     {
-        SECTION("perfect 1.0")
+        using Trait = FloatTraits<double>;
+
+        SECTION("Basics")
         {
-            uint64_t const sample
-                = FloatTraits<double>::One
-                | FloatTraits<double>::Mantissa & 0x0000'0000'0000'0000u;
-
-            double const value = FloatTraits<double>::FromBits(sample);
-
-            REQUIRE(value == 1.0);
+            CHECK(Trait::ToBits(0.0) == 0u);
+            CHECK(Trait::ToBits(1.0) == Trait::One);
         }
 
-        SECTION("perfect 2.0")
+        SECTION("Range01FromHighBits")
         {
-            uint64_t const sample
-                = FloatTraits<double>::One
-                | FloatTraits<double>::Mantissa & 0xFFFF'FFFF'FFFF'FFFFu;
+            double const one = Trait::Range12FromHighBits(0u);
+            double const almost_two = Trait::Range12FromHighBits(0xFFFFFFFF'FFFFFFFFu);
+            double const exact_two = std::nexttoward(almost_two, 10.0);
 
-            double const value = FloatTraits<double>::FromBits(sample);
-
-            REQUIRE(value < 2.0);
-
-            uint64_t const perfect_sample = sample + 1;
-
-            double const perfect_value = FloatTraits<double>::FromBits(perfect_sample);
-
-            REQUIRE(perfect_value == 2.0);
-            REQUIRE((perfect_value - 1.0) == 1.0);
+            CHECK(one == 1.0);
+            CHECK(almost_two < 2.0);
+            CHECK(exact_two == 2.0);
         }
     }
 }
+
 
 TEST_CASE("Random Generator")
 {
@@ -148,22 +100,22 @@ TEST_CASE("Random Generator")
         Graphyte::Random::RandomState state{};
         Initialize(state, 0);
 
-        CHECK(Generate64(state) == uint64_t{ 0x53175d61490b23dfu });
-        CHECK(Generate64(state) == uint64_t{ 0x61da6f3dc380d507u });
-        CHECK(Generate64(state) == uint64_t{ 0x5c0fdf91ec9a7bfcu });
-        CHECK(Generate64(state) == uint64_t{ 0x02eebf8c3bbe5e1au });
-        CHECK(Generate64(state) == uint64_t{ 0x7eca04ebaf4a5eeau });
-        CHECK(Generate64(state) == uint64_t{ 0x0543c37757f08d9au });
-        CHECK(Generate64(state) == uint64_t{ 0xdb7490c75ab5026eu });
-        CHECK(Generate64(state) == uint64_t{ 0xd87343e6464bc959u });
-        CHECK(Generate64(state) == uint64_t{ 0x4b7da0a02389f0ffu });
-        CHECK(Generate64(state) == uint64_t{ 0x1300fc58c0424c16u });
-        CHECK(Generate64(state) == uint64_t{ 0x5084843206c19968u });
-        CHECK(Generate64(state) == uint64_t{ 0x10ea073de9aa4dfcu });
-        CHECK(Generate64(state) == uint64_t{ 0x1aae554343960cc1u });
-        CHECK(Generate64(state) == uint64_t{ 0x1804139f10fae720u });
-        CHECK(Generate64(state) == uint64_t{ 0x10d790e7b8ac10fau });
-        CHECK(Generate64(state) == uint64_t{ 0x667d2bffdd1496f7u });
+        CHECK(Generate64(state) == uint64_t{ 0x99EC5F36CB75F2B4u });
+        CHECK(Generate64(state) == uint64_t{ 0xBF6E1F784956452Au });
+        CHECK(Generate64(state) == uint64_t{ 0x1A5F849D4933E6E0u });
+        CHECK(Generate64(state) == uint64_t{ 0x6AA594F1262D2D2Cu });
+        CHECK(Generate64(state) == uint64_t{ 0xBBA5AD4A1F842E59u });
+        CHECK(Generate64(state) == uint64_t{ 0xFFEF8375D9EBCACAu });
+        CHECK(Generate64(state) == uint64_t{ 0x6C160DEED2F54C98u });
+        CHECK(Generate64(state) == uint64_t{ 0x8920AD648FC30A3Fu });
+        CHECK(Generate64(state) == uint64_t{ 0xDB032C0BA7539731u });
+        CHECK(Generate64(state) == uint64_t{ 0xEB3A475A3E749A3Du });
+        CHECK(Generate64(state) == uint64_t{ 0x1D42993FA43F2A54u });
+        CHECK(Generate64(state) == uint64_t{ 0x11361BF526A14BB5u });
+        CHECK(Generate64(state) == uint64_t{ 0x1B4F07A5AB3D8E9Cu });
+        CHECK(Generate64(state) == uint64_t{ 0xA7A3257F6986DB7Fu });
+        CHECK(Generate64(state) == uint64_t{ 0x7EFDAA95605DFC9Cu });
+        CHECK(Generate64(state) == uint64_t{ 0x4BDE97C0A78EAAB8u });
     }
 
     SECTION("Generate random uint32 values")
@@ -171,61 +123,61 @@ TEST_CASE("Random Generator")
         Graphyte::Random::RandomState state{};
         Initialize(state, 0);
 
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x1a1c7ebeu });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xa25aba3au });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xb095a46du });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x3950e196u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xd1805a01u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x52b34eedu });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x81c192a9u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x9e388abfu });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x68f4505fu });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xd342b04eu });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x56451d5au });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xf9404ac1u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x59385982u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x08fef4bfu });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xa87b801du });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xbb69bd08u });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0x5299AD82u });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0xF6385A52u });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0x536C627Du });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0x4C88B9DDu });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0xA4218313u });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0x260449BFu });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0xBEE34176u });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0x06E3A75Bu });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0x7C50BB3Au });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0xD54EDD67u });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0xB97DB36Bu });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0x37975040u });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0xB0728939u });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0xCE25FE00u });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0x1EA05609u });
+        CHECK(Next<uint32_t>(state) == uint32_t{ 0xEC503D78u });
     }
 
-    SECTION("Generate random uint32 values between 2 and 12")
+    SECTION("Generate random uint32 values between 10 and 22")
     {
         Graphyte::Random::RandomState state{};
         Initialize(state, 0);
 
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 14 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 15 });
         CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 16 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 21 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 12 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 10 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 21 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 17 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 20 });
         CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 14 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 10 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 14 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 17 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 10 });
         CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 15 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 21 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 12 });
         CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 16 });
         CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 22 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 14 });
         CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 13 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 10 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 10 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 15 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 13 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 16 });
         CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
         CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 17 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 21 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 12 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 10 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 18 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 14 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 21 });
         CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 22 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 17 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 14 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 18 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 20 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 18 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 18 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 19 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 20 });
         CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 15 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 12 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 22 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 22 });
+        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
     }
 
     SECTION("Next<uint32_t> follows uniform distribution")
@@ -245,7 +197,7 @@ TEST_CASE("Random Generator")
 
         for (auto const& hist : histogram)
         {
-            CHECK(hist == Approx{ 310'000 }.margin(3'600));
+            CHECK(hist == Approx{ 310'000 }.margin(3'650));
             total += hist;
         }
 
@@ -272,7 +224,7 @@ TEST_CASE("Random Generator")
 
         for (auto const& hist : histogram)
         {
-            CHECK(hist == Approx{ 1'000'000 }.margin(4'000));
+            CHECK(hist == Approx{ 1'000'000 }.margin(3'700));
             total += hist;
         }
 
@@ -288,13 +240,28 @@ TEST_CASE("Random Generator")
 
         Generate(state, notstd::as_writable_bytes(notstd::span<uint64_t>{ buffer } ));
 
-        CHECK(buffer[0] == 0x53175d61490b23df);
-        CHECK(buffer[1] == 0x61da6f3dc380d507);
-        CHECK(buffer[2] == 0x5c0fdf91ec9a7bfc);
-        CHECK(buffer[3] == 0x2eebf8c3bbe5e1a);
-        CHECK(buffer[4] == 0x7eca04ebaf4a5eea);
-        CHECK(buffer[5] == 0x543c37757f08d9a);
-        CHECK(buffer[6] == 0xdb7490c75ab5026e);
-        CHECK(buffer[7] == 0xd87343e6464bc959);
+        CHECK(buffer[0] == 0x99EC5F36CB75F2B4u);
+        CHECK(buffer[1] == 0xBF6E1F784956452Au);
+        CHECK(buffer[2] == 0x1A5F849D4933E6E0u);
+        CHECK(buffer[3] == 0x6AA594F1262D2D2Cu);
+        CHECK(buffer[4] == 0xBBA5AD4A1F842E59u);
+        CHECK(buffer[5] == 0xFFEF8375D9EBCACAu);
+        CHECK(buffer[6] == 0x6C160DEED2F54C98u);
+        CHECK(buffer[7] == 0x8920AD648FC30A3Fu);
+    }
+
+    SECTION("Float4 from random state")
+    {
+        Graphyte::Random::RandomState state{};
+        Initialize(state, 0);
+
+        Graphyte::Maths::Float4A const sample = Next<Graphyte::Maths::Float4A>(state);
+
+        CHECK(Graphyte::FloatTraits<float>::ToBits(sample.X) == 0x3F4B75F2u);
+        CHECK(Graphyte::FloatTraits<float>::ToBits(sample.Y) == 0x3F19EC5Eu);
+        CHECK(Graphyte::FloatTraits<float>::ToBits(sample.Z) == 0x3E92AC88u);
+        CHECK(Graphyte::FloatTraits<float>::ToBits(sample.W) == 0x3F3F6E1Eu);
+
+
     }
 }

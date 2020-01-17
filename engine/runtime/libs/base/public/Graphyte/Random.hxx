@@ -64,23 +64,16 @@ namespace Graphyte::Random
     template <>
     inline float Next<float>(RandomState& state) noexcept
     {
-        uint32_t const sample
-            = FloatTraits<float>::One
-            | FloatTraits<float>::Mantissa & Generate32(state);
+        uint32_t const sample = Generate32(state);
 
-        float const value = FloatTraits<float>::FromBits(sample);
-        return value - 1.0f;
+        return FloatTraits<float>::Range12FromHighBits(sample) - 1.0f;
     }
 
     template <>
     inline double Next<double>(RandomState& state) noexcept
     {
-        uint64_t const sample
-            = FloatTraits<double>::One
-            | FloatTraits<double>::Mantissa & Generate64(state);
-
-        double const value = FloatTraits<double>::FromBits(sample);
-        return value - 1.0;
+        uint64_t const sample = Generate64(state);
+        return FloatTraits<double>::Range12FromHighBits(sample) - 1.0;
     }
 
     template <typename T>
@@ -100,6 +93,25 @@ namespace Graphyte::Random
         T const scale = (max - min);
         T const result = (sample * scale) + min;
         return result;
+    }
+
+    template <>
+    inline Maths::Float4A Next(RandomState& state) noexcept
+    {
+        uint64_t const sample0 = Generate64(state);
+        uint64_t const sample1 = Generate64(state);
+
+        uint32_t const c0_u32 = static_cast<uint32_t>(sample0);
+        uint32_t const c1_u32 = static_cast<uint32_t>(sample0 >> 32);
+        uint32_t const c2_u32 = static_cast<uint32_t>(sample1);
+        uint32_t const c3_u32 = static_cast<uint32_t>(sample1 >> 32);
+
+        return {
+            .X = FloatTraits<float>::Range12FromHighBits(c0_u32) - 1.0f,
+            .Y = FloatTraits<float>::Range12FromHighBits(c1_u32) - 1.0f,
+            .Z = FloatTraits<float>::Range12FromHighBits(c2_u32) - 1.0f,
+            .W = FloatTraits<float>::Range12FromHighBits(c3_u32) - 1.0f,
+        };
     }
 
     template <>

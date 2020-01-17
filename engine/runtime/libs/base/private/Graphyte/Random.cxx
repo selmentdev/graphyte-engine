@@ -30,7 +30,7 @@ namespace Graphyte::Random
 
     extern BASE_API uint64_t Generate64(RandomState& state) noexcept
     {
-        uint64_t const result = RotateLeft<uint64_t>(state.State[0] + state.State[3], 23) + state.State[0];
+        uint64_t const result = RotateLeft<uint64_t>(state.State[1] * 5, 7) * 9;
 
         uint64_t const t = state.State[1] << 17;
 
