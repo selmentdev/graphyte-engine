@@ -152,6 +152,13 @@ namespace Graphyte
         {
             return Layout{ .AsFloat32 = value }.AsUInt32;
         }
+
+        static constexpr float Range12FromHighBits(uint32_t value) noexcept
+        {
+            uint32_t const u = One | (value >> (ExponentBits + 1));
+            float const f = FromBits(u);
+            return f;
+        }
     };
 
 
@@ -225,6 +232,13 @@ namespace Graphyte
         static constexpr uint64_t ToBits(double value) noexcept
         {
             return Layout{ .AsFloat64 = value }.AsUInt64;
+        }
+
+        static constexpr double Range12FromHighBits(uint64_t value) noexcept
+        {
+            uint64_t const u = One | (value >> (ExponentBits + 1));
+            double const f = FromBits(u);
+            return f;
         }
     };
 }

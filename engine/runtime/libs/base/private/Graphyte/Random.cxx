@@ -28,9 +28,9 @@ namespace Graphyte::Random
         state.State[3] = Impl::SplitMix64(seed);
     }
 
-    extern BASE_API uint64_t Generate(RandomState& state) noexcept
+    extern BASE_API uint64_t Generate64(RandomState& state) noexcept
     {
-        uint64_t const result = RotateLeft<uint64_t>(state.State[0] + state.State[3], 23) + state.State[0];
+        uint64_t const result = RotateLeft<uint64_t>(state.State[1] * 5, 7) * 9;
 
         uint64_t const t = state.State[1] << 17;
 
@@ -43,6 +43,23 @@ namespace Graphyte::Random
         state.State[3] = RotateLeft<uint64_t>(state.State[3], 45);
 
         return result;
+    }
+
+    extern BASE_API void Generate(RandomState& state, notstd::span<std::byte> buffer) noexcept
+    {
+        while (buffer.size() >= sizeof(uint64_t))
+        {
+            uint64_t const sample = Generate64(state);
+            memcpy(buffer.data(), &sample, sizeof(uint64_t));
+
+            buffer.remove_prefix(sizeof(uint64_t));
+        }
+
+        if (!buffer.empty())
+        {
+            uint64_t const sample = Generate64(state);
+            memcpy(buffer.data(), &sample, buffer.size());
+        }
     }
 
     extern BASE_API void Skip2p128(RandomState& state) noexcept
@@ -71,7 +88,7 @@ namespace Graphyte::Random
                     s3 ^= state.State[3];
                 }
 
-                Generate(state);
+                Generate64(state);
             }
         }
 
@@ -102,7 +119,7 @@ namespace Graphyte::Random
                     s3 ^= state.State[3];
                 }
 
-                Generate(state);
+                Generate64(state);
             }
         }
 
