@@ -43,3 +43,9 @@ Makefile
 *.so
 *.so.recipe
 *.json
+*.fdb
+*.pch
+*.cache
+*.i
+build/
+build-x/

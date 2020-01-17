@@ -4,6 +4,10 @@
 #include <Graphyte/System.hxx>
 #include <Graphyte/Status.hxx>
 
+
+#pragma warning(push)
+#pragma warning(disable : 4263 4264)
+
 #include <winerror.h>
 
 #include <d3d10_1.h>
@@ -30,6 +34,7 @@
 
 #include <winnt.h>
 
+#pragma warning(pop)
 
 #define XAUDIO2_E_INVALID_CALL          0x88960001
 #define XAUDIO2_E_XMA_DECODER_ERROR     0x88960002

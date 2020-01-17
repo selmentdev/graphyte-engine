@@ -1,0 +1,256 @@
+// Compiler settings
+.VSBasePath = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools'
+.WindowsSDKBasePath = ''
+
+.CommonCompilerOptions
+    = ' /Z7'           // Debug format (in .obj)
+    + ' /c'            // Compile only
+    + ' /nologo'       // No compiler spam
+    + ' /W4'           // Warning level 4
+    + ' /WX'           // Warnings as errors
+    + ' /std:c++latest'
+    + ' /diagnostics:column'
+    + ' /O2'
+    + ' /Ob2'
+    + ' /Oi'
+    + ' /GL'
+    + ' /D _WINDLL'
+    + ' /D _UNICODE'
+    + ' /D UNICODE'
+    + ' /GF'
+    + ' /Gm-'
+    + ' /EHa'
+    + ' /MD'
+    + ' /GS-'
+    + ' /Gy'
+    + ' /arch:AVX'
+    + ' /fp:fast'
+    + ' /Zc:wchar_t'
+    + ' /Zc:forScope'
+    + ' /Zc:inline'
+    + ' /GR-'
+    + ' /std:c++latest'
+    + ' /Gd'
+    + ' /TP'
+    + ' /wd4263'
+    + ' /wd4264'
+    + ' /wd4275'
+    + ' /FC'
+    + ' /errorReport:queue'
+    + ' /permissive-'
+    + ' /bigobj'
+    + ' /Zc:char8_t'
+    + ' /Zc:inline'
+    + ' /Zc:throwingNew'
+    + ' /Zc:__cplusplus'
+    + ' /Zc:ternary'
+    + ' /Zc:referenceBinding'
+    + ' /Zc:externConstexpr'
+
+.IncludeDirectories =
+{
+    'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.24.28314\include',
+    'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.24.28314\atlmfc\include',
+    'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\VS\include',
+    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared',
+    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt',
+    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um',
+    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\winrt',
+}
+
+ForEach(.IncludeDirectory in .IncludeDirectories)
+{
+    ^CommonCompilerOptions + ' /I"$IncludeDirectory$"'
+}
+
+.Defines = {
+    'FMT_SHARED=1'
+    'FMT_EXCEPTIONS=0'
+    '__STDC_WANT_LIB_EXT1__=1'
+    '__STDINT_MACROS'
+    '__STDINT_LIMITS'
+    '__STDC_CONSTANT_MACROS'
+    '__STDC_FORMAT_MACROS'
+    '__STDC_LIMIT_MACROS'
+    'GRAPHYTE_MATH_NO_INTRINSICS=1'
+    '_HAS_EXCEPTIONS=0'
+    '_HAS_ITERATOR_DEBUGGING=0'
+    '_SCL_SECURE=0'
+    '_SECURE_SCL=0'
+    '_CRT_SECURE_INVALID_PARAMETER='
+    'GX_CONFIG_DEBUG'
+    'NDEBUG'
+    'GRAPHYTE_STATIC_BUILD=0'
+    'module_base_EXPORTS=1'
+}
+
+ForEach(.Define in .Defines)
+{
+    ^CommonCompilerOptions + ' /D $Define$'
+}
+
+.Includes = {
+    'engine/runtime/libs/base/public/'
+    'engine/runtime/libs/base/private/'
+    'sdks/fmt/include/'
+    'sdks/lz4/include/'
+    'engine/include/'
+}
+
+ForEach(.Include in .Includes)
+{
+    ^CommonCompilerOptions + ' /I"$Include$"'
+}
+
+.Compiler           = '$VSBasePath$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\cl.exe'
+
+
+
+//.GraphyteEnablePrecompiledHeaders = [
+//    .PCHOptions + ' /Fp"%2"'
+//]
+
+.CompilerOptions    = ' $CommonCompilerOptions$ "%1" /Fo"%2"'
+.PCHOptions         = ' $CommonCompilerOptions$ "%1" /Fo"%3"'
+
+.Linker             = '$VSBasePath$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\link.exe'
+.LinkerOptions      = ' /OUT:"%2"'     // Output
+                    + ' "%1"'          // Input
+                    + ' /WX'           // Warnings as errors
+                    + ' /NOLOGO'       // No linker spam
+                    + ' /DEBUG'        // Keep debug info when linking
+                    //+ ' /NODEFAULTLIB' // We'll specify the libs explicitly
+                    + ' /DYNAMICBASE'
+
+
+.SolutionConfig_Debug = [
+    .Platform = 'x64'
+    .Config = 'Debug'
+    .Target = 'base-lib'
+]
+
+.SolutionConfig_Release = [
+    .Platform = 'x64'
+    .Config = 'Release'
+    .Target = 'base-lib'
+]
+
+.SolutionConfig_Profile = [
+    .Platform = 'x64'
+    .Config = 'Profile'
+    .Target = 'base-lib'
+]
+
+.SolutionConfig_Checked = [
+    .Platform = 'x64'
+    .Config = 'Checked'
+    .Target = 'base-lib'
+]
+
+RemoveDir( 'base-dll-clean' )
+{
+  .RemovePaths = 'build-x/output/private/'
+}
+
+
+Unity('base-lib-unity')
+{
+    //.UnityPCH = 'Base.pch.hxx'
+    .UnityInputPath = 'engine/runtime/libs/base'
+    .UnityInputPattern = '*.cxx'
+    .UnityOutputPath = 'build-x/output-unity'
+    .UnityInputExcludePattern = {
+        '*Linux_*.cxx'
+        '*Linux.*.cxx'
+        '*Posix.*.cxx'
+        '*Android.*.cxx'
+    }
+}
+
+
+ObjectList('base-lib')
+{
+    .CompilerInputUnity = 'base-lib-unity'
+    .CompilerOutputPath = 'build-x/output'
+
+    //.PCHInputFile = 'engine/runtime/libs/base/private/Base.pch.cxx'
+    //.PCHOutputFile = 'build-x/output/Base.pch'
+    //.PCHOptions + ' /Yc"Base.pch.hxx"'
+    //.CompilerOptions + ' /Yu"Base.pch.hxx" /Fp"$PCHOutputFile$"'
+}
+
+VCXProject('base')
+{
+    .ProjectOutput = 'base.vcxproj'
+    .ProjectInputPaths = {
+        'engine/runtime/libs/base'
+    }
+
+    .OutputDirectory = 'build-x/out-dir'
+    .IntermediateDirectory = 'build-x/obj-dir'
+
+    .ProjectBasePath = 'engine/runtime/libs/base'
+    .ProjectAllowedFileExtensions = {
+        '*.bff'
+        '*.cxx'
+        '*.hxx'
+        '*.c'
+        '*.h'
+    }
+
+    .ProjectPatternToExclude = {
+        '*Linux_*.cxx'
+        '*Linux.*.cxx'
+        '*Posix.*.cxx'
+        '*Android.*.cxx'
+    }
+    .ProjectConfigs = {
+        .SolutionConfig_Debug,
+        .SolutionConfig_Release,
+        .SolutionConfig_Profile,
+        .SolutionConfig_Checked,
+    }
+    .PlatformToolset = 'v141'
+
+    .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor ^$(ProjectName)-dll'
+    .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor ^$(ProjectName)-dll'
+    .ProjectCleanCommand = 'fbuild -ide ^$(ProjectName)-dll-clean'
+    //.ProjectBuildCommand = 'fbuild -ide -dist -cache ^$(ProjectName)-^$(Platform)-^$(Configuration)'
+    //.ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache ^$(ProjectName)-^$(Platform)-^$(Configuration)'
+}
+
+
+DLL('base-dll')
+{
+    .LinkerOutput = 'build-x/baseoutput.dll'
+    .Libraries = { 'base-lib' }
+    .LinkerOptions
+        + ' /DLL'
+}
+
+VSSolution('graphyte')
+{
+    .SolutionOutput = 'gen.sln'
+    .SolutionConfigs = {
+        .SolutionConfig_Debug,
+        .SolutionConfig_Release,
+        .SolutionConfig_Profile,
+        .SolutionConfig_Checked,
+    }
+    .SolutionProjects = {
+        'base'
+    }
+}
+
+RemoveDir('graphyte-clean')
+{
+    .RemovePaths = 'build-x'
+}
+
+Alias('all') {
+    .Targets = { 'base-lib' }
+}
+
+Alias('clean') {
+    .Targets = { 'graphyte-clean' }
+}
