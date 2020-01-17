@@ -2,12 +2,73 @@
 .VSBasePath = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools'
 .WindowsSDKBasePath = ''
 
+.Graphyte_Includes = {
+    'sdks/fmt/include/'
+    'engine/include/'
+}
+
+.Graphyte_Platforms = {
+    'Windows'
+    'Linux'
+    'Android'
+}
+
+.Graphyte_Architectures = {
+    'x64'
+    'x86'
+    'arm'
+    'aarch64'
+}
+
+.Graphyte_Configurations = {
+    'Debug'
+    'Chedked'
+    'Profile'
+    'Release'
+}
+
+.Graphyte_Defines = {
+    'FMT_SHARED=1'
+    'FMT_EXCEPTIONS=0'
+    '__STDC_WANT_LIB_EXT1__=1'
+    '__STDINT_MACROS'
+    '__STDINT_LIMITS'
+    '__STDC_CONSTANT_MACROS'
+    '__STDC_FORMAT_MACROS'
+    '__STDC_LIMIT_MACROS'
+    '_HAS_EXCEPTIONS=0'
+    '_HAS_ITERATOR_DEBUGGING=0'
+    '_SCL_SECURE=0'
+    '_SECURE_SCL=0'
+    '_CRT_SECURE_INVALID_PARAMETER='
+    'NDEBUG'
+    'GRAPHYTE_MATH_NO_INTRINSICS=1'
+    'GRAPHYTE_STATIC_BUILD=0'
+}
+
+.Graphyte_Defines_Debug = {
+    'GX_CONFIG_DEBUG=1'
+}
+
+.Graphyte_Defines_Release = {
+    'GX_CONFIG_RELEASE=1'
+}
+
+.Graphyte_Defines_Checked = {
+    'GX_CONFIG_CHECKED=1'
+}
+
+.Graphyte_Defines_Profile = {
+    'GX_CONFIG_PROFILE'
+}
+
+
 .CommonCompilerOptions
     = ' /Z7'           // Debug format (in .obj)
     + ' /c'            // Compile only
     + ' /nologo'       // No compiler spam
     + ' /W4'           // Warning level 4
-    + ' /WX'           // Warnings as errors
+    //+ ' /WX'           // Warnings as errors
     + ' /std:c++latest'
     + ' /diagnostics:column'
     + ' /O2'
@@ -63,30 +124,33 @@ ForEach(.IncludeDirectory in .IncludeDirectories)
     ^CommonCompilerOptions + ' /I"$IncludeDirectory$"'
 }
 
-.Defines = {
-    'FMT_SHARED=1'
-    'FMT_EXCEPTIONS=0'
-    '__STDC_WANT_LIB_EXT1__=1'
-    '__STDINT_MACROS'
-    '__STDINT_LIMITS'
-    '__STDC_CONSTANT_MACROS'
-    '__STDC_FORMAT_MACROS'
-    '__STDC_LIMIT_MACROS'
-    'GRAPHYTE_MATH_NO_INTRINSICS=1'
-    '_HAS_EXCEPTIONS=0'
-    '_HAS_ITERATOR_DEBUGGING=0'
-    '_SCL_SECURE=0'
-    '_SECURE_SCL=0'
-    '_CRT_SECURE_INVALID_PARAMETER='
-    'GX_CONFIG_DEBUG'
-    'NDEBUG'
-    'GRAPHYTE_STATIC_BUILD=0'
+ForEach(.Include in .Graphyte_Includes)
+{
+    ^CommonCompilerOptions + ' /I"$Include$"'
+}
+
+.ProjectDefines = {
     'module_base_EXPORTS=1'
 }
 
-ForEach(.Define in .Defines)
+ForEach(.Define in .ProjectDefines)
 {
     ^CommonCompilerOptions + ' /D $Define$'
+}
+
+ForEach(.Define in .Graphyte_Defines)
+{
+    ^CommonCompilerOptions + ' /D $Define$'
+}
+
+.SolutionConfigsX = { 'Checked', 'Debug', 'Release', 'Profile' }
+
+ForEach(.Config in .SolutionConfigsX)
+{
+    ForEach(.Define in .'Graphyte_Defines_$Config$')
+    {
+        ^CommonCompilerOptions + ' /D $Define$'
+    }
 }
 
 .Includes = {
@@ -112,6 +176,9 @@ ForEach(.Include in .Includes)
 
 .CompilerOptions    = ' $CommonCompilerOptions$ "%1" /Fo"%2"'
 .PCHOptions         = ' $CommonCompilerOptions$ "%1" /Fo"%3"'
+
+.Librarian          = '$VSBasePath$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\lib.exe'
+.LibrarianOptions  = '/NOLOGO %1 /OUT:"%2"'
 
 .Linker             = '$VSBasePath$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\link.exe'
 .LinkerOptions      = ' /OUT:"%2"'     // Output
@@ -228,6 +295,92 @@ DLL('base-dll')
         + ' /DLL'
 }
 
+
+//--------------------------------------------------------------------------------------------------
+// SDKs
+//--------------------------------------------------------------------------------------------------
+
+.AllSdks = {}
+{
+    .Sdks = {
+        //'sdks/fmt'
+        'sdks/lz4'
+        'sdks/glad'
+    }
+
+    ForEach(.Sdk in .Sdks)
+    {
+        .LocalBasePath = '$Sdk$'
+
+        .ProjectSources = {}
+        .ProjectFiles = {}
+        .ProjectFiles_Android = {}
+        .ProjectFiles_Linux = {}
+        .ProjectFiles_Windows = {}
+
+        #include "$Sdk$/project.bff"
+
+        .LocalSources = {}
+        ForEach(.Source in .ProjectSources)
+        {
+            ^LocalSources + '$LocalBasePath$/$Source$'
+        }
+
+        .LocalFiles = {}
+        ForEach(.Source in .ProjectFiles)
+        {
+            ^LocalFiles + '$LocalBasePath$/$Source$'
+        }
+
+        .LocalIncludes = ''
+        ForEach(.Include in .ProjectIncludes)
+        {
+            ^LocalIncludes + ' /I"$LocalBasePath$/$Include$"'
+        }
+
+        ForEach(.Platform in .Graphyte_Platforms)
+        {
+            ForEach(.Architecture in .Graphyte_Architectures)
+            {
+                ForEach(.Config in .Graphyte_Configurations)
+                {
+                    .Local_Target_Prefix = '$Platform$-$Architecture$-$Config$-$ProjectName$'
+
+                    .LocalSources + .'ProjectFiles_$Platform$'
+
+                    ObjectList('$Local_Target_Prefix$-unity')
+                    {
+                        //.UnityPCH = 'Base.pch.hxx'
+                        .CompilerInputPath = .LocalSources
+                        .CompilerInputFiles = .LocalFiles
+                        .CompilerInputPattern = { '*.cxx', '*.c' }
+                        .CompilerOutputPath = 'build-x/output-unity/$Local_Target_Prefix$'
+                        .CompilerInputExcludePattern = {
+                            '*Linux_*.cxx'
+                            '*Linux.*.cxx'
+                            '*Posix.*.cxx'
+                            '*Android.*.cxx'
+                        }
+                        .CompilerOptions = .CompilerOptions + .LocalIncludes
+                    }
+
+                    Library('$Local_Target_Prefix$-lib')
+                    {
+                        .LibrarianAdditionalInputs = '$Local_Target_Prefix$-unity'
+                        .CompilerOutputPath = 'build-x/sdks/$Local_Target_Prefix$/output'
+                        .LibrarianOutput = 'build-x/sdks/$Local_Target_Prefix$/output/$ProjectName$.lib'
+                        .CompilerOptions = .CompilerOptions + .LocalIncludes
+                    }
+
+                    Print(.LocalIncludes)
+
+                    ^AllSdks + '$Local_Target_Prefix$-lib'
+                }
+            }
+        }
+    }
+}
+
 VSSolution('graphyte')
 {
     .SolutionOutput = 'gen.sln'
@@ -253,4 +406,8 @@ Alias('all') {
 
 Alias('clean') {
     .Targets = { 'graphyte-clean' }
+}
+
+Alias('sdks') {
+    .Targets = .AllSdks
 }

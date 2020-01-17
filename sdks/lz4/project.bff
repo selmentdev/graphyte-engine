@@ -1,0 +1,11 @@
+.ProjectType = 'c'
+.ProjectKind = 'static'
+.ProjectName = 'lz4'
+
+.ProjectSources = {
+    'source'
+}
+
+.ProjectIncludes = {
+    'include'
+}

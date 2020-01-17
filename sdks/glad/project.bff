@@ -1,0 +1,23 @@
+.ProjectType = 'c'
+.ProjectKind = 'static'
+.ProjectName = 'glad'
+
+.ProjectFiles = {
+    'source/glad.c'
+}
+
+.ProjectFiles_Android = {
+    'source/glad_egl.c'
+}
+
+.ProjectFiles_Linux = {
+    'source/glad_glx.c'
+}
+
+.ProjectFiles_Windows = {
+    'source/glad_wgl.c'
+}
+
+.ProjectIncludes = {
+    'include'
+}
