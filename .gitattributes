@@ -31,3 +31,7 @@
 tools/premake/linux-x86_64/premake5 binary
 tools/premake/premake5.exe binary
 tools/premake/linux-aarch64/premake5 binary
+tools/fastbuild/linux-x86_64/fbuild binary
+tools/fastbuild/linux-x86_64/fbuildworker binary
+tools/fastbuild/windows-x64/FBuild.exe binary
+tools/fastbuild/windows-x64/FBuildWorker.exe binary

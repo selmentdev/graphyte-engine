@@ -113,7 +113,7 @@ namespace Graphyte
                 uvalue2 += 0xC8000000u;
             }
 
-            result = ((uvalue2 + 0x0FFFu + ((uvalue2 >> 13u) & 1u)) >> 13u) & ~FloatTraits<Half>::Sign;
+            result = ((uvalue2 + 0x0FFFu + ((uvalue2 >> 13u) & 1u)) >> 13u) & FloatTraits<Half>::MaskAbs;
         }
 
         return Graphyte::Half{ .Value = static_cast<uint16_t>(result | sign) };
