@@ -33,7 +33,7 @@
 bin
 obj
 game/logs
-#engine/include/Graphyte/Build.Version.hxx
+engine/include/Graphyte/Build.Version.hxx
 Makefile
 *.make
 *.mk
