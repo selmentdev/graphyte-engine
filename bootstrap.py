@@ -29,7 +29,8 @@ def get_latest_vs_path():
     return output_of([
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere",
         "-latest",
-        "-property", "installationPath"
+        "-property", "installationPath",
+        "-products", "*"
     ])
 
 def emit_header(file):
@@ -87,7 +88,7 @@ def get_installed_windows_kits():
     return kits
 
 def emit_compiler_msvc():
-    with open('scripts/compiler.msvc.bff', 'w') as file:
+    with open('scripts/compiler.msvc.bff', 'w+') as file:
         emit_header(file)
 
         try:
@@ -98,7 +99,7 @@ def emit_compiler_msvc():
 
         try:
             with open(base_path + '/VC/Auxiliary/Build/Microsoft.VCToolsVersion.default.txt') as version:
-                file.write(".ToolsetMsvcVersion = '{}'".format(version.read().splitlines()[0]))
+                file.write(".ToolsetMsvcVersion = '{}'\n".format(version.read().splitlines()[0]))
         except:
             file.write(".ToolsetMsvcVersion = 'Unknown Version'")
 
@@ -114,7 +115,8 @@ def emit_compiler_msvc():
 
 
 def emit_version():
-    with open('engine/include/Graphyte/Build.Version.hxx', 'w') as file:
+    os.makedirs('./engine/include/Graphyte', exist_ok=True)
+    with open('engine/include/Graphyte/Build.Version.hxx', 'w+') as file:
         os_version = platform.win32_ver()[1]
         os_host = platform.system()
 
