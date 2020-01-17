@@ -373,8 +373,13 @@ VCXProject('base')
             {
                 ForEach(.Config in .Graphyte_Configurations)
                 {
-                    .Local_Output_Dir = '$Platform$-$Architecture$-$Config$'
                     .Local_Target_Prefix = '$Platform$-$Architecture$-$Config$-$ProjectName$'
+                    .Local_ObjDir = 'build-x/obj/$Platform$-$Architecture$-$Config$/$ProjectName$'
+                    .Local_LibDir = 'build-x/lib/$Platform$-$Architecture$-$Config$/'
+                    .Local_TmpDir = 'build-x/tmp/$Platform$-$Architecture$-$Config$/'
+                    .Local_BinDir = 'build-x/bin/$Platform$-$Architecture$-$Config$/'
+
+                    .Local_Output_Dir = '$Platform$-$Architecture$-$Config$/$ProjectName$'
 
                     .LocalSources + .'ProjectFiles_$Platform$'
 
@@ -386,7 +391,7 @@ VCXProject('base')
                         .CompilerInputPath = .LocalSources
                         .CompilerInputFiles = .LocalFiles
                         .CompilerInputPattern = { '*.cxx', '*.c', '*.cc' }
-                        .CompilerOutputPath = 'build-x/obj/sdks/$Local_Target_Prefix$'
+                        .CompilerOutputPath = .Local_ObjDir
                         .CompilerInputExcludePattern = {
                             '*Linux_*.cxx'
                             '*Linux.*.cxx'
@@ -402,8 +407,8 @@ VCXProject('base')
                         Library('$Local_Target_Prefix$-lib')
                         {
                             .LibrarianAdditionalInputs = '$Local_Target_Prefix$-unity'
-                            .CompilerOutputPath = 'build-x/obj/sdks/$Local_Target_Prefix$'
-                            .LibrarianOutput = 'build-x/lib/$Local_Output_Dir$/$ProjectName$.lib'
+                            .CompilerOutputPath = .Local_ObjDir
+                            .LibrarianOutput = '$Local_LibDir$/$ProjectName$.lib'
                             .CompilerOptions = .LocalCompilerOptions
                         }
                     }
@@ -414,11 +419,11 @@ VCXProject('base')
                             .Libraries = {
                                 '$Local_Target_Prefix$-unity'
                             }
-                            .LinkerOutput = 'build-x/bin/$Local_Output_Dir$/$ProjectName$.dll'
+                            .LinkerOutput = '$Local_BinDir$/$ProjectName$.dll'
                             .LinkerOptions
                                 + ' /DLL'
                                 + ' msvcprt.lib'
-                            .CompilerOutputPath = 'build-x/obj/sdks/$Local_Target_Prefix$'
+                            .CompilerOutputPath = .Local_ObjDir
                         }
                     }
 
