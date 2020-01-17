@@ -1,0 +1,16 @@
+.ProjectType = 'c'
+.ProjectKind = 'shared'
+.ProjectName = 'fmt'
+
+.ProjectSources = {
+    'source'
+}
+
+.ProjectIncludes = {
+    'include'
+}
+
+.ProjectDefines = {
+    'FMT_EXCEPTIONS=0'
+    'FMT_EXPORT=1'
+}
