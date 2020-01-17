@@ -1,0 +1,21 @@
+#include "compiler.msvc.bff"
+
+.ToolsetMsvc2019 = [
+    .LangResId = '1033'
+    .ToolsetRoot = '$ToolsetMsvcRoot$\VC\Tools\MSVC\$ToolsetMsvcVersion$\'
+    .ToolsetRootBin = '$ToolsetRoot$\bin\HostX64\x64'
+    
+    .ToolsetCompiler = '$ToolsetRootBin$/cl.exe'
+    .ToolsetLinker = '$ToolsetRootBin$/link.exe'
+    .ToolsetLibrarian = '$ToolsetRootBin$/lib.exe'
+    .ToolsetAssembly = '$ToolsetRootBin$/ml64.exe'
+
+    .ToolsetIncludes = {
+        '$ToolsetRoot$\include',
+        '$ToolsetRoot$\atlmfc\include',
+        '$ToolsetMsvcRoot$\VC\Auxiliary\VS\include',
+    }
+    .ToolsetLibs = {
+        '$ToolsetRoot$\lib\x64'
+    }
+]

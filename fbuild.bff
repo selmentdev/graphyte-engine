@@ -1,5 +1,6 @@
 // Compiler settings
-.VSBasePath = 'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools'
+#include "scripts/compilers.bff"
+
 .WindowsSDKBasePath = ''
 
 .Graphyte_Includes = {
@@ -109,9 +110,6 @@
 
 .IncludeDirectories =
 {
-    'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.24.28314\include',
-    'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.24.28314\atlmfc\include',
-    'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\VS\include',
     'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared',
     'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt',
     'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um',
@@ -119,9 +117,15 @@
 }
 
 .LinkerDirectories = {
-    'C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.24.28314\lib\x64'
     'C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\x64'
     'C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\ucrt\x64'
+}
+
+Using(.ToolsetMsvc2019)
+
+ForEach(.Directory in .ToolsetIncludes)
+{
+    ^CommonCompilerOptions + ' /I"$Directory$"'
 }
 
 ForEach(.IncludeDirectory in .IncludeDirectories)
@@ -170,7 +174,7 @@ ForEach(.Include in .Includes)
     ^CommonCompilerOptions + ' /I"$Include$"'
 }
 
-.Compiler           = '$VSBasePath$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\cl.exe'
+.Compiler           = '$ToolsetMsvcRoot$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\cl.exe'
 
 
 
@@ -181,10 +185,10 @@ ForEach(.Include in .Includes)
 .CompilerOptions    = ' $CommonCompilerOptions$ "%1" /Fo"%2"'
 .PCHOptions         = ' $CommonCompilerOptions$ "%1" /Fo"%3"'
 
-.Librarian          = '$VSBasePath$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\lib.exe'
+.Librarian          = '$ToolsetMsvcRoot$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\lib.exe'
 .LibrarianOptions  = '/NOLOGO %1 /OUT:"%2"'
 
-.Linker             = '$VSBasePath$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\link.exe'
+.Linker             = '$ToolsetMsvcRoot$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\link.exe'
 .LinkerOptions      = ' /OUT:"%2"'     // Output
                     + ' "%1"'          // Input
                     + ' /WX'           // Warnings as errors
@@ -192,6 +196,11 @@ ForEach(.Include in .Includes)
                     + ' /DEBUG'        // Keep debug info when linking
                     //+ ' /NODEFAULTLIB' // We'll specify the libs explicitly
                     + ' /DYNAMICBASE'
+
+ForEach(.Directory in .ToolsetLibs)
+{
+    ^LinkerOptions + ' /LIBPATH:"$Directory$"'
+}
 
 ForEach(.Path in .LinkerDirectories)
 {
@@ -285,7 +294,7 @@ VCXProject('base')
         .SolutionConfig_Profile,
         .SolutionConfig_Checked,
     }
-    .PlatformToolset = 'v141'
+    .PlatformToolset = 'v142'
 
     .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor ^$(ProjectName)-dll'
     .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor ^$(ProjectName)-dll'
@@ -385,7 +394,7 @@ VCXProject('base')
 
                     .LocalCompilerOptions = .CompilerOptions + .LocalIncludes + .LocalDefines
 
-                    ObjectList('$Local_Target_Prefix$-unity')
+                    ObjectList('$Local_Target_Prefix$-sources')
                     {
                         //.UnityPCH = 'Base.pch.hxx'
                         .CompilerInputPath = .LocalSources
@@ -406,7 +415,7 @@ VCXProject('base')
                     {
                         Library('$Local_Target_Prefix$-lib')
                         {
-                            .LibrarianAdditionalInputs = '$Local_Target_Prefix$-unity'
+                            .LibrarianAdditionalInputs = '$Local_Target_Prefix$-sources'
                             .CompilerOutputPath = .Local_ObjDir
                             .LibrarianOutput = '$Local_LibDir$/$ProjectName$.lib'
                             .CompilerOptions = .LocalCompilerOptions
@@ -417,7 +426,7 @@ VCXProject('base')
                         DLL('$Local_Target_Prefix$-lib')
                         {
                             .Libraries = {
-                                '$Local_Target_Prefix$-unity'
+                                '$Local_Target_Prefix$-sources'
                             }
                             .LinkerOutput = '$Local_BinDir$/$ProjectName$.dll'
                             .LinkerOptions
