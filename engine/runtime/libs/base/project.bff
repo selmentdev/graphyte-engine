@@ -5,6 +5,7 @@
         .UnityInputPath = '$ProjectPath$'
         .UnityInputPattern = { '*.cxx' }
         .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+        .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
 
         Unity('$ProjectName$-Unity-Windows') {
             .UnityInputExcludePattern = {
@@ -27,6 +28,8 @@
         }
     }
 
+    .VcxProjectConfigs = {}
+
     // this module applies only on windows-x64-msvc build
     ForEach(.Config in .Configs_Windows_MSVC_x64)
     {
@@ -47,5 +50,63 @@
                 + ' /D_WINDLL'
                 + ' /Dmodule_base_EXPORTS=1'
         }
+
+        DLL('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
+            .LinkerOutput = '$OutputBase$/bin/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.dll'
+            .Libraries = {
+                'sdk.fmt-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'sdk.lz4-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            }
+            .LinkerOptions
+                + ' /DLL'
+                + ' msvcprt.lib'
+                + ' ntdll.lib'
+                + ' comctl32.lib'
+                + ' dbghelp.lib'
+                + ' iphlpapi.lib'
+                + ' ws2_32.lib'
+                + ' dwmapi.lib'
+                + ' xinput.lib'
+                + ' xaudio2.lib'
+                + ' advapi32.lib'
+                + ' gdi32.lib'
+                + ' shell32.lib'
+                + ' ole32.lib'
+                + ' Faultrep.lib'
+                + ' Bcrypt.lib'
+                + ' user32.lib'
+                + ' Mincore.lib'
+        }
+
+        .ProjectConfig = [
+            .Platform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+            .Config = '$Config$'
+            .Target = '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        ]
+        
+        ^VcxProjectConfigs + .ProjectConfig
     }
+
+    VCXProject('$ProjectName$') {
+        .ProjectOutput = '$ProjectName$.vcxproj'
+        .ProjectInputPaths = { .ProjectPath }
+        //.ProjectOutputDirectory = 
+        //>intermediateDirectory = 
+        .ProjectBasePath = .ProjectPath
+        .ProjectAllowedFileExtensions = {
+            '*.bff'
+            '*.cxx'
+            '*.hxx'
+            '*.c'
+            '*.h'
+        }
+        .ProjectConfigs = .VcxProjectConfigs
+        .PlatformToolset = 'v142'
+        .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor ^$(ProjectName)-^$(PlatformName)-^$(Configuration)'
+        .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor ^$(ProjectName)-^$(PlatformName)-^$(Configuration)'
+        .ProjectCleanCommand = 'fbuild -ide ^$(ProjectName)-^$(Configuration)-Clean'
+    }
+
+    ^GraphyteProjects + .ProjectName
 }

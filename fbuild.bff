@@ -2,12 +2,48 @@
 #include "scripts/configs.bff"
 
 
+.SolutionConfigs = {}
+{
+
+    ForEach(.Config in .Configs)
+    {
+        Using(.Config)
+        
+        .ProjectConfig = [
+                .Platform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+                .Config = '$Config$'
+        ]
+        ^SolutionConfigs + .ProjectConfig
+    }
+}
+
 .OutputBase = 'build'
 
+.AllObjects = {}
+
+.SdkProjects = {}
+
+#include "sdks/lz4/project.bff"
+#include "sdks/fmt/project.bff"
+
+
+.GraphyteProjects = {}
+
 #include "engine/runtime/libs/base/project.bff"
+#include "engine/runtime/libs/geometry/project.bff"
+#include "engine/runtime/libs/graphics/project.bff"
+#include "engine/runtime/libs/launch/project.bff"
 
+VSSolution('graphyte')
+{
+    .SolutionOutput = 'gen.sln'
+    .SolutionProjects = .GraphyteProjects + .SdkProjects
+    .SolutionBuildProject = .GraphyteProjects + .SdkProjects
+}
 
-
+Alias('all') {
+    .Targets = .AllObjects
+}
 
 
 

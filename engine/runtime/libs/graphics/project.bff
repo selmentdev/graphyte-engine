@@ -1,0 +1,98 @@
+{
+    .ProjectName = 'com.graphyte.graphics'
+    .ProjectPath = 'engine/runtime/libs/graphics'
+    {
+        .UnityInputPath = '$ProjectPath$'
+        .UnityInputPattern = { '*.cxx' }
+        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+        .UnityOutputPattern = '$ProjectName$-unity*.cxx'
+
+        Unity('$ProjectName$-Unity-Windows') {
+            .UnityInputExcludePattern = {
+                '*Linux.*.cxx'
+                '*Posix.*.cxx'
+                '*Android.*.cxx'
+            }
+        }
+        Unity('$ProjectName$-Unity-Linux') {
+            .UnityInputExcludePattern = {
+                '*Windows.*.cxx'
+                '*Android.*.cxx'
+            }
+        }
+        Unity('$ProjectName$-Unity-Android') {
+            .UnityInputExcludePattern = {
+                '*Windows.*.cxx'
+                '*Linux.*.cxx'
+            }
+        }
+    }
+
+    .VcxProjectConfigs = {}
+
+    // this module applies only on windows-x64-msvc build
+    ForEach(.Config in .Configs_Windows_MSVC_x64)
+    {
+        Using(.Config)
+
+        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        {
+            .CompilerInputUnity = '$ProjectName$-Unity-Windows'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+
+            // Common Graphyte module include paths
+            .CompilerOptions
+                + ' /I"$ProjectPath$/private"'
+                + ' /I"$ProjectPath$/public"'
+                + ' /I"engine/runtime/libs/base/public"'
+                + ' /I"sdks/fmt/include"'
+                + ' /I"engine/include"'
+                + ' /D_WINDLL'
+                + ' /Dmodule_graphics_EXPORTS=1'
+        }
+
+        DLL('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
+            .LinkerOutput = '$OutputBase$/bin/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.dll'
+            .Libraries = {
+                'com.graphyte.base-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'sdk.fmt-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            }
+            .LinkerOptions
+                + ' /DLL'
+                + ' msvcprt.lib'
+        }
+
+
+        .ProjectConfig = [
+            .Platform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+            .Config = '$Config$'
+            .Target = '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        ]
+        
+        ^VcxProjectConfigs + .ProjectConfig
+    }
+
+    VCXProject('$ProjectName$') {
+        .ProjectOutput = '$ProjectName$.vcxproj'
+        .ProjectInputPaths = { .ProjectPath }
+        //.ProjectOutputDirectory = 
+        //>intermediateDirectory = 
+        .ProjectBasePath = .ProjectPath
+        .ProjectAllowedFileExtensions = {
+            '*.bff'
+            '*.cxx'
+            '*.hxx'
+            '*.c'
+            '*.h'
+        }
+        .ProjectConfigs = .VcxProjectConfigs
+        .PlatformToolset = 'v142'
+        .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor ^$(ProjectName)-^$(PlatformName)-^$(Configuration)'
+        .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor ^$(ProjectName)-^$(PlatformName)-^$(Configuration)'
+        .ProjectCleanCommand = 'fbuild -ide ^$(ProjectName)-^$(Configuration)-Clean'
+    }
+
+    Print(.ProjectName)
+    ^GraphyteProjects + .ProjectName
+}

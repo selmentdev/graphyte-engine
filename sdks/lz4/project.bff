@@ -1,11 +1,37 @@
-.ProjectType = 'c'
-.ProjectKind = 'static'
-.ProjectName = 'lz4'
+{
+    .ProjectName = 'sdk.lz4'
+    .ProjectPath = 'sdks/lz4'
 
-.ProjectSources = {
-    'source'
-}
+    {
+        .UnityInputPath = '$ProjectPath$'
+        .UnityInputPattern = { '*.c' }
+        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+        .UnityOutputPattern = '$ProjectName$-unity-*.c'
 
-.ProjectIncludes = {
-    'include'
+        Unity('$ProjectName$-Unity-Windows') { }
+        Unity('$ProjectName$-Unity-Linux') { }
+        Unity('$ProjectName$-Unity-Android') { }
+    }
+
+    ForEach(.Config in .Configs_Windows_MSVC_x64)
+    {
+        Using(.Config)
+
+        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        {
+            .CompilerInputUnity = '$ProjectName$-Unity-Windows'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+
+            // Common Graphyte module include paths
+            .CompilerOptions
+                + ' /I"$ProjectPath$/source"'
+                + ' /I"$ProjectPath$/include"'
+        }
+
+        Library('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
+            .LibrarianAdditionalInputs = '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+            .LibrarianOutput = '$OutputBase$/lib/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.lib'
+        }
+    }
 }

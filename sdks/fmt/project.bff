@@ -1,16 +1,45 @@
-.ProjectType = 'c'
-.ProjectKind = 'shared'
-.ProjectName = 'fmt'
+{
+    .ProjectName = 'sdk.fmt'
+    .ProjectPath = 'sdks/fmt'
 
-.ProjectSources = {
-    'source'
-}
+    {
+        .UnityInputPath = '$ProjectPath$'
+        .UnityInputPattern = { '*.cc' }
+        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+        .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
 
-.ProjectIncludes = {
-    'include'
-}
+        Unity('$ProjectName$-Unity-Windows') { }
+        Unity('$ProjectName$-Unity-Linux') { }
+        Unity('$ProjectName$-Unity-Android') { }
+    }
 
-.ProjectDefines = {
-    'FMT_EXCEPTIONS=0'
-    'FMT_EXPORT=1'
+    ForEach(.Config in .Configs_Windows_MSVC_x64)
+    {
+        Using(.Config)
+
+        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        {
+            .CompilerInputUnity = '$ProjectName$-Unity-Windows'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+
+            // Common Graphyte module include paths
+            .CompilerOptions
+                + ' /I"$ProjectPath$/source"'
+                + ' /I"$ProjectPath$/include"'
+                + ' /D_WINDLL'
+                + ' /DFMT_EXCEPTIONS=1'
+                + ' /DFMT_EXPORT=1'
+        }
+
+        DLL('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
+            .LibrarianAdditionalInputs = '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+            .LinkerOutput = '$OutputBase$/bin/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.dll'
+            .Libraries = {
+                '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            }
+            .LinkerOptions
+                + ' /DLL'
+        }
+    }
 }

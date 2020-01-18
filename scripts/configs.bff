@@ -59,11 +59,11 @@
         + ' /Fo"%2"'
     .CompilerOptions + ' /Fo"%2"'
     .LibrarianOptions = ''
-        + ' /NODEFAULTLIB'
+        //+ ' /NODEFAULTLIB'
         + ' /NOLOGO'
         + ' /OUT:"%2" "%1"'
     .LinkerOptions = ''
-        + ' /NODEFAULTLIB'
+        //+ ' /NODEFAULTLIB'
         + ' /NOLOGO'
         + ' /OUT:"%2" "%1"'
         + ' /DEBUG'
@@ -168,7 +168,7 @@
     .Config_Windows_MSVC_ARMv8_Profile,
     .Config_Windows_MSVC_ARMv8_Release,
 }
-.Configs + .Configs_Windows_MSVC_ARMv8
+//.Configs + .Configs_Windows_MSVC_ARMv8
 
 .Config_Windows_Clang_x64 = {
     .Config_Windows_Clang_x64_Debug,
@@ -176,7 +176,7 @@
     .Config_Windows_Clang_x64_Profile,
     .Config_Windows_Clang_x64_Release
 }
-.Configs + .Config_Windows_Clang_x64
+//.Configs + .Config_Windows_Clang_x64
 
 .Configs_Android = {
     .Config_Android_Clang_ARMv8_Debug,
@@ -184,4 +184,4 @@
     .Config_Android_Clang_ARMv8_Profile,
     .Config_Android_Clang_ARMv8_Release,
 }
-.Configs + .Configs_Android
+//.Configs + .Configs_Android
