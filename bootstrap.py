@@ -44,7 +44,7 @@ def sub_keys(key):
             sub_key = winreg.EnumKey(key, i)
             yield sub_key
             i += 1
-        except WindowsError as e:
+        except: # WindowsError as e:
             #log.error(e)
             break
 
@@ -56,7 +56,7 @@ def sub_values(key):
             v = winreg.EnumValue(key, i)
             yield v
             i += 1
-        except WindowsError as e:
+        except: # WindowsError as e:
             #log.error(e)
             break
 

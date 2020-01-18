@@ -1,500 +1,532 @@
-// Compiler settings
 #include "scripts/compilers.bff"
-
-.WindowsSDKBasePath = ''
-
-.Graphyte_Includes = {
-    'sdks/fmt/include/'
-    'engine/include/'
-}
-
-.Graphyte_Platforms = {
-    'Windows'
-    'Linux'
-    'Android'
-}
-
-.Graphyte_Architectures = {
-    'x64'
-    'x86'
-    'arm'
-    'aarch64'
-}
-
-.Graphyte_Configurations = {
-    'Debug'
-    'Checked'
-    'Profile'
-    'Release'
-}
-
-.Graphyte_Defines = {
-    'FMT_SHARED=1'
-    'FMT_EXCEPTIONS=0'
-    '__STDC_WANT_LIB_EXT1__=1'
-    '__STDINT_MACROS'
-    '__STDINT_LIMITS'
-    '__STDC_CONSTANT_MACROS'
-    '__STDC_FORMAT_MACROS'
-    '__STDC_LIMIT_MACROS'
-    '_HAS_EXCEPTIONS=0'
-    '_HAS_ITERATOR_DEBUGGING=0'
-    '_SCL_SECURE=0'
-    '_SECURE_SCL=0'
-    '_CRT_SECURE_INVALID_PARAMETER='
-    'NDEBUG'
-    'GRAPHYTE_MATH_NO_INTRINSICS=1'
-    'GRAPHYTE_STATIC_BUILD=0'
-}
-
-.Graphyte_Defines_Debug = {
-    'GX_CONFIG_DEBUG=1'
-}
-
-.Graphyte_Defines_Release = {
-    'GX_CONFIG_RELEASE=1'
-}
-
-.Graphyte_Defines_Checked = {
-    'GX_CONFIG_CHECKED=1'
-}
-
-.Graphyte_Defines_Profile = {
-    'GX_CONFIG_PROFILE'
-}
+#include "scripts/configs.bff"
 
 
-.CommonCompilerOptions
-    = ' /Z7'           // Debug format (in .obj)
-    + ' /c'            // Compile only
-    + ' /nologo'       // No compiler spam
-    + ' /W4'           // Warning level 4
-    //+ ' /WX'           // Warnings as errors
-    + ' /diagnostics:column'
-    //+ ' /O2'
-    //+ ' /Ob2'
-    //+ ' /Oi'
-    //+ ' /GL'
-    + ' /D _WINDLL'
-    + ' /D _UNICODE'
-    + ' /D UNICODE'
-    + ' /GF'
-    + ' /Gm-'
-    + ' /EHa'
-    + ' /MD'
-    + ' /GS-'
-    + ' /Gy'
-    + ' /arch:AVX'
-    + ' /fp:fast'
-    + ' /Zc:wchar_t'
-    + ' /Zc:forScope'
-    + ' /Zc:inline'
-    + ' /GR-'
-    + ' /std:c++latest'
-    + ' /Gd'
-    + ' /TP'
-    + ' /wd4263'
-    + ' /wd4264'
-    + ' /wd4275'
-    + ' /FC'
-    + ' /errorReport:queue'
-    + ' /permissive-'
-    + ' /bigobj'
-    + ' /Zc:char8_t'
-    + ' /Zc:inline'
-    + ' /Zc:throwingNew'
-    + ' /Zc:__cplusplus'
-    + ' /Zc:ternary'
-    + ' /Zc:referenceBinding'
-    + ' /Zc:externConstexpr'
+.OutputBase = 'build'
 
-.IncludeDirectories =
-{
-    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared',
-    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt',
-    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um',
-    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\winrt',
-}
-
-.LinkerDirectories = {
-    'C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\x64'
-    'C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\ucrt\x64'
-}
-
-Using(.ToolsetMsvc2019)
-
-ForEach(.Directory in .ToolsetIncludes)
-{
-    ^CommonCompilerOptions + ' /I"$Directory$"'
-}
-
-ForEach(.IncludeDirectory in .IncludeDirectories)
-{
-    ^CommonCompilerOptions + ' /I"$IncludeDirectory$"'
-}
-
-ForEach(.Include in .Graphyte_Includes)
-{
-    ^CommonCompilerOptions + ' /I"$Include$"'
-}
-
-.ProjectDefines = {
-    'module_base_EXPORTS=1'
-}
-
-ForEach(.Define in .ProjectDefines)
-{
-    ^CommonCompilerOptions + ' /D $Define$'
-}
-
-ForEach(.Define in .Graphyte_Defines)
-{
-    ^CommonCompilerOptions + ' /D $Define$'
-}
-
-ForEach(.Config in .Graphyte_Configurations)
-{
-    ForEach(.Define in .'Graphyte_Defines_$Config$')
-    {
-        ^CommonCompilerOptions + ' /D $Define$'
-    }
-}
-
-.Includes = {
-    'engine/runtime/libs/base/public/'
-    'engine/runtime/libs/base/private/'
-    'sdks/fmt/include/'
-    'sdks/lz4/include/'
-    'engine/include/'
-}
-
-ForEach(.Include in .Includes)
-{
-    // _CURRENT_BFF_DIR_?
-    ^CommonCompilerOptions + ' /I"$Include$"'
-}
-
-.Compiler           = '$ToolsetMsvcRoot$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\cl.exe'
+#include "engine/runtime/libs/base/project.bff"
 
 
 
-//.GraphyteEnablePrecompiledHeaders = [
-//    .PCHOptions + ' /Fp"%2"'
+
+
+
+
+
+.ProjectCommon = [
+    .ProjectBuildCommand   = 'cd ^$(SolutionDir) &amp; fbuild -vs -dist -monitor -fastcancel -cache ^$(ProjectName)-^$(Configuration)'
+    .ProjectRebuildCommand = 'cd ^$(SolutionDir) &amp; fbuild -vs -dist -monitor -fastcancel -cache -clean ^$(ProjectName)-^$(Configuration)'
+    .OutputDirectory = '^$(SolutionDir)\temp\out'
+    .IntermediateDirectory = '^$(SolutionDir)\temp\intermediate'
+    .BuildLogFile = '^$(SolutionDir)\Temp\^$(ProjectName)-^$(Configuration).log'
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+//.WindowsSDKBasePath = ''
+//.Graphyte_Includes = {
+//    'sdks/fmt/include/'
+//    'engine/include/'
+//}
+//
+//.Graphyte_Platforms = {
+//    'Windows'
+//    'Linux'
+//    'Android'
+//}
+//
+//.Graphyte_Architectures = {
+//    'x64'
+//    'x86'
+//    'arm'
+//    'aarch64'
+//}
+//
+//.Graphyte_Configurations = {
+//    'Debug'
+//    'Checked'
+//    'Profile'
+//    'Release'
+//}
+//
+//.Graphyte_Defines = {
+//    'FMT_SHARED=1'
+//    'FMT_EXCEPTIONS=0'
+//    '__STDC_WANT_LIB_EXT1__=1'
+//    '__STDINT_MACROS'
+//    '__STDINT_LIMITS'
+//    '__STDC_CONSTANT_MACROS'
+//    '__STDC_FORMAT_MACROS'
+//    '__STDC_LIMIT_MACROS'
+//    '_HAS_EXCEPTIONS=0'
+//    '_HAS_ITERATOR_DEBUGGING=0'
+//    '_SCL_SECURE=0'
+//    '_SECURE_SCL=0'
+//    '_CRT_SECURE_INVALID_PARAMETER='
+//    'NDEBUG'
+//    'GRAPHYTE_MATH_NO_INTRINSICS=1'
+//    'GRAPHYTE_STATIC_BUILD=0'
+//}
+//
+//.Graphyte_Defines_Debug = {
+//    'GX_CONFIG_DEBUG=1'
+//}
+//
+//.Graphyte_Defines_Release = {
+//    'GX_CONFIG_RELEASE=1'
+//}
+//
+//.Graphyte_Defines_Checked = {
+//    'GX_CONFIG_CHECKED=1'
+//}
+//
+//.Graphyte_Defines_Profile = {
+//    'GX_CONFIG_PROFILE'
+//}
+//
+//
+//.CommonCompilerOptions
+//    = ' /Z7'           // Debug format (in .obj)
+//    + ' /c'            // Compile only
+//    + ' /nologo'       // No compiler spam
+//    + ' /W4'           // Warning level 4
+//    //+ ' /WX'           // Warnings as errors
+//    + ' /diagnostics:column'
+//    //+ ' /O2'
+//    //+ ' /Ob2'
+//    //+ ' /Oi'
+//    //+ ' /GL'
+//    + ' /D _WINDLL'
+//    + ' /D _UNICODE'
+//    + ' /D UNICODE'
+//    + ' /GF'
+//    + ' /Gm-'
+//    + ' /EHa'
+//    + ' /MD'
+//    + ' /GS-'
+//    + ' /Gy'
+//    + ' /arch:AVX'
+//    + ' /fp:fast'
+//    + ' /Zc:wchar_t'
+//    + ' /Zc:forScope'
+//    + ' /Zc:inline'
+//    + ' /GR-'
+//    + ' /std:c++latest'
+//    + ' /Gd'
+//    + ' /TP'
+//    + ' /wd4263'
+//    + ' /wd4264'
+//    + ' /wd4275'
+//    + ' /FC'
+//    + ' /errorReport:queue'
+//    + ' /permissive-'
+//    + ' /bigobj'
+//    + ' /Zc:char8_t'
+//    + ' /Zc:inline'
+//    + ' /Zc:throwingNew'
+//    + ' /Zc:__cplusplus'
+//    + ' /Zc:ternary'
+//    + ' /Zc:referenceBinding'
+//    + ' /Zc:externConstexpr'
+//
+//.IncludeDirectories =
+//{
+//    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared',
+//    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt',
+//    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um',
+//    'C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\winrt',
+//}
+//
+//.LinkerDirectories = {
+//    C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\x64
+//    C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\ucrt\x64
+//}
+//
+//Using(.ToolsetMsvc2019)
+//
+//ForEach(.Directory in .ToolsetIncludes)
+//{
+//    ^CommonCompilerOptions + ' /I"$Directory$"'
+//}
+//
+//ForEach(.IncludeDirectory in .IncludeDirectories)
+//{
+//    ^CommonCompilerOptions + ' /I"$IncludeDirectory$"'
+//}
+//
+//ForEach(.Include in .Graphyte_Includes)
+//{
+//    ^CommonCompilerOptions + ' /I"$Include$"'
+//}
+//
+//.ProjectDefines = {
+//    'module_base_EXPORTS=1'
+//}
+//
+//ForEach(.Define in .ProjectDefines)
+//{
+//    ^CommonCompilerOptions + ' /D $Define$'
+//}
+//
+//ForEach(.Define in .Graphyte_Defines)
+//{
+//    ^CommonCompilerOptions + ' /D $Define$'
+//}
+//
+//ForEach(.Config in .Graphyte_Configurations)
+//{
+//    ForEach(.Define in .'Graphyte_Defines_$Config$')
+//    {
+//        ^CommonCompilerOptions + ' /D $Define$'
+//    }
+//}
+//
+//.Includes = {
+//    'engine/runtime/libs/base/public/'
+//    'engine/runtime/libs/base/private/'
+//    'sdks/fmt/include/'
+//    'sdks/lz4/include/'
+//    'engine/include/'
+//}
+//
+//ForEach(.Include in .Includes)
+//{
+//    // _CURRENT_BFF_DIR_?
+//    ^CommonCompilerOptions + ' /I"$Include$"'
+//}
+//
+//.Compiler           = '$ToolsetMsvcRoot$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\cl.exe'
+//
+//
+//
+////.GraphyteEnablePrecompiledHeaders = [
+////    .PCHOptions + ' /Fp"%2"'
+////]
+//
+//.CompilerOptions    = ' $CommonCompilerOptions$ "%1" /Fo"%2"'
+//.PCHOptions         = ' $CommonCompilerOptions$ "%1" /Fo"%3"'
+//
+//.Librarian          = '$ToolsetMsvcRoot$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\lib.exe'
+//.LibrarianOptions  = '/NOLOGO %1 /OUT:"%2"'
+//
+//.Linker             = '$ToolsetMsvcRoot$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\link.exe'
+//.LinkerOptions      = ' /OUT:"%2"'     // Output
+//                    + ' "%1"'          // Input
+//                    + ' /WX'           // Warnings as errors
+//                    + ' /NOLOGO'       // No linker spam
+//                    + ' /DEBUG'        // Keep debug info when linking
+//                    //+ ' /NODEFAULTLIB' // We'll specify the libs explicitly
+//                    + ' /DYNAMICBASE'
+//
+//ForEach(.Directory in .ToolsetLibs)
+//{
+//    ^LinkerOptions + ' /LIBPATH:"$Directory$"'
+//}
+//
+//ForEach(.Path in .LinkerDirectories)
+//{
+//    ^LinkerOptions + ' /LIBPATH:"$Path$"'
+//}
+//
+//.SolutionConfig_Debug = [
+//    .Platform = 'x64'
+//    .Config = 'Debug'
+//    .Target = 'base-lib'
 //]
-
-.CompilerOptions    = ' $CommonCompilerOptions$ "%1" /Fo"%2"'
-.PCHOptions         = ' $CommonCompilerOptions$ "%1" /Fo"%3"'
-
-.Librarian          = '$ToolsetMsvcRoot$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\lib.exe'
-.LibrarianOptions  = '/NOLOGO %1 /OUT:"%2"'
-
-.Linker             = '$ToolsetMsvcRoot$\VC\Tools\MSVC\14.24.28314\bin\Hostx64\x64\link.exe'
-.LinkerOptions      = ' /OUT:"%2"'     // Output
-                    + ' "%1"'          // Input
-                    + ' /WX'           // Warnings as errors
-                    + ' /NOLOGO'       // No linker spam
-                    + ' /DEBUG'        // Keep debug info when linking
-                    //+ ' /NODEFAULTLIB' // We'll specify the libs explicitly
-                    + ' /DYNAMICBASE'
-
-ForEach(.Directory in .ToolsetLibs)
-{
-    ^LinkerOptions + ' /LIBPATH:"$Directory$"'
-}
-
-ForEach(.Path in .LinkerDirectories)
-{
-    ^LinkerOptions + ' /LIBPATH:"$Path$"'
-}
-
-.SolutionConfig_Debug = [
-    .Platform = 'x64'
-    .Config = 'Debug'
-    .Target = 'base-lib'
-]
-
-.SolutionConfig_Release = [
-    .Platform = 'x64'
-    .Config = 'Release'
-    .Target = 'base-lib'
-]
-
-.SolutionConfig_Profile = [
-    .Platform = 'x64'
-    .Config = 'Profile'
-    .Target = 'base-lib'
-]
-
-.SolutionConfig_Checked = [
-    .Platform = 'x64'
-    .Config = 'Checked'
-    .Target = 'base-lib'
-]
-
-RemoveDir( 'base-dll-clean' )
-{
-  .RemovePaths = 'build-x/output/private/'
-}
-
-
-Unity('base-lib-unity')
-{
-    //.UnityPCH = 'Base.pch.hxx'
-    .UnityInputPath = 'engine/runtime/libs/base'
-    .UnityInputPattern = '*.cxx'
-    .UnityOutputPath = 'build-x/tmp'
-    .UnityInputExcludePattern = {
-        '*Linux_*.cxx'
-        '*Linux.*.cxx'
-        '*Posix.*.cxx'
-        '*Android.*.cxx'
-    }
-}
-
-
-ObjectList('base-lib')
-{
-    .CompilerInputUnity = 'base-lib-unity'
-    .CompilerOutputPath = 'build-x/obj/base-lib'
-
-    //.PCHInputFile = 'engine/runtime/libs/base/private/Base.pch.cxx'
-    //.PCHOutputFile = 'build-x/output/Base.pch'
-    //.PCHOptions + ' /Yc"Base.pch.hxx"'
-    //.CompilerOptions + ' /Yu"Base.pch.hxx" /Fp"$PCHOutputFile$"'
-}
-
-VCXProject('base')
-{
-    .ProjectOutput = 'base.vcxproj'
-    .ProjectInputPaths = {
-        'engine/runtime/libs/base'
-    }
-
-    .OutputDirectory = 'build-x/vcxproj-output-dir'
-    .IntermediateDirectory = 'build-x/vcxproj-intermediate-dir'
-
-    .ProjectBasePath = 'engine/runtime/libs/base'
-    .ProjectAllowedFileExtensions = {
-        '*.bff'
-        '*.cxx'
-        '*.hxx'
-        '*.c'
-        '*.h'
-    }
-
-    .ProjectPatternToExclude = {
-        '*Linux_*.cxx'
-        '*Linux.*.cxx'
-        '*Posix.*.cxx'
-        '*Android.*.cxx'
-    }
-    .ProjectConfigs = {
-        .SolutionConfig_Debug,
-        .SolutionConfig_Release,
-        .SolutionConfig_Profile,
-        .SolutionConfig_Checked,
-    }
-    .PlatformToolset = 'v142'
-
-    .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor ^$(ProjectName)-dll'
-    .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor ^$(ProjectName)-dll'
-    .ProjectCleanCommand = 'fbuild -ide ^$(ProjectName)-dll-clean'
-    //.ProjectBuildCommand = 'fbuild -ide -dist -cache ^$(ProjectName)-^$(Platform)-^$(Configuration)'
-    //.ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache ^$(ProjectName)-^$(Platform)-^$(Configuration)'
-}
-
-
-
-//--------------------------------------------------------------------------------------------------
-// SDKs
-//--------------------------------------------------------------------------------------------------
-
-.ProjectKind_Static = 'static'
-.ProjectKind_Shared = 'shared'
-.ProjectKind_App = 'app'
-.ProjectKind_Test = 'test'
-
-.AllSdks = {}
-{
-    .Sdks = {
-        'sdks/lz4'
-        'sdks/glad'
-        'sdks/fmt'
-    }
-
-    ForEach(.Sdk in .Sdks)
-    {
-        .LocalBasePath = '$Sdk$'
-
-        .ProjectSources = {}
-        .ProjectFiles = {}
-
-        .AllStructs = []
-
-        ForEach(.Platform in .Graphyte_Platforms)
-        {
-            ForEach(.Architecture in .Graphyte_Architectures)
-            {
-                ForEach(.Config in .Graphyte_Configurations)
-                {
-                    .CurrentStruct = [
-                        .'ProjectFiles_$Platform$' = {}
-                        .'ProjectFiles_$Platform$_$Architecture$' = {}
-                        .'ProjectFiles_$Platform$_$Architecture$_$Config$' = {}
-                    ]
-
-                    ^AllStructs + .CurrentStruct
-                }
-            }
-        }
-
-        Using(.AllStructs)
-
-        #include "$Sdk$/project.bff"
-
-        .LocalSources = {}
-        ForEach(.Source in .ProjectSources)
-        {
-            ^LocalSources + '$LocalBasePath$/$Source$'
-        }
-
-        .LocalFiles = {}
-        ForEach(.Source in .ProjectFiles)
-        {
-            ^LocalFiles + '$LocalBasePath$/$Source$'
-        }
-
-        .LocalIncludes = ''
-        ForEach(.Include in .ProjectIncludes)
-        {
-            ^LocalIncludes + ' /I"$LocalBasePath$/$Include$"'
-        }
-
-        .LocalDefines = ''
-        ForEach(.Define in .ProjectDefines)
-        {
-            ^LocalDefines + ' /D"$Define$"'
-        }
-
-        ForEach(.Platform in .Graphyte_Platforms)
-        {
-            ForEach(.Architecture in .Graphyte_Architectures)
-            {
-                ForEach(.Config in .Graphyte_Configurations)
-                {
-                    .Local_Target_Prefix = '$Platform$-$Architecture$-$Config$-$ProjectName$'
-                    .Local_ObjDir = 'build-x/obj/$Platform$-$Architecture$-$Config$/$ProjectName$'
-                    .Local_LibDir = 'build-x/lib/$Platform$-$Architecture$-$Config$/'
-                    .Local_TmpDir = 'build-x/tmp/$Platform$-$Architecture$-$Config$/'
-                    .Local_BinDir = 'build-x/bin/$Platform$-$Architecture$-$Config$/'
-
-                    .Local_Output_Dir = '$Platform$-$Architecture$-$Config$/$ProjectName$'
-
-                    .LocalSources + .'ProjectFiles_$Platform$'
-
-                    .LocalCompilerOptions = .CompilerOptions + .LocalIncludes + .LocalDefines
-
-                    ObjectList('$Local_Target_Prefix$-sources')
-                    {
-                        //.UnityPCH = 'Base.pch.hxx'
-                        .CompilerInputPath = .LocalSources
-                        .CompilerInputFiles = .LocalFiles
-                        .CompilerInputPattern = { '*.cxx', '*.c', '*.cc' }
-                        .CompilerOutputPath = .Local_ObjDir
-                        .CompilerInputExcludePattern = {
-                            '*Linux_*.cxx'
-                            '*Linux.*.cxx'
-                            '*Posix.*.cxx'
-                            '*Android.*.cxx'
-                        }
-                        .CompilerOptions = .LocalCompilerOptions
-                    }
-
-
-                    If(.ProjectKind == .ProjectKind_Static)
-                    {
-                        Library('$Local_Target_Prefix$-lib')
-                        {
-                            .LibrarianAdditionalInputs = '$Local_Target_Prefix$-sources'
-                            .CompilerOutputPath = .Local_ObjDir
-                            .LibrarianOutput = '$Local_LibDir$/$ProjectName$.lib'
-                            .CompilerOptions = .LocalCompilerOptions
-                        }
-                    }
-                    If(.ProjectKind == .ProjectKind_Shared)
-                    {
-                        DLL('$Local_Target_Prefix$-lib')
-                        {
-                            .Libraries = {
-                                '$Local_Target_Prefix$-sources'
-                            }
-                            .LinkerOutput = '$Local_BinDir$/$ProjectName$.dll'
-                            .LinkerOptions
-                                + ' /DLL'
-                                + ' msvcprt.lib'
-                            .CompilerOutputPath = .Local_ObjDir
-                        }
-                    }
-
-                    ^AllSdks + '$Local_Target_Prefix$-lib'
-                }
-            }
-        }
-    }
-}
-
-
-DLL('base-dll')
-{
-    .LinkerOutput = 'build-x/bin/Windows-x64-Release/com.graphyte.base.dll'
-    .Libraries = { 'base-lib', 'Windows-x64-Release-lz4-lib', 'Windows-x64-Release-fmt-lib' }
-    .LinkerOptions
-        + ' /DLL'
-        + ' ntdll.lib'
-        + ' comctl32.lib'
-        + ' dbghelp.lib'
-        + ' iphlpapi.lib'
-        + ' ws2_32.lib'
-        + ' dwmapi.lib'
-        + ' xinput.lib'
-        + ' xaudio2.lib'
-        + ' advapi32.lib'
-        + ' gdi32.lib'
-        + ' shell32.lib'
-        + ' ole32.lib'
-        + ' Faultrep.lib'
-        + ' Bcrypt.lib'
-        + ' user32.lib'
-        + ' Mincore.lib'
-}
-
-VSSolution('graphyte')
-{
-    .SolutionOutput = 'gen.sln'
-    .SolutionConfigs = {
-        .SolutionConfig_Debug,
-        .SolutionConfig_Release,
-        .SolutionConfig_Profile,
-        .SolutionConfig_Checked,
-    }
-    .SolutionProjects = {
-        'base'
-    }
-}
-
-RemoveDir('graphyte-clean')
-{
-    .RemovePaths = 'build-x'
-}
-
-Alias('all') {
-    .Targets = { 'base-dll' }
-}
-
-Alias('clean') {
-    .Targets = { 'graphyte-clean' }
-}
-
-Alias('sdks') {
-    .Targets = .AllSdks
-}
+//
+//.SolutionConfig_Release = [
+//    .Platform = 'x64'
+//    .Config = 'Release'
+//    .Target = 'base-lib'
+//]
+//
+//.SolutionConfig_Profile = [
+//    .Platform = 'x64'
+//    .Config = 'Profile'
+//    .Target = 'base-lib'
+//]
+//
+//.SolutionConfig_Checked = [
+//    .Platform = 'x64'
+//    .Config = 'Checked'
+//    .Target = 'base-lib'
+//]
+//
+//RemoveDir( 'base-dll-clean' )
+//{
+//  .RemovePaths = 'build-x/output/private/'
+//}
+//
+//
+//Unity('base-lib-unity')
+//{
+//    //.UnityPCH = 'Base.pch.hxx'
+//    .UnityInputPath = 'engine/runtime/libs/base'
+//    .UnityInputPattern = '*.cxx'
+//    .UnityOutputPath = 'build-x/tmp'
+//    .UnityInputExcludePattern = {
+//        '*Linux_*.cxx'
+//        '*Linux.*.cxx'
+//        '*Posix.*.cxx'
+//        '*Android.*.cxx'
+//    }
+//}
+//
+//
+//ObjectList('base-lib')
+//{
+//    .CompilerInputUnity = 'base-lib-unity'
+//    .CompilerOutputPath = 'build-x/obj/base-lib'
+//
+//    //.PCHInputFile = 'engine/runtime/libs/base/private/Base.pch.cxx'
+//    //.PCHOutputFile = 'build-x/output/Base.pch'
+//    //.PCHOptions + ' /Yc"Base.pch.hxx"'
+//    //.CompilerOptions + ' /Yu"Base.pch.hxx" /Fp"$PCHOutputFile$"'
+//}
+//
+//VCXProject('base')
+//{
+//    .ProjectOutput = 'base.vcxproj'
+//    .ProjectInputPaths = {
+//        'engine/runtime/libs/base'
+//    }
+//
+//    .OutputDirectory = 'build-x/vcxproj-output-dir'
+//    .IntermediateDirectory = 'build-x/vcxproj-intermediate-dir'
+//
+//    .ProjectBasePath = 'engine/runtime/libs/base'
+//    .ProjectAllowedFileExtensions = {
+//        '*.bff'
+//        '*.cxx'
+//        '*.hxx'
+//        '*.c'
+//        '*.h'
+//    }
+//
+//    .ProjectPatternToExclude = {
+//        '*Linux_*.cxx'
+//        '*Linux.*.cxx'
+//        '*Posix.*.cxx'
+//        '*Android.*.cxx'
+//    }
+//    .ProjectConfigs = {
+//        .SolutionConfig_Debug,
+//        .SolutionConfig_Release,
+//        .SolutionConfig_Profile,
+//        .SolutionConfig_Checked,
+//    }
+//    .PlatformToolset = 'v142'
+//
+//    .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor ^$(ProjectName)-dll'
+//    .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor ^$(ProjectName)-dll'
+//    .ProjectCleanCommand = 'fbuild -ide ^$(ProjectName)-dll-clean'
+//    //.ProjectBuildCommand = 'fbuild -ide -dist -cache ^$(ProjectName)-^$(Platform)-^$(Configuration)'
+//    //.ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache ^$(ProjectName)-^$(Platform)-^$(Configuration)'
+//}
+//
+//
+//
+////--------------------------------------------------------------------------------------------------
+//// SDKs
+////--------------------------------------------------------------------------------------------------
+//
+//.ProjectKind_Static = 'static'
+//.ProjectKind_Shared = 'shared'
+//.ProjectKind_App = 'app'
+//.ProjectKind_Test = 'test'
+//
+//.AllSdks = {}
+//{
+//    .Sdks = {
+//        'sdks/lz4'
+//        'sdks/glad'
+//        'sdks/fmt'
+//    }
+//
+//    ForEach(.Sdk in .Sdks)
+//    {
+//        .LocalBasePath = '$Sdk$'
+//
+//        .ProjectSources = {}
+//        .ProjectFiles = {}
+//
+//        .AllStructs = []
+//
+//        ForEach(.Platform in .Graphyte_Platforms)
+//        {
+//            ForEach(.Architecture in .Graphyte_Architectures)
+//            {
+//                ForEach(.Config in .Graphyte_Configurations)
+//                {
+//                    .CurrentStruct = [
+//                        .'ProjectFiles_$Platform$' = {}
+//                        .'ProjectFiles_$Platform$_$Architecture$' = {}
+//                        .'ProjectFiles_$Platform$_$Architecture$_$Config$' = {}
+//                    ]
+//
+//                    ^AllStructs + .CurrentStruct
+//                }
+//            }
+//        }
+//
+//        Using(.AllStructs)
+//
+//        #include "$Sdk$/project.bff"
+//
+//        .LocalSources = {}
+//        ForEach(.Source in .ProjectSources)
+//        {
+//            ^LocalSources + '$LocalBasePath$/$Source$'
+//        }
+//
+//        .LocalFiles = {}
+//        ForEach(.Source in .ProjectFiles)
+//        {
+//            ^LocalFiles + '$LocalBasePath$/$Source$'
+//        }
+//
+//        .LocalIncludes = ''
+//        ForEach(.Include in .ProjectIncludes)
+//        {
+//            ^LocalIncludes + ' /I"$LocalBasePath$/$Include$"'
+//        }
+//
+//        .LocalDefines = ''
+//        ForEach(.Define in .ProjectDefines)
+//        {
+//            ^LocalDefines + ' /D"$Define$"'
+//        }
+//
+//        ForEach(.Platform in .Graphyte_Platforms)
+//        {
+//            ForEach(.Architecture in .Graphyte_Architectures)
+//            {
+//                ForEach(.Config in .Graphyte_Configurations)
+//                {
+//                    .Local_Target_Prefix = '$Platform$-$Architecture$-$Config$-$ProjectName$'
+//                    .Local_ObjDir = 'build-x/obj/$Platform$-$Architecture$-$Config$/$ProjectName$'
+//                    .Local_LibDir = 'build-x/lib/$Platform$-$Architecture$-$Config$/'
+//                    .Local_TmpDir = 'build-x/tmp/$Platform$-$Architecture$-$Config$/'
+//                    .Local_BinDir = 'build-x/bin/$Platform$-$Architecture$-$Config$/'
+//
+//                    .Local_Output_Dir = '$Platform$-$Architecture$-$Config$/$ProjectName$'
+//
+//                    .LocalSources + .'ProjectFiles_$Platform$'
+//
+//                    .LocalCompilerOptions = .CompilerOptions + .LocalIncludes + .LocalDefines
+//
+//                    ObjectList('$Local_Target_Prefix$-sources')
+//                    {
+//                        //.UnityPCH = 'Base.pch.hxx'
+//                        .CompilerInputPath = .LocalSources
+//                        .CompilerInputFiles = .LocalFiles
+//                        .CompilerInputPattern = { '*.cxx', '*.c', '*.cc' }
+//                        .CompilerOutputPath = .Local_ObjDir
+//                        .CompilerInputExcludePattern = {
+//                            '*Linux_*.cxx'
+//                            '*Linux.*.cxx'
+//                            '*Posix.*.cxx'
+//                            '*Android.*.cxx'
+//                        }
+//                        .CompilerOptions = .LocalCompilerOptions
+//                    }
+//
+//
+//                    If(.ProjectKind == .ProjectKind_Static)
+//                    {
+//                        Library('$Local_Target_Prefix$-lib')
+//                        {
+//                            .LibrarianAdditionalInputs = '$Local_Target_Prefix$-sources'
+//                            .CompilerOutputPath = .Local_ObjDir
+//                            .LibrarianOutput = '$Local_LibDir$/$ProjectName$.lib'
+//                            .CompilerOptions = .LocalCompilerOptions
+//                        }
+//                    }
+//                    If(.ProjectKind == .ProjectKind_Shared)
+//                    {
+//                        DLL('$Local_Target_Prefix$-lib')
+//                        {
+//                            .Libraries = {
+//                                '$Local_Target_Prefix$-sources'
+//                            }
+//                            .LinkerOutput = '$Local_BinDir$/$ProjectName$.dll'
+//                            .LinkerOptions
+//                                + ' /DLL'
+//                                + ' msvcprt.lib'
+//                            .CompilerOutputPath = .Local_ObjDir
+//                        }
+//                    }
+//
+//                    ^AllSdks + '$Local_Target_Prefix$-lib'
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//
+//DLL('base-dll')
+//{
+//    .LinkerOutput = 'build-x/bin/Windows-x64-Release/com.graphyte.base.dll'
+//    .Libraries = { 'base-lib', 'Windows-x64-Release-lz4-lib', 'Windows-x64-Release-fmt-lib' }
+//    .LinkerOptions
+//        + ' /DLL'
+//        + ' ntdll.lib'
+//        + ' comctl32.lib'
+//        + ' dbghelp.lib'
+//        + ' iphlpapi.lib'
+//        + ' ws2_32.lib'
+//        + ' dwmapi.lib'
+//        + ' xinput.lib'
+//        + ' xaudio2.lib'
+//        + ' advapi32.lib'
+//        + ' gdi32.lib'
+//        + ' shell32.lib'
+//        + ' ole32.lib'
+//        + ' Faultrep.lib'
+//        + ' Bcrypt.lib'
+//        + ' user32.lib'
+//        + ' Mincore.lib'
+//}
+//
+//VSSolution('graphyte')
+//{
+//    .SolutionOutput = 'gen.sln'
+//    .SolutionConfigs = {
+//        .SolutionConfig_Debug,
+//        .SolutionConfig_Release,
+//        .SolutionConfig_Profile,
+//        .SolutionConfig_Checked,
+//    }
+//    .SolutionProjects = {
+//        'base'
+//    }
+//}
+//
+//RemoveDir('graphyte-clean')
+//{
+//    .RemovePaths = 'build-x'
+//}
+//
+//Alias('all') {
+//    .Targets = { 'base-dll' }
+//}
+//
+//Alias('clean') {
+//    .Targets = { 'graphyte-clean' }
+//}
+//
+//Alias('sdks') {
+//    .Targets = .AllSdks
+//}
+//

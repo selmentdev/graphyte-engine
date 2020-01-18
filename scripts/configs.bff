@@ -1,0 +1,187 @@
+#once
+#include "compilers.bff"
+
+
+
+.BaseConfig_Windows_MSVC = [
+    .PlatformInfo = 'Windows'
+    .CompilerInfo = 'MSVC'
+    .CompilerOptions = ''
+        + '"%1" /Z7'
+        + ' /nologo'
+        + ' /c'
+        + ' /D_WIN32'
+        + ' /D__WINDOWS__'
+        + ' /DFMT_SHARED=1'
+        + ' /DFMT_EXCEPTIONS=0'
+        + ' /D__STDC_WANT_LIB_EXT1__=1'
+        + ' /D__STDINT_MACROS'
+        + ' /D__STDINT_LIMITS'
+        + ' /D__STDC_CONSTANT_MACROS'
+        + ' /D__STDC_FORMAT_MACROS'
+        + ' /D__STDC_LIMIT_MACROS'
+        + ' /D_HAS_EXCEPTIONS=0'
+        + ' /D_HAS_ITERATOR_DEBUGGING=0'
+        + ' /D_SCL_SECURE=0'
+        + ' /D_SECURE_SCL=0'
+        + ' /D_CRT_SECURE_INVALID_PARAMETER='
+        + ' /D_UNICODE'
+        + ' /DUNICODE'
+        + ' /GF'
+        + ' /Gm-'
+        + ' /EHa'
+        + ' /MD'
+        + ' /GS-'
+        + ' /Gy'
+        + ' /fp:fast'
+        + ' /Zc:wchar_t'
+        + ' /Zc:forScope'
+        + ' /Zc:inline'
+        + ' /GR-'
+        + ' /std:c++latest'
+        + ' /Gd'
+        + ' /TP'
+        + ' /wd4263'
+        + ' /wd4264'
+        + ' /wd4275'
+        + ' /FC'
+        + ' /errorReport:queue'
+        + ' /permissive-'
+        + ' /bigobj'
+        + ' /Zc:char8_t'
+        + ' /Zc:throwingNew'
+        + ' /Zc:__cplusplus'
+        + ' /Zc:ternary'
+        + ' /Zc:referenceBinding'
+        + ' /Zc:externConstexpr'
+
+    .PCHOptions = '' + .CompilerOptions + ' /Fp"%2" /Fo"%3"'
+        + ' /Fo"%2"'
+    .CompilerOptions + ' /Fo"%2"'
+    .LibrarianOptions = ''
+        + ' /NODEFAULTLIB'
+        + ' /NOLOGO'
+        + ' /OUT:"%2" "%1"'
+    .LinkerOptions = ''
+        + ' /NODEFAULTLIB'
+        + ' /NOLOGO'
+        + ' /OUT:"%2" "%1"'
+        + ' /DEBUG'
+        + ' /IGNORE:4001'
+
+]
+
+.BaseConfig_Windows_MSVC_x64 = [
+    Using(.Toolset_Windows_MSVC_x64)
+    Using(.BaseConfig_Windows_MSVC)
+    .ArchitectureInfo = 'x64'
+    .CompilerOptions
+        + ' /arch:AVX'
+    .BaseIncludePaths
+        = ' /I"$ToolsetRoot$/include"'
+        + ' /I"$ToolsetRoot$/atlmfc/include"'
+        + ' /I"$ToolsetMsvcRoot$/VC/Auxiliary/VS/include"'
+        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared"'
+        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt"'
+        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um"'
+        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\winrt"'
+    .CompilerOptions + .BaseIncludePaths
+    .PCHOptions      + .BaseIncludePaths
+    .LinkerOptions + ' /MACHINE:X64'
+        + ' /LIBPATH:"$ToolsetRoot$/lib/x64"'
+        + ' /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\x64"'
+        + ' /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\ucrt\x64"'
+]
+
+.BaseConfig_Windows_MSVC_ARMv8 = [
+    Using(.Toolset_Windows_MSVC_ARMv8)
+    Using(.BaseConfig_Windows_MSVC)
+    .ArchitectureInfo = 'ARMv8'
+    .BaseIncludePaths
+        = ' /I"$ToolsetRoot$/include"'
+        + ' /I"$ToolsetRoot$/atlmfc/include"'
+        + ' /I"$ToolsetMsvcRoot$/VC/Auxiliary/VS/include"'
+        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared"'
+        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt"'
+        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um"'
+        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\winrt"'
+    .CompilerOptions + .BaseIncludePaths
+    .PCHOptions      + .BaseIncludePaths
+    .LinkerOptions + ' /MACHINE:ARM64'
+        + ' /LIBPATH:"$ToolsetRoot$/lib/arm64"'
+        + ' /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\arm64"'
+        + ' /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\ucrt\arm64"'
+]
+
+.Config_Windows_MSVC_x64_Debug = [
+    Using(.BaseConfig_Windows_MSVC_x64)
+    .Config = 'Debug'
+    .CompilerOptions + ' /DGX_CONFIG_DEBUG=1'
+]
+
+.Config_Windows_MSVC_x64_Checked = [
+    Using(.BaseConfig_Windows_MSVC_x64)
+    .Config = 'Checked'
+    .CompilerOptions + ' /DGX_CONFIG_CHECKED=1'
+]
+
+.Config_Windows_MSVC_x64_Profile = [
+    Using(.BaseConfig_Windows_MSVC_x64)
+    .Config = 'Profile'
+    .CompilerOptions + ' /DGX_CONFIG_PROFILE=1'
+]
+
+.Config_Windows_MSVC_x64_Release = [
+    Using(.BaseConfig_Windows_MSVC_x64)
+    .Config = 'Release'
+    .CompilerOptions + ' /DGX_CONFIG_RELEASE=1'
+]
+
+.Config_Windows_MSVC_ARMv8_Debug = []
+.Config_Windows_MSVC_ARMv8_Checked = []
+.Config_Windows_MSVC_ARMv8_Profile = []
+.Config_Windows_MSVC_ARMv8_Release = []
+
+.Config_Windows_Clang_x64_Debug = []
+.Config_Windows_Clang_x64_Checked = []
+.Config_Windows_Clang_x64_Profile = []
+.Config_Windows_Clang_x64_Release = []
+
+.Config_Android_Clang_ARMv8_Debug = []
+.Config_Android_Clang_ARMv8_Checked = []
+.Config_Android_Clang_ARMv8_Profile = []
+.Config_Android_Clang_ARMv8_Release = []
+
+.Configs = { }
+
+.Configs_Windows_MSVC_x64 = {
+    .Config_Windows_MSVC_x64_Debug,
+    .Config_Windows_MSVC_x64_Checked,
+    .Config_Windows_MSVC_x64_Profile,
+    .Config_Windows_MSVC_x64_Release,
+}
+.Configs + .Configs_Windows_MSVC_x64
+
+.Configs_Windows_MSVC_ARMv8 = {
+    .Config_Windows_MSVC_ARMv8_Debug,
+    .Config_Windows_MSVC_ARMv8_Checked,
+    .Config_Windows_MSVC_ARMv8_Profile,
+    .Config_Windows_MSVC_ARMv8_Release,
+}
+.Configs + .Configs_Windows_MSVC_ARMv8
+
+.Config_Windows_Clang_x64 = {
+    .Config_Windows_Clang_x64_Debug,
+    .Config_Windows_Clang_x64_Checked,
+    .Config_Windows_Clang_x64_Profile,
+    .Config_Windows_Clang_x64_Release
+}
+.Configs + .Config_Windows_Clang_x64
+
+.Configs_Android = {
+    .Config_Android_Clang_ARMv8_Debug,
+    .Config_Android_Clang_ARMv8_Checked,
+    .Config_Android_Clang_ARMv8_Profile,
+    .Config_Android_Clang_ARMv8_Release,
+}
+.Configs + .Configs_Android

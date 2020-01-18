@@ -1,8 +1,51 @@
-COSTAM_DEBUG := 2424
-COSTAM_RELEASE := 424124
+{
+    .ProjectName = 'com.graphyte.base'
+    .ProjectPath = 'engine/runtime/libs/base'
+    {
+        .UnityInputPath = '$ProjectPath$'
+        .UnityInputPattern = { '*.cxx' }
+        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
 
-CONFIG := DEBUG
+        Unity('$ProjectName$-Unity-Windows') {
+            .UnityInputExcludePattern = {
+                '*Linux.*.cxx'
+                '*Posix.*.cxx'
+                '*Android.*.cxx'
+            }
+        }
+        Unity('$ProjectName$-Unity-Linux') {
+            .UnityInputExcludePattern = {
+                '*Windows.*.cxx'
+                '*Android.*.cxx'
+            }
+        }
+        Unity('$ProjectName$-Unity-Android') {
+            .UnityInputExcludePattern = {
+                '*Windows.*.cxx'
+                '*Linux.*.cxx'
+            }
+        }
+    }
 
-COSTAM_$(CONFIG)
+    // this module applies only on windows-x64-msvc build
+    ForEach(.Config in .Configs_Windows_MSVC_x64)
+    {
+        Using(.Config)
 
-.'COSTAM_$CONFIG$'
+        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        {
+            .CompilerInputUnity = '$ProjectName$-Unity-Windows'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+
+            // Common Graphyte module include paths
+            .CompilerOptions
+                + ' /I"$ProjectPath$/private"'
+                + ' /I"$ProjectPath$/public"'
+                + ' /I"sdks/fmt/include"'
+                + ' /I"sdks/lz4/include"'
+                + ' /I"engine/include"'
+                + ' /D_WINDLL'
+                + ' /Dmodule_base_EXPORTS=1'
+        }
+    }
+}
