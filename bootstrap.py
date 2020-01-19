@@ -9,6 +9,7 @@ import sys
 import logging
 import re
 import json
+import functools
 
 is_win = sys.platform == "win32"
 is_py_3 = sys.version_info[0] == 3
@@ -18,6 +19,54 @@ if is_win:
     else:
         import _winreg as winreg
         import exceptions
+
+
+#---------------------------------------------------------------------------------------------------
+# Version class util
+class Version:
+    component_re = re.compile(r'(\d+ | \.)', re.VERBOSE)
+
+    def __init__(self, s = None):
+        if s:
+            self.parse(s)
+
+    def parse(self, s):
+        components = [x for x in filter(lambda x: x and x != '.', self.component_re.split(s))]
+
+        for i in range(len(components)):
+            components[i] = int(components[i])
+
+        self.components = components
+
+    def __str__(self):
+        return '.'.join([str(x) for x in self.components])
+
+    def __eq__(self, other):
+        return Version.cmp(self, other) == 0
+    def __lt__(self, other):
+        return Version.cmp(self, other) < 0
+    def __gt__(self, other):
+        return Version.cmp(self, other) > 0
+    def __le__(self, other):
+        return Version.cmp(self, other) <= 0
+    def __ge__(self, other):
+        return Version.cmp(self, other) >= 0
+
+    @staticmethod
+    def cmp(lhs, rhs):
+        i = 0
+        while True:
+            if i == len(lhs.components):
+                if i == len(rhs.components):
+                    return 0
+                else:
+                    return -1
+            else:
+                if i == len(rhs.components):
+                    return 1
+                elif lhs.components[i] != rhs.components[i]:
+                    return lhs.components[i] - rhs.components[i]
+            i = i + 1
 
 #---------------------------------------------------------------------------------------------------
 # Internal commands
@@ -59,6 +108,35 @@ def _msvc_get_installation(vswhere):
     result = subprocess.check_output(args).decode('utf-8')
     return json.loads(result)
 
+def _locate_windows_sdk_kits():
+    roots_key = r"SOFTWARE\Microsoft\Windows Kits\Installed Roots"
+    roots = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, roots_key, 0, winreg.KEY_READ)
+
+    pattern = re.compile(r'KitsRoot(\d+)')
+
+    for i in range(0, winreg.QueryInfoKey(roots)[1]):
+        (name, value, kind) = winreg.EnumValue(roots, i)
+        
+        if (name.startswith('KitsRoot') and kind == winreg.REG_SZ):
+            windows_sdk_location = value
+
+            match = pattern.match(name)
+
+            if match:
+                windows_sdk_version = match.group(1)
+                break
+
+    windows_sdk_kits = []
+
+    for i in range(0, winreg.QueryInfoKey(roots)[0]):
+        version : str = winreg.EnumKey(roots, i)
+        windows_sdk_kits.append(Version(version))
+
+    return (windows_sdk_location, windows_sdk_version, windows_sdk_kits)
+
+def _find_highest_version(versions):
+    return max(versions)
+
 #---------------------------------------------------------------------------------------------------
 # Generate BFF file with MSVC compiler
 
@@ -72,6 +150,12 @@ def generate_msvc_compiler_info():
     with open(msvs_tools_version_location, 'r') as file:
         vstools = file.read().splitlines()[0]
 
+    #
+    # Get Windows Kits locations
+    #
+
+    (windows_sdk_location, windows_sdk_version, windows_sdk_kits) = _locate_windows_sdk_kits()
+
     # Generate header
     with open('scripts/compiler.msvs.bff', 'w') as f:
         _bootstrap_emit_header(f)
@@ -79,70 +163,9 @@ def generate_msvc_compiler_info():
         f.write(".VsToolsLocation = '{}'\n".format(vspath))
         f.write(".VsToolsName = '{}'\n".format(vsname))
         f.write(".VsToolsVersion = '{}'\n".format(vstools))
-
-
-
-
-
-
-
-def sub_keys(key):
-    i = 0
-    while True:
-        try:
-            sub_key = winreg.EnumKey(key, i)
-            yield sub_key
-            i += 1
-        except: # WindowsError as e:
-            #log.error(e)
-            break
-
-
-def sub_values(key):
-    i = 0
-    while True:
-        try:
-            v = winreg.EnumValue(key, i)
-            yield v
-            i += 1
-        except: # WindowsError as e:
-            #log.error(e)
-            break
-
-def get_installed_windows_kits():
-    roots_key = r"SOFTWARE\Microsoft\Windows Kits\Installed Roots"
-#    log.info("Searching for Windows kits in registry path: {}".format(roots_key))
-    roots = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, roots_key, 0,
-                           winreg.KEY_READ)
-    kits = []
-    pattern = re.compile(r'KitsRoot(\d+)')
-
-    for (name, value, value_type) in sub_values(roots):
-        if value_type == winreg.REG_SZ and name.startswith('KitsRoot'):
-            match = pattern.search(name)
-            if match:
-                version = match.group(1)
-                kits.append({'version': version, 'value': value})
-
-    if not kits:
-       print("""
-            No windows kits found in the registry.
-            Consider downloading and installing the latest kit, either from
-            https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/debugger-download-tools
-            or from
-            https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk
-        """)
-        #exit(1)
-
-    return kits
-
-#'HKLM\\SOFTWARE\\WOW6432Node\\Microsoft\\Microsoft SDKs\\Windows\\v10.0\\InstallationFolder'
-#"HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots;KitsRoot10",
-
-        #print(_bootstrap_execute_command(['reg', 'query', "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots", '/v', '"KitsRoot10"']))
-        #print(_bootstrap_execute_command(['reg', 'query', "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots", '/v', '"KitsRoot10"']))
-
-print(get_installed_windows_kits())
+        f.write(".WindowsSdkLocation = '{}'\n".format(os.path.normpath(windows_sdk_location)))
+        f.write(".WindowsKitVersion = '{}'\n".format(windows_sdk_version))
+        f.write(".WindowsSdkVersion = '{}'\n".format(max(windows_sdk_kits)))
 
 
 def generate_version_file():

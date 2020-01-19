@@ -81,16 +81,16 @@
         = ' /I"$ToolsetRoot$/include"'
         + ' /I"$ToolsetRoot$/atlmfc/include"'
         + ' /I"$VsToolsLocation$/VC/Auxiliary/VS/include"'
-        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared"'
-        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt"'
-        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um"'
-        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\winrt"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\shared"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\ucrt"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\um"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\winrt"'
     .CompilerOptions + .BaseIncludePaths
     .PCHOptions      + .BaseIncludePaths
     .LinkerOptions + ' /MACHINE:X64'
         + ' /LIBPATH:"$ToolsetRoot$/lib/x64"'
-        + ' /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\x64"'
-        + ' /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\ucrt\x64"'
+        + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\um\x64"'
+        + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\x64"'
 ]
 
 .BaseConfig_Windows_MSVC_ARMv8 = [
@@ -101,16 +101,16 @@
         = ' /I"$ToolsetRoot$/include"'
         + ' /I"$ToolsetRoot$/atlmfc/include"'
         + ' /I"$VsToolsLocation$/VC/Auxiliary/VS/include"'
-        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared"'
-        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt"'
-        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um"'
-        + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\winrt"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\shared"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\ucrt"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\um"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\winrt"'
     .CompilerOptions + .BaseIncludePaths
     .PCHOptions      + .BaseIncludePaths
     .LinkerOptions + ' /MACHINE:ARM64'
         + ' /LIBPATH:"$ToolsetRoot$/lib/arm64"'
-        + ' /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\um\arm64"'
-        + ' /LIBPATH:"C:\Program Files (x86)\Windows Kits\10\Lib\10.0.18362.0\ucrt\arm64"'
+        + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\um\arm64"'
+        + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\arm64"'
 ]
 
 .Config_Windows_MSVC_x64_Debug = [
