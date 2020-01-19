@@ -349,62 +349,6 @@ workspace "graphyte"
         kind "SharedLib"
         defines { "GRAPHYTE_STATIC_BUILD=0" }
 
-function configfunction()
-    local ver = os.getversion()
-    local os_version = string.format("%d.%d.%d", ver.majorversion, ver.minorversion, ver.revision, ver.description)
-    local os_host = os.host()
-    local build_commit = os.outputof('git log -1 --format=%H')
-    local build_commit_short = os.outputof('git log -1 --format=%h')
-    local build_branch = os.outputof('git rev-parse --abbrev-ref HEAD')
-
-    local date = os.date('*t')
-    local reference = os.time{ day = 1, month = 1, year = 2000 }
-    local buildnumber = tonumber(math.floor(os.difftime(os.time(), reference) / (60 * 15)))
-
-    local build_version_major = date.year - 2000
-    local build_version_minor = date.month
-    local build_version_release = date.yday
-    local build_version_build = buildnumber
-
-    local build_version = string.format('%d.%d.%d.%d',
-        build_version_major,
-        build_version_minor,
-        build_version_release,
-        build_version_build
-    )
-
-    local build_timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
-
-    return string.format(
-        '#define GRAPHYTE_BUILD_OS_VERSION        "%s"\n' ..
-        '#define GRAPHYTE_BUILD_OS_HOST           "%s"\n' ..
-        '#define GRAPHYTE_BUILD_COMMIT            "%s"\n' ..
-        '#define GRAPHYTE_BUILD_COMMIT_SHORT      "%s"\n' ..
-        '#define GRAPHYTE_BUILD_BRANCH            "%s"\n' ..
-        '#define GRAPHYTE_BUILD_UUID              "%s"\n' ..
-        '#define GRAPHYTE_BUILD_VERSION           "%s"\n' ..
-        '#define GRAPHYTE_BUILD_VERSION_MAJOR     %d\n' ..
-        '#define GRAPHYTE_BUILD_VERSION_MINOR     %d\n' ..
-        '#define GRAPHYTE_BUILD_VERSION_RELEASE   %d\n' ..
-        '#define GRAPHYTE_BUILD_VERSION_BUILD     %d\n' ..
-        '#define GRAPHYTE_BUILD_TIMESTAMP         "%s"\n',
-        os_version,
-        os_host,
-        build_commit or "<unknown>",
-        build_commit_short or "<unknown>",
-        build_branch or "<unknown>",
-        os.uuid('graphyte'):gsub('-', ''):lower(),
-        build_version,
-        build_version_major,
-        build_version_minor,
-        build_version_release,
-        build_version_build,
-        build_timestamp
-    );
-end
-
-io.writefile('engine/include/Graphyte/Build.Version.hxx', configfunction())
-
 
 function use_com_graphyte_base()
     filter {}
