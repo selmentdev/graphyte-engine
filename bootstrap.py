@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import subprocess
 import os
 import platform
@@ -170,13 +171,19 @@ def generate_msvc_compiler_info():
 
 def generate_version_file():
     os.makedirs('./engine/include/Graphyte', exist_ok=True)
-    with open('engine/include/Graphyte/Build.Version.hxx', 'w+') as file:
-        os_version = platform.win32_ver()[1]
-        os_host = platform.system()
 
-        build_commit = _bootstrap_execute_command('git log -1 --format=%H')
-        build_commit_short = _bootstrap_execute_command('git log -1 --format=%h')
-        build_branch = _bootstrap_execute_command('git rev-parse --abbrev-ref HEAD')
+    with open('engine/include/Graphyte/Build.Version.hxx', 'w+') as file:
+        # Gather system and platform version for builder machine
+        os_version = platform.version()
+        os_release = platform.release()
+        os_system = platform.system()
+        os_platform = platform.platform()
+        os_node = platform.node()
+
+        # Gather source control info
+        build_commit = _bootstrap_execute_command(['git', 'log', '-1', '--format=%H'])
+        build_commit_short = _bootstrap_execute_command(['git', 'log', '-1', '--format=%h'])
+        build_branch = _bootstrap_execute_command(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
 
         date = datetime.datetime.now()
 
@@ -184,11 +191,15 @@ def generate_version_file():
         build_version_minor = date.month
         build_version_release = date.timetuple().tm_yday
         build_version_build = math.floor((date - datetime.datetime(year = 2000, day = 1, month = 1)).total_seconds() / (60 * 15))
-        build_timestamp = date.strftime("!%Y-%m-%dT%H:%M:%SZ")
+        build_timestamp = date.strftime("%Y-%m-%dT%H:%M:%SZ")
         build_uuid = hashlib.sha256(b'graphyte').hexdigest()[0:32]
 
         file.write('#define GRAPHYTE_BUILD_OS_VERSION        "{}"\n'.format(os_version))
-        file.write('#define GRAPHYTE_BUILD_OS_HOST           "{}"\n'.format(os_host))
+        file.write('#define GRAPHYTE_BUILD_OS_RELEASE        "{}"\n'.format(os_release))
+        file.write('#define GRAPHYTE_BUILD_OS_SYSTEM         "{}"\n'.format(os_system))
+        file.write('#define GRAPHYTE_BUILD_OS_PLATFORM       "{}"\n'.format(os_platform))
+        file.write('#define GRAPHYTE_BUILD_OS_NODE           "{}"\n'.format(os_node))
+
         file.write('#define GRAPHYTE_BUILD_COMMIT            "{}"\n'.format(build_commit[0] or "<unknown>"))
         file.write('#define GRAPHYTE_BUILD_COMMIT_SHORT      "{}"\n'.format(build_commit_short[0] or "<unknown>"))
         file.write('#define GRAPHYTE_BUILD_BRANCH            "{}"\n'.format(build_branch[0] or "<unknown>"))

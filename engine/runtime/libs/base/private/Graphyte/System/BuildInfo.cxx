@@ -47,7 +47,7 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetBuildHostSystem() noexcept
     {
-        return GRAPHYTE_BUILD_OS_HOST;
+        return GRAPHYTE_BUILD_OS_PLATFORM;
     }
 
     BASE_API std::string_view GetBuildHostVersion() noexcept
