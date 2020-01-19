@@ -477,7 +477,7 @@ namespace Graphyte::Maths::Impl
         float32x2_t const r1_xy = vpadd_f32(r0_xy, r0_xy);
 
         // {r1_zz}[x, y] = {r0_zw}[z, z]
-        float32x2_t const r1_zz = vdup_lane_f32(r0_zw, 0)
+        float32x2_t const r1_zz = vdup_lane_f32(r0_zw, 0);
 
         // {r_xyz}[x, y] = {r1_xy, r1_zz}[x1+x2, y1+y2] = [x+y+z, x+y+z]
         float32x2_t const r_xyz = vadd_f32(r1_xy, r1_zz);

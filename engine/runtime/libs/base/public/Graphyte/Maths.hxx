@@ -2170,7 +2170,7 @@ namespace Graphyte::Maths::Impl
         uint32x4_t const r1 = vcvtq_u32_f32(r0);
         uint32x4_t const r2 = vbicq_u32(r1, overflow);
         uint32x4_t const r3 = vorrq_u32(overflow, r2);
-        return vreinterpretq_f32_u32(r3)
+        return vreinterpretq_f32_u32(r3);
 #elif GRAPHYTE_HW_AVX
         __m128 const r0 = _mm_set_ps1(static_cast<float>(1U << exponent));
         __m128 const r1 = _mm_mul_ps(r0, vfloat);
@@ -2396,7 +2396,7 @@ namespace Graphyte::Maths
 
         return { result };
 #elif GRAPHYTE_HW_NEON
-        return { Impl::neon_permute(a.V, b.V, x, y, z, w);
+        return { Impl::neon_permute(a.V, b.V, x, y, z, w) };
 #endif
     }
 
@@ -4475,8 +4475,8 @@ namespace Graphyte::Maths
 
         return { _mm_castsi128_ps(ivec) };
 #elif GRAPHYTE_HW_NEON
-        uint32x2_t const r0_xy = vcreateu32(static_cast<uint64_t>(x) | (static_cast<uint64_t>(y) << 32));
-        uint32x2_t const r0_zw = vcreateu32(static_cast<uint64_t>(z) | (static_cast<uint64_t>(w) << 32));
+        uint32x2_t const r0_xy = vcreate_u32(static_cast<uint64_t>(x) | (static_cast<uint64_t>(y) << 32));
+        uint32x2_t const r0_zw = vcreate_u32(static_cast<uint64_t>(z) | (static_cast<uint64_t>(w) << 32));
 
         float32x4_t const result = vreinterpretq_f32_u32(
             vcombine_u32(r0_xy, r0_zw)
@@ -5608,7 +5608,7 @@ namespace Graphyte::Maths
     template <typename T>
     mathinline T mathcall Log(T base, T value) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
         Impl::ConstFloat32x4 const result{ { {
                 logf(value.V.F[0]) / logf(base.V.F[0]),
                 logf(value.V.F[1]) / logf(base.V.F[1]),
@@ -5929,7 +5929,7 @@ namespace Graphyte::Maths
     mathinline T mathcall SqrtEst(T v) noexcept
         requires VectorLike<T> and Componentwise<T>
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
         Impl::ConstFloat32x4 const result{ { {
                 sqrtf(v.V.F[0]),
                 sqrtf(v.V.F[1]),
@@ -5945,7 +5945,7 @@ namespace Graphyte::Maths
 
     mathinline float mathcall SqrtEst(float v) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
         return sqrtf(v);
 #elif GRAPHYTE_HW_AVX
         __m128 const s = _mm_rcp_ss(_mm_rsqrt_ss(_mm_set_ss(v)));
@@ -5989,7 +5989,7 @@ namespace Graphyte::Maths
 
     mathinline float mathcall InvSqrt(float v) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
         return 1.0F / sqrtf(v);
 #elif GRAPHYTE_HW_AVX
         __m128 const vv = _mm_set_ss(v);
@@ -6020,14 +6020,14 @@ namespace Graphyte::Maths
 
     mathinline float mathcall InvSqrtEst(float v) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+        return 1.0F / sqrtf(v);
+#elif GRAPHYTE_HW_AVX
         __m128 const vv = _mm_set_ss(v);
         __m128 const rv = _mm_rsqrt_ss(vv);
         float result;
         _mm_store_ss(&result, rv);
         return result;
-#elif GRAPHYTE_HW_AVX
-        return 1.0F / sqrtf(v);
 #endif
     }
 
@@ -6693,7 +6693,7 @@ namespace Graphyte::Maths
         return { result };
 #elif GRAPHYTE_HW_NEON
         float32x4_t const pba = vsubq_f32(b.V, a.V);
-        flaot32x4_t const pca = vsubq_f32(c.V, a.V);
+        float32x4_t const pca = vsubq_f32(c.V, a.V);
         float32x4_t const accum = vmlaq_n_f32(a.V, pba.V, f);
         float32x4_t const result = vmlaq_n_f32(accum, pca, g);
         return { result };
@@ -6727,7 +6727,7 @@ namespace Graphyte::Maths
         return { result };
 #elif GRAPHYTE_HW_NEON
         float32x4_t const pba = vsubq_f32(b.V, a.V);
-        flaot32x4_t const pca = vsubq_f32(c.V, a.V);
+        float32x4_t const pca = vsubq_f32(c.V, a.V);
         float32x4_t const accum = vmlaq_f32(a.V, pba, f.V);
         float32x4_t const result = vmlaq_f32(accum, pca, g.V);
         return { result };
@@ -9243,16 +9243,16 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_NEON
         // = [x, y]
-        float32x2_t const a_xy = vget_low_f32(a);
-        float32x2_t const b_xy = vget_low_f32(b);
+        float32x2_t const a_xy = vget_low_f32(a.V);
+        float32x2_t const b_xy = vget_low_f32(b.V);
 
         // = [y, x]
         float32x2_t const a_yx = vrev64_f32(a_xy);
         float32x2_t const b_yx = vrev64_f32(b_xy);
 
         // = [z, z]
-        float32x2_t const a_zz = vdup_lane_f32(vget_high_f32(a), 0);
-        float32x2_t const b_zz = vdup_lane_f32(vget_high_f32(b), 0);
+        float32x2_t const a_zz = vdup_lane_f32(vget_high_f32(a.V), 0);
+        float32x2_t const b_zz = vdup_lane_f32(vget_high_f32(b.V), 0);
 
         // = [y, x, x, y]
         float32x4_t const a_yxxy = vcombine_f32(a_yx, a_xy);
@@ -9281,7 +9281,7 @@ namespace Graphyte::Maths
         // flip: m2.y = m1.y * -1
         // m1: (a.x * b.z) - (a.z * b.x)
         // m2: -(a.x * b.z) + (a.z * b.x) = (a.z * b.x) - (a.x * b.z)
-        uint32x4_t const m2 = veorq_u32(vreinpretq_u32_f32(m1), Impl::VEC4_MASK_FLIP_Y);
+        uint32x4_t const m2 = veorq_u32(vreinterpretq_u32_f32(m1), Impl::VEC4_MASK_FLIP_Y);
 
         uint32x4_t const m3 = vandq_u32(m2, Impl::VEC4_MASK_SELECT_1110.V);
 
@@ -13258,7 +13258,7 @@ namespace Graphyte::Maths
         result.M.R[0] = vsetq_lane_f32(2.0f / view_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(2.0f / view_height, zero, 1);
         result.M.R[2] = vsetq_lane_f32(range, zero, 2);
-        result.M.R[3] = vsetq_lane_f32(-range * z_near, Impl::VEC4_POSTIVE_UNIT_W.V, 2);
+        result.M.R[3] = vsetq_lane_f32(-range * z_near, Impl::VEC4_POSITIVE_UNIT_W.V, 2);
 #elif GRAPHYTE_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
                 2.0f / view_width,
@@ -13323,7 +13323,7 @@ namespace Graphyte::Maths
         result.M.R[0] = vsetq_lane_f32(2.0f / view_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(2.0f / view_height, zero, 1);
         result.M.R[2] = vsetq_lane_f32(range, zero, 2);
-        result.M.R[3] = vsetq_lane_f32(range * z_near, Impl::VEC4_POSTIVE_UNIT_W.V, 2);
+        result.M.R[3] = vsetq_lane_f32(range * z_near, Impl::VEC4_POSITIVE_UNIT_W.V, 2);
 #elif GRAPHYTE_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
                 2.0f / view_width,
