@@ -20,20 +20,6 @@ Compiler('Compiler-MSVC-ARMv8') {
     .Compiler = 'Compiler-MSVC-x64'
     .Linker = '$ToolsetRootBin$/link.exe'
     .Librarian = '$ToolsetRootBin$/lib.exe'
-
-    .ToolsetCompiler = '$ToolsetRootBin$/cl.exe'
-    //.ToolsetLinker =
-    //.ToolsetLibrarian =
-    //.ToolsetAssembly = '$ToolsetRootBin$/ml64.exe'
-
-    .ToolsetIncludes = {
-        '$ToolsetRoot$/include'
-        '$ToolsetRoot$/atlmfc/include'
-        '$VsToolsLocation$/VC/Auxiliary/VS/include'
-    }
-    .ToolsetLibs = {
-        '$ToolsetRoot$/lib/x64'
-    }
 ]
 
 .Toolset_Windows_MSVC_ARMv8 = [
@@ -42,19 +28,9 @@ Compiler('Compiler-MSVC-ARMv8') {
     .ToolsetRoot = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$'
     .ToolsetRootBin = '$ToolsetRoot$/bin/HostX64/arm64'
 
-    .ToolsetCompiler = '$ToolsetRootBin$/cl.exe'
-    .ToolsetLinker = '$ToolsetRootBin$/link.exe'
-    .ToolsetLibrarian = '$ToolsetRootBin$/lib.exe'
-    .ToolsetAssembly = '$ToolsetRootBin$/armasm64.exe'
-
-    .ToolsetIncludes = {
-        '$ToolsetRoot$/include'
-        '$ToolsetRoot$/atlmfc/include'
-        '$VsToolsLocation$/VC/Auxiliary/VS/include'
-    }
-    .ToolsetLibs = {
-        '$ToolsetRoot$/lib/arm64'
-    }
+    .Compiler = 'Compiler-MSVC-ARMv8'
+    .Linker = '$ToolsetRootBin$/link.exe'
+    .Librarian = '$ToolsetRootBin$/lib.exe'
 ]
 
 .Toolset_Linux_Clang_x64 = [

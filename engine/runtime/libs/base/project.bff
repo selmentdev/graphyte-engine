@@ -31,7 +31,8 @@
     .VcxProjectConfigs = {}
 
     // this module applies only on windows-x64-msvc build
-    ForEach(.Config in .Configs_Windows_MSVC_x64)
+    .CurrentConfigs = .Configs_Windows_MSVC_x64 + .Configs_Windows_MSVC_ARMv8
+    ForEach(.Config in .CurrentConfigs)
     {
         Using(.Config)
 

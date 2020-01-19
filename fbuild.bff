@@ -8,6 +8,7 @@
     ForEach(.Config in .Configs)
     {
         Using(.Config)
+        Print(.Config)
         
         .ProjectConfig = [
                 .Platform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
@@ -34,15 +35,46 @@
 #include "engine/runtime/libs/graphics/project.bff"
 #include "engine/runtime/libs/launch/project.bff"
 
-VSSolution('graphyte')
+{
+    .VcxProjectConfigs = {}
+    .CurrentConfigs = .Configs_Windows_MSVC_x64 + .Configs_Windows_MSVC_ARMv8
+    ForEach(.Config in .CurrentConfigs)
+    {
+        Using(.Config)
+
+        .ProjectConfig = [
+            .Platform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+            .Config = '$Config$'
+            //.Target = 'All-proj-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        ]
+        
+        ^VcxProjectConfigs + .ProjectConfig
+    }
+
+    VCXProject('All-proj') {
+        .ProjectConfigs = .VcxProjectConfigs
+        .ProjectOutput   = 'All.vcxproj'
+        .ProjectFiles    = { '.\fbuild.bff' }
+        .ProjectBasePath = '.\'
+        .PlatformToolset = 'v142'
+    }
+}
+
+VSSolution('Graphyte')
 {
     .SolutionOutput = 'gen.sln'
-    .SolutionProjects = .GraphyteProjects + .SdkProjects
-    .SolutionBuildProject = .GraphyteProjects + .SdkProjects
+    .SolutionProjects = { 'All-proj' }
+    .SolutionBuildProject = 'All-proj'
+    .Deps = [
+        .Projects = .GraphyteProjects + .SdkProjects
+        .Dependencies = { 'All-proj' }
+    ]
+    Print(.Deps)
+    .SolutionDependencies = { .Deps }
 }
 
 Alias('all') {
-    .Targets = .AllObjects
+    .Targets = 'Graphyte'
 }
 
 

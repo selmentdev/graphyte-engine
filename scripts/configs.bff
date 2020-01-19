@@ -97,6 +97,8 @@
     Using(.Toolset_Windows_MSVC_ARMv8)
     Using(.BaseConfig_Windows_MSVC)
     .ArchitectureInfo = 'ARMv8'
+    .CompilerOptions
+        + ' /DGRAPHYTE_MATH_NO_INTRINSICS=1'
     .BaseIncludePaths
         = ' /I"$ToolsetRoot$/include"'
         + ' /I"$ToolsetRoot$/atlmfc/include"'
@@ -137,10 +139,27 @@
     .CompilerOptions + ' /DGX_CONFIG_RELEASE=1'
 ]
 
-.Config_Windows_MSVC_ARMv8_Debug = []
-.Config_Windows_MSVC_ARMv8_Checked = []
-.Config_Windows_MSVC_ARMv8_Profile = []
-.Config_Windows_MSVC_ARMv8_Release = []
+.Config_Windows_MSVC_ARMv8_Debug = [
+    Using(.BaseConfig_Windows_MSVC_ARMv8)
+    .Config = 'Debug'
+    .CompilerOptions + ' /DGX_CONFIG_DEBUG=1'
+]
+
+.Config_Windows_MSVC_ARMv8_Checked = [
+    Using(.BaseConfig_Windows_MSVC_ARMv8)
+    .Config = 'Checked'
+    .CompilerOptions + ' /DGX_CONFIG_CHECKED=1'
+]
+.Config_Windows_MSVC_ARMv8_Profile = [
+    Using(.BaseConfig_Windows_MSVC_ARMv8)
+    .Config = 'Profile'
+    .CompilerOptions + ' /DGX_CONFIG_PROFILE=1'
+]
+.Config_Windows_MSVC_ARMv8_Release = [
+    Using(.BaseConfig_Windows_MSVC_ARMv8)
+    .Config = 'Release'
+    .CompilerOptions + ' /DGX_CONFIG_RELEASE=1'
+]
 
 .Config_Windows_Clang_x64_Debug = []
 .Config_Windows_Clang_x64_Checked = []
@@ -168,7 +187,7 @@
     .Config_Windows_MSVC_ARMv8_Profile,
     .Config_Windows_MSVC_ARMv8_Release,
 }
-//.Configs + .Configs_Windows_MSVC_ARMv8
+.Configs + .Configs_Windows_MSVC_ARMv8
 
 .Config_Windows_Clang_x64 = {
     .Config_Windows_Clang_x64_Debug,

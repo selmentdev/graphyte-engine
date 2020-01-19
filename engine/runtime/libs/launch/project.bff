@@ -28,8 +28,11 @@
         }
     }
 
+    .VcxProjectConfigs = {}
+
     // this module applies only on windows-x64-msvc build
-    ForEach(.Config in .Configs_Windows_MSVC_x64)
+    .CurrentConfigs = .Configs_Windows_MSVC_x64 + .Configs_Windows_MSVC_ARMv8
+    ForEach(.Config in .CurrentConfigs)
     {
         Using(.Config)
 
@@ -54,5 +57,35 @@
             .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
             .LibrarianOutput = '$OutputBase$/lib/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.lib'
         }
+
+        .ProjectConfig = [
+            .Platform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+            .Config = '$Config$'
+            .Target = '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        ]
+        
+        ^VcxProjectConfigs + .ProjectConfig
     }
+
+    VCXProject('$ProjectName$') {
+        .ProjectOutput = '$ProjectName$.vcxproj'
+        .ProjectInputPaths = { .ProjectPath }
+        //.ProjectOutputDirectory = 
+        //>intermediateDirectory = 
+        .ProjectBasePath = .ProjectPath
+        .ProjectAllowedFileExtensions = {
+            '*.bff'
+            '*.cxx'
+            '*.hxx'
+            '*.c'
+            '*.h'
+        }
+        .ProjectConfigs = .VcxProjectConfigs
+        .PlatformToolset = 'v142'
+        .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor ^$(ProjectName)-^$(PlatformName)-^$(Configuration)'
+        .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor ^$(ProjectName)-^$(PlatformName)-^$(Configuration)'
+        .ProjectCleanCommand = 'fbuild -ide ^$(ProjectName)-^$(Configuration)-Clean'
+    }
+
+    ^GraphyteProjects + .ProjectName
 }
