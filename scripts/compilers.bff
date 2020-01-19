@@ -1,20 +1,20 @@
 #once
-#include "compiler.msvc.bff"
+#include "compiler.msvs.bff"
 
 Compiler('Compiler-MSVC-x64') {
-    .Root = '$ToolsetMsvcRoot$/VC/Tools/MSVC/$ToolsetMsvcVersion$/bin/HostX64/x64'
+    .Root = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64'
     .Executable = '$Root$/cl.exe'
 }
 
 Compiler('Compiler-MSVC-ARMv8') {
-    .Root = '$ToolsetMsvcRoot$/VC/Tools/MSVC/$ToolsetMsvcVersion$/bin/HostX64/arm64'
+    .Root = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64'
     .Executable = '$Root$/cl.exe'
 }
 
 .Toolset_Windows_MSVC_x64 = [
     .LangResId = '1033'
     .ToolsetName = 'MSVC-x64'
-    .ToolsetRoot = '$ToolsetMsvcRoot$/VC/Tools/MSVC/$ToolsetMsvcVersion$'
+    .ToolsetRoot = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$'
     .ToolsetRootBin = '$ToolsetRoot$/bin/HostX64/x64'
 
     .Compiler = 'Compiler-MSVC-x64'
@@ -29,7 +29,7 @@ Compiler('Compiler-MSVC-ARMv8') {
     .ToolsetIncludes = {
         '$ToolsetRoot$/include'
         '$ToolsetRoot$/atlmfc/include'
-        '$ToolsetMsvcRoot$/VC/Auxiliary/VS/include'
+        '$VsToolsLocation$/VC/Auxiliary/VS/include'
     }
     .ToolsetLibs = {
         '$ToolsetRoot$/lib/x64'
@@ -39,7 +39,7 @@ Compiler('Compiler-MSVC-ARMv8') {
 .Toolset_Windows_MSVC_ARMv8 = [
     .LangResId = '1033'
     .ToolsetName = 'MSVC-ARMv8'
-    .ToolsetRoot = '$ToolsetMsvcRoot$/VC/Tools/MSVC/$ToolsetMsvcVersion$'
+    .ToolsetRoot = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$'
     .ToolsetRootBin = '$ToolsetRoot$/bin/HostX64/arm64'
 
     .ToolsetCompiler = '$ToolsetRootBin$/cl.exe'
@@ -50,7 +50,7 @@ Compiler('Compiler-MSVC-ARMv8') {
     .ToolsetIncludes = {
         '$ToolsetRoot$/include'
         '$ToolsetRoot$/atlmfc/include'
-        '$ToolsetMsvcRoot$/VC/Auxiliary/VS/include'
+        '$VsToolsLocation$/VC/Auxiliary/VS/include'
     }
     .ToolsetLibs = {
         '$ToolsetRoot$/lib/arm64'

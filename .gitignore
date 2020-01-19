@@ -34,7 +34,7 @@ bin
 obj
 game/logs
 engine/include/Graphyte/Build.Version.hxx
-scripts/compiler.msvc.bff
+scripts/compiler.msvs.bff
 Makefile
 *.make
 *.mk

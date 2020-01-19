@@ -80,7 +80,7 @@
     .BaseIncludePaths
         = ' /I"$ToolsetRoot$/include"'
         + ' /I"$ToolsetRoot$/atlmfc/include"'
-        + ' /I"$ToolsetMsvcRoot$/VC/Auxiliary/VS/include"'
+        + ' /I"$VsToolsLocation$/VC/Auxiliary/VS/include"'
         + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared"'
         + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt"'
         + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um"'
@@ -100,7 +100,7 @@
     .BaseIncludePaths
         = ' /I"$ToolsetRoot$/include"'
         + ' /I"$ToolsetRoot$/atlmfc/include"'
-        + ' /I"$ToolsetMsvcRoot$/VC/Auxiliary/VS/include"'
+        + ' /I"$VsToolsLocation$/VC/Auxiliary/VS/include"'
         + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared"'
         + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt"'
         + ' /I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\um"'
