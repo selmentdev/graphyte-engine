@@ -121,6 +121,8 @@
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\arm64"'
 ]
 
+//--------------------------------------------------------------------------------------------------
+
 .Config_Windows_x64_MSVC_Debug = [
     Using(.BaseConfig_Windows_x64_MSVC)
     .Config = 'Debug'
@@ -158,6 +160,11 @@
 .SolutionConfigs_Windows_x64_MSVC_Profile = {}
 .SolutionConfigs_Windows_x64_MSVC_Release = {}
 
+.AllTargets_Windows_x64_MSVC_Debug = {}
+.AllTargets_Windows_x64_MSVC_Checked = {}
+.AllTargets_Windows_x64_MSVC_Profile = {}
+.AllTargets_Windows_x64_MSVC_Release = {}
+
 //--------------------------------------------------------------------------------------------------
 
 .Config_Windows_ARMv8_MSVC_Debug = [
@@ -194,6 +201,11 @@
 .SolutionConfigs_Windows_ARMv8_MSVC_Checked = {}
 .SolutionConfigs_Windows_ARMv8_MSVC_Profile = {}
 .SolutionConfigs_Windows_ARMv8_MSVC_Release = {}
+
+.AllTargets_Windows_ARMv8_MSVC_Debug = {}
+.AllTargets_Windows_ARMv8_MSVC_Checked = {}
+.AllTargets_Windows_ARMv8_MSVC_Profile = {}
+.AllTargets_Windows_ARMv8_MSVC_Release = {}
 
 //--------------------------------------------------------------------------------------------------
 

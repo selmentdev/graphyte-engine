@@ -94,6 +94,8 @@
 
         ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'
         ^VcxProjectConfigs + .ProjectConfig
+
+        ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
     }
 
     VCXProject('$ProjectName$') {

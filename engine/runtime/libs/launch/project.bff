@@ -35,6 +35,9 @@
     ForEach(.Config in .CurrentConfigs)
     {
         Using(.Config)
+        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 
         ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
         {
@@ -69,6 +72,7 @@
 
         ^'SolutionConfigs_$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$' + '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
         ^VcxProjectConfigs + .ProjectConfig
+        ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
     }
 
     VCXProject('$ProjectName$') {

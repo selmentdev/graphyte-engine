@@ -33,7 +33,10 @@
 #include "engine/runtime/libs/base/project.bff"
 #include "engine/runtime/libs/geometry/project.bff"
 #include "engine/runtime/libs/graphics/project.bff"
+#include "engine/runtime/libs/graphics-opengl/project.bff"
+#include "engine/runtime/libs/graphics-d3d11/project.bff"
 #include "engine/runtime/libs/launch/project.bff"
+#include "engine/runtime/libs/rendering/project.bff"
 
 {
     .VcxProjectConfigs = {}
@@ -87,9 +90,40 @@ Alias('all') {
     .Targets = 'Graphyte'
 }
 
+Alias('All-Windows-x64-MSVC-Debug')   { .Targets = .AllTargets_Windows_x64_MSVC_Debug   }
+Alias('All-Windows-x64-MSVC-Checked') { .Targets = .AllTargets_Windows_x64_MSVC_Checked }
+Alias('All-Windows-x64-MSVC-Profile') { .Targets = .AllTargets_Windows_x64_MSVC_Profile }
+Alias('All-Windows-x64-MSVC-Release') { .Targets = .AllTargets_Windows_x64_MSVC_Release }
 
+Alias('All-Windows-x64-MSVC') {
+    .Targets = {
+        'All-Windows-x64-MSVC-Debug'
+        'All-Windows-x64-MSVC-Checked'
+        'All-Windows-x64-MSVC-Profile'
+        'All-Windows-x64-MSVC-Release'
+    }
+}
 
+Alias('All-Windows-ARMv8-MSVC-Debug')   { .Targets = .AllTargets_Windows_ARMv8_MSVC_Debug   }
+Alias('All-Windows-ARMv8-MSVC-Checked') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Checked }
+Alias('All-Windows-ARMv8-MSVC-Profile') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Profile }
+Alias('All-Windows-ARMv8-MSVC-Release') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Release }
 
+Alias('All-Windows-ARMv8-MSVC') {
+    .Targets = {
+        'All-Windows-ARMv8-MSVC-Debug'
+        'All-Windows-ARMv8-MSVC-Checked'
+        'All-Windows-ARMv8-MSVC-Profile'
+        'All-Windows-ARMv8-MSVC-Release'
+    }
+}
+
+Alias('All-Windows-MSVC') {
+    .Targets = {
+        'All-Windows-x64-MSVC'
+        'All-Windows-ARMv8-MSVC'
+    }
+}
 
 .ProjectCommon = [
     .ProjectBuildCommand   = 'cd ^$(SolutionDir) &amp; fbuild -vs -dist -monitor -fastcancel -cache ^$(ProjectName)-^$(Configuration)'
