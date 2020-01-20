@@ -74,6 +74,7 @@
 .BaseConfig_Windows_MSVC_x64 = [
     Using(.Toolset_Windows_MSVC_x64)
     Using(.BaseConfig_Windows_MSVC)
+    .VsPlatform = 'x64'
     .ArchitectureInfo = 'x64'
     .CompilerOptions
         + ' /arch:AVX'
@@ -96,6 +97,7 @@
 .BaseConfig_Windows_MSVC_ARMv8 = [
     Using(.Toolset_Windows_MSVC_ARMv8)
     Using(.BaseConfig_Windows_MSVC)
+    .VsPlatform = 'ARM64'
     .ArchitectureInfo = 'ARMv8'
     .CompilerOptions
         + ' /DGRAPHYTE_MATH_NO_INTRINSICS=1'
@@ -161,15 +163,47 @@
     .CompilerOptions + ' /DGX_CONFIG_RELEASE=1'
 ]
 
-.Config_Windows_Clang_x64_Debug = []
-.Config_Windows_Clang_x64_Checked = []
-.Config_Windows_Clang_x64_Profile = []
-.Config_Windows_Clang_x64_Release = []
 
-.Config_Android_Clang_ARMv8_Debug = []
-.Config_Android_Clang_ARMv8_Checked = []
-.Config_Android_Clang_ARMv8_Profile = []
-.Config_Android_Clang_ARMv8_Release = []
+.BaseConfig_Windows_Clang = [
+]
+
+.BaseConfig_Windows_Clang_x64 = [
+    Using(.BaseConfig_Windows_Clang)
+    .VsPlatform = 'x64'
+]
+
+.Config_Windows_Clang_x64_Debug = [
+    Using(.BaseConfig_Windows_Clang_x64)
+]
+.Config_Windows_Clang_x64_Checked = [
+    Using(.BaseConfig_Windows_Clang_x64)
+]
+.Config_Windows_Clang_x64_Profile = [
+    Using(.BaseConfig_Windows_Clang_x64)
+]
+.Config_Windows_Clang_x64_Release = [
+    Using(.BaseConfig_Windows_Clang_x64)
+]
+
+.BaseConfig_Android_Clang = [
+    .VsPlatform = 'ARM64'
+]
+.BaseConfig_Android_Clang_ARMv8 = [
+    Using(.BaseConfig_Android_Clang)
+]
+
+.Config_Android_Clang_ARMv8_Debug = [
+    Using(.BaseConfig_Android_Clang_ARMv8)
+]
+.Config_Android_Clang_ARMv8_Checked = [
+    Using(.BaseConfig_Android_Clang_ARMv8)
+]
+.Config_Android_Clang_ARMv8_Profile = [
+    Using(.BaseConfig_Android_Clang_ARMv8)
+]
+.Config_Android_Clang_ARMv8_Release = [
+    Using(.BaseConfig_Android_Clang_ARMv8)
+]
 
 .Configs = { }
 
@@ -181,6 +215,11 @@
 }
 .Configs + .Configs_Windows_MSVC_x64
 
+.SolutionConfigs_Windows_MSVC_x64_Debug = {}
+.SolutionConfigs_Windows_MSVC_x64_Checked = {}
+.SolutionConfigs_Windows_MSVC_x64_Profile = {}
+.SolutionConfigs_Windows_MSVC_x64_Release = {}
+
 .Configs_Windows_MSVC_ARMv8 = {
     .Config_Windows_MSVC_ARMv8_Debug,
     .Config_Windows_MSVC_ARMv8_Checked,
@@ -188,6 +227,12 @@
     .Config_Windows_MSVC_ARMv8_Release,
 }
 .Configs + .Configs_Windows_MSVC_ARMv8
+
+.SolutionConfigs_Windows_MSVC_ARMv8_Debug = {}
+.SolutionConfigs_Windows_MSVC_ARMv8_Checked = {}
+.SolutionConfigs_Windows_MSVC_ARMv8_Profile = {}
+.SolutionConfigs_Windows_MSVC_ARMv8_Release = {}
+
 
 .Config_Windows_Clang_x64 = {
     .Config_Windows_Clang_x64_Debug,

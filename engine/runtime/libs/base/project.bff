@@ -81,19 +81,23 @@
         }
 
         .ProjectConfig = [
-            .Platform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
-            .Config = '$Config$'
             .Target = '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .Config = '$Config$'
+            .Platform = '$VsPlatform$'
+            .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .ProjectCleanCommand = 'fbuild -ide $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
         ]
-        
+
+        ^'SolutionConfigs_$PlatformInfo$_$CompilerInfo$_$ArchitectureInfo$_$Config$' + '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
         ^VcxProjectConfigs + .ProjectConfig
     }
 
     VCXProject('$ProjectName$') {
         .ProjectOutput = '$ProjectName$.vcxproj'
         .ProjectInputPaths = { .ProjectPath }
-        //.ProjectOutputDirectory = 
-        //>intermediateDirectory = 
+        //.ProjectOutputDirectory =
+        //>intermediateDirectory =
         .ProjectBasePath = .ProjectPath
         .ProjectAllowedFileExtensions = {
             '*.bff'
@@ -104,9 +108,6 @@
         }
         .ProjectConfigs = .VcxProjectConfigs
         .PlatformToolset = 'v142'
-        .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor ^$(ProjectName)-^$(PlatformName)-^$(Configuration)'
-        .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor ^$(ProjectName)-^$(PlatformName)-^$(Configuration)'
-        .ProjectCleanCommand = 'fbuild -ide ^$(ProjectName)-^$(Configuration)-Clean'
     }
 
     ^GraphyteProjects + .ProjectName

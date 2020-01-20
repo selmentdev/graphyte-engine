@@ -122,11 +122,38 @@ def _locate_windows10_sdk_kits():
 
     windows_sdk_kits : List[Version] = []
 
+    required_options : set[str] = {
+        'OptionId.DesktopCPPx64',
+        'OptionId.DesktopCPParm64',
+        'OptionId.SigningTools'
+    }
+
     for i in range(0, winreg.QueryInfoKey(roots)[0]):
         version : str = winreg.EnumKey(roots, i)
 
         if version.startswith("10."):
-            windows_sdk_kits.append(Version(version))
+            try:
+                kit = winreg.OpenKey(roots, version, 0, winreg.KEY_READ)
+
+                options = winreg.OpenKey(kit, 'Installed Options', 0, winreg.KEY_READ)
+                options_found : List[str] = []
+
+                for k in range(0, winreg.QueryInfoKey(options)[1]):
+                    (name, value, kind) = winreg.EnumValue(options, k)
+
+                    if name.startswith('OptionId'):
+                        options_found.append(name)
+
+                if required_options.issubset(options_found):
+                    windows_sdk_kits.append(Version(version))
+                    print('Windows SDK "{}" found'.format(version))
+                else:
+                    print('Windows SDK "{}" in not supported'.format(version))
+                    for option in required_options:
+                        if option not in options_found:
+                            print('  - missing "{}"'.format(option))
+            except:
+                print('Windows SDK "{}" is not supported'.format(version))
 
     return (windows_sdk_location, windows_sdk_kits)
 
@@ -152,11 +179,14 @@ def generate_msvc_compiler_info():
         #
 
         windows_sdk_version : int = 10
-        (windows_sdk_location, windows_sdk_kits) = _locate_windows10_sdk_kits()
+        (windows_sdk_location, kits_found) = _locate_windows10_sdk_kits()
+
+        windows_sdk_kit = max(kits_found)
+        print('Using Windows SDK "{}"'.format(windows_sdk_kit))
     else:
         windows_sdk_version : int = -1
         windows_sdk_location = '/dev/null'
-        windows_sdk_kits : List[Version] = [Version('0.0.0.0')]
+        windows_sdk_kit : str = 'unknown'
         vspath : str = '/dev/null'
         vsname : str = '/dev/null'
         vstools : str = '/dev/null'
@@ -170,7 +200,7 @@ def generate_msvc_compiler_info():
         f.write(".VsToolsVersion = '{}'\n".format(vstools))
         f.write(".WindowsSdkLocation = '{}'\n".format(os.path.normpath(windows_sdk_location)))
         f.write(".WindowsKitVersion = '{}'\n".format(windows_sdk_version))
-        f.write(".WindowsSdkVersion = '{}'\n".format(max(windows_sdk_kits)))
+        f.write(".WindowsSdkVersion = '{}'\n".format(windows_sdk_kit))
 
 def generate_version_file():
     os.makedirs('./engine/include/Graphyte', exist_ok=True)

@@ -4,15 +4,14 @@
 
 .SolutionConfigs = {}
 {
-
     ForEach(.Config in .Configs)
     {
         Using(.Config)
-        Print(.Config)
-        
         .ProjectConfig = [
-                .Platform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
-                .Config = '$Config$'
+            .Config = '$Config$'
+            .Platform = '$VsPlatform$'
+            .SolutionConfig = '$Config$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+            .SolutionPlatform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
         ]
         ^SolutionConfigs + .ProjectConfig
     }
@@ -38,38 +37,49 @@
 {
     .VcxProjectConfigs = {}
     .CurrentConfigs = .Configs_Windows_MSVC_x64 + .Configs_Windows_MSVC_ARMv8
+    .ProjectName = 'all-proj'
+
     ForEach(.Config in .CurrentConfigs)
     {
         Using(.Config)
 
+        Alias('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
+            Print('SolutionConfigs_$PlatformInfo$_$CompilerInfo$_$ArchitectureInfo$_$Config$')
+            .Targets = .'SolutionConfigs_$PlatformInfo$_$CompilerInfo$_$ArchitectureInfo$_$Config$'
+        }
+
         .ProjectConfig = [
-            .Platform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+            .Target = '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
             .Config = '$Config$'
-            //.Target = 'All-proj-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .Platform = '$VsPlatform$'
+            .SolutionConfig = '$Config$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+            .SolutionPlatform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+            .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .ProjectCleanCommand = 'fbuild -ide $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
         ]
-        
+
         ^VcxProjectConfigs + .ProjectConfig
     }
 
-    VCXProject('All-proj') {
-        .ProjectConfigs = .VcxProjectConfigs
-        .ProjectOutput   = 'All.vcxproj'
+    VCXProject('$ProjectName$') {
+        .ProjectOutput   = '$ProjectName$.vcxproj'
         .ProjectFiles    = { '.\fbuild.bff' }
         .ProjectBasePath = '.\'
-        .PlatformToolset = 'v142'
+        .ProjectConfigs = .VcxProjectConfigs
+        .PlatformToolset = 'v141'
     }
 }
 
 VSSolution('Graphyte')
 {
     .SolutionOutput = 'gen.sln'
-    .SolutionProjects = { 'All-proj' }
-    .SolutionBuildProject = 'All-proj'
+    //.SolutionProjects = .GraphyteProjects + .SdkProjects + 'All-proj'
+    .SolutionBuildProject = 'all-proj'
     .Deps = [
         .Projects = .GraphyteProjects + .SdkProjects
-        .Dependencies = { 'All-proj' }
+        .Dependencies = { 'all-proj' }
     ]
-    Print(.Deps)
     .SolutionDependencies = { .Deps }
 }
 
