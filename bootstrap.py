@@ -111,7 +111,7 @@ def _msvc_get_installation(vswhere):
     return json.loads(result)
 
 def _locate_windows10_sdk_kits():
-    roots_key : str = r"SOFTWARE\Microsoft\Windows Kits\Installed Roots"
+    roots_key : str = r"SOFTWARE\WOW6432Node\Microsoft\Windows Kits\Installed Roots"
     roots = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, roots_key, 0, winreg.KEY_READ)
 
     for i in range(0, winreg.QueryInfoKey(roots)[1]):
