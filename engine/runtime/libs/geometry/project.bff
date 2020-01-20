@@ -95,7 +95,7 @@
             '*.h'
         }
         .ProjectConfigs = .VcxProjectConfigs
-        .PlatformToolset = 'v142'
+        .PlatformToolset = .VsPlatformToolset
     }
 
     ^GraphyteProjects + .ProjectName

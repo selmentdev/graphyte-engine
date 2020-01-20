@@ -169,6 +169,14 @@ def generate_msvc_compiler_info():
         vsinstance : str = _msvc_get_installation(vswhere)[0]
         vsname : str = vsinstance['displayName']
         vspath : str = vsinstance['installationPath']
+        vsversion : str = vsinstance['catalog']['productLineVersion']
+
+        VS_AVAILABLE_TOOLKITS = {
+            '2017': 'v141',
+            '2019': 'v142',
+        }
+
+        vstoolkit : str = VS_AVAILABLE_TOOLKITS[vsversion]
 
         msvs_tools_version_location : str = os.path.join(vspath, 'VC', 'Auxiliary', 'Build', 'Microsoft.VCToolsVersion.default.txt')
         with open(msvs_tools_version_location, 'r') as file:
@@ -190,6 +198,8 @@ def generate_msvc_compiler_info():
         vspath : str = '/dev/null'
         vsname : str = '/dev/null'
         vstools : str = '/dev/null'
+        vsversion : str = ''
+        vstoolkit : str = ''
 
     # Generate header
     with open('scripts/compiler.msvs.bff', 'w') as f:
@@ -198,6 +208,8 @@ def generate_msvc_compiler_info():
         f.write(".VsToolsLocation = '{}'\n".format(vspath))
         f.write(".VsToolsName = '{}'\n".format(vsname))
         f.write(".VsToolsVersion = '{}'\n".format(vstools))
+        f.write(".VsVersion = '{}'\n".format(vsversion))
+        f.write(".VsPlatformToolset = '{}'\n".format(vstoolkit))
         f.write(".WindowsSdkLocation = '{}'\n".format(os.path.normpath(windows_sdk_location)))
         f.write(".WindowsKitVersion = '{}'\n".format(windows_sdk_version))
         f.write(".WindowsSdkVersion = '{}'\n".format(windows_sdk_kit))
