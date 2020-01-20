@@ -1,23 +1,24 @@
-.ProjectType = 'c'
-.ProjectKind = 'static'
-.ProjectName = 'glad'
+{
+    .ProjectName = 'sdk.glad'
+    .ProjectPath = 'sdks/glad'
 
-.ProjectFiles = {
-    'source/glad.c'
-}
+    .CurrentConfigs = .Configs_Windows_x64_MSVC
 
-.ProjectFiles_Android = {
-    'source/glad_egl.c'
-}
+    ForEach(.Config in .CurrentConfigs)
+    {
+        Using(.Config)
 
-.ProjectFiles_Linux = {
-    'source/glad_glx.c'
-}
+        .CompilerInputFiles = {
+            '$ProjectPath$/source/glad.c'
+        }
 
-.ProjectFiles_Windows = {
-    'source/glad_wgl.c'
-}
+        .CompilerOptions
+            + ' /I"$ProjectPath$/include"'
 
-.ProjectIncludes = {
-    'include'
+        Library('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
+            .CompilerInputFiles + '$ProjectPath$/source/glad_wgl.c'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+            .LibrarianOutput = '$OutputBase$/lib/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.lib'
+        }
+    }
 }

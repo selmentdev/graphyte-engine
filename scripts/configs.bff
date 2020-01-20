@@ -1,7 +1,11 @@
 #once
 #include "compilers.bff"
 
+//--------------------------------------------------------------------------------------------------
 
+.Configs = { }
+
+//--------------------------------------------------------------------------------------------------
 
 .BaseConfig_Windows_MSVC = [
     .PlatformInfo = 'Windows'
@@ -71,8 +75,8 @@
 
 ]
 
-.BaseConfig_Windows_MSVC_x64 = [
-    Using(.Toolset_Windows_MSVC_x64)
+.BaseConfig_Windows_x64_MSVC = [
+    Using(.Toolset_Windows_x64_MSVC)
     Using(.BaseConfig_Windows_MSVC)
     .VsPlatform = 'x64'
     .ArchitectureInfo = 'x64'
@@ -94,8 +98,8 @@
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\x64"'
 ]
 
-.BaseConfig_Windows_MSVC_ARMv8 = [
-    Using(.Toolset_Windows_MSVC_ARMv8)
+.BaseConfig_Windows_ARMv8_MSVC = [
+    Using(.Toolset_Windows_ARMv8_MSVC)
     Using(.BaseConfig_Windows_MSVC)
     .VsPlatform = 'ARM64'
     .ArchitectureInfo = 'ARMv8'
@@ -117,135 +121,150 @@
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\arm64"'
 ]
 
-.Config_Windows_MSVC_x64_Debug = [
-    Using(.BaseConfig_Windows_MSVC_x64)
+.Config_Windows_x64_MSVC_Debug = [
+    Using(.BaseConfig_Windows_x64_MSVC)
     .Config = 'Debug'
     .CompilerOptions + ' /DGX_CONFIG_DEBUG=1'
 ]
 
-.Config_Windows_MSVC_x64_Checked = [
-    Using(.BaseConfig_Windows_MSVC_x64)
+.Config_Windows_x64_MSVC_Checked = [
+    Using(.BaseConfig_Windows_x64_MSVC)
     .Config = 'Checked'
     .CompilerOptions + ' /DGX_CONFIG_CHECKED=1'
 ]
 
-.Config_Windows_MSVC_x64_Profile = [
-    Using(.BaseConfig_Windows_MSVC_x64)
+.Config_Windows_x64_MSVC_Profile = [
+    Using(.BaseConfig_Windows_x64_MSVC)
     .Config = 'Profile'
     .CompilerOptions + ' /DGX_CONFIG_PROFILE=1'
 ]
 
-.Config_Windows_MSVC_x64_Release = [
-    Using(.BaseConfig_Windows_MSVC_x64)
+.Config_Windows_x64_MSVC_Release = [
+    Using(.BaseConfig_Windows_x64_MSVC)
     .Config = 'Release'
     .CompilerOptions + ' /DGX_CONFIG_RELEASE=1'
 ]
 
-.Config_Windows_MSVC_ARMv8_Debug = [
-    Using(.BaseConfig_Windows_MSVC_ARMv8)
+.Configs_Windows_x64_MSVC = {
+    .Config_Windows_x64_MSVC_Debug,
+    .Config_Windows_x64_MSVC_Checked,
+    .Config_Windows_x64_MSVC_Profile,
+    .Config_Windows_x64_MSVC_Release,
+}
+.Configs + .Configs_Windows_x64_MSVC
+
+.SolutionConfigs_Windows_x64_MSVC_Debug = {}
+.SolutionConfigs_Windows_x64_MSVC_Checked = {}
+.SolutionConfigs_Windows_x64_MSVC_Profile = {}
+.SolutionConfigs_Windows_x64_MSVC_Release = {}
+
+//--------------------------------------------------------------------------------------------------
+
+.Config_Windows_ARMv8_MSVC_Debug = [
+    Using(.BaseConfig_Windows_ARMv8_MSVC)
     .Config = 'Debug'
     .CompilerOptions + ' /DGX_CONFIG_DEBUG=1'
 ]
 
-.Config_Windows_MSVC_ARMv8_Checked = [
-    Using(.BaseConfig_Windows_MSVC_ARMv8)
+.Config_Windows_ARMv8_MSVC_Checked = [
+    Using(.BaseConfig_Windows_ARMv8_MSVC)
     .Config = 'Checked'
     .CompilerOptions + ' /DGX_CONFIG_CHECKED=1'
 ]
-.Config_Windows_MSVC_ARMv8_Profile = [
-    Using(.BaseConfig_Windows_MSVC_ARMv8)
+.Config_Windows_ARMv8_MSVC_Profile = [
+    Using(.BaseConfig_Windows_ARMv8_MSVC)
     .Config = 'Profile'
     .CompilerOptions + ' /DGX_CONFIG_PROFILE=1'
 ]
-.Config_Windows_MSVC_ARMv8_Release = [
-    Using(.BaseConfig_Windows_MSVC_ARMv8)
+.Config_Windows_ARMv8_MSVC_Release = [
+    Using(.BaseConfig_Windows_ARMv8_MSVC)
     .Config = 'Release'
     .CompilerOptions + ' /DGX_CONFIG_RELEASE=1'
 ]
 
+.Configs_Windows_ARMv8_MSVC = {
+    .Config_Windows_ARMv8_MSVC_Debug,
+    .Config_Windows_ARMv8_MSVC_Checked,
+    .Config_Windows_ARMv8_MSVC_Profile,
+    .Config_Windows_ARMv8_MSVC_Release,
+}
+.Configs + .Configs_Windows_ARMv8_MSVC
+
+.SolutionConfigs_Windows_ARMv8_MSVC_Debug = {}
+.SolutionConfigs_Windows_ARMv8_MSVC_Checked = {}
+.SolutionConfigs_Windows_ARMv8_MSVC_Profile = {}
+.SolutionConfigs_Windows_ARMv8_MSVC_Release = {}
+
+//--------------------------------------------------------------------------------------------------
 
 .BaseConfig_Windows_Clang = [
 ]
 
-.BaseConfig_Windows_Clang_x64 = [
+.BaseConfig_Windows_x64_Clang = [
     Using(.BaseConfig_Windows_Clang)
     .VsPlatform = 'x64'
 ]
 
-.Config_Windows_Clang_x64_Debug = [
-    Using(.BaseConfig_Windows_Clang_x64)
+.Config_Windows_x64_Clang_Debug = [
+    Using(.BaseConfig_Windows_x64_Clang)
 ]
-.Config_Windows_Clang_x64_Checked = [
-    Using(.BaseConfig_Windows_Clang_x64)
+.Config_Windows_x64_Clang_Checked = [
+    Using(.BaseConfig_Windows_x64_Clang)
 ]
-.Config_Windows_Clang_x64_Profile = [
-    Using(.BaseConfig_Windows_Clang_x64)
+.Config_Windows_x64_Clang_Profile = [
+    Using(.BaseConfig_Windows_x64_Clang)
 ]
-.Config_Windows_Clang_x64_Release = [
-    Using(.BaseConfig_Windows_Clang_x64)
+.Config_Windows_x64_Clang_Release = [
+    Using(.BaseConfig_Windows_x64_Clang)
 ]
 
+.Config_Windows_x64_Clang = {
+    .Config_Windows_x64_Clang_Debug,
+    .Config_Windows_x64_Clang_Checked,
+    .Config_Windows_x64_Clang_Profile,
+    .Config_Windows_x64_Clang_Release
+}
+//.Configs + .Config_Windows_x64_Clang
+
+.SolutionConfigs_Windows_x64_Clang_Debug = {}
+.SolutionConfigs_Windows_x64_Clang_Checked = {}
+.SolutionConfigs_Windows_x64_Clang_Profile = {}
+.SolutionConfigs_Windows_x64_Clang_Release = {}
+
+//--------------------------------------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------------------------------
+// Android
 .BaseConfig_Android_Clang = [
     .VsPlatform = 'ARM64'
 ]
-.BaseConfig_Android_Clang_ARMv8 = [
+.BaseConfig_Android_ARMv8_Clang = [
     Using(.BaseConfig_Android_Clang)
 ]
 
 .Config_Android_Clang_ARMv8_Debug = [
-    Using(.BaseConfig_Android_Clang_ARMv8)
+    Using(.BaseConfig_Android_ARMv8_Clang)
 ]
 .Config_Android_Clang_ARMv8_Checked = [
-    Using(.BaseConfig_Android_Clang_ARMv8)
+    Using(.BaseConfig_Android_ARMv8_Clang)
 ]
 .Config_Android_Clang_ARMv8_Profile = [
-    Using(.BaseConfig_Android_Clang_ARMv8)
+    Using(.BaseConfig_Android_ARMv8_Clang)
 ]
 .Config_Android_Clang_ARMv8_Release = [
-    Using(.BaseConfig_Android_Clang_ARMv8)
+    Using(.BaseConfig_Android_ARMv8_Clang)
 ]
 
-.Configs = { }
-
-.Configs_Windows_MSVC_x64 = {
-    .Config_Windows_MSVC_x64_Debug,
-    .Config_Windows_MSVC_x64_Checked,
-    .Config_Windows_MSVC_x64_Profile,
-    .Config_Windows_MSVC_x64_Release,
-}
-.Configs + .Configs_Windows_MSVC_x64
-
-.SolutionConfigs_Windows_MSVC_x64_Debug = {}
-.SolutionConfigs_Windows_MSVC_x64_Checked = {}
-.SolutionConfigs_Windows_MSVC_x64_Profile = {}
-.SolutionConfigs_Windows_MSVC_x64_Release = {}
-
-.Configs_Windows_MSVC_ARMv8 = {
-    .Config_Windows_MSVC_ARMv8_Debug,
-    .Config_Windows_MSVC_ARMv8_Checked,
-    .Config_Windows_MSVC_ARMv8_Profile,
-    .Config_Windows_MSVC_ARMv8_Release,
-}
-.Configs + .Configs_Windows_MSVC_ARMv8
-
-.SolutionConfigs_Windows_MSVC_ARMv8_Debug = {}
-.SolutionConfigs_Windows_MSVC_ARMv8_Checked = {}
-.SolutionConfigs_Windows_MSVC_ARMv8_Profile = {}
-.SolutionConfigs_Windows_MSVC_ARMv8_Release = {}
-
-
-.Config_Windows_Clang_x64 = {
-    .Config_Windows_Clang_x64_Debug,
-    .Config_Windows_Clang_x64_Checked,
-    .Config_Windows_Clang_x64_Profile,
-    .Config_Windows_Clang_x64_Release
-}
-//.Configs + .Config_Windows_Clang_x64
-
-.Configs_Android = {
+.Configs_Android_ARMv8_Clang = {
     .Config_Android_Clang_ARMv8_Debug,
     .Config_Android_Clang_ARMv8_Checked,
     .Config_Android_Clang_ARMv8_Profile,
     .Config_Android_Clang_ARMv8_Release,
 }
-//.Configs + .Configs_Android
+//.Configs + .Configs_Android_ARMv8_Clang
+
+.SolutionConfigs_Android_ARMv8_Clang_Debug = {}
+.SolutionConfigs_Android_ARMv8_Clang_Checked = {}
+.SolutionConfigs_Android_ARMv8_Clang_Profile = {}
+.SolutionConfigs_Android_ARMv8_Clang_Release = {}

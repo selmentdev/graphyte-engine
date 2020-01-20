@@ -25,6 +25,7 @@
 
 #include "sdks/lz4/project.bff"
 #include "sdks/fmt/project.bff"
+#include "sdks/glad/project.bff"
 
 
 .GraphyteProjects = {}
@@ -36,7 +37,7 @@
 
 {
     .VcxProjectConfigs = {}
-    .CurrentConfigs = .Configs_Windows_MSVC_x64 + .Configs_Windows_MSVC_ARMv8
+    .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
     .ProjectName = 'all-proj'
 
     ForEach(.Config in .CurrentConfigs)
@@ -44,8 +45,7 @@
         Using(.Config)
 
         Alias('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
-            Print('SolutionConfigs_$PlatformInfo$_$CompilerInfo$_$ArchitectureInfo$_$Config$')
-            .Targets = .'SolutionConfigs_$PlatformInfo$_$CompilerInfo$_$ArchitectureInfo$_$Config$'
+            .Targets = .'SolutionConfigs_$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
         }
 
         .ProjectConfig = [

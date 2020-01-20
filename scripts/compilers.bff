@@ -11,7 +11,7 @@ Compiler('Compiler-MSVC-ARMv8') {
     .Executable = '$Root$/cl.exe'
 }
 
-.Toolset_Windows_MSVC_x64 = [
+.Toolset_Windows_x64_MSVC = [
     .LangResId = '1033'
     .ToolsetName = 'MSVC-x64'
     .ToolsetRoot = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$'
@@ -22,7 +22,7 @@ Compiler('Compiler-MSVC-ARMv8') {
     .Librarian = '$ToolsetRootBin$/lib.exe'
 ]
 
-.Toolset_Windows_MSVC_ARMv8 = [
+.Toolset_Windows_ARMv8_MSVC = [
     .LangResId = '1033'
     .ToolsetName = 'MSVC-ARMv8'
     .ToolsetRoot = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$'
@@ -33,7 +33,7 @@ Compiler('Compiler-MSVC-ARMv8') {
     .Librarian = '$ToolsetRootBin$/lib.exe'
 ]
 
-.Toolset_Linux_Clang_x64 = [
+.Toolset_Linux_x64_Clang = [
     .ToolsetRoot = '/usr/bin'
     .ToolsetCompiler = '$ToolsetRoot$/clang++'
     .ToolsetLinker = '$ToolsetRoot$/lld'

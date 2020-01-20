@@ -31,7 +31,7 @@
     .VcxProjectConfigs = {}
 
     // this module applies only on windows-x64-msvc build
-    .CurrentConfigs = .Configs_Windows_MSVC_x64 + .Configs_Windows_MSVC_ARMv8
+    .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
     ForEach(.Config in .CurrentConfigs)
     {
         Using(.Config)
@@ -73,7 +73,7 @@
             .ProjectCleanCommand = 'fbuild -ide $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
         ]
 
-        .'SolutionConfigs_$PlatformInfo$_$CompilerInfo$_$ArchitectureInfo$_$Config$' + '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        ^'SolutionConfigs_$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$' + '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
         ^VcxProjectConfigs + .ProjectConfig
     }
 

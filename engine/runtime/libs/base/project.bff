@@ -31,15 +31,18 @@
     .VcxProjectConfigs = {}
 
     // this module applies only on windows-x64-msvc build
-    .CurrentConfigs = .Configs_Windows_MSVC_x64 + .Configs_Windows_MSVC_ARMv8
+    .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
     ForEach(.Config in .CurrentConfigs)
     {
         Using(.Config)
+        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 
-        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        ObjectList('$ProjectName$-Lib-$LocalConfigName$')
         {
             .CompilerInputUnity = '$ProjectName$-Unity-Windows'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
 
             // Common Graphyte module include paths
             .CompilerOptions
@@ -52,12 +55,12 @@
                 + ' /Dmodule_base_EXPORTS=1'
         }
 
-        DLL('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
-            .LinkerOutput = '$OutputBase$/bin/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.dll'
+        DLL('$LocalTargetName$') {
+            .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.dll'
             .Libraries = {
-                'sdk.fmt-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                'sdk.lz4-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'sdk.fmt-$LocalConfigName$'
+                'sdk.lz4-$LocalConfigName$'
+                '$ProjectName$-Lib-$LocalConfigName$'
             }
             .LinkerOptions
                 + ' /DLL'
@@ -81,15 +84,15 @@
         }
 
         .ProjectConfig = [
-            .Target = '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .Target = '$LocalTargetName$'
             .Config = '$Config$'
             .Platform = '$VsPlatform$'
-            .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .ProjectCleanCommand = 'fbuild -ide $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
+            .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor $LocalTargetName$'
+            .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor $LocalTargetName$'
+            .ProjectCleanCommand = 'fbuild -ide $LocalTargetName$-Clean'
         ]
 
-        ^'SolutionConfigs_$PlatformInfo$_$CompilerInfo$_$ArchitectureInfo$_$Config$' + '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'
         ^VcxProjectConfigs + .ProjectConfig
     }
 
