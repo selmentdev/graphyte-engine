@@ -137,21 +137,29 @@ def _find_highest_version(versions):
 # Generate BFF file with MSVC compiler
 
 def generate_msvc_compiler_info():
-    vswhere : str = _msvc_find_vswhere()
-    vsinstance : str = _msvc_get_installation(vswhere)[0]
-    vsname : str = vsinstance['displayName']
-    vspath : str = vsinstance['installationPath']
+    if is_win:
+        vswhere : str = _msvc_find_vswhere()
+        vsinstance : str = _msvc_get_installation(vswhere)[0]
+        vsname : str = vsinstance['displayName']
+        vspath : str = vsinstance['installationPath']
 
-    msvs_tools_version_location : str = os.path.join(vspath, 'VC', 'Auxiliary', 'Build', 'Microsoft.VCToolsVersion.default.txt')
-    with open(msvs_tools_version_location, 'r') as file:
-        vstools = file.read().splitlines()[0]
+        msvs_tools_version_location : str = os.path.join(vspath, 'VC', 'Auxiliary', 'Build', 'Microsoft.VCToolsVersion.default.txt')
+        with open(msvs_tools_version_location, 'r') as file:
+            vstools = file.read().splitlines()[0]
 
-    #
-    # Get Windows Kits locations
-    #
+        #
+        # Get Windows Kits locations
+        #
 
-    windows_sdk_version : int = 10
-    (windows_sdk_location, windows_sdk_kits) = _locate_windows10_sdk_kits()
+        windows_sdk_version : int = 10
+        (windows_sdk_location, windows_sdk_kits) = _locate_windows10_sdk_kits()
+    else:
+        windows_sdk_version : int = -1
+        windows_sdk_location = '/dev/null'
+        windows_sdk_kits : List[Version] = [Version('0.0.0.0')]
+        vspath : str = '/dev/null'
+        vsname : str = '/dev/null'
+        vstools : str = '/dev/null'
 
     # Generate header
     with open('scripts/compiler.msvs.bff', 'w') as f:
@@ -214,6 +222,4 @@ def generate_version_file():
 
 if __name__ == "__main__":
     generate_version_file()
-
-    if is_win:
-        generate_msvc_compiler_info()
+    generate_msvc_compiler_info()
