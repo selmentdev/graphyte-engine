@@ -11,6 +11,7 @@ import logging
 import re
 import json
 import functools
+import argparse
 
 is_win : bool = sys.platform == "win32"
 
@@ -161,6 +162,49 @@ def _find_highest_version(versions):
     return max(versions)
 
 #---------------------------------------------------------------------------------------------------
+# Generate BFF file with Android NDK
+
+def generate_android_ndk_compiler_info(ndk_level):
+    android_ndk_path = os.getenv('ANDROID_NDK_PATH')
+
+    if android_ndk_path is not None:
+        path_ndk_meta = os.path.join(android_ndk_path, 'meta')
+        path_ndk_meta_abis = os.path.join(path_ndk_meta, 'abis.json')
+        path_ndk_meta_platforms = os.path.join(path_ndk_meta, 'platforms.json')
+        path_ndk_meta_libs = os.path.join(path_ndk_meta, 'system_libs.json')
+
+        with open(path_ndk_meta_abis, 'r') as f:
+            ndk_abis = [key for key in json.loads(f.read())]
+
+        with open(path_ndk_meta_platforms, 'r') as f:
+            platforms = json.loads(f.read())
+
+            ndk_min_level = platforms['min']
+            ndk_max_level = platforms['max']
+
+        with open(path_ndk_meta_libs, 'r') as f:
+            ndk_libs = json.loads(f.read())
+
+        libs : List[str] = ['"{}"'.format(lib) for lib, ver in ndk_libs.items() if int(ver) <= ndk_level]
+    else:
+        libs : List[str] = []
+
+        ndk_min_level = -1
+        ndk_max_level = -1
+
+    with open('scripts/compiler.android.ndk.bff', 'w') as f:
+        _bootstrap_emit_header(f)
+        f.write(".AndroidNdkPath = '{}'\n".format(android_ndk_path))
+        f.write(".AndroidNdkLevel = '{}'\n".format(ndk_level))
+        f.write(".AndroidNdkMinLevel = '{}'\n".format(ndk_min_level))
+        f.write(".AndroidNdkMaxLevel = '{}'\n".format(ndk_max_level))
+        f.write(".AndroidNdkLibs = '{}'\n".format(', '.join(libs)))
+
+
+
+
+
+#---------------------------------------------------------------------------------------------------
 # Generate BFF file with MSVC compiler
 
 def generate_msvc_compiler_info():
@@ -263,5 +307,15 @@ def generate_version_file():
         file.write('#define GRAPHYTE_BUILD_TIMESTAMP         "{}"\n'.format(build_timestamp))
 
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--ndk', help='specifies Android API level', default=24, type=int)
+    parser.add_argument('--verbose', action='store_true')
+    args = parser.parse_args()
+
+    if args.ndk:
+        print(args.ndk)
+
     generate_version_file()
     generate_msvc_compiler_info()
+    generate_android_ndk_compiler_info(args.ndk)

@@ -35,6 +35,7 @@ obj
 game/logs
 engine/include/Graphyte/Build.Version.hxx
 scripts/compiler.msvs.bff
+scripts/compiler.android.ndk.bff
 Makefile
 *.make
 *.mk
