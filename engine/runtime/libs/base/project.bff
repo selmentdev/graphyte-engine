@@ -84,7 +84,7 @@
         }
 
         .ProjectConfig = [
-            .Target = '$LocalTargetName$'
+            .Target = '$ProjectName$-Lib-$LocalConfigName$'
             .Config = '$Config$'
             .Platform = '$VsPlatform$'
             .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor $LocalTargetName$'
