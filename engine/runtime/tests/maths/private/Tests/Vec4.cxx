@@ -9,19 +9,16 @@ namespace Tests
 
     struct Vector4 final
     {
-        __m128 V;
         using IsOrderComparable = void;
     };
 
     struct Vector3 final
     {
-        __m128 V;
         using IsEqualComparable = void;
     };
 
     struct Vector2 final
     {
-        __m128 V;
         using IsOrderComparable = void;
         using IsEqualComparable = void;
     };

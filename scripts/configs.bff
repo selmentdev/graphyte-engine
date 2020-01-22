@@ -169,6 +169,11 @@
 .AllTargets_Windows_x64_MSVC_Profile = {}
 .AllTargets_Windows_x64_MSVC_Release = {}
 
+.AllTests_Windows_x64_MSVC_Debug = {}
+.AllTests_Windows_x64_MSVC_Checked = {}
+.AllTests_Windows_x64_MSVC_Profile = {}
+.AllTests_Windows_x64_MSVC_Release = {}
+
 //--------------------------------------------------------------------------------------------------
 
 .Config_Windows_ARMv8_MSVC_Debug = [
@@ -210,6 +215,11 @@
 .AllTargets_Windows_ARMv8_MSVC_Checked = {}
 .AllTargets_Windows_ARMv8_MSVC_Profile = {}
 .AllTargets_Windows_ARMv8_MSVC_Release = {}
+
+.AllTests_Windows_ARMv8_MSVC_Debug = {}
+.AllTests_Windows_ARMv8_MSVC_Checked = {}
+.AllTests_Windows_ARMv8_MSVC_Profile = {}
+.AllTests_Windows_ARMv8_MSVC_Release = {}
 
 //--------------------------------------------------------------------------------------------------
 

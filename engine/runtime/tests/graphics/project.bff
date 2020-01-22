@@ -78,6 +78,13 @@
                 + ' user32.lib'
         }
 
+        Test('Test-$LocalTargetName$')
+        {
+            .TestExecutable = '$LocalTargetName$'
+            .TestOutput = '$OutputBase$/tests/$LocalTargetName$.out.txt'
+            .TestArguments = '--force-no-log'
+        }
+
         .ProjectConfig = [
             .Target = '$ProjectName$-Lib-$LocalConfigName$'
             .Config = '$Config$'
@@ -96,6 +103,7 @@
         ^VcxProjectConfigs + .ProjectConfig
 
         ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
+        ^'AllTests_$LocalConfigVarName$' + 'Test-$LocalTargetName$'
     }
 
     VCXProject('$ProjectName$') {

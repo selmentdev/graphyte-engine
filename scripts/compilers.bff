@@ -7,7 +7,7 @@ Compiler('Compiler-Windows-RC-x64') {
 }
 
 Compiler('Compiler-Windows-RC-ARMv8') {
-    .Executable = '$WindowsSdkLocation$/bin/$WindowsSdkVersion$/arm64/rc.exe'
+    .Executable = '$WindowsSdkLocation$/bin/$WindowsSdkVersion$/x64/rc.exe'
     .CompilerFamily = 'custom'
 }
 

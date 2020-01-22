@@ -115,6 +115,11 @@ Alias('All-Windows-x64-MSVC-Checked') { .Targets = .AllTargets_Windows_x64_MSVC_
 Alias('All-Windows-x64-MSVC-Profile') { .Targets = .AllTargets_Windows_x64_MSVC_Profile }
 Alias('All-Windows-x64-MSVC-Release') { .Targets = .AllTargets_Windows_x64_MSVC_Release }
 
+Alias('All-Tests-Windows-x64-MSVC-Debug')   { .Targets = .AllTests_Windows_x64_MSVC_Debug   }
+Alias('All-Tests-Windows-x64-MSVC-Checked') { .Targets = .AllTests_Windows_x64_MSVC_Checked }
+Alias('All-Tests-Windows-x64-MSVC-Profile') { .Targets = .AllTests_Windows_x64_MSVC_Profile }
+Alias('All-Tests-Windows-x64-MSVC-Release') { .Targets = .AllTests_Windows_x64_MSVC_Release }
+
 Alias('All-Windows-x64-MSVC') {
     .Targets = {
         'All-Windows-x64-MSVC-Debug'
@@ -124,10 +129,24 @@ Alias('All-Windows-x64-MSVC') {
     }
 }
 
+Alias('All-Tests-Windows-x64-MSVC') {
+    .Targets = {
+        'All-Tests-Windows-x64-MSVC-Debug'
+        'All-Tests-Windows-x64-MSVC-Checked'
+        'All-Tests-Windows-x64-MSVC-Profile'
+        'All-Tests-Windows-x64-MSVC-Release'
+    }
+}
+
 Alias('All-Windows-ARMv8-MSVC-Debug')   { .Targets = .AllTargets_Windows_ARMv8_MSVC_Debug   }
 Alias('All-Windows-ARMv8-MSVC-Checked') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Checked }
 Alias('All-Windows-ARMv8-MSVC-Profile') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Profile }
 Alias('All-Windows-ARMv8-MSVC-Release') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Release }
+
+Alias('All-Tests-Windows-ARMv8-MSVC-Debug')   { .Targets = .AllTests_Windows_ARMv8_MSVC_Debug   }
+Alias('All-Tests-Windows-ARMv8-MSVC-Checked') { .Targets = .AllTests_Windows_ARMv8_MSVC_Checked }
+Alias('All-Tests-Windows-ARMv8-MSVC-Profile') { .Targets = .AllTests_Windows_ARMv8_MSVC_Profile }
+Alias('All-Tests-Windows-ARMv8-MSVC-Release') { .Targets = .AllTests_Windows_ARMv8_MSVC_Release }
 
 Alias('All-Windows-ARMv8-MSVC') {
     .Targets = {
@@ -135,6 +154,15 @@ Alias('All-Windows-ARMv8-MSVC') {
         'All-Windows-ARMv8-MSVC-Checked'
         'All-Windows-ARMv8-MSVC-Profile'
         'All-Windows-ARMv8-MSVC-Release'
+    }
+}
+
+Alias('All-Tests-Windows-ARMv8-MSVC') {
+    .Targets = {
+        'All-Tests-Windows-ARMv8-MSVC-Debug'
+        'All-Tests-Windows-ARMv8-MSVC-Checked'
+        'All-Tests-Windows-ARMv8-MSVC-Profile'
+        'All-Tests-Windows-ARMv8-MSVC-Release'
     }
 }
 
