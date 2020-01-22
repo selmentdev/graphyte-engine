@@ -72,7 +72,6 @@
 
             .LinkerOptions
                 + ' /SUBSYSTEM:CONSOLE'
-                + ' msvcprt.lib'
                 + ' ntdll.lib'
                 + ' user32.lib'
         }

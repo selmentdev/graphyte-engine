@@ -54,7 +54,6 @@
             }
             .LinkerOptions
                 + ' /DLL'
-                + ' msvcprt.lib'
                 + ' dxgi.lib'
                 + ' d3d11.lib'
                 + ' dxguid.lib'

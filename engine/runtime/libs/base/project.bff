@@ -64,7 +64,6 @@
             }
             .LinkerOptions
                 + ' /DLL'
-                + ' msvcprt.lib'
                 + ' ntdll.lib'
                 + ' comctl32.lib'
                 + ' dbghelp.lib'

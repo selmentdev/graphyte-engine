@@ -68,7 +68,6 @@
             }
             .LinkerOptions
                 + ' /DLL'
-                + ' msvcprt.lib'
                 + ' opengl32.lib'
                 + ' Gdi32.lib'
                 + ' User32.lib'

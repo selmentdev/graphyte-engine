@@ -30,6 +30,7 @@
                 + ' /D_WINDLL'
                 + ' /DFMT_EXCEPTIONS=1'
                 + ' /DFMT_EXPORT=1'
+                + ' /D_CRT_SECURE_NO_WARNINGS=0'
         }
 
         DLL('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {

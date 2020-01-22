@@ -14,14 +14,9 @@
 .BaseConfig_Windows_MSVC = [
     .PlatformInfo = 'Windows'
     .CompilerInfo = 'MSVC'
-    .CompilerOptions = ''
-        + '"%1" /Z7'
-        + ' /nologo'
-        + ' /c'
+    .DefaultDefines = ''
         + ' /D_WIN32'
         + ' /D__WINDOWS__'
-        + ' /DFMT_SHARED=1'
-        + ' /DFMT_EXCEPTIONS=0'
         + ' /D__STDC_WANT_LIB_EXT1__=1'
         + ' /D__STDINT_MACROS'
         + ' /D__STDINT_LIMITS'
@@ -35,33 +30,46 @@
         + ' /D_CRT_SECURE_INVALID_PARAMETER='
         + ' /D_UNICODE'
         + ' /DUNICODE'
-        + ' /GF'
-        + ' /Gm-'
-        + ' /EHa'
-        + ' /MD'
-        + ' /GS-'
-        + ' /Gy'
-        + ' /fp:fast'
-        + ' /Zc:wchar_t'
-        + ' /Zc:forScope'
-        + ' /Zc:inline'
-        + ' /GR-'
-        + ' /std:c++latest'
-        + ' /Gd'
-        + ' /TP'
-        + ' /wd4263'
-        + ' /wd4264'
-        + ' /wd4275'
-        + ' /FC'
-        + ' /errorReport:queue'
-        + ' /permissive-'
-        + ' /bigobj'
-        + ' /Zc:char8_t'
-        + ' /Zc:throwingNew'
-        + ' /Zc:__cplusplus'
-        + ' /Zc:ternary'
-        + ' /Zc:referenceBinding'
-        + ' /Zc:externConstexpr'
+        + ' /DFMT_SHARED=1'
+        + ' /DFMT_EXCEPTIONS=0'
+
+    .CompilerOptions = ''
+        + '"%1"'
+        + ' /Z7'                    
+        + ' /nologo'                // Don't display compiler logo banner
+        + ' /c'                     // Compile files
+        + ' /bigobj'                // Increase Number of Sections in .Obj file
+        + ' /diagnostics:caret'     // Use caret (^) to indicate error location
+        + ' /EHa'                   // Support asynchronous structured exception handling (SEH) with the native C++
+        + ' /errorReport:send'      // Automatically sends reports of internal compiler errors to Microsoft
+        //+ ' /experimental:preprocessor'     // Enable new compliant preprocessor features when available (not available in VS2019, v16.4.3)
+        + ' /FC'                    // Full Path of Source Code File in Diagnostics
+        + ' /fp:fast'               // ...reorder, combine, or simplify floating-point operations to optimize floating-point code for speed and space
+        + ' /Gd'                    // the __cdecl calling convention for all functions except C++ member functions and functions that are marked __stdcall, __fastcall, or __vectorcall
+        + ' /GF'                    // Eliminate Duplicate Strings
+        + ' /GR-'                   // Enable Run-Time Type Information
+        + ' /Gw'                    // Optimize Global Data
+        + ' /Gy'                    // Enable Function-Level Linking
+        + ' /JMC-'                  // Disable Just My Code
+        + ' /permissive-'           // Enable Standards conformance
+        + ' /std:c++latest'         // Specify Language Standard Version
+        //+ ' /TP' // is this needed?
+        //+ ' /wd4263'
+        //+ ' /wd4264'
+        //+ ' /wd4275'
+        + ' /WX'                    // Treats all compiler warnings as errors.
+        + ' /Zc:__cplusplus'        // Enable the __cplusplus macro to report the supported standard
+        + ' /Zc:char8_t'            //
+        + ' /Zc:externConstexpr'    // Enable extern constexpr variables
+        + ' /Zc:forScope'           // Force Conformance in for Loop Scope
+        + ' /Zc:inline'             // Remove unreferenced COMDAT
+        + ' /Zc:referenceBinding'   // Enforce reference binding rules
+        + ' /Zc:sizedDealloc'       // Enable Global Sized Deallocation Functions
+        + ' /Zc:ternary'            // Enforce conditional operator rules
+        + ' /Zc:throwingNew'        // Assume operator new throws
+        + ' /Zc:wchar_t'            // wchar_t Is Native Type
+        // /GL (Whole Program Optimization)
+        + .DefaultDefines
 
     .PCHOptions = '' + .CompilerOptions + ' /Fp"%2" /Fo"%3"'
         + ' /Fo"%2"'
@@ -76,7 +84,6 @@
         + ' /OUT:"%2" "%1"'
         + ' /DEBUG'
         + ' /IGNORE:4001'
-
 ]
 
 .BaseConfig_Windows_x64_MSVC = [
@@ -85,7 +92,7 @@
     .VsPlatform = 'x64'
     .ArchitectureInfo = 'x64'
     .CompilerOptions
-        + ' /arch:AVX'
+        + ' /arch:AVX'                          // Use AVX at minimum
     .BaseIncludePaths
         = ' /I"$ToolsetRoot$/include"'
         + ' /I"$ToolsetRoot$/atlmfc/include"'
@@ -108,7 +115,7 @@
     .VsPlatform = 'ARM64'
     .ArchitectureInfo = 'ARMv8'
     .CompilerOptions
-        + ' /DGRAPHYTE_MATH_NO_INTRINSICS=1'
+        + ' /DGRAPHYTE_MATH_NO_INTRINSICS=1'    // NEON math library implementation is not ready
     .BaseIncludePaths
         = ' /I"$ToolsetRoot$/include"'
         + ' /I"$ToolsetRoot$/atlmfc/include"'
@@ -130,19 +137,45 @@
 .Config_Windows_x64_MSVC_Debug = [
     Using(.BaseConfig_Windows_x64_MSVC)
     .Config = 'Debug'
-    .CompilerOptions + ' /DGX_CONFIG_DEBUG=1'
+    .CompilerOptions
+        + ' /DGX_CONFIG_DEBUG=1'
+        + ' /MDd'                   // Use Debug DLL Run-Time Library
+        + ' /Od'                    // Disable optimizations
+        + ' /Ob0'                   // Disable Inline Function Expansion
+        + ' /GS'                    // Enable Buffer Security Check
+        + ' /sdl'                   // Enable Additional Security Checks
+        + ' /RTCsu'                 // Enable Run-Time Error Checks
+    .LinkerOptions
+        + ' msvcprtd.lib'
 ]
 
 .Config_Windows_x64_MSVC_Checked = [
     Using(.BaseConfig_Windows_x64_MSVC)
     .Config = 'Checked'
-    .CompilerOptions + ' /DGX_CONFIG_CHECKED=1'
+    .CompilerOptions
+        + ' /DGX_CONFIG_CHECKED=1'
+        + ' /MD'                    // Use Release DLL Run-Time Library
+        + ' /O2'                    // Optimize for maximum speed
+        + ' /Ob1'                   // Enable Inline Function Expansion
+        + ' /Zo'                    // Enable Enhance Optimized Debugging
+    .LinkerOptions
+        + ' msvcprt.lib'
 ]
 
 .Config_Windows_x64_MSVC_Profile = [
     Using(.BaseConfig_Windows_x64_MSVC)
     .Config = 'Profile'
-    .CompilerOptions + ' /DGX_CONFIG_PROFILE=1'
+    .CompilerOptions
+        + ' /DGX_CONFIG_PROFILE=1'
+        + ' /MD'                    // Use Release DLL Run-Time Library
+        + ' /O2'                    // Optimize for maximum speed
+        + ' /Ob2'                   // Enable Inline Function Expansion
+        + ' /Oi'                    // Generate Intrinsic Functions
+        + ' /Ot'                    // Favor Fast Code
+        + ' /Oy-'                   // Enable Frame-Pointer Omission
+        + ' /GS-'                   // Disable Buffer Security Check
+    .LinkerOptions
+        + ' msvcprt.lib'
 ]
 
 .Config_Windows_x64_MSVC_Release = [
@@ -150,8 +183,15 @@
     .Config = 'Release'
     .CompilerOptions
         + ' /DGX_CONFIG_RELEASE=1'
-        + ' /O2'
-        + ' /Ob3'
+        + ' /MD'                    // Use Release DLL Run-Time Library
+        + ' /O2'                    // Optimize for maximum speed
+        + ' /Ob3'                   // Enable Inline Function Expansion
+        + ' /Oi'                    // Generate Intrinsic Functions
+        + ' /Ot'                    // Favor Fast Code
+        + ' /Oy-'                   // Enable Frame-Pointer Omission
+        + ' /GS-'                   // Disable Buffer Security Check
+    .LinkerOptions
+        + ' msvcprt.lib'
 ]
 
 .Configs_Windows_x64_MSVC = {
@@ -182,23 +222,59 @@
 .Config_Windows_ARMv8_MSVC_Debug = [
     Using(.BaseConfig_Windows_ARMv8_MSVC)
     .Config = 'Debug'
-    .CompilerOptions + ' /DGX_CONFIG_DEBUG=1'
+    .CompilerOptions
+        + ' /DGX_CONFIG_DEBUG=1'
+        + ' /MDd'                   // Use Debug DLL Run-Time Library
+        + ' /Od'                    // Disable optimizations
+        + ' /Ob0'                   // Disable Inline Function Expansion
+        + ' /GS'                    // Enable Buffer Security Check
+        + ' /sdl'                   // Enable Additional Security Checks
+        + ' /RTCsu'                 // Enable Run-Time Error Checks
+    .LinkerOptions
+        + ' msvcprtd.lib'
 ]
 
 .Config_Windows_ARMv8_MSVC_Checked = [
     Using(.BaseConfig_Windows_ARMv8_MSVC)
     .Config = 'Checked'
-    .CompilerOptions + ' /DGX_CONFIG_CHECKED=1'
+    .CompilerOptions
+        + ' /DGX_CONFIG_CHECKED=1'
+        + ' /MD'                    // Use Release DLL Run-Time Library
+        + ' /O2'                    // Optimize for maximum speed
+        + ' /Ob1'                   // Enable Inline Function Expansion
+        + ' /Zo'                    // Enable Enhance Optimized Debugging
+    .LinkerOptions
+        + ' msvcprt.lib'
 ]
 .Config_Windows_ARMv8_MSVC_Profile = [
     Using(.BaseConfig_Windows_ARMv8_MSVC)
     .Config = 'Profile'
-    .CompilerOptions + ' /DGX_CONFIG_PROFILE=1'
+    .CompilerOptions
+        + ' /DGX_CONFIG_PROFILE=1'
+        + ' /MD'                    // Use Release DLL Run-Time Library
+        + ' /O2'                    // Optimize for maximum speed
+        + ' /Ob2'                   // Enable Inline Function Expansion
+        + ' /Oi'                    // Generate Intrinsic Functions
+        + ' /Ot'                    // Favor Fast Code
+        + ' /Oy-'                   // Enable Frame-Pointer Omission
+        + ' /GS-'                   // Disable Buffer Security Check
+    .LinkerOptions
+        + ' msvcprt.lib'
 ]
 .Config_Windows_ARMv8_MSVC_Release = [
     Using(.BaseConfig_Windows_ARMv8_MSVC)
     .Config = 'Release'
-    .CompilerOptions + ' /DGX_CONFIG_RELEASE=1'
+    .CompilerOptions
+        + ' /DGX_CONFIG_RELEASE=1'
+        + ' /MD'                    // Use Release DLL Run-Time Library
+        + ' /O2'                    // Optimize for maximum speed
+        + ' /Ob3'                   // Enable Inline Function Expansion
+        + ' /Oi'                    // Generate Intrinsic Functions
+        + ' /Ot'                    // Favor Fast Code
+        + ' /Oy-'                   // Enable Frame-Pointer Omission
+        + ' /GS-'                   // Disable Buffer Security Check
+    .LinkerOptions
+        + ' msvcprt.lib'
 ]
 
 .Configs_Windows_ARMv8_MSVC = {

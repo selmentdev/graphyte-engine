@@ -64,7 +64,6 @@
             }
             .LinkerOptions
                 + ' /DLL'
-                + ' msvcprt.lib'
         }
 
         .ProjectConfig = [

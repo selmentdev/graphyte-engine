@@ -70,7 +70,6 @@
             .LinkerOptions
                 + ' /SUBSYSTEM:WINDOWS'
                 + ' User32.lib'
-                + ' msvcprt.lib'
                 + ' ntdll.lib'
                 + ' comctl32.lib'
                 + ' dbghelp.lib'
