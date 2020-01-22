@@ -5,6 +5,10 @@
 
 .Configs = { }
 
+.FbBuildCommand = 'fbuild -ide -cache -monitor -fastcancel'
+.FbRebuildCommand = 'fbuild -ide -clean -cache -monitor -fastcancel'
+.FbCleanCommand = 'fbuild -ide -fastcancel'
+
 //--------------------------------------------------------------------------------------------------
 
 .BaseConfig_Windows_MSVC = [

@@ -1,6 +1,7 @@
 #include "scripts/compilers.bff"
 #include "scripts/configs.bff"
 
+.OutputBase = 'build'
 
 .SolutionConfigs = {}
 {
@@ -14,10 +15,25 @@
             .SolutionPlatform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
         ]
         ^SolutionConfigs + .ProjectConfig
+
+        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+
+        ObjectList('Graphyte-Res-$LocalConfigName$')
+        {
+            .Compiler = .ResCompiler
+            .CompilerInputFiles = { 'engine/resources/resources.rc' }
+            .CompilerOutputPath = '$OutputBase$/obj/Graphyte-Res-$LocalConfigName$/'
+            .CompilerOutputExtension = '.res'
+            .CompilerOptions
+                = ' /nologo'
+                + ' /fo"%2"'
+                + .BaseIncludePaths
+                + ' /I"engine/include"'
+                + ' "%1"' // Output must be last
+        }
     }
 }
 
-.OutputBase = 'build'
 
 .AllObjects = {}
 
@@ -37,6 +53,7 @@
 #include "engine/runtime/libs/graphics-d3d11/project.bff"
 #include "engine/runtime/libs/launch/project.bff"
 #include "engine/runtime/libs/rendering/project.bff"
+#include "game/source/app.demo/project.bff"
 
 {
     .VcxProjectConfigs = {}
@@ -57,9 +74,9 @@
             .Platform = '$VsPlatform$'
             .SolutionConfig = '$Config$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
             .SolutionPlatform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
-            .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .ProjectCleanCommand = 'fbuild -ide $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
+            .ProjectBuildCommand = '$FbBuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .ProjectRebuildCommand = '$FbRebuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .ProjectCleanCommand = '$FbCleanCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
         ]
 
         ^VcxProjectConfigs + .ProjectConfig

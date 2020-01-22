@@ -87,9 +87,9 @@
             .Target = '$ProjectName$-Lib-$LocalConfigName$'
             .Config = '$Config$'
             .Platform = '$VsPlatform$'
-            .ProjectBuildCommand = 'fbuild -ide -dist -cache -monitor $LocalTargetName$'
-            .ProjectRebuildCommand = 'fbuild -ide -clean -dist -cache -monitor $LocalTargetName$'
-            .ProjectCleanCommand = 'fbuild -ide $LocalTargetName$-Clean'
+            .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
+            .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
+            .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
         ]
 
         ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'

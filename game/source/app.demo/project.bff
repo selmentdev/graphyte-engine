@@ -1,11 +1,11 @@
 {
-    .ProjectName = 'com.graphyte.graphics.glcore'
-    .ProjectPath = 'engine/runtime/libs/graphics-opengl'
+    .ProjectName = 'game'
+    .ProjectPath = 'game/source/app.demo'
     {
         .UnityInputPath = '$ProjectPath$'
         .UnityInputPattern = { '*.cxx' }
         .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
-        .UnityOutputPattern = '$ProjectName$-unity*.cxx'
+        .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
 
         Unity('$ProjectName$-Unity-Windows') {
             .UnityInputExcludePattern = {
@@ -31,7 +31,7 @@
     .VcxProjectConfigs = {}
 
     // this module applies only on windows-x64-msvc build
-    .CurrentConfigs = .Configs_Windows_x64_MSVC
+    .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
     ForEach(.Config in .CurrentConfigs)
     {
         Using(.Config)
@@ -39,64 +39,75 @@
         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 
-        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        ObjectList('$ProjectName$-Lib-$LocalConfigName$')
         {
             .CompilerInputUnity = '$ProjectName$-Unity-Windows'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
 
             // Common Graphyte module include paths
             .CompilerOptions
                 + ' /I"$ProjectPath$/private"'
                 + ' /I"$ProjectPath$/public"'
+                + ' /I"sdks/fmt/include"'
+                + ' /I"sdks/lz4/include"'
+                + ' /I"engine/include"'
                 + ' /I"engine/runtime/libs/base/public"'
                 + ' /I"engine/runtime/libs/graphics/public"'
-                + ' /I"sdks/fmt/include"'
-                + ' /I"sdks/glad/include"'
-                + ' /I"engine/include"'
-                + ' /D_WINDLL'
-                + ' /Dmodule_graphics_glcore_EXPORTS=1'
+                + ' /I"engine/runtime/libs/launch/public"'
         }
 
-        DLL('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
-            .LinkerOutput = '$OutputBase$/bin/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.dll'
+        Executable('$LocalTargetName$') {
+            .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'
             .Libraries = {
+                'sdk.fmt-$LocalConfigName$'
+                'sdk.lz4-$LocalConfigName$'
+                '$ProjectName$-Lib-$LocalConfigName$'
+                'Graphyte-Res-$LocalConfigName$'
                 'com.graphyte.base-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
                 'com.graphyte.graphics-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                'sdk.fmt-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                'sdk.glad-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'com.graphyte.launch-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
             }
+
             .LinkerOptions
-                + ' /DLL'
-                + ' msvcprt.lib'
-                + ' opengl32.lib'
-                + ' Gdi32.lib'
+                + ' /SUBSYSTEM:WINDOWS'
                 + ' User32.lib'
+                + ' msvcprt.lib'
+                + ' ntdll.lib'
+                + ' comctl32.lib'
+                + ' dbghelp.lib'
+                + ' iphlpapi.lib'
+                + ' ws2_32.lib'
+                + ' dwmapi.lib'
+                + ' xinput.lib'
+                + ' xaudio2.lib'
+                + ' advapi32.lib'
+                + ' gdi32.lib'
+                + ' shell32.lib'
+                + ' ole32.lib'
+                + ' Faultrep.lib'
+                + ' Bcrypt.lib'
+                + ' user32.lib'
+                + ' Mincore.lib'
         }
 
         .ProjectConfig = [
-            .Target = '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .Target = '$ProjectName$-Lib-$LocalConfigName$'
             .Config = '$Config$'
             .Platform = '$VsPlatform$'
-            .ProjectBuildCommand = '$FbBuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .ProjectRebuildCommand = '$FbRebuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .ProjectCleanCommand = '$FbCleanCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
+            .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
+            .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
+            .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
+
+            .LocalDebuggerCommand = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'           // (optional) Executable to launch when debugging.
+            .LocalDebuggerCommandArguments = ''
+            .LocalDebuggerWorkingDirectory = ''
+            .LocalDebuggerEnvironment = ''
         ]
 
-        ^'SolutionConfigs_$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$' + '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'
         ^VcxProjectConfigs + .ProjectConfig
+
         ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
-    }
-
-    .CurrentConfigs = .Configs_Windows_ARMv8_MSVC
-    ForEach(.Config in .CurrentConfigs)
-    {
-        Using(.Config)
-        .ProjectConfig = [
-            .Config = '$Config$'
-            .Platform = '$VsPlatform$'
-        ]
-        ^VcxProjectConfigs + .ProjectConfig
     }
 
     VCXProject('$ProjectName$') {
