@@ -101,7 +101,6 @@
         ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'
         ^VcxProjectConfigs + .ProjectConfig
 
-        ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
         ^'AllTests_$LocalConfigVarName$' + 'Test-$LocalTargetName$'
     }
 

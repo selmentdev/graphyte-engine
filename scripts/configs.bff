@@ -148,7 +148,10 @@
 .Config_Windows_x64_MSVC_Release = [
     Using(.BaseConfig_Windows_x64_MSVC)
     .Config = 'Release'
-    .CompilerOptions + ' /DGX_CONFIG_RELEASE=1'
+    .CompilerOptions
+        + ' /DGX_CONFIG_RELEASE=1'
+        + ' /O2'
+        + ' /Ob3'
 ]
 
 .Configs_Windows_x64_MSVC = {
