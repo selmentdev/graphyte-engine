@@ -53,6 +53,10 @@
 #include "engine/runtime/libs/graphics-d3d11/project.bff"
 #include "engine/runtime/libs/launch/project.bff"
 #include "engine/runtime/libs/rendering/project.bff"
+#include "engine/runtime/tests/base/project.bff"
+#include "engine/runtime/tests/entities/project.bff"
+#include "engine/runtime/tests/graphics/project.bff"
+#include "engine/runtime/tests/maths/project.bff"
 #include "game/source/app.demo/project.bff"
 
 {
