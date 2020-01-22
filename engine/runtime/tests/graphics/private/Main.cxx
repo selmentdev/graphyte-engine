@@ -19,21 +19,11 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp
 #include <fcntl.h>
 #endif
 
-int GraphyteMain(int argc, char** argv) noexcept
+int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {
 #if GRAPHYTE_PLATFORM_WINDOWS
-    [[maybe_unused]] auto previous_mode = ::_setmode(::_fileno(stdout), _O_TEXT);
+    ::_setmode(::_fileno(stdout), _O_TEXT);
 #endif
-    Catch::Session session{};
-    bool chuj{};
-    auto cli = session.cli() | Catch::clara::Opt(chuj)["--force-no-log"];
-    session.cli(cli);
 
-    if (int result = session.applyCommandLine(argc, argv); result != 0)
-    {
-        return result;
-    }
-
-
-    return session.run();
+    return Catch::Session().run();
 }

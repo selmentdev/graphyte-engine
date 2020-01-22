@@ -19,11 +19,11 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp
 #include <fcntl.h>
 #endif
 
-int GraphyteMain(int argc, char** argv) noexcept
+int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {
 #if GRAPHYTE_PLATFORM_WINDOWS
     ::_setmode(::_fileno(stdout), _O_TEXT);
 #endif
 
-    return Catch::Session().run(argc, argv);
+    return Catch::Session().run();
 }
