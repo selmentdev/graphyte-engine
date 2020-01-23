@@ -31,6 +31,11 @@
         }
     }
 
+    .DeoptimizedConfigs = {
+        'Release'
+        'Profile'
+    }
+
     .VcxProjectConfigs = {}
 
     // this module applies only on windows-x64-msvc build
@@ -56,6 +61,14 @@
                 + ' /I"engine/include"'
                 + ' /I"engine/runtime/libs/base/public"'
                 + ' /I"engine/runtime/libs/launch/public"'
+
+            If(.Config in .DeoptimizedConfigs)
+            {
+                ^CompilerOptions
+                    - ' /Ob2'
+                    - ' /Ob3'
+                    + ' /Ob1'
+            }
         }
 
         Executable('$LocalTargetName$') {
