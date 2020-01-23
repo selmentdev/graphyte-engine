@@ -67,7 +67,8 @@
                 ^CompilerOptions
                     - ' /Ob2'
                     - ' /Ob3'
-                    + ' /Ob1'
+                    - ' /Ob1'
+                    + ' /Ob0'
             }
         }
 
@@ -110,7 +111,6 @@
             .LocalDebuggerEnvironment = ''
         ]
 
-        ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'
         ^VcxProjectConfigs + .ProjectConfig
 
         ^'AllTests_$LocalConfigVarName$' + 'Test-$LocalTargetName$'
