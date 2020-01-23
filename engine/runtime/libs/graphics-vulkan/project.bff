@@ -1,0 +1,114 @@
+
+#if exists(VULKAN_SDK)
+#import VULKAN_SDK
+{
+    .ProjectName = 'com.graphyte.graphics.vulkan'
+    .ProjectPath = 'engine/runtime/libs/graphics-vulkan'
+    {
+        .UnityInputPath = '$ProjectPath$'
+        .UnityInputPattern = { '*.cxx' }
+        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+        .UnityOutputPattern = '$ProjectName$-unity*.cxx'
+
+        Unity('$ProjectName$-Unity-Windows') {
+            .UnityInputExcludePattern = {
+                '*Linux.*.cxx'
+                '*Posix.*.cxx'
+                '*Android.*.cxx'
+            }
+        }
+    }
+
+    .VcxProjectConfigs = {}
+
+    // this module applies only on windows-x64-msvc build
+    .CurrentConfigs = .Configs_Windows_x64_MSVC
+    ForEach(.Config in .CurrentConfigs)
+    {
+        Using(.Config)
+        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+
+        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        {
+            .CompilerInputUnity = '$ProjectName$-Unity-Windows'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+
+            // Common Graphyte module include paths
+            .CompilerOptions
+                + ' /I"$ProjectPath$/private"'
+                + ' /I"$ProjectPath$/public"'
+                + ' /I"engine/runtime/libs/base/public"'
+                + ' /I"engine/runtime/libs/graphics/public"'
+                + ' /I"sdks/fmt/include"'
+                + ' /I"sdks/libvulkanvma/include'
+                + ' /I"engine/include"'
+                + ' /I"$VULKAN_SDK$/include"'
+                + ' /D_WINDLL'
+                + ' /Dmodule_graphics_vulkan_EXPORTS=1'
+                Print(.CompilerOptions)
+        }
+
+        DLL('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
+            .LinkerOutput = '$OutputBase$/bin/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.dll'
+            .Libraries = {
+                'com.graphyte.base-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'com.graphyte.graphics-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'sdk.fmt-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'sdk.libvulkanvma-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'LibVulkanVma-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            }
+            .LinkerOptions
+                + ' /DLL'
+                + ' vulkan-1.lib'
+        }
+
+        .ProjectConfig = [
+            .Target = '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .Config = '$Config$'
+            .Platform = '$VsPlatform$'
+            .ProjectBuildCommand = '$FbBuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .ProjectRebuildCommand = '$FbRebuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .ProjectCleanCommand = '$FbCleanCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
+        ]
+
+        ^'SolutionConfigs_$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$' + '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        ^VcxProjectConfigs + .ProjectConfig
+        ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
+    }
+
+
+    // ARMv8 doesn't support vulkan for now on Windows
+    .CurrentConfigs = .Configs_Windows_ARMv8_MSVC
+    ForEach(.Config in .CurrentConfigs)
+    {
+        Using(.Config)
+        .ProjectConfig = [
+            .Config = '$Config$'
+            .Platform = '$VsPlatform$'
+        ]
+        ^VcxProjectConfigs + .ProjectConfig
+    }
+
+    VCXProject('$ProjectName$') {
+        .ProjectOutput = '$ProjectName$.vcxproj'
+        .ProjectInputPaths = { .ProjectPath }
+        //.ProjectOutputDirectory =
+        //>intermediateDirectory =
+        .ProjectBasePath = .ProjectPath
+        .ProjectAllowedFileExtensions = {
+            '*.bff'
+            '*.cxx'
+            '*.hxx'
+            '*.c'
+            '*.h'
+        }
+        .ProjectConfigs = .VcxProjectConfigs
+        .PlatformToolset = .VsPlatformToolset
+    }
+
+    ^GraphyteProjects + .ProjectName
+}
+#endif

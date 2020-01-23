@@ -1,0 +1,34 @@
+#if exists(VULKAN_SDK)
+#import VULKAN_SDK
+{
+    .ProjectName = 'sdk.libvulkanvma'
+    .ProjectPath = 'sdks/libvulkanvma'
+
+    .CurrentConfigs = .Configs_Windows_x64_MSVC
+
+    ForEach(.Config in .CurrentConfigs)
+    {
+        Using(.Config)
+
+        .CompilerInputFiles = {
+            '$ProjectPath$/source/impl.cxx'
+        }
+
+        .CompilerOptions
+            + ' /I"$ProjectPath$/include"'
+            + ' /I"$VULKAN_SDK$/include"'
+
+        If(.Config in .ConfigList) {
+            ^CompilerOptions
+                - ' /Ob3'
+                - ' /Ob2'
+                + ' /Ob1'
+        }
+
+        Library('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+            .LibrarianOutput = '$OutputBase$/lib/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.lib'
+        }
+    }
+}
+#endif

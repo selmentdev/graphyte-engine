@@ -3,16 +3,17 @@
 
 .OutputBase = 'build'
 
+.CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
 .SolutionConfigs = {}
 {
-    ForEach(.Config in .Configs)
+    ForEach(.Config in .CurrentConfigs)
     {
         Using(.Config)
         .ProjectConfig = [
             .Config = '$Config$'
             .Platform = '$VsPlatform$'
-            .SolutionConfig = '$Config$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
-            .SolutionPlatform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+            .SolutionConfig = '$Config$'
+            .SolutionPlatform = 'Windows-$CompilerInfo$-$VsPlatform$'
         ]
         ^SolutionConfigs + .ProjectConfig
 
@@ -51,6 +52,7 @@
 #include "engine/runtime/libs/graphics/project.bff"
 #include "engine/runtime/libs/graphics-opengl/project.bff"
 #include "engine/runtime/libs/graphics-d3d11/project.bff"
+#include "engine/runtime/libs/graphics-vulkan/project.bff"
 #include "engine/runtime/libs/launch/project.bff"
 #include "engine/runtime/libs/rendering/project.bff"
 #include "engine/runtime/tests/base/project.bff"
@@ -61,7 +63,6 @@
 
 {
     .VcxProjectConfigs = {}
-    .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
     .ProjectName = 'all-proj'
 
     ForEach(.Config in .CurrentConfigs)
@@ -76,8 +77,8 @@
             .Target = '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
             .Config = '$Config$'
             .Platform = '$VsPlatform$'
-            .SolutionConfig = '$Config$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
-            .SolutionPlatform = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$'
+            .SolutionConfig = '$Config$'
+            .SolutionPlatform = 'Windows-$CompilerInfo$-$VsPlatform$'
             .ProjectBuildCommand = '$FbBuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
             .ProjectRebuildCommand = '$FbRebuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
             .ProjectCleanCommand = '$FbCleanCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
