@@ -2,6 +2,11 @@
     .ProjectName = 'sdk.glad'
     .ProjectPath = 'sdks/glad'
 
+    .ConfigList = {
+        'Release'
+        'Profile'
+    }
+
     .CurrentConfigs = .Configs_Windows_x64_MSVC
 
     ForEach(.Config in .CurrentConfigs)
@@ -14,6 +19,13 @@
 
         .CompilerOptions
             + ' /I"$ProjectPath$/include"'
+
+        If(.Config in .ConfigList) {
+            ^CompilerOptions
+                - ' /Ob3'
+                - ' /Ob2'
+                + ' /Ob1'
+        }
 
         Library('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
             .CompilerInputFiles + '$ProjectPath$/source/glad_wgl.c'

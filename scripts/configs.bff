@@ -5,6 +5,12 @@
 
 .Configs = { }
 
+.ConfigName_Debug   = 'Debug'
+.ConfigName_Checked = 'Checked'
+.ConfigName_Release = 'Release'
+.ConfigName_Profile = 'Profile'
+
+
 .FbBuildCommand = 'fbuild -ide -cache -monitor -fastcancel'
 .FbRebuildCommand = 'fbuild -ide -clean -cache -monitor -fastcancel'
 .FbCleanCommand = 'fbuild -ide -fastcancel'
@@ -35,7 +41,7 @@
 
     .CompilerOptions = ''
         + '"%1"'
-        + ' /Z7'                    
+        + ' /Z7'
         + ' /nologo'                // Don't display compiler logo banner
         + ' /c'                     // Compile files
         + ' /bigobj'                // Increase Number of Sections in .Obj file
