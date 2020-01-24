@@ -63,14 +63,14 @@
                 + ' /I"engine/runtime/libs/graphics/public"'
                 + ' /I"engine/runtime/libs/launch/public"'
 
-            If(.Config in .DeoptimizedConfigs)
-            {
-                ^CompilerOptions
-                    - ' /Ob2'
-                    - ' /Ob3'
-                    - ' /Ob1'
-                    + ' /Ob0'
-            }
+            // If(.Config in .DeoptimizedConfigs)
+            // {
+            //     ^CompilerOptions
+            //         - ' /Ob2'
+            //         - ' /Ob3'
+            //         - ' /Ob1'
+            //         + ' /Ob0'
+            // }
         }
 
         Executable('$LocalTargetName$') {
@@ -94,7 +94,7 @@
         Test('Test-$LocalTargetName$')
         {
             .TestExecutable = '$LocalTargetName$'
-            .TestOutput = '$OutputBase$/tests/$LocalTargetName$.out.txt'
+            .TestOutput = '$OutputBase$/tests/$LocalConfigName$/$ProjectName$.out.txt'
             .TestArguments = '--force-no-log'
         }
 
@@ -134,5 +134,5 @@
         .PlatformToolset = .VsPlatformToolset
     }
 
-    ^GraphyteProjects + .ProjectName
+    ^VcxProjects_EngineTests + .ProjectName
 }

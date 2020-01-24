@@ -36,52 +36,65 @@
 }
 
 
-.AllObjects = {}
-
-.SdkProjects = {}
-
+.VcxProjects_EngineSdks = {}
 #include "sdks/lz4/project.bff"
 #include "sdks/fmt/project.bff"
 #include "sdks/glad/project.bff"
+#include "sdks/libvulkanvma/project.bff"
 
-
-.GraphyteProjects = {}
-
+.VcxProjects_EngineModules = {}
 #include "engine/runtime/libs/base/project.bff"
 #include "engine/runtime/libs/geometry/project.bff"
 #include "engine/runtime/libs/graphics/project.bff"
+#include "engine/runtime/libs/launch/project.bff"
+#include "engine/runtime/libs/rendering/project.bff"
+
+.VcxProjects_EnginePlugins = {}
 #include "engine/runtime/libs/graphics-opengl/project.bff"
 #include "engine/runtime/libs/graphics-d3d11/project.bff"
 #include "engine/runtime/libs/graphics-vulkan/project.bff"
-#include "engine/runtime/libs/launch/project.bff"
-#include "engine/runtime/libs/rendering/project.bff"
+
+.VcxProjects_EngineTests = {}
 #include "engine/runtime/tests/base/project.bff"
 #include "engine/runtime/tests/entities/project.bff"
 #include "engine/runtime/tests/graphics/project.bff"
 #include "engine/runtime/tests/maths/project.bff"
+
+.VcxProjects_Game = {}
 #include "game/source/app.demo/project.bff"
+
+.VcxProjects_GameModules = {}
+
+
+// -------------------------------------------------------------------------------------------------
+// All engine projects
+// -------------------------------------------------------------------------------------------------
 
 {
     .VcxProjectConfigs = {}
-    .ProjectName = 'all-proj'
+    .ProjectName = 'All-Engine'
 
     ForEach(.Config in .CurrentConfigs)
     {
         Using(.Config)
 
-        Alias('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
-            .Targets = .'SolutionConfigs_$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+
+        Alias('$LocalTargetName$') {
+            .Targets = .'SolutionConfigs_$LocalConfigVarName$'
         }
 
         .ProjectConfig = [
-            .Target = '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .Target = '$LocalTargetName$'
             .Config = '$Config$'
             .Platform = '$VsPlatform$'
             .SolutionConfig = '$Config$'
             .SolutionPlatform = 'Windows-$CompilerInfo$-$VsPlatform$'
-            .ProjectBuildCommand = '$FbBuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .ProjectRebuildCommand = '$FbRebuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .ProjectCleanCommand = '$FbCleanCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
+            .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
+            .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
+            .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
         ]
 
         ^VcxProjectConfigs + .ProjectConfig
@@ -96,17 +109,131 @@
     }
 }
 
+//
+// All Test projects
+//
+
+{
+    .VcxProjectConfigs = {}
+    .ProjectName = 'Run-Tests'
+
+    ForEach(.Config in .CurrentConfigs)
+    {
+        Using(.Config)
+        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+
+        Alias('$LocalTargetName$') {
+            .Targets
+                = .'AllTests_$LocalConfigVarName$'
+        }
+
+        .ProjectConfig = [
+            .Target = '$LocalTargetName$'
+            .Config = '$Config$'
+            .Platform = '$VsPlatform$'
+            .SolutionConfig = '$Config$'
+            .SolutionPlatform = 'Windows-$CompilerInfo$-$VsPlatform$'
+            .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
+            .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
+            .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
+        ]
+
+        ^VcxProjectConfigs + .ProjectConfig
+    }
+
+    VCXProject('$ProjectName$') {
+        .ProjectOutput   = '$ProjectName$.vcxproj'
+        .ProjectFiles    = { '.\fbuild.bff' }
+        .ProjectBasePath = '.\'
+        .ProjectConfigs = .VcxProjectConfigs
+        .PlatformToolset = .VsPlatformToolset
+    }
+}
+
+
 VSSolution('Graphyte')
 {
     .SolutionOutput = 'gen.sln'
-    .SolutionBuildProject = 'all-proj'
-    .Deps = [
-        .Projects = .GraphyteProjects + .SdkProjects
-        .Dependencies = { 'all-proj' }
+    .SolutionBuildProject = 'All-Engine'
+
+    // Projects included in whole-engine build target
+    .EngineDependencies = [
+        .Projects
+             = { 'All-Engine' }
+        .Dependencies
+            = .VcxProjects_EngineModules
+            + .VcxProjects_EngineSdks
+            + .VcxProjects_EnginePlugins
+            + .VcxProjects_Game
+            + .VcxProjects_GameModules
     ]
-    .SolutionDependencies = { .Deps }
+
+    .EngineTestsDependencies = [
+        .Dependencies
+            = .VcxProjects_EngineModules
+            + .VcxProjects_EnginePlugins
+        .Projects
+            = { 'Run-Tests' }
+            + .VcxProjects_EngineTests
+    ]
+    Print(.EngineTestsDependencies)
+
+    .SolutionDependencies = {
+        .EngineDependencies
+        .EngineTestsDependencies
+    }
+
+    
+    .SolutionFolders_EngineSdks = [
+        .Path = 'EngineSdks'
+        .Projects = .VcxProjects_EngineSdks
+    ]
+    .SolutionFolders_EngineModules = [
+        .Path = 'Engine/Modules'
+        .Projects = .VcxProjects_EngineModules
+    ]
+    .SolutionFolders_EnginePlugins = [
+        .Path = 'Engine/Plugins'
+        .Projects = .VcxProjects_EnginePlugins
+    ]
+    .SolutionFolders_EngineTests = [
+        .Path = 'Engine/Tests'
+        .Projects = .VcxProjects_EngineTests
+    ]
+    .SolutionFolders_Game = [
+        .Path = 'Game'
+        .Projects = .VcxProjects_Game
+    ]
+    .SolutionFolders_GameModules = [
+        .Path = 'Game/Modules'
+        .Projects = .VcxProjects_GameModules
+    ]
+
+    .SolutionFolders_GlobalTargets = [
+        .Path = 'Global'
+        .Projects = {
+            'All-Engine'
+            'Run-Tests'
+        }
+    ]
+    
+    .SolutionFolders = {
+        .SolutionFolders_GlobalTargets
+        //.SolutionFolders_EngineSdks
+        .SolutionFolders_EngineModules
+        .SolutionFolders_EnginePlugins
+        .SolutionFolders_EngineTests
+        .SolutionFolders_Game
+        //.SolutionFolders_GameModules
+    }
 }
 
+
+// -------------------------------------------------------------------------------------------------
+// All targets
+// -------------------------------------------------------------------------------------------------
 Alias('all') {
     .Targets = 'Graphyte'
 }

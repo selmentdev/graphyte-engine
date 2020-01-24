@@ -91,5 +91,5 @@
         .PlatformToolset = .VsPlatformToolset
     }
 
-    ^GraphyteProjects + .ProjectName
+    ^VcxProjects_EnginePlugins + .ProjectName
 }
