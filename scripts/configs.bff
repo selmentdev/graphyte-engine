@@ -28,6 +28,14 @@
 .BaseConfig_Windows_MSVC = [
     .PlatformInfo = 'Windows'
     .CompilerInfo = 'MSVC'
+
+    .ExecutablePrefix = ''
+    .ExecutableSuffix = '.exe'
+    .StaticLibraryPrefix = ''
+    .StaticLibrarySuffix = '.lib'
+    .SharedLibraryPrefix = ''
+    .SharedLibrarySuffix = '.dll'
+
     .DefaultDefines = ''
         + ' /D_WIN32'
         + ' /D__WINDOWS__'
@@ -319,6 +327,12 @@
 //--------------------------------------------------------------------------------------------------
 
 .BaseConfig_Windows_Clang = [
+    .ExecutablePrefix = ''
+    .ExecutableSuffix = '.exe'
+    .StaticLibraryPrefix = 'lib'
+    .StaticLibrarySuffix = '.a'
+    .SharedLibraryPrefix = ''
+    .SharedLibrarySuffix = '.dll'
 ]
 
 .BaseConfig_Windows_x64_Clang = [
@@ -397,6 +411,14 @@
 .BaseConfig_Linux = [
     .PlatformInfo = 'Linux'
     .CompilerInfo = 'GCC'
+
+    .ExecutablePrefix = ''
+    .ExecutableSuffix = '.elf'
+    .StaticLibraryPrefix = 'lib'
+    .StaticLibrarySuffix = '.a'
+    .SharedLibraryPrefix = 'lib'
+    .SharedLibrarySuffix = '.so'
+
     .DefaultDefines = ''
         + ' -DFMT_SHARED=1'
         + ' -DFMT_EXCEPTIONS=0'

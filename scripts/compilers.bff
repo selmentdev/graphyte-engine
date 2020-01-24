@@ -21,6 +21,17 @@ Compiler('Compiler-Windows-RC-ARMv8') {
     .ResCompiler = 'Compiler-Windows-RC-x64'
     .Linker = '$ToolsetRootBin$/link.exe'
     .Librarian = '$ToolsetRootBin$/lib.exe'
+
+    .DefinePrefix = '/D'
+    .DefineSuffix = ''
+    .IncludePrefix = '/I"'
+    .IncludeSuffix = '"'
+    .LibPathPrefix = '/LIBPATH:"'
+    .LibPathSuffix = '"'
+    .LinkPrefix = ''
+    .LinkSuffix = ''
+    .SharedLib = '/DLL'
+    .StaticLib = ''
 ]
 
 .Toolset_Windows_ARMv8_MSVC = [
@@ -33,6 +44,17 @@ Compiler('Compiler-Windows-RC-ARMv8') {
     .ResCompiler = 'Compiler-Windows-RC-ARMv8'
     .Linker = '$ToolsetRootBin$/link.exe'
     .Librarian = '$ToolsetRootBin$/lib.exe'
+
+    .DefinePrefix = '/D'
+    .DefineSuffix = ''
+    .IncludePrefix = '/I"'
+    .IncludeSuffix = '"'
+    .LibPathPrefix = '/LIBPATH:"'
+    .LibPathSuffix = '"'
+    .LinkPrefix = ''
+    .LinkSuffix = ''
+    .SharedLib = '/DLL'
+    .StaticLib = ''
 ]
 
 .Toolset_Linux_x64_Clang = [
@@ -100,4 +122,15 @@ Compiler('Compiler-Linux-GCC') {
     .Compiler = 'Compiler-Linux-GCC'
     .Linker = '/usr/bin/g++'
     .Librarian = '/usr/bin/ar'
+
+    .DefinePrefix = '-D'
+    .DefineSuffix = ''
+    .IncludePrefix = '-I'
+    .IncludeSuffix = ''
+    .LibPathPrefix = '-L'
+    .LibPathSuffix = ''
+    .LinkPrefix = '-l'
+    .LinkSuffix = ''
+    .SharedLib = '-shared'
+    .StaticLib = '-static'
 ]

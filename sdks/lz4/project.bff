@@ -1,6 +1,7 @@
 {
     .ProjectName = 'sdk.lz4'
     .ProjectPath = 'sdks/lz4'
+    .ProjectTags = { 'Windows', 'Linux' }
 
 #if __WINDOWS__
     .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
@@ -28,7 +29,7 @@
         Library('$LocalTargetName$') {
             .LibrarianAdditionalInputs = '$ProjectName$-Lib-$LocalConfigName$'
             .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-            .LibrarianOutput = '$OutputBase$/lib/$LocalConfigName$/$ProjectName$.lib'
+            .LibrarianOutput = '$OutputBase$/lib/$LocalConfigName$/$StaticLibraryPrefix$$ProjectName$.$StaticLibrarySuffix$'
         }
     }
 #endif
@@ -59,7 +60,7 @@
         Library('$LocalTargetName$') {
             .LibrarianAdditionalInputs = '$ProjectName$-Lib-$LocalConfigName$'
             .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-            .LibrarianOutput = '$OutputBase$/lib/$LocalConfigName$/$ProjectName$.lib'
+            .LibrarianOutput = '$OutputBase$/lib/$LocalConfigName$/$StaticLibraryPrefix$$ProjectName$.$StaticLibrarySuffix$'
         }
     }
 #endif
