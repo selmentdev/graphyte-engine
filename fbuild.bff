@@ -305,6 +305,7 @@ Alias('All-Windows-MSVC') {
 // Linux-x64 aliases
 // -------------------------------------------------------------------------------------------------
 
+#if __LINUX__
 
 Alias('All-Linux-x64-Debug')   { .Targets = .AllTargets_Linux_x64_GCC_Debug   }
 Alias('All-Linux-x64-Checked') { .Targets = .AllTargets_Linux_x64_GCC_Checked }
@@ -334,3 +335,4 @@ Alias('All-Tests-Linux-x64') {
         'All-Tests-Linux-x64-Release'
     }
 }
+#endif
