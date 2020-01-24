@@ -86,3 +86,18 @@ Compiler('Compiler-MSVC-ARMv8') {
         '$Root$/vcruntime140.dll'
     }
 }
+
+//--------------------------------------------------------------------------------------------------
+// Linux compilers
+//--------------------------------------------------------------------------------------------------
+
+Compiler('Compiler-Linux-GCC') {
+    .Executable = '/usr/bin/g++'
+}
+
+.Toolset_Linux_x64 = [
+    .ToolsetName = 'Linux-x64-GCC'
+    .Compiler = 'Compiler-Linux-GCC'
+    .Linker = '/usr/bin/g++'
+    .Librarian = '/usr/bin/ar'
+]

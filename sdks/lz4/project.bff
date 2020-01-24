@@ -13,6 +13,7 @@
         Unity('$ProjectName$-Unity-Android') { }
     }
 
+#if __WINDOWS__
     .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
     ForEach(.Config in .CurrentConfigs)
     {
@@ -38,4 +39,37 @@
             .LibrarianOutput = '$OutputBase$/lib/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.lib'
         }
     }
+#endif
+
+#if __LINUX__
+    .CurrentConfigs = .Configs_Linux_x64
+    ForEach(.Config in .CurrentConfigs)
+    {
+        Using(.Config)
+        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+
+        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        {
+            .CompilerInputFiles = {
+                '$ProjectPath$/source/lz4hc.c'
+                '$ProjectPath$/source/lz4.c'
+            }
+            //.CompilerInputUnity = '$ProjectName$-Unity-Linux'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+
+            // Common Graphyte module include paths
+            .CompilerOptions
+                + ' -I$ProjectPath$/source'
+                + ' -I$ProjectPath$/include'
+        }
+
+        Library('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
+            .LibrarianAdditionalInputs = '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+            .LibrarianOutput = '$OutputBase$/lib/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.lib'
+        }
+    }
+#endif
 }

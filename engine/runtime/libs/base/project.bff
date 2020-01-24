@@ -28,6 +28,7 @@
         }
     }
 
+#if __WINDOWS__
     .VcxProjectConfigs = {}
 
     // this module applies only on windows-x64-msvc build
@@ -115,4 +116,52 @@
     }
 
     ^VcxProjects_EngineModules + .ProjectName
+#endif
+
+#if __LINUX__
+    .CurrentConfigs = .Configs_Linux_x64
+    ForEach(.Config in .CurrentConfigs)
+    {
+        Using(.Config)
+        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        Print(.LocalConfigName)
+        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+
+        ObjectList('$ProjectName$-Lib-$LocalConfigName$')
+        {
+            .CompilerInputUnity = '$ProjectName$-Unity-Linux'
+            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
+
+            // Common Graphyte module include paths
+            .CompilerOptions
+                + ' -I$ProjectPath$/private'
+                + ' -I$ProjectPath$/public'
+                + ' -Isdks/fmt/include'
+                + ' -Isdks/lz4/include'
+                + ' -Iengine/include'
+        }
+
+        DLL('$LocalTargetName$') {
+            .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/lib$ProjectName$.so'
+            .Libraries = {
+                'sdk.fmt-$LocalConfigName$'
+                'sdk.lz4-$LocalConfigName$'
+                '$ProjectName$-Lib-$LocalConfigName$'
+            }
+            .LinkerOptions
+                + ' -shared'
+                + ' -lpthread'
+                + ' -luuid'
+                + ' -ldl'
+                + ' -lSDL2'
+                + ' -lunwind'
+                + ' -lunwind-x86_64'
+                + ' -lunwind-generic'
+        }
+
+        ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
+    }
+
+#endif
 }

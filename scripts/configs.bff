@@ -389,3 +389,89 @@
 .SolutionConfigs_Android_ARMv8_Clang_Checked = {}
 .SolutionConfigs_Android_ARMv8_Clang_Profile = {}
 .SolutionConfigs_Android_ARMv8_Clang_Release = {}
+
+//--------------------------------------------------------------------------------------------------
+// Linux-x64 configuration
+//--------------------------------------------------------------------------------------------------
+
+.BaseConfig_Linux = [
+    .PlatformInfo = 'Linux'
+    .CompilerInfo = 'GCC'
+    .DefaultDefines = ''
+        + ' -DFMT_SHARED=1'
+        + ' -DFMT_EXCEPTIONS=0'
+    .CompilerOptions
+        = '-o "%2" "%1" -c -g'
+    .CompilerOptionsC
+        = ' -std=c11'
+    .CompilerOptions
+        + ' -std=c++2a'
+        + ' -fconcepts'
+    .LinkerOptions
+        = '"%1" -o "%2"'
+        + ' -lc'
+        + ' -lm'
+        + ' -lstdc++'
+        + ' -pie'
+    .LibrarianOptions
+        = 'rcs "%2" "%1"'
+]
+
+.BaseConfig_Linux_x64 = [
+    Using(.Toolset_Linux_x64)
+    Using(.BaseConfig_Linux)
+    .ArchitectureInfo = 'x64'
+    .CompilerOptions
+        + ' -mavx'
+        + ' -msse4.1'
+        + ' -msse3'
+        + ' -mssse3'
+        + ' -msse2'
+        + ' -m64'
+        + ' -fPIC'
+]
+
+.Config_Linux_x64_Debug = [
+    Using(.BaseConfig_Linux_x64)
+    .Config = 'Debug'
+    .CompilerOptions
+        + ' -DGX_CONFIG_DEBUG=1'
+]
+
+.Config_Linux_x64_Checked = [
+    Using(.BaseConfig_Linux_x64)
+    .Config = 'Checked'
+    .CompilerOptions
+        + ' -DGX_CONFIG_CHECKED=1'
+]
+
+.Config_Linux_x64_Profile = [
+    Using(.BaseConfig_Linux_x64)
+    .Config = 'Profile'
+    .CompilerOptions
+        + ' -DGX_CONFIG_PROFILE=1'
+]
+
+.Config_Linux_x64_Release = [
+    Using(.BaseConfig_Linux_x64)
+    .Config = 'Release'
+    .CompilerOptions
+        + ' -DGX_CONFIG_RELEASE=1'
+]
+
+.Configs_Linux_x64 = {
+    .Config_Linux_x64_Debug
+    .Config_Linux_x64_Checked
+    .Config_Linux_x64_Profile
+    .Config_Linux_x64_Release
+}
+
+.AllTargets_Linux_x64_GCC_Debug = {}
+.AllTargets_Linux_x64_GCC_Checked = {}
+.AllTargets_Linux_x64_GCC_Profile = {}
+.AllTargets_Linux_x64_GCC_Release = {}
+
+.AllTests_Linux_x64_GCC_Debug = {}
+.AllTests_Linux_x64_GCC_Checked = {}
+.AllTests_Linux_x64_GCC_Profile = {}
+.AllTests_Linux_x64_GCC_Release = {}

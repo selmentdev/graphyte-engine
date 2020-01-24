@@ -299,3 +299,38 @@ Alias('All-Windows-MSVC') {
         'All-Windows-ARMv8-MSVC'
     }
 }
+
+
+// -------------------------------------------------------------------------------------------------
+// Linux-x64 aliases
+// -------------------------------------------------------------------------------------------------
+
+
+Alias('All-Linux-x64-Debug')   { .Targets = .AllTargets_Linux_x64_GCC_Debug   }
+Alias('All-Linux-x64-Checked') { .Targets = .AllTargets_Linux_x64_GCC_Checked }
+Alias('All-Linux-x64-Profile') { .Targets = .AllTargets_Linux_x64_GCC_Profile }
+Alias('All-Linux-x64-Release') { .Targets = .AllTargets_Linux_x64_GCC_Release }
+
+//Alias('All-Tests-Linux-x64-Debug')   { .Targets = .AllTests_Linux_x64_GCC_Debug   }
+//Alias('All-Tests-Linux-x64-Checked') { .Targets = .AllTests_Linux_x64_GCC_Checked }
+//Alias('All-Tests-Linux-x64-Profile') { .Targets = .AllTests_Linux_x64_GCC_Profile }
+//Alias('All-Tests-Linux-x64-Release') { .Targets = .AllTests_Linux_x64_GCC_Release }
+
+
+Alias('All-Linux-x64') {
+    .Targets = {
+        'All-Linux-x64-Debug'
+        'All-Linux-x64-Checked'
+        'All-Linux-x64-Profile'
+        'All-Linux-x64-Release'
+    }
+}
+
+Alias('All-Tests-Linux-x64') {
+    .Targets = {
+        'All-Tests-Linux-x64-Debug'
+        'All-Tests-Linux-x64-Checked'
+        'All-Tests-Linux-x64-Profile'
+        'All-Tests-Linux-x64-Release'
+    }
+}
