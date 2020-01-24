@@ -109,7 +109,8 @@
         + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\winrt"'
     .CompilerOptions + .BaseIncludePaths
     .PCHOptions      + .BaseIncludePaths
-    .LinkerOptions + ' /MACHINE:X64'
+    .LinkerOptions
+        + ' /MACHINE:X64'
         + ' /LIBPATH:"$ToolsetRoot$/lib/x64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\um\x64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\x64"'
@@ -132,7 +133,8 @@
         + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\winrt"'
     .CompilerOptions + .BaseIncludePaths
     .PCHOptions      + .BaseIncludePaths
-    .LinkerOptions + ' /MACHINE:ARM64'
+    .LinkerOptions
+        + ' /MACHINE:ARM64'
         + ' /LIBPATH:"$ToolsetRoot$/lib/arm64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\um\arm64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\arm64"'
