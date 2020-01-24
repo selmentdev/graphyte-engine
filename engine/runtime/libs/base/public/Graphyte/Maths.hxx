@@ -10807,6 +10807,50 @@ namespace Graphyte::Maths
         return result;
     }
 
+    mathinline Vector4 mathcall Diagonal(Matrix m) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                m.M.M[0][0],
+                m.M.M[1][1],
+                m.M.M[2][2],
+                m.M.M[3][3],
+            } } };
+        return { result.V };
+
+#elif GRAPHYTE_HW_NEON
+        uint32x4_t const t0_x = vandq_u32(vreinterpretq_u32_f32(m.M.R[0]), vreinterpretq_u32_f32(Impl::VEC4_MASK_COMPONENT_X.V));
+        uint32x4_t const t0_y = vandq_u32(vreinterpretq_u32_f32(m.M.R[1]), vreinterpretq_u32_f32(Impl::VEC4_MASK_COMPONENT_Y.V));
+        uint32x4_t const t0_z = vandq_u32(vreinterpretq_u32_f32(m.M.R[2]), vreinterpretq_u32_f32(Impl::VEC4_MASK_COMPONENT_Z.V));
+        uint32x4_t const t0_w = vandq_u32(vreinterpretq_u32_f32(m.M.R[3]), vreinterpretq_u32_f32(Impl::VEC4_MASK_COMPONENT_W.V));
+
+        uint32x4_t const t1_xy = vorq_u32(t0_x, t0_y);
+        uint32x4_t const t1_zw = vorq_u32(t0_z, t0_w);
+
+        uint32x4_t const t2_xyzw = vorq_u32(t1_xy, t1_zw);
+
+        return { vreinterpret_f32_u32(t2_xyzw) };
+
+#elif GRAPHYTE_HW_AVX
+        __m128 const t0_x = _mm_and_ps(m.M.R[0], Impl::VEC4_MASK_COMPONENT_X.V);
+        __m128 const t0_y = _mm_and_ps(m.M.R[1], Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const t0_z = _mm_and_ps(m.M.R[2], Impl::VEC4_MASK_COMPONENT_Z.V);
+        __m128 const t0_w = _mm_and_ps(m.M.R[3], Impl::VEC4_MASK_COMPONENT_W.V);
+
+        __m128 const t1_xy = _mm_or_ps(t0_x, t0_y);
+        __m128 const t1_zw = _mm_or_ps(t0_z, t0_w);
+
+        __m128 const t2_xyzw = _mm_or_ps(t1_xy, t2_zw);
+        return { t2_xyzw };
+#endif
+    }
+
+    mathinline Vector4 mathcall Trace(Matrix m) noexcept
+    {
+        Vector4 const diagonal = Diagonal(m);
+        return Hsum(diagonal);
+    }
+
     mathinline Matrix mathcall Add(Matrix m1, Matrix m2) noexcept
     {
         Matrix result;
