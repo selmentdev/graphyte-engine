@@ -60,7 +60,7 @@
         Library('$LocalTargetName$') {
             .LibrarianAdditionalInputs = '$ProjectName$-Lib-$LocalConfigName$'
             .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-            .LibrarianOutput = '$OutputBase$/lib/$LocalConfigName$/$StaticLibraryPrefix$$ProjectName$.$StaticLibrarySuffix$'
+            .LibrarianOutput = '$OutputBase$/lib/$LocalConfigName$/$StaticLibraryPrefix$$ProjectName$$StaticLibrarySuffix$'
         }
     }
 #endif
