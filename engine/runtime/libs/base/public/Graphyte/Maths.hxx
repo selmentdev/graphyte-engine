@@ -9537,16 +9537,16 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    T CreateFromAxisAngle(Vector3 axis, float angle) = delete;
+    T CreateFromAxisAngle(Vector3 axis, float angle) noexcept = delete;
 
     template <typename T>
-    T CreateFromNormalAngle(Vector3 normal, float angle) = delete;
+    T CreateFromNormalAngle(Vector3 normal, float angle) noexcept = delete;
 
     template <typename T>
-    T CreateFromEuler(Vector3 angles) = delete;
+    T CreateFromEuler(Vector3 angles) noexcept = delete;
 
     template <typename T>
-    T CreateFromEuler(float x, float y, float z) = delete;
+    T CreateFromEuler(float x, float y, float z) noexcept = delete;
 }
 
 

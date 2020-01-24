@@ -59,7 +59,7 @@ namespace Graphyte::Random
 
 namespace Graphyte::Random
 {
-    template <typename T> T Next(RandomState&) = delete;
+    template <typename T> T Next(RandomState&) noexcept = delete;
 
     template <>
     inline float Next<float>(RandomState& state) noexcept
