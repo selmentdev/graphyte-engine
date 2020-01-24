@@ -10840,7 +10840,7 @@ namespace Graphyte::Maths
         __m128 const t1_xy = _mm_or_ps(t0_x, t0_y);
         __m128 const t1_zw = _mm_or_ps(t0_z, t0_w);
 
-        __m128 const t2_xyzw = _mm_or_ps(t1_xy, t2_zw);
+        __m128 const t2_xyzw = _mm_or_ps(t1_xy, t1_zw);
         return { t2_xyzw };
 #endif
     }
