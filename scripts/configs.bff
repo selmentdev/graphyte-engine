@@ -436,6 +436,7 @@
     .Config = 'Debug'
     .CompilerOptions
         + ' -DGX_CONFIG_DEBUG=1'
+        + ' -O0'
 ]
 
 .Config_Linux_x64_Checked = [
@@ -443,6 +444,7 @@
     .Config = 'Checked'
     .CompilerOptions
         + ' -DGX_CONFIG_CHECKED=1'
+        + ' -O1'
 ]
 
 .Config_Linux_x64_Profile = [
@@ -450,6 +452,7 @@
     .Config = 'Profile'
     .CompilerOptions
         + ' -DGX_CONFIG_PROFILE=1'
+        + ' -O2'
 ]
 
 .Config_Linux_x64_Release = [
@@ -457,6 +460,7 @@
     .Config = 'Release'
     .CompilerOptions
         + ' -DGX_CONFIG_RELEASE=1'
+        + ' -O3'
 ]
 
 .Configs_Linux_x64 = {
