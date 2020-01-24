@@ -124,7 +124,6 @@
     {
         Using(.Config)
         .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-        Print(.LocalConfigName)
         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 

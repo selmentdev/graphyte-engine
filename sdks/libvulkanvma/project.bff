@@ -21,9 +21,9 @@
             + ' /I"$ProjectPath$/include"'
             + ' /I"$VULKAN_SDK$/include"'
 
-        Library('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
-            .LibrarianOutput = '$OutputBase$/lib/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.lib'
+        Library('$LocalTargetName$') {
+            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
+            .LibrarianOutput = '$OutputBase$/lib/$LocalConfigName$/$ProjectName$.lib'
         }
     }
 }

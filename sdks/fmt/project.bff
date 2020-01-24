@@ -22,10 +22,10 @@
         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 
-        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        ObjectList('$ProjectName$-Lib-$LocalConfigName$')
         {
             .CompilerInputUnity = '$ProjectName$-Unity-Windows'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
 
             // Common Graphyte module include paths
             .CompilerOptions
@@ -37,12 +37,12 @@
                 + ' /D_CRT_SECURE_NO_WARNINGS=0'
         }
 
-        DLL('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
-            .LibrarianAdditionalInputs = '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
-            .LinkerOutput = '$OutputBase$/bin/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.dll'
+        DLL('$LocalTargetName$') {
+            .LibrarianAdditionalInputs = '$ProjectName$-Lib-$LocalConfigName$'
+            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
+            .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.dll'
             .Libraries = {
-                '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                '$ProjectName$-Lib-$LocalConfigName$'
             }
             .LinkerOptions
                 + ' /DLL'
@@ -59,10 +59,10 @@
         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 
-        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        ObjectList('$ProjectName$-Lib-$LocalConfigName$')
         {
             .CompilerInputUnity = '$ProjectName$-Unity-Linux'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
 
             // Common Graphyte module include paths
             .CompilerOptions
@@ -72,12 +72,12 @@
                 + ' -DFMT_EXPORT=1'
         }
 
-        DLL('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
-            .LibrarianAdditionalInputs = '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
-            .LinkerOutput = '$OutputBase$/bin/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/lib$ProjectName$.so'
+        DLL('$LocalTargetName$') {
+            .LibrarianAdditionalInputs = '$ProjectName$-Lib-$LocalConfigName$'
+            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
+            .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/lib$ProjectName$.so'
             .Libraries = {
-                '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                '$ProjectName$-Lib-$LocalConfigName$'
             }
             .LinkerOptions
                 + ' -shared'
