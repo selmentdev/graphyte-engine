@@ -39,10 +39,10 @@
         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 
-        ObjectList('$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$')
+        ObjectList('$ProjectName$-Lib-$LocalConfigName$')
         {
             .CompilerInputUnity = '$ProjectName$-Unity-Windows'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
+            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
 
             // Common Graphyte module include paths
             .CompilerOptions
@@ -55,27 +55,27 @@
                 + ' /Dmodule_graphics_EXPORTS=1'
         }
 
-        DLL('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
-            .LinkerOutput = '$OutputBase$/bin/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.dll'
+        DLL('$LocalTargetName$') {
+            .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.dll'
             .Libraries = {
-                'com.graphyte.base-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                'sdk.fmt-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'com.graphyte.base-$LocalConfigName$'
+                'sdk.fmt-$LocalConfigName$'
+                '$ProjectName$-Lib-$LocalConfigName$'
             }
             .LinkerOptions
                 + ' /DLL'
         }
 
         .ProjectConfig = [
-            .Target = '$ProjectName$-Lib-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .Target = '$ProjectName$-Lib-$LocalConfigName$'
             .Config = '$Config$'
             .Platform = '$VsPlatform$'
-            .ProjectBuildCommand = '$FbBuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .ProjectRebuildCommand = '$FbRebuildCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            .ProjectCleanCommand = '$FbCleanCommand$ $ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$-Clean'
+            .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
+            .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
+            .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
         ]
 
-        ^'SolutionConfigs_$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$' + '$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'
         ^VcxProjectConfigs + .ProjectConfig
         ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
     }

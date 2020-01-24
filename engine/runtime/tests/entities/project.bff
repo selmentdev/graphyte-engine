@@ -38,7 +38,6 @@
 
     .VcxProjectConfigs = {}
 
-    // this module applies only on windows-x64-msvc build
     .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
     ForEach(.Config in .CurrentConfigs)
     {
@@ -61,15 +60,6 @@
                 + ' /I"engine/include"'
                 + ' /I"engine/runtime/libs/base/public"'
                 + ' /I"engine/runtime/libs/launch/public"'
-
-            // If(.Config in .DeoptimizedConfigs)
-            // {
-            //     ^CompilerOptions
-            //         - ' /Ob2'
-            //         - ' /Ob3'
-            //         - ' /Ob1'
-            //         + ' /Ob0'
-            // }
         }
 
         Executable('$LocalTargetName$') {
@@ -79,9 +69,9 @@
                 'sdk.lz4-$LocalConfigName$'
                 '$ProjectName$-Lib-$LocalConfigName$'
                 'Graphyte-Res-$LocalConfigName$'
-                'com.graphyte.base-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                'com.graphyte.graphics-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                'com.graphyte.launch-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'com.graphyte.base-$LocalConfigName$'
+                'com.graphyte.graphics-$LocalConfigName$'
+                'com.graphyte.launch-$LocalConfigName$'
             }
 
             .LinkerOptions
@@ -105,7 +95,7 @@
             .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
             .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
 
-            .LocalDebuggerCommand = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'           // (optional) Executable to launch when debugging.
+            .LocalDebuggerCommand = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'
             .LocalDebuggerCommandArguments = ''
             .LocalDebuggerWorkingDirectory = ''
             .LocalDebuggerEnvironment = ''

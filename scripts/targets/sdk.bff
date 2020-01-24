@@ -1,0 +1,20 @@
+{
+    Print(.ProjectName)
+    Print(.ProjectPath)
+    Print(.ProjectPlatforms)
+    {
+        .UnityInputPath = '$ProjectPath$'
+        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+
+        Unity('$ProjectName$-Unity-Windows') { }
+        Unity('$ProjectName$-Unity-Linux') { }
+        Unity('$ProjectName$-Unity-Android') { }
+    }
+
+    If(.TargetPlatform_Windows_x64 in .ProjectPlatforms) {
+        ForEach(.Config in .Configs_Windows) {
+            Using(.Config)
+            ObjectList()
+        }
+    }
+}

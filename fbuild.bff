@@ -178,14 +178,13 @@ VSSolution('Graphyte')
             = { 'Run-Tests' }
             + .VcxProjects_EngineTests
     ]
-    Print(.EngineTestsDependencies)
 
     .SolutionDependencies = {
         .EngineDependencies
         .EngineTestsDependencies
     }
 
-    
+
     .SolutionFolders_EngineSdks = [
         .Path = 'EngineSdks'
         .Projects = .VcxProjects_EngineSdks
@@ -218,7 +217,7 @@ VSSolution('Graphyte')
             'Run-Tests'
         }
     ]
-    
+
     .SolutionFolders = {
         .SolutionFolders_GlobalTargets
         //.SolutionFolders_EngineSdks

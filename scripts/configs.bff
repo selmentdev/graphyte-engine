@@ -10,6 +10,14 @@
 .ConfigName_Release = 'Release'
 .ConfigName_Profile = 'Profile'
 
+.TargetPlatform_Windows_x64 = 'Windows-x64'
+.TargetPlatform_Windows_ARMv8 = 'Windows-ARMv8'
+.TargetPlatform_Linux_x64 = 'Linux-x64'
+.TargetPlatform_Linux_ARMv8 = 'Linux-ARMv8'
+
+.TargetKind_Static = 'Static'
+.TargetKind_Shared = 'Shared'
+.TargetKind_Executable = 'Executable'
 
 .FbBuildCommand = 'fbuild -ide -cache -monitor -fastcancel'
 .FbRebuildCommand = 'fbuild -ide -clean -cache -monitor -fastcancel'

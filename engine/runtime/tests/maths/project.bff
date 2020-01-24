@@ -79,9 +79,9 @@
                 'sdk.lz4-$LocalConfigName$'
                 '$ProjectName$-Lib-$LocalConfigName$'
                 'Graphyte-Res-$LocalConfigName$'
-                'com.graphyte.base-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                'com.graphyte.graphics-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                'com.graphyte.launch-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+                'com.graphyte.base-$LocalConfigName$'
+                'com.graphyte.graphics-$LocalConfigName$'
+                'com.graphyte.launch-$LocalConfigName$'
             }
 
             .LinkerOptions

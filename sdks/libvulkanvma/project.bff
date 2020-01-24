@@ -9,6 +9,9 @@
     ForEach(.Config in .CurrentConfigs)
     {
         Using(.Config)
+        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 
         .CompilerInputFiles = {
             '$ProjectPath$/source/impl.cxx'
