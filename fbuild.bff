@@ -1,11 +1,45 @@
 #include "scripts/fastbuild/globals.bff"
 #include "scripts/fastbuild/toolchains.bff"
 
-// List of all available projects
-.Graphyte_ProjectsList = {}
+.Graphyte_EngineModuleList = {}
+.Graphyte_EnginePluginList = {}
+.Graphyte_EngineSdkList = {}
+.Graphyte_EngineTestList = {}
+.Graphyte_EngineAppList = {}
+.Graphyte_GameAppList = {}
+.Graphyte_GameModuleList = {}
+.Graphyte_GamePluginList = {}
+
+// .ProjectDefinition = [
+//     .ProjectName = ''
+//     .ProjectPath = ''
+//     .ProjectKind = { 'EngineModule', 'EnginePlugin', 'EngineSdk', 'EngineTest', 'EngineApp', 'GameApp', 'GameModule' }
+//     .ProjectPlatforms = { } // list of available platforms
+//     .ProjectObjectList = '' // if defined, it means that we providing list of sources manually?
+
+//     .ProjectIncludes = { }
+//     .ProjectLibraries = { }
+//     .ProjectDefines = { }
+
+//     .Target_WindowsDef = [
+//         .Platforms = { 'Windows-x64', 'Windows-ARMv8' }
+//         .Includes = {}
+//         .Libraries = {}
+//     ]
+
+//     .ProjectTargets = { } // specific options for platforms
+// ]
+#include "sdks/fmt/project.bff"
+
+#include "engine/runtime/libs/base/project.bff"
+#include "engine/runtime/libs/geometry/project.bff"
+#include "engine/runtime/libs/graphics/project.bff"
+#include "engine/runtime/libs/graphics-d3d11/project.bff"
+#include "engine/runtime/libs/graphics-opengl/project.bff"
+#include "engine/runtime/libs/launch/project.bff"
 
 
-Print(.Global_ConfigDefinitionList)
+#include "scripts/fastbuild/build-project.bff"
 
 Alias('all') {
     .Targets = {}

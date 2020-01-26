@@ -69,14 +69,14 @@
     'Linux-ARMv8'
     'Android-x64'
     'Android-ARMv8'
-    'IOS-ARMv8'
-    'MacOS-x64'
-    'MacOS-ARMv8'
-    'NX-ARMv8'
-    'Orbis-x64'
-    'Prospero-x64'
-    'Durango-x64'
-    'Scarlett-x64'
+    ;'IOS-ARMv8'
+    ;'MacOS-x64'
+    ;'MacOS-ARMv8'
+    ;'NX-ARMv8'
+    ;'Orbis-x64'
+    ;'Prospero-x64'
+    ;'Durango-x64'
+    ;'Scarlett-x64'
 }
 
 //--------------------------------------------------------------------------------------------------

@@ -1,21 +1,23 @@
-.ProjectDefinition = [
-    .ProjectName = 'com.graphyte.launch'
-    .ProjectPath = 'engine/runtime/libs/launch'
-    .ProjectKind = 'Static'
-    .ProjectDefines = {
-        'module_launch_EXPORTS=1'
-    }
-    .ProjectIncludes = {
-        'sdks/fmt/include'
-        'engine/runtime/libs/base/public'
-        'engine/runtime/libs/graphics/public'
-    }
-    .ProjectLibraries = {
-        'sdk.fmt'
-        'com.graphyte.base'
-        'com.graphyte.graphics'
-    }
-    .ProjectTargets = {}
-]
+{
+    .ProjectDefinition = [
+        .ProjectName = 'com.graphyte.launch'
+        .ProjectPath = 'engine/runtime/libs/launch'
+        .ProjectKind = 'Static'
+        .ProjectDefines = {
+            'module_launch_EXPORTS=1'
+        }
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'engine/runtime/libs/base/public'
+            'engine/runtime/libs/graphics/public'
+        }
+        .ProjectLibraries = {
+            'sdk.fmt'
+            'com.graphyte.base'
+            'com.graphyte.graphics'
+        }
+        .ProjectTargets = {}
+    ]
 
-.GraphyteModules + .ProjectDefinition
+    ^Graphyte_EngineModuleList + .ProjectDefinition
+}

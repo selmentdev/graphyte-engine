@@ -1,36 +1,39 @@
-.ProjectDefinition = [
-    .ProjectName = 'com.graphyte.graphics.d3d11'
-    .ProjectPath = 'engine/runtime/libs/graphics-d3d11'
-    .ProjectKind = 'Shared'
-    .ProjectDefines = {
-        'module_graphics_d3d11_EXPORTS=1'
-    }
-    .ProjectIncludes = {
-        'sdks/fmt/include'
-        'engine/runtime/libs/base/public'
-        'engine/runtime/libs/graphics/public'
-    }
-    .ProjectLibraries = {
-        'sdk.fmt'
-        'com.graphyte.base'
-        'com.graphyte.graphics'
-    }
+{
+    .ProjectDefinition = [
+        .ProjectName = 'com.graphyte.graphics.d3d11'
+        .ProjectPath = 'engine/runtime/libs/graphics-d3d11'
+        .ProjectKind = 'Shared'
+        .ProjectPlatforms = { 'Windows-x64', 'Windows-ARMv8' }
+        .ProjectDefines = {
+            'module_graphics_d3d11_EXPORTS=1'
+        }
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'engine/runtime/libs/base/public'
+            'engine/runtime/libs/graphics/public'
+        }
+        .ProjectLibraries = {
+            'sdk.fmt'
+            'com.graphyte.base'
+            'com.graphyte.graphics'
+        }
 
-    .Target_Windows = [
-        .Targets = { 'Windows-x64', 'Windows-ARMv8' }
-        .Includes = {}
-        .LinkerPaths = {}
-        .Libraries = {
-            'dxgi.lib'
-            'd3d11.lib'
-            'dxguid.lib'
-            'User32.lib'
+        .Target_Windows = [
+            .Targets = { 'Windows-x64', 'Windows-ARMv8' }
+            .Includes = {}
+            .LinkerPaths = {}
+            .Libraries = {
+                'dxgi.lib'
+                'd3d11.lib'
+                'dxguid.lib'
+                'User32.lib'
+            }
+        ]
+
+        .ProjectTargets = {
+            .Target_Windows
         }
     ]
 
-    .ProjectTargets = {
-        .Target_Windows
-    }
-]
-
-.GraphyteModules + .ProjectDefinition
+    ^Graphyte_EngineModuleList + .ProjectDefinition
+}

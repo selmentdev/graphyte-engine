@@ -1,84 +1,86 @@
-.ProjectDefinition = [
-    .ProjectName = 'com.graphyte.base'
-    .ProjectPath = 'engine/runtime/libs/base'
-    .ProjectKind = 'Shared'
+{
+    .ProjectDefinition = [
+        .ProjectName = 'com.graphyte.base'
+        .ProjectPath = 'engine/runtime/libs/base'
+        .ProjectKind = 'SharedLib'
 
-    .ProjectDefines = {
-        'module_base_EXPORTS=1'
-    }
+        .ProjectDefines = {
+            'module_base_EXPORTS=1'
+        }
 
-    .ProjectIncludes = {
-        'sdks/fmt/include'
-        'sdks/lz4/include'
-    }
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'sdks/lz4/include'
+        }
 
-    .ProjectLibraries = {
-        'sdk.fmt'
-        'sdk.lz4'
-    }
+        .ProjectLibraries = {
+            'sdk.fmt'
+            'sdk.lz4'
+        }
 
-    // Platform specific configurations
-    .Target_Windows = [
-        .Targets = { 'Windows-x64', 'Windows-ARMv8' }
-        .Includes = {}
-        .LinkerPaths = {}
-        .Libraries = {
-            'ntdll.lib'
-            'comctl32.lib'
-            'dbghelp.lib'
-            'iphlpapi.lib'
-            'ws2_32.lib'
-            'dwmapi.lib'
-            'xinput.lib'
-            'xaudio2.lib'
-            'advapi32.lib'
-            'gdi32.lib'
-            'shell32.lib'
-            'ole32.lib'
-            'Faultrep.lib'
-            'Bcrypt.lib'
-            'user32.lib'
-            'Mincore.lib'
+        // Platform specific configurations
+        .Target_Windows = [
+            .Targets = { 'Windows-x64', 'Windows-ARMv8' }
+            .Includes = {}
+            .LinkerPaths = {}
+            .Libraries = {
+                'ntdll.lib'
+                'comctl32.lib'
+                'dbghelp.lib'
+                'iphlpapi.lib'
+                'ws2_32.lib'
+                'dwmapi.lib'
+                'xinput.lib'
+                'xaudio2.lib'
+                'advapi32.lib'
+                'gdi32.lib'
+                'shell32.lib'
+                'ole32.lib'
+                'Faultrep.lib'
+                'Bcrypt.lib'
+                'user32.lib'
+                'Mincore.lib'
+            }
+        ]
+
+        .Target_Linux_x64 = [
+            .Targets = { 'Linux-x64' }
+            .Includes = {}
+            .LinkerPaths = {}
+            .Libraries = {
+                'pthread'
+                'uuid'
+                'dl'
+                'SDL2'
+                'unwind'
+                'unwind-generic'
+                'unwind-x86_64'
+            }
+        ]
+        .Target_Linux_ARMv8 = [
+            .Targets = { 'Linux-ARMv8' }
+            .Includes = {}
+            .LinkerPaths = {}
+            .Libraries = {
+                'pthread'
+                'uuid'
+                'dl'
+                'SDL2'
+                'unwind'
+                'unwind-generic'
+                'unwind-aarch64'
+            }
+        ]
+
+        .ProjectTargets = {
+            .Target_Windows
+            .Target_Linux_x64
+            .Target_Linux_ARMv8
         }
     ]
 
-    .Target_Linux_x64 = [
-        .Targets = { 'Linux-x64' }
-        .Includes = {}
-        .LinkerPaths = {}
-        .Libraries = {
-            'pthread'
-            'uuid'
-            'dl'
-            'SDL2'
-            'unwind'
-            'unwind-generic'
-            'unwind-x86_64'
-        }
-    ]
-    .Target_Linux_ARMv8 = [
-        .Targets = { 'Linux-ARMv8' }
-        .Includes = {}
-        .LinkerPaths = {}
-        .Libraries = {
-            'pthread'
-            'uuid'
-            'dl'
-            'SDL2'
-            'unwind'
-            'unwind-generic'
-            'unwind-aarch64'
-        }
-    ]
-
-    .ProjectTargets = {
-        .Target_Windows
-        .Target_Linux_x64
-        .Target_Linux_ARMv8
-    }
-]
-
-.GraphyteModules + .ProjectDefinition
+    ^Graphyte_EngineModuleList + .ProjectDefinition
+}
 
 // #if 0
 // #if __WINDOWS__

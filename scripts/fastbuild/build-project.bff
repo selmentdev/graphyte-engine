@@ -1,0 +1,33 @@
+{
+    .LocalProjects
+        = .Graphyte_EngineModuleList
+        + .Graphyte_EnginePluginList
+        + .Graphyte_EngineSdkList
+        + .Graphyte_EngineTestList
+        + .Graphyte_EngineAppList
+        + .Graphyte_GameAppList
+        + .Graphyte_GameModuleList
+        + .Graphyte_GamePluginList
+
+    //
+    // Applied for all projects
+    //
+    ForEach(.CurrentProject in .LocalProjects) {
+        .ProjectObjectLists = {}
+        .ProjectPlatforms = .ValidTargets
+        .ProjectDefines = {}
+        .ProjectIncludes = {}
+        .ProjectLibraries = {}
+        .ProjectTargets = {}
+        Using(.CurrentProject)
+
+        Print('$ProjectName$')
+        
+        ForEach(.CurrentObjectList in .ProjectObjectLists) {
+            Print('  objectlist: -> $ProjectObjectList$')
+        }
+        ForEach(.CurrentPlatform in .ProjectPlatforms) {
+            Print('  platform:   -> $CurrentPlatform$')
+        }
+    }
+}

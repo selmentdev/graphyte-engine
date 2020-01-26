@@ -1,38 +1,38 @@
-.ProjectDefinition = [
-    .ProjectName = 'com.graphyte.graphics.glcore'
-    .ProjectPath = 'engine/runtime/libs/graphics-opengl'
-    .ProjectKind = 'Shared'
-    .ProjectPlatforms = { 'Windows-x64' }
-    .ProjectDefines = {
-        'module_graphics_glcore_EXPORTS=1'
-    }
-    .ProjectIncludes = {
-        'sdks/fmt/include'
-        'sdks/glad/include'
-        'engine/runtime/libs/base/public'
-        'engine/runtime/libs/graphics/public'
-    }
-    .ProjectLibraries = {
-        'sdk.fmt'
-        'sdk.glad'
-        'com.graphyte.base'
-        'com.graphyte.graphics'
-    }
-    .ProjectLinks = {
-    }
-    .Target_Windows = [
-        .Targets = { 'Windows-x64' }
-        .Includes = {}
-        .LinkerPaths = {}
-        .Libraries = {
-            'opengl32.lib'
-            'gdi32.lib'
-            'user32.lib'
+{
+    .ProjectDefinition = [
+        .ProjectName = 'com.graphyte.graphics.glcore'
+        .ProjectPath = 'engine/runtime/libs/graphics-opengl'
+        .ProjectKind = 'Shared'
+        .ProjectPlatforms = { 'Windows-x64', 'Linux-x64', 'Linux-ARMv8', 'Android-x64', 'Android-ARMv8' }
+        .ProjectDefines = {
+            'module_graphics_glcore_EXPORTS=1'
+        }
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'sdks/glad/include'
+            'engine/runtime/libs/base/public'
+            'engine/runtime/libs/graphics/public'
+        }
+        .ProjectLibraries = {
+            'sdk.fmt'
+            'sdk.glad'
+            'com.graphyte.base'
+            'com.graphyte.graphics'
+        }
+        .Target_Windows = [
+            .Targets = { 'Windows-x64' }
+            .Includes = {}
+            .LinkerPaths = {}
+            .Libraries = {
+                'opengl32.lib'
+                'gdi32.lib'
+                'user32.lib'
+            }
+        ]
+        .ProjectTargets = {
+            .Target_Windows
         }
     ]
-    .ProjectTargets = {
-        .Target_Windows
-    }
-]
 
-.GraphyteModules + .ProjectDefinition
+    ^Graphyte_EngineModuleList + .ProjectDefinition
+}

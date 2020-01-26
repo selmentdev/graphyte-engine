@@ -1,19 +1,20 @@
-.ProjectDefinition = [
-    .ProjectName = 'com.graphyte.geometry'
-    .ProjectPath = 'engine/runtime/libs/geometry'
-    .ProjectKind = 'Shared'
-    .ProjectDefines = {
-        'module_geometry_EXPORTS=1'
-    }
-    .ProjectIncludes = {
-        'sdks/fmt/include'
-        'engine/runtime/libs/base/public'
-    }
-    .ProjectLibraries = {
-        'sdk.fmt'
-        'com.graphyte.base'
-    }
-    .ProjectTargets = {}
-]
+{
+    .ProjectDefinition = [
+        .ProjectName = 'com.graphyte.geometry'
+        .ProjectPath = 'engine/runtime/libs/geometry'
+        .ProjectKind = 'Shared'
+        .ProjectDefines = {
+            'module_geometry_EXPORTS=1'
+        }
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'engine/runtime/libs/base/public'
+        }
+        .ProjectLibraries = {
+            'sdk.fmt'
+            'com.graphyte.base'
+        }
+    ]
 
-.GraphyteModules + .ProjectDefinition
+    ^Graphyte_EngineModuleList + .ProjectDefinition
+}
