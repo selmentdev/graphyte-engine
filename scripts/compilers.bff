@@ -30,7 +30,7 @@ Compiler('Compiler-Windows-RC-ARMv8') {
     .LibPathSuffix = '"'
     .LinkPrefix = ''
     .LinkSuffix = ''
-    .SharedLib = '/DLL'
+    .SharedLib = ' /DLL'
     .StaticLib = ''
 ]
 
@@ -53,7 +53,7 @@ Compiler('Compiler-Windows-RC-ARMv8') {
     .LibPathSuffix = '"'
     .LinkPrefix = ''
     .LinkSuffix = ''
-    .SharedLib = '/DLL'
+    .SharedLib = ' /DLL'
     .StaticLib = ''
 ]
 
@@ -131,6 +131,6 @@ Compiler('Compiler-Linux-GCC') {
     .LibPathSuffix = ''
     .LinkPrefix = '-l'
     .LinkSuffix = ''
-    .SharedLib = '-shared'
-    .StaticLib = '-static'
+    .SharedLib = ' -shared'
+    .StaticLib = ' -static'
 ]

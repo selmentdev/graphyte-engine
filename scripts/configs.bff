@@ -492,6 +492,8 @@
     .Config_Linux_x64_Release
 }
 
+.Configs + .Configs_Linux_x64
+
 .AllTargets_Linux_x64_GCC_Debug = {}
 .AllTargets_Linux_x64_GCC_Checked = {}
 .AllTargets_Linux_x64_GCC_Profile = {}

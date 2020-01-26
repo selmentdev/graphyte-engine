@@ -1,0 +1,156 @@
+//--------------------------------------------------------------------------------------------------
+// Graphyte Engine modules
+
+ForEach(.Module in .GraphyteModules) {
+    Using(.Module)
+
+    // Declare unity sources for this module
+    {
+        .UnityInputPath = '$ProjectPath$'
+        .UnityInputPattern = { '*.cxx' }
+        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+        .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
+
+        Unity('$ProjectName$-Unity-Windows') {
+            .UnityInputExcludePattern = {
+                '*Linux.*.cxx'
+                '*Posix.*.cxx'
+                '*Android.*.cxx'
+            }
+        }
+
+        Unity('$ProjectName$-Unity-Linux') {
+            .UnityInputExcludePattern = {
+                '*Windows.*.cxx'
+                '*Android.*.cxx'
+            }
+        }
+
+        Unity('$ProjectName$-Unity-Android') {
+            .UnityInputExcludePattern = {
+                '*Windows.*.cxx'
+                '*Linux.*.cxx'
+            }
+        }
+    }
+
+    // Apply each available build system configs for here
+    ForEach(.Config in .Configs) {
+        Using(.Config)
+
+        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+
+        // Create object list for specific files
+        ObjectList('$ProjectName$-Lib-$LocalConfigName$') {
+            .CompilerInputUnity = '$ProjectName$-Unity-$PlatformInfo$'
+            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$'
+
+            // all global defines
+            ForEach(.Define in .ProjectDefines) {
+                ^CompilerOptions + ' $DefinePrefix$$Define$$DefineSuffix$'
+            }
+
+            // all global includes
+            ForEach(.Include in .ProjectIncludes) {
+                ^CompilerOptions + ' $IncludePrefix$$Include$$IncludeSuffix$'
+            }
+
+            // Per target includes / defines / libs / links
+            ForEach(.ProjectTarget in .ProjectTargets) {
+                Using(.ProjectTarget)
+                .CurrentConfig = '$PlatformInfo$-$ArchitectureInfo$'
+
+                If (.CurrentConfig in .Targets) {
+                    ForEach(.Include in .Includes) {
+                        ^CompilerOptions + ' $IncludePrefix$$Include$$IncludeSuffix$'
+                    }
+                }
+            }
+
+            .CompilerOptions
+                + ' $IncludePrefix$$ProjectPath$/private$IncludeSuffix$'
+                + ' $IncludePrefix$$ProjectPath$/public$IncludeSuffix$'
+                + ' $IncludePrefix$engine/include$IncludeSuffix$'
+                + ' $DefinePrefix$_WINDLL$DefineSuffix$'
+        }
+
+        {
+            
+            .Libraries = { }
+            // all global libraries (included as fastbuild targets)
+            ForEach(.Library in .ProjectLibraries) {
+                ^Libraries + '$Library$-$LocalConfigName$'
+            }
+            //.LinkerOptions + ''
+
+            ForEach(.ProjectTarget in .ProjectTargets) {
+                Using(.ProjectTarget)
+                .CurrentConfig = '$PlatformInfo$-$ArchitectureInfo$'
+                If (.CurrentConfig in .Targets) {
+                    ForEach(.Library in .Libraries) {
+                        ^LinkerOptions + ' $LinkPrefix$$Library$$LinkSuffix$'
+                    }
+                }
+            }
+
+            ^LinkerOptions + .SharedLib
+
+            If (.ProjectKind == .TargetKind_Static) {
+                Library('$LocalTargetName$') {
+                    .LibrarianAdditionalInputs = '$ProjectName$-Lib-$LocalConfigName$'
+                    .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
+                    .LibrarianOutput = '$OutputBase$/lib/$LocalConfigName$/$ProjectName$.lib'
+                }
+            }
+
+            If (.ProjectKind == .TargetKind_Shared) {
+                DLL('$LocalTargetName$') {
+                    .LinkerOutput = '$OutputBase$/bin/$SharedLibraryPrefix$$LocalConfigName$/$ProjectName$$SharedLibrarySuffix$'
+                    .Libraries + { '$ProjectName$-Lib-$LocalConfigName$' }
+                }
+            }
+        }
+    }
+
+#if __WINDOWS__
+    //.VcxProjectConfigs = {}
+    //ForEach(.Config in .Configs) {
+    //    Using(.Config)
+//
+    //    .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+    //    .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+    //    .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+    //    .LocalProjectConfig = [
+    //        .Target = '$ProjectName$-Lib-$LocalConfigName$'
+    //        .Config = '$Config$'
+    //        .Platform = '$VsPlatform$'
+    //        .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
+    //        .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
+    //        .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
+    //    ]
+    //    ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'
+    //}
+    //.VcxProjectConfigs + .LocalProjectConfig
+//
+    //^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
+    
+    //VCXProject('$ProjectName$') {
+    //    .ProjectOutput = '$ProjectName$.vcxproj'
+    //    .ProjectInputPaths = { .ProjectPath }
+    //    //.ProjectOutputDirectory =
+    //    //>intermediateDirectory =
+    //    .ProjectBasePath = .ProjectPath
+    //    .ProjectAllowedFileExtensions = {
+    //        '*.bff'
+    //        '*.cxx'
+    //        '*.hxx'
+    //        '*.c'
+    //        '*.h'
+    //    }
+    //    .ProjectConfigs = .VcxProjectConfigs
+    //    .PlatformToolset = .VsPlatformToolset
+    //}
+#endif
+}

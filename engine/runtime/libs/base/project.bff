@@ -1,166 +1,217 @@
-{
+.ProjectDefinition = [
     .ProjectName = 'com.graphyte.base'
     .ProjectPath = 'engine/runtime/libs/base'
-    {
-        .UnityInputPath = '$ProjectPath$'
-        .UnityInputPattern = { '*.cxx' }
-        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
-        .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
+    .ProjectKind = 'Shared'
 
-        Unity('$ProjectName$-Unity-Windows') {
-            .UnityInputExcludePattern = {
-                '*Linux.*.cxx'
-                '*Posix.*.cxx'
-                '*Android.*.cxx'
-            }
-        }
-        Unity('$ProjectName$-Unity-Linux') {
-            .UnityInputExcludePattern = {
-                '*Windows.*.cxx'
-                '*Android.*.cxx'
-            }
-        }
-        Unity('$ProjectName$-Unity-Android') {
-            .UnityInputExcludePattern = {
-                '*Windows.*.cxx'
-                '*Linux.*.cxx'
-            }
-        }
+    .ProjectDefines = {
+        'module_base_EXPORTS=1'
     }
 
-#if __WINDOWS__
-    .VcxProjectConfigs = {}
-
-    // this module applies only on windows-x64-msvc build
-    .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
-    ForEach(.Config in .CurrentConfigs)
-    {
-        Using(.Config)
-        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
-        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
-
-        ObjectList('$ProjectName$-Lib-$LocalConfigName$')
-        {
-            .CompilerInputUnity = '$ProjectName$-Unity-Windows'
-            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-
-            // Common Graphyte module include paths
-            .CompilerOptions
-                + ' /I"$ProjectPath$/private"'
-                + ' /I"$ProjectPath$/public"'
-                + ' /I"sdks/fmt/include"'
-                + ' /I"sdks/lz4/include"'
-                + ' /I"engine/include"'
-                + ' /D_WINDLL'
-                + ' /Dmodule_base_EXPORTS=1'
-        }
-
-        DLL('$LocalTargetName$') {
-            .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.dll'
-            .Libraries = {
-                'sdk.fmt-$LocalConfigName$'
-                'sdk.lz4-$LocalConfigName$'
-                '$ProjectName$-Lib-$LocalConfigName$'
-            }
-            .LinkerOptions
-                + ' /DLL'
-                + ' ntdll.lib'
-                + ' comctl32.lib'
-                + ' dbghelp.lib'
-                + ' iphlpapi.lib'
-                + ' ws2_32.lib'
-                + ' dwmapi.lib'
-                + ' xinput.lib'
-                + ' xaudio2.lib'
-                + ' advapi32.lib'
-                + ' gdi32.lib'
-                + ' shell32.lib'
-                + ' ole32.lib'
-                + ' Faultrep.lib'
-                + ' Bcrypt.lib'
-                + ' user32.lib'
-                + ' Mincore.lib'
-        }
-
-        .ProjectConfig = [
-            .Target = '$ProjectName$-Lib-$LocalConfigName$'
-            .Config = '$Config$'
-            .Platform = '$VsPlatform$'
-            .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
-            .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
-            .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
-        ]
-
-        ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'
-        ^VcxProjectConfigs + .ProjectConfig
-
-        ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
+    .ProjectIncludes = {
+        'sdks/fmt/include'
+        'sdks/lz4/include'
     }
 
-    VCXProject('$ProjectName$') {
-        .ProjectOutput = '$ProjectName$.vcxproj'
-        .ProjectInputPaths = { .ProjectPath }
-        //.ProjectOutputDirectory =
-        //>intermediateDirectory =
-        .ProjectBasePath = .ProjectPath
-        .ProjectAllowedFileExtensions = {
-            '*.bff'
-            '*.cxx'
-            '*.hxx'
-            '*.c'
-            '*.h'
-        }
-        .ProjectConfigs = .VcxProjectConfigs
-        .PlatformToolset = .VsPlatformToolset
+    .ProjectLibraries = {
+        'sdk.fmt'
+        'sdk.lz4'
     }
 
-    ^VcxProjects_EngineModules + .ProjectName
-#endif
-
-#if __LINUX__
-    .CurrentConfigs = .Configs_Linux_x64
-    ForEach(.Config in .CurrentConfigs)
-    {
-        Using(.Config)
-        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
-        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
-
-        ObjectList('$ProjectName$-Lib-$LocalConfigName$')
-        {
-            .CompilerInputUnity = '$ProjectName$-Unity-Linux'
-            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-
-            // Common Graphyte module include paths
-            .CompilerOptions
-                + ' -I$ProjectPath$/private'
-                + ' -I$ProjectPath$/public'
-                + ' -Isdks/fmt/include'
-                + ' -Isdks/lz4/include'
-                + ' -Iengine/include'
+    // Platform specific configurations
+    .Target_Windows = [
+        .Targets = { 'Windows-x64', 'Windows-ARMv8' }
+        .Includes = {}
+        .Libraries = {
+            'ntdll.lib'
+            'comctl32.lib'
+            'dbghelp.lib'
+            'iphlpapi.lib'
+            'ws2_32.lib'
+            'dwmapi.lib'
+            'xinput.lib'
+            'xaudio2.lib'
+            'advapi32.lib'
+            'gdi32.lib'
+            'shell32.lib'
+            'ole32.lib'
+            'Faultrep.lib'
+            'Bcrypt.lib'
+            'user32.lib'
+            'Mincore.lib'
         }
+    ]
 
-        DLL('$LocalTargetName$') {
-            .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/lib$ProjectName$.so'
-            .Libraries = {
-                'sdk.fmt-$LocalConfigName$'
-                'sdk.lz4-$LocalConfigName$'
-                '$ProjectName$-Lib-$LocalConfigName$'
-            }
-            .LinkerOptions
-                + ' -shared'
-                + ' -lpthread'
-                + ' -luuid'
-                + ' -ldl'
-                + ' -lSDL2'
-                + ' -lunwind'
-                + ' -lunwind-x86_64'
-                + ' -lunwind-generic'
+    .Target_Linux_x64 = [
+        .Targets = { 'Linux-x64' }
+        .Includes = {}
+        .Libraries = {
+            'pthread'
+            'uuid'
+            'dl'
+            'SDL2'
+            'unwind'
+            'unwind-generic'
+            'unwind-x86_64'
         }
+    ]
+    .Target_Linux_ARMv8 = [
+        .Targets = { 'Linux-ARMv8' }
+        .Includes = {}
+        .Libraries = {
+            'pthread'
+            'uuid'
+            'dl'
+            'SDL2'
+            'unwind'
+            'unwind-generic'
+            'unwind-aarch64'
+        }
+    ]
 
-        ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
+    .ProjectTargets = {
+        .Target_Windows
+        .Target_Linux_x64
+        .Target_Linux_ARMv8
     }
+]
 
-#endif
-}
+.GraphyteModules + .ProjectDefinition
+
+// #if 0
+// #if __WINDOWS__
+//     .VcxProjectConfigs = {}
+
+//     // this module applies only on windows-x64-msvc build
+//     .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
+//     ForEach(.Config in .CurrentConfigs)
+//     {
+//         Using(.Config)
+//         .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+//         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+//         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+
+//         ObjectList('$ProjectName$-Lib-$LocalConfigName$')
+//         {
+//             .CompilerInputUnity = '$ProjectName$-Unity-Windows'
+//             .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
+
+//             // Common Graphyte module include paths
+//             .CompilerOptions
+//                 + ' /I"$ProjectPath$/private"'
+//                 + ' /I"$ProjectPath$/public"'
+//                 + ' /I"sdks/fmt/include"'
+//                 + ' /I"sdks/lz4/include"'
+//                 + ' /I"engine/include"'
+//                 + ' /D_WINDLL'
+//                 + ' /Dmodule_base_EXPORTS=1'
+//         }
+
+//         DLL('$LocalTargetName$') {
+//             .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.dll'
+//             .Libraries = {
+//                 'sdk.fmt-$LocalConfigName$'
+//                 'sdk.lz4-$LocalConfigName$'
+//                 '$ProjectName$-Lib-$LocalConfigName$'
+//             }
+//             .LinkerOptions
+//                 + ' /DLL'
+//                 + ' ntdll.lib'
+//                 + ' comctl32.lib'
+//                 + ' dbghelp.lib'
+//                 + ' iphlpapi.lib'
+//                 + ' ws2_32.lib'
+//                 + ' dwmapi.lib'
+//                 + ' xinput.lib'
+//                 + ' xaudio2.lib'
+//                 + ' advapi32.lib'
+//                 + ' gdi32.lib'
+//                 + ' shell32.lib'
+//                 + ' ole32.lib'
+//                 + ' Faultrep.lib'
+//                 + ' Bcrypt.lib'
+//                 + ' user32.lib'
+//                 + ' Mincore.lib'
+//         }
+
+//         .ProjectConfig = [
+//             .Target = '$ProjectName$-Lib-$LocalConfigName$'
+//             .Config = '$Config$'
+//             .Platform = '$VsPlatform$'
+//             .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
+//             .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
+//             .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
+//         ]
+
+//         ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'
+//         ^VcxProjectConfigs + .ProjectConfig
+
+//         ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
+//     }
+
+//     VCXProject('$ProjectName$') {
+//         .ProjectOutput = '$ProjectName$.vcxproj'
+//         .ProjectInputPaths = { .ProjectPath }
+//         //.ProjectOutputDirectory =
+//         //>intermediateDirectory =
+//         .ProjectBasePath = .ProjectPath
+//         .ProjectAllowedFileExtensions = {
+//             '*.bff'
+//             '*.cxx'
+//             '*.hxx'
+//             '*.c'
+//             '*.h'
+//         }
+//         .ProjectConfigs = .VcxProjectConfigs
+//         .PlatformToolset = .VsPlatformToolset
+//     }
+
+//     ^VcxProjects_EngineModules + .ProjectName
+// #endif
+
+// #if __LINUX__
+//     .CurrentConfigs = .Configs_Linux_x64
+//     ForEach(.Config in .CurrentConfigs)
+//     {
+//         Using(.Config)
+//         .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+//         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+//         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+
+//         ObjectList('$ProjectName$-Lib-$LocalConfigName$')
+//         {
+//             .CompilerInputUnity = '$ProjectName$-Unity-Linux'
+//             .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
+
+//             // Common Graphyte module include paths
+//             .CompilerOptions
+//                 + ' -I$ProjectPath$/private'
+//                 + ' -I$ProjectPath$/public'
+//                 + ' -Isdks/fmt/include'
+//                 + ' -Isdks/lz4/include'
+//                 + ' -Iengine/include'
+//         }
+
+//         DLL('$LocalTargetName$') {
+//             .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/lib$ProjectName$.so'
+//             .Libraries = {
+//                 'sdk.fmt-$LocalConfigName$'
+//                 'sdk.lz4-$LocalConfigName$'
+//                 '$ProjectName$-Lib-$LocalConfigName$'
+//             }
+//             .LinkerOptions
+//                 + ' -shared'
+//                 + ' -lpthread'
+//                 + ' -luuid'
+//                 + ' -ldl'
+//                 + ' -lSDL2'
+//                 + ' -lunwind'
+//                 + ' -lunwind-x86_64'
+//                 + ' -lunwind-generic'
+//         }
+
+//         ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
+//     }
+
+// #endif
+// }
+// #endif

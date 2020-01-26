@@ -2,9 +2,12 @@
 #include "scripts/configs.bff"
 
 .OutputBase = 'build'
-
-.CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
 .SolutionConfigs = {}
+
+//--------------------------------------------------------------------------------------------------
+// Windows Specific resources
+//--------------------------------------------------------------------------------------------------
+.CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
 {
     ForEach(.Config in .CurrentConfigs)
     {
@@ -35,304 +38,308 @@
     }
 }
 
+.GraphyteModules = {}
 
-.VcxProjects_EngineSdks = {}
+
+//.VcxProjects_EngineSdks = {}
 #include "sdks/lz4/project.bff"
 #include "sdks/fmt/project.bff"
 #include "sdks/glad/project.bff"
 #include "sdks/libvulkanvma/project.bff"
 
-.VcxProjects_EngineModules = {}
 #include "engine/runtime/libs/base/project.bff"
-#include "engine/runtime/libs/geometry/project.bff"
 #include "engine/runtime/libs/graphics/project.bff"
+#include "engine/runtime/libs/geometry/project.bff"
 #include "engine/runtime/libs/launch/project.bff"
 #include "engine/runtime/libs/rendering/project.bff"
-
-.VcxProjects_EnginePlugins = {}
 #include "engine/runtime/libs/graphics-opengl/project.bff"
 #include "engine/runtime/libs/graphics-d3d11/project.bff"
-#include "engine/runtime/libs/graphics-vulkan/project.bff"
+//#include "engine/runtime/libs/graphics-vulkan/project.bff"
+#include "scripts/targets/module.bff"
 
-.VcxProjects_EngineTests = {}
-#include "engine/runtime/tests/base/project.bff"
-#include "engine/runtime/tests/entities/project.bff"
-#include "engine/runtime/tests/graphics/project.bff"
-#include "engine/runtime/tests/maths/project.bff"
+//.VcxProjects_EngineModules = {}
 
-.VcxProjects_Game = {}
-#include "game/source/app.demo/project.bff"
+// .VcxProjects_EnginePlugins = {}
 
-.VcxProjects_GameModules = {}
+// .VcxProjects_EngineTests = {}
+// #include "engine/runtime/tests/base/project.bff"
+// #include "engine/runtime/tests/entities/project.bff"
+// #include "engine/runtime/tests/graphics/project.bff"
+// #include "engine/runtime/tests/maths/project.bff"
 
+// .VcxProjects_Game = {}
+// #include "game/source/app.demo/project.bff"
 
-// -------------------------------------------------------------------------------------------------
-// All engine projects
-// -------------------------------------------------------------------------------------------------
-
-{
-    .VcxProjectConfigs = {}
-    .ProjectName = 'All-Engine'
-
-    ForEach(.Config in .CurrentConfigs)
-    {
-        Using(.Config)
-
-        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
-        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
-
-        Alias('$LocalTargetName$') {
-            .Targets = .'SolutionConfigs_$LocalConfigVarName$'
-        }
-
-        .ProjectConfig = [
-            .Target = '$LocalTargetName$'
-            .Config = '$Config$'
-            .Platform = '$VsPlatform$'
-            .SolutionConfig = '$Config$'
-            .SolutionPlatform = 'Windows-$CompilerInfo$-$VsPlatform$'
-            .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
-            .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
-            .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
-        ]
-
-        ^VcxProjectConfigs + .ProjectConfig
-    }
-
-    VCXProject('$ProjectName$') {
-        .ProjectOutput   = '$ProjectName$.vcxproj'
-        .ProjectFiles    = { '.\fbuild.bff' }
-        .ProjectBasePath = '.\'
-        .ProjectConfigs = .VcxProjectConfigs
-        .PlatformToolset = .VsPlatformToolset
-    }
-}
-
-//
-// All Test projects
-//
-
-{
-    .VcxProjectConfigs = {}
-    .ProjectName = 'Run-Tests'
-
-    ForEach(.Config in .CurrentConfigs)
-    {
-        Using(.Config)
-        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
-        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
-
-        Alias('$LocalTargetName$') {
-            .Targets
-                = .'AllTests_$LocalConfigVarName$'
-        }
-
-        .ProjectConfig = [
-            .Target = '$LocalTargetName$'
-            .Config = '$Config$'
-            .Platform = '$VsPlatform$'
-            .SolutionConfig = '$Config$'
-            .SolutionPlatform = 'Windows-$CompilerInfo$-$VsPlatform$'
-            .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
-            .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
-            .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
-        ]
-
-        ^VcxProjectConfigs + .ProjectConfig
-    }
-
-    VCXProject('$ProjectName$') {
-        .ProjectOutput   = '$ProjectName$.vcxproj'
-        .ProjectFiles    = { '.\fbuild.bff' }
-        .ProjectBasePath = '.\'
-        .ProjectConfigs = .VcxProjectConfigs
-        .PlatformToolset = .VsPlatformToolset
-    }
-}
+// .VcxProjects_GameModules = {}
 
 
-VSSolution('Graphyte')
-{
-    .SolutionOutput = 'gen.sln'
-    .SolutionBuildProject = 'All-Engine'
+// // -------------------------------------------------------------------------------------------------
+// // All engine projects
+// // -------------------------------------------------------------------------------------------------
 
-    // Projects included in whole-engine build target
-    .EngineDependencies = [
-        .Projects
-             = { 'All-Engine' }
-        .Dependencies
-            = .VcxProjects_EngineModules
-            + .VcxProjects_EngineSdks
-            + .VcxProjects_EnginePlugins
-            + .VcxProjects_Game
-            + .VcxProjects_GameModules
-    ]
+// {
+//     .VcxProjectConfigs = {}
+//     .ProjectName = 'All-Engine'
 
-    .EngineTestsDependencies = [
-        .Dependencies
-            = .VcxProjects_EngineModules
-            + .VcxProjects_EnginePlugins
-        .Projects
-            = { 'Run-Tests' }
-            + .VcxProjects_EngineTests
-    ]
+//     ForEach(.Config in .CurrentConfigs)
+//     {
+//         Using(.Config)
 
-    .SolutionDependencies = {
-        .EngineDependencies
-        .EngineTestsDependencies
-    }
+//         .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+//         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+//         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 
+//         Alias('$LocalTargetName$') {
+//             .Targets = .'SolutionConfigs_$LocalConfigVarName$'
+//         }
 
-    .SolutionFolders_EngineSdks = [
-        .Path = 'EngineSdks'
-        .Projects = .VcxProjects_EngineSdks
-    ]
-    .SolutionFolders_EngineModules = [
-        .Path = 'Engine/Modules'
-        .Projects = .VcxProjects_EngineModules
-    ]
-    .SolutionFolders_EnginePlugins = [
-        .Path = 'Engine/Plugins'
-        .Projects = .VcxProjects_EnginePlugins
-    ]
-    .SolutionFolders_EngineTests = [
-        .Path = 'Engine/Tests'
-        .Projects = .VcxProjects_EngineTests
-    ]
-    .SolutionFolders_Game = [
-        .Path = 'Game'
-        .Projects = .VcxProjects_Game
-    ]
-    .SolutionFolders_GameModules = [
-        .Path = 'Game/Modules'
-        .Projects = .VcxProjects_GameModules
-    ]
+//         .ProjectConfig = [
+//             .Target = '$LocalTargetName$'
+//             .Config = '$Config$'
+//             .Platform = '$VsPlatform$'
+//             .SolutionConfig = '$Config$'
+//             .SolutionPlatform = 'Windows-$CompilerInfo$-$VsPlatform$'
+//             .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
+//             .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
+//             .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
+//         ]
 
-    .SolutionFolders_GlobalTargets = [
-        .Path = 'Global'
-        .Projects = {
-            'All-Engine'
-            'Run-Tests'
-        }
-    ]
+//         ^VcxProjectConfigs + .ProjectConfig
+//     }
 
-    .SolutionFolders = {
-        .SolutionFolders_GlobalTargets
-        //.SolutionFolders_EngineSdks
-        .SolutionFolders_EngineModules
-        .SolutionFolders_EnginePlugins
-        .SolutionFolders_EngineTests
-        .SolutionFolders_Game
-        //.SolutionFolders_GameModules
-    }
-}
+//     VCXProject('$ProjectName$') {
+//         .ProjectOutput   = '$ProjectName$.vcxproj'
+//         .ProjectFiles    = { '.\fbuild.bff' }
+//         .ProjectBasePath = '.\'
+//         .ProjectConfigs = .VcxProjectConfigs
+//         .PlatformToolset = .VsPlatformToolset
+//     }
+// }
 
+// //
+// // All Test projects
+// //
 
-// -------------------------------------------------------------------------------------------------
-// All targets
-// -------------------------------------------------------------------------------------------------
-Alias('all') {
-    .Targets = 'Graphyte'
-}
+// {
+//     .VcxProjectConfigs = {}
+//     .ProjectName = 'Run-Tests'
 
-Alias('All-Windows-x64-MSVC-Debug')   { .Targets = .AllTargets_Windows_x64_MSVC_Debug   }
-Alias('All-Windows-x64-MSVC-Checked') { .Targets = .AllTargets_Windows_x64_MSVC_Checked }
-Alias('All-Windows-x64-MSVC-Profile') { .Targets = .AllTargets_Windows_x64_MSVC_Profile }
-Alias('All-Windows-x64-MSVC-Release') { .Targets = .AllTargets_Windows_x64_MSVC_Release }
+//     ForEach(.Config in .CurrentConfigs)
+//     {
+//         Using(.Config)
+//         .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+//         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+//         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 
-Alias('All-Tests-Windows-x64-MSVC-Debug')   { .Targets = .AllTests_Windows_x64_MSVC_Debug   }
-Alias('All-Tests-Windows-x64-MSVC-Checked') { .Targets = .AllTests_Windows_x64_MSVC_Checked }
-Alias('All-Tests-Windows-x64-MSVC-Profile') { .Targets = .AllTests_Windows_x64_MSVC_Profile }
-Alias('All-Tests-Windows-x64-MSVC-Release') { .Targets = .AllTests_Windows_x64_MSVC_Release }
+//         Alias('$LocalTargetName$') {
+//             .Targets
+//                 = .'AllTests_$LocalConfigVarName$'
+//         }
 
-Alias('All-Windows-x64-MSVC') {
-    .Targets = {
-        'All-Windows-x64-MSVC-Debug'
-        'All-Windows-x64-MSVC-Checked'
-        'All-Windows-x64-MSVC-Profile'
-        'All-Windows-x64-MSVC-Release'
-    }
-}
+//         .ProjectConfig = [
+//             .Target = '$LocalTargetName$'
+//             .Config = '$Config$'
+//             .Platform = '$VsPlatform$'
+//             .SolutionConfig = '$Config$'
+//             .SolutionPlatform = 'Windows-$CompilerInfo$-$VsPlatform$'
+//             .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
+//             .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
+//             .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
+//         ]
 
-Alias('All-Tests-Windows-x64-MSVC') {
-    .Targets = {
-        'All-Tests-Windows-x64-MSVC-Debug'
-        'All-Tests-Windows-x64-MSVC-Checked'
-        'All-Tests-Windows-x64-MSVC-Profile'
-        'All-Tests-Windows-x64-MSVC-Release'
-    }
-}
+//         ^VcxProjectConfigs + .ProjectConfig
+//     }
 
-Alias('All-Windows-ARMv8-MSVC-Debug')   { .Targets = .AllTargets_Windows_ARMv8_MSVC_Debug   }
-Alias('All-Windows-ARMv8-MSVC-Checked') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Checked }
-Alias('All-Windows-ARMv8-MSVC-Profile') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Profile }
-Alias('All-Windows-ARMv8-MSVC-Release') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Release }
-
-Alias('All-Tests-Windows-ARMv8-MSVC-Debug')   { .Targets = .AllTests_Windows_ARMv8_MSVC_Debug   }
-Alias('All-Tests-Windows-ARMv8-MSVC-Checked') { .Targets = .AllTests_Windows_ARMv8_MSVC_Checked }
-Alias('All-Tests-Windows-ARMv8-MSVC-Profile') { .Targets = .AllTests_Windows_ARMv8_MSVC_Profile }
-Alias('All-Tests-Windows-ARMv8-MSVC-Release') { .Targets = .AllTests_Windows_ARMv8_MSVC_Release }
-
-Alias('All-Windows-ARMv8-MSVC') {
-    .Targets = {
-        'All-Windows-ARMv8-MSVC-Debug'
-        'All-Windows-ARMv8-MSVC-Checked'
-        'All-Windows-ARMv8-MSVC-Profile'
-        'All-Windows-ARMv8-MSVC-Release'
-    }
-}
-
-Alias('All-Tests-Windows-ARMv8-MSVC') {
-    .Targets = {
-        'All-Tests-Windows-ARMv8-MSVC-Debug'
-        'All-Tests-Windows-ARMv8-MSVC-Checked'
-        'All-Tests-Windows-ARMv8-MSVC-Profile'
-        'All-Tests-Windows-ARMv8-MSVC-Release'
-    }
-}
-
-Alias('All-Windows-MSVC') {
-    .Targets = {
-        'All-Windows-x64-MSVC'
-        'All-Windows-ARMv8-MSVC'
-    }
-}
+//     VCXProject('$ProjectName$') {
+//         .ProjectOutput   = '$ProjectName$.vcxproj'
+//         .ProjectFiles    = { '.\fbuild.bff' }
+//         .ProjectBasePath = '.\'
+//         .ProjectConfigs = .VcxProjectConfigs
+//         .PlatformToolset = .VsPlatformToolset
+//     }
+// }
 
 
-// -------------------------------------------------------------------------------------------------
-// Linux-x64 aliases
-// -------------------------------------------------------------------------------------------------
+// VSSolution('Graphyte')
+// {
+//     .SolutionOutput = 'gen.sln'
+//     .SolutionBuildProject = 'All-Engine'
 
-#if __LINUX__
+//     // Projects included in whole-engine build target
+//     .EngineDependencies = [
+//         .Projects
+//              = { 'All-Engine' }
+//         .Dependencies
+//             = .VcxProjects_EngineModules
+//             + .VcxProjects_EngineSdks
+//             + .VcxProjects_EnginePlugins
+//             + .VcxProjects_Game
+//             + .VcxProjects_GameModules
+//     ]
 
-Alias('All-Linux-x64-Debug')   { .Targets = .AllTargets_Linux_x64_GCC_Debug   }
-Alias('All-Linux-x64-Checked') { .Targets = .AllTargets_Linux_x64_GCC_Checked }
-Alias('All-Linux-x64-Profile') { .Targets = .AllTargets_Linux_x64_GCC_Profile }
-Alias('All-Linux-x64-Release') { .Targets = .AllTargets_Linux_x64_GCC_Release }
+//     .EngineTestsDependencies = [
+//         .Dependencies
+//             = .VcxProjects_EngineModules
+//             + .VcxProjects_EnginePlugins
+//         .Projects
+//             = { 'Run-Tests' }
+//             + .VcxProjects_EngineTests
+//     ]
 
-//Alias('All-Tests-Linux-x64-Debug')   { .Targets = .AllTests_Linux_x64_GCC_Debug   }
-//Alias('All-Tests-Linux-x64-Checked') { .Targets = .AllTests_Linux_x64_GCC_Checked }
-//Alias('All-Tests-Linux-x64-Profile') { .Targets = .AllTests_Linux_x64_GCC_Profile }
-//Alias('All-Tests-Linux-x64-Release') { .Targets = .AllTests_Linux_x64_GCC_Release }
+//     .SolutionDependencies = {
+//         .EngineDependencies
+//         .EngineTestsDependencies
+//     }
 
 
-Alias('All-Linux-x64') {
-    .Targets = {
-        'All-Linux-x64-Debug'
-        'All-Linux-x64-Checked'
-        'All-Linux-x64-Profile'
-        'All-Linux-x64-Release'
-    }
-}
+//     .SolutionFolders_EngineSdks = [
+//         .Path = 'EngineSdks'
+//         .Projects = .VcxProjects_EngineSdks
+//     ]
+//     .SolutionFolders_EngineModules = [
+//         .Path = 'Engine/Modules'
+//         .Projects = .VcxProjects_EngineModules
+//     ]
+//     .SolutionFolders_EnginePlugins = [
+//         .Path = 'Engine/Plugins'
+//         .Projects = .VcxProjects_EnginePlugins
+//     ]
+//     .SolutionFolders_EngineTests = [
+//         .Path = 'Engine/Tests'
+//         .Projects = .VcxProjects_EngineTests
+//     ]
+//     .SolutionFolders_Game = [
+//         .Path = 'Game'
+//         .Projects = .VcxProjects_Game
+//     ]
+//     .SolutionFolders_GameModules = [
+//         .Path = 'Game/Modules'
+//         .Projects = .VcxProjects_GameModules
+//     ]
 
-Alias('All-Tests-Linux-x64') {
-    .Targets = {
-        'All-Tests-Linux-x64-Debug'
-        'All-Tests-Linux-x64-Checked'
-        'All-Tests-Linux-x64-Profile'
-        'All-Tests-Linux-x64-Release'
-    }
-}
-#endif
+//     .SolutionFolders_GlobalTargets = [
+//         .Path = 'Global'
+//         .Projects = {
+//             'All-Engine'
+//             'Run-Tests'
+//         }
+//     ]
+
+//     .SolutionFolders = {
+//         .SolutionFolders_GlobalTargets
+//         //.SolutionFolders_EngineSdks
+//         .SolutionFolders_EngineModules
+//         .SolutionFolders_EnginePlugins
+//         .SolutionFolders_EngineTests
+//         .SolutionFolders_Game
+//         //.SolutionFolders_GameModules
+//     }
+// }
+
+
+// // -------------------------------------------------------------------------------------------------
+// // All targets
+// // -------------------------------------------------------------------------------------------------
+// Alias('all') {
+//     .Targets = 'Graphyte'
+// }
+
+// Alias('All-Windows-x64-MSVC-Debug')   { .Targets = .AllTargets_Windows_x64_MSVC_Debug   }
+// Alias('All-Windows-x64-MSVC-Checked') { .Targets = .AllTargets_Windows_x64_MSVC_Checked }
+// Alias('All-Windows-x64-MSVC-Profile') { .Targets = .AllTargets_Windows_x64_MSVC_Profile }
+// Alias('All-Windows-x64-MSVC-Release') { .Targets = .AllTargets_Windows_x64_MSVC_Release }
+
+// Alias('All-Tests-Windows-x64-MSVC-Debug')   { .Targets = .AllTests_Windows_x64_MSVC_Debug   }
+// Alias('All-Tests-Windows-x64-MSVC-Checked') { .Targets = .AllTests_Windows_x64_MSVC_Checked }
+// Alias('All-Tests-Windows-x64-MSVC-Profile') { .Targets = .AllTests_Windows_x64_MSVC_Profile }
+// Alias('All-Tests-Windows-x64-MSVC-Release') { .Targets = .AllTests_Windows_x64_MSVC_Release }
+
+// Alias('All-Windows-x64-MSVC') {
+//     .Targets = {
+//         'All-Windows-x64-MSVC-Debug'
+//         'All-Windows-x64-MSVC-Checked'
+//         'All-Windows-x64-MSVC-Profile'
+//         'All-Windows-x64-MSVC-Release'
+//     }
+// }
+
+// Alias('All-Tests-Windows-x64-MSVC') {
+//     .Targets = {
+//         'All-Tests-Windows-x64-MSVC-Debug'
+//         'All-Tests-Windows-x64-MSVC-Checked'
+//         'All-Tests-Windows-x64-MSVC-Profile'
+//         'All-Tests-Windows-x64-MSVC-Release'
+//     }
+// }
+
+// Alias('All-Windows-ARMv8-MSVC-Debug')   { .Targets = .AllTargets_Windows_ARMv8_MSVC_Debug   }
+// Alias('All-Windows-ARMv8-MSVC-Checked') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Checked }
+// Alias('All-Windows-ARMv8-MSVC-Profile') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Profile }
+// Alias('All-Windows-ARMv8-MSVC-Release') { .Targets = .AllTargets_Windows_ARMv8_MSVC_Release }
+
+// Alias('All-Tests-Windows-ARMv8-MSVC-Debug')   { .Targets = .AllTests_Windows_ARMv8_MSVC_Debug   }
+// Alias('All-Tests-Windows-ARMv8-MSVC-Checked') { .Targets = .AllTests_Windows_ARMv8_MSVC_Checked }
+// Alias('All-Tests-Windows-ARMv8-MSVC-Profile') { .Targets = .AllTests_Windows_ARMv8_MSVC_Profile }
+// Alias('All-Tests-Windows-ARMv8-MSVC-Release') { .Targets = .AllTests_Windows_ARMv8_MSVC_Release }
+
+// Alias('All-Windows-ARMv8-MSVC') {
+//     .Targets = {
+//         'All-Windows-ARMv8-MSVC-Debug'
+//         'All-Windows-ARMv8-MSVC-Checked'
+//         'All-Windows-ARMv8-MSVC-Profile'
+//         'All-Windows-ARMv8-MSVC-Release'
+//     }
+// }
+
+// Alias('All-Tests-Windows-ARMv8-MSVC') {
+//     .Targets = {
+//         'All-Tests-Windows-ARMv8-MSVC-Debug'
+//         'All-Tests-Windows-ARMv8-MSVC-Checked'
+//         'All-Tests-Windows-ARMv8-MSVC-Profile'
+//         'All-Tests-Windows-ARMv8-MSVC-Release'
+//     }
+// }
+
+// Alias('All-Windows-MSVC') {
+//     .Targets = {
+//         'All-Windows-x64-MSVC'
+//         'All-Windows-ARMv8-MSVC'
+//     }
+// }
+
+
+// // -------------------------------------------------------------------------------------------------
+// // Linux-x64 aliases
+// // -------------------------------------------------------------------------------------------------
+
+// #if __LINUX__
+
+// Alias('All-Linux-x64-Debug')   { .Targets = .AllTargets_Linux_x64_GCC_Debug   }
+// Alias('All-Linux-x64-Checked') { .Targets = .AllTargets_Linux_x64_GCC_Checked }
+// Alias('All-Linux-x64-Profile') { .Targets = .AllTargets_Linux_x64_GCC_Profile }
+// Alias('All-Linux-x64-Release') { .Targets = .AllTargets_Linux_x64_GCC_Release }
+
+// //Alias('All-Tests-Linux-x64-Debug')   { .Targets = .AllTests_Linux_x64_GCC_Debug   }
+// //Alias('All-Tests-Linux-x64-Checked') { .Targets = .AllTests_Linux_x64_GCC_Checked }
+// //Alias('All-Tests-Linux-x64-Profile') { .Targets = .AllTests_Linux_x64_GCC_Profile }
+// //Alias('All-Tests-Linux-x64-Release') { .Targets = .AllTests_Linux_x64_GCC_Release }
+
+
+// Alias('All-Linux-x64') {
+//     .Targets = {
+//         'All-Linux-x64-Debug'
+//         'All-Linux-x64-Checked'
+//         'All-Linux-x64-Profile'
+//         'All-Linux-x64-Release'
+//     }
+// }
+
+// Alias('All-Tests-Linux-x64') {
+//     .Targets = {
+//         'All-Tests-Linux-x64-Debug'
+//         'All-Tests-Linux-x64-Checked'
+//         'All-Tests-Linux-x64-Profile'
+//         'All-Tests-Linux-x64-Release'
+//     }
+// }
+// #endif
