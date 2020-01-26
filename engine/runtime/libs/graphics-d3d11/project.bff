@@ -19,6 +19,7 @@
     .Target_Windows = [
         .Targets = { 'Windows-x64', 'Windows-ARMv8' }
         .Includes = {}
+        .LinkerPaths = {}
         .Libraries = {
             'dxgi.lib'
             'd3d11.lib'

@@ -3,6 +3,7 @@
 .ProjectDefinition = [
     .ProjectName = 'com.graphyte.graphics.vulkan'
     .ProjectPath = 'engine/runtime/libs/graphics-vulkan'
+    .ProjectPlatforms = { 'Windows-x64' }
     .ProjectKind = 'Shared'
     .ProjectDefines = {
         'module_graphics_vulkan_EXPORTS=1'
@@ -24,13 +25,14 @@
     .Target_Windows = [
         .Targets = { 'Windows-x64', 'Windows-ARMv8' }
         .Includes = {}
+        .LinkerPaths = {
+            '$VULKAN_SDK$/lib'
+        }
         .Libraries = {
             'vulkan-1.lib'
             'User32.lib'
         }
     ]
-
-    ^LinkerOptions + ' $LibPathPrefix$$VULKAN_SDK$/lib$LibPathSuffix$'
 
     .ProjectTargets = {
         .Target_Windows

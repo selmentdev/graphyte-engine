@@ -10,10 +10,16 @@
 .ConfigName_Release = 'Release'
 .ConfigName_Profile = 'Profile'
 
+.TargetPlatform_Windows = 'Windows'
+.TargetPlatform_Linux = 'Linux'
+.TargetPlatform_Android = 'Android'
+
 .TargetPlatform_Windows_x64 = 'Windows-x64'
 .TargetPlatform_Windows_ARMv8 = 'Windows-ARMv8'
 .TargetPlatform_Linux_x64 = 'Linux-x64'
 .TargetPlatform_Linux_ARMv8 = 'Linux-ARMv8'
+.TargetPlatform_Android_x64 = 'Android-x64'
+.TargetPlatform_Android_ARMv8 = 'Android-ARMv8'
 
 .TargetKind_Static = 'Static'
 .TargetKind_Shared = 'Shared'
@@ -24,36 +30,30 @@
 .FbCleanCommand = 'fbuild -ide -fastcancel'
 
 //--------------------------------------------------------------------------------------------------
+//
+// Declare all Graphyte module targets.
+//
+
+.AllModules_Windows_x64_MSVC_Debug = {}
+.AllModules_Windows_x64_MSVC_Checked = {}
+.AllModules_Windows_x64_MSVC_Profile = {}
+.AllModules_Windows_x64_MSVC_Release = {}
+
+.AllModules_Windows_ARMv8_MSVC_Debug = {}
+.AllModules_Windows_ARMv8_MSVC_Checked = {}
+.AllModules_Windows_ARMv8_MSVC_Profile = {}
+.AllModules_Windows_ARMv8_MSVC_Release = {}
+
+.AllModules_Linux_x64_GCC_Debug = {}
+.AllModules_Linux_x64_GCC_Checked = {}
+.AllModules_Linux_x64_GCC_Profile = {}
+.AllModules_Linux_x64_GCC_Release = {}
+
+//--------------------------------------------------------------------------------------------------
 
 .BaseConfig_Windows_MSVC = [
     .PlatformInfo = 'Windows'
     .CompilerInfo = 'MSVC'
-
-    .ExecutablePrefix = ''
-    .ExecutableSuffix = '.exe'
-    .StaticLibraryPrefix = ''
-    .StaticLibrarySuffix = '.lib'
-    .SharedLibraryPrefix = ''
-    .SharedLibrarySuffix = '.dll'
-
-    .DefaultDefines = ''
-        + ' /D_WIN32'
-        + ' /D__WINDOWS__'
-        + ' /D__STDC_WANT_LIB_EXT1__=1'
-        + ' /D__STDINT_MACROS'
-        + ' /D__STDINT_LIMITS'
-        + ' /D__STDC_CONSTANT_MACROS'
-        + ' /D__STDC_FORMAT_MACROS'
-        + ' /D__STDC_LIMIT_MACROS'
-        + ' /D_HAS_EXCEPTIONS=0'
-        + ' /D_HAS_ITERATOR_DEBUGGING=0'
-        + ' /D_SCL_SECURE=0'
-        + ' /D_SECURE_SCL=0'
-        + ' /D_CRT_SECURE_INVALID_PARAMETER='
-        + ' /D_UNICODE'
-        + ' /DUNICODE'
-        + ' /DFMT_SHARED=1'
-        + ' /DFMT_EXCEPTIONS=0'
 
     .CompilerOptions = ''
         + '"%1"'
@@ -75,7 +75,6 @@
         + ' /JMC-'                  // Disable Just My Code
         + ' /permissive-'           // Enable Standards conformance
         + ' /std:c++latest'         // Specify Language Standard Version
-        //+ ' /TP' // is this needed?
         //+ ' /wd4263'
         //+ ' /wd4264'
         //+ ' /wd4275'
@@ -115,9 +114,10 @@
     .ArchitectureInfo = 'x64'
     .CompilerOptions
         + ' /arch:AVX'                          // Use AVX at minimum
+
     .BaseIncludePaths
-        = ' /I"$ToolsetRoot$/include"'
-        + ' /I"$ToolsetRoot$/atlmfc/include"'
+        = ' /I"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/include"'
+        + ' /I"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/atlmfc/include"'
         + ' /I"$VsToolsLocation$/VC/Auxiliary/VS/include"'
         + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\shared"'
         + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\ucrt"'
@@ -127,7 +127,7 @@
     .PCHOptions      + .BaseIncludePaths
     .LinkerOptions
         + ' /MACHINE:X64'
-        + ' /LIBPATH:"$ToolsetRoot$/lib/x64"'
+        + ' /LIBPATH:"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/lib/x64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\um\x64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\x64"'
 ]
@@ -140,8 +140,8 @@
     .CompilerOptions
         + ' /DGRAPHYTE_MATH_NO_INTRINSICS=1'    // NEON math library implementation is not ready
     .BaseIncludePaths
-        = ' /I"$ToolsetRoot$/include"'
-        + ' /I"$ToolsetRoot$/atlmfc/include"'
+        = ' /I"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/include"'
+        + ' /I"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/atlmfc/include"'
         + ' /I"$VsToolsLocation$/VC/Auxiliary/VS/include"'
         + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\shared"'
         + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\ucrt"'
@@ -151,7 +151,7 @@
     .PCHOptions      + .BaseIncludePaths
     .LinkerOptions
         + ' /MACHINE:ARM64'
-        + ' /LIBPATH:"$ToolsetRoot$/lib/arm64"'
+        + ' /LIBPATH:"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/lib/arm64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\um\arm64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\arm64"'
 ]

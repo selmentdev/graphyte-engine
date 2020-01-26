@@ -1,7 +1,10 @@
 //--------------------------------------------------------------------------------------------------
 // Graphyte Engine modules
 
+Print(.GraphyteModules)
+
 ForEach(.Module in .GraphyteModules) {
+    .ProjectPlatforms = { 'Windows-x64', 'Windows-ARMv8', 'Linux-x64', 'Linux-ARMv8', 'Android-x64', 'Android-ARMv8' }
     Using(.Module)
 
     // Declare unity sources for this module
@@ -37,80 +40,98 @@ ForEach(.Module in .GraphyteModules) {
     // Apply each available build system configs for here
     ForEach(.Config in .Configs) {
         Using(.Config)
+        .LocalPlatformArch = '$PlatformInfo$-$ArchitectureInfo$'
 
-        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
-        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+        If (.LocalPlatformArch in .ProjectPlatforms) {
 
-        // Create object list for specific files
-        ObjectList('$ProjectName$-Lib-$LocalConfigName$') {
-            .CompilerInputUnity = '$ProjectName$-Unity-$PlatformInfo$'
-            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$'
+            .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
+            .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
+            .LocalTargetName = '$ProjectName$-$LocalConfigName$'
 
-            // all global defines
-            ForEach(.Define in .ProjectDefines) {
-                ^CompilerOptions + ' $DefinePrefix$$Define$$DefineSuffix$'
+            // Create object list for specific files
+            ObjectList('$ProjectName$-Lib-$LocalConfigName$') {
+                .CompilerInputUnity = '$ProjectName$-Unity-$PlatformInfo$'
+                .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$'
+
+                // all global defines
+                ForEach(.Define in .ProjectDefines) {
+                    ^CompilerOptions + ' $DefinePrefix$$Define$$DefineSuffix$'
+                }
+
+                // all global includes
+                ForEach(.Include in .ProjectIncludes) {
+                    ^CompilerOptions + ' $IncludePrefix$$Include$$IncludeSuffix$'
+                }
+
+                // Per target includes / defines / libs / links
+                ForEach(.ProjectTarget in .ProjectTargets) {
+                    Using(.ProjectTarget)
+                    .CurrentConfig = '$PlatformInfo$-$ArchitectureInfo$'
+
+                    If (.CurrentConfig in .Targets) {
+                        ForEach(.Include in .Includes) {
+                            ^CompilerOptions + ' $IncludePrefix$$Include$$IncludeSuffix$'
+                        }
+                    }
+                }
+
+                .CompilerOptions
+                    + ' $IncludePrefix$$ProjectPath$/private$IncludeSuffix$'
+                    + ' $IncludePrefix$$ProjectPath$/public$IncludeSuffix$'
+                    + ' $IncludePrefix$engine/include$IncludeSuffix$'
             }
 
-            // all global includes
-            ForEach(.Include in .ProjectIncludes) {
-                ^CompilerOptions + ' $IncludePrefix$$Include$$IncludeSuffix$'
-            }
+            {
+                // All libraries used to link this target:
+                .Libraries = { }
 
-            // Per target includes / defines / libs / links
-            ForEach(.ProjectTarget in .ProjectTargets) {
-                Using(.ProjectTarget)
-                .CurrentConfig = '$PlatformInfo$-$ArchitectureInfo$'
+                // Add libraries coming from other FB targets - for current configuration
+                ForEach(.Library in .ProjectLibraries) {
+                    ^Libraries + '$Library$-$LocalConfigName$'
+                }
 
-                If (.CurrentConfig in .Targets) {
-                    ForEach(.Include in .Includes) {
-                        ^CompilerOptions + ' $IncludePrefix$$Include$$IncludeSuffix$'
+                // Windows platform includes shared copy of precompiled resources with version info.
+                If (.PlatformInfo == .TargetPlatform_Windows) {
+                    ^Libraries + 'Graphyte-Res-$LocalConfigName$'
+                }
+
+                // Target specific link options
+                ForEach(.ProjectTarget in .ProjectTargets) {
+                    Using(.ProjectTarget)
+                    .CurrentConfig = '$PlatformInfo$-$ArchitectureInfo$'
+                    If (.CurrentConfig in .Targets) {
+                        ForEach(.LinkerPath in .LinkerPaths) {
+                            ^LinkerOptions + ' $LibPathPrefix$$LinkerPath$$LibPathSuffix$'
+                        }
+                        ForEach(.Library in .Libraries) {
+                            ^LinkerOptions + ' $LinkPrefix$$Library$$LinkSuffix$'
+                        }
+                    }
+                }
+
+                If (.ProjectKind == .TargetKind_Static) {
+                    // Static library requires these flags
+                    ^CompilerOptions + .CompilerOptions_Static
+                    ^LinkerOptions + .LinkerOptions_Static
+
+                    Library('$LocalTargetName$') {
+                        .LibrarianAdditionalInputs = '$ProjectName$-Lib-$LocalConfigName$'
+                        .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
+                        .LibrarianOutput = '$OutputBase$/lib/$LocalConfigName$/$StaticLibraryPrefix$$ProjectName$$StaticLibrarySuffix$'
+                    }
+                }
+
+                If (.ProjectKind == .TargetKind_Shared) {
+                    ^CompilerOptions + .CompilerOptions_Shared
+                    ^LinkerOptions + .LinkerOptions_Shared
+                    DLL('$LocalTargetName$') {
+                        .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/$SharedLibraryPrefix$$ProjectName$$SharedLibrarySuffix$'
+                        .Libraries + { '$ProjectName$-Lib-$LocalConfigName$' }
                     }
                 }
             }
 
-            .CompilerOptions
-                + ' $IncludePrefix$$ProjectPath$/private$IncludeSuffix$'
-                + ' $IncludePrefix$$ProjectPath$/public$IncludeSuffix$'
-                + ' $IncludePrefix$engine/include$IncludeSuffix$'
-                + ' $DefinePrefix$_WINDLL$DefineSuffix$'
-        }
-
-        {
-            
-            .Libraries = { }
-            // all global libraries (included as fastbuild targets)
-            ForEach(.Library in .ProjectLibraries) {
-                ^Libraries + '$Library$-$LocalConfigName$'
-            }
-            //.LinkerOptions + ''
-
-            ForEach(.ProjectTarget in .ProjectTargets) {
-                Using(.ProjectTarget)
-                .CurrentConfig = '$PlatformInfo$-$ArchitectureInfo$'
-                If (.CurrentConfig in .Targets) {
-                    ForEach(.Library in .Libraries) {
-                        ^LinkerOptions + ' $LinkPrefix$$Library$$LinkSuffix$'
-                    }
-                }
-            }
-
-            ^LinkerOptions + .SharedLib
-
-            If (.ProjectKind == .TargetKind_Static) {
-                Library('$LocalTargetName$') {
-                    .LibrarianAdditionalInputs = '$ProjectName$-Lib-$LocalConfigName$'
-                    .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-                    .LibrarianOutput = '$OutputBase$/lib/$LocalConfigName$/$ProjectName$.lib'
-                }
-            }
-
-            If (.ProjectKind == .TargetKind_Shared) {
-                DLL('$LocalTargetName$') {
-                    .LinkerOutput = '$OutputBase$/bin/$SharedLibraryPrefix$$LocalConfigName$/$ProjectName$$SharedLibrarySuffix$'
-                    .Libraries + { '$ProjectName$-Lib-$LocalConfigName$' }
-                }
-            }
+            ^'AllModules_$LocalConfigVarName$' + '$LocalTargetName$'
         }
     }
 
@@ -135,7 +156,7 @@ ForEach(.Module in .GraphyteModules) {
     //.VcxProjectConfigs + .LocalProjectConfig
 //
     //^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
-    
+
     //VCXProject('$ProjectName$') {
     //    .ProjectOutput = '$ProjectName$.vcxproj'
     //    .ProjectInputPaths = { .ProjectPath }

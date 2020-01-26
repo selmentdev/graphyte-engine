@@ -17,7 +17,6 @@
         'com.graphyte.graphics'
         'com.graphyte.geometry'
     }
-    .ProjectTargets = {
-    }
+    .ProjectTargets = {}
 ]
 .GraphyteModules + .ProjectDefinition

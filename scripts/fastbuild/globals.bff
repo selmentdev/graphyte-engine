@@ -1,0 +1,93 @@
+//--------------------------------------------------------------------------------------------------
+// This file defines all globals required to build Graphyte Engine.
+//--------------------------------------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------------------------------
+// Define all valid names in engine
+
+//--------------------------------------------------------------------------------------------------
+// Configurations
+
+.Configuration_Debug   = 'Debug'
+.Configuration_Checked = 'Checked'
+.Configuration_Profile = 'Profile'
+.Configuration_Release = 'Release'
+
+.ValidConfigurations = {
+    .Configuration_Debug
+    .Configuration_Checked
+    .Configuration_Profile
+    .Configuration_Release
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// Platforms
+
+.Platform_Windows  = 'Windows'
+.Platform_Linux    = 'Linux'
+.Platform_Android  = 'Android'
+.Platform_IOS      = 'IOS'
+.Platform_MacOS    = 'MacOS'
+.Platform_NX       = 'NX'
+.Platform_Orbis    = 'Orbis'
+.Platform_Prospero = 'Prospero'
+.Platform_Durango  = 'Durango'
+.Platform_Scarlett = 'Scarlett'
+
+.ValidPlatforms = {
+    .Platform_Windows
+    .Platform_Linux
+    .Platform_Android
+    .Platform_IOS
+    .Platform_MacOS
+    .Platform_NX
+    .Platform_Orbis
+    .Platform_Prospero
+    .Platform_Durango
+    .Platform_Scarlett
+}
+
+//--------------------------------------------------------------------------------------------------
+// Architectures
+
+.Architecture_x64   = 'x64'
+.Architecture_ARMv8 = 'ARMv8'
+
+.ValidArchitectures = {
+    .Architecture_x64
+    .Architecture_ARMv8
+}
+
+//--------------------------------------------------------------------------------------------------
+// Targets
+.ValidTargets = {
+    'Windows-x64'
+    'Windows-ARMv8'
+    'Linux-x64'
+    'Linux-ARMv8'
+    'Android-x64'
+    'Android-ARMv8'
+    'IOS-ARMv8'
+    'MacOS-x64'
+    'MacOS-ARMv8'
+    'NX-ARMv8'
+    'Orbis-x64'
+    'Prospero-x64'
+    'Durango-x64'
+    'Scarlett-x64'
+}
+
+//--------------------------------------------------------------------------------------------------
+// Toolchains
+
+.Toolchain_MSVC  = 'MSVC'
+.Toolchain_GCC   = 'GCC'
+.Toolchain_Clang = 'Clang'
+
+
+//--------------------------------------------------------------------------------------------------
+// List of all supported / discovered configs
+
+.Global_ConfigDefinitionList = {}
