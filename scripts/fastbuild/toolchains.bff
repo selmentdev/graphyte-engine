@@ -249,7 +249,7 @@ Compiler('Compiler-Linux-x64-GCC') {
         + ' /IGNORE:4001'
 ]
 
-.ConfigDefinition_Windows_x64_MSVC = [
+.BaseConfigDefinition_Windows_x64_MSVC = [
     Using(.ConfigDefinition_Windows_MSVC)
     Using(.ToolchainDefinition_Windows_x64_MSVC)
 
@@ -272,7 +272,7 @@ Compiler('Compiler-Linux-x64-GCC') {
 ]
 
 .ConfigDefinition_Windows_x64_MSVC_Debug = [
-    Using(.ConfigDefinition_Windows_x64_MSVC)
+    Using(.BaseConfigDefinition_Windows_x64_MSVC)
     .ConfigName = 'Debug'
 
     .CompilerOptions
@@ -286,10 +286,9 @@ Compiler('Compiler-Linux-x64-GCC') {
     .LinkerOptions
         + ' msvcprtd.lib'
 ]
-.Global_ConfigDefinitionList + .ConfigDefinition_Windows_x64_MSVC_Debug
 
 .ConfigDefinition_Windows_x64_MSVC_Checked = [
-    Using(.ConfigDefinition_Windows_x64_MSVC)
+    Using(.BaseConfigDefinition_Windows_x64_MSVC)
     .ConfigName = 'Checked'
 
     .CompilerOptions
@@ -301,10 +300,9 @@ Compiler('Compiler-Linux-x64-GCC') {
     .LinkerOptions
         + ' msvcprt.lib'
 ]
-.Global_ConfigDefinitionList + .ConfigDefinition_Windows_x64_MSVC_Checked
 
 .ConfigDefinition_Windows_x64_MSVC_Profile = [
-    Using(.ConfigDefinition_Windows_x64_MSVC)
+    Using(.BaseConfigDefinition_Windows_x64_MSVC)
     .ConfigName = 'Profile'
 
     .CompilerOptions
@@ -319,10 +317,9 @@ Compiler('Compiler-Linux-x64-GCC') {
     .LinkerOptions
         + ' msvcprt.lib'
 ]
-.Global_ConfigDefinitionList + .ConfigDefinition_Windows_x64_MSVC_Profile
 
 .ConfigDefinition_Windows_x64_MSVC_Release = [
-    Using(.ConfigDefinition_Windows_x64_MSVC)
+    Using(.BaseConfigDefinition_Windows_x64_MSVC)
     .ConfigName = 'Release'
 
     .CompilerOptions
@@ -337,9 +334,15 @@ Compiler('Compiler-Linux-x64-GCC') {
     .LinkerOptions
         + ' msvcprt.lib'
 ]
-.Global_ConfigDefinitionList + .ConfigDefinition_Windows_x64_MSVC_Release
+.ConfigDefinition_Windows_x64_MSVC = {
+    .ConfigDefinition_Windows_x64_MSVC_Debug
+    .ConfigDefinition_Windows_x64_MSVC_Checked
+    .ConfigDefinition_Windows_x64_MSVC_Profile
+    .ConfigDefinition_Windows_x64_MSVC_Release
+}
+.Global_ConfigDefinitionList + .ConfigDefinition_Windows_x64_MSVC
 
-.ConfigDefinition_Windows_ARMv8_MSVC = [
+.BaseConfigDefinition_Windows_ARMv8_MSVC = [
     Using(.ConfigDefinition_Windows_MSVC)
     Using(.ToolchainDefinition_Windows_ARMv8_MSVC)
 
@@ -363,7 +366,7 @@ Compiler('Compiler-Linux-x64-GCC') {
 ]
 
 .ConfigDefinition_Windows_ARMv8_MSVC_Debug = [
-    Using(.ConfigDefinition_Windows_ARMv8_MSVC)
+    Using(.BaseConfigDefinition_Windows_ARMv8_MSVC)
     .ConfigName = 'Debug'
 
     .CompilerOptions
@@ -377,10 +380,9 @@ Compiler('Compiler-Linux-x64-GCC') {
     .LinkerOptions
         + ' msvcprtd.lib'
 ]
-.Global_ConfigDefinitionList + .ConfigDefinition_Windows_ARMv8_MSVC_Debug
 
 .ConfigDefinition_Windows_ARMv8_MSVC_Checked = [
-    Using(.ConfigDefinition_Windows_ARMv8_MSVC)
+    Using(.BaseConfigDefinition_Windows_ARMv8_MSVC)
     .ConfigName = 'Checked'
 
     .CompilerOptions
@@ -392,10 +394,9 @@ Compiler('Compiler-Linux-x64-GCC') {
     .LinkerOptions
         + ' msvcprt.lib'
 ]
-.Global_ConfigDefinitionList + .ConfigDefinition_Windows_ARMv8_MSVC_Checked
 
 .ConfigDefinition_Windows_ARMv8_MSVC_Profile = [
-    Using(.ConfigDefinition_Windows_ARMv8_MSVC)
+    Using(.BaseConfigDefinition_Windows_ARMv8_MSVC)
     .ConfigName = 'Profile'
 
     .CompilerOptions
@@ -410,10 +411,9 @@ Compiler('Compiler-Linux-x64-GCC') {
     .LinkerOptions
         + ' msvcprt.lib'
 ]
-.Global_ConfigDefinitionList + .ConfigDefinition_Windows_ARMv8_MSVC_Profile
 
 .ConfigDefinition_Windows_ARMv8_MSVC_Release = [
-    Using(.ConfigDefinition_Windows_ARMv8_MSVC)
+    Using(.BaseConfigDefinition_Windows_ARMv8_MSVC)
     .ConfigName = 'Release'
 
     .CompilerOptions
@@ -428,9 +428,75 @@ Compiler('Compiler-Linux-x64-GCC') {
     .LinkerOptions
         + ' msvcprt.lib'
 ]
-.Global_ConfigDefinitionList + .ConfigDefinition_Windows_ARMv8_MSVC_Release
+.ConfigDefinition_Windows_ARMv8_MSVC = {
+    .ConfigDefinition_Windows_ARMv8_MSVC_Debug
+    .ConfigDefinition_Windows_ARMv8_MSVC_Checked
+    .ConfigDefinition_Windows_ARMv8_MSVC_Profile
+    .ConfigDefinition_Windows_ARMv8_MSVC_Release
+}
+.Global_ConfigDefinitionList + .ConfigDefinition_Windows_ARMv8_MSVC
 
 //--------------------------------------------------------------------------------------------------
-// Define lists containing all configuration specific names of aliases
+// Linux - x64 - Clang
+
+.BaseConfigDefinition_Linux_Clang = [
+    .ConfigPlatform = 'Linux'
+    .ConfigToolchain = 'Clang'
+
+    .CompilerOptions
+        = ' %1 -c -o %2'
+        + ' -std=c++2a'
+        + ' -fconcepts'
+
+    .LibrarianOptions = ''
+    .LinkerOptions = ''
+]
+
+.BaseConfigDefinition_Linux_x64_Clang = [
+    Using(.BaseConfigDefinition_Linux_Clang)
+]
+
 
 //--------------------------------------------------------------------------------------------------
+// Linux - x64 - GCC
+
+.BaseConfigDefinition_Linux_GCC = [
+    .ConfigPlatform = 'Linux'
+    .ConfigToolchain = 'GCC'
+
+    .CompilerOptions
+        = ' -o "%2" "%1" -c -g'
+        + ' -std=c++2a'
+        + ' -fconcepts'
+
+    .CompilerOptionsC
+        = ' -std=c11'
+
+    .LinkerOptions
+        = '"%1" -o "%2"'
+        + ' -lc'
+        + ' -lm'
+        + ' -lstdc++'
+        + ' -pie'
+    .LibrarianOptions
+        = 'rcs "%2" "%1"'
+]
+
+.BaseConfigDefinition_Linux_x64_GCC = [
+    Using(.ToolchainDefinition_Linux_x64_GCC)
+    Using(.BaseConfigDefinition_Linux_GCC)
+
+    .CompilerOptions
+        + ' -mavx'
+        + ' -msse4.1'
+        + ' -msse3'
+        + ' -mssse3'
+        + ' -msse2'
+        + ' -m64'
+        + ' -fPIC'
+]
+
+.ConfigDefinition_Linux_x64_GCC_Debug = [
+    Using(.BaseConfigDefinition_Linux_x64_GCC)
+    .ConfigName = 'Debug'
+]

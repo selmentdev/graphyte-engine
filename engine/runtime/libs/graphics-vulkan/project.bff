@@ -24,7 +24,6 @@
 
     .Target_Windows = [
         .Targets = { 'Windows-x64', 'Windows-ARMv8' }
-        .Includes = {}
         .LinkerPaths = {
             '$VULKAN_SDK$/lib'
         }

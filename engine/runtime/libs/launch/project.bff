@@ -16,7 +16,6 @@
             'com.graphyte.base'
             'com.graphyte.graphics'
         }
-        .ProjectTargets = {}
     ]
 
     ^Graphyte_EngineModuleList + .ProjectDefinition

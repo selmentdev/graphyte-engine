@@ -21,8 +21,6 @@
         // Platform specific configurations
         .Target_Windows = [
             .Targets = { 'Windows-x64', 'Windows-ARMv8' }
-            .Includes = {}
-            .LinkerPaths = {}
             .Libraries = {
                 'ntdll.lib'
                 'comctl32.lib'
@@ -45,8 +43,6 @@
 
         .Target_Linux_x64 = [
             .Targets = { 'Linux-x64' }
-            .Includes = {}
-            .LinkerPaths = {}
             .Libraries = {
                 'pthread'
                 'uuid'
@@ -59,8 +55,6 @@
         ]
         .Target_Linux_ARMv8 = [
             .Targets = { 'Linux-ARMv8' }
-            .Includes = {}
-            .LinkerPaths = {}
             .Libraries = {
                 'pthread'
                 'uuid'

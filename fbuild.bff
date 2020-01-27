@@ -1,9 +1,10 @@
 #include "scripts/fastbuild/globals.bff"
 #include "scripts/fastbuild/toolchains.bff"
 
+.OutputBase = 'build'
+
 .Graphyte_EngineModuleList = {}
 .Graphyte_EnginePluginList = {}
-.Graphyte_EngineSdkList = {}
 .Graphyte_EngineTestList = {}
 .Graphyte_EngineAppList = {}
 .Graphyte_GameAppList = {}
@@ -38,9 +39,8 @@
 #include "engine/runtime/libs/graphics-opengl/project.bff"
 #include "engine/runtime/libs/launch/project.bff"
 
-
 #include "scripts/fastbuild/build-project.bff"
 
-Alias('all') {
-    .Targets = {}
-}
+//Alias('all') {
+//    .Targets = {}
+//}

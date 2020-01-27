@@ -2,7 +2,6 @@
     .LocalProjects
         = .Graphyte_EngineModuleList
         + .Graphyte_EnginePluginList
-        + .Graphyte_EngineSdkList
         + .Graphyte_EngineTestList
         + .Graphyte_EngineAppList
         + .Graphyte_GameAppList
@@ -22,7 +21,7 @@
         Using(.CurrentProject)
 
         Print('$ProjectName$')
-        
+
         ForEach(.CurrentObjectList in .ProjectObjectLists) {
             Print('  objectlist: -> $ProjectObjectList$')
         }

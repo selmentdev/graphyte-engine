@@ -21,8 +21,6 @@
         }
         .Target_Windows = [
             .Targets = { 'Windows-x64' }
-            .Includes = {}
-            .LinkerPaths = {}
             .Libraries = {
                 'opengl32.lib'
                 'gdi32.lib'

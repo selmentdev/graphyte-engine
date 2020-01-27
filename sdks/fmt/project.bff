@@ -1,94 +1,73 @@
 {
-    .ProjectDefinition = [
-        .ProjectName = 'sdk.fmt'
-        .ProjectPath = 'sdks/fmt'
-        .ProjectKind = 'SharedLib'
-        .ProjectIncludes = {}
-        .ProjectLibraries = {}
-        .ProjectDefines = {
-            'FMT_EXCEPTIONS=1'
-            'FMT_EXPORT=1'
-            '_CRT_SECURE_NO_WARNINGS=0'
+    .ProjectName = 'sdk.fmt'
+    .ProjectPath = 'sdks/fmt'
+
+    {
+        .UnityInputPath = '$ProjectPath$'
+        .UnityInputPattern = { '*.cc' }
+        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+        .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
+
+        Unity('$ProjectName$-Unity-Windows') { }
+        Unity('$ProjectName$-Unity-Linux') { }
+        Unity('$ProjectName$-Unity-Android') { }
+    }
+
+    .ProjectIncludes = {}
+    .ProjectLibraries = {}
+    .ProjectDefines = {
+        'FMT_EXCEPTIONS=1'
+        'FMT_EXPORT=1'
+        '_CRT_SECURE_NO_WARNINGS=0'
+    }
+
+    .LocalConfigList = {}
+#if __WINDOWS__
+    .LocalConfigList
+        + .ConfigDefinition_Windows_ARMv8_MSVC
+        + .ConfigDefinition_Windows_x64_MSVC
+#endif
+#if __LINUX__
+    .LocalConfigList
+        + .ConfigDefinitions_Linux_ARMv8_Clang
+        + .ConfigDefinitions_Linux_x64_Clang
+#endif
+
+    ForEach(.CurrentConfig in .Global_ConfigDefinitionList) {
+        Using(.CurrentConfig)
+
+        Print('$ProjectName$')
+        Print('  $ToolchainName$-$ConfigName$')
+
+        ObjectList('$ProjectName$-Lib-$ToolchainName$-$ConfigName$') {
+            .CompilerInputUnity = '$ProjectName$-Unity-$ConfigPlatform$'
+            .CompilerOutputPath = '$OutputBase$/obj/$ToolchainName$-$ConfigName$'
+
+            .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/source$Toolchain_IncludePath_Suffix$'
+            .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/include$Toolchain_IncludePath_Suffix$'
+            .CompilerOptions + '$Toolchain_CompilerOptions_SharedLib$'
+
+            ForEach(.CurrentInclude in .ProjectIncludes) {
+                ^CompilerOptions + ' $Toolchain_IncludePath_Prefix$$CurrentInclude$$Toolchain_IncludePath_Suffix$'
+            }
+
+            ForEach(.CurrentDefine in .ProjectDefines) {
+                ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
+            }
+
+            Print(.CompilerOptions)
         }
-    ]
 
-    ^Graphyte_EngineSdkList + .ProjectDefinition
+        DLL('$ProjectName$-$ToolchainName$-$ConfigName$') {
+            .LibrarianAdditionalInputs = '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$ToolchainName$-$ConfigName$/'
+            .LinkerOutput = '$OutputBase$/bin/$ProjectName$-$ToolchainName$-$ConfigName$/$Toolchain_SharedLibrary_Prefix$$ProjectName$$Toolchain_SharedLibrary_Suffix$'
+
+            .LinkerOptions + '$Toolchain_LinkerOptions_SharedLib$'
+            .Libraries = {
+                '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
+            }
+            Print(.LinkerOptions)
+        }
+    }
 }
-
-// {
-//     .ProjectName = 'sdk.fmt'
-//     .ProjectPath = 'sdks/fmt'
-
-
-// #if __WINDOWS__
-//     .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
-//     ForEach(.Config in .CurrentConfigs)
-//     {
-//         Using(.Config)
-//         .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-//         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
-//         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
-
-//         ObjectList('$ProjectName$-Lib-$LocalConfigName$')
-//         {
-//             .CompilerInputUnity = '$ProjectName$-Unity-Windows'
-//             .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-
-//             // Common Graphyte module include paths
-//             .CompilerOptions
-//                 + ' /I"$ProjectPath$/source"'
-//                 + ' /I"$ProjectPath$/include"'
-//                 + ' /D_WINDLL'
-//                 + ' /DFMT_EXCEPTIONS=1'
-//                 + ' /DFMT_EXPORT=1'
-//                 + ' /D_CRT_SECURE_NO_WARNINGS=0'
-//         }
-
-//         DLL('$LocalTargetName$') {
-//             .LibrarianAdditionalInputs = '$ProjectName$-Lib-$LocalConfigName$'
-//             .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-//             .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.dll'
-//             .Libraries = {
-//                 '$ProjectName$-Lib-$LocalConfigName$'
-//             }
-//             .LinkerOptions
-//                 + ' /DLL'
-//         }
-//     }
-// #endif
-
-// #if __LINUX__
-//     .CurrentConfigs = .Configs_Linux_x64
-//     ForEach(.Config in .CurrentConfigs)
-//     {
-//         Using(.Config)
-//         .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-//         .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
-//         .LocalTargetName = '$ProjectName$-$LocalConfigName$'
-
-//         ObjectList('$ProjectName$-Lib-$LocalConfigName$')
-//         {
-//             .CompilerInputUnity = '$ProjectName$-Unity-Linux'
-//             .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-
-//             // Common Graphyte module include paths
-//             .CompilerOptions
-//                 + ' -I$ProjectPath$/source'
-//                 + ' -I$ProjectPath$/include'
-//                 + ' -DFMT_EXCEPTIONS=1'
-//                 + ' -DFMT_EXPORT=1'
-//         }
-
-//         DLL('$LocalTargetName$') {
-//             .LibrarianAdditionalInputs = '$ProjectName$-Lib-$LocalConfigName$'
-//             .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-//             .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/lib$ProjectName$.so'
-//             .Libraries = {
-//                 '$ProjectName$-Lib-$LocalConfigName$'
-//             }
-//             .LinkerOptions
-//                 + ' -shared'
-//         }
-//     }
-// #endif
-// }
