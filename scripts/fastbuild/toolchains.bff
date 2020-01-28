@@ -499,4 +499,43 @@ Compiler('Compiler-Linux-x64-GCC') {
 .ConfigDefinition_Linux_x64_GCC_Debug = [
     Using(.BaseConfigDefinition_Linux_x64_GCC)
     .ConfigName = 'Debug'
+
+    .CompilerOptions
+        + ' -DGX_CONFIG_DEBUG=1'
+        + ' -O0'
 ]
+
+.ConfigDefinition_Linux_x64_GCC_Checked = [
+    Using(.BaseConfigDefinition_Linux_x64_GCC)
+    .ConfigName = 'Checked'
+
+    .CompilerOptions
+        + ' -DGX_CONFIG_CHECKED=1'
+        + ' -O1'
+]
+
+.ConfigDefinition_Linux_x64_GCC_Profile = [
+    Using(.BaseConfigDefinition_Linux_x64_GCC)
+    .ConfigName = 'Profile'
+
+    .CompilerOptions
+        + ' -DGX_CONFIG_PROFILE=1'
+        + ' -O2'
+]
+
+.ConfigDefinition_Linux_x64_GCC_Release = [
+    Using(.BaseConfigDefinition_Linux_x64_GCC)
+    .ConfigName = 'Release'
+
+    .CompilerOptions
+        + ' -DGX_CONFIG_RELEASE=1'
+        + ' -O3'
+]
+
+.ConfigDefinition_Linux_x64_GCC = {
+    .ConfigDefinition_Linux_x64_GCC_Debug
+    .ConfigDefinition_Linux_x64_GCC_Checked
+    .ConfigDefinition_Linux_x64_GCC_Profile
+    .ConfigDefinition_Linux_x64_GCC_Release
+}
+.Global_ConfigDefinitionList + .ConfigDefinition_Linux_x64_GCC

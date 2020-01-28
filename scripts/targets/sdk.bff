@@ -1,7 +1,4 @@
 {
-    Print(.ProjectName)
-    Print(.ProjectPath)
-    Print(.ProjectPlatforms)
     {
         .UnityInputPath = '$ProjectPath$'
         .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'

@@ -1,47 +1,27 @@
 {
     .ProjectName = 'sdk.fmt'
     .ProjectPath = 'sdks/fmt'
-
-    {
-        .UnityInputPath = '$ProjectPath$'
-        .UnityInputPattern = { '*.cc' }
-        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
-        .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
-
-        Unity('$ProjectName$-Unity-Windows') { }
-        Unity('$ProjectName$-Unity-Linux') { }
-        Unity('$ProjectName$-Unity-Android') { }
+    .ProjectFiles = {
+        '$ProjectPath$/source/format.cc'
+        '$ProjectPath$/source/posix.cc'
     }
 
     .ProjectIncludes = {}
-    .ProjectLibraries = {}
+    .ProjectImports = {}
+    .ProjectLinks = {}
     .ProjectDefines = {
         'FMT_EXCEPTIONS=1'
         'FMT_EXPORT=1'
         '_CRT_SECURE_NO_WARNINGS=0'
     }
 
-    .LocalConfigList = {}
-#if __WINDOWS__
-    .LocalConfigList
-        + .ConfigDefinition_Windows_ARMv8_MSVC
-        + .ConfigDefinition_Windows_x64_MSVC
-#endif
-#if __LINUX__
-    .LocalConfigList
-        + .ConfigDefinitions_Linux_ARMv8_Clang
-        + .ConfigDefinitions_Linux_x64_Clang
-#endif
-
     ForEach(.CurrentConfig in .Global_ConfigDefinitionList) {
         Using(.CurrentConfig)
 
-        Print('$ProjectName$')
-        Print('  $ToolchainName$-$ConfigName$')
-
         ObjectList('$ProjectName$-Lib-$ToolchainName$-$ConfigName$') {
-            .CompilerInputUnity = '$ProjectName$-Unity-$ConfigPlatform$'
-            .CompilerOutputPath = '$OutputBase$/obj/$ToolchainName$-$ConfigName$'
+            .CompilerInputFiles = .ProjectFiles
+            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$ToolchainName$-$ConfigName$'
+            .CompilerInputFilesRoot = .ProjectPath
 
             .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/source$Toolchain_IncludePath_Suffix$'
             .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/include$Toolchain_IncludePath_Suffix$'
@@ -54,20 +34,25 @@
             ForEach(.CurrentDefine in .ProjectDefines) {
                 ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
             }
-
-            Print(.CompilerOptions)
         }
 
         DLL('$ProjectName$-$ToolchainName$-$ConfigName$') {
             .LibrarianAdditionalInputs = '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
             .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$ToolchainName$-$ConfigName$/'
-            .LinkerOutput = '$OutputBase$/bin/$ProjectName$-$ToolchainName$-$ConfigName$/$Toolchain_SharedLibrary_Prefix$$ProjectName$$Toolchain_SharedLibrary_Suffix$'
+            .LinkerOutput = '$OutputBase$/bin/$ToolchainName$-$ConfigName$/$Toolchain_SharedLibrary_Prefix$$ProjectName$$Toolchain_SharedLibrary_Suffix$'
 
             .LinkerOptions + '$Toolchain_LinkerOptions_SharedLib$'
             .Libraries = {
                 '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
             }
-            Print(.LinkerOptions)
+
+            ForEach(.CurrentImport in .ProjectImports) {
+                ^Libraries + '$CurrentImport$-$ToolchainName$-$ConfigName$'
+            }
+
+            ForEach(.CurrentLink in .ProjectLinks) {
+                ^Libraries + '$Toolchain_Library_Prefix$$CurrentLink$$Toolchain_Library_Suffix$'
+            }
         }
     }
 }

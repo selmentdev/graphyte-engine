@@ -153,9 +153,9 @@ namespace Graphyte::Graphics
             nullptr,
             context_attributes
         );
-        
+
         err = glGetError();
-        
+
         GX_ASSERT(native->m_ContextHandle != nullptr);
 
         wglMakeCurrent(
@@ -171,62 +171,62 @@ namespace Graphyte::Graphics
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8))
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8))
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24))
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8))
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, SDL_TRUE))
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, msaa_buffers))
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, msaa_samples))
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4))
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5))
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG))
         {
             GX_ASSERT(false);
         }
-        
+
         if (0 != SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE))
         {
             GX_ASSERT(false);
         }
-        
+
 
         native->m_Context = SDL_GL_CreateContext(
             native->m_Handle
@@ -261,8 +261,8 @@ namespace Graphyte::Graphics
             nullptr
         ));
 
-        GPU_GL_VALIDATE(glDebugMessageControlARB(
-            GL_DEBUG_SOURCE_APPLICATION_ARB,
+        GPU_GL_VALIDATE(glDebugMessageControl(
+            GL_DEBUG_SOURCE_APPLICATION,
             GL_DEBUG_TYPE_MARKER,
             GL_DONT_CARE,
             0,
@@ -270,8 +270,8 @@ namespace Graphyte::Graphics
             GL_FALSE
         ));
 
-        GPU_GL_VALIDATE(glDebugMessageControlARB(
-            GL_DEBUG_SOURCE_APPLICATION_ARB,
+        GPU_GL_VALIDATE(glDebugMessageControl(
+            GL_DEBUG_SOURCE_APPLICATION,
             GL_DEBUG_TYPE_PUSH_GROUP,
             GL_DONT_CARE,
             0,
@@ -279,8 +279,8 @@ namespace Graphyte::Graphics
             GL_FALSE
         ));
 
-        GPU_GL_VALIDATE(glDebugMessageControlARB(
-            GL_DEBUG_SOURCE_APPLICATION_ARB,
+        GPU_GL_VALIDATE(glDebugMessageControl(
+            GL_DEBUG_SOURCE_APPLICATION,
             GL_DEBUG_TYPE_POP_GROUP,
             GL_DONT_CARE,
             0,
@@ -289,9 +289,9 @@ namespace Graphyte::Graphics
         ));
 
 #ifdef GL_KHR_debug
-        GPU_GL_VALIDATE(glDebugMessageControlARB(
-            GL_DEBUG_SOURCE_API_ARB,
-            GL_DEBUG_TYPE_OTHER_ARB,
+        GPU_GL_VALIDATE(glDebugMessageControl(
+            GL_DEBUG_SOURCE_API,
+            GL_DEBUG_TYPE_OTHER,
             GL_DEBUG_SEVERITY_NOTIFICATION,
             0,
             nullptr,

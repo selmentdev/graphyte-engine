@@ -63,7 +63,7 @@ namespace Graphyte::Graphics
             //
             // Binding depth/stencil texture.
             //
-            GPU_GL_VALIDATE(glNamedFramebufferTexture2DEXT(
+            GPU_GL_VALIDATE(glNamedFramebufferTexture2D(
                 native_render_target->m_Framebuffer,
                 GL_DEPTH_STENCIL_ATTACHMENT,
                 GL_TEXTURE_2D,
@@ -76,7 +76,7 @@ namespace Graphyte::Graphics
             //
             // Binding color attachment.
             //
-            GPU_GL_VALIDATE(glNamedFramebufferTexture2DEXT(
+            GPU_GL_VALIDATE(glNamedFramebufferTexture2D(
                 native_render_target->m_Framebuffer,
                 static_cast<GLenum>(GL_COLOR_ATTACHMENT0 + index),
                 GL_TEXTURE_2D,

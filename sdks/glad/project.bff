@@ -2,38 +2,54 @@
     .ProjectName = 'sdk.glad'
     .ProjectPath = 'sdks/glad'
 
-    .ConfigList = {
-        'Release'
-        'Profile'
+    .ProjectFiles = {
+        '$ProjectPath$/source/glad.c'
+    }
+    {
+        .UnityInputIsolatedFiles = { '$ProjectPath$/source/glad.c' }
+        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+        .UnityOutputPattern = '$ProjectName$-unity-*.c'
+
+        Unity('$ProjectName$-Unity-Windows') {
+            ^UnityInputIsolatedFiles + '$ProjectPath$/source/glad_wgl.c'
+        }
+
+        Unity('$ProjectName$-Unity-Linux') {
+            ^UnityInputIsolatedFiles + '$ProjectPath$/source/glad_glx.c'
+        }
+
+        Unity('$ProjectName$-Unity-Android') {
+            ^UnityInputIsolatedFiles + '$ProjectPath$/source/glad_egl.c'
+        }
     }
 
-    .CurrentConfigs = .Configs_Windows_x64_MSVC
+    .ProjectIncludes = {}
+    .ProjectLibraries = {}
+    .ProjectDefines = {}
 
-    ForEach(.Config in .CurrentConfigs)
-    {
-        Using(.Config)
-        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
-        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
+    ForEach(.CurrentConfig in .Global_ConfigDefinitionList) {
+        Using(.CurrentConfig)
 
-        .CompilerInputFiles = {
-            '$ProjectPath$/source/glad.c'
+        .CompilerInputFiles = .ProjectFiles
+        .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$ToolchainName$-$ConfigName$'
+        .LinkerOptions + '$Toolchain_LinkerOptions_StaticLib$'
+        .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/source$Toolchain_IncludePath_Suffix$'
+        .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/include$Toolchain_IncludePath_Suffix$'
+        .CompilerOptions + '$Toolchain_CompilerOptions_StaticLib$'
+
+        ForEach(.CurrentInclude in .ProjectIncludes) {
+            ^CompilerOptions + ' $Toolchain_IncludePath_Prefix$$CurrentInclude$$Toolchain_IncludePath_Suffix$'
         }
 
-        .CompilerOptions
-            + ' /I"$ProjectPath$/include"'
-
-        If(.Config in .ConfigList) {
-            ^CompilerOptions
-                - ' /Ob3'
-                - ' /Ob2'
-                + ' /Ob1'
+        ForEach(.CurrentDefine in .ProjectDefines) {
+            ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
         }
 
-        Library('$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$') {
-            .CompilerInputFiles + '$ProjectPath$/source/glad_wgl.c'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/'
-            .LibrarianOutput = '$OutputBase$/lib/$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$/$ProjectName$.lib'
+        Library('$ProjectName$-$ToolchainName$-$ConfigName$') {
+            .LibrarianOutput = '$OutputBase$/lib/$ProjectName$-$ToolchainName$-$ConfigName$/$Toolchain_StaticLibrary_Prefix$$ProjectName$$Toolchain_StaticLibrary_Suffix$'
+            .Libraries = {
+                '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
+            }
         }
     }
 }

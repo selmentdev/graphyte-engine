@@ -7,9 +7,10 @@
 .Graphyte_EnginePluginList = {}
 .Graphyte_EngineTestList = {}
 .Graphyte_EngineAppList = {}
-.Graphyte_GameAppList = {}
 .Graphyte_GameModuleList = {}
 .Graphyte_GamePluginList = {}
+.Graphyte_GameTestList = {}
+.Graphyte_GameAppList = {}
 
 // .ProjectDefinition = [
 //     .ProjectName = ''
@@ -31,6 +32,8 @@
 //     .ProjectTargets = { } // specific options for platforms
 // ]
 #include "sdks/fmt/project.bff"
+#include "sdks/glad/project.bff"
+#include "sdks/lz4/project.bff"
 
 #include "engine/runtime/libs/base/project.bff"
 #include "engine/runtime/libs/geometry/project.bff"

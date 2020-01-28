@@ -4,9 +4,10 @@
         + .Graphyte_EnginePluginList
         + .Graphyte_EngineTestList
         + .Graphyte_EngineAppList
-        + .Graphyte_GameAppList
         + .Graphyte_GameModuleList
         + .Graphyte_GamePluginList
+        + .Graphyte_GameTestList
+        + .Graphyte_GameAppList
 
     //
     // Applied for all projects
@@ -19,14 +20,5 @@
         .ProjectLibraries = {}
         .ProjectTargets = {}
         Using(.CurrentProject)
-
-        Print('$ProjectName$')
-
-        ForEach(.CurrentObjectList in .ProjectObjectLists) {
-            Print('  objectlist: -> $ProjectObjectList$')
-        }
-        ForEach(.CurrentPlatform in .ProjectPlatforms) {
-            Print('  platform:   -> $CurrentPlatform$')
-        }
     }
 }
