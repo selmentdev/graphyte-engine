@@ -12,25 +12,6 @@
 .Graphyte_GameTestList = {}
 .Graphyte_GameAppList = {}
 
-// .ProjectDefinition = [
-//     .ProjectName = ''
-//     .ProjectPath = ''
-//     .ProjectKind = { 'EngineModule', 'EnginePlugin', 'EngineSdk', 'EngineTest', 'EngineApp', 'GameApp', 'GameModule' }
-//     .ProjectPlatforms = { } // list of available platforms
-//     .ProjectObjectList = '' // if defined, it means that we providing list of sources manually?
-
-//     .ProjectIncludes = { }
-//     .ProjectLibraries = { }
-//     .ProjectDefines = { }
-
-//     .Target_WindowsDef = [
-//         .Platforms = { 'Windows-x64', 'Windows-ARMv8' }
-//         .Includes = {}
-//         .Libraries = {}
-//     ]
-
-//     .ProjectTargets = { } // specific options for platforms
-// ]
 #include "sdks/fmt/project.bff"
 #include "sdks/glad/project.bff"
 #include "sdks/lz4/project.bff"
@@ -44,7 +25,3 @@
 
 #include "scripts/fastbuild/build-sdk.bff"
 #include "scripts/fastbuild/build-project.bff"
-
-//Alias('all') {
-//    .Targets = {}
-//}

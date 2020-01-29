@@ -430,6 +430,7 @@ Compiler('Compiler-Linux-x64-GCC') {
         + ' /GS-'                   // Disable Buffer Security Check
     .LinkerOptions
         + ' msvcprt.lib'
+        + ' /LTCG'
 ]
 .ConfigDefinition_Windows_ARMv8_MSVC = {
     .ConfigDefinition_Windows_ARMv8_MSVC_Debug

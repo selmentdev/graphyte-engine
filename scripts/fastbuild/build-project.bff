@@ -1,3 +1,39 @@
+// Consider:
+// - project kind specifies that we have windowed-app / console-app / static-lib / shared-lib
+// - project type specifies where to put generated project in solution / list of aliases
+//
+// This may require to use another approach for toolchains:
+// - enables per triplet and per config alias generation in easier way
+// - actual ConfigDefinition still may be generated in old way
+// - adding new triplet / config is checked "everywhere" just by checking variable existence
+{
+    .ValidConfigs = {
+        'Debug'
+        'Checked'
+        'Profile'
+        'Release'
+    }
+
+    .ValidToolchainTriplets = {
+        'Windows_x64_MSVC'
+        'Windows_ARMv8_MSVC'
+        //'Linux_x64_Clang'
+        //'Linux_ARMv8_Clang'
+        'Linux_x64_GCC'
+        //'Android_x64_Clang'
+        //'Android_ARMv8_Clang'
+    }
+
+    ForEach(.CurrentTriplet in .ValidToolchainTriplets)
+    {
+        ForEach(.CurrentConfig in .ValidConfigs)
+        {
+            //Using(.'Toolchain_$CurrentTriplet$_$CurrentConfig$')
+            Print('ConfigDefinition_$CurrentTriplet$_$CurrentConfig$')
+        }
+    }
+}
+
 {
     .LocalProjects
         = .Graphyte_EngineModuleList

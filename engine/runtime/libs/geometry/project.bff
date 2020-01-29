@@ -2,7 +2,8 @@
     .ProjectDefinition = [
         .ProjectName = 'com.graphyte.geometry'
         .ProjectPath = 'engine/runtime/libs/geometry'
-        .ProjectKind = 'Shared'
+        .ProjectKind = 'SharedLib'
+
         .ProjectDefines = {
             'module_geometry_EXPORTS=1'
         }
@@ -10,7 +11,7 @@
             'sdks/fmt/include'
             'engine/runtime/libs/base/public'
         }
-        .ProjectLibraries = {
+        .ProjectImports = {
             'sdk.fmt'
             'com.graphyte.base'
         }

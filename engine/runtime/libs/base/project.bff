@@ -13,15 +13,15 @@
             'sdks/lz4/include'
         }
 
-        .ProjectLibraries = {
+        .ProjectImports = {
             'sdk.fmt'
             'sdk.lz4'
         }
 
         // Platform specific configurations
-        .Target_Windows = [
-            .Targets = { 'Windows-x64', 'Windows-ARMv8' }
-            .Libraries = {
+        .VariantDef_Windows = [
+            .VariantSelector = { 'Windows' }
+            .VariantLinks = {
                 'ntdll.lib'
                 'comctl32.lib'
                 'dbghelp.lib'
@@ -41,21 +41,28 @@
             }
         ]
 
-        .Target_Linux_x64 = [
-            .Targets = { 'Linux-x64' }
-            .Libraries = {
+        .VariantDef_Linux = [
+            .VariantSelector = { 'Linux' }
+            .VariantLinks = {
                 'pthread'
                 'uuid'
                 'dl'
                 'SDL2'
                 'unwind'
                 'unwind-generic'
+            }
+        ]
+
+        .VariantDef_Linux_x64 = [
+            .VariantSelector = { 'Linux-x64' }
+            .VariantLinks = {
                 'unwind-x86_64'
             }
         ]
-        .Target_Linux_ARMv8 = [
-            .Targets = { 'Linux-ARMv8' }
-            .Libraries = {
+
+        .VariantDef_Linux_ARMv8 = [
+            .VariantSelector = { 'Linux-ARMv8' }
+            .VariantLinks = {
                 'pthread'
                 'uuid'
                 'dl'
@@ -66,10 +73,11 @@
             }
         ]
 
-        .ProjectTargets = {
-            .Target_Windows
-            .Target_Linux_x64
-            .Target_Linux_ARMv8
+        .ProjectVariant = {
+            .VariantDef_Windows
+            .VariantDef_Linux
+            .VariantDef_Linux_x64
+            .VariantDef_Linux_ARMv8
         }
     ]
 
