@@ -1,55 +1,44 @@
 {
-    .ProjectName = 'sdk.glad'
-    .ProjectPath = 'sdks/glad'
+    .ProjectDefinition = [
+        .ProjectName = 'sdk.glad'
+        .ProjectPath = 'sdks/glad'
+        .ProjectKind = 'StaticLib'
+        .ProjectSelector = { 'Windows-x64', 'Linux', 'Android' }
 
-    .ProjectFiles = {
-        '$ProjectPath$/source/glad.c'
-    }
-    {
-        .UnityInputIsolatedFiles = { '$ProjectPath$/source/glad.c' }
-        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
-        .UnityOutputPattern = '$ProjectName$-unity-*.c'
-
-        Unity('$ProjectName$-Unity-Windows') {
-            ^UnityInputIsolatedFiles + '$ProjectPath$/source/glad_wgl.c'
+        .ProjectFiles = {
+            '$ProjectPath$/src/glad.c'
         }
 
-        Unity('$ProjectName$-Unity-Linux') {
-            ^UnityInputIsolatedFiles + '$ProjectPath$/source/glad_glx.c'
-        }
+        .ProjectIncludes = {}
+        .ProjectImports = {}
+        .ProjectLinks = {}
+        .ProjectDefines = {}
 
-        Unity('$ProjectName$-Unity-Android') {
-            ^UnityInputIsolatedFiles + '$ProjectPath$/source/glad_egl.c'
-        }
-    }
-
-    .ProjectIncludes = {}
-    .ProjectLibraries = {}
-    .ProjectDefines = {}
-
-    ForEach(.CurrentConfig in .Global_ConfigDefinitionList) {
-        Using(.CurrentConfig)
-
-        .CompilerInputFiles = .ProjectFiles
-        .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$ToolchainName$-$ConfigName$'
-        .LinkerOptions + '$Toolchain_LinkerOptions_StaticLib$'
-        .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/source$Toolchain_IncludePath_Suffix$'
-        .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/include$Toolchain_IncludePath_Suffix$'
-        .CompilerOptions + '$Toolchain_CompilerOptions_StaticLib$'
-
-        ForEach(.CurrentInclude in .ProjectIncludes) {
-            ^CompilerOptions + ' $Toolchain_IncludePath_Prefix$$CurrentInclude$$Toolchain_IncludePath_Suffix$'
-        }
-
-        ForEach(.CurrentDefine in .ProjectDefines) {
-            ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
-        }
-
-        Library('$ProjectName$-$ToolchainName$-$ConfigName$') {
-            .LibrarianOutput = '$OutputBase$/lib/$ProjectName$-$ToolchainName$-$ConfigName$/$Toolchain_StaticLibrary_Prefix$$ProjectName$$Toolchain_StaticLibrary_Suffix$'
-            .Libraries = {
-                '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
+        .VariantDef_Windows = [
+            .VariantSelector = { 'Windows-x64' }
+            .VariantFiles = {
+                '$ProjectPath$/src/glad_wgl.c'
             }
+        ]
+        .VariantDef_Linux = [
+            .VariantSelector = { 'Linux' }
+            .VariantFiles = {
+                '$ProjectPath$/src/glad_glx.c'
+            }
+        ]
+        .VariantDef_Android = [
+            .VariantSelector = { 'Android' }
+            .VariantFiles = {
+                '$ProjectPath$/src/glad_egl.c'
+            }
+        ]
+
+        .ProjectVariants = {
+            .VariantDef_Windows
+            .VariantDef_Linux
+            .VariantDef_Android
         }
-    }
+    ]
+
+    ^Global_ProjectSdkList + .ProjectDefinition
 }

@@ -49,6 +49,16 @@
     .Platform_Scarlett
 }
 
+.ProjectKind_SharedLib = 'SharedLib'
+.ProjectKind_StaticLib = 'StaticLib'
+.ProjectKind_Executable = 'Executable'
+
+.ValidProjectKinds = {
+    .ProjectKind_StaticLib
+    .ProjectKind_SharedLib
+    .ProjectKind_Executable
+}
+
 //--------------------------------------------------------------------------------------------------
 // Architectures
 
@@ -91,3 +101,9 @@
 // List of all supported / discovered configs
 
 .Global_ConfigDefinitionList = {}
+
+
+//--------------------------------------------------------------------------------------------------
+// List of all discovered SDKs
+
+.Global_ProjectSdkList = {}

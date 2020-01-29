@@ -1,58 +1,26 @@
 {
-    .ProjectName = 'sdk.fmt'
-    .ProjectPath = 'sdks/fmt'
-    .ProjectFiles = {
-        '$ProjectPath$/source/format.cc'
-        '$ProjectPath$/source/posix.cc'
-    }
+    .ProjectDefinition = [
+        .ProjectName = 'sdk.fmt'
+        .ProjectPath = 'sdks/fmt'
+        .ProjectKind = 'SharedLib'
+        .ProjectSelector = { 'All' }
 
-    .ProjectIncludes = {}
-    .ProjectImports = {}
-    .ProjectLinks = {}
-    .ProjectDefines = {
-        'FMT_EXCEPTIONS=1'
-        'FMT_EXPORT=1'
-        '_CRT_SECURE_NO_WARNINGS=0'
-    }
-
-    ForEach(.CurrentConfig in .Global_ConfigDefinitionList) {
-        Using(.CurrentConfig)
-
-        ObjectList('$ProjectName$-Lib-$ToolchainName$-$ConfigName$') {
-            .CompilerInputFiles = .ProjectFiles
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$ToolchainName$-$ConfigName$'
-            .CompilerInputFilesRoot = .ProjectPath
-
-            .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/source$Toolchain_IncludePath_Suffix$'
-            .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/include$Toolchain_IncludePath_Suffix$'
-            .CompilerOptions + '$Toolchain_CompilerOptions_SharedLib$'
-
-            ForEach(.CurrentInclude in .ProjectIncludes) {
-                ^CompilerOptions + ' $Toolchain_IncludePath_Prefix$$CurrentInclude$$Toolchain_IncludePath_Suffix$'
-            }
-
-            ForEach(.CurrentDefine in .ProjectDefines) {
-                ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
-            }
+        .ProjectFiles = {
+            '$ProjectPath$/source/format.cc'
+            '$ProjectPath$/source/posix.cc'
         }
 
-        DLL('$ProjectName$-$ToolchainName$-$ConfigName$') {
-            .LibrarianAdditionalInputs = '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$ToolchainName$-$ConfigName$/'
-            .LinkerOutput = '$OutputBase$/bin/$ToolchainName$-$ConfigName$/$Toolchain_SharedLibrary_Prefix$$ProjectName$$Toolchain_SharedLibrary_Suffix$'
-
-            .LinkerOptions + '$Toolchain_LinkerOptions_SharedLib$'
-            .Libraries = {
-                '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
-            }
-
-            ForEach(.CurrentImport in .ProjectImports) {
-                ^Libraries + '$CurrentImport$-$ToolchainName$-$ConfigName$'
-            }
-
-            ForEach(.CurrentLink in .ProjectLinks) {
-                ^Libraries + '$Toolchain_Library_Prefix$$CurrentLink$$Toolchain_Library_Suffix$'
-            }
+        .ProjectIncludes = {}
+        .ProjectImports = {}
+        .ProjectLinks = {}
+        .ProjectDefines = {
+            'FMT_EXCEPTIONS=1'
+            'FMT_EXPORT=1'
+            '_CRT_SECURE_NO_WARNINGS=0'
         }
-    }
+
+        .ProjectVariants = {}
+    ]
+
+    ^Global_ProjectSdkList + .ProjectDefinition
 }

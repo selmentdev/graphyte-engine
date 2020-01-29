@@ -138,6 +138,9 @@ Compiler('Compiler-Linux-x64-GCC') {
     .Linker = '/usr/bin/g++'
     .Librarian = '/usr/bin/ar'
 
+    .ToolchainArchitecture = 'x64'
+    .ToolchainVsPlatformName = 'x64'
+
     .Toolchain_Executable_Prefix = ''
     .Toolchain_Executable_Suffix = '.elf'
     .Toolchain_StaticLibrary_Prefix = 'lib'
