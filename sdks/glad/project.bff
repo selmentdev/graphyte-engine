@@ -9,21 +9,23 @@
             '$ProjectPath$/src/glad.c'
         }
 
-        .ProjectIncludes = {}
-        .ProjectImports = {}
-        .ProjectLinks = {}
-        .ProjectDefines = {}
-
         .VariantDef_Windows = [
             .VariantSelector = { 'Windows-x64' }
             .VariantFiles = {
                 '$ProjectPath$/src/glad_wgl.c'
             }
         ]
-        .VariantDef_Linux = [
-            .VariantSelector = { 'Linux' }
+        .VariantDef_Linux_x64 = [
+            .VariantSelector = { 'Linux-x64' }
             .VariantFiles = {
                 '$ProjectPath$/src/glad_glx.c'
+            }
+        ]
+        .VariantDef_Linux_ARMv8 = [
+            .VariantSelector = { 'Linux-ARMv8' }
+            .VariantFiles = {
+                '$ProjectPath$/src/glad_glx.c'
+                '$ProjectPath$/src/glad_egl.c'
             }
         ]
         .VariantDef_Android = [
@@ -35,7 +37,8 @@
 
         .ProjectVariants = {
             .VariantDef_Windows
-            .VariantDef_Linux
+            .VariantDef_Linux_x64
+            .VariantDef_Linux_ARMv8
             .VariantDef_Android
         }
     ]

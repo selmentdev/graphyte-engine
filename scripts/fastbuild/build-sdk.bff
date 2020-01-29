@@ -1,12 +1,39 @@
+// -------------------------------------------------------------------------------------------------
+// This script defines all targets for building static/shared libs with SDKs built from sources.
+
 {
-    .Aliases_Sdk = []
+    //
+    // All defined SDKs aliases grouped by configs.
+    //
+
+    .Aliases_Sdk_Config = []
 
     ForEach(.CurrentProject in .Global_ProjectSdkList) {
         ForEach(.CurrentConfig in .Global_ConfigDefinitionList) {
+            //
+            // By default, project is built on all configurations.
+            // For simplicity, we default define some project variables which are optional.
+            //
+
+            .ProjectSelector = { 'All' }
+            .ProjectIncludes = {}
+            .ProjectImports = {}
+            .ProjectLinks = {}
+            .ProjectDefines = {}
+            .ProjectVariants = {}
+
+
+            //
+            // Import project and configuration variables for this combination
+            //
+
             Using(.CurrentProject)
             Using(.CurrentConfig)
 
+
+            //
             // Create variant selectors
+            //
             .LocalVariantSelector = {
                 'All'
                 '$ConfigPlatform$'
@@ -15,45 +42,112 @@
                 '$ConfigPlatform$-$ConfigName$'
             }
 
+
+            //
+            // Check whether this project can be built on this variant configuration.
+            //
+
             If (.LocalVariantSelector in .ProjectSelector) {
                 ForEach(.CurrentVariant in .ProjectVariants) {
+                    //
+                    // Define optional variant configuration values.
+                    //
+
+                    .VariantFiles = {}
+                    .VariantDefines = {}
+                    .VariantIncludes = {}
+                    .VariantLinks = {}
+                    .VariantImports = {}
+
+
+                    //
+                    // Import variant configuration.
+                    //
+
                     Using(.CurrentVariant)
+
+
+                    //
+                    // Modify project values with variant specialization if selector matches.
+                    //
 
                     If (.LocalVariantSelector in .VariantSelector) {
                         ^ProjectFiles + .VariantFiles
+                        ^ProjectIncludes + .VariantIncludes
+                        ^ProjectImports + .VariantImports
+                        ^ProjectLinks + .VariantLinks
+                        ^ProjectDefines + .VariantDefines
                     }
                 }
-                Print('$ConfigPlatform$-$ToolchainArchitecture$-$ConfigName$')
+
+                //
+                // Setup compiler using project variables.
+                //
 
                 .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$ToolchainName$-$ConfigName$'
                 .CompilerInputFiles = .ProjectFiles
                 .CompilerInputFilesRoot = .ProjectPath
 
-                .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/include$Toolchain_IncludePath_Suffix$'
+
+                //
+                // Toolchain specific flags for project kind.
+                //
+
                 .CompilerOptions + .'Toolchain_CompilerOptions_$ProjectKind$'
+
+
+                //
+                // All SDKs define local sources include path
+                //
+                .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/include$Toolchain_IncludePath_Suffix$'
+
+
+                //
+                // Additional includes from project and variants
+                //
 
                 ForEach(.CurrentInclude in .ProjectIncludes) {
                     ^CompilerOptions + ' $Toolchain_IncludePath_Prefix$$CurrentInclude$$Toolchain_IncludePath_Suffix$'
                 }
 
+
+                //
+                // Additional defines from project and variants
+                //
+
                 ForEach(.CurrentDefine in .ProjectDefines) {
                     ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
                 }
 
-                .Libraries = {
-                    '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
-                }
-
-                ForEach(.CurrentImport in .ProjectImports) {
-                    ^Libraries + '$CurrentImport$-$ToolchainName$-$ConfigName$'
-                }
-
-                ForEach(.CurrentLink in .ProjectLinks) {
-                    ^Libraries + '$Toolchain_Library_Prefix$$CurrentLink$$Toolchain_Library_Suffix$'
-                }
-
                 If (.ProjectKind == .ProjectKind_SharedLib) {
+
                     ObjectList('$ProjectName$-Lib-$ToolchainName$-$ConfigName$') { }
+
+                    //
+                    // Link with default lib target from object list.
+                    //
+
+                    .Libraries = {
+                        '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
+                    }
+
+
+                    //
+                    // Additional libraries imported from other fastbuild targets.
+                    //
+
+                    ForEach(.CurrentImport in .ProjectImports) {
+                        ^Libraries + '$CurrentImport$-$ToolchainName$-$ConfigName$'
+                    }
+
+
+                    //
+                    // Additional libraries linked from link paths.
+                    //
+
+                    ForEach(.CurrentLink in .ProjectLinks) {
+                        ^Libraries + '$Toolchain_Library_Prefix$$CurrentLink$$Toolchain_Library_Suffix$'
+                    }
 
                     DLL('$ProjectName$-$ToolchainName$-$ConfigName$') {
                         .LibrarianAdditionalInputs = '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
@@ -63,29 +157,58 @@
                 }
 
                 If (.ProjectKind == .ProjectKind_StaticLib) {
+                    //
+                    // Shared lib definition
+                    //
+
                     Library('$ProjectName$-$ToolchainName$-$ConfigName$') {
                         .LibrarianOutput = '$OutputBase$/lib/$ProjectName$-$ToolchainName$-$ConfigName$/$Toolchain_StaticLibrary_Prefix$$ProjectName$$Toolchain_StaticLibrary_Suffix$'
                     }
                 }
 
+                //
+                // Update list of SDKs aliases.
+                //
 
-                .Aliases_Sdk_Entry =
-                [
-                    .'Aliases_$ConfigPlatform$_$ToolchainArchitecture$_$ConfigName$' = { '$ProjectName$-$ToolchainName$-$ConfigName$' }
+                .Aliases_Sdk_Config_Entry = [
+                    .'Aliases_Sdk_$ConfigPlatform$_$ToolchainArchitecture$_$ConfigName$' = { '$ProjectName$-$ToolchainName$-$ConfigName$' }
                 ]
-                ^Aliases_Sdk + .Aliases_Sdk_Entry
+                ^Aliases_Sdk_Config + .Aliases_Sdk_Config_Entry
             }
         }
     }
 
+    //
+    // Generate actual aliases form lists.
+    //
     {
-        Using(.Aliases_Sdk)
+        .Aliases_Sdk = []
+
+        Using(.Aliases_Sdk_Config)
 
         ForEach(.CurrentConfig in .Global_ConfigDefinitionList) {
             Using(.CurrentConfig)
 
+
+            //
+            // Create mapping of alias -> target
+            //
+
+            .LocalTargetName = '$ConfigPlatform$-$ToolchainArchitecture$'
+            .LocalTargetConfigName = '$ConfigPlatform$_$ToolchainArchitecture$_$ConfigName$'
+
+            .Aliases_Sdk_Entry = [
+                .'Aliases_Sdk_$ConfigPlatform$_$ToolchainArchitecture$' = { 'All-Sdks-$ToolchainName$-$ConfigName$' }
+            ]
+
+            ^Aliases_Sdk + .Aliases_Sdk_Entry
+
+            //
+            // Generate platform-config SDK aliases
+            //
+
             Alias('All-Sdks-$ToolchainName$-$ConfigName$') {
-                .Targets = .'Aliases_$ConfigPlatform$_$ToolchainArchitecture$_$ConfigName$'
+                .Targets = .'Aliases_Sdk_$ConfigPlatform$_$ToolchainArchitecture$_$ConfigName$'
             }
         }
     }

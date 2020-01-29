@@ -1,62 +1,14 @@
 {
-    .ProjectName = 'sdk.lz4'
-    .ProjectPath = 'sdks/lz4'
+    .ProjectDefinition = [
+        .ProjectName = 'sdk.lz4'
+        .ProjectPath = 'sdks/lz4'
+        .ProjectKind = 'StaticLib'
 
-    {
-        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
-        .UnityOutputPattern = '$ProjectName$-unity-*.c'
-        .UnityInputIsolatedFiles = {
+        .ProjectFiles = {
             '$ProjectPath$/source/lz4hc.c'
             '$ProjectPath$/source/lz4.c'
         }
-        .UnityInputFiles = .UnityInputIsolatedFiles
+    ]
 
-        Unity('$ProjectName$-Unity-Windows') { }
-        Unity('$ProjectName$-Unity-Linux') { }
-        Unity('$ProjectName$-Unity-Android') { }
-    }
-
-    .ProjectFiles = {
-        '$ProjectPath$/source/lz4.c'
-        '$ProjectPath$/source/lz4hc.c'
-    }
-    {
-
-    }
-
-    .ProjectIncludes = {}
-    .ProjectLibraries = {}
-    .ProjectDefines = {}
-
-    ForEach(.CurrentConfig in .Global_ConfigDefinitionList) {
-        Using(.CurrentConfig)
-
-        ObjectList('$ProjectName$-Lib-$ToolchainName$-$ConfigName$') {
-            .CompilerInputUnity = '$ProjectName$-Unity-$ConfigPlatform$'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$ToolchainName$-$ConfigName$'
-
-            .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/source$Toolchain_IncludePath_Suffix$'
-            .CompilerOptions + ' $Toolchain_IncludePath_Prefix$$ProjectPath$/include$Toolchain_IncludePath_Suffix$'
-            .CompilerOptions + '$Toolchain_CompilerOptions_SharedLib$'
-
-            ForEach(.CurrentInclude in .ProjectIncludes) {
-                ^CompilerOptions + ' $Toolchain_IncludePath_Prefix$$CurrentInclude$$Toolchain_IncludePath_Suffix$'
-            }
-
-            ForEach(.CurrentDefine in .ProjectDefines) {
-                ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
-            }
-        }
-
-        DLL('$ProjectName$-$ToolchainName$-$ConfigName$') {
-            .LibrarianAdditionalInputs = '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
-            .CompilerOutputPath = '$OutputBase$/obj/$ProjectName$-$ToolchainName$-$ConfigName$/'
-            .LinkerOutput = '$OutputBase$/bin/$ToolchainName$-$ConfigName$/$Toolchain_SharedLibrary_Prefix$$ProjectName$$Toolchain_SharedLibrary_Suffix$'
-
-            .LinkerOptions + '$Toolchain_LinkerOptions_SharedLib$'
-            .Libraries = {
-                '$ProjectName$-Lib-$ToolchainName$-$ConfigName$'
-            }
-        }
-    }
+    ^Global_ProjectSdkList + .ProjectDefinition
 }

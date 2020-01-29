@@ -3,23 +3,17 @@
         .ProjectName = 'sdk.fmt'
         .ProjectPath = 'sdks/fmt'
         .ProjectKind = 'SharedLib'
-        .ProjectSelector = { 'All' }
 
         .ProjectFiles = {
             '$ProjectPath$/source/format.cc'
             '$ProjectPath$/source/posix.cc'
         }
 
-        .ProjectIncludes = {}
-        .ProjectImports = {}
-        .ProjectLinks = {}
         .ProjectDefines = {
             'FMT_EXCEPTIONS=1'
             'FMT_EXPORT=1'
             '_CRT_SECURE_NO_WARNINGS=0'
         }
-
-        .ProjectVariants = {}
     ]
 
     ^Global_ProjectSdkList + .ProjectDefinition
