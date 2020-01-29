@@ -157,9 +157,9 @@ Compiler('Compiler-Linux-x64-GCC') {
     .Toolchain_Library_Prefix = '-l'
     .Toolchain_Library_Suffix = ''
 
-    .Toolchain_CompilerOptions_SharedLib = ' -shared -fPIC'
-    .Toolchain_CompilerOptions_StaticLib = ' -static'
-    .Toolchain_LinkerOptions_SharedLib = ' -shared -pie'
+    .Toolchain_CompilerOptions_SharedLib = ' -fpic'
+    .Toolchain_CompilerOptions_StaticLib = ' -fpic'
+    .Toolchain_LinkerOptions_SharedLib = ' -shared'
     .Toolchain_LinkerOptions_StaticLib = ' -static'
 ]
 
