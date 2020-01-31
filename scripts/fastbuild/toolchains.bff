@@ -60,8 +60,10 @@ Compiler('Compiler-Linux-x64-GCC') {
 
 .PlatformDesc_Windows = [
     .Platform_Name = 'Windows'
-    .Platform_Executable_Prefix = ''
-    .Platform_Executable_Suffix = '.exe'
+    .Platform_ConsoleApp_Prefix = ''
+    .Platform_ConsoleApp_Suffix = '.exe'
+    .Platform_WindowedApp_Prefix = ''
+    .Platform_WindowedApp_Suffix = '.exe'
     .Platform_StaticLib_Prefix = ''
     .Platform_StaticLib_Suffix = '.lib'
     .Platform_SharedLib_Prefix = ''
@@ -70,8 +72,10 @@ Compiler('Compiler-Linux-x64-GCC') {
 
 .PlatformDesc_Linux = [
     .Platform_Name = 'Linux'
-    .Platform_Executable_Prefix = ''
-    .Platform_Executable_Suffix = '.elf'
+    .Platform_ConsoleApp_Prefix = ''
+    .Platform_ConsoleApp_Suffix = '.elf'
+    .Platform_WindowedApp_Prefix = ''
+    .Platform_WindowedApp_Suffix = '.elf'
     .Platform_StaticLib_Prefix = 'lib'
     .Platform_StaticLib_Suffix = '.a'
     .Platform_SharedLib_Prefix = 'lib'
@@ -80,8 +84,10 @@ Compiler('Compiler-Linux-x64-GCC') {
 
 .PlatformDesc_Android = [
     .Platform_Name = 'Android'
-    .Platform_Executable_Prefix = ''
-    .Platform_Executable_Suffix = '.elf'
+    .Platform_ConsoleApp_Prefix = ''
+    .Platform_ConsoleApp_Suffix = '.elf'
+    .Platform_WindowedApp_Prefix = ''
+    .Platform_WindowedApp_Suffix = '.elf'
     .Platform_StaticLib_Prefix = 'lib'
     .Platform_StaticLib_Suffix = '.a'
     .Platform_SharedLib_Prefix = 'lib'
@@ -268,6 +274,7 @@ Compiler('Compiler-Linux-x64-GCC') {
     Using(.ToolchainDesc_Windows_MSVC)
 
     .Toolchain_Architecture = 'x64'
+    .Toolchain_VisualStudio_Architecture = 'x64'
 
 
     //
@@ -296,6 +303,7 @@ Compiler('Compiler-Linux-x64-GCC') {
     Using(.ToolchainDesc_Windows_MSVC)
 
     .Toolchain_Architecture = 'ARMv8'
+    .Toolchain_VisualStudio_Architecture = 'ARM64'
 
 
     //

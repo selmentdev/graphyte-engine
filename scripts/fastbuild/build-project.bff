@@ -1,6 +1,46 @@
 // -------------------------------------------------------------------------------------------------
 // This script defines targets for building game/engine modules and plugins
 
+.SolutionConfigs = {}
+
+// -------------------------------------------------------------------------------------------------
+// Define windows resources and solution configs for Visual Studio
+{
+
+    ForEach(.CurrentTriplet in .ValidToolchainTriplets) {
+        // Import toolchain definition
+        Using(.'ToolchainDesc_$CurrentTriplet$')
+
+        If (.Platform_Windows == .Platform_Name) {
+            ForEach(.CurrentConfig in .ValidConfigurations) {
+                .ProjectConfig = [
+                    .Config = '$CurrentConfig$'
+                    .Platform = '$Toolchain_VisualStudio_Architecture$'
+                    .SolutionConfig = '$CurrentConfig$'
+                    .SolutionPlatform = .CurrentTriplet
+                ]
+                ^SolutionConfigs + .ProjectConfig
+
+                .LocalTargetPrefix = '$Platform_Name$-$Toolchain_Architecture$-$Toolchain_Name$-$CurrentConfig$'
+
+                ObjectList('Graphyte-Res-$LocalTargetPrefix$')
+                {
+                    .Compiler = .ResCompiler
+                    .CompilerInputFiles = { 'engine/resources/resources.rc' }
+                    .CompilerOutputPath = '$OutputBase$/obj/Graphyte-Res-$LocalTargetPrefix$'
+                    .CompilerOutputExtension = '.res'
+                    .CompilerOptions
+                        = ' /nologo'
+                        + ' /fo"%2"'
+                        + .SystemIncludes
+                        + ' /I"engine/include"'
+                        + ' "%1"'
+                }
+            }
+        }
+    }
+}
+
 {
     .AliasesList = []
 
@@ -136,31 +176,40 @@
                         .CompilerInputUnity = '$ProjectName$-Unity-$Platform_Name$'
                     }
 
+                    .Libraries = {
+                        'Lib-$LocalTargetName$'
+                    }
+
+                    If (.Platform_Windows == .Platform_Name) {
+                        ^Libraries + 'Graphyte-Res-$LocalTargetPrefix$'
+                    }
+
+                    ForEach(.CurrentImport in .ProjectImports) {
+                        ^Libraries + '$CurrentImport$-$LocalTargetPrefix$'
+                    }
+
+                    ForEach(.CurrentLink in .ProjectLinks) {
+                        ^LinkerOptions + ' $Toolchain_Link_Prefix$$CurrentLink$$Toolchain_Link_Suffix$'
+                    }
+
+                    .LinkerOutput = '$OutputBase$/bin/$LocalTargetPrefix$/$LocalOutputName$'
+                    .LibrarianAdditionalInputs = 'Lib-$LocalTargetName$'
+                    .LibrarianOutput = '$OutputBase$/lib/$LocalTargetPrefix$/$LocalOutputName$'
+                    
                     If (.ProjectKind == .ProjectKind_SharedLib) {
-
-                        .Libraries = {
-                            'Lib-$LocalTargetName$'
-                        }
-
-                        ForEach(.CurrentImport in .ProjectImports) {
-                            ^Libraries + '$CurrentImport$-$LocalTargetPrefix$'
-                        }
-
-                        ForEach(.CurrentLink in .ProjectLinks) {
-                            ^LinkerOptions + ' $Toolchain_Link_Prefix$$CurrentLink$$Toolchain_Link_Suffix$'
-                        }
-
-                        Print(.Libraries)
-                        DLL('$LocalTargetName$') {
-                            .LibrarianAdditionalInputs = 'Lib-$LocalTargetName$'
-                            .LinkerOutput = '$OutputBase$/bin/$LocalTargetPrefix$/$LocalOutputName$'
-                        }
+                        DLL('$LocalTargetName$') { }
                     }
 
                     If (.ProjectKind == .ProjectKind_StaticLib) {
-                        Library('$LocalTargetName$') {
-                            .LibrarianOutput = '$OutputBase$/lib/$LocalTargetPrefix$/$LocalOutputName$'
-                        }
+                        Library('$LocalTargetName$') { }
+                    }
+
+                    If (.ProjectKind == .ProjectKind_ConsoleApp) {
+                        Executable('$LocalTargetName$') { }
+                    }
+
+                    If (.ProjectKind == .ProjectKind_WindowedApp) {
+                        Executable('$LocalTargetName$') { }
                     }
 
                     .CurrentAlias = [
