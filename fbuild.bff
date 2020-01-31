@@ -24,9 +24,9 @@
 #include "engine/runtime/libs/launch/project.bff"
 
 #include "engine/runtime/tests/base/project.bff"
-//#include "engine/runtime/tests/entities/project.bff"
-//#include "engine/runtime/tests/graphics/project.bff"
-//#include "engine/runtime/tests/maths/project.bff"
+#include "engine/runtime/tests/entities/project.bff"
+#include "engine/runtime/tests/graphics/project.bff"
+#include "engine/runtime/tests/maths/project.bff"
 
 #include "scripts/fastbuild/build-sdk.bff"
 #include "scripts/fastbuild/build-project.bff"

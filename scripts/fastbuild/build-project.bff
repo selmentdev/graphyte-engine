@@ -46,6 +46,8 @@
 
     ForEach(.CurrentProject in .Global_ProjectList) {
 
+        .VisualStudioProjects = {}
+
         // Default values for project settings.
         .ProjectSelector = { 'All' }
         .ProjectIncludes = {}
@@ -222,6 +224,9 @@
         }
     }
 
+    //
+    // Aliases for engine projects
+    //
     {
         Using(.AliasesList)
 
@@ -244,4 +249,12 @@
             .Targets = .AllTargets
         }
     }
+
+
+#if __WINDOWS__
+    //
+    // Visual Studio projects
+    //
+
+#endif
 }

@@ -1,127 +1,81 @@
 {
-    .ProjectName = 'test.entities'
-    .ProjectPath = 'engine/runtime/tests/entities'
-    {
-        .UnityInputPath = '$ProjectPath$'
-        .UnityInputPattern = { '*.cxx' }
-        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
-        .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
-        .UnityInputIsolatedFiles = {
-            '$ProjectPath$/private/Main.cxx'
+    .ProjectDefinition = [
+        .ProjectName = 'test.graphyte.entities'
+        .ProjectPath = 'engine/runtime/tests/entities'
+        .ProjectKind = 'ConsoleApp'
+        .ProjectType = 'EngineTest'
+
+        .ProjectImport = {
+            'sdk.fmt'
+            'com.graphyte.base'
+            'com.graphyte.launch'
+        }
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'sdks/catch2/include'
+            'engine/runtime/libs/base/public'
+            'engine/runtime/libs/launch/public'
+            'engine/runtime/libs/graphics/public'
         }
 
-        Unity('$ProjectName$-Unity-Windows') {
-            .UnityInputExcludePattern = {
-                '*Linux.*.cxx'
-                '*Posix.*.cxx'
-                '*Android.*.cxx'
+        .VariantDef_Windows = [
+            .VariantSelector = { 'Windows' }
+            .VariantLinks = {
+                'ntdll.lib'
+                'user32.lib'
             }
-        }
-        Unity('$ProjectName$-Unity-Linux') {
-            .UnityInputExcludePattern = {
-                '*Windows.*.cxx'
-                '*Android.*.cxx'
-            }
-        }
-        Unity('$ProjectName$-Unity-Android') {
-            .UnityInputExcludePattern = {
-                '*Windows.*.cxx'
-                '*Linux.*.cxx'
-            }
-        }
-    }
-
-    .DeoptimizedConfigs = {
-        'Release'
-        'Profile'
-    }
-
-    .VcxProjectConfigs = {}
-
-    .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
-    ForEach(.Config in .CurrentConfigs)
-    {
-        Using(.Config)
-        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
-        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
-
-        ObjectList('$ProjectName$-Lib-$LocalConfigName$')
-        {
-            .CompilerInputUnity = '$ProjectName$-Unity-Windows'
-            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-
-            // Common Graphyte module include paths
-            .CompilerOptions
-                + ' /I"$ProjectPath$/private"'
-                + ' /I"$ProjectPath$/public"'
-                + ' /I"sdks/fmt/include"'
-                + ' /I"sdks/catch2/include"'
-                + ' /I"engine/include"'
-                + ' /I"engine/runtime/libs/base/public"'
-                + ' /I"engine/runtime/libs/launch/public"'
-        }
-
-        Executable('$LocalTargetName$') {
-            .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'
-            .Libraries = {
-                'sdk.fmt-$LocalConfigName$'
-                'sdk.lz4-$LocalConfigName$'
-                '$ProjectName$-Lib-$LocalConfigName$'
-                'Graphyte-Res-$LocalConfigName$'
-                'com.graphyte.base-$LocalConfigName$'
-                'com.graphyte.graphics-$LocalConfigName$'
-                'com.graphyte.launch-$LocalConfigName$'
-            }
-
-            .LinkerOptions
-                + ' /SUBSYSTEM:CONSOLE'
-                + ' ntdll.lib'
-                + ' user32.lib'
-        }
-
-        Test('Test-$LocalTargetName$')
-        {
-            .TestExecutable = '$LocalTargetName$'
-            .TestOutput = '$OutputBase$/tests/$LocalConfigName$/$ProjectName$.out.txt'
-            .TestArguments = '--force-no-log'
-        }
-
-        .ProjectConfig = [
-            .Target = '$ProjectName$-Lib-$LocalConfigName$'
-            .Config = '$Config$'
-            .Platform = '$VsPlatform$'
-            .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
-            .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
-            .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
-
-            .LocalDebuggerCommand = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'
-            .LocalDebuggerCommandArguments = ''
-            .LocalDebuggerWorkingDirectory = ''
-            .LocalDebuggerEnvironment = ''
         ]
 
-        ^VcxProjectConfigs + .ProjectConfig
-
-        ^'AllTests_$LocalConfigVarName$' + 'Test-$LocalTargetName$'
-    }
-
-    VCXProject('$ProjectName$') {
-        .ProjectOutput = '$ProjectName$.vcxproj'
-        .ProjectInputPaths = { .ProjectPath }
-        //.ProjectOutputDirectory =
-        //>intermediateDirectory =
-        .ProjectBasePath = .ProjectPath
-        .ProjectAllowedFileExtensions = {
-            '*.bff'
-            '*.cxx'
-            '*.hxx'
-            '*.c'
-            '*.h'
+        .ProjectVariants = {
+            .VariantDef_Windows
         }
-        .ProjectConfigs = .VcxProjectConfigs
-        .PlatformToolset = .VsPlatformToolset
-    }
+    ]
 
-    ^VcxProjects_EngineTests + .ProjectName
+    ^Global_ProjectList + .ProjectDefinition
 }
+
+//         Test('Test-$LocalTargetName$')
+//         {
+//             .TestExecutable = '$LocalTargetName$'
+//             .TestOutput = '$OutputBase$/tests/$LocalConfigName$/$ProjectName$.out.txt'
+//             .TestArguments = '--force-no-log'
+//         }
+
+//         .ProjectConfig = [
+//             .Target = '$ProjectName$-Lib-$LocalConfigName$'
+//             .Config = '$Config$'
+//             .Platform = '$VsPlatform$'
+//             .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
+//             .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
+//             .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
+
+//             .LocalDebuggerCommand = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'
+//             .LocalDebuggerCommandArguments = ''
+//             .LocalDebuggerWorkingDirectory = ''
+//             .LocalDebuggerEnvironment = ''
+//         ]
+
+//         ^VcxProjectConfigs + .ProjectConfig
+
+//         ^'AllTests_$LocalConfigVarName$' + 'Test-$LocalTargetName$'
+//     }
+
+//     VCXProject('$ProjectName$') {
+//         .ProjectOutput = '$ProjectName$.vcxproj'
+//         .ProjectInputPaths = { .ProjectPath }
+//         //.ProjectOutputDirectory =
+//         //>intermediateDirectory =
+//         .ProjectBasePath = .ProjectPath
+//         .ProjectAllowedFileExtensions = {
+//             '*.bff'
+//             '*.cxx'
+//             '*.hxx'
+//             '*.c'
+//             '*.h'
+//         }
+//         .ProjectConfigs = .VcxProjectConfigs
+//         .PlatformToolset = .VsPlatformToolset
+//     }
+
+//     ^VcxProjects_EngineTests + .ProjectName
+// }
