@@ -51,12 +51,14 @@
 
 .ProjectKind_SharedLib = 'SharedLib'
 .ProjectKind_StaticLib = 'StaticLib'
-.ProjectKind_Executable = 'Executable'
+.ProjectKind_ConsoleApp = 'ConsoleApp'
+.ProjectKind_WindowedApp = 'WindowedApp'
 
 .ValidProjectKinds = {
     .ProjectKind_StaticLib
     .ProjectKind_SharedLib
-    .ProjectKind_Executable
+    .ProjectKind_ConsoleApp
+    .ProjectKind_WindowedApp
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -98,12 +100,21 @@
 
 
 //--------------------------------------------------------------------------------------------------
-// List of all supported / discovered configs
+// Toolchain Triplets
 
-.Global_ConfigDefinitionList = {}
+.ValidToolchainTriplets = {
+    'Windows_x64_MSVC'
+    'Windows_ARMv8_MSVC'
+    'Linux_x64_GCC'
+    //'Linux_x64_Clang'
+    //'Linux_ARMv8_Clang'
+    //'Android_x64_Clang'
+    //'Android_ARMv8_Clang'
+}
 
 
 //--------------------------------------------------------------------------------------------------
 // List of all discovered SDKs
 
-.Global_ProjectSdkList = {}
+.Global_SdkList = {}
+.Global_ProjectList = {}

@@ -1,6 +1,6 @@
 #include "../compiler.msvs.bff"
-//--------------------------------------------------------------------------------------------------
-// Toolchain definitions
+// -------------------------------------------------------------------------------------------------
+// Compilers
 
 // Windows Resource compiler
 Compiler('Compiler-Windows-ResourceCompiler') {
@@ -50,138 +50,57 @@ Compiler('Compiler-Windows-ARMv8-MSVC') {
     }
 }
 
-// Windows specific toolchains
-
-.ToolchainDefinition_Windows_x64_MSVC = [
-    .ToolchainName = 'Windows-x64-MSVC'
-    .Compiler = 'Compiler-Windows-x64-MSVC'
-    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
-    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/link.exe'
-    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/lib.exe'
-
-    .ToolchainArchitecture = 'x64'
-    .ToolchainVsPlatformName = 'x64'
-
-    .Toolchain_Executable_Prefix = ''
-    .Toolchain_Executable_Suffix = '.exe'
-    .Toolchain_StaticLibrary_Prefix = ''
-    .Toolchain_StaticLibrary_Suffix = '.lib'
-    .Toolchain_SharedLibrary_Prefix = ''
-    .Toolchain_SharedLibrary_Suffix = '.dll'
-
-    .Toolchain_Define_Prefix = '/D'
-    .Toolchain_Define_Suffix = ''
-    .Toolchain_IncludePath_Prefix = '/I"'
-    .Toolchain_IncludePath_Suffix = '"'
-    .Toolchain_LibraryPath_Prefix = '/LIBPATH:"'
-    .Toolchain_LibraryPath_Suffix = '"'
-    .Toolchain_Library_Prefix = ''
-    .Toolchain_Library_Suffix = ''
-    .Toolchain_CompilerOptions_SharedLib = ' /D_WINDLL'
-    .Toolchain_CompilerOptions_StaticLib = ''
-    .Toolchain_LinkerOptions_SharedLib = ' /DLL'
-    .Toolchain_LinkerOptions_StaticLib = ''
-]
-
-.ToolchainDefinition_Windows_ARMv8_MSVC = [
-    .ToolchainName = 'Windows-ARMv8-MSVC'
-    .Compiler = 'Compiler-Windows-ARMv8-MSVC'
-    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
-    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/link.exe'
-    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/lib.exe'
-
-    .ToolchainArchitecture = 'ARMv8'
-    .ToolchainVsPlatformName = 'ARM64'
-
-    .Toolchain_Executable_Prefix = ''
-    .Toolchain_Executable_Suffix = '.exe'
-    .Toolchain_StaticLibrary_Prefix = ''
-    .Toolchain_StaticLibrary_Suffix = '.lib'
-    .Toolchain_SharedLibrary_Prefix = ''
-    .Toolchain_SharedLibrary_Suffix = '.dll'
-
-    .Toolchain_Define_Prefix = '/D'
-    .Toolchain_Define_Suffix = ''
-    .Toolchain_IncludePath_Prefix = '/I"'
-    .Toolchain_IncludePath_Suffix = '"'
-    .Toolchain_LibraryPath_Prefix = '/LIBPATH:"'
-    .Toolchain_LibraryPath_Suffix = '"'
-    .Toolchain_Library_Prefix = ''
-    .Toolchain_Library_Suffix = ''
-    .Toolchain_CompilerOptions_SharedLib = ' /D_WINDLL'
-    .Toolchain_CompilerOptions_StaticLib = ''
-    .Toolchain_LinkerOptions_SharedLib = ' /DLL'
-    .Toolchain_LinkerOptions_StaticLib = ''
-]
-
-.ToolchainDefinition_Windows_x64_Clang = [
-    .ToolchainName = 'Windows-x64-Clang'
-]
-
-
-// Linux specific toolchains
-.ToolchainDefinition_Linux_x64_Clang = [
-    .ToolchainName = 'Linux-x64-Clang'
-]
-
-.ToolchainDefinition_Linux_ARMv8_Clang = [
-    .ToolchainName = 'Linux-ARMv8-Clang'
-]
-
 Compiler('Compiler-Linux-x64-GCC') {
     .Executable = '/usr/bin/g++'
 }
 
-.ToolchainDefinition_Linux_x64_GCC = [
-    .ToolchainName = 'Linux-x64-GCC'
-    .Compiler = 'Compiler-Linux-x64-GCC'
-    .Linker = '/usr/bin/g++'
-    .Librarian = '/usr/bin/ar'
 
-    .ToolchainArchitecture = 'x64'
-    .ToolchainVsPlatformName = 'x64'
+// -------------------------------------------------------------------------------------------------
+// Platforms
 
-    .Toolchain_Executable_Prefix = ''
-    .Toolchain_Executable_Suffix = '.elf'
-    .Toolchain_StaticLibrary_Prefix = 'lib'
-    .Toolchain_StaticLibrary_Suffix = '.a'
-    .Toolchain_SharedLibrary_Prefix = 'lib'
-    .Toolchain_SharedLibrary_Suffix = '.so'
+.PlatformDesc_Windows = [
+    .Platform_Name = 'Windows'
+    .Platform_Executable_Prefix = ''
+    .Platform_Executable_Suffix = '.exe'
+    .Platform_StaticLib_Prefix = ''
+    .Platform_StaticLib_Suffix = '.lib'
+    .Platform_SharedLib_Prefix = ''
+    .Platform_SharedLib_Suffix = '.dll'
+]
 
-    .Toolchain_Define_Prefix = '-D'
+.PlatformDesc_Linux = [
+    .Platform_Name = 'Linux'
+    .Platform_Executable_Prefix = ''
+    .Platform_Executable_Suffix = '.elf'
+    .Platform_StaticLib_Prefix = 'lib'
+    .Platform_StaticLib_Suffix = '.a'
+    .Platform_SharedLib_Prefix = 'lib'
+    .Platform_SharedLib_Suffix = '.so'
+]
+
+.PlatformDesc_Android = [
+    .Platform_Name = 'Android'
+    .Platform_Executable_Prefix = ''
+    .Platform_Executable_Suffix = '.elf'
+    .Platform_StaticLib_Prefix = 'lib'
+    .Platform_StaticLib_Suffix = '.a'
+    .Platform_SharedLib_Prefix = 'lib'
+    .Platform_SharedLib_Suffix = '.so'
+]
+
+// -------------------------------------------------------------------------------------------------
+// Toolchains
+
+.ToolchainDesc_Windows_MSVC = [
+    .Toolchain_Name = 'MSVC'
+    .Toolchain_Define_Prefix = '/D'
     .Toolchain_Define_Suffix = ''
-    .Toolchain_IncludePath_Prefix = '-I'
-    .Toolchain_IncludePath_Suffix = ''
-    .Toolchain_LibraryPath_Prefix = '-L'
-    .Toolchain_LibraryPath_Suffix = ''
-    .Toolchain_Library_Prefix = '-l'
-    .Toolchain_Library_Suffix = ''
-
-    .Toolchain_CompilerOptions_SharedLib = ' -fpic'
-    .Toolchain_CompilerOptions_StaticLib = ' -fpic'
-    .Toolchain_LinkerOptions_SharedLib = ' -shared'
-    .Toolchain_LinkerOptions_StaticLib = ' -static'
-]
-
-.ToolchainDefinition_Linux_ARMv8_GCC = [
-    .ToolchainName = 'Linux-ARMv8-GCC'
-]
-
-// Android specific toolchains
-.ToolchainDefinition_Android_x64_Clang = [
-    .ToolchainName = 'Android-x64-Clang'
-]
-
-.ToolchainDefinition_Android_ARMv8_Clang = [
-    .ToolchainName = 'Android-ARMv8-Clang'
-]
-
-//--------------------------------------------------------------------------------------------------
-// Config definitions
-
-.ConfigDefinition_Windows_MSVC = [
-    .ConfigPlatform = 'Windows'
-    .ConfigToolchain = 'MSVC'
+    .Toolchain_Include_Prefix = '/I"'
+    .Toolchain_Include_Suffix = '"'
+    .Toolchain_Library_Prefix = '/LIBPATH:"'
+    .Toolchain_Library_Suffix = '"'
+    .Toolchain_Link_Prefix = ''
+    .Toolchain_Link_Suffix = ''
 
     .DefaultDefines = ''
         + ' /D_WIN32'
@@ -201,6 +120,15 @@ Compiler('Compiler-Linux-x64-GCC') {
         + ' /DUNICODE'
         + ' /DFMT_SHARED=1'
         + ' /DFMT_EXCEPTIONS=0'
+
+    .SystemIncludes
+        = ' /I"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/include"'
+        + ' /I"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/atlmfc/include"'
+        + ' /I"$VsToolsLocation$/VC/Auxiliary/VS/include"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\shared"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\ucrt"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\um"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\winrt"'
 
     .CompilerOptions = ''
         + '"%1"'
@@ -237,6 +165,7 @@ Compiler('Compiler-Linux-x64-GCC') {
         + ' /Zc:throwingNew'        // Assume operator new throws
         + ' /Zc:wchar_t'            // wchar_t Is Native Type
         // /GL (Whole Program Optimization)
+        + .SystemIncludes
         + .DefaultDefines
         + ' /Fo"%2"'
 
@@ -250,223 +179,154 @@ Compiler('Compiler-Linux-x64-GCC') {
         + ' /OUT:"%2" "%1"'
         + ' /DEBUG'
         + ' /IGNORE:4001'
+
+
+    //
+    // Kind specific toolchain options.
+    //
+
+    .Options_Kind_SharedLib = [
+        .KindCompilerOptions = ' /D_WINDLL'
+        .KindLinkerOptions = ' /DLL'
+    ]
+
+    .Options_Kind_StaticLib = [
+        .KindCompilerOptions = ''
+        .KindLinkerOptions = ''
+    ]
+
+    .Options_Kind_ConsoleApp = [
+        .KindCompilerOptions = ''
+        .KindLinkerOptions = ' /SUBSYSTEM:CONSOLE'
+    ]
+
+    .Options_Kind_WindowedApp = [
+        .KindCompilerOptions = ''
+        .KindLinkerOptions = ' /SUBSYSTEM:WINDOWS'
+    ]
+
+
+    //
+    // Configuration specific toolchain options.
+    //
+
+    .Options_Config_Debug = [
+        .ConfigCompilerOptions
+            = ' /DGX_CONFIG_DEBUG=1'
+            + ' /MDd'                   // Use Debug DLL Run-Time Library
+            + ' /Od'                    // Disable optimizations
+            + ' /Ob0'                   // Disable Inline Function Expansion
+            + ' /GS'                    // Enable Buffer Security Check
+            + ' /sdl'                   // Enable Additional Security Checks
+            + ' /RTCsu'                 // Enable Run-Time Error Checks
+        .ConfigLinkerOptions
+            = ' msvcprtd.lib'
+    ]
+
+    .Options_Config_Checked = [
+        .ConfigCompilerOptions
+            = ' /DGX_CONFIG_CHECKED=1'
+            + ' /MD'                    // Use Release DLL Run-Time Library
+            + ' /O2'                    // Optimize for maximum speed
+            + ' /Ob1'                   // Enable Inline Function Expansion
+            + ' /Zo'                    // Enable Enhance Optimized Debugging
+        .ConfigLinkerOptions
+            = ' msvcprt.lib'
+    ]
+
+    .Options_Config_Profile = [
+        .ConfigCompilerOptions
+            = ' /DGX_CONFIG_PROFILE=1'
+            + ' /MD'                    // Use Release DLL Run-Time Library
+            + ' /O2'                    // Optimize for maximum speed
+            + ' /Ob2'                   // Enable Inline Function Expansion
+            + ' /Oi'                    // Generate Intrinsic Functions
+            + ' /Ot'                    // Favor Fast Code
+            + ' /Oy-'                   // Enable Frame-Pointer Omission
+            + ' /GS-'                   // Disable Buffer Security Check
+        .ConfigLinkerOptions
+            = ' msvcprt.lib'
+    ]
+
+    .Options_Config_Release = [
+        .ConfigCompilerOptions
+            = ' /DGX_CONFIG_RELEASE=1'
+            + ' /MD'                    // Use Release DLL Run-Time Library
+            + ' /O2'                    // Optimize for maximum speed
+            + ' /Ob3'                   // Enable Inline Function Expansion
+            + ' /Oi'                    // Generate Intrinsic Functions
+            + ' /Ot'                    // Favor Fast Code
+            + ' /Oy-'                   // Enable Frame-Pointer Omission
+            + ' /GS-'                   // Disable Buffer Security Check
+        .ConfigLinkerOptions
+            = ' msvcprt.lib'
+    ]
 ]
 
-.BaseConfigDefinition_Windows_x64_MSVC = [
-    Using(.ConfigDefinition_Windows_MSVC)
-    Using(.ToolchainDefinition_Windows_x64_MSVC)
+.ToolchainDesc_Windows_x64_MSVC = [
+    Using(.PlatformDesc_Windows)
+    Using(.ToolchainDesc_Windows_MSVC)
 
+    .Toolchain_Architecture = 'x64'
+
+
+    //
+    // Compilers
+    //
+
+    .Compiler = 'Compiler-Windows-x64-MSVC'
+    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
+    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/link.exe'
+    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/lib.exe'
+
+
+    // Additional compiler and linker options
     .CompilerOptions
         + ' /arch:AVX'
-        + ' /I"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/include"'
-        + ' /I"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/atlmfc/include"'
-        + ' /I"$VsToolsLocation$/VC/Auxiliary/VS/include"'
-        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\shared"'
-        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\ucrt"'
-        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\um"'
-        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\winrt"'
+
     .LinkerOptions
         + ' /MACHINE:X64'
         + ' /LIBPATH:"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/lib/x64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\um\x64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\x64"'
-
-    .TargetName = 'Windows-x64'
 ]
 
-.ConfigDefinition_Windows_x64_MSVC_Debug = [
-    Using(.BaseConfigDefinition_Windows_x64_MSVC)
-    .ConfigName = 'Debug'
+.ToolchainDesc_Windows_ARMv8_MSVC = [
+    Using(.PlatformDesc_Windows)
+    Using(.ToolchainDesc_Windows_MSVC)
 
-    .CompilerOptions
-        + ' /DGX_CONFIG_DEBUG=1'
-        + ' /MDd'                   // Use Debug DLL Run-Time Library
-        + ' /Od'                    // Disable optimizations
-        + ' /Ob0'                   // Disable Inline Function Expansion
-        + ' /GS'                    // Enable Buffer Security Check
-        + ' /sdl'                   // Enable Additional Security Checks
-        + ' /RTCsu'                 // Enable Run-Time Error Checks
-    .LinkerOptions
-        + ' msvcprtd.lib'
-]
+    .Toolchain_Architecture = 'ARMv8'
 
-.ConfigDefinition_Windows_x64_MSVC_Checked = [
-    Using(.BaseConfigDefinition_Windows_x64_MSVC)
-    .ConfigName = 'Checked'
 
-    .CompilerOptions
-        + ' /DGX_CONFIG_CHECKED=1'
-        + ' /MD'                    // Use Release DLL Run-Time Library
-        + ' /O2'                    // Optimize for maximum speed
-        + ' /Ob1'                   // Enable Inline Function Expansion
-        + ' /Zo'                    // Enable Enhance Optimized Debugging
-    .LinkerOptions
-        + ' msvcprt.lib'
-]
+    //
+    // Compilers
+    //
 
-.ConfigDefinition_Windows_x64_MSVC_Profile = [
-    Using(.BaseConfigDefinition_Windows_x64_MSVC)
-    .ConfigName = 'Profile'
-
-    .CompilerOptions
-        + ' /DGX_CONFIG_PROFILE=1'
-        + ' /MD'                    // Use Release DLL Run-Time Library
-        + ' /O2'                    // Optimize for maximum speed
-        + ' /Ob2'                   // Enable Inline Function Expansion
-        + ' /Oi'                    // Generate Intrinsic Functions
-        + ' /Ot'                    // Favor Fast Code
-        + ' /Oy-'                   // Enable Frame-Pointer Omission
-        + ' /GS-'                   // Disable Buffer Security Check
-    .LinkerOptions
-        + ' msvcprt.lib'
-]
-
-.ConfigDefinition_Windows_x64_MSVC_Release = [
-    Using(.BaseConfigDefinition_Windows_x64_MSVC)
-    .ConfigName = 'Release'
-
-    .CompilerOptions
-        + ' /DGX_CONFIG_RELEASE=1'
-        + ' /MD'                    // Use Release DLL Run-Time Library
-        + ' /O2'                    // Optimize for maximum speed
-        + ' /Ob3'                   // Enable Inline Function Expansion
-        + ' /Oi'                    // Generate Intrinsic Functions
-        + ' /Ot'                    // Favor Fast Code
-        + ' /Oy-'                   // Enable Frame-Pointer Omission
-        + ' /GS-'                   // Disable Buffer Security Check
-    .LinkerOptions
-        + ' msvcprt.lib'
-]
-.ConfigDefinition_Windows_x64_MSVC = {
-    .ConfigDefinition_Windows_x64_MSVC_Debug
-    .ConfigDefinition_Windows_x64_MSVC_Checked
-    .ConfigDefinition_Windows_x64_MSVC_Profile
-    .ConfigDefinition_Windows_x64_MSVC_Release
-}
-.Global_ConfigDefinitionList + .ConfigDefinition_Windows_x64_MSVC
-
-.BaseConfigDefinition_Windows_ARMv8_MSVC = [
-    Using(.ConfigDefinition_Windows_MSVC)
-    Using(.ToolchainDefinition_Windows_ARMv8_MSVC)
+    .Compiler = 'Compiler-Windows-ARMv8-MSVC'
+    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
+    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/link.exe'
+    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/lib.exe'
 
     .CompilerOptions
         + ' /DGRAPHYTE_MATH_NO_INTRINSICS=1'
-        + ' /I"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/include"'
-        + ' /I"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/atlmfc/include"'
-        + ' /I"$VsToolsLocation$/VC/Auxiliary/VS/include"'
-        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\shared"'
-        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\ucrt"'
-        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\um"'
-        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\winrt"'
 
     .LinkerOptions
         + ' /MACHINE:ARM64'
         + ' /LIBPATH:"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/lib/arm64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\um\arm64"'
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\arm64"'
-
-    .TargetName = 'Windows-ARMv8'
 ]
 
-.ConfigDefinition_Windows_ARMv8_MSVC_Debug = [
-    Using(.BaseConfigDefinition_Windows_ARMv8_MSVC)
-    .ConfigName = 'Debug'
-
-    .CompilerOptions
-        + ' /DGX_CONFIG_DEBUG=1'
-        + ' /MDd'                   // Use Debug DLL Run-Time Library
-        + ' /Od'                    // Disable optimizations
-        + ' /Ob0'                   // Disable Inline Function Expansion
-        + ' /GS'                    // Enable Buffer Security Check
-        + ' /sdl'                   // Enable Additional Security Checks
-        + ' /RTCsu'                 // Enable Run-Time Error Checks
-    .LinkerOptions
-        + ' msvcprtd.lib'
-]
-
-.ConfigDefinition_Windows_ARMv8_MSVC_Checked = [
-    Using(.BaseConfigDefinition_Windows_ARMv8_MSVC)
-    .ConfigName = 'Checked'
-
-    .CompilerOptions
-        + ' /DGX_CONFIG_CHECKED=1'
-        + ' /MD'                    // Use Release DLL Run-Time Library
-        + ' /O2'                    // Optimize for maximum speed
-        + ' /Ob1'                   // Enable Inline Function Expansion
-        + ' /Zo'                    // Enable Enhance Optimized Debugging
-    .LinkerOptions
-        + ' msvcprt.lib'
-]
-
-.ConfigDefinition_Windows_ARMv8_MSVC_Profile = [
-    Using(.BaseConfigDefinition_Windows_ARMv8_MSVC)
-    .ConfigName = 'Profile'
-
-    .CompilerOptions
-        + ' /DGX_CONFIG_PROFILE=1'
-        + ' /MD'                    // Use Release DLL Run-Time Library
-        + ' /O2'                    // Optimize for maximum speed
-        + ' /Ob2'                   // Enable Inline Function Expansion
-        + ' /Oi'                    // Generate Intrinsic Functions
-        + ' /Ot'                    // Favor Fast Code
-        + ' /Oy-'                   // Enable Frame-Pointer Omission
-        + ' /GS-'                   // Disable Buffer Security Check
-    .LinkerOptions
-        + ' msvcprt.lib'
-]
-
-.ConfigDefinition_Windows_ARMv8_MSVC_Release = [
-    Using(.BaseConfigDefinition_Windows_ARMv8_MSVC)
-    .ConfigName = 'Release'
-
-    .CompilerOptions
-        + ' /DGX_CONFIG_RELEASE=1'
-        + ' /MD'                    // Use Release DLL Run-Time Library
-        + ' /O2'                    // Optimize for maximum speed
-        + ' /Ob3'                   // Enable Inline Function Expansion
-        + ' /Oi'                    // Generate Intrinsic Functions
-        + ' /Ot'                    // Favor Fast Code
-        + ' /Oy-'                   // Enable Frame-Pointer Omission
-        + ' /GS-'                   // Disable Buffer Security Check
-    .LinkerOptions
-        + ' msvcprt.lib'
-        + ' /LTCG'
-]
-.ConfigDefinition_Windows_ARMv8_MSVC = {
-    .ConfigDefinition_Windows_ARMv8_MSVC_Debug
-    .ConfigDefinition_Windows_ARMv8_MSVC_Checked
-    .ConfigDefinition_Windows_ARMv8_MSVC_Profile
-    .ConfigDefinition_Windows_ARMv8_MSVC_Release
-}
-.Global_ConfigDefinitionList + .ConfigDefinition_Windows_ARMv8_MSVC
-
-//--------------------------------------------------------------------------------------------------
-// Linux - x64 - Clang
-
-.BaseConfigDefinition_Linux_Clang = [
-    .ConfigPlatform = 'Linux'
-    .ConfigToolchain = 'Clang'
-
-    .CompilerOptions
-        = ' %1 -c -o %2'
-        + ' -std=c++2a'
-        + ' -fconcepts'
-
-    .LibrarianOptions = ''
-    .LinkerOptions = ''
-]
-
-.BaseConfigDefinition_Linux_x64_Clang = [
-    Using(.BaseConfigDefinition_Linux_Clang)
-]
-
-
-//--------------------------------------------------------------------------------------------------
-// Linux - x64 - GCC
-
-.BaseConfigDefinition_Linux_GCC = [
-    .ConfigPlatform = 'Linux'
-    .ConfigToolchain = 'GCC'
+.ToolchainDesc_GCC = [
+    .Toolchain_Name = 'GCC'
+    .Toolchain_Define_Prefix = '-D'
+    .Toolchain_Define_Suffix = ''
+    .Toolchain_Include_Prefix = '-I'
+    .Toolchain_Include_Suffix = ''
+    .Toolchain_Library_Prefix = '-L'
+    .Toolchain_Library_Suffix = ''
+    .Toolchain_Link_Prefix = '-l'
+    .Toolchain_Link_Suffix = ''
 
     .CompilerOptions
         = ' -o "%2" "%1" -c -g'
@@ -481,14 +341,16 @@ Compiler('Compiler-Linux-x64-GCC') {
         + ' -lc'
         + ' -lm'
         + ' -lstdc++'
-        + ' -pie'
+
     .LibrarianOptions
         = 'rcs "%2" "%1"'
 ]
 
-.BaseConfigDefinition_Linux_x64_GCC = [
-    Using(.ToolchainDefinition_Linux_x64_GCC)
-    Using(.BaseConfigDefinition_Linux_GCC)
+.ToolchainDesc_Linux_x64_GCC = [
+    Using(.PlatformDesc_Linux)
+    Using(.ToolchainDesc_GCC)
+
+    .Toolchain_Architecture = 'x64'
 
     .CompilerOptions
         + ' -mavx'
@@ -497,49 +359,64 @@ Compiler('Compiler-Linux-x64-GCC') {
         + ' -mssse3'
         + ' -msse2'
         + ' -m64'
-        + ' -fPIC'
+
+
+    //
+    // Compilers
+    //
+
+    .ToolchainName = 'Linux-x64-GCC'
+    .Compiler = 'Compiler-Linux-x64-GCC'
+    .Linker = '/usr/bin/g++'
+    .Librarian = '/usr/bin/ar'
+
+
+    //
+    // Configuration specific toolchain options
+    //
+
+    .Options_Config_Debug = [
+        .ConfigCompilerOptions = ' -DGX_CONFIG_DEBUG=1'
+        .ConfigLinkerOptions = ' -O0'
+    ]
+
+    .Options_Config_Checked = [
+        .ConfigCompilerOptions = ' -DGX_CONFIG_CHECKED=1'
+        .ConfigLinkerOptions = ' -O1'
+    ]
+
+    .Options_Config_Profile = [
+        .ConfigCompilerOptions = ' -DGX_CONFIG_PROFILE=1'
+        .ConfigLinkerOptions = ' -O2'
+    ]
+
+    .Options_Config_Release = [
+        .ConfigCompilerOptions = ' -DGX_CONFIG_RELEASE=1'
+        .ConfigLinkerOptions = ' -O3'
+    ]
+
+
+    //
+    // Kind specific toolchain options.
+    //
+
+    .Options_Kind_SharedLib = [
+        .KindCompilerOptions = ' -fpic'
+        .KindLinkerOptions = ' -shared -pie'
+    ]
+
+    .Options_Kind_StaticLib = [
+        .KindCompilerOptions = ' -fpic'
+        .KindLinkerOptions = ' -static'
+    ]
+
+    .Options_Kind_ConsoleApp = [
+        .KindCompilerOptions = ' -fpic'
+        .KindLinkerOptions = ' -pie'
+    ]
+
+    .Options_Kind_WindowedApp = [
+        .KindCompilerOptions = ' -fpic'
+        .KindLinkerOptions = ' -pie'
+    ]
 ]
-
-.ConfigDefinition_Linux_x64_GCC_Debug = [
-    Using(.BaseConfigDefinition_Linux_x64_GCC)
-    .ConfigName = 'Debug'
-
-    .CompilerOptions
-        + ' -DGX_CONFIG_DEBUG=1'
-        + ' -O0'
-]
-
-.ConfigDefinition_Linux_x64_GCC_Checked = [
-    Using(.BaseConfigDefinition_Linux_x64_GCC)
-    .ConfigName = 'Checked'
-
-    .CompilerOptions
-        + ' -DGX_CONFIG_CHECKED=1'
-        + ' -O1'
-]
-
-.ConfigDefinition_Linux_x64_GCC_Profile = [
-    Using(.BaseConfigDefinition_Linux_x64_GCC)
-    .ConfigName = 'Profile'
-
-    .CompilerOptions
-        + ' -DGX_CONFIG_PROFILE=1'
-        + ' -O2'
-]
-
-.ConfigDefinition_Linux_x64_GCC_Release = [
-    Using(.BaseConfigDefinition_Linux_x64_GCC)
-    .ConfigName = 'Release'
-
-    .CompilerOptions
-        + ' -DGX_CONFIG_RELEASE=1'
-        + ' -O3'
-]
-
-.ConfigDefinition_Linux_x64_GCC = {
-    .ConfigDefinition_Linux_x64_GCC_Debug
-    .ConfigDefinition_Linux_x64_GCC_Checked
-    .ConfigDefinition_Linux_x64_GCC_Profile
-    .ConfigDefinition_Linux_x64_GCC_Release
-}
-.Global_ConfigDefinitionList + .ConfigDefinition_Linux_x64_GCC

@@ -2,7 +2,7 @@
     .ProjectDefinition = [
         .ProjectName = 'com.graphyte.launch'
         .ProjectPath = 'engine/runtime/libs/launch'
-        .ProjectKind = 'Static'
+        .ProjectKind = 'StaticLib'
         .ProjectDefines = {
             'module_launch_EXPORTS=1'
         }
@@ -11,12 +11,12 @@
             'engine/runtime/libs/base/public'
             'engine/runtime/libs/graphics/public'
         }
-        .ProjectLibraries = {
+        .ProjectImports = {
             'sdk.fmt'
             'com.graphyte.base'
             'com.graphyte.graphics'
         }
     ]
 
-    ^Graphyte_EngineModuleList + .ProjectDefinition
+    ^Global_ProjectList + .ProjectDefinition
 }

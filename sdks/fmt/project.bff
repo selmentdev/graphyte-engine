@@ -16,5 +16,5 @@
         }
     ]
 
-    ^Global_ProjectSdkList + .ProjectDefinition
+    ^Global_SdkList + .ProjectDefinition
 }

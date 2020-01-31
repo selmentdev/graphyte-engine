@@ -2,8 +2,8 @@
     .ProjectDefinition = [
         .ProjectName = 'com.graphyte.graphics.glcore'
         .ProjectPath = 'engine/runtime/libs/graphics-opengl'
-        .ProjectKind = 'Shared'
-        .ProjectPlatforms = { 'Windows-x64', 'Linux-x64', 'Linux-ARMv8', 'Android-x64', 'Android-ARMv8' }
+        .ProjectKind = 'SharedLib'
+        .ProjectSelector = { 'Windows-x64', 'Linux-x64', 'Linux-ARMv8', 'Android-x64', 'Android-ARMv8' }
         .ProjectDefines = {
             'module_graphics_glcore_EXPORTS=1'
         }
@@ -13,24 +13,24 @@
             'engine/runtime/libs/base/public'
             'engine/runtime/libs/graphics/public'
         }
-        .ProjectLibraries = {
+        .ProjectImports = {
             'sdk.fmt'
             'sdk.glad'
             'com.graphyte.base'
             'com.graphyte.graphics'
         }
-        .Target_Windows = [
-            .Targets = { 'Windows-x64' }
-            .Libraries = {
+        .VariantDef_Linux_x64 = [
+            .VariantSelector = { 'Windows-x64' }
+            .VariantLinks = {
                 'opengl32.lib'
                 'gdi32.lib'
                 'user32.lib'
             }
         ]
-        .ProjectTargets = {
-            .Target_Windows
+        .ProjectVariants = {
+            .VariantDef_Linux_x64
         }
     ]
 
-    ^Graphyte_EngineModuleList + .ProjectDefinition
+    ^Global_ProjectList + .ProjectDefinition
 }

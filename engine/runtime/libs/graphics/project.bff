@@ -2,7 +2,7 @@
     .ProjectDefinition = [
         .ProjectName = 'com.graphyte.graphics'
         .ProjectPath = 'engine/runtime/libs/graphics'
-        .ProjectKind = 'Shared'
+        .ProjectKind = 'SharedLib'
         .ProjectDefines = {
             'module_graphics_EXPORTS=1'
         }
@@ -10,11 +10,11 @@
             'sdks/fmt/include'
             'engine/runtime/libs/base/public'
         }
-        .ProjectLibraries = {
+        .ProjectImports = {
             'sdk.fmt'
             'com.graphyte.base'
         }
     ]
 
-    ^Graphyte_EngineModuleList + .ProjectDefinition
+    ^Global_ProjectList + .ProjectDefinition
 }

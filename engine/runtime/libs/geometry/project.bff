@@ -17,5 +17,5 @@
         }
     ]
 
-    ^Graphyte_EngineModuleList + .ProjectDefinition
+    ^Global_ProjectList + .ProjectDefinition
 }

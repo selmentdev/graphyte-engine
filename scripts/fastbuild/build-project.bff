@@ -1,60 +1,198 @@
-// Consider:
-// - project kind specifies that we have windowed-app / console-app / static-lib / shared-lib
-// - project type specifies where to put generated project in solution / list of aliases
-//
-// This may require to use another approach for toolchains:
-// - enables per triplet and per config alias generation in easier way
-// - actual ConfigDefinition still may be generated in old way
-// - adding new triplet / config is checked "everywhere" just by checking variable existence
+// -------------------------------------------------------------------------------------------------
+// This script defines targets for building game/engine modules and plugins
+
 {
-    .ValidConfigs = {
-        'Debug'
-        'Checked'
-        'Profile'
-        'Release'
-    }
+    .AliasesList = []
 
-    .ValidToolchainTriplets = {
-        'Windows_x64_MSVC'
-        'Windows_ARMv8_MSVC'
-        //'Linux_x64_Clang'
-        //'Linux_ARMv8_Clang'
-        'Linux_x64_GCC'
-        //'Android_x64_Clang'
-        //'Android_ARMv8_Clang'
-    }
+    ForEach(.CurrentProject in .Global_ProjectList) {
 
-    ForEach(.CurrentTriplet in .ValidToolchainTriplets)
-    {
-        ForEach(.CurrentConfig in .ValidConfigs)
+        // Default values for project settings.
+        .ProjectSelector = { 'All' }
+        .ProjectIncludes = {}
+        .ProjectImports = {}
+        .ProjectLinks = {}
+        .ProjectDefines = {}
+        .ProjectVariants = {}
+
+        // Use values from current project
+        Using(.CurrentProject)
+
+        // Define unity build for this projects
         {
-            //Using(.'Toolchain_$CurrentTriplet$_$CurrentConfig$')
-            Print('ConfigDefinition_$CurrentTriplet$_$CurrentConfig$')
+            .UnityInputPath = '$ProjectPath$'
+            .UnityInputPattern = { '*.cxx' }
+            .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+            .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
+
+            Unity('$ProjectName$-Unity-Windows') {
+                .UnityInputExcludePattern = {
+                    '*Linux.*.cxx'
+                    '*Posix.*.cxx'
+                    '*Android.*.cxx'
+                }
+            }
+
+            Unity('$ProjectName$-Unity-Linux') {
+                .UnityInputExcludePattern = {
+                    '*Windows.*.cxx'
+                    '*Android.*.cxx'
+                }
+            }
+
+            Unity('$ProjectName$-Unity-Android') {
+                .UnityInputExcludePattern = {
+                    '*Windows.*.cxx'
+                    '*Linux.*.cxx'
+                }
+            }
+        }
+
+        // Define targets for all projects
+        ForEach(.CurrentTriplet in .ValidToolchainTriplets) {
+
+            // Import toolchain definition
+            Using(.'ToolchainDesc_$CurrentTriplet$')
+
+            ForEach(.CurrentConfig in .ValidConfigurations) {
+
+                // Create selector used to disable project from targets list
+                .LocalVariantSelector = {
+                    'All'
+                    '$Platform_Name$'
+                    '$Platform_Name$-$Toolchain_Architecture$'
+                    '$Platform_Name$-$Toolchain_Architecture$-$CurrentConfig$'
+                    '$Platform_Name$-$CurrentConfig$'
+                }
+
+                // Check if project can be compiled
+                If (.LocalVariantSelector in .ProjectSelector) {
+                    .CompilerOptions = .CompilerOptions
+                    .LinkerOptions = .LinkerOptions
+                    .ProjectIncludes = .ProjectIncludes
+                    .ProjectImports = .ProjectImports
+                    .ProjectLinks = .ProjectLinks
+                    .ProjectDefines = .ProjectDefines
+
+                    // Update optional variant specializations
+                    ForEach(.CurrentVariant in .ProjectVariants) {
+
+                        // Optional variant configuration values
+                        .VariantDefines = {}
+                        .VariantIncludes = {}
+                        .VariantLinks = {}
+                        .VariantImports = {}
+
+                        // Specialize variant
+                        Using(.CurrentVariant)
+
+                        // Update configuration project variables
+                        If (.LocalVariantSelector in .VariantSelector) {
+                            ^ProjectIncludes + .VariantIncludes
+                            ^ProjectImports + .VariantImports
+                            ^ProjectLinks + .VariantLinks
+                            ^ProjectDefines + .VariantDefines
+                        }
+                    }
+
+                    // Add kind specific flags
+                    {
+                        Using(.'Options_Kind_$ProjectKind$')
+                        ^CompilerOptions + .KindCompilerOptions
+                        ^LinkerOptions   + .KindLinkerOptions
+                    }
+
+                    // Add config specific flags
+                    Using(.'Options_Config_$CurrentConfig$')
+                    {
+                        ^CompilerOptions + .ConfigCompilerOptions
+                        ^LinkerOptions   + .ConfigLinkerOptions
+                    }
+
+                    .LocalOutputName = .'Platform_$ProjectKind$_Prefix' + .ProjectName + .'Platform_$ProjectKind$_Suffix'
+
+                    .LocalTargetPrefix = '$Platform_Name$-$Toolchain_Architecture$-$Toolchain_Name$-$CurrentConfig$'
+                    .LocalTargetName = '$ProjectName$-$LocalTargetPrefix$'
+
+                    .LocalAliasVarName = '$Platform_Name$_$Toolchain_Architecture$_$Toolchain_Name$_$CurrentConfig$'
+
+                    // Specialize compiler settings
+                    .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$'
+
+                    .CompilerOptions
+                        + ' $Toolchain_Include_Prefix$$ProjectPath$/private$Toolchain_Include_Suffix$'
+                        + ' $Toolchain_Include_Prefix$$ProjectPath$/public$Toolchain_Include_Suffix$'
+                        + ' $Toolchain_Include_Prefix$engine/include$Toolchain_Include_Suffix$'
+
+                    ForEach(.CurrentInclude in .ProjectIncludes) {
+                        ^CompilerOptions + ' $Toolchain_Include_Prefix$$CurrentInclude$$Toolchain_Include_Suffix$'
+                        Print('$CurrentInclude$')
+                    }
+
+                    ForEach(.CurrentDefine in .ProjectDefines) {
+                        ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
+                    }
+
+                    ObjectList('Lib-$LocalTargetName$') {
+                        .CompilerInputUnity = '$ProjectName$-Unity-$Platform_Name$'
+                    }
+
+                    If (.ProjectKind == .ProjectKind_SharedLib) {
+
+                        .Libraries = {
+                            'Lib-$LocalTargetName$'
+                        }
+
+                        ForEach(.CurrentImport in .ProjectImports) {
+                            ^Libraries + '$CurrentImport$-$LocalTargetPrefix$'
+                        }
+
+                        ForEach(.CurrentLink in .ProjectLinks) {
+                            ^LinkerOptions + ' $Toolchain_Link_Prefix$$CurrentLink$$Toolchain_Link_Suffix$'
+                        }
+
+                        Print(.Libraries)
+                        DLL('$LocalTargetName$') {
+                            .LibrarianAdditionalInputs = 'Lib-$LocalTargetName$'
+                            .LinkerOutput = '$OutputBase$/bin/$LocalTargetPrefix$/$LocalOutputName$'
+                        }
+                    }
+
+                    If (.ProjectKind == .ProjectKind_StaticLib) {
+                        Library('$LocalTargetName$') {
+                            .LibrarianOutput = '$OutputBase$/lib/$LocalTargetPrefix$/$LocalOutputName$'
+                        }
+                    }
+
+                    .CurrentAlias = [
+                        .'TargetList_$LocalAliasVarName$' = { '$LocalTargetName$' }
+                    ]
+
+                    ^AliasesList + .CurrentAlias
+                }
+            }
         }
     }
-}
 
-{
-    .LocalProjects
-        = .Graphyte_EngineModuleList
-        + .Graphyte_EnginePluginList
-        + .Graphyte_EngineTestList
-        + .Graphyte_EngineAppList
-        + .Graphyte_GameModuleList
-        + .Graphyte_GamePluginList
-        + .Graphyte_GameTestList
-        + .Graphyte_GameAppList
+    {
+        Using(.AliasesList)
 
-    //
-    // Applied for all projects
-    //
-    ForEach(.CurrentProject in .LocalProjects) {
-        .ProjectObjectLists = {}
-        .ProjectPlatforms = .ValidTargets
-        .ProjectDefines = {}
-        .ProjectIncludes = {}
-        .ProjectLibraries = {}
-        .ProjectTargets = {}
-        Using(.CurrentProject)
+        .AllTargets = {}
+
+        ForEach(.CurrentTriplet in .ValidToolchainTriplets) {
+            .TripletTargets = {}
+            ForEach(.CurrentConfig in .ValidConfigurations) {
+                ^TripletTargets + .'TargetList_$CurrentTriplet$_$CurrentConfig$'
+            }
+
+            Alias('All-$CurrentTriplet$') {
+                .Targets = .TripletTargets
+            }
+
+            ^AllTargets + 'All-$CurrentTriplet$'
+        }
+
+        Alias('All-Modules') {
+            .Targets = .AllTargets
+        }
     }
 }
