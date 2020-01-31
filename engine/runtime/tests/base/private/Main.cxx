@@ -27,3 +27,5 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
 
     return Catch::Session().run();
 }
+
+#undef CATCH_CONFIG_RUNNER

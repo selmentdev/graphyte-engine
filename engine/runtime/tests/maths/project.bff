@@ -5,7 +5,7 @@
         .ProjectKind = 'ConsoleApp'
         .ProjectType = 'EngineTest'
 
-        .ProjectImport = {
+        .ProjectImports = {
             'sdk.fmt'
             'com.graphyte.base'
             'com.graphyte.launch'
