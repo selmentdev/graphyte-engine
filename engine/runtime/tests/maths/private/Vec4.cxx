@@ -590,8 +590,6 @@ TEST_CASE("Maths / Matrix / Rotations")
 
     SECTION("Rotation X")
     {
-        Vector3 const v = Make<Vector3>(1.0f, -2.0f, 3.0f);
-
         SECTION("angle = 0 deg")
         {
             Matrix const m = CreateRotationX(DegreesToRadians(0.0f));
@@ -820,8 +818,6 @@ TEST_CASE("Maths / Matrix / Rotations")
 
     SECTION("Rotation Y")
     {
-        Vector3 const v = Make<Vector3>(3.0f, 1.0f, -2.0);
-
         SECTION("angle = 0 deg")
         {
             Matrix const m = CreateRotationY(DegreesToRadians(0.0f));
@@ -1050,8 +1046,6 @@ TEST_CASE("Maths / Matrix / Rotations")
 
     SECTION("Rotation Z")
     {
-        Vector3 const v = Make<Vector3>(-2.0f, 3.0f, 1.0f);
-
         SECTION("angle = 0 deg")
         {
             Matrix const m = CreateRotationZ(DegreesToRadians(0.0f));

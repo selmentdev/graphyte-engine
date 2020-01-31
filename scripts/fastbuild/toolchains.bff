@@ -410,7 +410,7 @@ Compiler('Compiler-Linux-x64-GCC') {
 
     .Options_Kind_SharedLib = [
         .KindCompilerOptions = ' -fpic'
-        .KindLinkerOptions = ' -shared -pie'
+        .KindLinkerOptions = ' -shared'
     ]
 
     .Options_Kind_StaticLib = [
