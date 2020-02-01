@@ -7,8 +7,8 @@
 
 Graphyte::Application::ApplicationDescriptor GraphyteApp
 {
-    "Library GxBase unit test",
-    "module.base.unittest",
+    "Graphyte Engine Unit Test",
+    "unittest",
     "Graphyte",
     Graphyte::Application::ApplicationType::UnitTest,
     Graphyte::Version{ 1, 0, 0, 0 }

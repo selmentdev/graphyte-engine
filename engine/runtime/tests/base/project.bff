@@ -10,6 +10,7 @@
             'com.graphyte.base'
             'com.graphyte.graphics'
             'com.graphyte.launch'
+            'test.graphyte.executor'
         }
 
         .ProjectIncludes = {

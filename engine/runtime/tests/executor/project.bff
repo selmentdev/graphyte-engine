@@ -1,16 +1,15 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'test.graphyte.graphics'
-        .ProjectPath = 'engine/runtime/tests/graphics'
-        .ProjectKind = 'ConsoleApp'
+        .ProjectName = 'test.graphyte.executor'
+        .ProjectPath = 'engine/runtime/tests/executor'
+        .ProjectKind = 'StaticLib'
         .ProjectType = 'EngineTest'
 
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
-            'com.graphyte.launch'
-            'com.graphyte.graphics'
-            'test.graphyte.executor'
+            //'sdk.fmt'
+            //'com.graphyte.base'
+            //'com.graphyte.launch'
+            //'com.graphyte.graphics'
         }
 
         .ProjectIncludes = {
@@ -18,7 +17,6 @@
             'sdks/catch2/include'
             'engine/runtime/libs/base/public'
             'engine/runtime/libs/launch/public'
-            'engine/runtime/libs/graphics/public'
         }
 
         .VariantDef_Windows = [
@@ -30,7 +28,7 @@
         ]
 
         .ProjectVariants = {
-            .VariantDef_Windows
+            //.VariantDef_Windows
         }
     ]
 
