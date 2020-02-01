@@ -340,9 +340,11 @@ Compiler('Compiler-Linux-x64-GCC') {
         = ' -o "%2" "%1" -c -g'
         + ' -std=c++2a'
         + ' -fconcepts'
+        + ' -fdiagnostics-color=always'
 
     .CompilerOptionsC
         = ' -std=c11'
+        + ' -fdiagnostics-color=always'
 
     .LinkerOptions
         = '"%1" -o "%2"'
@@ -384,23 +386,23 @@ Compiler('Compiler-Linux-x64-GCC') {
     //
 
     .Options_Config_Debug = [
-        .ConfigCompilerOptions = ' -DGX_CONFIG_DEBUG=1'
-        .ConfigLinkerOptions = ' -O0'
+        .ConfigCompilerOptions = ' -DGX_CONFIG_DEBUG=1 -O0'
+        .ConfigLinkerOptions = ''
     ]
 
     .Options_Config_Checked = [
-        .ConfigCompilerOptions = ' -DGX_CONFIG_CHECKED=1'
-        .ConfigLinkerOptions = ' -O1'
+        .ConfigCompilerOptions = ' -DGX_CONFIG_CHECKED=1 -O1'
+        .ConfigLinkerOptions = ''
     ]
 
     .Options_Config_Profile = [
-        .ConfigCompilerOptions = ' -DGX_CONFIG_PROFILE=1'
-        .ConfigLinkerOptions = ' -O2'
+        .ConfigCompilerOptions = ' -DGX_CONFIG_PROFILE=1 -O2'
+        .ConfigLinkerOptions = ''
     ]
 
     .Options_Config_Release = [
-        .ConfigCompilerOptions = ' -DGX_CONFIG_RELEASE=1'
-        .ConfigLinkerOptions = ' -O3'
+        .ConfigCompilerOptions = ' -DGX_CONFIG_RELEASE=1 -O3'
+        .ConfigLinkerOptions = ''
     ]
 
 

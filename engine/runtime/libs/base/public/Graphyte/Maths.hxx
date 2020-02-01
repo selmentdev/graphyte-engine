@@ -8934,7 +8934,7 @@ namespace Graphyte::Maths
         Vector4 const clamp_length_0 = Select(select_length, max, control_max);
         Vector4 const clamp_length_1 = Select(clamp_length_0, min, control_min);
 
-        Vector4 const clamped = Multiply(normal, clamp_length_1);
+        Vector4 const clamped = Multiply(select_normal, clamp_length_1);
         Bool4 const control = CompareEqual(control_max, control_min);
         Vector4 const result = Select(clamped, As<Vector4>(v), control);
         return As<T>(result);

@@ -167,7 +167,6 @@
 
                     ForEach(.CurrentInclude in .ProjectIncludes) {
                         ^CompilerOptions + ' $Toolchain_Include_Prefix$$CurrentInclude$$Toolchain_Include_Suffix$'
-                        Print('$CurrentInclude$')
                     }
 
                     ForEach(.CurrentDefine in .ProjectDefines) {

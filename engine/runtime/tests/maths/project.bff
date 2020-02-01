@@ -8,14 +8,14 @@
         .ProjectImports = {
             'sdk.fmt'
             'com.graphyte.base'
+            'test.graphyte.executor'
             'com.graphyte.launch'
             'com.graphyte.graphics'
-            'test.graphyte.executor'
         }
 
         .ProjectIncludes = {
-            'sdks/fmt/include'
             'sdks/catch2/include'
+            'sdks/fmt/include'
             'engine/runtime/libs/base/public'
             'engine/runtime/libs/launch/public'
         }
@@ -28,8 +28,16 @@
             }
         ]
 
+        .VariantDef_Linux = [
+            .VariantSelector = { 'Linux' }
+            .VariantLinks = {
+                'pthread'
+            }
+        ]
+
         .ProjectVariants = {
             .VariantDef_Windows
+            .VariantDef_Linux
         }
     ]
 

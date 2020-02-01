@@ -37,12 +37,12 @@ TEST_CASE("File stream reading and writing")
             //
 
             const std::array<const std::byte, 32> original_buffer
-            {
+            {{
                 std::byte{ 11 }, std::byte{ 12 }, std::byte{ 13 }, std::byte{ 14 }, std::byte{ 15 }, std::byte{ 16 }, std::byte{ 17 }, std::byte{ 18 },
                 std::byte{ 21 }, std::byte{ 22 }, std::byte{ 23 }, std::byte{ 24 }, std::byte{ 25 }, std::byte{ 26 }, std::byte{ 27 }, std::byte{ 28 },
                 std::byte{ 31 }, std::byte{ 32 }, std::byte{ 33 }, std::byte{ 34 }, std::byte{ 35 }, std::byte{ 36 }, std::byte{ 37 }, std::byte{ 38 },
                 std::byte{ 41 }, std::byte{ 42 }, std::byte{ 43 }, std::byte{ 44 }, std::byte{ 45 }, std::byte{ 46 }, std::byte{ 47 }, std::byte{ 48 },
-            };
+            }};
             auto original_buffer_view = notstd::as_bytes(notstd::span<const std::byte>{ original_buffer });
 
             SECTION("Small files check")
