@@ -347,7 +347,7 @@ Compiler('Compiler-Linux-x64-GCC') {
         + ' -fdiagnostics-color=always'
 
     .LinkerOptions
-        = '"%1" -o "%2"'
+        = ' -Wl,--start-group "%1" -Wl,--end-group -o "%2"'
         + ' -lc'
         + ' -lm'
         + ' -lstdc++'
