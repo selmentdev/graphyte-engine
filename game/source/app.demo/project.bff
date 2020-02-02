@@ -96,7 +96,7 @@
             .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
             .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
 
-            .LocalDebuggerCommand = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'           // (optional) Executable to launch when debugging.
+            .LocalDebuggerCommand = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'
             .LocalDebuggerCommandArguments = ''
             .LocalDebuggerWorkingDirectory = ''
             .LocalDebuggerEnvironment = ''

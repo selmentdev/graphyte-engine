@@ -5,30 +5,11 @@
         .ProjectKind = 'StaticLib'
         .ProjectType = 'EngineTest'
 
-        .ProjectImports = {
-            //'sdk.fmt'
-            //'com.graphyte.base'
-            //'com.graphyte.launch'
-            //'com.graphyte.graphics'
-        }
-
         .ProjectIncludes = {
             'sdks/fmt/include'
             'sdks/catch2/include'
             'engine/runtime/libs/base/public'
             'engine/runtime/libs/launch/public'
-        }
-
-        .VariantDef_Windows = [
-            .VariantSelector = { 'Windows' }
-            .VariantLinks = {
-                'ntdll.lib'
-                'user32.lib'
-            }
-        ]
-
-        .ProjectVariants = {
-            //.VariantDef_Windows
         }
     ]
 
