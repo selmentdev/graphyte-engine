@@ -15,18 +15,13 @@ import argparse
 
 import scripts.bootstrap.windows as windows
 import scripts.bootstrap.msvc as msvc
+import scripts.bootstrap.dcvs as dcvs
 from scripts.bootstrap.version import Version
 
 assert(sys.version_info[0] == 3)
 
 #---------------------------------------------------------------------------------------------------
 # Internal commands
-
-def _bootstrap_execute_command(args):
-    try:
-        return subprocess.check_output(args).decode('utf-8').splitlines()
-    except:
-        return None
 
 def _bootstrap_emit_header(file):
     file.write('//--------------------------------------------------------------------------------------------------\n')
@@ -131,9 +126,9 @@ def generate_version_file():
         os_node : str = platform.node()
 
         # Gather source control info
-        build_commit : str = _bootstrap_execute_command(['git', 'log', '-1', '--format=%H'])
-        build_commit_short : str = _bootstrap_execute_command(['git', 'log', '-1', '--format=%h'])
-        build_branch : str = _bootstrap_execute_command(['git', 'rev-parse', '--abbrev-ref', 'HEAD'])
+        build_commit : str = dcvs.get_commit_id()
+        build_commit_short : str = dcvs.get_commit_id_short()
+        build_branch : str = dcvs.get_branch_name()
 
         date : datetime = datetime.datetime.now()
 
@@ -178,4 +173,6 @@ if __name__ == "__main__":
     generate_msvc_compiler_info()
     generate_android_ndk_compiler_info(args.ndk)
 
-    print(msvc.get_msvc_compiler_info())
+    print(dcvs.get_branch_name())
+    print(dcvs.get_commit_id())
+    print(dcvs.get_commit_id_short())
