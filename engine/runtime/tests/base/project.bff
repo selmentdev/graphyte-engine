@@ -8,9 +8,9 @@
         .ProjectImports = {
             'sdk.fmt'
             'com.graphyte.base'
-            'test.graphyte.executor'
             'com.graphyte.launch'
             'com.graphyte.graphics'
+            'test.graphyte.executor'
         }
 
         .ProjectIncludes = {
