@@ -1,10 +1,11 @@
 # Check where Windows SDK is installed
 import sys
+import os
 from scripts.bootstrap.version import Version
 
-_is_windows : bool = sys.platform == "win32"
+is_windows : bool = sys.platform.startswith("win32")
 
-if _is_windows:
+if is_windows:
     import winreg
 
 """
@@ -63,8 +64,8 @@ Finds location of specific Windows SDK.
 
 If version is none, it tries to find latest one instead
 """
-def find_windows_sdk(version : str = None):
-    if _is_windows:
+def find_windows_sdk(version : str = None) -> (str, str):
+    if is_windows:
         (location, kits) = _enumerate_all_windows_10_sdk_kits()
 
         if (version is None):
@@ -75,3 +76,26 @@ def find_windows_sdk(version : str = None):
         return (location, selected)
     else:
         return (None, None)
+
+
+"""
+Finds Vulkan SDK
+"""
+def find_vulkan_sdk() -> str:
+    sdk = os.getenv('VULKAN_SDK')
+
+    if (sdk is not None):
+        # SDK subdirectories to check
+        dir_include = os.path.join(sdk, 'Include')
+        dir_lib = os.path.join(sdk, 'Lib')
+        dir_bin = os.path.join(sdk, 'Bin')
+
+        if not os.path.exists(os.path.join(dir_include, 'vulkan/vulkan.h')):
+            # Header file is required
+            return None
+
+        # We are good :)
+        return sdk
+    else:
+        # :(
+        return None

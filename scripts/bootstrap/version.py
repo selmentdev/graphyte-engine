@@ -1,16 +1,17 @@
 import re
 
+_component_re = re.compile(r'(\d+ | \.)', re.VERBOSE)
+
 #---------------------------------------------------------------------------------------------------
 # Version class util
 class Version:
-    component_re = re.compile(r'(\d+ | \.)', re.VERBOSE)
 
     def __init__(self, s : str = None):
         if s:
             self.parse(s)
 
     def parse(self, s : str):
-        parts : List[str] = [x for x in filter(lambda x: x and x != '.', self.component_re.split(s))]
+        parts : List[str] = [x for x in filter(lambda x: x and x != '.', _component_re.split(s))]
 
         self.components : List[int] = []
 
@@ -18,6 +19,12 @@ class Version:
             self.components.append(int(parts[i]))
 
     def __str__(self):
+        return '.'.join([str(x) for x in self.components])
+
+    def __unicode__(self):
+        return '.'.join([str(x) for x in self.components])
+
+    def __repr__(self):
         return '.'.join([str(x) for x in self.components])
 
     def __eq__(self, other):
