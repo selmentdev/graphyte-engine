@@ -29,7 +29,7 @@
                 {
                     .Compiler = .ResCompiler
                     .CompilerInputFiles = { 'engine/resources/resources.rc' }
-                    .CompilerOutputPath = '$OutputBase$/obj/Graphyte-Res-$LocalTargetPrefix$'
+                    .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetPrefix$/Graphyte-Res'
                     .CompilerOutputExtension = '.res'
                     .CompilerOptions
                         = ' /nologo'
@@ -96,22 +96,30 @@
         ForEach(.CurrentTriplet in .Global_Triplets) {
             Using(.CurrentTriplet)
 
+            .TripletName = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+
             // Import toolchain definition
             Using(.'ToolchainDesc_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$')
 
             ForEach(.CurrentConfig in .ValidConfigurations) {
+                .TripletConfigName = '$TripletName$-$CurrentConfig$'
 
                 // Create selector used to disable project from targets list
                 .LocalVariantSelector = {
                     'All'
-                    '$Platform_Name$'
-                    '$Platform_Name$-$Toolchain_Architecture$'
-                    '$Platform_Name$-$Toolchain_Architecture$-$CurrentConfig$'
-                    '$Platform_Name$-$CurrentConfig$'
+                    '$Triplet_Platform$'
+                    '$Triplet_Platform$-$Triplet_Architecture$'
+                    '$Triplet_Platform$-$Triplet_Architecture$-$CurrentConfig$'
+                    '$Triplet_Platform$-$CurrentConfig$'
+                    '$Triplet_Platform$-$Triplet_Compiler$-$CurrentConfig$'
+                    '$TripletName$'
+                    '$TripletConfigName$'
+                    '$CurrentConfig$'
                 }
 
                 // Check if project can be compiled
                 If (.LocalVariantSelector in .ProjectSelector) {
+                    // Redefine variables in current scope
                     .CompilerOptions = .CompilerOptions
                     .LinkerOptions = .LinkerOptions
                     .ProjectIncludes = .ProjectIncludes
@@ -148,8 +156,8 @@
                     }
 
                     // Add config specific flags
-                    Using(.'Options_Config_$CurrentConfig$')
                     {
+                        Using(.'Options_Config_$CurrentConfig$')
                         ^CompilerOptions + .ConfigCompilerOptions
                         ^LinkerOptions   + .ConfigLinkerOptions
                     }
@@ -162,7 +170,7 @@
                     .LocalAliasVarName = '$Platform_Name$_$Toolchain_Architecture$_$Toolchain_Name$_$CurrentConfig$'
 
                     // Specialize compiler settings
-                    .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$'
+                    .CompilerOutputPath = '$OutputBase$/obj/$TripletConfigName$/$ProjectName$'
 
                     .CompilerOptions
                         + ' $Toolchain_Include_Prefix$$ProjectPath$/private$Toolchain_Include_Suffix$'
@@ -229,14 +237,6 @@
                         Executable('$LocalTargetName$') { }
                     }
 
-                    If (.ProjectType in .ValidProjectTypes_Tests) {
-                        Test('Test-$LocalTargetName$') {
-                            .TestExecutable = '$LocalTargetName$'
-                            .TestOutput = '$OutputBase$/tests/$Toolchain_Architecture$-$Toolchain_Name$-$CurrentConfig$/$ProjectName$.out.txt'
-                            .TestArguments = '--force-no-log'
-                        }
-                    }
-
                     .CurrentAlias = [
                         .'TargetList_$LocalAliasVarName$' = { '$LocalTargetName$' }
                     ]
@@ -258,16 +258,18 @@
         ForEach(.CurrentTriplet in .Global_Triplets) {
             Using(.CurrentTriplet)
 
+            .TripletName = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
             .TripletTargets = {}
+            
             ForEach(.CurrentConfig in .ValidConfigurations) {
                 ^TripletTargets + .'TargetList_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$_$CurrentConfig$'
             }
 
-            Alias('All-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
+            Alias('All-$TripletName$') {
                 .Targets = .TripletTargets
             }
 
-            ^AllTargets + 'All-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+            ^AllTargets + 'All-$TripletName$'
         }
 
         Alias('All-Modules') {
@@ -278,16 +280,23 @@
     //
     // Generate aliases for all tests.
     //
+    // Aliases:
+    //
+    //  Tests-{Platform}-{Architecture}-{Compiler}
+    //      Tests-{Platform}-{Architecture}-{Compiler}-{Config}
+    //          Test-{Project}-{Platform}-{Architecture}-{Compiler}-{Config}
+    //
     {
-        // Alias format:
-        // Tests-{Platform}-{Architecture}-{Compiler}-{Config}
         ForEach(.CurrentTriplet in .Global_Triplets) {
             Using(.CurrentTriplet)
             .TripletAliases = {}
 
+            .TripletName = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+
             ForEach(.CurrentConfig in .ValidConfigurations) {
                 .Aliases = {}
-                .LocalTargetPrefix = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+
+                .TripletConfigName = '$TripletName$-$CurrentConfig$'
 
                 ForEach(.CurrentProject in .Global_ProjectList) {
                     .ProjectType = {}
@@ -295,19 +304,26 @@
 
                     If (.ProjectType in .ValidProjectTypes_Tests) {
 
-                        .LocalTargetName = '$ProjectName$-$LocalTargetPrefix$'
+                        .LocalTargetName = '$ProjectName$-$TripletConfigName$'
+
                         ^Aliases + 'Test-$LocalTargetName$'
+
+                        Test('Test-$LocalTargetName$') {
+                            .TestExecutable = '$LocalTargetName$'
+                            .TestOutput = '$OutputBase$/tests/$TripletConfigName$/$ProjectName$.out.txt'
+                            .TestArguments = '--force-no-log'
+                        }
                     }
                 }
 
-                Alias('Tests-$LocalTargetPrefix$') {
+                Alias('Tests-$TripletConfigName$') {
                     .Targets = .Aliases
                 }
 
-                ^TripletAliases + 'Tests-$LocalTargetPrefix$'
+                ^TripletAliases + 'Tests-$TripletConfigName$'
             }
 
-            Alias('Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
+            Alias('Tests-$TripletName$') {
                 .Targets = .TripletAliases
             }
         }
