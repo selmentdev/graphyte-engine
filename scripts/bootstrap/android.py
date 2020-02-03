@@ -89,12 +89,14 @@ def _find_system_libs() -> Dict[str, str]:
 ANDROID_NDK_LIBS = _find_system_libs()
 
 def find_system_libs(api_level : int = None) -> List[str]:
-    libs = ANDROID_NDK_LIBS
+    if ANDROID_NDK_LIBS is not None:
+        libs = ANDROID_NDK_LIBS
 
-    if (api_level is not None):
-        libs = { k:v for (k, v) in libs.items() if v <= api_level }
+        if (api_level is not None):
+            libs = { k:v for (k, v) in libs.items() if v <= api_level }
 
-    return libs
+        return libs
+    return None
 
 def find_compiler_paths(api_level : int, abi : str) -> Dict[str, str]:
     if ANDROID_NDK_PATH is not None:
@@ -130,8 +132,9 @@ def is_supported(api_level : int) -> bool:
     return ANDROID_MIN_API_LEVEL <= api_level and api_level <= ANDROID_MAX_API_LEVEL
 
 def is_vulkan_supported(api_level : int) -> bool:
-    level = ANDROID_NDK_LIBS.get('libvulkan.so', None)
+    if ANDROID_NDK_LIBS is not None:
+        level = ANDROID_NDK_LIBS.get('libvulkan.so', None)
 
-    if level is not None:
-        return api_level >= level
+        if level is not None:
+            return api_level >= level
     return False
