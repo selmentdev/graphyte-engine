@@ -1,12 +1,9 @@
 // -------------------------------------------------------------------------------------------------
 // This script defines targets for building game/engine modules and plugins
 
-.SolutionConfigs = {}
-
 // -------------------------------------------------------------------------------------------------
 // Define windows resources and solution configs for Visual Studio
 {
-
     ForEach(.CurrentTriplet in .Global_Triplets) {
         Using(.CurrentTriplet)
 
@@ -15,14 +12,6 @@
 
         If (.Platform_Windows == .Platform_Name) {
             ForEach(.CurrentConfig in .ValidConfigurations) {
-                .ProjectConfig = [
-                    .Config = '$CurrentConfig$'
-                    .Platform = '$Toolchain_VisualStudio_Architecture$'
-                    .SolutionConfig = '$CurrentConfig$'
-                    .SolutionPlatform = .CurrentTriplet
-                ]
-                ^SolutionConfigs + .ProjectConfig
-
                 .LocalTargetPrefix = '$Platform_Name$-$Toolchain_Architecture$-$Toolchain_Name$-$CurrentConfig$'
 
                 ObjectList('Graphyte-Res-$LocalTargetPrefix$')
@@ -43,33 +32,29 @@
     }
 }
 
+
+// -------------------------------------------------------------------------------------------------
+// Define targets for all available projects
 {
-    .AliasesList = []
-
+    .AliasTargetList = []
     ForEach(.CurrentProject in .Global_ProjectList) {
-
-        .VisualStudioProjects = {}
-
-        // Default values for project settings.
+        // Specialize scope using current project definition
         .ProjectSelector = { 'All' }
-        .ProjectType = {}
         .ProjectIncludes = {}
         .ProjectImports = {}
         .ProjectLinks = {}
         .ProjectDefines = {}
         .ProjectVariants = {}
-
-        // Use values from current project
         Using(.CurrentProject)
 
-        // Define unity build for this projects
+        // Define unity files for each known platform
         {
             .UnityInputPath = '$ProjectPath$'
             .UnityInputPattern = { '*.cxx' }
             .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
             .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
 
-            Unity('$ProjectName$-Unity-Windows') {
+            Unity('Unity-Windows-$ProjectName$') {
                 .UnityInputExcludePattern = {
                     '*Linux.*.cxx'
                     '*Posix.*.cxx'
@@ -77,14 +62,14 @@
                 }
             }
 
-            Unity('$ProjectName$-Unity-Linux') {
+            Unity('Unity-Linux-$ProjectName$') {
                 .UnityInputExcludePattern = {
                     '*Windows.*.cxx'
                     '*Android.*.cxx'
                 }
             }
 
-            Unity('$ProjectName$-Unity-Android') {
+            Unity('Unity-Android-$ProjectName$') {
                 .UnityInputExcludePattern = {
                     '*Windows.*.cxx'
                     '*Linux.*.cxx'
@@ -92,63 +77,43 @@
             }
         }
 
-        // Define targets for all projects
+        // Apply for all triplets
         ForEach(.CurrentTriplet in .Global_Triplets) {
+            // Use triplet and associated toolchain definition
             Using(.CurrentTriplet)
-
-            .TripletName = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
-
-            // Import toolchain definition
             Using(.'ToolchainDesc_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$')
 
-            ForEach(.CurrentConfig in .ValidConfigurations) {
-                .TripletConfigName = '$TripletName$-$CurrentConfig$'
+            // Make selector for this triplet
+            .LocalProjectSelector = {
+                'All'
+                '$Triplet_Platform$'
+                '$Triplet_Platform$-$Triplet_Architecture$'
+                '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+            }
 
-                // Create selector used to disable project from targets list
-                .LocalVariantSelector = {
-                    'All'
-                    '$Triplet_Platform$'
-                    '$Triplet_Platform$-$Triplet_Architecture$'
-                    '$Triplet_Platform$-$Triplet_Architecture$-$CurrentConfig$'
-                    '$Triplet_Platform$-$CurrentConfig$'
-                    '$Triplet_Platform$-$Triplet_Compiler$-$CurrentConfig$'
-                    '$TripletName$'
-                    '$TripletConfigName$'
-                    '$CurrentConfig$'
-                }
+            If (.LocalProjectSelector in .ProjectSelector) {
+                // Platform specific binary name
+                .LocalOutputName = .'Platform_$ProjectKind$_Prefix' + .ProjectName + .'Platform_$ProjectKind$_Suffix'
 
-                // Check if project can be compiled
-                If (.LocalVariantSelector in .ProjectSelector) {
+                // Apply common project includes; project was selected for built
+                .CompilerOptions
+                    + ' $Toolchain_Include_Prefix$$ProjectPath$/private$Toolchain_Include_Suffix$'
+                    + ' $Toolchain_Include_Prefix$$ProjectPath$/public$Toolchain_Include_Suffix$'
+                    + ' $Toolchain_Include_Prefix$engine/include$Toolchain_Include_Suffix$'
+
+                // Iterate over all configs available
+                ForEach(.CurrentConfig in .ValidConfigurations) {
+
                     // Redefine variables in current scope
                     .CompilerOptions = .CompilerOptions
                     .LinkerOptions = .LinkerOptions
-                    .ProjectIncludes = .ProjectIncludes
-                    .ProjectImports = .ProjectImports
-                    .ProjectLinks = .ProjectLinks
-                    .ProjectDefines = .ProjectDefines
 
-                    // Update optional variant specializations
-                    ForEach(.CurrentVariant in .ProjectVariants) {
+                    .LocalIncludes = .ProjectIncludes
+                    .LocalImports = .ProjectImports
+                    .LocalLinks = .ProjectLinks
+                    .LocalDefines = .ProjectDefines
 
-                        // Optional variant configuration values
-                        .VariantDefines = {}
-                        .VariantIncludes = {}
-                        .VariantLinks = {}
-                        .VariantImports = {}
-
-                        // Specialize variant
-                        Using(.CurrentVariant)
-
-                        // Update configuration project variables
-                        If (.LocalVariantSelector in .VariantSelector) {
-                            ^ProjectIncludes + .VariantIncludes
-                            ^ProjectImports + .VariantImports
-                            ^ProjectLinks + .VariantLinks
-                            ^ProjectDefines + .VariantDefines
-                        }
-                    }
-
-                    // Add kind specific flags
+                    // Add project kind specific flags
                     {
                         Using(.'Options_Kind_$ProjectKind$')
                         ^CompilerOptions + .KindCompilerOptions
@@ -162,29 +127,50 @@
                         ^LinkerOptions   + .ConfigLinkerOptions
                     }
 
-                    .LocalOutputName = .'Platform_$ProjectKind$_Prefix' + .ProjectName + .'Platform_$ProjectKind$_Suffix'
-
-                    .LocalTargetPrefix = '$Platform_Name$-$Toolchain_Architecture$-$Toolchain_Name$-$CurrentConfig$'
-                    .LocalTargetName = '$ProjectName$-$LocalTargetPrefix$'
-
-                    .LocalAliasVarName = '$Platform_Name$_$Toolchain_Architecture$_$Toolchain_Name$_$CurrentConfig$'
-
-                    // Specialize compiler settings
-                    .CompilerOutputPath = '$OutputBase$/obj/$TripletConfigName$/$ProjectName$'
-
-                    .CompilerOptions
-                        + ' $Toolchain_Include_Prefix$$ProjectPath$/private$Toolchain_Include_Suffix$'
-                        + ' $Toolchain_Include_Prefix$$ProjectPath$/public$Toolchain_Include_Suffix$'
-                        + ' $Toolchain_Include_Prefix$engine/include$Toolchain_Include_Suffix$'
-
-                    ForEach(.CurrentInclude in .ProjectIncludes) {
-                        ^CompilerOptions + ' $Toolchain_Include_Prefix$$CurrentInclude$$Toolchain_Include_Suffix$'
+                    // Define valid variant selectors for this configuration
+                    .LocalVariantSelector = {
+                        'All'
+                        '$Triplet_Platform$'
+                        '$Triplet_Platform$-$Triplet_Architecture$'
+                        '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+                        '$Triplet_Platform$-$CurrentConfig$'
+                        '$Triplet_Platform$-$Triplet_Architecture$-$CurrentConfig$'
+                        '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
                     }
 
-                    ForEach(.CurrentDefine in .ProjectDefines) {
+                    // Apply variants for this project
+                    ForEach(.CurrentVariant in .ProjectVariants) {
+                        // default variant values
+                        .VariantDefines = {}
+                        .VariantIncludes = {}
+                        .VariantLinks = {}
+                        .VariantImports = {}
+
+                        Using(.CurrentVariant)
+
+                        If (.LocalVariantSelector in .VariantSelector) {
+                            // Apply variant specialization
+                            ^LocalIncludes + .VariantIncludes
+                            ^LocalImports + .VariantImports
+                            ^LocalLinks + .VariantLinks
+                            ^LocalDefines + .VariantDefines
+                        }
+                    }
+
+                    // Specify path where compiler should output object files
+                    .CompilerOutputPath = '$OutputBase$/obj/$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$/$ProjectName$'
+
+                    // Apply all defines for this config
+                    ForEach(.CurrentDefine in .LocalDefines) {
                         ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
                     }
-
+                
+                    // Apply all includes for this config
+                    ForEach(.CurrentInclude in .LocalIncludes) {
+                        ^CompilerOptions + ' $Toolchain_Include_Prefix$$CurrentInclude$$Toolchain_Include_Suffix$'
+                    }
+                
+                    // Apply unit-test specific compiler options
                     If (.ProjectType in .ValidProjectTypes_Tests) {
                         Using(.'UnitTest_CompilerOptions_$CurrentConfig$')
 
@@ -197,142 +183,147 @@
                         }
                     }
 
-                    ObjectList('Lib-$LocalTargetName$') {
-                        .CompilerInputUnity = '$ProjectName$-Unity-$Platform_Name$'
+                    // Generate object list for specified unity files
+                    ObjectList('Lib-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
+                        .CompilerInputUnity = 'Unity-$Triplet_Platform$-$ProjectName$'
                     }
 
+                    // Specify librarian object files list
+                    .LibrarianAdditionalInputs = 'Lib-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+
+                    // Setup linker and librarian output paths
+                    .LinkerOutput = '$OutputBase$/bin/$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$/$LocalOutputName$'
+                    .LibrarianOutput = '$OutputBase$/bin/$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$/$LocalOutputName$'
+
+                    // Specify initial library with unity files
                     .Libraries = {
-                        'Lib-$LocalTargetName$'
+                        'Lib-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+                    }
+                
+                    // Import other libraries for this triplet
+                    ForEach(.CurrentImport in .LocalImports) {
+                        ^Libraries + '$CurrentImport$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
                     }
 
-                    If (.Platform_Windows == .Platform_Name) {
-                        ^Libraries + 'Graphyte-Res-$LocalTargetPrefix$'
-                    }
-
-                    ForEach(.CurrentImport in .ProjectImports) {
-                        ^Libraries + '$CurrentImport$-$LocalTargetPrefix$'
-                    }
-
-                    ForEach(.CurrentLink in .ProjectLinks) {
+                    // Import additional external libraries
+                    ForEach(.CurrentLink in .LocalLinks) {
                         ^LinkerOptions + ' $Toolchain_Link_Prefix$$CurrentLink$$Toolchain_Link_Suffix$'
                     }
+                
+                    // Add resources for windows platform
+                    If (.Triplet_Platform == .Platform_Windows) {
+                        ^Libraries + 'Graphyte-Res-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+                    }
 
-                    .LinkerOutput = '$OutputBase$/bin/$LocalTargetPrefix$/$LocalOutputName$'
-                    .LibrarianAdditionalInputs = 'Lib-$LocalTargetName$'
-                    .LibrarianOutput = '$OutputBase$/lib/$LocalTargetPrefix$/$LocalOutputName$'
+                    // Create actual targets:
 
                     If (.ProjectKind == .ProjectKind_SharedLib) {
-                        DLL('$LocalTargetName$') { }
+                        DLL('$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') { }
                     }
 
                     If (.ProjectKind == .ProjectKind_StaticLib) {
-                        Library('$LocalTargetName$') { }
+                        Library('$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') { }
                     }
 
                     If (.ProjectKind == .ProjectKind_ConsoleApp) {
-                        Executable('$LocalTargetName$') { }
+                        Executable('$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') { }
                     }
 
                     If (.ProjectKind == .ProjectKind_WindowedApp) {
-                        Executable('$LocalTargetName$') { }
+                        Executable('$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') { }
                     }
 
-                    .CurrentAlias = [
-                        .'TargetList_$LocalAliasVarName$' = { '$LocalTargetName$' }
-                    ]
-
-                    ^AliasesList + .CurrentAlias
-                }
-            }
-        }
-    }
-
-    //
-    // Aliases for engine projects
-    //
-    {
-        Using(.AliasesList)
-
-        .AllTargets = {}
-
-        ForEach(.CurrentTriplet in .Global_Triplets) {
-            Using(.CurrentTriplet)
-
-            .TripletName = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
-            .TripletTargets = {}
-            
-            ForEach(.CurrentConfig in .ValidConfigurations) {
-                ^TripletTargets + .'TargetList_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$_$CurrentConfig$'
-            }
-
-            Alias('All-$TripletName$') {
-                .Targets = .TripletTargets
-            }
-
-            ^AllTargets + 'All-$TripletName$'
-        }
-
-        Alias('All-Modules') {
-            .Targets = .AllTargets
-        }
-    }
-
-    //
-    // Generate aliases for all tests.
-    //
-    // Aliases:
-    //
-    //  Tests-{Platform}-{Architecture}-{Compiler}
-    //      Tests-{Platform}-{Architecture}-{Compiler}-{Config}
-    //          Test-{Project}-{Platform}-{Architecture}-{Compiler}-{Config}
-    //
-    {
-        ForEach(.CurrentTriplet in .Global_Triplets) {
-            Using(.CurrentTriplet)
-            .TripletAliases = {}
-
-            .TripletName = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
-
-            ForEach(.CurrentConfig in .ValidConfigurations) {
-                .Aliases = {}
-
-                .TripletConfigName = '$TripletName$-$CurrentConfig$'
-
-                ForEach(.CurrentProject in .Global_ProjectList) {
-                    .ProjectType = {}
-                    Using(.CurrentProject)
-
+                    // If this executable was unit-test, define additional target
                     If (.ProjectType in .ValidProjectTypes_Tests) {
-
-                        .LocalTargetName = '$ProjectName$-$TripletConfigName$'
-
-                        ^Aliases + 'Test-$LocalTargetName$'
-
-                        Test('Test-$LocalTargetName$') {
-                            .TestExecutable = '$LocalTargetName$'
-                            .TestOutput = '$OutputBase$/tests/$TripletConfigName$/$ProjectName$.out.txt'
+                        Test('Test-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
+                            .TestExecutable = '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+                            .TestOutput = '$OutputBase$/tests/$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$/$ProjectName$.out.txt'
                             .TestArguments = '--force-no-log'
                         }
                     }
                 }
 
-                Alias('Tests-$TripletConfigName$') {
-                    .Targets = .Aliases
-                }
+                // Add target project for this specific triplet for aliases
+                .TargetEntry = [
+                    .'TripletEntry_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$' = [
+                        .'TargetsList_$ProjectType$' = {
+                            '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+                        }
+                    ]
+                ]
 
-                ^TripletAliases + 'Tests-$TripletConfigName$'
-            }
-
-            Alias('Tests-$TripletName$') {
-                .Targets = .TripletAliases
+                ^AliasTargetList + .TargetEntry
             }
         }
     }
 
-#if __WINDOWS__
-    //
-    // Visual Studio projects
-    //
+    {
+        // Use matrix of targets in order to use aliases
+        Using(.AliasTargetList)
+        ForEach(.CurrentTriplet in .Global_Triplets) {
+            Using(.CurrentTriplet)
+            Using(.'TripletEntry_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$')
 
-#endif
+            // Predefined list of config-specific targets for this triplet
+            .ListEngineAliases = {}
+            .ListTestAliases = {}
+            .ListRunTestAliases = {}
+
+            ForEach(.CurrentConfig in .ValidConfigurations) {
+                {
+                    // Generate engine modules and plugins targets for this config
+                    .ConfigTargets = {}
+
+                    ForEach(.Item in .TargetsList_EngineModule) {
+                        ^ConfigTargets + '$Item$-$CurrentConfig$'
+                    }
+
+                    ForEach(.Item in .TargetsList_EnginePlugin) {
+                        ^ConfigTargets + '$Item$-$CurrentConfig$'
+                    }
+                    
+                    // Define new alias
+                    Alias('All-Engine-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
+                        .Targets = .ConfigTargets
+                    }
+                }
+
+                {
+                    // Generate tests targets for this config
+                    .ConfigTargets = {}
+                    .RunConfigTargets = {}
+
+                    ForEach(.Item in .TargetsList_EngineTest) {
+                        ^ConfigTargets + '$Item$-$CurrentConfig$'
+                        ^RunConfigTargets + 'Test-$Item$-$CurrentConfig$'
+                    }
+                    
+                    // Build all targets
+                    Alias('All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
+                        .Targets = .ConfigTargets
+                    }
+
+                    // Run all targets
+                    Alias('Run-All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
+                        .Targets = .RunConfigTargets
+                    }
+                }
+
+                ^ListEngineAliases + 'All-Engine-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+                ^ListTestAliases + 'All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+                ^ListRunTestAliases + 'Run-All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+            }
+
+            // Global list of all aliases
+            Alias('All-Engine-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
+                .Targets = .ListEngineAliases
+            }
+            Alias('All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
+                .Targets = .ListTestAliases + 'All-Engine-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+            }
+            Alias('Run-All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
+                .Targets = .ListRunTestAliases + 'All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+            }
+        }
+    }
 }

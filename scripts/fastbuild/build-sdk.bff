@@ -121,7 +121,7 @@
 
                     If (.ProjectKind == .ProjectKind_StaticLib) {
                         Library('$LocalTargetName$') {
-                            .LibrarianOutput = '$OutputBase$/lib/$LocalTargetPrefix$/$LocalOutputName$'
+                            .LibrarianOutput = '$OutputBase$/bin/$LocalTargetPrefix$/$LocalOutputName$'
                         }
                     }
 

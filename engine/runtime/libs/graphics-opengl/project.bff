@@ -3,6 +3,8 @@
         .ProjectName = 'com.graphyte.graphics.glcore'
         .ProjectPath = 'engine/runtime/libs/graphics-opengl'
         .ProjectKind = 'SharedLib'
+        .ProjectType = 'EnginePlugin'
+
         .ProjectSelector = { 'Windows-x64', 'Linux-x64', 'Linux-ARMv8', 'Android-x64', 'Android-ARMv8' }
         .ProjectDefines = {
             'module_graphics_glcore_EXPORTS=1'
