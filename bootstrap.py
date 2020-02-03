@@ -136,7 +136,6 @@ if __name__ == "__main__":
     print(dcvs.get_commit_id_short())
     print(windows.find_vulkan_sdk())
     print(windows.find_windows_sdk())
-    print(sys.getwindowsversion())
     print(android.ANDROID_MIN_API_LEVEL)
     print(android.ANDROID_MAX_API_LEVEL)
     print(android.ANDROID_NDK_ABIS)
