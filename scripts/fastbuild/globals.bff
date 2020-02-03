@@ -61,6 +61,20 @@
     .ProjectKind_WindowedApp
 }
 
+.ProjectType_EngineModule = 'EngineModule'
+.ProjectType_EnginePlugin = 'EnginePlugin'
+.ProjectType_EngineApp = 'EngineApp'
+.ProjectType_EngineTest = 'EngineTest'
+.ProjectType_GameModule = 'GameModule'
+.ProjectType_GamePlugin = 'GamePlugin'
+.ProjectType_GameApp = 'GameApp'
+.ProjectType_GameTest = 'GameTest'
+
+.ValidProjectTypes_Tests = {
+    .ProjectType_GameTest
+    .ProjectType_EngineTest
+}
+
 //--------------------------------------------------------------------------------------------------
 // Architectures
 

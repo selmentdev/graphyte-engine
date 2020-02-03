@@ -3,7 +3,7 @@
         .ProjectName = 'test.graphyte.executor'
         .ProjectPath = 'engine/runtime/tests/executor'
         .ProjectKind = 'StaticLib'
-        .ProjectType = 'EngineTest'
+        .ProjectType = 'EngineModule'
 
         .ProjectIncludes = {
             'sdks/fmt/include'

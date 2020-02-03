@@ -267,6 +267,44 @@ Compiler('Compiler-Linux-x64-GCC') {
         .ConfigLinkerOptions
             = ' msvcprt.lib'
     ]
+
+    .UnitTest_CompilerOptions_Debug = [
+        .RemoveCompilerOptions = {}
+        .AddCompilerOptions = {}
+    ]
+
+    .UnitTest_CompilerOptions_Checked = [
+        .RemoveCompilerOptions = {
+            ' /Ob1'
+            ' /O2'
+        }
+        .AddCompilerOptions = {
+            ' /Ob0'
+            ' /Od'
+        }
+    ]
+
+    .UnitTest_CompilerOptions_Profile = [
+        .RemoveCompilerOptions = {
+            ' /Ob2'
+            ' /O2'
+        }
+        .AddCompilerOptions = {
+            ' /Ob0'
+            ' /Od'
+        }
+    ]
+
+    .UnitTest_CompilerOptions_Release = [
+        .RemoveCompilerOptions = {
+            ' /Ob3'
+            ' /O2'
+        }
+        .AddCompilerOptions = {
+            ' /Ob0'
+            ' /Od'
+        }
+    ]
 ]
 
 .ToolchainDesc_Windows_x64_MSVC = [
@@ -354,6 +392,26 @@ Compiler('Compiler-Linux-x64-GCC') {
 
     .LibrarianOptions
         = 'rcs "%2" "%1"'
+
+    .UnitTest_CompilerOptions_Debug = [
+        .RemoveCompilerOptions = {}
+        .AddCompilerOptions = {}
+    ]
+
+    .UnitTest_CompilerOptions_Checked = [
+        .RemoveCompilerOptions = {}
+        .AddCompilerOptions = {}
+    ]
+
+    .UnitTest_CompilerOptions_Profile = [
+        .RemoveCompilerOptions = {}
+        .AddCompilerOptions = {}
+    ]
+
+    .UnitTest_CompilerOptions_Release = [
+        .RemoveCompilerOptions = {}
+        .AddCompilerOptions = {}
+    ]
 ]
 
 .ToolchainDesc_Linux_x64_GCC = [

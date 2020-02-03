@@ -52,6 +52,7 @@
 
         // Default values for project settings.
         .ProjectSelector = { 'All' }
+        .ProjectType = {}
         .ProjectIncludes = {}
         .ProjectImports = {}
         .ProjectLinks = {}
@@ -176,6 +177,18 @@
                         ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
                     }
 
+                    If (.ProjectType in .ValidProjectTypes_Tests) {
+                        Using(.'UnitTest_CompilerOptions_$CurrentConfig$')
+
+                        ForEach(.Option in .RemoveCompilerOptions) {
+                            ^CompilerOptions - .Option
+                        }
+
+                        ForEach(.Option in .AddCompilerOptions) {
+                            ^CompilerOptions + .Option
+                        }
+                    }
+
                     ObjectList('Lib-$LocalTargetName$') {
                         .CompilerInputUnity = '$ProjectName$-Unity-$Platform_Name$'
                     }
@@ -216,6 +229,14 @@
                         Executable('$LocalTargetName$') { }
                     }
 
+                    If (.ProjectType in .ValidProjectTypes_Tests) {
+                        Test('Test-$LocalTargetName$') {
+                            .TestExecutable = '$LocalTargetName$'
+                            .TestOutput = '$OutputBase$/tests/$Toolchain_Architecture$-$Toolchain_Name$-$CurrentConfig$/$ProjectName$.out.txt'
+                            .TestArguments = '--force-no-log'
+                        }
+                    }
+
                     .CurrentAlias = [
                         .'TargetList_$LocalAliasVarName$' = { '$LocalTargetName$' }
                     ]
@@ -254,6 +275,43 @@
         }
     }
 
+    //
+    // Generate aliases for all tests.
+    //
+    {
+        // Alias format:
+        // Tests-{Platform}-{Architecture}-{Compiler}-{Config}
+        ForEach(.CurrentTriplet in .Global_Triplets) {
+            Using(.CurrentTriplet)
+            .TripletAliases = {}
+
+            ForEach(.CurrentConfig in .ValidConfigurations) {
+                .Aliases = {}
+                .LocalTargetPrefix = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+
+                ForEach(.CurrentProject in .Global_ProjectList) {
+                    .ProjectType = {}
+                    Using(.CurrentProject)
+
+                    If (.ProjectType in .ValidProjectTypes_Tests) {
+
+                        .LocalTargetName = '$ProjectName$-$LocalTargetPrefix$'
+                        ^Aliases + 'Test-$LocalTargetName$'
+                    }
+                }
+
+                Alias('Tests-$LocalTargetPrefix$') {
+                    .Targets = .Aliases
+                }
+
+                ^TripletAliases + 'Tests-$LocalTargetPrefix$'
+            }
+
+            Alias('Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
+                .Targets = .TripletAliases
+            }
+        }
+    }
 
 #if __WINDOWS__
     //
