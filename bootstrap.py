@@ -130,9 +130,9 @@ def _emit_toolchain_triplet(f, platform, architecture, compiler):
     _emit_separator(f)
     f.write('// Triplet definition {}-{}-{}\n'.format(platform, architecture, compiler))
     f.write('{} = [\n'.format(varname))
-    f.write('    .Platform = \"{}\"\n'.format(platform))
-    f.write('    .Architecture = \"{}\"\n'.format(architecture))
-    f.write('    .Compiler = \"{}\"\n'.format(compiler))
+    f.write('    .Triplet_Platform = \"{}\"\n'.format(platform))
+    f.write('    .Triplet_Architecture = \"{}\"\n'.format(architecture))
+    f.write('    .Triplet_Compiler = \"{}\"\n'.format(compiler))
     f.write(']\n')
     f.write('.Global_Triplets + {}\n\n'.format(varname))
 

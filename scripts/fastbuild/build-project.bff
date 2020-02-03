@@ -7,9 +7,11 @@
 // Define windows resources and solution configs for Visual Studio
 {
 
-    ForEach(.CurrentTriplet in .ValidToolchainTriplets) {
+    ForEach(.CurrentTriplet in .Global_Triplets) {
+        Using(.CurrentTriplet)
+
         // Import toolchain definition
-        Using(.'ToolchainDesc_$CurrentTriplet$')
+        Using(.'ToolchainDesc_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$')
 
         If (.Platform_Windows == .Platform_Name) {
             ForEach(.CurrentConfig in .ValidConfigurations) {
@@ -90,10 +92,11 @@
         }
 
         // Define targets for all projects
-        ForEach(.CurrentTriplet in .ValidToolchainTriplets) {
+        ForEach(.CurrentTriplet in .Global_Triplets) {
+            Using(.CurrentTriplet)
 
             // Import toolchain definition
-            Using(.'ToolchainDesc_$CurrentTriplet$')
+            Using(.'ToolchainDesc_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$')
 
             ForEach(.CurrentConfig in .ValidConfigurations) {
 
@@ -231,17 +234,19 @@
 
         .AllTargets = {}
 
-        ForEach(.CurrentTriplet in .ValidToolchainTriplets) {
+        ForEach(.CurrentTriplet in .Global_Triplets) {
+            Using(.CurrentTriplet)
+
             .TripletTargets = {}
             ForEach(.CurrentConfig in .ValidConfigurations) {
-                ^TripletTargets + .'TargetList_$CurrentTriplet$_$CurrentConfig$'
+                ^TripletTargets + .'TargetList_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$_$CurrentConfig$'
             }
 
-            Alias('All-$CurrentTriplet$') {
+            Alias('All-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
                 .Targets = .TripletTargets
             }
 
-            ^AllTargets + 'All-$CurrentTriplet$'
+            ^AllTargets + 'All-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
         }
 
         Alias('All-Modules') {
@@ -257,5 +262,3 @@
 
 #endif
 }
-
-Print(.Global_Triplets)

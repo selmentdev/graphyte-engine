@@ -99,19 +99,6 @@
 .Toolchain_Clang = 'Clang'
 
 
-//--------------------------------------------------------------------------------------------------
-// Toolchain Triplets
-
-.ValidToolchainTriplets = {
-    'Windows_x64_MSVC'
-    'Windows_ARMv8_MSVC'
-    'Linux_x64_GCC'
-    //'Linux_x64_Clang'
-    //'Linux_ARMv8_Clang'
-    //'Android_x64_Clang'
-    //'Android_ARMv8_Clang'
-}
-
 // -------------------------------------------------------------------------------------------------
 // List of valid toolchains - filled in compilers.gen.bff
 .Global_Triplets = { }

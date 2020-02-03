@@ -5,10 +5,11 @@
     .AllSdkAliases = []
 
     ForEach(.CurrentProject in .Global_SdkList) {
-        ForEach(.CurrentTriplet in .ValidToolchainTriplets) {
+        ForEach(.CurrentTriplet in .Global_Triplets) {
+            Using(.CurrentTriplet)
 
             // Import toolchain definition
-            Using(.'ToolchainDesc_$CurrentTriplet$')
+            Using(.'ToolchainDesc_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$')
 
             ForEach(.CurrentConfig in .ValidConfigurations) {
 
@@ -138,17 +139,19 @@
 
         .AllTargets = {}
 
-        ForEach(.CurrentTriplet in .ValidToolchainTriplets) {
+        ForEach(.CurrentTriplet in .Global_Triplets) {
+            Using(.CurrentTriplet)
+
             .TripletTargets = {}
             ForEach(.CurrentConfig in .ValidConfigurations) {
-                ^TripletTargets + .'SdkAlias_$CurrentTriplet$_$CurrentConfig$'
+                ^TripletTargets + .'SdkAlias_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$_$CurrentConfig$'
             }
 
-            Alias('All-Sdks-$CurrentTriplet$') {
+            Alias('All-Sdks-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
                 .Targets = .TripletTargets
             }
 
-            ^AllTargets + 'All-Sdks-$CurrentTriplet$'
+            ^AllTargets + 'All-Sdks-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
         }
 
         Alias('All-Sdks') {
