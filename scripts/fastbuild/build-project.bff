@@ -196,7 +196,7 @@
                     .LinkerOutput = '$OutputBase$/bin/$LocalTargetPrefix$/$LocalOutputName$'
                     .LibrarianAdditionalInputs = 'Lib-$LocalTargetName$'
                     .LibrarianOutput = '$OutputBase$/lib/$LocalTargetPrefix$/$LocalOutputName$'
-                    
+
                     If (.ProjectKind == .ProjectKind_SharedLib) {
                         DLL('$LocalTargetName$') { }
                     }
@@ -257,3 +257,5 @@
 
 #endif
 }
+
+Print(.Global_Triplets)

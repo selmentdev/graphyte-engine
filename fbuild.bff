@@ -1,6 +1,8 @@
 #include "scripts/fastbuild/globals.bff"
 #include "scripts/fastbuild/toolchains.bff"
 
+#include "scripts/compilers.gen.bff"
+
 .OutputBase = 'build'
 
 .Graphyte_EngineModuleList = {}
