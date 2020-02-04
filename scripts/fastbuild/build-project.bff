@@ -53,6 +53,7 @@
             .UnityInputPattern = { '*.cxx' }
             .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
             .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
+            .UnityNumFiles = 1
 
             Unity('Unity-Windows-$ProjectName$') {
                 .UnityInputExcludePattern = {
@@ -164,12 +165,12 @@
                     ForEach(.CurrentDefine in .LocalDefines) {
                         ^CompilerOptions + ' $Toolchain_Define_Prefix$$CurrentDefine$$Toolchain_Define_Suffix$'
                     }
-                
+
                     // Apply all includes for this config
                     ForEach(.CurrentInclude in .LocalIncludes) {
                         ^CompilerOptions + ' $Toolchain_Include_Prefix$$CurrentInclude$$Toolchain_Include_Suffix$'
                     }
-                
+
                     // Apply unit-test specific compiler options
                     If (.ProjectType in .ValidProjectTypes_Tests) {
                         Using(.'UnitTest_CompilerOptions_$CurrentConfig$')
@@ -199,7 +200,7 @@
                     .Libraries = {
                         'Lib-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
                     }
-                
+
                     // Import other libraries for this triplet
                     ForEach(.CurrentImport in .LocalImports) {
                         ^Libraries + '$CurrentImport$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
@@ -209,7 +210,7 @@
                     ForEach(.CurrentLink in .LocalLinks) {
                         ^LinkerOptions + ' $Toolchain_Link_Prefix$$CurrentLink$$Toolchain_Link_Suffix$'
                     }
-                
+
                     // Add resources for windows platform
                     If (.Triplet_Platform == .Platform_Windows) {
                         ^Libraries + 'Graphyte-Res-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
@@ -259,6 +260,7 @@
 
     {
         // Use matrix of targets in order to use aliases
+        Print(.AliasTargetList)
         Using(.AliasTargetList)
         ForEach(.CurrentTriplet in .Global_Triplets) {
             Using(.CurrentTriplet)
@@ -281,7 +283,7 @@
                     ForEach(.Item in .TargetsList_EnginePlugin) {
                         ^ConfigTargets + '$Item$-$CurrentConfig$'
                     }
-                    
+
                     // Define new alias
                     Alias('All-Engine-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
                         .Targets = .ConfigTargets
@@ -297,7 +299,7 @@
                         ^ConfigTargets + '$Item$-$CurrentConfig$'
                         ^RunConfigTargets + 'Test-$Item$-$CurrentConfig$'
                     }
-                    
+
                     // Build all targets
                     Alias('All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
                         .Targets = .ConfigTargets
@@ -324,6 +326,52 @@
             Alias('Run-All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
                 .Targets = .ListRunTestAliases + 'All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
             }
+        }
+
+        {
+            .FbBuildCommand = 'fbuild -ide -cache -monitor -fastcancel'
+            .FbRebuildCommand = 'fbuild -ide -clean -cache -monitor -fastcancel'
+            .FbCleanCommand = 'fbuild -ide -fastcancel'
+
+#if 0
+            // Proper order requires this to be project -> triplet -> config
+            ForEach(.CurrentProject in .Global_ProjectList) {
+                Using(.CurrentProject)
+
+                .ProjectConfigs = {}
+
+                ForEach(.CurrentTriplet in .Global_Triplets) {
+                    Using(.CurrentTriplet)
+                    ForEach(.CurrentConfig in .ValidConfigurations) {
+                        .ConfigEntry = [
+                            .Target = '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+                            .Config = '$CurrentConfig$'
+                            .Platform = 'x64'
+                            .SolutionConfig = '$CurrentConfig$'
+                            .SolutionPlatform = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+                            .ProjectBuildCommand = '$FbBuildCommand$ $Target$'
+                            .ProjectRebuildCommand = '$FbRebuildCommand$ $Target$'
+                            .ProjectCleanCommand = '$FbCleanCommand$ $Target$-Clean'
+                        ]
+
+                        ^ProjectConfigs + .ConfigEntry
+                    }
+                }
+
+                VCXProject('$ProjectName$') {
+                    .ProjectOutput = '$ProjectName$.vcxproj'
+                    .ProjectFiles = { '.\fbuild.bff' }
+                    .ProjectBasePath = '.\'
+                    //.ProjectConfigs = ProjectConfigs
+                    .PlatformToolset = 'v141'
+                }
+            }
+
+            VSSolution('Graphyte') {
+                .SolutionOutput = 'graphyte.sln'
+                //.SolutionBuildProject
+            }
+#endif
         }
     }
 }

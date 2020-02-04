@@ -41,6 +41,7 @@ Compiler('Compiler-Windows-ARMv8-MSVC') {
         '$Root$/c2.dll'
         '$Root$/msobj140.dll'
         '$Root$/mspdb140.dll'
+        '$Root$/msvcdis140.dll'
         '$Root$/mspdbcore.dll'
         '$Root$/mspdbsrv.exe'
         '$Root$/mspft140.dll'
