@@ -36,6 +36,7 @@ game/logs
 engine/include/Graphyte/Build.Version.hxx
 scripts/compiler.msvs.bff
 scripts/compiler.android.ndk.bff
+scripts/compilers.gen.bff
 Makefile
 *.make
 *.mk
