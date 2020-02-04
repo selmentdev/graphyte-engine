@@ -3,6 +3,8 @@
         .ProjectName = 'com.graphyte.graphics.d3d11'
         .ProjectPath = 'engine/runtime/libs/graphics-d3d11'
         .ProjectKind = 'SharedLib'
+        .ProjectType = 'EnginePlugin'
+
         .ProjectSelector = { 'Windows-x64', 'Windows-ARMv8' }
         .ProjectDefines = {
             'module_graphics_d3d11_EXPORTS=1'

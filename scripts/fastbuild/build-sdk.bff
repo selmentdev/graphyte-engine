@@ -83,7 +83,7 @@
                     .LocalAliasVarName = '$Platform_Name$_$Toolchain_Architecture$_$Toolchain_Name$_$CurrentConfig$'
 
                     // Specialize compiler settings
-                    .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$'
+                    .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetPrefix$/$ProjectName$/'
                     .CompilerInputFiles = .ProjectFiles
                     .CompilerInputFilesRoot = .ProjectPath
 
@@ -121,7 +121,7 @@
 
                     If (.ProjectKind == .ProjectKind_StaticLib) {
                         Library('$LocalTargetName$') {
-                            .LibrarianOutput = '$OutputBase$/lib/$LocalTargetPrefix$/$LocalOutputName$'
+                            .LibrarianOutput = '$OutputBase$/bin/$LocalTargetPrefix$/$LocalOutputName$'
                         }
                     }
 

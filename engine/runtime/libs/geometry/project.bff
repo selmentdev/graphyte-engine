@@ -3,7 +3,8 @@
         .ProjectName = 'com.graphyte.geometry'
         .ProjectPath = 'engine/runtime/libs/geometry'
         .ProjectKind = 'SharedLib'
-
+        .ProjectType = 'EngineModule'
+        
         .ProjectDefines = {
             'module_geometry_EXPORTS=1'
         }

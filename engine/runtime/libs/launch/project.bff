@@ -3,6 +3,8 @@
         .ProjectName = 'com.graphyte.launch'
         .ProjectPath = 'engine/runtime/libs/launch'
         .ProjectKind = 'StaticLib'
+        .ProjectType = 'EngineModule'
+
         .ProjectDefines = {
             'module_launch_EXPORTS=1'
         }
