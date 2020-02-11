@@ -54,6 +54,11 @@
 .ProjectKind_ConsoleApp = 'ConsoleApp'
 .ProjectKind_WindowedApp = 'WindowedApp'
 
+.ProjectKind_App = {
+    .ProjectKind_ConsoleApp
+    .ProjectKind_WindowedApp
+}
+
 .ValidProjectKinds = {
     .ProjectKind_StaticLib
     .ProjectKind_SharedLib

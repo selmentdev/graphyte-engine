@@ -226,11 +226,7 @@
                         Library('$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') { }
                     }
 
-                    If (.ProjectKind == .ProjectKind_ConsoleApp) {
-                        Executable('$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') { }
-                    }
-
-                    If (.ProjectKind == .ProjectKind_WindowedApp) {
+                    If (.ProjectKind in .ProjectKind_App) {
                         Executable('$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') { }
                     }
 
@@ -333,28 +329,41 @@
             .FbRebuildCommand = 'fbuild -ide -clean -cache -monitor -fastcancel'
             .FbCleanCommand = 'fbuild -ide -fastcancel'
 
-#if 0
+            .ProjectsList = {}
+
             // Proper order requires this to be project -> triplet -> config
             ForEach(.CurrentProject in .Global_ProjectList) {
+                .ProjectSelector = { 'All' }
                 Using(.CurrentProject)
 
                 .ProjectConfigs = {}
 
                 ForEach(.CurrentTriplet in .Global_Triplets) {
                     Using(.CurrentTriplet)
-                    ForEach(.CurrentConfig in .ValidConfigurations) {
-                        .ConfigEntry = [
-                            .Target = '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
-                            .Config = '$CurrentConfig$'
-                            .Platform = 'x64'
-                            .SolutionConfig = '$CurrentConfig$'
-                            .SolutionPlatform = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
-                            .ProjectBuildCommand = '$FbBuildCommand$ $Target$'
-                            .ProjectRebuildCommand = '$FbRebuildCommand$ $Target$'
-                            .ProjectCleanCommand = '$FbCleanCommand$ $Target$-Clean'
-                        ]
 
-                        ^ProjectConfigs + .ConfigEntry
+                    // Make selector for this triplet
+                    .LocalProjectSelector = {
+                        'All'
+                        '$Triplet_Platform$'
+                        '$Triplet_Platform$-$Triplet_Architecture$'
+                        '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+                    }
+
+                    If (.LocalProjectSelector in .ProjectSelector) {
+                        ForEach(.CurrentConfig in .ValidConfigurations) {
+                            .ConfigEntry = [
+                                .Target = '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+                                .Config = '$CurrentConfig$'
+                                .Platform = 'x64'
+                                .SolutionConfig = '$CurrentConfig$'
+                                .SolutionPlatform = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+                                .ProjectBuildCommand = '$FbBuildCommand$ $Target$'
+                                .ProjectRebuildCommand = '$FbRebuildCommand$ $Target$'
+                                .ProjectCleanCommand = '$FbCleanCommand$ $Target$-Clean'
+                            ]
+
+                            ^ProjectConfigs + .ConfigEntry
+                        }
                     }
                 }
 
@@ -362,16 +371,41 @@
                     .ProjectOutput = '$ProjectName$.vcxproj'
                     .ProjectFiles = { '.\fbuild.bff' }
                     .ProjectBasePath = '.\'
-                    //.ProjectConfigs = ProjectConfigs
+                    .ProjectConfigs = .ProjectConfigs
                     .PlatformToolset = 'v141'
+                }
+                ^ProjectsList + '$ProjectName$'
+            }
+
+            Print(.ProjectsList)
+
+            .SolutionConfigs = {}
+            ForEach(.CurrentTriplet in .Global_Triplets) {
+                Using(.CurrentTriplet)
+
+                ForEach(.Configuration in .ValidConfigurations) {
+                    .CurrentSolutionConfig = [
+                        .Platform = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+                        .Config = .Configuration
+                        .SolutionConfig = .Configuration
+                        .SolutionPlatform = 'x64'
+                    ]
+
+                    ^SolutionConfigs + .CurrentSolutionConfig
                 }
             }
 
             VSSolution('Graphyte') {
                 .SolutionOutput = 'graphyte.sln'
+                .LocalFolders = [
+                    .Path = 'Engine'
+                    .Projects = .ProjectsList
+                ]
+                .SolutionFolders = {
+                    .LocalFolders
+                }
                 //.SolutionBuildProject
             }
-#endif
         }
     }
 }

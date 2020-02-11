@@ -229,7 +229,7 @@ namespace Graphyte::Diagnostics
         {
             DeregisterEventSource(Impl::GSystemEventLog);
         }
-        
+
 #elif GRAPHYTE_PLATFORM_POSIX
 
         closelog();
@@ -282,7 +282,7 @@ namespace Graphyte::Diagnostics
         return false;
 
 #else
-
+    // https://developer.apple.com/library/archive/qa/qa1361/_index.html
 #   error "Unimplemented"
 
 #endif
