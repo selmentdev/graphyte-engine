@@ -256,7 +256,6 @@
 
     {
         // Use matrix of targets in order to use aliases
-        Print(.AliasTargetList)
         Using(.AliasTargetList)
         ForEach(.CurrentTriplet in .Global_Triplets) {
             Using(.CurrentTriplet)
@@ -372,12 +371,10 @@
                     .ProjectFiles = { '.\fbuild.bff' }
                     .ProjectBasePath = '.\'
                     .ProjectConfigs = .ProjectConfigs
-                    .PlatformToolset = 'v141'
+                    .PlatformToolset = 'v142'
                 }
                 ^ProjectsList + '$ProjectName$'
             }
-
-            Print(.ProjectsList)
 
             .SolutionConfigs = {}
             ForEach(.CurrentTriplet in .Global_Triplets) {
@@ -385,10 +382,10 @@
 
                 ForEach(.Configuration in .ValidConfigurations) {
                     .CurrentSolutionConfig = [
-                        .Platform = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
-                        .Config = .Configuration
+                        .SolutionPlatform = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
                         .SolutionConfig = .Configuration
-                        .SolutionPlatform = 'x64'
+                        .Platform = 'x64'
+                        .Config = .Configuration
                     ]
 
                     ^SolutionConfigs + .CurrentSolutionConfig
