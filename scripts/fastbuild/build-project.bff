@@ -372,21 +372,24 @@
                             .Platform = .MsBuildPlatform
                             .SolutionConfig = '$CurrentConfig$'
                             .SolutionPlatform = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
-                            .ProjectBuildCommand = '$FbBuildCommand$ $Target$'
-                            .ProjectRebuildCommand = '$FbRebuildCommand$ $Target$'
-                            .ProjectCleanCommand = '$FbCleanCommand$ $Target$-Clean'
+                            .ProjectBuildCommand = 'cd ^$(SolutionDir) &amp; $FbBuildCommand$ $Target$'
+                            .ProjectRebuildCommand = 'cd ^$(SolutionDir) &amp; $FbRebuildCommand$ $Target$'
+                            .ProjectCleanCommand = 'cd ^$(SolutionDir) &amp; $FbCleanCommand$ $Target$-Clean'
                         ]
 
                         ^ProjectConfigs + .ConfigEntry
                     }
                 }
 
+
                 VCXProject('$ProjectName$') {
-                    .ProjectOutput = '$ProjectName$.vcxproj'
+                    .ProjectOutput = 'tmp/$ProjectName$.vcxproj'
                     .ProjectInputPaths = { .ProjectPath }
                     .ProjectBasePath = .ProjectPath
                     .ProjectConfigs = .ProjectConfigs
                     .PlatformToolset = 'v142'
+                    .OutputDirectory       = '^$(SolutionDir)\tmp'
+                    .IntermediateDirectory = '^$(SolutionDir)\tmp'
                 }
                 ^EngineProjectsList + '$ProjectName$'
             }
@@ -412,9 +415,9 @@
                             .Platform = .MsBuildPlatform
                             .SolutionConfig = '$CurrentConfig$'
                             .SolutionPlatform = '$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
-                            .ProjectBuildCommand = '$FbBuildCommand$ $Target$'
-                            .ProjectRebuildCommand = '$FbRebuildCommand$ $Target$'
-                            .ProjectCleanCommand = '$FbCleanCommand$ $Target$-Clean'
+                            .ProjectBuildCommand = 'cd ^$(SolutionDir) &amp; $FbBuildCommand$ $Target$'
+                            .ProjectRebuildCommand = 'cd ^$(SolutionDir) &amp; $FbRebuildCommand$ $Target$'
+                            .ProjectCleanCommand = 'cd ^$(SolutionDir) &amp; $FbCleanCommand$ $Target$-Clean'
                         ]
 
                         ^ProjectConfigs + .ConfigEntry
@@ -422,7 +425,7 @@
                 }
 
                 VCXProject('$CurrentMetaProject$') {
-                    .ProjectOutput = '$CurrentMetaProject$.vcxproj'
+                    .ProjectOutput = 'tmp/$CurrentMetaProject$.vcxproj'
                     .ProjectConfigs = .ProjectConfigs
                     .PlatformToolset = 'v142'
                 }
@@ -459,7 +462,24 @@
                     .Local_MetaFolders
                     .Local_EngineFolders
                 }
+
+                //
+                // Use this project for building all sources at once
+                //
                 .SolutionBuildProject = 'All'
+
+                //
+                // All projects defined in this solution depends on building `All` project.
+                //
+
+                .Local_RunDependencies = [
+                    .Projects = .EngineProjectsList
+                    .Dependencies = { 'All' }
+                ]
+
+                .SolutionDependencies = {
+                    .Local_RunDependencies
+                }
             }
         }
     }

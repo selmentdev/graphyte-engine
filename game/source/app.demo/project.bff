@@ -1,129 +1,61 @@
 {
-    .ProjectName = 'game'
-    .ProjectPath = 'game/source/app.demo'
-    {
-        .UnityInputPath = '$ProjectPath$'
-        .UnityInputPattern = { '*.cxx' }
-        .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
-        .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
+    .ProjectDefinition = [
+        .ProjectName = 'game'
+        .ProjectPath = 'game/source/app.demo'
+        .ProjectKind = 'WindowedApp'
+        .ProjectType = ''
 
-        Unity('$ProjectName$-Unity-Windows') {
-            .UnityInputExcludePattern = {
-                '*Linux.*.cxx'
-                '*Posix.*.cxx'
-                '*Android.*.cxx'
+        .ProjectImports = {
+            'sdk.fmt'
+            'com.graphyte.base'
+            'com.graphyte.launch'
+            'com.graphyte.graphics'
+        }
+
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'engine/runtime/libs/base/public'
+            'engine/runtime/libs/launch/public'
+            'engine/runtime/libs/graphics/public'
+            'engine/runtime/libs/geometry/public'
+            'engine/runtime/libs/rendering/public'
+        }
+
+        .VariantDef_Windows = [
+            .VariantSelector = { 'Windows' }
+            .VariantLinks = {
+                'User32.lib'
+                'ntdll.lib'
+                'comctl32.lib'
+                'dbghelp.lib'
+                'iphlpapi.lib'
+                'ws2_32.lib'
+                'dwmapi.lib'
+                'xinput.lib'
+                'xaudio2.lib'
+                'advapi32.lib'
+                'gdi32.lib'
+                'shell32.lib'
+                'ole32.lib'
+                'Faultrep.lib'
+                'Bcrypt.lib'
+                'user32.lib'
+                'Mincore.lib'
             }
-        }
-        Unity('$ProjectName$-Unity-Linux') {
-            .UnityInputExcludePattern = {
-                '*Windows.*.cxx'
-                '*Android.*.cxx'
-            }
-        }
-        Unity('$ProjectName$-Unity-Android') {
-            .UnityInputExcludePattern = {
-                '*Windows.*.cxx'
-                '*Linux.*.cxx'
-            }
-        }
-    }
-
-    .VcxProjectConfigs = {}
-
-    // this module applies only on windows-x64-msvc build
-    .CurrentConfigs = .Configs_Windows_x64_MSVC + .Configs_Windows_ARMv8_MSVC
-    ForEach(.Config in .CurrentConfigs)
-    {
-        Using(.Config)
-        .LocalConfigName = '$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-        .LocalConfigVarName = '$PlatformInfo$_$ArchitectureInfo$_$CompilerInfo$_$Config$'
-        .LocalTargetName = '$ProjectName$-$LocalConfigName$'
-
-        ObjectList('$ProjectName$-Lib-$LocalConfigName$')
-        {
-            .CompilerInputUnity = '$ProjectName$-Unity-Windows'
-            .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetName$/'
-
-            // Common Graphyte module include paths
-            .CompilerOptions
-                + ' /I"$ProjectPath$/private"'
-                + ' /I"$ProjectPath$/public"'
-                + ' /I"sdks/fmt/include"'
-                + ' /I"engine/include"'
-                + ' /I"engine/runtime/libs/base/public"'
-                + ' /I"engine/runtime/libs/graphics/public"'
-                + ' /I"engine/runtime/libs/launch/public"'
-        }
-
-        Executable('$LocalTargetName$') {
-            .LinkerOutput = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'
-            .Libraries = {
-                'sdk.fmt-$LocalConfigName$'
-                'sdk.lz4-$LocalConfigName$'
-                '$ProjectName$-Lib-$LocalConfigName$'
-                'Graphyte-Res-$LocalConfigName$'
-                'com.graphyte.base-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                'com.graphyte.graphics-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-                'com.graphyte.launch-$PlatformInfo$-$ArchitectureInfo$-$CompilerInfo$-$Config$'
-            }
-
-            .LinkerOptions
-                + ' /SUBSYSTEM:WINDOWS'
-                + ' User32.lib'
-                + ' ntdll.lib'
-                + ' comctl32.lib'
-                + ' dbghelp.lib'
-                + ' iphlpapi.lib'
-                + ' ws2_32.lib'
-                + ' dwmapi.lib'
-                + ' xinput.lib'
-                + ' xaudio2.lib'
-                + ' advapi32.lib'
-                + ' gdi32.lib'
-                + ' shell32.lib'
-                + ' ole32.lib'
-                + ' Faultrep.lib'
-                + ' Bcrypt.lib'
-                + ' user32.lib'
-                + ' Mincore.lib'
-        }
-
-        .ProjectConfig = [
-            .Target = '$ProjectName$-Lib-$LocalConfigName$'
-            .Config = '$Config$'
-            .Platform = '$VsPlatform$'
-            .ProjectBuildCommand = '$FbBuildCommand$ $LocalTargetName$'
-            .ProjectRebuildCommand = '$FbRebuildCommand$ $LocalTargetName$'
-            .ProjectCleanCommand = '$FbCleanCommand$ $LocalTargetName$-Clean'
-
-            .LocalDebuggerCommand = '$OutputBase$/bin/$LocalConfigName$/$ProjectName$.exe'
-            .LocalDebuggerCommandArguments = ''
-            .LocalDebuggerWorkingDirectory = ''
-            .LocalDebuggerEnvironment = ''
         ]
 
-        ^'SolutionConfigs_$LocalConfigVarName$' + '$LocalTargetName$'
-        ^VcxProjectConfigs + .ProjectConfig
+        .VariantDef_Linux = [
+            .VariantSelector = { 'Linux' }
+            .VariantLinks = {
+                'pthread'
+            }
+        ]
 
-        ^'AllTargets_$LocalConfigVarName$' + '$LocalTargetName$'
-    }
-
-    VCXProject('$ProjectName$') {
-        .ProjectOutput = '$ProjectName$.vcxproj'
-        .ProjectInputPaths = { .ProjectPath }
-        //.ProjectOutputDirectory =
-        //>intermediateDirectory =
-        .ProjectBasePath = .ProjectPath
-        .ProjectAllowedFileExtensions = {
-            '*.bff'
-            '*.cxx'
-            '*.hxx'
-            '*.c'
-            '*.h'
+        .ProjectVariants = {
+            .VariantDef_Windows
+            .VariantDef_Linux
         }
-        .ProjectConfigs = .VcxProjectConfigs
-        .PlatformToolset = .VsPlatformToolset
-    }
-
-    ^VcxProjects_Game + .ProjectName
+    ]
+ 
+    ^Global_ProjectList + .ProjectDefinition
 }

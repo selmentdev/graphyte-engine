@@ -5,15 +5,6 @@
 
 .OutputBase = 'build'
 
-.Graphyte_EngineModuleList = {}
-.Graphyte_EnginePluginList = {}
-.Graphyte_EngineTestList = {}
-.Graphyte_EngineAppList = {}
-.Graphyte_GameModuleList = {}
-.Graphyte_GamePluginList = {}
-.Graphyte_GameTestList = {}
-.Graphyte_GameAppList = {}
-
 #include "sdks/fmt/project.bff"
 #include "sdks/glad/project.bff"
 #include "sdks/lz4/project.bff"
@@ -30,6 +21,8 @@
 #include "engine/runtime/tests/entities/project.bff"
 #include "engine/runtime/tests/graphics/project.bff"
 #include "engine/runtime/tests/maths/project.bff"
+
+#include "game/source/app.demo/project.bff"
 
 #include "scripts/fastbuild/build-sdk.bff"
 #include "scripts/fastbuild/build-project.bff"
