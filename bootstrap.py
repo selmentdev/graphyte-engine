@@ -154,7 +154,9 @@ def generate_compilers_gen_bff():
         _emit_host_information(f)
         _emit_toolchain_triplet(f, 'Windows', 'ARMv8', 'MSVC', 'ARM64')
         _emit_toolchain_triplet(f, 'Windows', 'x64', 'MSVC', 'x64')
-        #_emit_toolchain_triplet(f, 'Linux', 'x64', 'GCC', 'Linux')
+
+        if linux.is_linux:
+            _emit_toolchain_triplet(f, 'Linux', 'x64', 'GCC', 'Linux')
 
 if __name__ == "__main__":
 

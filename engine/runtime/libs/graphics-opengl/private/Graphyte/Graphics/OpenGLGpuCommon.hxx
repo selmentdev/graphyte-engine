@@ -18,6 +18,7 @@
 #undef Complex
 #undef True
 #undef False
+#undef Status
 #else
 #error "Unsupported platform"
 #endif

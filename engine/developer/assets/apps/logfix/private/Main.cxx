@@ -18,7 +18,13 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp
     Graphyte::Version{ 1, 0, 0, 0 }
 };
 
+#include <stdio.h>
+
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {
+    FILE* f = fopen(argv[1], "r");
+    Graphyte::Developer::Elf::ElfImageHeader64 header{};
+    fread(&header, sizeof(header), 1, f);
+    fclose(f);
     return 0;
 }

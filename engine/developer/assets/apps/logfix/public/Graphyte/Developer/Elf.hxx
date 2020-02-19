@@ -74,6 +74,7 @@ namespace Graphyte::Developer::Elf
     enum class ElfImageHeaderObjectVersion : uint32_t
     {
         None = 0,
+        Current = 1,
     };
 
     struct ElfImageHeader32 final
