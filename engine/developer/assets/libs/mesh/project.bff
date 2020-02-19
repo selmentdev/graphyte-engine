@@ -1,0 +1,28 @@
+{
+    .ProjectDefinition = [
+        .ProjectName = 'com.graphyte.assets.mesh'
+        .ProjectPath = 'engine/developer/assets/libs/mesh'
+        .ProjectKind = 'SharedLib'
+        .ProjectType = 'Module'
+        .ProjectComponent = 'Developer'
+
+        .ProjectDefines = {
+            'assets_mesh_EXPORTS=1'
+        }
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'engine/runtime/libs/base/public'
+            'engine/runtime/libs/graphics/public'
+            'engine/runtime/libs/geometry/public'
+            'engine/developer/assets/libs/base/public'
+        }
+        .ProjectImports = {
+            'sdk.fmt'
+            'com.graphyte.base'
+            'com.graphyte.graphics'
+            'com.graphyte.geometry'
+            'com.graphyte.assets.base'
+        }
+    ]
+    ^Global_ProjectList + .ProjectDefinition
+}

@@ -127,7 +127,7 @@ namespace Graphyte::System
             //
             std::wstring wbuffer(static_cast<size_t>(dwLength - 1), 0);
 
-            GX_ASSERT(wbuffer.capacity() >= (static_cast<size_t>(dwLength) + 1));
+            GX_ASSERT(wbuffer.capacity() >= static_cast<size_t>(dwLength));
 
             //
             // Get actual variable content.

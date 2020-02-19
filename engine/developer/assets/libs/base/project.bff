@@ -1,0 +1,22 @@
+{
+    .ProjectDefinition = [
+        .ProjectName = 'com.graphyte.assets.base'
+        .ProjectPath = 'engine/developer/assets/libs/base'
+        .ProjectKind = 'SharedLib'
+        .ProjectType = 'Module'
+        .ProjectComponent = 'Developer'
+
+        .ProjectDefines = {
+            'assets_base_EXPORTS=1'
+        }
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'engine/runtime/libs/base/public'
+        }
+        .ProjectImports = {
+            'sdk.fmt'
+            'com.graphyte.base'
+        }
+    ]
+    ^Global_ProjectList + .ProjectDefinition
+}

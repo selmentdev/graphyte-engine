@@ -1,0 +1,64 @@
+{
+    .ProjectDefinition = [
+        .ProjectName = 'dev.assets.compiler'
+        .ProjectPath = 'engine/developer/assets/apps/compiler'
+        .ProjectKind = 'ConsoleApp'
+        .ProjectType = 'Application'
+        .ProjectComponent = 'Developer'
+
+        .ProjectDefines = {
+            'assets_shader_EXPORTS=1'
+        }
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'engine/runtime/libs/base/public'
+            'engine/runtime/libs/launch/public'
+            'engine/developer/assets/libs/base/public'
+            'engine/developer/assets/libs/shader/public'
+        }
+        .ProjectImports = {
+            'sdk.fmt'
+            'com.graphyte.base'
+            'com.graphyte.graphics'
+            'com.graphyte.launch'
+            'com.graphyte.assets.base'
+            'com.graphyte.assets.shader'
+        }
+
+        .VariantDef_Windows = [
+            .VariantSelector = { 'Windows' }
+            .VariantLinks = {
+                'User32.lib'
+                'ntdll.lib'
+                'comctl32.lib'
+                'dbghelp.lib'
+                'iphlpapi.lib'
+                'ws2_32.lib'
+                'dwmapi.lib'
+                'xinput.lib'
+                'xaudio2.lib'
+                'advapi32.lib'
+                'gdi32.lib'
+                'shell32.lib'
+                'ole32.lib'
+                'Faultrep.lib'
+                'Bcrypt.lib'
+                'user32.lib'
+                'Mincore.lib'
+            }
+        ]
+
+        .VariantDef_Linux = [
+            .VariantSelector = { 'Linux' }
+            .VariantLinks = {
+                'pthread'
+            }
+        ]
+
+        .ProjectVariants = {
+            .VariantDef_Windows
+            .VariantDef_Linux
+        }
+    ]
+    ^Global_ProjectList + .ProjectDefinition
+}

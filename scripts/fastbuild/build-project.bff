@@ -284,6 +284,7 @@
             'Engine'
             'Game'
             'UnitTest'
+            'Developer'
         }
         
         ForEach(.CurrentTriplet in .Global_Triplets) {
@@ -476,6 +477,16 @@
                     .Projects = .VcxFolder_GameApplication
                 ]
 
+                .VcxFolderDef_DeveloperModules = [
+                    .Path = 'Developer/Modules'
+                    .Projects = .VcxFolder_DeveloperModule
+                ]
+
+                .VcxFolderDef_DeveloperApplications = [
+                    .Path = 'Developer/Applications'
+                    .Projects = .VcxFolder_DeveloperApplication
+                ]
+
                 .VcxFolderDef_MetaProjects = [
                     .Path = 'Meta'
                     .Projects = .MetaProjectsList
@@ -486,6 +497,8 @@
                     .VcxFolderDef_EnginePlugins
                     .VcxFolderDef_EngineUnitTests
                     .VcxFolderDef_GameApplications
+                    .VcxFolderDef_DeveloperModules
+                    .VcxFolderDef_DeveloperApplications
                     .VcxFolderDef_MetaProjects
                 }
 
