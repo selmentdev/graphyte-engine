@@ -1,4 +1,3 @@
-#include "Graphics.Vulkan.pch.hxx"
 #include "VulkanGpuIndexBuffer.hxx"
 #include "VulkanGpuDevice.hxx"
 #include <Graphyte/Bitwise.hxx>

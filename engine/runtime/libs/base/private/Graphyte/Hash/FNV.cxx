@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Hash/FNV.hxx>
 
 namespace Graphyte::Hash

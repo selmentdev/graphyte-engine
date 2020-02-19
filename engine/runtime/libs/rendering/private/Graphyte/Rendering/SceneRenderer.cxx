@@ -1,4 +1,3 @@
-#include "Rendering.pch.hxx"
 #include <Graphyte/Rendering/SceneRenderer.hxx>
 
 namespace Graphyte::Rendering

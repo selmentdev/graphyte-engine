@@ -1,4 +1,5 @@
-#include "Test.Entities.pch.hxx"
+#include <catch2/catch.hpp>
+#include <Graphyte/Base.module.hxx>
 //#include <Graphyte/Entities.hxx>
 
 TEST_CASE("Entity store allocation")

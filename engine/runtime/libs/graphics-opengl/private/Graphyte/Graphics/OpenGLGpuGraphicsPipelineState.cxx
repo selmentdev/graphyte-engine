@@ -1,4 +1,3 @@
-#include "Graphics.GLCore.pch.hxx"
 #include "OpenGLGpuGraphicsPipelineState.hxx"
 #include "OpenGLGpuDevice.hxx"
 #include <Graphyte/Graphics/Gpu/GpuVertex.hxx>

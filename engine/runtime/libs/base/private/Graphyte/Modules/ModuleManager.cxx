@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Modules.hxx>
 #include <Graphyte/System.hxx>
 #include <Graphyte/Threading/Sync.hxx>

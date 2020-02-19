@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Uuid.hxx>
 
 #if GRAPHYTE_PLATFORM_LINUX

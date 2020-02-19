@@ -1,4 +1,3 @@
-#include "Graphics.pch.hxx"
 #include "NullGpuCommon.hxx"
 
 namespace Graphyte::Graphics

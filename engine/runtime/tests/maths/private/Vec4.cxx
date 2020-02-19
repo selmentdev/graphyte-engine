@@ -1,4 +1,4 @@
-#include "Test.Maths.pch.hxx"
+#include <catch2/catch.hpp>
 #include <Graphyte/Maths.hxx>
 
 namespace Tests

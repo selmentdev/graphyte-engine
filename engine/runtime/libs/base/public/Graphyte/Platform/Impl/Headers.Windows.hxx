@@ -5,54 +5,54 @@
 //
 
 
-#define NOATOM
-//#define NOCLIPBOARD
-//#define NOCOLOR
-#define NOCOMM
-//#define NOCTLMGR
-#define NODEFERWINDOWPOS
-#define NODRAWTEXT
-//#define NOGDI
-#define NOGDICAPMASKS
-#define NOHELP
-//#define NOICONS
-#define NOIMAGE
-#define NOKANJI
-#define NOKERNEL
-//#define NOKEYSTATES
-//#define NOMB
-#define NOMCX
-#define NOMEMMGR
-//#define NOMENUS
-#define NOMETAFILE
-#define NOMINMAX
-//#define NOMSG
-//#define NONLS
-#define NOOPENFILE
-#define NOPROFILER
-#define NOPROXYSTUB
-#define NORASTEROPS
-#define NORPC
-#define NOSCROLL
-#define NOSERVICE
-//#define NOSHOWWINDOW
-#define NOSOUND
-//#define NOSYSCOMMANDS
-//#define NOSYSMETRICS
-#define NOTAPE
-#define NOTEXTMETRIC
-//#define NOUSER
-//#define NOVIRTUALKEYCODES
-#define NOWH
-//#define NOWINMESSAGES
-//#define NOWINOFFSETS
-//#define NOWINSTYLES
-#define OEMRESOURCE
+#define NOATOM 1
+//#define NOCLIPBOARD 1
+//#define NOCOLOR 1
+#define NOCOMM 1
+//#define NOCTLMGR 1
+#define NODEFERWINDOWPOS 1
+#define NODRAWTEXT 1
+//#define NOGDI 1
+#define NOGDICAPMASKS 1
+#define NOHELP 1
+//#define NOICONS 1
+#define NOIMAGE 1
+#define NOKANJI 1
+#define NOKERNEL 1
+//#define NOKEYSTATES 1
+//#define NOMB 1
+#define NOMCX 1
+#define NOMEMMGR 1
+//#define NOMENUS 1
+#define NOMETAFILE 1
+#define NOMINMAX 1
+//#define NOMSG 1
+//#define NONLS 1
+#define NOOPENFILE 1
+#define NOPROFILER 1
+#define NOPROXYSTUB 1
+#define NORASTEROPS 1
+#define NORPC 1
+#define NOSCROLL 1
+#define NOSERVICE 1
+//define NOSHOWWINDOW 1
+#define NOSOUND 1
+//#define NOSYSCOMMANDS 1
+//#define NOSYSMETRICS 1
+#define NOTAPE 1
+#define NOTEXTMETRIC 1
+//#define NOUSER 1
+//#define NOVIRTUALKEYCODES 1
+#define NOWH 1
+//#define NOWINMESSAGES 1
+//#define NOWINOFFSETS 1
+//#define NOWINSTYLES 1
+#define OEMRESOURCE 1
 
 
 
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN 1
+#define NOMINMAX 1
 
 #ifndef STRICT
 #define STRICT 1

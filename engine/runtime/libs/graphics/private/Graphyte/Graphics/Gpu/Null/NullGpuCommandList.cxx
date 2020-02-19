@@ -1,4 +1,3 @@
-#include "Graphics.pch.hxx"
 #include "NullGpuCommandList.hxx"
 #include "NullGpuDevice.hxx"
 #include "NullGpuRenderTarget.hxx"

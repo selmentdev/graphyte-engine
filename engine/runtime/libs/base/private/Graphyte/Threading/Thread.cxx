@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Threading/Thread.hxx>
 
 #if GRAPHYTE_PLATFORM_WINDOWS

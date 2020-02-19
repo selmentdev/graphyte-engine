@@ -1,4 +1,3 @@
-#include "Graphics.pch.hxx"
 #include <Graphyte/Graphics/Image.hxx>
 
 namespace Graphyte::Graphics

@@ -1,4 +1,4 @@
-#include "Test.Base.pch.hxx"
+#include <catch2/catch.hpp>
 #include <Graphyte/Flags.hxx>
 
 TEST_CASE("Flags")

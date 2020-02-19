@@ -1,4 +1,3 @@
-#include "Graphics.D3D11.pch.hxx"
 #include <Graphyte/Diagnostics.hxx>
 #include <Graphyte/Graphics/GraphicsModule.hxx>
 

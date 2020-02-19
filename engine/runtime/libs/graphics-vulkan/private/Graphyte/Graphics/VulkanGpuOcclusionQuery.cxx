@@ -1,4 +1,3 @@
-#include "Graphics.Vulkan.pch.hxx"
 #include "VulkanGpuOcclusionQuery.hxx"
 #include "VulkanGpuCommandList.hxx"
 

@@ -1,4 +1,4 @@
-#include "Graphics.pch.hxx"
+#include <Graphyte/Base.module.hxx>
 #include <Graphyte/Graphics/GraphicsModule.hxx>
 #include <Graphyte/CommandLine.hxx>
 #include <Graphyte/System.hxx>

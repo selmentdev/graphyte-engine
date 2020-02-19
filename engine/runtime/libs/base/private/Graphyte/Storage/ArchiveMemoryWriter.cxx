@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Storage/ArchiveMemoryWriter.hxx>
 
 namespace Graphyte::Storage

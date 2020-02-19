@@ -1,4 +1,3 @@
-#include "Graphics.D3D12.pch.hxx"
 #include "D3D12Common.hxx"
 
 namespace Graphyte::Graphics::Render

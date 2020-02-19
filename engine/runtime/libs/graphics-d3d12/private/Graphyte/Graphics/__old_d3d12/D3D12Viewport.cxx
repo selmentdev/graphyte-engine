@@ -1,4 +1,3 @@
-#include "Graphics.D3D12.pch.hxx"
 #include "D3D12Viewport.hxx"
 #include "D3D12RenderSystem.hxx"
 #include "D3D12PixelFormat.hxx"

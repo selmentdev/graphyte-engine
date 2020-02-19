@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #if false
 #include <Graphyte/Maths/Noise/PerlinNoise.hxx>
 #include <Graphyte/Maths/Scalar.hxx>

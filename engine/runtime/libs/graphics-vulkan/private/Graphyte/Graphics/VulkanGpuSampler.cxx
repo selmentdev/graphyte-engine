@@ -1,4 +1,3 @@
-#include "Graphics.Vulkan.pch.hxx"
 #include "VulkanGpuSampler.hxx"
 #include "VulkanGpuDevice.hxx"
 #include "VulkanGpuTypeMapping.hxx"

@@ -1,4 +1,4 @@
-#include "Test.Maths.pch.hxx"
+#include <catch2/catch.hpp>
 #if false
 #include <Graphyte/Maths2/Vector.hxx>
 #include <Graphyte/Maths2/Bool4.hxx>

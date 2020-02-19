@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Storage/FileManager.hxx>
 #include <Graphyte/Storage/IFileSystem.hxx>
 #include <Graphyte/Application.hxx>

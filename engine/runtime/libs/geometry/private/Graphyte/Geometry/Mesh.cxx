@@ -1,4 +1,3 @@
-#include "Geometry.pch.hxx"
 #include <Graphyte/Geometry/Mesh.hxx>
 
 namespace Graphyte::Geometry

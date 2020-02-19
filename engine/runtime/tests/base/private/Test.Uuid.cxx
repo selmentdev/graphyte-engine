@@ -1,4 +1,4 @@
-#include "Test.Base.pch.hxx"
+#include <catch2/catch.hpp>
 #include <Graphyte/Uuid.hxx>
 
 TEST_CASE("Uuid")

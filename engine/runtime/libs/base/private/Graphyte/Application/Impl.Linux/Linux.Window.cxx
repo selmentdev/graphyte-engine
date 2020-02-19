@@ -1,5 +1,3 @@
-#include "Base.pch.hxx"
-#include <Graphyte/Diagnostics.hxx>
 
 #include "Linux.Window.hxx"
 

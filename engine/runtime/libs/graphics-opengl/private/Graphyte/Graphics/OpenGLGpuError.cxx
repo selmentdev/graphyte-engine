@@ -1,4 +1,3 @@
-#include "Graphics.GLCore.pch.hxx"
 #include "OpenGLGpuCommon.hxx"
 
 namespace Graphyte::Graphics

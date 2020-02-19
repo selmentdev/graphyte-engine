@@ -1,4 +1,3 @@
-#include "Graphics.GLCore.pch.hxx"
 #include "OpenGLGpuComputePipelineState.hxx"
 #include "OpenGLGpuDevice.hxx"
 

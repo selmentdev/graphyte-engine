@@ -1,4 +1,3 @@
-#include "Graphics.GLCore.pch.hxx"
 #include "OpenGLGpuDevice.hxx"
 #include <Graphyte/Unicode.hxx>
 #include "OpenGLGpuSampler.hxx"

@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Storage/Archive.hxx>
 
 GX_DEFINE_LOG_CATEGORY(LogStorage);

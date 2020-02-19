@@ -1,4 +1,3 @@
-#include "Graphics.pch.hxx"
 #include <Graphyte/Graphics/ShaderBytecode.hxx>
 #include <Graphyte/Hash/XXHash.hxx>
 #include <Graphyte/Span.hxx>

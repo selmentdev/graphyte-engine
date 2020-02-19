@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/System.hxx>
 #include <Graphyte/System/Impl.Posix/Posix.Types.hxx>
 

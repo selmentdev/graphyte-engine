@@ -1,1 +1,0 @@
-#include "Rendering.pch.hxx"

@@ -1,4 +1,3 @@
-#include "Graphics.D3D11.pch.hxx"
 #include <Graphyte/Application.hxx>
 
 #include "D3D11GpuCommon.hxx"

@@ -1,4 +1,4 @@
-#include "Test.Base.pch.hxx"
+#include <catch2/catch.hpp>
 #include <Graphyte/Storage/IFileSystem.hxx>
 #include <Graphyte/Storage/Path.hxx>
 #include <Graphyte/Application.hxx>

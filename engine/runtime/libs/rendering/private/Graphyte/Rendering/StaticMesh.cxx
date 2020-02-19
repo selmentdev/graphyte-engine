@@ -1,4 +1,3 @@
-#include "Rendering.pch.hxx"
 #include <Graphyte/Rendering/StaticMesh.hxx>
 #include <Graphyte/Graphics/Gpu/GpuDevice.hxx>
 #include <Graphyte/Half.hxx>

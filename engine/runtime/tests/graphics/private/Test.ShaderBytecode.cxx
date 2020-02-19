@@ -1,4 +1,4 @@
-#include "Test.Graphics.pch.hxx"
+#include <catch2/catch.hpp>
 #include <Graphyte/Storage/ArchiveMemoryReader.hxx>
 #include <Graphyte/Storage/ArchiveMemoryWriter.hxx>
 #include <Graphyte/Storage/IFileSystem.hxx>

@@ -1,4 +1,3 @@
-#include "Graphics.D3D11.pch.hxx"
 #include "D3D11GpuShader.hxx"
 #include "D3D11GpuTypeMapping.hxx"
 #include "D3D11GpuDevice.hxx"

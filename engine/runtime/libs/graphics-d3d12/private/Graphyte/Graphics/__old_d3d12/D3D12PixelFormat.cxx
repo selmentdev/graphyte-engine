@@ -1,4 +1,3 @@
-#include "Graphics.D3D12.pch.hxx"
 #include <Graphyte/Graphics/PixelFormat.hxx>
 
 #include <dxgiformat.h>

@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Threading/TaskDispatcher.hxx>
 #include <Graphyte/String.hxx>
 #include <Graphyte/Diagnostics/Profiler.hxx>

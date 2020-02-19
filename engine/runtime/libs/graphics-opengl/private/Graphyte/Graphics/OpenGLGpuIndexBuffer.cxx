@@ -1,4 +1,3 @@
-#include "Graphics.GLCore.pch.hxx"
 #include "OpenGLGpuIndexBuffer.hxx"
 #include "OpenGLGpuDevice.hxx"
 #include <Graphyte/Flags.hxx>

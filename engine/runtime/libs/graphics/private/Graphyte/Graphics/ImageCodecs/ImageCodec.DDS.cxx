@@ -1,4 +1,3 @@
-#include "Graphics.pch.hxx"
 #include <Graphyte/Graphics/Image.hxx>
 #include <Graphyte/Diagnostics.hxx>
 #include <Graphyte/Graphics/ImageCodecs/ImageCodec.DDS.hxx>

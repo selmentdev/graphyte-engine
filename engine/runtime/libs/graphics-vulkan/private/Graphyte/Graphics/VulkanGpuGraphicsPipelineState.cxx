@@ -1,4 +1,3 @@
-#include "Graphics.Vulkan.pch.hxx"
 #include "VulkanGpuGraphicsPipelineState.hxx"
 #include "VulkanGpuDevice.hxx"
 #include "VulkanGpuTypeMapping.hxx"

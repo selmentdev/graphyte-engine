@@ -1,4 +1,4 @@
-#include "Base.pch.hxx"
+#include <Graphyte/System.hxx>
 
 namespace Graphyte::System
 {

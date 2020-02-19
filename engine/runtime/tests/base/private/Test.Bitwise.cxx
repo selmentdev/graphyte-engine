@@ -1,4 +1,4 @@
-#include "Test.Base.pch.hxx"
+#include <catch2/catch.hpp>
 #include <Graphyte/ByteAccess.hxx>
 
 TEST_CASE("Bitwise ops")

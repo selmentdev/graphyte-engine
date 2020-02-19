@@ -1,4 +1,3 @@
-#include "Rendering.pch.hxx"
 #include <Graphyte/Rendering/DeferredShadingCompositor.hxx>
 #include <Graphyte/Graphics/ImageCodecs/ImageCodec.DDS.hxx>
 #include <Graphyte/Graphics/Gpu/GpuDevice.hxx>

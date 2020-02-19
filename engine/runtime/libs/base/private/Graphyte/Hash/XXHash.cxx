@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Hash/XXHash.hxx>
 #include <Graphyte/ByteAccess.hxx>
 

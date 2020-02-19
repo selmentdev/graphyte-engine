@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Random.hxx>
 #include <Graphyte/Bitwise.hxx>
 

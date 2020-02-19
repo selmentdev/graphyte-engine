@@ -1,4 +1,3 @@
-#include "Graphics.GLCore.pch.hxx"
 #include <Graphyte/Diagnostics.hxx>
 #include <Graphyte/Graphics/GraphicsModule.hxx>
 

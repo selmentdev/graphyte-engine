@@ -1,4 +1,3 @@
-#include "Graphics.pch.hxx"
 #include "NullGpuViewport.hxx"
 #include "NullGpuDevice.hxx"
 

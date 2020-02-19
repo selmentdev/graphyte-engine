@@ -1,4 +1,3 @@
-#include "Graphics.pch.hxx"
 #include <Graphyte/Graphics/Gpu/GpuCommandList.hxx>
 
 namespace Graphyte::Graphics

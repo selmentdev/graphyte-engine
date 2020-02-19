@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 
 #include "../Platform.impl.hxx"
 

@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Diagnostics/Profiler.hxx>
 
 #if defined(ENABLE_NSIGHT_PROFILER)

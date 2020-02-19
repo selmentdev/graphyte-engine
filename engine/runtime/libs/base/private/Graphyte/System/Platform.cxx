@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include "Platform.impl.hxx"
 
 #if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64

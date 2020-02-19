@@ -1,4 +1,3 @@
-#include "Geometry.pch.hxx"
 #include <Graphyte/Geometry/Model.hxx>
 #include <Graphyte/Storage/BinaryFormat.hxx>
 

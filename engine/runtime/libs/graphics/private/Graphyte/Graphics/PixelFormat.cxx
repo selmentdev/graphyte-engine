@@ -1,4 +1,3 @@
-#include "Graphics.pch.hxx"
 #include <Graphyte/Graphics/PixelFormat.hxx>
 #include <Graphyte/ByteAccess.hxx>
 

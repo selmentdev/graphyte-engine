@@ -1,4 +1,3 @@
-#include "Graphics.Vulkan.pch.hxx"
 #include "VulkanGpuPixelFormat.hxx"
 
 namespace Graphyte::Graphics

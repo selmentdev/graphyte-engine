@@ -1,4 +1,4 @@
-#include "Test.Graphics.pch.hxx"
+#include <catch2/catch.hpp>
 #include <Graphyte/Graphics/PixelFormat.hxx>
 #include <Graphyte/Graphics/Image.hxx>
 #include <Graphyte/ByteAccess.hxx>

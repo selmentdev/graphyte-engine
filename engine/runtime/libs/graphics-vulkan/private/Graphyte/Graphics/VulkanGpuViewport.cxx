@@ -1,4 +1,3 @@
-#include "Graphics.Vulkan.pch.hxx"
 #include <Graphyte/Application.hxx>
 #include <Graphyte/System/Impl.Windows/Windows.Helpers.hxx>
 #include <Graphyte/System.hxx>

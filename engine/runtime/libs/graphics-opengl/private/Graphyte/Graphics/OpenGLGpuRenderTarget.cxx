@@ -1,4 +1,3 @@
-#include "Graphics.GLCore.pch.hxx"
 #include "OpenGLGpuRenderTarget.hxx"
 #include "OpenGLGpuDevice.hxx"
 #include "OpenGLGpuTexture.hxx"

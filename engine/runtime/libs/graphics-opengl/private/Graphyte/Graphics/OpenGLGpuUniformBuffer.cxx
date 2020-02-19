@@ -1,4 +1,3 @@
-#include "Graphics.GLCore.pch.hxx"
 #include "OpenGLGpuDevice.hxx"
 #include "OpenGLGpuUniformBuffer.hxx"
 #include <Graphyte/Bitwise.hxx>

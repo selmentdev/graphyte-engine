@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Compression.hxx>
 #include <Graphyte/System.hxx>
 #include <Graphyte/Diagnostics.hxx>

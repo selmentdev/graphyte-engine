@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Application.hxx>
 
 #include "../Platform.impl.hxx"

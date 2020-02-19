@@ -1,4 +1,4 @@
-#include "Test.Base.pch.hxx"
+#include <catch2/catch.hpp>
 #include <Graphyte/System.hxx>
 #include <Graphyte/Threading/Thread.hxx>
 #include <Graphyte/Diagnostics.hxx>

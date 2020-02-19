@@ -1,4 +1,3 @@
-#include "Graphics.Vulkan.pch.hxx"
 #include <Graphyte/Application.hxx>
 #include <Graphyte/Graphics/Gpu/GpuVertex.hxx>
 

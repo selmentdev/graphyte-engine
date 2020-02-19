@@ -1,4 +1,4 @@
-#include "Test.Base.pch.hxx"
+#include <catch2/catch.hpp>
 #include <Graphyte/Random.hxx>
 #include <Graphyte/Ieee754.hxx>
 

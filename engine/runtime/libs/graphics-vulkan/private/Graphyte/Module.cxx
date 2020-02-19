@@ -1,4 +1,3 @@
-#include "Graphics.Vulkan.pch.hxx"
 #include <Graphyte/Graphics/GraphicsModule.hxx>
 #include <Graphyte/Diagnostics.hxx>
 

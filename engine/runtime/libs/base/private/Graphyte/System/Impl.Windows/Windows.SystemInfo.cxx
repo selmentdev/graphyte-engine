@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/System.hxx>
 #include <Graphyte/System/Impl.Windows/Windows.Helpers.hxx>
 #include <Graphyte/Storage/Path.hxx>

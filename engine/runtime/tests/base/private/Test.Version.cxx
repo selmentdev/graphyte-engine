@@ -1,4 +1,5 @@
-#include "Test.Base.pch.hxx"
+#include <catch2/catch.hpp>
+#include <Graphyte/Base.module.hxx>
 #include <Graphyte/Version.hxx>
 
 TEST_CASE("Version")

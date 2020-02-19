@@ -1,4 +1,4 @@
-#include "Test.Base.pch.hxx"
+#include <catch2/catch.hpp>
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/System.hxx>
 #include <Graphyte/ObjectPool.hxx>

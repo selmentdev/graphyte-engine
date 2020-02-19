@@ -1,4 +1,3 @@
-#include "Graphics.pch.hxx"
 #include <Graphyte/Graphics.hxx>
 #include <Graphyte/Graphics/Gpu/GpuDevice.hxx>
 

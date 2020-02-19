@@ -1,4 +1,3 @@
-#include "Graphics.Vulkan.pch.hxx"
 
 #if GRAPHYTE_COMPILER_MSVC
 #pragma warning(disable : 4296 4100 4189 4701 4703 4191)

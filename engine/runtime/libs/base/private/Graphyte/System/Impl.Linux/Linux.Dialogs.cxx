@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/System/Dialogs.hxx>
 
 namespace Graphyte::System

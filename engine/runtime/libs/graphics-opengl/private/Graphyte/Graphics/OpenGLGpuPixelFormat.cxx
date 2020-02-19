@@ -1,4 +1,3 @@
-#include "Graphics.GLCore.pch.hxx"
 #include <Graphyte/Graphics/PixelFormat.hxx>
 #include "OpenGLGpuPixelFormat.hxx"
 

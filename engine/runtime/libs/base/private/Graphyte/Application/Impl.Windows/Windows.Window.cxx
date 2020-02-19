@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include "Windows.Window.hxx"
 #include <Graphyte/Diagnostics.hxx>
 #include <Graphyte/System.hxx>

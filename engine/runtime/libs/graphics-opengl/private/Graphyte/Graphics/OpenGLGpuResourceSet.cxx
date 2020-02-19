@@ -1,4 +1,3 @@
-#include "Graphics.GLCore.pch.hxx"
 #include "OpenGLGpuResourceSet.hxx"
 #include "OpenGLGpuCommandList.hxx"
 #include "OpenGLGpuDevice.hxx"

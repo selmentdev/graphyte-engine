@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include "../Diagnostics.Impl.hxx"
 
 namespace Graphyte::Diagnostics::Impl

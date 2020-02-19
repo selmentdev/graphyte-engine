@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Storage/ArchiveFileWriter.hxx>
 #include <Graphyte/Storage/IStream.hxx>
 #include <Graphyte/Diagnostics.hxx>

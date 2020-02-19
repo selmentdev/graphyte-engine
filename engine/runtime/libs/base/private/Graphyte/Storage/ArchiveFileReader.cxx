@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Storage/ArchiveFileReader.hxx>
 #include <Graphyte/Bitwise.hxx>
 
