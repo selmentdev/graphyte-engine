@@ -7,6 +7,8 @@ GX_DEFINE_LOG_CATEGORY(LogFixTool);
 
 #include <Graphyte/Launch/Main.hxx>
 
+#include <Graphyte/Developer/Elf.hxx>
+
 Graphyte::Application::ApplicationDescriptor GraphyteApp
 {
     "Graphyte Assets Compiler",
