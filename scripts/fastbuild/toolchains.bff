@@ -346,6 +346,7 @@ Compiler('Compiler-Linux-x64-GCC') {
     // Additional compiler and linker options
     .CompilerOptions
         + ' /arch:AVX'
+        + ' /D__AVX__'
 
     .LinkerOptions
         + ' /MACHINE:X64'
