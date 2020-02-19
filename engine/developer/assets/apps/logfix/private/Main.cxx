@@ -22,9 +22,5 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp
 
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {
-    FILE* f = fopen(argv[1], "r");
-    Graphyte::Developer::Elf::ElfImageHeader64 header{};
-    fread(&header, sizeof(header), 1, f);
-    fclose(f);
     return 0;
 }
