@@ -3,7 +3,8 @@
         .ProjectName = 'test.graphyte.maths'
         .ProjectPath = 'engine/runtime/tests/maths'
         .ProjectKind = 'ConsoleApp'
-        .ProjectType = 'EngineTest'
+        .ProjectType = 'UnitTest'
+        .ProjectComponent = 'Engine'
 
         .ProjectImports = {
             'sdk.fmt'

@@ -3,7 +3,8 @@
         .ProjectName = 'com.graphyte.graphics'
         .ProjectPath = 'engine/runtime/libs/graphics'
         .ProjectKind = 'SharedLib'
-        .ProjectType = 'EngineModule'
+        .ProjectType = 'Module'
+        .ProjectComponent = 'Engine'
 
         .ProjectDefines = {
             'module_graphics_EXPORTS=1'

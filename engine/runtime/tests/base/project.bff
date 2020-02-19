@@ -3,7 +3,9 @@
         .ProjectName = 'test.graphyte.base'
         .ProjectPath = 'engine/runtime/tests/base'
         .ProjectKind = 'ConsoleApp'
-        .ProjectType = 'EngineTest'
+        
+        .ProjectType = 'UnitTest'
+        .ProjectComponent = 'Engine'
 
         .ProjectImports = {
             'sdk.fmt'

@@ -40,12 +40,29 @@
     ForEach(.CurrentProject in .Global_ProjectList) {
         // Specialize scope using current project definition
         .ProjectSelector = { 'All' }
+        .ProjectType = ''
+        .ProjectKind = ''
+        .ProjectComponent = ''
         .ProjectIncludes = {}
         .ProjectImports = {}
         .ProjectLinks = {}
         .ProjectDefines = {}
         .ProjectVariants = {}
         Using(.CurrentProject)
+
+        If (.ProjectType not in .ValidProjectTypes) {
+            Print('$ProjectName$ type is `$ProjectType$`')
+            Error('Invalid project type')
+        }
+
+        If (.ProjectComponent not in .ValidProjectComponents) {
+            Print('$ProjectName$ component is `$ProjectComponent$`')
+            Error('Invalid project component')
+        }
+        If (.ProjectKind not in .ValidProjectKinds) {
+            Print('$ProjectName$ kind is `$ProjectKind$`')
+            Error('Invalid project kind')
+        }
 
         // Define unity files for each known platform
         {
@@ -163,7 +180,7 @@
                 }
 
                 // Apply unit-test specific compiler options
-                If (.ProjectType in .ValidProjectTypes_Tests) {
+                If (.ProjectType == .ProjectType_UnitTest) {
                     Using(.'UnitTest_CompilerOptions_$CurrentConfig$')
 
                     ForEach(.Option in .RemoveCompilerOptions) {
@@ -222,7 +239,7 @@
                 }
 
                 // If this executable was unit-test, define additional target
-                If (.ProjectType in .ValidProjectTypes_Tests) {
+                If (.ProjectType == .ProjectType_UnitTest) {
                     Test('Test-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
                         .TestExecutable = '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
                         .TestOutput = '$OutputBase$/tests/$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$/$ProjectName$.out.txt'
@@ -243,7 +260,13 @@
                 // Add target project for this specific triplet for aliases
                 .TargetEntry = [
                     .'TripletEntry_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$' = [
+                        .'TargetsList_$ProjectComponent$$ProjectType$' = {
+                            '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+                        }
                         .'TargetsList_$ProjectType$' = {
+                            '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+                        }
+                        .'TargetsList_$ProjectComponent$' = {
                             '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
                         }
                     ]
@@ -253,100 +276,69 @@
             }
         }
     }
-
     {
         // Use matrix of targets in order to use aliases
         Using(.AliasTargetList)
+
+        .LocalTargetsList = {
+            'Engine'
+            'Game'
+            'UnitTest'
+        }
+        
         ForEach(.CurrentTriplet in .Global_Triplets) {
             Using(.CurrentTriplet)
             Using(.'TripletEntry_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$')
 
-            // Predefined list of config-specific targets for this triplet
-            .ListEngineAliases = {}
-            .ListTestAliases = {}
-            .ListRunTestAliases = {}
+            // Define targets for target-config specifics
+            .LocalTripletTargetsList = []
 
             ForEach(.CurrentConfig in .ValidConfigurations) {
-                {
-                    // Generate engine modules and plugins targets for this config
-                    .ConfigTargets = {}
+                // Generate aliases per component
+                ForEach(.CurrentTarget in .LocalTargetsList) {
+                    .Targets = {}
 
-                    ForEach(.Item in .TargetsList_EngineModule) {
-                        ^ConfigTargets + '$Item$-$CurrentConfig$'
-                    }
-
-                    ForEach(.Item in .TargetsList_EnginePlugin) {
-                        ^ConfigTargets + '$Item$-$CurrentConfig$'
+                    ForEach(.Item in .'TargetsList_$CurrentTarget$') {
+                        ^Targets + '$Item$-$CurrentConfig$'
                     }
 
                     // Define new alias
-                    Alias('All-Engine-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
-                        .Targets = .ConfigTargets
-                    }
+                    Alias('All-$CurrentTarget$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {}
+                    
+                    .LocalTargetDef = [
+                        .'Local_PerConfig_$CurrentConfig$' = { 'All-$CurrentTarget$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$' }
+                    ]
+                    ^LocalTripletTargetsList + .LocalTargetDef
                 }
+            }
 
-                {
-                    // Generate tests targets for this config
-                    .ConfigTargets = {}
-                    .RunConfigTargets = {}
+            Using(.LocalTripletTargetsList)
 
-                    ForEach(.Item in .TargetsList_EngineTest) {
-                        ^ConfigTargets + '$Item$-$CurrentConfig$'
-                        ^RunConfigTargets + 'Test-$Item$-$CurrentConfig$'
-                    }
-
-                    // Build all targets
-                    Alias('All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
-                        .Targets = .ConfigTargets
-                    }
-
-                    // Run all targets
-                    Alias('Run-All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
-                        .Targets = .RunConfigTargets
-                    }
-                }
-                {
-                    // Generate engine modules and plugins targets for this config
-                    .ConfigTargets = {}
-
-                    ForEach(.Item in .TargetsList_EngineModule) {
-                        ^ConfigTargets + '$Item$-$CurrentConfig$'
-                    }
-
-                    ForEach(.Item in .TargetsList_EnginePlugin) {
-                        ^ConfigTargets + '$Item$-$CurrentConfig$'
-                    }
-
-                    ForEach(.Item in .TargetsList_EngineTest) {
-                        ^ConfigTargets + '$Item$-$CurrentConfig$'
-                    }
-
-                    // Define new alias
+            {
+                .Targets = {}
+                ForEach(.CurrentConfig in .ValidConfigurations) {
                     Alias('All-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
-                        .Targets = .ConfigTargets
+                        .Targets = .'Local_PerConfig_$CurrentConfig$'
                     }
+                    ^Targets + 'All-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
                 }
 
-                ^ListEngineAliases + 'All-Engine-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
-                ^ListTestAliases + 'All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
-                ^ListRunTestAliases + 'Run-All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+                Alias('All-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {}
             }
 
-            // Global list of all aliases
-            Alias('All-Engine-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
-                .Targets = .ListEngineAliases
-            }
-            Alias('All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
-                .Targets = .ListTestAliases + 'All-Engine-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
-            }
-            Alias('All-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
-                .Targets = {
-                    'All-Engine-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
-                    'All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+            {
+                .TestsPerConfig = {}
+                ForEach(.CurrentConfig in .ValidConfigurations) {
+                    .Targets = {}
+                    ForEach(.CurrentTarget in .TargetsList_UnitTest) {
+                        ^Targets + 'Test-$CurrentTarget$-$CurrentConfig$'
+                    }
+                    Alias('Test-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') { }
+                    ^TestsPerConfig + 'Test-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
                 }
-            }
-            Alias('Run-All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
-                .Targets = .ListRunTestAliases + 'All-Tests-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$'
+                Alias('Test-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$') {
+                    .Targets = .TestsPerConfig
+                }
             }
         }
 
@@ -355,7 +347,7 @@
             .FbRebuildCommand = 'fbuild -ide -clean -cache -monitor -fastcancel -dist'
             .FbCleanCommand = 'fbuild -ide -fastcancel'
 
-            .EngineProjectsList = {}
+            .VcxProjectsList = []
 
             // Proper order requires this to be project -> triplet -> config
             ForEach(.CurrentProject in .Global_ProjectList) {
@@ -365,6 +357,7 @@
 
                 ForEach(.CurrentTriplet in .Global_Triplets) {
                     Using(.CurrentTriplet)
+                    
                     ForEach(.CurrentConfig in .ValidConfigurations) {
                         .ConfigEntry = [
                             .Target = '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
@@ -390,17 +383,26 @@
                     .PlatformToolset = 'v142'
                     .OutputDirectory       = '^$(SolutionDir)\tmp'
                     .IntermediateDirectory = '^$(SolutionDir)\tmp'
+                    .ProjectPatternToExclude = {
+                        '*/Impl.Linux/*'
+                        '*/Impl.Android/*'
+                        '*/Impl.Posix/*'
+                    }
                 }
-                ^EngineProjectsList + '$ProjectName$'
+
+                .VcxProjectDescriptor = [
+                    //.'VcxFolder_$ProjectType$' = { .ProjectName }
+                    .'VcxFolder_$ProjectComponent$$ProjectType$' = { .ProjectName }
+                    .VcxBuildableProjects = { .ProjectName }
+                ]
+                ^VcxProjectsList + .VcxProjectDescriptor
             }
 
             .MetaProjectsList = {}
 
             .Local_MetaProjects = {
-                'All-Engine'
-                'All-Tests'
                 'All'
-                'Run-All-Tests'
+                'Test'
             }
 
             ForEach(.CurrentMetaProject in .Local_MetaProjects) {
@@ -448,32 +450,58 @@
                 }
             }
 
+
             VSSolution('Graphyte') {
                 .SolutionOutput = 'graphyte.sln'
-                .Local_EngineFolders = [
-                    .Path = 'Engine'
-                    .Projects = .EngineProjectsList
+
+                Using(.VcxProjectsList)
+
+                .VcxFolderDef_EngineModules = [
+                    .Path = 'Engine/Modules'
+                    .Projects = .VcxFolder_EngineModule
                 ]
-                .Local_MetaFolders = [
+
+                .VcxFolderDef_EnginePlugins = [
+                    .Path = 'Engine/Plugins'
+                    .Projects = .VcxFolder_EnginePlugin
+                ]
+
+                .VcxFolderDef_EngineUnitTests = [
+                    .Path = 'Engine/UnitTest'
+                    .Projects = .VcxFolder_EngineUnitTest
+                ]
+
+                .VcxFolderDef_GameApplications = [
+                    .Path = 'Game/Application'
+                    .Projects = .VcxFolder_GameApplication
+                ]
+
+                .VcxFolderDef_MetaProjects = [
                     .Path = 'Meta'
                     .Projects = .MetaProjectsList
                 ]
+
                 .SolutionFolders = {
-                    .Local_MetaFolders
-                    .Local_EngineFolders
+                    .VcxFolderDef_EngineModules
+                    .VcxFolderDef_EnginePlugins
+                    .VcxFolderDef_EngineUnitTests
+                    .VcxFolderDef_GameApplications
+                    .VcxFolderDef_MetaProjects
                 }
 
                 //
                 // Use this project for building all sources at once
                 //
+
                 .SolutionBuildProject = 'All'
+
 
                 //
                 // All projects defined in this solution depends on building `All` project.
                 //
 
                 .Local_RunDependencies = [
-                    .Projects = .EngineProjectsList
+                    .Projects = .VcxBuildableProjects
                     .Dependencies = { 'All' }
                 ]
 

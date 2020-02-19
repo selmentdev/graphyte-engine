@@ -3,7 +3,8 @@
         .ProjectName = 'game'
         .ProjectPath = 'game/source/app.demo'
         .ProjectKind = 'WindowedApp'
-        .ProjectType = ''
+        .ProjectType = 'Application'
+        .ProjectComponent = 'Game'
 
         .ProjectImports = {
             'sdk.fmt'

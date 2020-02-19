@@ -60,7 +60,7 @@ namespace Graphyte::System
     {
 #if GRAPHYTE_PLATFORM_WINDOWS
 
-        return {};
+        return "lib";
 
 #elif GRAPHYTE_PLATFORM_LINUX
 

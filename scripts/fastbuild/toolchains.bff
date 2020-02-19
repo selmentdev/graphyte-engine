@@ -65,10 +65,16 @@ Compiler('Compiler-Linux-x64-GCC') {
     .Platform_ConsoleApp_Suffix = '.exe'
     .Platform_WindowedApp_Prefix = ''
     .Platform_WindowedApp_Suffix = '.exe'
-    .Platform_StaticLib_Prefix = ''
+    .Platform_StaticLib_Prefix = 'lib'
     .Platform_StaticLib_Suffix = '.lib'
-    .Platform_SharedLib_Prefix = ''
+    .Platform_SharedLib_Prefix = 'lib'
     .Platform_SharedLib_Suffix = '.dll'
+    
+    .VcxProjectPatternToExclude = {
+        '*/Impl.Linux/*'
+        '*/Impl.Android/*'
+        '*/Impl.Posix/*'
+    }
 ]
 
 .PlatformDesc_Linux = [
@@ -81,6 +87,11 @@ Compiler('Compiler-Linux-x64-GCC') {
     .Platform_StaticLib_Suffix = '.a'
     .Platform_SharedLib_Prefix = 'lib'
     .Platform_SharedLib_Suffix = '.so'
+    
+    .VcxProjectPatternToExclude = {
+        '*/Impl.Android/*'
+        '*/Impl.Windows/*'
+    }
 ]
 
 .PlatformDesc_Android = [
@@ -93,6 +104,12 @@ Compiler('Compiler-Linux-x64-GCC') {
     .Platform_StaticLib_Suffix = '.a'
     .Platform_SharedLib_Prefix = 'lib'
     .Platform_SharedLib_Suffix = '.so'
+    
+    .VcxProjectPatternToExclude = {
+        '*/Impl.Linux/*'
+        '*/Impl.Android/*'
+        '*/Impl.Posix/*'
+    }
 ]
 
 // -------------------------------------------------------------------------------------------------

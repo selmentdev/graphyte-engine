@@ -49,6 +49,29 @@
     .Platform_Scarlett
 }
 
+.ProjectComponent_Game = 'Game'
+.ProjectComponent_Engine = 'Engine'
+.ProjectComponent_Developer = 'Developer'
+
+.ValidProjectComponents = {
+    .ProjectComponent_Game
+    .ProjectComponent_Engine
+    .ProjectComponent_Developer
+}
+
+.ProjectType_Module = 'Module'
+.ProjectType_Plugin = 'Plugin'
+.ProjectType_UnitTest = 'UnitTest'
+.ProjectType_Application = 'Application'
+
+.ValidProjectTypes = {
+    .ProjectType_Module
+    .ProjectType_Plugin
+    .ProjectType_UnitTest
+    .ProjectType_Application
+}
+
+
 .ProjectKind_SharedLib = 'SharedLib'
 .ProjectKind_StaticLib = 'StaticLib'
 .ProjectKind_ConsoleApp = 'ConsoleApp'
@@ -66,19 +89,6 @@
     .ProjectKind_WindowedApp
 }
 
-.ProjectType_EngineModule = 'EngineModule'
-.ProjectType_EnginePlugin = 'EnginePlugin'
-.ProjectType_EngineApp = 'EngineApp'
-.ProjectType_EngineTest = 'EngineTest'
-.ProjectType_GameModule = 'GameModule'
-.ProjectType_GamePlugin = 'GamePlugin'
-.ProjectType_GameApp = 'GameApp'
-.ProjectType_GameTest = 'GameTest'
-
-.ValidProjectTypes_Tests = {
-    .ProjectType_GameTest
-    .ProjectType_EngineTest
-}
 
 //--------------------------------------------------------------------------------------------------
 // Architectures
