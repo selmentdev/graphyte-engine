@@ -408,6 +408,7 @@ Compiler('Compiler-Linux-x64-GCC') {
         + ' -lc'
         + ' -lm'
         + ' -lstdc++'
+        + ' -pthread'
 
     .LibrarianOptions
         = 'rcs "%2" "%1"'

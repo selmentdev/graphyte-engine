@@ -1,7 +1,7 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'dev.assets.compiler'
-        .ProjectPath = 'engine/developer/assets/apps/compiler'
+        .ProjectName = 'dev.logfix'
+        .ProjectPath = 'engine/developer/assets/apps/logfix'
         .ProjectKind = 'ConsoleApp'
         .ProjectType = 'Application'
         .ProjectComponent = 'Developer'
@@ -10,8 +10,6 @@
             'sdks/fmt/include'
             'engine/runtime/libs/base/public'
             'engine/runtime/libs/launch/public'
-            'engine/developer/assets/libs/base/public'
-            'engine/developer/assets/libs/shader/public'
         }
         .ProjectImports = {
             'sdk.fmt'

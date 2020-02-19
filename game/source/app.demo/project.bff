@@ -54,7 +54,7 @@
 
         .ProjectVariants = {
             .VariantDef_Windows
-            .VariantDef_Linux
+            //.VariantDef_Linux
         }
     ]
  
