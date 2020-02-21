@@ -85,7 +85,6 @@ namespace Graphyte::AssetsPipeline
 
         std::string std_output{};
         std::string std_error{};
-        int32_t exit_code;
 
         auto temp_directory = Storage::FileManager::GetProjectIntermediateDirectory() + "shader-temp/";
         if (Storage::IFileSystem::GetPlatformNative().DirectoryTreeCreate(temp_directory) != Status::Success)
@@ -119,20 +118,18 @@ namespace Graphyte::AssetsPipeline
             m_Glslc.c_str(),
             commandline.c_str(),
             nullptr,
-            exit_code,
             &std_output,
             &std_error
         );
 
-        if (called)
+        if (bool success = called.Status == Status::Success and called.ExitCode == 0; success)
         {
             for (auto&& line : Split(std_error, '\n'))
             {
                 output.Log.emplace_back(line);
             }
 
-            GX_LOG(LogShaderCompilerFrontend, Error, "Exit code: {}\n", exit_code);
-            auto success = (exit_code == 0);
+            GX_LOG(LogShaderCompilerFrontend, Error, "Exit code: {}\n", called.ExitCode);
             output.Success = success;
 
             if (success)

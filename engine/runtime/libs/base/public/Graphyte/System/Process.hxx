@@ -33,6 +33,12 @@ namespace Graphyte::System
 #endif
     };
 
+    struct ProcessResult final
+    {
+        Status Status;
+        int32_t ExitCode;
+    };
+
     enum class CreateProcessFlags
     {
         None = 0,
@@ -123,13 +129,12 @@ namespace Graphyte::System
          * 
          * @return  @c true when successful, @c false otherwise.
          */
-        static bool Execute(
+        static ProcessResult Execute(
             const char* path,
-            const char* params,
-            const char* working_directory,
-            int32_t& exit_code,
-            std::string* out_stdout,
-            std::string* out_stderr
+            const char* params = nullptr,
+            const char* working_directory = nullptr,
+            std::string* out_stdout = nullptr,
+            std::string* out_stderr = nullptr
         ) noexcept;
 
 

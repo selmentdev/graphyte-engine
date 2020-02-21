@@ -223,11 +223,10 @@ namespace Graphyte::System
         TerminateProcess(handle.Handle, 0);
     }
 
-    bool Process::Execute(
+    ProcessResult Process::Execute(
         const char* path,
         const char* params,
         const char* working_directory,
-        int32_t& exit_code,
         std::string* out_stdout,
         std::string* out_stderr
     ) noexcept
@@ -259,7 +258,7 @@ namespace Graphyte::System
             }
         }
 
-        bool success{ false };
+        ProcessResult result;
 
         STARTUPINFOW startup_info{
             .cb              = sizeof(startup_info),
@@ -306,6 +305,8 @@ namespace Graphyte::System
 
                 ProcessHandle handle{ process_information.hProcess };
 
+                int32_t exit_code{};
+
                 do
                 {
                     Pipe::Read(outputs.data(), pipe_read.data(), 2);
@@ -322,16 +323,15 @@ namespace Graphyte::System
             DWORD dw_exit_code{};
             GetExitCodeProcess(process_information.hProcess, &dw_exit_code);
 
-            exit_code = static_cast<int32_t>(dw_exit_code);
 
             CloseHandle(process_information.hProcess);
             CloseHandle(process_information.hThread);
 
-            success = true;
+            result.Status = Status::Success;
+            result.ExitCode = static_cast<int32_t>(dw_exit_code);
         }
         else
         {
-            exit_code = 0;
 
             if (redirect_output)
             {
@@ -341,7 +341,9 @@ namespace Graphyte::System
                 }
             }
 
-            GX_ASSERTF(false, "Failed to create process: {}", Diagnostics::GetMessageFromSystemError());
+            Status status = Diagnostics::GetStatusFromSystemError();
+            result.ExitCode = 0;
+            result.Status = status;
         }
 
         if (redirect_output)
@@ -352,7 +354,7 @@ namespace Graphyte::System
             }
         }
 
-        return success;
+        return result;
     }
 
     DateTime Process::GetLinkTime() noexcept

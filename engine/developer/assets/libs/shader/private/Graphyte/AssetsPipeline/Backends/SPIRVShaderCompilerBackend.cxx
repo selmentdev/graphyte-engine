@@ -122,12 +122,11 @@ namespace Graphyte::AssetsPipeline
             m_CompilerPath.c_str(),
             commandline.c_str(),
             nullptr,
-            exit_code,
             &std_output,
             &std_error
         );
 
-        if (called)
+        if (bool success = called.Status == Status::Success and called.ExitCode == 0; success)
         {
             for (auto&& line : Split(std_error, '\n'))
             {
@@ -135,7 +134,7 @@ namespace Graphyte::AssetsPipeline
             }
 
             GX_LOG(LogShaderCompilerFrontend, Error, "Exit code: {}\n", exit_code);
-            auto success = (exit_code == 0);
+
             output.Success = success;
 
             if (success)
