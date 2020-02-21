@@ -84,24 +84,17 @@ namespace Graphyte::System
             .hStdError       = native_stderr_pipe,
         };
 
-        std::string const command_line = (params != nullptr)
-            ? fmt::format("\"{}\" {}", path, params)
-            : fmt::format("\"{}\"", path);
-
-        std::wstring szCcommandLine = System::Impl::WidenString(command_line);
-        std::wstring szWorkingDirectory = System::Impl::WidenString(working_directory);
-
         PROCESS_INFORMATION process_information{};
 
         BOOL created = CreateProcessW(
-            nullptr,
-            szCcommandLine.data(),
+            path != nullptr ? System::Impl::WidenString(path).data() : nullptr,
+            params != nullptr ? System::Impl::WidenString(params).data() : nullptr,
             &security_attributes,
             &security_attributes,
             TRUE,
             dw_create_flags,
             nullptr,
-            szWorkingDirectory.c_str(),
+            working_directory != nullptr ? System::Impl::WidenString(working_directory).data() : nullptr,
             &startup_info,
             &process_information
         );
@@ -239,10 +232,6 @@ namespace Graphyte::System
         std::string* out_stderr
     ) noexcept
     {
-        std::string const commandline = (params != nullptr)
-            ? fmt::format("\"{}\" {}", path, params)
-            : fmt::format("\"{}\"", path);
-
         SECURITY_ATTRIBUTES security_attributes{
             .nLength              = sizeof(SECURITY_ATTRIBUTES),
             .lpSecurityDescriptor = nullptr,
@@ -295,18 +284,15 @@ namespace Graphyte::System
 
         PROCESS_INFORMATION process_information{};
 
-        std::wstring wszCommandLine = System::Impl::WidenString(commandline);
-        std::wstring const wszWorkingDirectory = System::Impl::WidenString(working_directory);
-
         if (CreateProcessW(
-            nullptr,
-            wszCommandLine.data(),
+            path != nullptr ? System::Impl::WidenString(path).data() : nullptr,
+            params != nullptr ? System::Impl::WidenString(params).data() : nullptr,
             &security_attributes,
             &security_attributes,
             TRUE,
             dw_create_flags,
             nullptr,
-            wszWorkingDirectory.c_str(),
+            working_directory != nullptr ? System::Impl::WidenString(working_directory).data() : nullptr,
             &startup_info,
             &process_information
         ))
