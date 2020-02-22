@@ -13,13 +13,13 @@
         .ProjectIncludes = {
             'sdks/fmt/include'
             'sdks/lz4/include'
-            'sdks/mbedcrypto/include'
+            'sdks/mbedtls/include'
         }
 
         .ProjectImports = {
             'sdk.fmt'
             'sdk.lz4'
-            'sdk.mbedcrypto'
+            'sdk.mbedtls'
         }
 
         // Platform specific configurations
