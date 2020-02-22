@@ -19,7 +19,7 @@ namespace Graphyte::Crypto
             }
             else
             {
-                Status::Failure;
+                return Status::Failure;
             }
         }
 
