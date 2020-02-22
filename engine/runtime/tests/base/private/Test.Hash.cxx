@@ -42,7 +42,6 @@ TEST_CASE("Hashing functions")
         }
     }
 
-#if false
     SECTION("SHA1")
     {
         SECTION("Empty string")
@@ -399,5 +398,4 @@ TEST_CASE("Hashing functions")
             ));
         }
     }
-#endif
 }

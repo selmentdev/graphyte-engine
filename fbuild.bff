@@ -8,6 +8,7 @@
 #include "sdks/fmt/project.bff"
 #include "sdks/glad/project.bff"
 #include "sdks/lz4/project.bff"
+#include "sdks/mbedcrypto/project.bff"
 
 #include "engine/runtime/libs/base/project.bff"
 #include "engine/runtime/libs/geometry/project.bff"
