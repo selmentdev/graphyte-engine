@@ -91,8 +91,9 @@ namespace Graphyte::Maths::Impl
 {
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline __m128 mathcall avx_permute(__m128 a, __m128 b) noexcept
-        requires (X < 8) and (Y < 8) and (Z < 8) and (W < 8)
     {
+        static_assert((X < 8) and (Y < 8) and (Z < 8) and (W < 8));
+
         constexpr bool x_up = (X >= 4);
         constexpr bool y_up = (Y >= 4);
         constexpr bool z_up = (Z >= 4);
@@ -264,8 +265,9 @@ namespace Graphyte::Maths::Impl
 
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline __m128 mathcall avx_swizzle(__m128 v) noexcept
-        requires (X < 4) and (Y < 4) and (Z < 4) and (W < 4)
     {
+        static_assert((X < 4) and (Y < 4) and (Z < 4) and (W < 4));
+
         if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
         {
             return v;

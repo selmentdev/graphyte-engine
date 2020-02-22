@@ -54,8 +54,9 @@ namespace Graphyte::Maths::Impl
 
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline float32x4_t mathcall neon_permute(float32x4_t a, float32x4_t b) noexcept
-        requires (X < 8) and (Y < 8) and (Z < 8) and (W < 8)
     {
+        static_assert((X < 8) and (Y < 8) and (Z < 8) and (W < 8));
+
         if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
         {
             return a;
@@ -168,8 +169,9 @@ namespace Graphyte::Maths::Impl
 
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline float32x4_t mathcall neon_shuffle(float32x4_t a, float32x4_t b) noexcept
-        requires (X < 4) and (Y < 4) and (Z < 4) and (W < 4)
     {
+        static_assert((X < 4) and (Y < 4) and (Z < 4) and (W < 4));
+
         if constexpr (X == 0 and Y == 0 and Z == 0 and W == 0)
         {
             return vcombine_f32(vdup_lane_f32(vget_low_f32(a), 0), vdup_lane_f32(vget_low_f32(b), 0));
@@ -291,8 +293,9 @@ namespace Graphyte::Maths::Impl
 
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline float32x4_t mathcall neon_swizzle(float32x4_t v) noexcept
-        requires (X < 4) and (Y < 4) and (Z < 4) and (W < 4)
     {
+        static_assert((X < 4) and (Y < 4) and (Z < 4) and (W < 4));
+
         if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
         {
             return v;
