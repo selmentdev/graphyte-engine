@@ -1493,6 +1493,8 @@ namespace Graphyte::Application::Impl
         LPARAM lParam
     ) noexcept
     {
+        GX_ABORT_UNLESS(GApplicationEventHandler != nullptr, "Event handler must be set");
+
         Impl::WindowsWindow* window = reinterpret_cast<Impl::WindowsWindow*>(GetWindowLongPtrW(
             hWnd,
             GWLP_USERDATA

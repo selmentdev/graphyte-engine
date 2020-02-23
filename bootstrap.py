@@ -20,6 +20,7 @@ import scripts.bootstrap.vulkan as vulkan
 import scripts.bootstrap.msvc as msvc
 import scripts.bootstrap.dcvs as dcvs
 import scripts.bootstrap.utils as utils
+import scripts.bootstrap.llvm as llvm
 from scripts.bootstrap.version import Version
 
 assert(sys.version_info[0] == 3)
@@ -62,18 +63,21 @@ def generate_msvc_compiler_info():
         vsversion : str = ''
         vstoolkit : str = ''
 
+    llvm_path = llvm.find_llvm_windows()
+
     # Generate header
     with open('scripts/compiler.msvs.bff', 'w') as f:
         _bootstrap_emit_header(f)
 
-        f.write(".VsToolsLocation = '{}'\n".format(vspath))
-        f.write(".VsToolsName = '{}'\n".format(vsname))
-        f.write(".VsToolsVersion = '{}'\n".format(vstoolset))
-        f.write(".VsVersion = '{}'\n".format(vsversion))
-        f.write(".VsPlatformToolset = '{}'\n".format(vstoolkit))
-        f.write(".WindowsSdkLocation = '{}'\n".format(os.path.normpath(windows_sdk_location)))
-        f.write(".WindowsKitVersion = '{}'\n".format(windows_sdk_version))
-        f.write(".WindowsSdkVersion = '{}'\n".format(windows_sdk_kit))
+        f.write(f".VsToolsLocation = '{vspath}'\n")
+        f.write(f".VsToolsName = '{vsname}'\n")
+        f.write(f".VsToolsVersion = '{vstoolset}'\n")
+        f.write(f".VsVersion = '{vsversion}'\n")
+        f.write(f".VsPlatformToolset = '{vstoolkit}'\n")
+        f.write(f".WindowsSdkLocation = '{os.path.normpath(windows_sdk_location)}'\n")
+        f.write(f".WindowsKitVersion = '{windows_sdk_version}'\n")
+        f.write(f".WindowsSdkVersion = '{windows_sdk_kit}'\n")
+        f.write(f".WindowsLlvmPath = '{llvm_path}'\n")
 
 def generate_version_file():
     os.makedirs('./engine/include/Graphyte', exist_ok=True)

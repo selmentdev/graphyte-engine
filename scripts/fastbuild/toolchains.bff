@@ -55,6 +55,16 @@ Compiler('Compiler-Linux-x64-GCC') {
     .Executable = '/usr/bin/g++'
 }
 
+Compiler('Compiler-Windows-x64-LLVM-Clang') {
+    .Root = '$WindowsLlvmPath$/bin'
+    .Executable = '$Root$/clang++.exe'
+}
+
+Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
+    .Root = '$WindowsLlvmPath$/bin'
+    .Executable = '$Root$/clang-cl.exe'
+}
+
 
 // -------------------------------------------------------------------------------------------------
 // Platforms
