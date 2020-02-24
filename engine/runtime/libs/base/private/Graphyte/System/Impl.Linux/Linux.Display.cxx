@@ -1,5 +1,5 @@
 #include <Graphyte/System.hxx>
-#include <Graphyte/Maths.hxx>
+//#include <Graphyte/Maths.hxx>
 //#include <Graphyte/Math/Scalar.hxx>
 
 #include "../Platform.impl.hxx"

@@ -3,10 +3,6 @@
 
 namespace Graphyte::Geometry
 {
-}
-
-namespace Graphyte::Geometry
-{
     namespace Impl
     {
         constexpr Storage::BinarySignature ModelFileSignature{ 0x1032'0402'1020'1ace };

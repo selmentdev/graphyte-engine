@@ -1,7 +1,7 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Diagnostics.hxx>
-#include <Graphyte/Maths.hxx>
+#include <Graphyte/Types.hxx>
 #include <Graphyte/Storage/EnumSerialize.hxx>
 #include <Graphyte/Uuid.hxx>
 #include <Graphyte/DateTime.hxx>
@@ -184,62 +184,62 @@ namespace Graphyte::Storage
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Maths::Float2A& value) noexcept
+        __forceinline friend Archive& operator << (Archive& archive, Float2A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Maths::Float3A& value) noexcept
+        __forceinline friend Archive& operator << (Archive& archive, Float3A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Maths::Float4A& value) noexcept
+        __forceinline friend Archive& operator << (Archive& archive, Float4A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Maths::Float3x3A& value) noexcept
+        __forceinline friend Archive& operator << (Archive& archive, Float3x3A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Maths::Float4x3A& value) noexcept
+        __forceinline friend Archive& operator << (Archive& archive, Float4x3A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Maths::Float4x4A& value) noexcept
+        __forceinline friend Archive& operator << (Archive& archive, Float4x4A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Maths::Float2& value) noexcept
+        __forceinline friend Archive& operator<< (Archive& archive, Float2& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Maths::Float3& value) noexcept
+        __forceinline friend Archive& operator<< (Archive& archive, Float3& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Maths::Float4& value) noexcept
+        __forceinline friend Archive& operator<< (Archive& archive, Float4& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Maths::Float3x3& value) noexcept
+        __forceinline friend Archive& operator<< (Archive& archive, Float3x3& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Maths::Float4x3& value) noexcept
+        __forceinline friend Archive& operator<< (Archive& archive, Float4x3& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Maths::Float4x4& value) noexcept
+        __forceinline friend Archive& operator<< (Archive& archive, Float4x4& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;

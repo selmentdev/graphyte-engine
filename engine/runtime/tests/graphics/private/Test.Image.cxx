@@ -6,7 +6,8 @@
 #include <Graphyte/Storage/FileManager.hxx>
 #include <Graphyte/Graphics/ImageCodecs/ImageCodec.DDS.hxx>
 #include <Graphyte/Storage/ArchiveMemoryReader.hxx>
-#include <Graphyte/Maths.hxx>
+#include <Graphyte/Types.hxx>
+
 
 using Graphyte::Graphics::PixelFormat;
 using Graphyte::Graphics::PixelFormatProperties;
@@ -17,7 +18,7 @@ using Graphyte::Graphics::ImageCodecDDS;
 using Graphyte::Graphics::ImagePixels;
 using Graphyte::Graphics::CubeFace;
 using Graphyte::Hash::XXHash64;
-using Graphyte::Maths::ColorBGRA;
+using Graphyte::ColorBGRA;
 using Graphyte::Storage::ArchiveMemoryReader;
 
 TEST_CASE("gen-1d.dds")

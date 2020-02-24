@@ -1,6 +1,6 @@
 #pragma once
 #include <Graphyte/Rendering/SceneRenderer.hxx>
-#include <Graphyte/Maths.hxx>
+#include <Graphyte/Types.hxx>
 #include <Graphyte/Rendering/StaticMesh.hxx>
 
 namespace Graphyte::Rendering

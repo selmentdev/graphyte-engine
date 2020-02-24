@@ -121,10 +121,10 @@ namespace Graphyte::AssetsPipeline::Meshes
         int32_t TextureIndex;
         float BrightnessTreshold;
         float LightTreshold;
-        Maths::Float4 Ambient;
-        Maths::Float4 Diffuse;
-        Maths::Float4 Specular;
-        Maths::Float4 Selfilum;
+        Float4 Ambient;
+        Float4 Diffuse;
+        Float4 Specular;
+        Float4 Selfilum;
         float LineSize;
         float MaxDistanceSquared;
         float MinDistanceSquared;
@@ -142,9 +142,9 @@ namespace Graphyte::AssetsPipeline::Meshes
 
     struct Vertex final
     {
-        Maths::Float3 Position;
-        Maths::Float3 Normal;
-        Maths::Float2 Texcoord;
+        Float3 Position;
+        Float3 Normal;
+        Float2 Texcoord;
     };
     static_assert(sizeof(Vertex) == (sizeof(float) * 8));
 

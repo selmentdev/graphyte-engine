@@ -1,5 +1,6 @@
 #pragma once
 #include <Graphyte/Geometry.module.hxx>
+#include <Graphyte/Types.hxx>
 #include <Graphyte/Maths.hxx>
 #include <Graphyte/Geometry/Mesh.hxx>
 
@@ -52,10 +53,10 @@ namespace Graphyte::Geometry
         uint32_t        ChildrenCount;      //!< Number of children model parts.
         Mesh*           MeshData;           //!< Pointer to actual mesh data.
         ModelHelperType HelperType;         //!< Model helper type.
-        Maths::Float3   HelperSize;         //!< Model helper size.
+        Float3   HelperSize;                //!< Model helper size.
         std::string     Name;               //!< Name of model part.
-        Maths::Float4x3 LocalTransform;     //!< Local transform matrix.
-        Maths::Float4x3 BoneTransform;      //!< Bone transform matrix.
+        Float4x3 LocalTransform;            //!< Local transform matrix.
+        Float4x3 BoneTransform;             //!< Bone transform matrix.
     };
 
     /**

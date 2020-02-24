@@ -255,7 +255,7 @@ TEST_CASE("Random Generator")
         Graphyte::Random::RandomState state{};
         Initialize(state, 0);
 
-        Graphyte::Maths::Float4A const sample = Next<Graphyte::Maths::Float4A>(state);
+        Graphyte::Float4A const sample = Next<Graphyte::Float4A>(state);
 
         CHECK(Graphyte::FloatTraits<float>::ToBits(sample.X) == 0x3F4B75F2u);
         CHECK(Graphyte::FloatTraits<float>::ToBits(sample.Y) == 0x3F19EC5Eu);

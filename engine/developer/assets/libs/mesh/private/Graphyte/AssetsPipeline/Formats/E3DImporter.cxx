@@ -15,7 +15,7 @@ namespace Graphyte::AssetsPipeline::Meshes
         std::vector<std::string> materials{};
         std::vector<std::string> submodel_names{};
         std::vector<Vertex> vertices{};
-        std::vector<Maths::Float4x4> matrices{};
+        std::vector<Float4x4> matrices{};
 
         while (archive.GetPosition() <= archive.GetSize())
         {
@@ -60,11 +60,11 @@ namespace Graphyte::AssetsPipeline::Meshes
             case Chunks::TRA0:
                 {
                     GX_LOG(LogMeshProcessor, Info, "Transform Matrices: Float4x4A\n");
-                    size_t count = static_cast<size_t>((chunkHeader.Size - sizeof(chunkHeader)) / sizeof(Maths::Float4x4));
+                    size_t count = static_cast<size_t>((chunkHeader.Size - sizeof(chunkHeader)) / sizeof(Float4x4));
 
                     for (size_t i = 0; i < count; ++i)
                     {
-                        Maths::Float4x4 matrix{};
+                        Float4x4 matrix{};
                         archive.Serialize(&matrix, sizeof(matrix));
                         matrices.push_back(matrix);
                     }

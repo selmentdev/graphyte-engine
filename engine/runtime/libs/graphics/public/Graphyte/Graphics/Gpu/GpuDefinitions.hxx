@@ -1,7 +1,7 @@
 #pragma once
 #include <Graphyte/Graphics.module.hxx>
 #include <Graphyte/Graphics/PixelFormat.hxx>
-#include <Graphyte/Maths.hxx>
+#include <Graphyte/Types.hxx>
 
 namespace Graphyte::Graphics
 {
@@ -570,7 +570,7 @@ namespace Graphyte::Graphics
         bool IndependentBlend;
         GpuRenderTargetBlendDesc RenderTarget[8];
         uint32_t SampleMask;
-        Maths::Float4 BlendFactors;
+        Float4 BlendFactors;
     };
 
     struct GpuRasterizerStateDesc final

@@ -1,6 +1,6 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
-#include <Graphyte/Maths.hxx>
+#include <Graphyte/Types.hxx>
 
 namespace Graphyte::Input
 {
@@ -325,13 +325,13 @@ namespace Graphyte::Input
     struct PointerEvent final : public InputEvent
     {
     private:
-        Maths::Float2 m_ScreenSpacePosition;
-        Maths::Float2 m_CursorDelta;
+        Float2 m_ScreenSpacePosition;
+        Float2 m_CursorDelta;
         MouseButton m_Button;
 
     public:
         PointerEvent() noexcept = default;
-        PointerEvent(ModifierKeyState state, uint32_t user_index, bool is_repeat, Maths::Float2 screen_space_position, Maths::Float2 cursor_delta, MouseButton mouse_button) noexcept
+        PointerEvent(ModifierKeyState state, uint32_t user_index, bool is_repeat, Float2 screen_space_position, Float2 cursor_delta, MouseButton mouse_button) noexcept
             : InputEvent{ state, user_index, is_repeat }
             , m_ScreenSpacePosition{ screen_space_position }
             , m_CursorDelta{ cursor_delta }
@@ -340,12 +340,12 @@ namespace Graphyte::Input
         }
 
     public:
-        Maths::Float2 GetScreenSpacePosition() const noexcept
+        Float2 GetScreenSpacePosition() const noexcept
         {
             return m_ScreenSpacePosition;
         }
 
-        Maths::Float2 GetCursorDelta() const noexcept
+        Float2 GetCursorDelta() const noexcept
         {
             return m_CursorDelta;
         }
@@ -359,14 +359,14 @@ namespace Graphyte::Input
     struct MotionEvent final : public InputEvent
     {
     private:
-        Maths::Float2 m_Tilt;
-        Maths::Float3 m_RotationRate;
-        Maths::Float3 m_Gravity;
-        Maths::Float3 m_Acceleration;
+        Float2 m_Tilt;
+        Float3 m_RotationRate;
+        Float3 m_Gravity;
+        Float3 m_Acceleration;
 
     public:
         MotionEvent() noexcept = default;
-        MotionEvent(ModifierKeyState state, uint32_t user_index, bool is_repeat, Maths::Float2 tilt, Maths::Float3 rotation_rate, Maths::Float3 gravity, Maths::Float3 acceleration) noexcept
+        MotionEvent(ModifierKeyState state, uint32_t user_index, bool is_repeat, Float2 tilt, Float3 rotation_rate, Float3 gravity, Float3 acceleration) noexcept
             : InputEvent{ state, user_index, is_repeat }
             , m_Tilt{ tilt }
             , m_RotationRate{ rotation_rate }
@@ -376,22 +376,22 @@ namespace Graphyte::Input
         }
 
     public:
-        Maths::Float2 GetTilt() const noexcept
+        Float2 GetTilt() const noexcept
         {
             return m_Tilt;
         }
 
-        Maths::Float3 GetRotationRate() const noexcept
+        Float3 GetRotationRate() const noexcept
         {
             return m_RotationRate;
         }
 
-        Maths::Float3 GetGravity() const noexcept
+        Float3 GetGravity() const noexcept
         {
             return m_Gravity;
         }
 
-        Maths::Float3 GetAcceleration() const noexcept
+        Float3 GetAcceleration() const noexcept
         {
             return m_Acceleration;
         }

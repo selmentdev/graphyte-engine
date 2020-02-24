@@ -1,6 +1,6 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
-#include <Graphyte/Maths.hxx>
+#include <Graphyte/Types.hxx>
 #include <Graphyte/Span.hxx>
 
 namespace Graphyte::Random::Impl
@@ -96,7 +96,7 @@ namespace Graphyte::Random
     }
 
     template <>
-    inline Maths::Float4A Next(RandomState& state) noexcept
+    inline Float4A Next(RandomState& state) noexcept
     {
         uint64_t const sample0 = Generate64(state);
         uint64_t const sample1 = Generate64(state);
