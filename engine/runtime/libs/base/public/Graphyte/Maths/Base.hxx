@@ -1336,14 +1336,269 @@ namespace Graphyte::MathsX
     template <typename T> T NegativeUnitW() noexcept = delete;
 
     template <typename T> T Identity() noexcept = delete;
+
     template <typename T> bool IsIdentity(T value) noexcept = delete;
-    template <typename T> bool IsIdentity(T value, float epsilon) noexcept = delete;
-    template <typename T> bool IsIdentity(T value, Vector4 epsilon) noexcept = delete;
+    template <typename T, typename U> bool IsIdentity(T value, U epsilon) noexcept = delete;
 
     template <typename T> T True() noexcept = delete;
     template <typename T> T False() noexcept = delete;
 }
 
+namespace Graphyte::MathsX
+{
+    template <typename T> bool AllTrue(T value) noexcept = delete;
+    template <typename T> bool AllFalse(T value) noexcept = delete;
+    template <typename T> bool AnyTrue(T value) noexcept = delete;
+    template <typename T> bool AnyFalse(T value) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename T> T And(T a, T b) noexcept = delete;
+    template <typename T> T AndNot(T a, T b) noexcept = delete;
+    template <typename T> T Or(T a, T b) noexcept = delete;
+    template <typename T> T Xor(T a, T b) noexcept = delete;
+    template <typename T> T Nor(T a, T b) noexcept = delete;
+    template <typename T> T Not(T a, T b) noexcept = delete;
+}
+
+
+
+namespace Graphyte::MathsX
+{
+    template <typename T> T Cos(T value) noexcept = delete;
+    template <typename T> T Sin(T value) noexcept = delete;
+    template <typename T> void SinCos(T& result_sin, T& result_cos, T value) noexcept = delete;
+    template <typename T> T Tan(T value) noexcept = delete;
+    template <typename T> T Asin(T value) noexcept = delete;
+    template <typename T> T Acos(T value) noexcept = delete;
+    template <typename T> T Atan(T value) noexcept = delete;
+    template <typename T> T Atan2(T y, T x) noexcept = delete;
+    template <typename T> T Sinh(T value) noexcept = delete;
+    template <typename T> T Cosh(T value) noexcept = delete;
+    template <typename T> T Tanh(T value) noexcept = delete;
+    template <typename T> T Asinh(T value) noexcept = delete;
+    template <typename T> T Acosh(T value) noexcept = delete;
+    template <typename T> T Atanh(T value) noexcept = delete;
+
+    template <typename T> T Log(T value) noexcept = delete;
+    template <typename T> T Log(T base, T value) noexcept = delete;
+    template <typename T> T Log10(T value) noexcept = delete;
+    template <typename T> T Log2(T value) noexcept = delete;
+
+    template <typename T> T Exp(T value) noexcept = delete;
+    template <typename T> T Exp10(T value) noexcept = delete;
+    template <typename T> T Exp2(T value) noexcept = delete;
+
+    template <typename T> T Power(T x, T y) noexcept = delete;
+    template <typename T> T Hypot(T x, T y) noexcept = delete;
+    template <typename T> T Sqrt(T value) noexcept = delete;
+    template <typename T> T SqrtEst(T value) noexcept = delete;
+    template <typename T> T InvSqrt(T value) noexcept = delete;
+    template <typename T> T InvSqrtEst(T value) noexcept = delete;
+    template <typename T> T Cbrt(T value) noexcept = delete;
+    template <typename T> T InvCbrt(T value) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename T> T Abs(T value) noexcept = delete;
+    template <typename T> T Negate(T value) noexcept = delete;
+    template <typename T> T Add(T a, T b) noexcept = delete;
+    template <typename T> T Subtract(T a, T b) noexcept = delete;
+    template <typename T> T Multiply(T a, T b) noexcept = delete;
+    template <typename T, typename U> T Multiply(T a, U b) noexcept = delete;
+    template <typename T> T Reciprocal(T value) noexcept = delete;
+    template <typename T> T Divide(T value) noexcept = delete;
+    template <typename T, typename U> T Divide(T a, U b) noexcept = delete;
+    template <typename T> T MultiplyAdd(T a, T b, T c) noexcept = delete;
+    template <typename T> T MultiplySubtract(T a, T b, T c) noexcept = delete;
+    template <typename T> T NegateMultiplyAdd(T a, T b, T c) noexcept = delete;
+    template <typename T> T NegateMultiplySubtract(T a, T b, T c) noexcept = delete;
+
+    template <typename T> T Square(T value) noexcept = delete;
+    template <typename T> T SignedSquare(T v) noexcept = delete;
+    template <typename T> T Cube(T v) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename T, typename U> T Lerp(T a, T b, U t) noexcept = delete;
+    template <typename T> T Lerp(T a, T b, T t) noexcept = delete;
+
+    template <typename T> T Unlerp(T v, T a, T b) noexcept = delete;
+
+    template <typename T, typename U> T LerpPrecise(T a, T b, U t) noexcept = delete;
+    template <typename T> T LerpPrecise(T a, T b, T t) noexcept = delete;
+
+    template <typename T, typename U> T Hermite(T p0, T t0, T p1, T t1, U t) noexcept = delete;
+    template <typename T> T Hermite(T p0, T t0, T p1, T t1, T t) noexcept = delete;
+
+    template <typename T, typename U> T Barycentric(T a, T b, T c, U f, U g) noexcept = delete;
+    template <typename T> T Barycentric(T a, T b, T c, T f, T g) noexcept = delete;
+
+    template <typename T, typename U> T CatmullRom(T p0, T p1, T p2, T p3, U t) noexcept = delete;
+    template <typename T> T CatmullRom(T p0, T p1, T p2, T p3, T t) noexcept = delete;
+
+    template <typename T, typename U> T Bezier(T a, T b, T c, U t) noexcept = delete;
+    template <typename T> T Bezier(T a, T b, T c, T t) noexcept = delete;
+
+    template <typename T, typename U> T Bezier(T a, T b, T c, T d, U t) noexcept = delete;
+    template <typename T> T Bezier(T a, T b, T c, T d, T t) noexcept = delete;
+
+    template <typename T> T Remap(T v, T from_min, T from_max, T to_min, T to_max) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename T> T CopySign(T number, T sign) noexcept = delete;
+    template <typename T> T Sign(T v) noexcept = delete;
+    template <typename T> T Ceiling(T v) noexcept = delete;
+    template <typename T> T Floor(T v) noexcept = delete;
+    template <typename T> T Truncate(T v) noexcept = delete;
+    template <typename T> T Round(T v) noexcept = delete;
+    template <typename T> T Remainder(T x, T y) noexcept = delete;
+    template <typename T> T Fraction(T x, T y) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename R, typename T> R BitCompareEqual(T a, T b) noexcept = delete;
+    template <typename R, typename T> R BitCompareNotEqual(T a, T b) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename R, typename T> R CompareEqual(T a, T b) noexcept = delete;
+    template <typename R, typename T, typename U> R CompareEqual(T a, T b, U epsilon) noexcept = delete;
+    template <typename R, typename T> R CompareNotEqual(T a, T b) noexcept = delete;
+    template <typename R, typename T> R CompareGreater(T a, T b) noexcept = delete;
+    template <typename R, typename T> R CompareGreaterEqual(T a, T b) noexcept = delete;
+    template <typename R, typename T> R CompareLess(T a, T b) noexcept = delete;
+    template <typename R, typename T> R CompareLessEqual(T a, T b) noexcept = delete;
+    template <typename R, typename T> R CompareInfinity(T v) noexcept = delete;
+    template <typename R, typename T> R CompareNan(T v) noexcept = delete;
+    template <typename R, typename T> R CompareInBounds(T v, T bounds) noexcept = delete;
+
+    template <typename T> bool IsZero(T v) noexcept = delete;
+    template <typename T> bool IsZero(T v, T epsilon) noexcept = delete;
+    template <typename T> bool IsEqual(T a, T b) noexcept = delete;
+    template <typename T, typename U> bool IsEqual(T a, T b, U epsilon) noexcept = delete;
+    template <typename T> bool IsNotEqual(T a, T b) noexcept = delete;
+    template <typename T> bool IsGreater(T a, T b) noexcept = delete;
+    template <typename T> bool IsGreaterEqual(T a, T b) noexcept = delete;
+    template <typename T> bool IsLess(T a, T b) noexcept = delete;
+    template <typename T> bool IsLessEqual(T a, T b) noexcept = delete;
+    template <typename T> bool IsInfinity(T v) noexcept = delete;
+    template <typename T> bool IsNan(T v) noexcept = delete;
+    template <typename T> bool InBounds(T v, T bounds) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename T> bool IsNearEqual(T a, T b, int32_t tolerance) noexcept = delete;
+    template <typename T> bool IsNearEqual(T a, T b) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename T> T Min(T a, T b) noexcept = delete;
+    template <typename T> T Max(T a, T b) noexcept = delete;
+    template <typename T> T Clamp(T v, T min, T max) noexcept = delete;
+    template <typename T> T Saturate(T v) noexcept = delete;
+    template <typename T> T Wrap(T v, T min, T max) noexcept = delete;
+    template <typename T> Vector4 Hmin(T v) noexcept = delete;
+    template <typename T> Vector4 Hmax(T v) noexcept = delete;
+    template <typename T> Vector4 Hsum(T v) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename T, typename U> T SmoothStep(T a, T b, U x) noexcept = delete;
+
+    template <typename T, typename U> T Cosine(T a, T b, U x) noexcept = delete;
+
+    template <typename T> T EaseSmoothC2(T x) noexcept = delete;
+    template <typename T> T Smooth(T min, T max, T x) noexcept = delete;
+    template <typename T> T SmoothSquared(T min, T max, T x) noexcept = delete;
+    template <typename T> T SmoothInvSquared(T min, T max, T x) noexcept = delete;
+    template <typename T> T SmoothCubed(T min, T max, T x) noexcept = delete;
+    template <typename T> T SmoothInvCubed(T min, T max, T x) noexcept = delete;
+    template <typename T> T Trapezoid(T a, T b, T c, T d, T t) noexcept = delete;
+    template <typename T> T Trapezoid(T a, T b, T c, T d, T t, T min, T max) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename T, typename R> R Dot(T a, T b) noexcept = delete;
+    template <typename T, typename R> R LengthSquared(T v) noexcept = delete;
+    template <typename T, typename R> R Length(T v) noexcept = delete;
+    template <typename T, typename R> R LengthEst(T v) noexcept = delete;
+    template <typename T, typename R> R ReciprocalLength(T v) noexcept = delete;
+    template <typename T, typename R> R ReciprocalLengthEst(T v) noexcept = delete;
+    template <typename T, typename R> R Distance(T a, T b) noexcept = delete;
+    template <typename T, typename R> R DistanceSquared(T a, T b) noexcept = delete;
+
+    template <typename T> bool IsUnit(T v) noexcept;
+    template <typename T> T Normalize(T v) noexcept;
+    template <typename T> T NormalizeEst(T v) noexcept;
+
+    template <typename T, typename U> T ClampLength(T v, U min, U max) noexcept = delete;
+    template <typename T> T Reflect(T incident, T normal) noexcept = delete;
+    template <typename T, typename U> T Refract(T incident, T normal, U index) noexcept = delete;
+    template <typename T> T FaceForward(T normal, T incident, T reference) noexcept = delete;
+    template <typename T> Vector4 AngleBetweenNormals(T a, T b) noexcept = delete;
+    template <typename T> Vector4 AngleBetweenVectors(T a, T b) noexcept = delete;
+
+    template <typename T> T Cross(T a, T b) noexcept = delete;
+    template <typename T> T Cross(T a, T b, T c) noexcept = delete;
+
+    template <typename T> T Orthogonal(T v) noexcept = delete;
+
+    template <typename T, typename M> T Transform(T v, M m) noexcept = delete;
+    template <typename T, typename M> T TransformCoord(T v, M m) noexcept = delete;
+    template <typename T, typename M> T TransformNormal(T v, M m) noexcept = delete;
+
+    void ComponentsFromNormal(Vector3& parallel, Vector3& perpendicular, Vector3 v, Vector3 n) noexcept;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename R> R CreateFromAxisAngle(Vector3 axis, float angle) noexcept = delete;
+    template <typename R> R CreateFromNormalAngle(Vector3 normal, float angle) noexcept = delete;
+    template <typename R> R CreateFromEuler(float x, float y, float z) noexcept = delete;
+    template <typename R> R CreateFromEuler(Vector3 angles) noexcept = delete;
+
+    template <typename R> R CreateFromMatrix(Matrix m) noexcept = delete;
+    template <typename R> R CreateFromQuaternion(Quaternion v) noexcept = delete;
+
+    template <typename T> void ToAxisAngle(Vector3& axis, float& angle, T v) noexcept = delete;
+
+    template <typename M> Vector3 Rotate(Vector3 v, M m) noexcept = delete;
+    template <typename M> Vector3 InverseRotate(Vector3 v, M m) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename T> T Conjugate(T v) noexcept = delete;
+    template <typename T> T Inverse(T v) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename T> T RevolutionsToDegrees(T x) noexcept = delete;
+    template <typename T> T RevolutionsToRadians(T x) noexcept = delete;
+    template <typename T> T RevolutionsToGradians(T x) noexcept = delete;
+    template <typename T> T DegreesToRevolutions(T x) noexcept = delete;
+    template <typename T> T RadiansToRevolutions(T x) noexcept = delete;
+    template <typename T> T GradiansToRevolutions(T x) noexcept = delete;
+    template <typename T> T RadiansToGradians(T x) noexcept = delete;
+    template <typename T> T GradiansToRadians(T x) noexcept = delete;
+    template <typename T> T RadiansToDegrees(T x) noexcept = delete;
+    template <typename T> T DegreesToRadians(T x) noexcept = delete;
+    template <typename T> T GradiansToDegrees(T x) noexcept = delete;
+    template <typename T> T DegreesToGradians(T x) noexcept = delete;
+}
 
 // =================================================================================================
 //
@@ -1352,19 +1607,12 @@ namespace Graphyte::MathsX
 
 namespace Graphyte::MathsX
 {
-    template <typename T> T Replicate(float value) noexcept = delete;
-    template <typename T> T Replicate(float const* source) noexcept = delete;
-    template <typename T> T Make(float x) noexcept = delete;
-    template <typename T> T Make(float x, float y) noexcept = delete;
-    template <typename T> T Make(float x, float y, float z) noexcept = delete;
-    template <typename T> T Make(float x, float y, float z, float w) noexcept = delete;
-
-    template <typename T> T Replicate(uint32_t value) noexcept = delete;
-    template <typename T> T Replicate(uint32_t const* source) noexcept = delete;
-    template <typename T> T Make(uint32_t x) noexcept = delete;
-    template <typename T> T Make(uint32_t x, uint32_t y) noexcept = delete;
-    template <typename T> T Make(uint32_t x, uint32_t y, uint32_t z) noexcept = delete;
-    template <typename T> T Make(uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept = delete;
+    template <typename T, typename S> T Replicate(S value) noexcept = delete;
+    template <typename T, typename S> T Replicate(S const* source) noexcept = delete;
+    template <typename T, typename S> T Make(S x) noexcept = delete;
+    template <typename T, typename S> T Make(S x, S y) noexcept = delete;
+    template <typename T, typename S> T Make(S x, S y, S z) noexcept = delete;
+    template <typename T, typename S> T Make(S x, S y, S z, S w) noexcept = delete;
 }
 
 // =================================================================================================
@@ -1424,7 +1672,7 @@ namespace Graphyte::MathsX
     template <size_t X, size_t Y, size_t Z>
     mathinline Vector3 mathcall Swizzle(Vector3 v) noexcept
     {
-        static_assert(X < 3 and Y < 3 and W < 3);
+        static_assert(X < 3 and Y < 3 and Z < 3);
         return Vector3{ Swizzle<X, Y, Z, Z>(Vector4{ v.V }).V };
     }
 
@@ -1485,3 +1733,85 @@ namespace Graphyte::MathsX
 #endif
     }
 }
+
+namespace Graphyte::MathsX
+{
+    // Splat component on all lanes.
+    template <typename T> T SplatX(T v) noexcept = delete;
+    template <typename T> T SplatY(T v) noexcept = delete;
+    template <typename T> T SplatZ(T v) noexcept = delete;
+    template <typename T> T SplatW(T v) noexcept = delete;
+
+    // get/set component by index.
+    template <typename R, typename T> R GetByIndex(T v, size_t index) noexcept = delete;
+    template <typename T, typename S> T SetByIndex(T v, S value, size_t index) noexcept = delete;
+
+    template <typename R, typename T> void GetByIndex(R* result, T v, size_t index) noexcept = delete;
+    template <typename T, typename S> T SetByIndex(T v, S const* value, size_t index) noexcept = delete;
+
+    template <typename R, typename T> R GetX(T v) noexcept = delete;
+    template <typename R, typename T> R GetY(T v) noexcept = delete;
+    template <typename R, typename T> R GetZ(T v) noexcept = delete;
+    template <typename R, typename T> R GetW(T v) noexcept = delete;
+
+    template <typename R, typename T> void GetX(R* result, T v) noexcept = delete;
+    template <typename R, typename T> void GetY(R* result, T v) noexcept = delete;
+    template <typename R, typename T> void GetZ(R* result, T v) noexcept = delete;
+    template <typename R, typename T> void GetW(R* result, T v) noexcept = delete;
+
+    template <typename T, typename S> T SetX(T v, S value) noexcept = delete;
+    template <typename T, typename S> T SetY(T v, S value) noexcept = delete;
+    template <typename T, typename S> T SetZ(T v, S value) noexcept = delete;
+    template <typename T, typename S> T SetW(T v, S value) noexcept = delete;
+
+    template <typename T, typename S> T SetX(T v, S const* value) noexcept = delete;
+    template <typename T, typename S> T SetY(T v, S const* value) noexcept = delete;
+    template <typename T, typename S> T SetZ(T v, S const* value) noexcept = delete;
+    template <typename T, typename S> T SetW(T v, S const* value) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <typename R, typename T1, typename T2> R To(T1 a, T2 b) noexcept = delete;
+    template <typename R, typename T1, typename T2, typename T3> R To(T1 a, T2 b, T3 c) noexcept = delete;
+}
+
+namespace Graphyte::MathsX
+{
+    template <>
+    mathinline Bool4 mathcall CompareNotEqual<Bool4, Vector4>(Vector4 a, Vector4 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                (a.V.F[0] != b.V.F[0]) ? SELECT_1 : SELECT_0,
+                (a.V.F[1] != b.V.F[1]) ? SELECT_1 : SELECT_0,
+                (a.V.F[2] != b.V.F[2]) ? SELECT_1 : SELECT_0,
+                (a.V.F[3] != b.V.F[3]) ? SELECT_1 : SELECT_0,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_cmpneq_ps(a.V, b.V) };
+#elif GRAPHYTE_HW_NEON
+        uint32x4_t const equal = vreinterpretq_u32_f32(vceqq_f32(a.V, b.V));
+        uint32x4_t const not_equal = vmvnq_u32(equal);
+        return { vreinterpretq_f32_u32(not_equal) };
+#endif
+    }
+
+    // forward specialization for specific type
+    template <> mathinline Bool3 mathcall CompareNotEqual<Bool3, Vector3>(Vector3 a, Vector3 b) noexcept
+    {
+        return { CompareNotEqual<Bool4, Vector4>({ a.V }, { b.V }).V };
+    }
+    template <> mathinline Bool2 mathcall CompareNotEqual<Bool2, Vector2>(Vector2 a, Vector2 b) noexcept
+    {
+        return { CompareNotEqual<Bool4, Vector4>({ a.V }, { b.V }).V };
+    }
+
+    template <> mathinline Bool4 mathcall CompareNotEqual<Bool4, Plane>(Plane a, Plane b) noexcept
+    {
+        return CompareNotEqual<Bool4, Vector4>({ a.V }, { b.V });
+    }
+}
+

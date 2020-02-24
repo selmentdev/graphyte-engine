@@ -246,10 +246,10 @@ namespace Graphyte::Maths::Impl
             //
 
             alignas(__m128) static constexpr uint32_t const select_mask[4] {
-                    x_up ? SELECT_1 : SELECT_0,
-                    y_up ? SELECT_1 : SELECT_0,
-                    z_up ? SELECT_1 : SELECT_0,
-                    w_up ? SELECT_1 : SELECT_0,
+                    x_up ? 0xFFFFFFFFu : 0x00000000u,
+                    y_up ? 0xFFFFFFFFu : 0x00000000u,
+                    z_up ? 0xFFFFFFFFu : 0x00000000u,
+                    w_up ? 0xFFFFFFFFu : 0x00000000u,
                 };
 
             __m128 const mask = _mm_load_ps(reinterpret_cast<float const*>(&select_mask[0]));
