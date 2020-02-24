@@ -53,17 +53,32 @@ namespace Graphyte::MathsX::Impl
             int32_t I[4];
         };
     };
+    struct alignas(16) NativeUInt32x4 final
+    {
+        union
+        {
+            float F[4];
+            uint32_t U[4];
+            int32_t I[4];
+        };
+};
 #elif GRAPHYTE_HW_NEON
     using NativeFloat32x4 = float32x4_t;
+    using NativeUInt32x4 = uint32x4_t;
 #elif GRAPHYTE_HW_AVX
     using NativeFloat32x4 = __m128;
+    using NativeUInt32x4 = __m128i;
 #else
 #error Unknown architecture
 #endif
 
     static_assert(alignof(NativeFloat32x4) == 16);
     static_assert(sizeof(NativeFloat32x4) == 16);
+
+    static_assert(alignof(NativeUInt32x4) == 16);
+    static_assert(sizeof(NativeUInt32x4) == 16);
 }
+
 
 
 // =================================================================================================
@@ -1342,6 +1357,13 @@ namespace Graphyte::MathsX
 
     template <typename T> T True() noexcept = delete;
     template <typename T> T False() noexcept = delete;
+
+    template <typename T> T Pi() noexcept = delete;
+    template <typename T> T Pi2() noexcept = delete;
+    template <typename T> T OneOverPi() noexcept = delete;
+    template <typename T> T OneOverPi2() noexcept = delete;
+    template <typename T> T PiOver2() noexcept = delete;
+    template <typename T> T E() noexcept = delete;
 }
 
 namespace Graphyte::MathsX
@@ -1707,8 +1729,8 @@ namespace Graphyte::MathsX
 
     mathinline Vector4 mathcall Swizzle(Vector4 v, size_t x, size_t y, size_t z, size_t w) noexcept
     {
-        GX_ASSERT((x < 4) and (y < 4) and (z < 4) and (w < 4));
-        GX_COMPILER_ASSUME((x < 4) and (y < 4) and (z < 4) and (w < 4));
+        GX_ASSERT((x < 4) && (y < 4) && (z < 4) && (w < 4));
+        GX_COMPILER_ASSUME((x < 4) && (y < 4) && (z < 4) && (w < 4));
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -1770,8 +1792,14 @@ namespace Graphyte::MathsX
     template <typename T, typename S> T SetW(T v, S const* value) noexcept = delete;
 }
 
+// =================================================================================================
+//
+// Vector conversion functions.
+//
+
 namespace Graphyte::MathsX
 {
+    template <typename R, typename T> R To(T v) noexcept = delete;
     template <typename R, typename T1, typename T2> R To(T1 a, T2 b) noexcept = delete;
     template <typename R, typename T1, typename T2, typename T3> R To(T1 a, T2 b, T3 c) noexcept = delete;
 }
