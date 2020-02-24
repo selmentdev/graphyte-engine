@@ -78,6 +78,9 @@ def generate_msvc_compiler_info():
         f.write(f".WindowsKitVersion = '{windows_sdk_version}'\n")
         f.write(f".WindowsSdkVersion = '{windows_sdk_kit}'\n")
         f.write(f".WindowsLlvmPath = '{llvm_path}'\n")
+        f.write(f".WindowsVulkanPath = '{vulkan.find_vulkan_sdk()}'\n")
+        f.write(f".LinuxVulkanPath = '{vulkan.find_vulkan_sdk()}'\n")
+
 
 def generate_version_file():
     os.makedirs('./engine/include/Graphyte', exist_ok=True)

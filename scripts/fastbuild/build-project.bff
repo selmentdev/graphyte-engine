@@ -47,6 +47,7 @@
         .ProjectImports = {}
         .ProjectLinks = {}
         .ProjectDefines = {}
+        .ProjectLibPaths = {}
         .ProjectVariants = {}
         Using(.CurrentProject)
 
@@ -121,6 +122,7 @@
                 .LocalImports = .ProjectImports
                 .LocalLinks = .ProjectLinks
                 .LocalDefines = .ProjectDefines
+                .LocalLibPaths = .ProjectLibPaths
 
                 // Add project kind specific flags
                 {
@@ -154,6 +156,7 @@
                     .VariantIncludes = {}
                     .VariantLinks = {}
                     .VariantImports = {}
+                    .VariantLibPaths = {}
 
                     Using(.CurrentVariant)
 
@@ -163,6 +166,7 @@
                         ^LocalImports + .VariantImports
                         ^LocalLinks + .VariantLinks
                         ^LocalDefines + .VariantDefines
+                        ^LocalLibPaths + .VariantLibPaths
                     }
                 }
 
@@ -207,6 +211,10 @@
                 // Specify initial library with unity files
                 .Libraries = {
                     'Lib-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+                }
+
+                ForEach(.CurrentLibPath in .LocalLibPaths) {
+                    ^LinkerOptions + ' $Toolchain_Library_Prefix$$CurrentLibPath$$Toolchain_Library_Suffix$'
                 }
 
                 // Import other libraries for this triplet

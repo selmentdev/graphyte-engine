@@ -1,42 +1,59 @@
-#if exists(VULKAN_SDK)
-#import VULKAN_SDK
-.ProjectDefinition = [
-    .ProjectName = 'com.graphyte.graphics.vulkan'
-    .ProjectPath = 'engine/runtime/libs/graphics-vulkan'
-    .ProjectPlatforms = { 'Windows-x64' }
-    .ProjectKind = 'Shared'
-    .ProjectDefines = {
-        'module_graphics_vulkan_EXPORTS=1'
-    }
-    .ProjectIncludes = {
-        'sdks/fmt/include'
-        'sdks/libvulkanvma/include'
-        'engine/runtime/libs/base/public'
-        'engine/runtime/libs/graphics/public'
-        '$VULKAN_SDK$/include'
-    }
-    .ProjectLibraries = {
-        'sdk.fmt'
-        'sdk.libvulkanvma'
-        'com.graphyte.base'
-        'com.graphyte.graphics'
-    }
+{
+    .ProjectDefinition = [
+        .ProjectName = 'com.graphyte.graphics.vulkan'
+        .ProjectPath = 'engine/runtime/libs/graphics-vulkan'
+        .ProjectKind = 'SharedLib'
+        .ProjectType = 'Plugin'
+        .ProjectComponent = 'Engine'
 
-    .Target_Windows = [
-        .Targets = { 'Windows-x64', 'Windows-ARMv8' }
-        .LinkerPaths = {
-            '$VULKAN_SDK$/lib'
+        .ProjectSelector = { 'Windows-x64', 'Linux-x64', 'Android-x64', 'Android-ARMv8' }
+        .ProjectDefines = { 'module_graphics_vulkan_EXPORTS=1' }
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'sdks/vulkanvma/include'
+            'engine/runtime/libs/base/public'
+            'engine/runtime/libs/graphics/public'
         }
-        .Libraries = {
-            'vulkan-1.lib'
-            'User32.lib'
+
+        .ProjectImports = {
+            'sdk.fmt'
+            'sdk.vulkanvma'
+            'com.graphyte.base'
+            'com.graphyte.graphics'
+        }
+
+        .VariantDef_Windows = [
+            .VariantSelector = { 'Windows-x64' }
+            .VariantLinks = {
+                'vulkan-1.lib'
+                'User32.lib'
+            }
+            .VariantLibPaths = {
+                '$WindowsVulkanPath$/Lib'
+            }
+            .VariantIncludes = {
+                '$WindowsVulkanPath$/Include'
+            }
+        ]
+
+        .VariantDef_Linux = [
+            .VariantSelector = { 'Linux-x64' }
+            .VariantLinks = {
+                'vulkan-1.so'
+            }
+            .VariantLibPaths = {
+                '$LinuxVulkanPath$/Lib'
+            }
+            .VariantIncludes = {
+                '$LinuxVulkanPath$/Include'
+            }
+        ]
+
+        .ProjectVariants = {
+            .VariantDef_Windows
+            .VariantDef_Linux
         }
     ]
 
-    .ProjectTargets = {
-        .Target_Windows
-    }
-]
-
-.GraphyteModules + .ProjectDefinition
-#endif
+    ^Global_ProjectList + .ProjectDefinition
+}

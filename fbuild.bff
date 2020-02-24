@@ -9,12 +9,14 @@
 #include "sdks/glad/project.bff"
 #include "sdks/lz4/project.bff"
 #include "sdks/mbedtls/project.bff"
+#include "sdks/vulkanvma/project.bff"
 
 #include "engine/runtime/libs/base/project.bff"
 #include "engine/runtime/libs/geometry/project.bff"
 #include "engine/runtime/libs/graphics/project.bff"
 #include "engine/runtime/libs/graphics-d3d11/project.bff"
 #include "engine/runtime/libs/graphics-opengl/project.bff"
+#include "engine/runtime/libs/graphics-vulkan/project.bff"
 #include "engine/runtime/libs/launch/project.bff"
 
 #include "engine/developer/assets/libs/base/project.bff"

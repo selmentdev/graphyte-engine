@@ -19,6 +19,7 @@
                 .ProjectImports = {}
                 .ProjectLinks = {}
                 .ProjectDefines = {}
+                .ProjectLibPaths = {}
                 .ProjectVariants = {}
 
                 // Use project configuration
@@ -47,6 +48,7 @@
                         .VariantIncludes = {}
                         .VariantLinks = {}
                         .VariantImports = {}
+                        .VariantLibPaths = {}
 
                         // Specialize variant
                         Using(.CurrentVariant)
@@ -58,6 +60,7 @@
                             ^ProjectImports + .VariantImports
                             ^ProjectLinks + .VariantLinks
                             ^ProjectDefines + .VariantDefines
+                            ^ProjectLibPaths + .VariantLibPaths
                         }
                     }
 
@@ -103,6 +106,10 @@
 
                         .Libraries = {
                             'Lib-$LocalTargetName$'
+                        }
+
+                        ForEach(.CurrentLibPath in .ProjectLibPaths) {
+                            ^LinkerOptions + ' $Toolchain_Library_Prefix$$CurrentLibPath$$Toolchain_Library_Suffix$'
                         }
 
                         ForEach(.CurrentImport in .ProjectImports) {

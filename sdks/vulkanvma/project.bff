@@ -1,0 +1,43 @@
+{
+    .ProjectDefinition = [
+        .ProjectName = 'sdk.vulkanvma'
+        .ProjectPath = 'sdks/vulkanvma'
+        .ProjectKind = 'StaticLib'
+        .ProjectFiles = {
+            '$ProjectPath$/source/impl.cxx'
+        }
+
+        .VariantDef_Windows = [
+            .VariantSelector = { 'Windows-x64' }
+            .VariantLinks = {
+                ;'vulkan1.lib'
+                ;'User32.lib'
+            }
+            .VariantLibPaths = {
+                ;'$WindowsVulkanPath$/Lib'
+            }
+            .VariantIncludes = {
+                '$WindowsVulkanPath$/Include'
+            }
+        ]
+
+        .VariantDef_Linux = [
+            .VariantSelector = { 'Linux-x64' }
+            .VariantLinks = {
+                ;'vulkan1.lib'
+            }
+            .VariantLibPaths = {
+                ;'$LinuxVulkanPath$/Lib'
+            }
+            .VariantIncludes = {
+                '$LinuxVulkanPath$/Include'
+            }
+        ]
+        .ProjectVariants = {
+            .VariantDef_Windows
+            .VariantDef_Linux
+        }
+    ]
+
+    ^Global_SdkList + .ProjectDefinition
+}
