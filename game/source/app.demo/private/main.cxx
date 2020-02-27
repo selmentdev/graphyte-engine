@@ -19,7 +19,7 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp
 };
 
 #include <Graphyte/Uuid.hxx>
-
+#include <Graphyte/Maths.hxx>
 #include <Graphyte/System/Dialogs.hxx>
 
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
@@ -29,6 +29,13 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
         { "Text Files", "*.txt", },
         { "All Files", "*.*", },
     };
+
+    auto v = Graphyte::Maths::Make<Graphyte::Maths::Vector4>(1.0f, 2.0f, (float)argc);
+    auto c = Graphyte::Maths::Cos(v);
+    Graphyte::Float4A ss;
+    Graphyte::Maths::Store(&ss, c);
+
+    GX_LOG(LogAssetsCompiler, Info, "{}, {}, {}, {}\n", ss.X, ss.Y, ss.Z, ss.W);
 
     if (Graphyte::System::OpenFile(paths, filters, "Open Chujemuje") == Graphyte::Status::Success)
     {

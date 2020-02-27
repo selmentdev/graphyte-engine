@@ -1132,65 +1132,9 @@ namespace Graphyte::Maths::Traits
     template <typename T> concept Comparable = OrderComparable<T> and EqualComparable<T>;
     template <typename T> concept Loadable = requires { typename T::IsLoadable; };
     template <typename T> concept Storable = requires { typename T::IsStorable; };
-    template <typename T> concept Roundable = requires { typename T::IsRoundable; };
-    template <typename T> concept Componentwise = requires { typename T::IsComponentwise; };
     template <typename T> concept Interpolable = requires { typename T::IsInterpolable; };
-    template <typename T> concept FloatScalar = std::is_same_v<T, float>;
     template <typename T> concept FloatVector = requires { typename T::IsFloatVector; };
     template <typename T> concept FloatMatrix = requires { typename T::IsFloatMatrix; } and T::Components == (T::Rows * T::Columns) and T::Components >= 1;
-    template <typename T> concept BoolVector = requires { typename T::IsBoolVector; };
-
-    /// NOTES:
-    ///     Every `vector-space` type contains these properties:
-    ///
-    ///         * component type
-    ///         * number of components
-    ///         * number of rows
-    ///         * number of columns
-    ///
-    ///     In our case:
-    ///
-    ///     Vector2:    { float, 2, 1, 2 }
-    ///         * vector-space
-    ///         * normed-space
-    ///         * euclidean-space
-    ///     Vector3:    { float, 3, 1, 3 }
-    ///         * vector-space
-    ///         * normed-space
-    ///         * euclidean-space
-    ///     Vector4:    { float, 4, 1, 4 }
-    ///         * vector-space
-    ///         * normed-space
-    ///         * euclidean-space
-    ///     Quaternion: { float 4, 1, 4 }
-    ///         * vector-space
-    ///         * normed-space
-    ///     Sphere:     { float, 4, 1, 4 }
-    ///     Plane:      { float, 4, 1, 4 }
-    ///     Matrix:     { float, 16, 4, 4 }
-    ///         * vector-space
-    ///
-    ///
-    /// Vector<N> = Matrix<1, N> or Matrix<N, 1>
-    ///
-
-    template <typename T> concept OpAdd = requires { typename T::OpAdd; };
-    template <typename T> concept OpSub = requires { typename T::OpSub; };
-    template <typename T> concept OpMul = requires { typename T::OpMul; };
-    template <typename T> concept OpDiv = requires { typename T::OpDiv; };
-    template <typename T> concept OpNeg = requires { typename T::OpNeg; };
-    template <typename T> concept OpRem = requires { typename T::OpRem; };
-    template <typename T> concept OpRcp = requires { typename T::OpRcp; };
-    template <typename T> concept OpBitAnd = requires { typename T::OpBitAnd; };
-    template <typename T> concept OpBitOr = requires { typename T::OpBitOr; };
-    template <typename T> concept OpBitXor = requires { typename T::OpBitXor; };
-    template <typename T> concept OpBitNot = requires { typename T::OpBitNot; };
-
-    // supports length / normalize /
-    template <typename T> concept NormedSpace = requires { typename T::IsNormedSpace; };
-
-    // supports distance, angle between
-    template <typename T> concept EuclideanSpace = requires { typename T::IsEuclideanSpace; };
 }
 
 // =================================================================================================
@@ -1243,25 +1187,10 @@ namespace Graphyte::Maths
     concept Logical = IsLogical<T>::value;
 
     template <typename T>
-    struct IsComponentwise : std::false_type { };
-
-    template <typename T>
-    concept Componentwise = IsComponentwise<T>::value;
-
-    template <typename T>
-    struct IsRoundable : std::false_type { };
-
-    template <typename T>
-    concept Roundable = IsRoundable<T>::value;
-
-    template <typename T>
     struct IsInterpolable : std::false_type { };
 
     template <typename T>
     concept Interpolable = IsInterpolable<T>::value and Arithmetic<T>;
-
-    template <typename T>
-    concept ScalarLike = std::is_floating_point_v<T>;
 
     template <typename T>
     struct IsVectorLike : std::false_type { };
@@ -1276,30 +1205,6 @@ namespace Graphyte::Maths
     concept FloatVector = IsFloatVector<T>::value;
 
     template <typename T>
-    struct IsDoubleVector : std::false_type { };
-
-    template <typename T>
-    concept DoubleVector = IsDoubleVector<T>::value;
-
-    template <typename T>
-    struct IsUIntVector : std::false_type { };
-
-    template <typename T>
-    concept UIntVector = IsUIntVector<T>::value;
-
-    template <typename T>
-    struct IsIntVector : std::false_type { };
-
-    template <typename T>
-    concept IntVector = IsIntVector<T>::value;
-
-    template <typename T>
-    struct IsBoolVector : std::false_type { };
-
-    template <typename T>
-    concept BoolVector = IsBoolVector<T>::value;
-
-    template <typename T>
     struct IsMatrixLike : std::false_type { };
 
     template <typename T>
@@ -1310,36 +1215,6 @@ namespace Graphyte::Maths
 
     template <typename T>
     concept FloatMatrix = IsFloatMatrix<T>::value;
-
-    template <typename T>
-    struct IsDoubleMatrix : std::false_type { };
-
-    template <typename T>
-    concept DoubleMatrix = IsDoubleMatrix<T>::value;
-
-    template <typename T>
-    struct IsAffineSpace : std::false_type { };
-
-    template <typename T>
-    concept AffineSpace = IsAffineSpace<T>::value;
-
-    template <typename T>
-    struct IsVectorSpace : std::false_type { };
-
-    template <typename T>
-    concept VectorSpace = IsAffineSpace<T>::value;
-
-    template <typename T>
-    struct IsQuaternionSpace : std::false_type { };
-
-    template <typename T>
-    concept QuaternionSpace = IsAffineSpace<T>::value;
-
-    template <typename T>
-    struct IsGeometric : std::false_type { };
-
-    template <typename T>
-    concept Geometric = IsGeometric<T>::value;
 }
 
 // =================================================================================================
@@ -1361,7 +1236,6 @@ namespace Graphyte::Maths
     template <> struct IsVectorLike<Bool4> : std::true_type { };
     template <> struct IsEqualComparable<Bool4> : std::true_type { };
     template <> struct IsLogical<Bool4> : std::true_type { }; // deprecate
-    template <> struct IsBoolVector<Bool4> : std::true_type { };
 
 
     struct Bool3 final
@@ -1377,7 +1251,6 @@ namespace Graphyte::Maths
     template <> struct IsVectorLike<Bool3> : std::true_type { };
     template <> struct IsEqualComparable<Bool3> : std::true_type { };
     template <> struct IsLogical<Bool3> : std::true_type { };
-    template <> struct IsBoolVector<Bool3> : std::true_type { };
 
 
     struct Bool2 final
@@ -1392,7 +1265,6 @@ namespace Graphyte::Maths
     template <> struct IsVectorLike<Bool2> : std::true_type { };
     template <> struct IsEqualComparable<Bool2> : std::true_type { };
     template <> struct IsLogical<Bool2> : std::true_type { };
-    template <> struct IsBoolVector<Bool2> : std::true_type { };
 
 
     struct Bool1 final
@@ -1407,7 +1279,6 @@ namespace Graphyte::Maths
     template <> struct IsVectorLike<Bool1> : std::true_type { };
     template <> struct IsEqualComparable<Bool1> : std::true_type { };
     template <> struct IsLogical<Bool1> : std::true_type { };
-    template <> struct IsBoolVector<Bool1> : std::true_type { };
 
     struct Vector4 final
     {
@@ -1424,11 +1295,7 @@ namespace Graphyte::Maths
     template <> struct IsOrderComparable<Vector4> : std::true_type { };
     template <> struct IsEqualComparable<Vector4> : std::true_type { };
     template <> struct IsArithmetic<Vector4> : std::true_type { };
-    template <> struct IsComponentwise<Vector4> : std::true_type { };
-    template <> struct IsRoundable<Vector4> : std::true_type { };
     template <> struct IsInterpolable<Vector4> : std::true_type { };
-    template <> struct IsVectorSpace<Vector4> : std::true_type { };
-    template <> struct IsGeometric<Vector4> : std::true_type { };
     template <> struct IsFloatVector<Vector4> : std::true_type { };
 
     struct Vector3 final
@@ -1446,11 +1313,7 @@ namespace Graphyte::Maths
     template <> struct IsOrderComparable<Vector3> : std::true_type { };
     template <> struct IsEqualComparable<Vector3> : std::true_type { };
     template <> struct IsArithmetic<Vector3> : std::true_type { };
-    template <> struct IsComponentwise<Vector3> : std::true_type { };
-    template <> struct IsRoundable<Vector3> : std::true_type { };
     template <> struct IsInterpolable<Vector3> : std::true_type { };
-    template <> struct IsVectorSpace<Vector3> : std::true_type { };
-    template <> struct IsGeometric<Vector3> : std::true_type { };
     template <> struct IsFloatVector<Vector3> : std::true_type { };
 
     struct Vector2 final
@@ -1468,11 +1331,7 @@ namespace Graphyte::Maths
     template <> struct IsOrderComparable<Vector2> : std::true_type { };
     template <> struct IsEqualComparable<Vector2> : std::true_type { };
     template <> struct IsArithmetic<Vector2> : std::true_type { };
-    template <> struct IsComponentwise<Vector2> : std::true_type { };
-    template <> struct IsRoundable<Vector2> : std::true_type { };
     template <> struct IsInterpolable<Vector2> : std::true_type { };
-    template <> struct IsVectorSpace<Vector2> : std::true_type { };
-    template <> struct IsGeometric<Vector2> : std::true_type { };
     template <> struct IsFloatVector<Vector2> : std::true_type { };
 
     struct Vector1 final
@@ -1489,11 +1348,7 @@ namespace Graphyte::Maths
     template <> struct IsOrderComparable<Vector1> : std::true_type { };
     template <> struct IsEqualComparable<Vector1> : std::true_type { };
     template <> struct IsArithmetic<Vector1> : std::true_type { };
-    template <> struct IsComponentwise<Vector1> : std::true_type { };
-    template <> struct IsRoundable<Vector1> : std::true_type { };
     template <> struct IsInterpolable<Vector1> : std::true_type { };
-    template <> struct IsVectorSpace<Vector1> : std::true_type { };
-    template <> struct IsGeometric<Vector1> : std::true_type { };
     template <> struct IsFloatVector<Vector1> : std::true_type { };
 
 
@@ -1511,7 +1366,6 @@ namespace Graphyte::Maths
     template <> struct IsLoadable<Quaternion> : std::true_type { };
     template <> struct IsStorable<Quaternion> : std::true_type { };
     template <> struct IsArithmetic<Quaternion> : std::true_type { };
-    template <> struct IsQuaternionSpace<Quaternion> : std::true_type { };
     template <> struct IsFloatVector<Quaternion> : std::true_type { };
 
     struct Plane final
@@ -1559,7 +1413,6 @@ namespace Graphyte::Maths
     template <> struct IsLoadable<Matrix> : std::true_type { };
     template <> struct IsStorable<Matrix> : std::true_type { };
     template <> struct IsArithmetic<Matrix> : std::true_type { };
-    template <> struct IsRoundable<Matrix> : std::true_type { };
     template <> struct IsFloatMatrix<Matrix> : std::true_type { };
 
     struct Color final
@@ -1705,7 +1558,6 @@ namespace Graphyte::Maths
 {
     template <typename TTo, typename TFrom>
     mathinline TTo mathcall As(TFrom v) noexcept
-        requires VectorLike<TTo> and VectorLike<TFrom>
     {
         return { v.V };
     }
@@ -1958,9 +1810,7 @@ namespace Graphyte::Maths::Impl
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall SelectControl(uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
-        requires VectorLike<T> and Logical<T>
+    mathinline Bool4 mathcall SelectControl(uint32_t x, uint32_t y, uint32_t z, uint32_t w) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         GX_ASSERT(x < 2);
@@ -1999,9 +1849,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Select(T a, T b, typename T::MaskType control) noexcept
-        requires FloatVector<T> and (T::Components <= 4)
+    mathinline Vector4 mathcall Select(Vector4 a, Vector4 b, Bool4 control) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2108,8 +1956,9 @@ namespace Graphyte::Maths
 
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline Vector4 mathcall Permute(Vector4 a, Vector4 b) noexcept
-        requires (X < 8) and (Y < 8) and (Z < 8) and (W < 8)
     {
+        static_assert((X < 8) && (Y < 8) && (Z < 8) && (W < 8));
+
         if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
         {
             return a;
@@ -2141,8 +1990,9 @@ namespace Graphyte::Maths
 {
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline Vector4 mathcall Swizzle(Vector4 v) noexcept
-        requires (X < 4) and (Y < 4) and (Z < 4) and (W < 4)
     {
+        static_assert((X < 4) && (Y < 4) && (Z < 4) && (W < 4));
+
         if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
         {
             return v;
@@ -2362,7 +2212,7 @@ namespace Graphyte::Maths
 
     mathinline Vector4 mathcall Insert(Vector4 a, Vector4 b, bool x, bool y, bool z, bool w) noexcept
     {
-        Bool4 const control = SelectControl<Bool4>(
+        Bool4 const control = SelectControl(
             x ? 1 : 0,
             y ? 1 : 0,
             z ? 1 : 0,
@@ -2374,7 +2224,7 @@ namespace Graphyte::Maths
 
     mathinline Vector4 mathcall Insert(Vector4 a, Vector4 b, uint32_t rotate_left_count, bool x, bool y, bool z, bool w) noexcept
     {
-        Bool4 const control = SelectControl<Bool4>(
+        Bool4 const control = SelectControl(
             x ? 1 : 0,
             y ? 1 : 0,
             z ? 1 : 0,
@@ -2394,9 +2244,7 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T, typename U>
-    mathinline T mathcall To(float x, U yzw) noexcept
-        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 3)
+    mathinline Vector4 mathcall To(float x, Vector3 yzw) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2423,9 +2271,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T, typename U>
-    mathinline T mathcall To(U xyz, float w) noexcept
-        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 3)
+    mathinline Vector4 mathcall To(Vector3 xyz, float w) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2447,9 +2293,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T, typename U>
-    mathinline T mathcall To(float x, float y, U zw) noexcept
-        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 2)
+    mathinline Vector4 mathcall To(float x, float y, Vector2 zw) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2477,9 +2321,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T, typename U>
-    mathinline T mathcall To(float x, U yz, float w) noexcept
-        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 2)
+    mathinline Vector4 mathcall To(float x, Vector2 yz, float w) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2508,9 +2350,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T, typename U>
-    mathinline T mathcall To(U xy, float z, float w) noexcept
-        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 2)
+    mathinline Vector4 mathcall To(Vector2 xy, float z, float w) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2540,9 +2380,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T, typename U>
-    mathinline T mathcall To(U xy, U zw) noexcept
-        requires VectorLike<T> and VectorLike<U> and (T::Components == 4) and (U::Components == 2)
+    mathinline Vector4 mathcall To(Vector2 xy, Vector2 zw) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2566,9 +2404,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T, typename U>
-    mathinline T mathcall To(float x, U yz) noexcept
-        requires VectorLike<T> and VectorLike<U> and (T::Components == 3) and (U::Components == 2)
+    mathinline Vector3 mathcall To(float x, Vector2 yz) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2600,9 +2436,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T, typename U>
-    mathinline T mathcall To(U xy, float z) noexcept
-        requires VectorLike<T> and VectorLike<U> and (T::Components == 3) and (U::Components == 2)
+    mathinline Vector3 mathcall To(Vector2 xy, float z) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -2639,9 +2473,14 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall Load(Float4A const* source) noexcept
-        requires VectorLike<T> and Loadable<T> and (T::Components == 4)
+    template <typename D, typename S>
+    D Load(S const* source) noexcept = delete;
+
+    template <typename D, typename S>
+    void Store(D* destination, S source) noexcept = delete;
+
+    template <>
+    mathinline Vector4 mathcall Load<Vector4, Float4A>(Float4A const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -2660,9 +2499,26 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall Store(Float4A* destination, T v) noexcept
-        requires VectorLike<T> and Storable<T> and (T::Components == 4)
+    template <>
+    mathinline Plane mathcall Load<Plane, Float4A>(Float4A const* source) noexcept
+    {
+        return { Load<Vector4, Float4A>(source).V };
+    }
+
+    template <>
+    mathinline Sphere mathcall Load<Sphere, Float4A>(Float4A const* source) noexcept
+    {
+        return { Load<Vector4, Float4A>(source).V };
+    }
+
+    template <>
+    mathinline Quaternion mathcall Load<Quaternion, Float4A>(Float4A const* source) noexcept
+    {
+        return { Load<Vector4, Float4A>(source).V };
+    }
+
+    template <>
+    mathinline void mathcall Store<Float4A, Vector4>(Float4A* destination, Vector4 v) noexcept
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void*>(destination), std::align_val_t{ 16 }));
@@ -2677,9 +2533,26 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Load(Float4 const* source) noexcept
-        requires VectorLike<T> and Loadable<T> and (T::Components == 4)
+    template <>
+    mathinline void mathcall Store<Float4A, Plane>(Float4A* destination, Plane v) noexcept
+    {
+        Store<Float4A, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline void mathcall Store<Float4A, Sphere>(Float4A* destination, Sphere v) noexcept
+    {
+        Store<Float4A, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline void mathcall Store<Float4A, Quaternion>(Float4A* destination, Quaternion v) noexcept
+    {
+        Store<Float4A, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline Vector4 mathcall Load<Vector4, Float4>(Float4 const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 
@@ -2697,9 +2570,26 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall Store(Float4* destination, T v) noexcept
-        requires VectorLike<T> and Storable<T> and (T::Components == 4)
+    template <>
+    mathinline Plane mathcall Load<Plane, Float4>(Float4 const* source) noexcept
+    {
+        return { Load<Vector4, Float4>(source).V };
+    }
+
+    template <>
+    mathinline Sphere mathcall Load<Sphere, Float4>(Float4 const* source) noexcept
+    {
+        return { Load<Vector4, Float4>(source).V };
+    }
+
+    template <>
+    mathinline Quaternion mathcall Load<Quaternion, Float4>(Float4 const* source) noexcept
+    {
+        return { Load<Vector4, Float4>(source).V };
+    }
+
+    template <>
+    mathinline void mathcall Store<Float4, Vector4>(Float4* destination, Vector4 v) noexcept
     {
         GX_ASSERT(destination != nullptr);
 
@@ -2713,9 +2603,26 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Load(Float3A const* source) noexcept
-        requires VectorLike<T> and Loadable<T> and (T::Components >= 3)
+    template <>
+    mathinline void mathcall Store<Float4, Plane>(Float4* destination, Plane v) noexcept
+    {
+        Store<Float4, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline void mathcall Store<Float4, Sphere>(Float4* destination, Sphere v) noexcept
+    {
+        Store<Float4, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline void mathcall Store<Float4, Quaternion>(Float4* destination, Quaternion v) noexcept
+    {
+        Store<Float4, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline Vector4 mathcall Load<Vector4, Float3A>(Float3A const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -2736,9 +2643,14 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall Store(Float3A* destination, T v) noexcept
-        requires VectorLike<T> and Storable<T> and (T::Components >= 3)
+    template <>
+    mathinline Vector3 mathcall Load<Vector3, Float3A>(Float3A const* source) noexcept
+    {
+        return { Load<Vector4, Float3A>(source).V };
+    }
+
+    template <>
+    mathinline void mathcall Store<Float3A, Vector4>(Float3A* destination, Vector4 v) noexcept
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void*>(destination), std::align_val_t{ 16 }));
@@ -2754,9 +2666,14 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Load(Float3 const* source) noexcept
-        requires VectorLike<T> and Loadable<T> and (T::Components >= 3)
+    template <>
+    mathinline void mathcall Store<Float3A, Vector3>(Float3A* destination, Vector3 v) noexcept
+    {
+        Store<Float3A, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline Vector4 mathcall Load<Vector4, Float3>(Float3 const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 
@@ -2779,9 +2696,14 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall Store(Float3* destination, T v) noexcept
-        requires VectorLike<T> and Storable<T> and (T::Components >= 3)
+    template <>
+    mathinline Vector3 mathcall Load<Vector3, Float3>(Float3 const* source) noexcept
+    {
+        return { Load<Vector4, Float3>(source).V };
+    }
+
+    template <>
+    mathinline void mathcall Store<Float3, Vector4>(Float3* destination, Vector4 v) noexcept
     {
         GX_ASSERT(destination != nullptr);
 
@@ -2798,9 +2720,14 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Load(Float2A const* source) noexcept
-        requires VectorLike<T> and Loadable<T> and (T::Components >= 2)
+    template <>
+    mathinline void mathcall Store<Float3, Vector3>(Float3* destination, Vector3 v) noexcept
+    {
+        Store<Float3, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline Vector4 mathcall Load<Vector4, Float2A>(Float2A const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -2820,9 +2747,20 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall Store(Float2A* destination, T v) noexcept
-        requires VectorLike<T> and Storable<T> and (T::Components >= 2)
+    template <>
+    mathinline Vector3 mathcall Load<Vector3, Float2A>(Float2A const* source) noexcept
+    {
+        return { Load<Vector4, Float2A>(source).V };
+    }
+
+    template <>
+    mathinline Vector2 mathcall Load<Vector2, Float2A>(Float2A const* source) noexcept
+    {
+        return { Load<Vector4, Float2A>(source).V };
+    }
+
+    template <>
+    mathinline void mathcall Store<Float2A, Vector4>(Float2A* destination, Vector4 v) noexcept
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void*>(destination), std::align_val_t{ 16 }));
@@ -2835,9 +2773,14 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Load(Float2 const* source) noexcept
-        requires VectorLike<T> and Loadable<T> and (T::Components >= 2)
+    template <>
+    mathinline void mathcall Store<Float2A, Vector3>(Float2A* destination, Vector3 v) noexcept
+    {
+        Store<Float2A, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline Vector4 mathcall Load<Vector4, Float2>(Float2 const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 
@@ -2858,9 +2801,20 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall Store(Float2* destination, T v) noexcept
-        requires VectorLike<T> and Storable<T> and (T::Components >= 2)
+    template <>
+    mathinline Vector3 mathcall Load<Vector3, Float2>(Float2 const* source) noexcept
+    {
+        return { Load<Vector4, Float2>(source).V };
+    }
+
+    template <>
+    mathinline Vector2 mathcall Load<Vector2, Float2>(Float2 const* source) noexcept
+    {
+        return { Load<Vector4, Float2>(source).V };
+    }
+
+    template <>
+    mathinline void mathcall Store<Float2, Vector4>(Float2* destination, Vector4 v) noexcept
     {
 
         GX_ASSERT(destination != nullptr);
@@ -2875,9 +2829,20 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Load(float const* source) noexcept
-        requires VectorLike<T> and Loadable<T> and (T::Components >= 1)
+    template <>
+    mathinline void mathcall Store<Float2, Vector3>(Float2* destination, Vector3 v) noexcept
+    {
+        Store<Float2, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline void mathcall Store<Float2, Vector2>(Float2* destination, Vector2 v) noexcept
+    {
+        Store<Float2, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline Vector4 mathcall Load<Vector4, float>(float const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 
@@ -2895,9 +2860,20 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall Store(float* destination, T v) noexcept
-        requires VectorLike<T> and Storable<T> and (T::Components >= 1)
+    template <>
+    mathinline Vector3 mathcall Load<Vector3, float>(float const* source) noexcept
+    {
+        return { Load<Vector4, float>(source).V };
+    }
+
+    template <>
+    mathinline Vector2 mathcall Load<Vector2, float>(float const* source) noexcept
+    {
+        return { Load<Vector4, float>(source).V };
+    }
+
+    template <>
+    mathinline void mathcall Store<float, Vector4>(float* destination, Vector4 v) noexcept
     {
         GX_ASSERT(destination != nullptr);
 
@@ -2907,13 +2883,24 @@ namespace Graphyte::Maths
         _mm_store_ss(destination, v.V);
 #endif
     }
+
+    template <>
+    mathinline void mathcall Store<float, Vector3>(float* destination, Vector3 v) noexcept
+    {
+        Store<float, Vector4>(destination, { v.V });
+    }
+
+    template <>
+    mathinline void mathcall Store<float, Vector2>(float* destination, Vector2 v) noexcept
+    {
+        Store<float, Vector4>(destination, { v.V });
+    }
 }
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall Load(Half4 const* source) noexcept
-        requires FloatVector<T> and Loadable<T> and (T::Components == 4)
+    template <>
+    mathinline Vector4 mathcall Load<Vector4, Half4>(Half4 const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 
@@ -2933,26 +2920,28 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Store(Half4* destination, T v) noexcept
-        requires FloatVector<T> and Storable<T> and (T::Components == 4)
+    template <>
+    mathinline void mathcall Store<Half4, Vector4>(Half4* destination, Vector4 v) noexcept
     {
         GX_ASSERT(destination != nullptr);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_AVX || GRAPHYTE_HW_NEON
-        destination->X = ToHalf(v.V.F[0]);
-        destination->Y = ToHalf(v.V.F[1]);
-        destination->Z = ToHalf(v.V.F[2]);
-        destination->W = ToHalf(v.V.F[3]);
+        Impl::ConstFloat32x4 const components{
+            .V = v.V
+        };
+
+        destination->X = ToHalf(components.F[0]);
+        destination->Y = ToHalf(components.F[1]);
+        destination->Z = ToHalf(components.F[2]);
+        destination->W = ToHalf(components.F[3]);
 #elif GRAPHYTE_HW_AVX2
         __m128 const h0 = _mm_cvtps_ph(v.V, 0);
         _mm_storel_epi64(reinterpret_cast<__m128i*>(destination), h0);
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Load(Half2 const* source) noexcept
-        requires FloatVector<T> and Loadable<T> and (T::Components >= 2)
+    template <>
+    mathinline Vector4 mathcall Load<Vector4, Half2>(Half2 const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 
@@ -2972,15 +2961,18 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall Store(Half2* destination, T v) noexcept
-        requires FloatVector<T> and Storable<T> and (T::Components >= 2)
+    template <>
+    mathinline void mathcall Store<Half2, Vector4>(Half2* destination, Vector4 v) noexcept
     {
         GX_ASSERT(destination != nullptr);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_AVX || GRAPHYTE_HW_NEON
-        destination->X = ToHalf(v.V.F[0]);
-        destination->Y = ToHalf(v.V.F[1]);
+        Impl::ConstFloat32x4 const components{
+            .V = v.V
+        };
+
+        destination->X = ToHalf(components.F[0]);
+        destination->Y = ToHalf(components.F[1]);
 #elif GRAPHYTE_HW_AVX2
         __m128 const h0 = _mm_cvtps_ph(v.V, 0);
         __m128 const h1 = _mm_castsi128_ps(h0);
@@ -2998,8 +2990,10 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall SplatX(T v) noexcept
-        requires VectorLike<T> and (T::Components >= 1)
+    T SplatX(T v) noexcept = delete;
+
+    template <>
+    mathinline Vector4 mathcall SplatX<Vector4>(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const value = v.V.F[0];
@@ -3020,9 +3014,23 @@ namespace Graphyte::Maths
 #endif
     }
 
+    template <>
+    mathinline Vector3 mathcall SplatX<Vector3>(Vector3 v) noexcept
+    {
+        return { SplatX<Vector4>({ v.V }).V };
+    }
+
+    template <>
+    mathinline Vector2 mathcall SplatX<Vector2>(Vector2 v) noexcept
+    {
+        return { SplatX<Vector4>({ v.V }).V };
+    }
+
     template <typename T>
-    mathinline T mathcall SplatY(T v) noexcept
-        requires VectorLike<T> and (T::Components >= 2)
+    T SplatY(T v) noexcept = delete;
+
+    template <>
+    mathinline Vector4 mathcall SplatY<Vector4>(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const value = v.V.F[1];
@@ -3041,9 +3049,23 @@ namespace Graphyte::Maths
 #endif
     }
 
+    template <>
+    mathinline Vector3 mathcall SplatY<Vector3>(Vector3 v) noexcept
+    {
+        return { SplatY<Vector4>({ v.V }).V };
+    }
+
+    template <>
+    mathinline Vector2 mathcall SplatY<Vector2>(Vector2 v) noexcept
+    {
+        return { SplatY<Vector4>({ v.V }).V };
+    }
+
     template <typename T>
-    mathinline T mathcall SplatZ(T v) noexcept
-        requires VectorLike<T> and (T::Components >= 3)
+    T SplatZ(T v) noexcept = delete;
+
+    template <>
+    mathinline Vector4 mathcall SplatZ<Vector4>(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const value = v.V.F[2];
@@ -3062,9 +3084,17 @@ namespace Graphyte::Maths
 #endif
     }
 
+    template <>
+    mathinline Vector3 mathcall SplatZ<Vector3>(Vector3 v) noexcept
+    {
+        return { SplatZ<Vector4>({ v.V }).V };
+    }
+
     template <typename T>
-    mathinline T mathcall SplatW(T v) noexcept
-        requires VectorLike<T> and (T::Components >= 4)
+    T SplatW(T v) noexcept = delete;
+
+    template <>
+    mathinline Vector4 mathcall SplatW<Vector4>(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const value = v.V.F[3];
@@ -4244,9 +4274,11 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall True() noexcept
-        requires VectorLike<T> and Logical<T>
+    template <typename T> T True() noexcept = delete;
+    template <typename T> T False() noexcept = delete;
+    
+    template <>
+    mathinline Bool4 mathcall True<Bool4>() noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4264,10 +4296,27 @@ namespace Graphyte::Maths
         return { vdupq_n_u32(0xFFFFFFFFu) };
 #endif
     }
+    
+    template <>
+    mathinline Bool3 mathcall True<Bool3>() noexcept
+    {
+        return { True<Bool4>().V };
+    }
+    
+    template <>
+    mathinline Bool2 mathcall True<Bool2>() noexcept
+    {
+        return { True<Bool4>().V };
+    }
+    
+    template <>
+    mathinline Bool1 mathcall True<Bool1>() noexcept
+    {
+        return { True<Bool4>().V };
+    }
 
-    template <typename T>
-    mathinline T mathcall False() noexcept
-        requires VectorLike<T> and Logical<T>
+    template <>
+    mathinline Bool4 mathcall False<Bool4>() noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result = { { {
@@ -4285,9 +4334,25 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall And(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T>
+    template <>
+    mathinline Bool3 mathcall False<Bool3>() noexcept
+    {
+        return { False<Bool4>().V };
+    }
+
+    template <>
+    mathinline Bool2 mathcall False<Bool2>() noexcept
+    {
+        return { False<Bool4>().V };
+    }
+
+    template <>
+    mathinline Bool1 mathcall False<Bool1>() noexcept
+    {
+        return { False<Bool4>().V };
+    }
+
+    mathinline Bool4 mathcall And(Bool4 a, Bool4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4311,9 +4376,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall AndNot(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T>
+    mathinline Bool3 mathcall And(Bool3 a, Bool3 b) noexcept
+    {
+        return { And(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool2 mathcall And(Bool2 a, Bool2 b) noexcept
+    {
+        return { And(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool1 mathcall And(Bool1 a, Bool1 b) noexcept
+    {
+        return { And(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool4 mathcall AndNot(Bool4 a, Bool4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result = { { {
@@ -4336,9 +4414,23 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Or(T a, T b) noexcept
-        requires BoolVector<T>
+    mathinline Bool3 mathcall AndNot(Bool3 a, Bool3 b) noexcept
+    {
+        return { AndNot(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool2 mathcall AndNot(Bool2 a, Bool2 b) noexcept
+    {
+        return { AndNot(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool1 mathcall AndNot(Bool1 a, Bool1 b) noexcept
+    {
+        return { AndNot(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+
+    mathinline Bool4 mathcall Or(Bool4 a, Bool4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4362,9 +4454,23 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Xor(T a, T b) noexcept
-        requires BoolVector<T>
+    mathinline Bool3 mathcall Or(Bool3 a, Bool3 b) noexcept
+    {
+        return { Or(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool2 mathcall Or(Bool2 a, Bool2 b) noexcept
+    {
+        return { Or(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool1 mathcall Or(Bool1 a, Bool1 b) noexcept
+    {
+        return { Or(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+
+    mathinline Bool4 mathcall Xor(Bool4 a, Bool4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4388,9 +4494,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Nor(T a, T b) noexcept
-        requires BoolVector<T>
+    mathinline Bool3 mathcall Xor(Bool3 a, Bool3 b) noexcept
+    {
+        return { Xor(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool2 mathcall Xor(Bool2 a, Bool2 b) noexcept
+    {
+        return { Xor(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool1 mathcall Xor(Bool1 a, Bool1 b) noexcept
+    {
+        return { Xor(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool4 mathcall Nor(Bool4 a, Bool4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4414,8 +4533,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Not(T v) noexcept
+    mathinline Bool3 mathcall Nor(Bool3 a, Bool3 b) noexcept
+    {
+        return { Nor(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool2 mathcall Nor(Bool2 a, Bool2 b) noexcept
+    {
+        return { Nor(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool1 mathcall Nor(Bool1 a, Bool1 b) noexcept
+    {
+        return { Nor(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool4 mathcall Not(Bool4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4427,13 +4560,28 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const fullbits = _mm_castsi128_ps(_mm_set1_epi32(-1));
-        __m128 const result = _mm_xor_ps(v, fullbits);
+        __m128 const result = _mm_xor_ps(v.V, fullbits);
         return { result };
 #elif GRAPHYTE_HW_NEON
         return vreinterpretq_f32_u32(
             vmvnq_u32(vreinterpretq_u32_f32(v.V))
         );
 #endif
+    }
+
+    mathinline Bool3 mathcall Not(Bool3 v) noexcept
+    {
+        return { Not(Bool4{ v.V }).V };
+    }
+
+    mathinline Bool2 mathcall Not(Bool2 v) noexcept
+    {
+        return { Not(Bool4{ v.V }).V };
+    }
+
+    mathinline Bool1 mathcall Not(Bool1 v) noexcept
+    {
+        return { Not(Bool4{ v.V }).V };
     }
 }
 
@@ -4444,9 +4592,7 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline typename T::MaskType mathcall BitCompareEqual(T a, T b) noexcept
-        requires VectorLike<T> and EqualComparable<T>
+    mathinline Bool4 mathcall CompareEqual(Bool4 a, Bool4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4463,9 +4609,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline typename T::MaskType mathcall BitCompareNotEqual(T a, T b) noexcept
-        requires VectorLike<T> and EqualComparable<T>
+    mathinline Bool3 mathcall CompareEqual(Bool3 a, Bool3 b) noexcept
+    {
+        return { CompareEqual(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool2 mathcall CompareEqual(Bool2 a, Bool2 b) noexcept
+    {
+        return { CompareEqual(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool1 mathcall CompareEqual(Bool1 a, Bool1 b) noexcept
+    {
+        return { CompareEqual(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline Bool4 mathcall CompareNotEqual(Bool4 a, Bool4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -4482,125 +4641,110 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall CompareEqual(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T>
+    mathinline Bool3 mathcall CompareNotEqual(Bool3 a, Bool3 b) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstUInt32x4 const result{ { {
-                (a.V.U[0] == b.V.U[0]) ? SELECT_1 : SELECT_0,
-                (a.V.U[1] == b.V.U[1]) ? SELECT_1 : SELECT_0,
-                (a.V.U[2] == b.V.U[2]) ? SELECT_1 : SELECT_0,
-                (a.V.U[3] == b.V.U[3]) ? SELECT_1 : SELECT_0,
-            } } };
-
-        return { result.V };
-#elif GRAPHYTE_HW_AVX
-        __m128i const result = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
-        return { _mm_castsi128_ps(result) };
-#endif
+        return { CompareNotEqual(Bool4{ a.V }, Bool4{ b.V }).V };
     }
 
-    template <typename T>
-    mathinline T mathcall CompareNotEqual(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T>
+    mathinline Bool2 mathcall CompareNotEqual(Bool2 a, Bool2 b) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstUInt32x4 const result{ { {
-                (a.V.U[0] != b.V.U[0]) ? SELECT_1 : SELECT_0,
-                (a.V.U[1] != b.V.U[1]) ? SELECT_1 : SELECT_0,
-                (a.V.U[2] != b.V.U[2]) ? SELECT_1 : SELECT_0,
-                (a.V.U[3] != b.V.U[3]) ? SELECT_1 : SELECT_0,
-            } } };
-
-        return { result.V };
-#elif GRAPHYTE_HW_AVX
-        __m128i const result = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
-        return { _mm_xor_ps(_mm_castsi128_ps(result), Impl::VEC4_MASK_NEGATIVE_ONE.V) };
-#endif
+        return { CompareNotEqual(Bool4{ a.V }, Bool4{ b.V }).V };
     }
 
-    template <typename T>
-    mathinline T mathcall IsEqual(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T>
+    mathinline Bool1 mathcall CompareNotEqual(Bool1 a, Bool1 b) noexcept
+    {
+        return { CompareNotEqual(Bool4{ a.V }, Bool4{ b.V }).V };
+    }
+
+    mathinline bool mathcall IsEqual(Bool4 a, Bool4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        if constexpr (T::Components == 4)
-        {
-            return (a.V.U[0] == b.V.U[0])
-                && (a.V.U[1] == b.V.U[1])
-                && (a.V.U[2] == b.V.U[2])
-                && (a.V.U[3] == b.V.U[3]);
-        }
-        else if constexpr (T::Components == 3)
-        {
-            return (a.V.U[0] == b.V.U[0])
-                && (a.V.U[1] == b.V.U[1])
-                && (a.V.U[2] == b.V.U[2]);
-        }
-        else if constexpr (T::Components == 2)
-        {
-            return (a.V.U[0] == b.V.U[0])
-                && (a.V.U[1] == b.V.U[1]);
-        }
-        else if constexpr (T::Components == 1)
-        {
-            return (a.V.U[0] == b.V.U[0]);
-        }
+        return (a.V.U[0] == b.V.U[0])
+            && (a.V.U[1] == b.V.U[1])
+            && (a.V.U[2] == b.V.U[2])
+            && (a.V.U[3] == b.V.U[3]);
 #elif GRAPHYTE_HW_AVX
         __m128 const mask = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V)));
-        static constexpr const int movemask = (1 << T::Components) - 1;
-
-        if constexpr (T::Components == 4)
-        {
-            return _mm_movemask_ps(mask) == movemask;
-        }
-        else
-        {
-            return (_mm_movemask_ps(mask) & movemask) == movemask;
-        }
+        return _mm_movemask_ps(mask) == 0b1111;
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall IsNotEqual(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T>
+    mathinline bool mathcall IsEqual(Bool3 a, Bool3 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        if constexpr (T::Components == 4)
-        {
-            return (a.V.U[0] != b.V.U[0])
-                || (a.V.U[1] != b.V.U[1])
-                || (a.V.U[2] != b.V.U[2])
-                || (a.V.U[3] != b.V.U[3]);
-        }
-        else if constexpr (T::Components == 3)
-        {
-            return (a.V.U[0] != b.V.U[0])
-                || (a.V.U[1] != b.V.U[1])
-                || (a.V.U[2] != b.V.U[2]);
-        }
-        else if constexpr (T::Components == 2)
-        {
-            return (a.V.U[0] != b.V.U[0])
-                || (a.V.U[1] != b.V.U[1]);
-        }
-        else if constexpr (T::Components == 1)
-        {
-            return (a.V.U[0] != b.V.U[0]);
-        }
+        return (a.V.U[0] == b.V.U[0])
+            && (a.V.U[1] == b.V.U[1])
+            && (a.V.U[2] == b.V.U[2]);
 #elif GRAPHYTE_HW_AVX
         __m128 const mask = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V)));
-        static constexpr const int movemask = (1 << T::Components) - 1;
+        return (_mm_movemask_ps(mask) & 0b0111) == 0b0111;
+#endif
+    }
 
-        if constexpr (T::Components == 4)
-        {
-            return _mm_movemask_ps(mask) != movemask;
-        }
-        else
-        {
-            return (_mm_movemask_ps(mask) & movemask) != movemask;
-        }
+    mathinline bool mathcall IsEqual(Bool2 a, Bool2 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (a.V.U[0] == b.V.U[0])
+            && (a.V.U[1] == b.V.U[1]);
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V)));
+        return (_mm_movemask_ps(mask) & 0b0011) == 0b0011;
+#endif
+    }
+
+    mathinline bool mathcall IsEqual(Bool1 a, Bool1 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (a.V.U[0] == b.V.U[0]);
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V)));
+        return (_mm_movemask_ps(mask) & 0b0001) == 0b0001;
+#endif
+    }
+
+    mathinline bool mathcall IsNotEqual(Bool4 a, Bool4 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (a.V.U[0] != b.V.U[0])
+            || (a.V.U[1] != b.V.U[1])
+            || (a.V.U[2] != b.V.U[2])
+            || (a.V.U[3] != b.V.U[3]);
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V)));
+        return _mm_movemask_ps(mask) != 0b1111;
+#endif
+    }
+    
+    mathinline bool mathcall IsNotEqual(Bool3 a, Bool3 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (a.V.U[0] != b.V.U[0])
+            || (a.V.U[1] != b.V.U[1])
+            || (a.V.U[2] != b.V.U[2]);
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V)));
+        return (_mm_movemask_ps(mask) & 0b0111) != 0b0111;
+#endif
+    }
+    
+    mathinline bool mathcall IsNotEqual(Bool2 a, Bool2 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (a.V.U[0] != b.V.U[0])
+            || (a.V.U[1] != b.V.U[1]);
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V)));
+        return (_mm_movemask_ps(mask) & 0b0011) != 0b0011;
+#endif
+    }
+    
+    mathinline bool mathcall IsNotEqual(Bool1 a, Bool1 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (a.V.U[0] != b.V.U[0]);
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V)));
+        return (_mm_movemask_ps(mask) & 0b0001) != 0b0001;
 #endif
     }
 }
@@ -4613,185 +4757,173 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline bool mathcall AllTrue(T v) noexcept
-        requires VectorLike<T> and Logical<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
+    mathinline bool mathcall AllTrue(Bool4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        if constexpr (T::Components == 4)
-        {
-            return (v.V.U[0] != 0)
-                && (v.V.U[1] != 0)
-                && (v.V.U[2] != 0)
-                && (v.V.U[3] != 0);
-        }
-        else if constexpr (T::Components == 3)
-        {
-            return (v.V.U[0] != 0)
-                && (v.V.U[1] != 0)
-                && (v.V.U[2] != 0);
-        }
-        else if constexpr (T::Components == 2)
-        {
-            return (v.V.U[0] != 0)
-                && (v.V.U[1] != 0);
-        }
-        else if constexpr (T::Components == 1)
-        {
-            return (v.V.U[0] != 0);
-        }
+        return (v.V.U[0] != 0)
+            && (v.V.U[1] != 0)
+            && (v.V.U[2] != 0)
+            && (v.V.U[3] != 0);
 #elif GRAPHYTE_HW_AVX
-        constexpr const int movemask = (1 << T::Components) - 1;
-
-        if constexpr (T::Components == 4)
-        {
-            return _mm_movemask_ps(v.V) == movemask;
-        }
-        else
-        {
-            return (_mm_movemask_ps(v.V) & movemask) == movemask;
-        }
+        return _mm_movemask_ps(v.V) == 0b1111;
 #endif
     }
 
-    template <typename T>
-    mathinline bool mathcall AllFalse(T v) noexcept
-        requires VectorLike<T> and Logical<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
+    mathinline bool mathcall AllTrue(Bool3 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        if constexpr (T::Components == 4)
-        {
-            return (v.V.U[0] == 0)
-                && (v.V.U[1] == 0)
-                && (v.V.U[2] == 0)
-                && (v.V.U[3] == 0);
-        }
-        else if constexpr (T::Components == 3)
-        {
-            return (v.V.U[0] == 0)
-                && (v.V.U[1] == 0)
-                && (v.V.U[2] == 0);
-        }
-        else if constexpr (T::Components == 2)
-        {
-            return (v.V.U[0] == 0)
-                && (v.V.U[1] == 0);
-        }
-        else if constexpr (T::Components == 1)
-        {
-            return (v.V.U[0] == 0);
-        }
+        return (v.V.U[0] != 0)
+            && (v.V.U[1] != 0)
+            && (v.V.U[2] != 0);
 #elif GRAPHYTE_HW_AVX
-
-        if constexpr (T::Components == 4)
-        {
-            return _mm_movemask_ps(v.V) == 0;
-        }
-        else
-        {
-            constexpr const int movemask = (1 << T::Components) - 1;
-            return (_mm_movemask_ps(v.V) & movemask) == 0;
-        }
+        return (_mm_movemask_ps(v.V) & 0b0111) == 0b0111;
 #endif
     }
 
-    template <typename T>
-    mathinline bool mathcall AnyTrue(T v) noexcept
-        requires VectorLike<T> and Logical<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
+    mathinline bool mathcall AllTrue(Bool2 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        if constexpr (T::Components == 4)
-        {
-            return (v.V.U[0] != 0)
-                || (v.V.U[1] != 0)
-                || (v.V.U[2] != 0)
-                || (v.V.U[3] != 0);
-        }
-        else if constexpr (T::Components == 3)
-        {
-            return (v.V.U[0] != 0)
-                || (v.V.U[1] != 0)
-                || (v.V.U[2] != 0);
-        }
-        else if constexpr (T::Components == 2)
-        {
-            return (v.V.U[0] != 0)
-                || (v.V.U[1] != 0);
-        }
-        else if constexpr (T::Components == 1)
-        {
-            return (v.V.U[0] != 0);
-        }
+        return (v.V.U[0] != 0)
+            && (v.V.U[1] != 0);
 #elif GRAPHYTE_HW_AVX
-        if constexpr (T::Components == 4)
-        {
-            return _mm_movemask_ps(v.V) != 0;
-        }
-        else
-        {
-            constexpr const int movemask = (1 << T::Components) - 1;
-            return (_mm_movemask_ps(v.V) & movemask) != 0;
-        }
+        return (_mm_movemask_ps(v.V) & 0b0011) == 0b0011;
 #endif
     }
 
-    template <typename T>
-    mathinline bool mathcall AnyFalse(T v) noexcept
-        requires VectorLike<T> and Logical<T> and EqualComparable<T> and (T::Components >= 1) and (T::Components <= 4)
+    mathinline bool mathcall AllTrue(Bool1 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        if constexpr (T::Components == 4)
-        {
-            return (v.V.U[0] == 0)
-                || (v.V.U[1] == 0)
-                || (v.V.U[2] == 0)
-                || (v.V.U[3] == 0);
-        }
-        else if constexpr (T::Components == 3)
-        {
-            return (v.V.U[0] == 0)
-                || (v.V.U[1] == 0)
-                || (v.V.U[2] == 0);
-        }
-        else if constexpr (T::Components == 2)
-        {
-            return (v.V.U[0] == 0)
-                || (v.V.U[1] == 0);
-        }
-        else if constexpr (T::Components == 1)
-        {
-            return (v.V.U[0] == 0);
-        }
+        return (v.V.U[0] != 0);
 #elif GRAPHYTE_HW_AVX
-        constexpr const int movemask = (1 << T::Components) - 1;
-
-        if constexpr (T::Components == 4)
-        {
-            return _mm_movemask_ps(v.V) != movemask;
-        }
-        else
-        {
-            return (_mm_movemask_ps(v.V) & movemask) != movemask;
-        }
+        return (_mm_movemask_ps(v.V) & 0b0001) == 0b0001;
 #endif
     }
 
-    template <typename T>
-    mathinline bool mathcall IsEqual(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T> and EqualComparable<T>
+    mathinline bool mathcall AllFalse(Bool4 v) noexcept
     {
-        T const result = Maths::CompareEqual(a, b);
-        return AllTrue(result);
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] == 0)
+            && (v.V.U[1] == 0)
+            && (v.V.U[2] == 0)
+            && (v.V.U[3] == 0);
+#elif GRAPHYTE_HW_AVX
+        return _mm_movemask_ps(v.V) == 0;
+#endif
     }
 
-    template <typename T>
-    mathinline bool mathcall IsNotEqual(T a, T b) noexcept
-        requires VectorLike<T> and Logical<T> and EqualComparable<T>
+    mathinline bool mathcall AllFalse(Bool3 v) noexcept
     {
-        T const result = Maths::CompareNotEqual(a, b);
-        return AllTrue(result);
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] == 0)
+            && (v.V.U[1] == 0)
+            && (v.V.U[2] == 0);
+#elif GRAPHYTE_HW_AVX
+        return (_mm_movemask_ps(v.V) & 0b0111) == 0;
+#endif
     }
 
+    mathinline bool mathcall AllFalse(Bool2 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] == 0)
+            && (v.V.U[1] == 0);
+#elif GRAPHYTE_HW_AVX
+        return (_mm_movemask_ps(v.V) & 0b0011) == 0;
+#endif
+    }
+
+    mathinline bool mathcall AllFalse(Bool1 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] == 0);
+#elif GRAPHYTE_HW_AVX
+        return (_mm_movemask_ps(v.V) & 0b0001) == 0;
+#endif
+    }
+
+    mathinline bool mathcall AnyTrue(Bool4 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] != 0)
+            || (v.V.U[1] != 0)
+            || (v.V.U[2] != 0)
+            || (v.V.U[3] != 0);
+#elif GRAPHYTE_HW_AVX
+        return _mm_movemask_ps(v.V) != 0;
+#endif
+    }
+
+    mathinline bool mathcall AnyTrue(Bool3 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] != 0)
+            || (v.V.U[1] != 0)
+            || (v.V.U[2] != 0);
+#elif GRAPHYTE_HW_AVX
+        return (_mm_movemask_ps(v.V) & 0b0111) != 0;
+#endif
+    }
+
+    mathinline bool mathcall AnyTrue(Bool2 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] != 0)
+            || (v.V.U[1] != 0);
+#elif GRAPHYTE_HW_AVX
+        return (_mm_movemask_ps(v.V) & 0b0011) != 0;
+#endif
+    }
+
+    mathinline bool mathcall AnyTrue(Bool1 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] != 0);
+#elif GRAPHYTE_HW_AVX
+        return (_mm_movemask_ps(v.V) & 0b0001) != 0;
+#endif
+    }
+
+    mathinline bool mathcall AnyFalse(Bool4 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] == 0)
+            || (v.V.U[1] == 0)
+            || (v.V.U[2] == 0)
+            || (v.V.U[3] == 0);
+#elif GRAPHYTE_HW_AVX
+        return _mm_movemask_ps(v.V) != 0b1111;
+#endif
+    }
+
+    mathinline bool mathcall AnyFalse(Bool3 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] == 0)
+            || (v.V.U[1] == 0)
+            || (v.V.U[2] == 0);
+#elif GRAPHYTE_HW_AVX
+        return (_mm_movemask_ps(v.V) & 0b0111) != 0b0111;
+#endif
+    }
+
+    mathinline bool mathcall AnyFalse(Bool2 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] == 0)
+            || (v.V.U[1] == 0);
+#elif GRAPHYTE_HW_AVX
+        return (_mm_movemask_ps(v.V) & 0b0011) != 0b0011;
+#endif
+    }
+
+    mathinline bool mathcall AnyFalse(Bool1 v) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        return (v.V.U[0] == 0);
+#elif GRAPHYTE_HW_AVX
+        return (_mm_movemask_ps(v.V) & 0b0001) != 0b0001;
+#endif
+    }
 }
 
 
@@ -4802,9 +4934,7 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall Cos(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Cos(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4830,14 +4960,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Cos(Vector3 v) noexcept
+    {
+        return { Cos(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Cos(Vector2 v) noexcept
+    {
+        return { Cos(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Cos(float v) noexcept
     {
         return cosf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Sin(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Sin(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4862,51 +5000,80 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Sin(Vector3 v) noexcept
+    {
+        return { Sin(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Sin(Vector2 v) noexcept
+    {
+        return { Sin(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Sin(float v) noexcept
     {
         return sinf(v);
     }
 
-    template <typename T>
-    mathinline void mathcall SinCos(T& result_sin, T& result_cos, T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    namespace Impl
     {
+        mathinline void mathcall SinCosImpl(
+            NativeFloat32x4& out_sin,
+            NativeFloat32x4& out_cos,
+            NativeFloat32x4 v) noexcept
+        {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Impl::ConstFloat32x4 const vsin{ { {
-                sinf(v.V.F[0]),
-                sinf(v.V.F[1]),
-                sinf(v.V.F[2]),
-                sinf(v.V.F[3]),
-            } } };
+            Impl::ConstFloat32x4 const vsin{ { {
+                    sinf(v.F[0]),
+                    sinf(v.F[1]),
+                    sinf(v.F[2]),
+                    sinf(v.F[3]),
+                } } };
 
-        Impl::ConstFloat32x4 const vcos{ { {
-                cosf(v.V.F[0]),
-                cosf(v.V.F[1]),
-                cosf(v.V.F[2]),
-                cosf(v.V.F[3]),
-            } } };
+            Impl::ConstFloat32x4 const vcos{ { {
+                    cosf(v.F[0]),
+                    cosf(v.F[1]),
+                    cosf(v.F[2]),
+                    cosf(v.F[3]),
+                } } };
 
-        result_sin.V = vsin.V;
-        result_cos.V = vcos.V;
+            out_sin = vsin.V;
+            out_cos = vcos.V;
 
 #elif GRAPHYTE_MATH_SVML
-        result_sin.V = _mm_sincos_ps(&result_cos.V, v.V);
+            out_sin = _mm_sincos_ps(&out_cos, v);
 #else
-        Impl::ConstFloat32x4 const components{ .V = v.V };
-        result_sin.V = Impl::ConstFloat32x4{ { {
-                sinf(components.F[0]),
-                sinf(components.F[1]),
-                sinf(components.F[2]),
-                sinf(components.F[3]),
-            } } }.V;
+            Impl::ConstFloat32x4 const components{ .V = v };
+            out_sin = Impl::ConstFloat32x4{ { {
+                    sinf(components.F[0]),
+                    sinf(components.F[1]),
+                    sinf(components.F[2]),
+                    sinf(components.F[3]),
+                } } }.V;
 
-        result_cos.V = Impl::ConstFloat32x4{ { {
-                cosf(components.F[0]),
-                cosf(components.F[1]),
-                cosf(components.F[2]),
-                cosf(components.F[3]),
-            } } }.V;
+            out_cos = Impl::ConstFloat32x4{ { {
+                    cosf(components.F[0]),
+                    cosf(components.F[1]),
+                    cosf(components.F[2]),
+                    cosf(components.F[3]),
+                } } }.V;
 #endif
+        }
+    }
+
+    mathinline void mathcall SinCos(Vector4& result_sin, Vector4& result_cos, Vector4 v) noexcept
+    {
+        Impl::SinCosImpl(result_sin.V, result_cos.V, v.V);
+    }
+
+    mathinline void mathcall SinCos(Vector3& result_sin, Vector3& result_cos, Vector3 v) noexcept
+    {
+        Impl::SinCosImpl(result_sin.V, result_cos.V, v.V);
+    }
+
+    mathinline void mathcall SinCos(Vector2& result_sin, Vector2& result_cos, Vector2 v) noexcept
+    {
+        Impl::SinCosImpl(result_sin.V, result_cos.V, v.V);
     }
 
     mathinline void mathcall SinCos(float& result_sin, float& result_cos, float v) noexcept
@@ -4915,9 +5082,7 @@ namespace Graphyte::Maths
         result_cos = cosf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Tan(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Tan(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4942,14 +5107,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Tan(Vector3 v) noexcept
+    {
+        return { Tan(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Tan(Vector2 v) noexcept
+    {
+        return { Tan(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Tan(float v) noexcept
     {
         return tanf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Asin(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Asin(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -4975,14 +5148,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Asin(Vector3 v) noexcept
+    {
+        return { Asin(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Asin(Vector2 v) noexcept
+    {
+        return { Asin(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Asin(float v) noexcept
     {
         return asinf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Acos(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Acos(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5008,14 +5189,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Acos(Vector3 v) noexcept
+    {
+        return { Acos(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Acos(Vector2 v) noexcept
+    {
+        return { Acos(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Acos(float v) noexcept
     {
         return acosf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Atan(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Atan(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5041,14 +5230,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Atan(Vector3 v) noexcept
+    {
+        return { Atan(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Atan(Vector2 v) noexcept
+    {
+        return { Atan(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Atan(float v) noexcept
     {
         return atanf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Atan2(T y, T x) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Atan2(Vector4 y, Vector4 x) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5075,14 +5272,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Atan2(Vector3 y, Vector3 x) noexcept
+    {
+        return { Atan2(Vector4{ y.V }, Vector4{ x.V }).V };
+    }
+
+    mathinline Vector2 mathcall Atan2(Vector2 y, Vector2 x) noexcept
+    {
+        return { Atan2(Vector4{ y.V }, Vector4{ x.V }).V };
+    }
+
     mathinline float mathcall Atan2(float y, float x) noexcept
     {
         return atan2f(y, x);
     }
 
-    template <typename T>
-    mathinline T mathcall Sinh(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Sinh(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5108,14 +5313,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Sinh(Vector3 v) noexcept
+    {
+        return { Sinh(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Sinh(Vector2 v) noexcept
+    {
+        return { Sinh(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Sinh(float v) noexcept
     {
         return sinhf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Cosh(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Cosh(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5141,14 +5354,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Cosh(Vector3 v) noexcept
+    {
+        return { Cosh(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Cosh(Vector2 v) noexcept
+    {
+        return { Cosh(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Cosh(float v) noexcept
     {
         return coshf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Tanh(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Tanh(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5174,14 +5395,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Tanh(Vector3 v) noexcept
+    {
+        return { Tanh(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Tanh(Vector2 v) noexcept
+    {
+        return { Tanh(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Tanh(float v) noexcept
     {
         return tanhf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Asinh(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Asinh(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5207,14 +5436,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Asinh(Vector3 v) noexcept
+    {
+        return { Asinh(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Asinh(Vector2 v) noexcept
+    {
+        return { Asinh(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Asinh(float v) noexcept
     {
         return asinhf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Acosh(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Acosh(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5240,14 +5477,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Acosh(Vector3 v) noexcept
+    {
+        return { Acosh(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Acosh(Vector2 v) noexcept
+    {
+        return { Acosh(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Acosh(float v) noexcept
     {
         return acoshf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Atanh(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Atanh(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5273,14 +5518,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Atanh(Vector3 v) noexcept
+    {
+        return { Atanh(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Atanh(Vector2 v) noexcept
+    {
+        return { Atanh(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Atanh(float v) noexcept
     {
         return atanhf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Log(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Log(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5306,13 +5559,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Log(Vector3 v) noexcept
+    {
+        return { Log(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Log(Vector2 v) noexcept
+    {
+        return { Log(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Log(float v) noexcept
     {
         return logf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Log(T base, T value) noexcept
+    mathinline Vector4 mathcall Log(Vector4 base, Vector4 value) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
         Impl::ConstFloat32x4 const result{ { {
@@ -5342,14 +5604,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Log(Vector3 base, Vector3 value) noexcept
+    {
+        return { Log(Vector4{ base.V }, Vector4{ value.V }).V };
+    }
+
+    mathinline Vector2 mathcall Log(Vector2 base, Vector2 value) noexcept
+    {
+        return { Log(Vector4{ base.V }, Vector4{ value.V }).V };
+    }
+
     mathinline float mathcall Log(float base, float value) noexcept
     {
         return logf(value) / logf(base);
     }
 
-    template <typename T>
-    mathinline T mathcall Log10(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Log10(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5375,14 +5645,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Log10(Vector3 v) noexcept
+    {
+        return { Log10(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Log10(Vector2 v) noexcept
+    {
+        return { Log10(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Log10(float v) noexcept
     {
         return log10f(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Log2(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Log2(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5408,14 +5686,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Log2(Vector3 v) noexcept
+    {
+        return { Log2(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Log2(Vector2 v) noexcept
+    {
+        return { Log2(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Log2(float v) noexcept
     {
         return log2f(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Exp(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Exp(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5441,14 +5727,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Exp(Vector3 v) noexcept
+    {
+        return { Exp(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Exp(Vector2 v) noexcept
+    {
+        return { Exp(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Exp(float v) noexcept
     {
         return expf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Exp10(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Exp10(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5474,14 +5768,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Exp10(Vector3 v) noexcept
+    {
+        return { Exp10(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Exp10(Vector2 v) noexcept
+    {
+        return { Exp10(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Exp10(float v) noexcept
     {
         return powf(10.0F, v);
     }
 
-    template <typename T>
-    mathinline T mathcall Exp2(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Exp2(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5507,14 +5809,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Exp2(Vector3 v) noexcept
+    {
+        return { Exp2(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Exp2(Vector2 v) noexcept
+    {
+        return { Exp2(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Exp2(float v) noexcept
     {
         return exp2f(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Power(T x, T y) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Power(Vector4 x, Vector4 y) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5541,14 +5851,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Power(Vector3 x, Vector3 y) noexcept
+    {
+        return { Power(Vector4{ x.V }, Vector4{ y.V }).V };
+    }
+
+    mathinline Vector2 mathcall Power(Vector2 x, Vector2 y) noexcept
+    {
+        return { Power(Vector4{ x.V }, Vector4{ y.V }).V };
+    }
+
     mathinline float mathcall Power(float x, float y) noexcept
     {
         return powf(x, y);
     }
 
-    template <typename T>
-    mathinline T mathcall Hypot(T x, T y) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Hypot(Vector4 x, Vector4 y) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5575,14 +5893,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Hypot(Vector3 x, Vector3 y) noexcept
+    {
+        return { Hypot(Vector4{ x.V }, Vector4{ y.V }).V };
+    }
+
+    mathinline Vector2 mathcall Hypot(Vector2 x, Vector2 y) noexcept
+    {
+        return { Hypot(Vector4{ x.V }, Vector4{ y.V }).V };
+    }
+
     mathinline float mathcall Hypot(float x, float y) noexcept
     {
         return hypotf(x, y);
     }
 
-    template <typename T>
-    mathinline T mathcall Sqrt(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Sqrt(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5619,6 +5945,16 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Sqrt(Vector3 v) noexcept
+    {
+        return { Sqrt(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Sqrt(Vector2 v) noexcept
+    {
+        return { Sqrt(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Sqrt(float v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
@@ -5631,9 +5967,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SqrtEst(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall SqrtEst(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
         Impl::ConstFloat32x4 const result{ { {
@@ -5649,6 +5983,16 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall SqrtEst(Vector3 v) noexcept
+    {
+        return { SqrtEst(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall SqrtEst(Vector2 v) noexcept
+    {
+        return { SqrtEst(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall SqrtEst(float v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
@@ -5661,8 +6005,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall InvSqrt(T v) noexcept
+    mathinline Vector4 mathcall InvSqrt(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5693,6 +6036,21 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall InvSqrt(Vector3 v) noexcept
+    {
+        return { InvSqrt(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall InvSqrt(Vector2 v) noexcept
+    {
+        return { InvSqrt(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector1 mathcall InvSqrt(Vector1 v) noexcept
+    {
+        return { InvSqrt(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall InvSqrt(float v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
@@ -5706,9 +6064,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall InvSqrtEst(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall InvSqrtEst(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5724,6 +6080,21 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall InvSqrtEst(Vector3 v) noexcept
+    {
+        return { InvSqrtEst(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall InvSqrtEst(Vector2 v) noexcept
+    {
+        return { InvSqrtEst(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector1 mathcall InvSqrtEst(Vector1 v) noexcept
+    {
+        return { InvSqrtEst(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall InvSqrtEst(float v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
@@ -5737,9 +6108,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Cbrt(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall Cbrt(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5765,14 +6134,27 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Cbrt(Vector3 v) noexcept
+    {
+        return { Cbrt(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Cbrt(Vector2 v) noexcept
+    {
+        return { Cbrt(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector1 mathcall Cbrt(Vector1 v) noexcept
+    {
+        return { Cbrt(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Cbrt(float v) noexcept
     {
         return cbrtf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall InvCbrt(T v) noexcept
-        requires VectorLike<T> and Componentwise<T>
+    mathinline Vector4 mathcall InvCbrt(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5798,14 +6180,27 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall InvCbrt(Vector3 v) noexcept
+    {
+        return { InvCbrt(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall InvCbrt(Vector2 v) noexcept
+    {
+        return { InvCbrt(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector1 mathcall InvCbrt(Vector1 v) noexcept
+    {
+        return { InvCbrt(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall InvCbrt(float v) noexcept
     {
         return 1.0F / cbrtf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Abs(T v) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall Abs(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5827,14 +6222,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Abs(Vector3 v) noexcept
+    {
+        return { Abs(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Abs(Vector2 v) noexcept
+    {
+        return { Abs(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Abs(float v) noexcept
     {
         return fabsf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Negate(T v) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall Negate(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5854,15 +6257,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Negate(T v) noexcept
+    mathinline Vector3 mathcall Negate(Vector3 v) noexcept
+    {
+        return { Negate(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Negate(Vector2 v) noexcept
+    {
+        return { Negate(Vector4{ v.V }).V };
+    }
+
+    mathinline float mathcall Negate(float v) noexcept
     {
         return -v;
     }
 
-    template <typename T>
-    mathinline T mathcall Add(T a, T b) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall Add(Vector4 a, Vector4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5880,9 +6290,17 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Subtract(T a, T b) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector3 mathcall Add(Vector3 a, Vector3 b) noexcept
+    {
+        return { Add(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector2 mathcall Add(Vector2 a, Vector2 b) noexcept
+    {
+        return { Add(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector4 mathcall Subtract(Vector4 a, Vector4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5900,9 +6318,17 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Multiply(T a, T b) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector3 mathcall Subtract(Vector3 a, Vector3 b) noexcept
+    {
+        return { Subtract(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector2 mathcall Subtract(Vector2 a, Vector2 b) noexcept
+    {
+        return { Subtract(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector4 mathcall Multiply(Vector4 a, Vector4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5920,9 +6346,17 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Multiply(T a, typename T::ComponentType b) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector3 mathcall Multiply(Vector3 a, Vector3 b) noexcept
+    {
+        return { Multiply(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector2 mathcall Multiply(Vector2 a, Vector2 b) noexcept
+    {
+        return { Multiply(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector4 mathcall Multiply(Vector4 a, float b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5941,9 +6375,17 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Reciprocal(T v) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector3 mathcall Multiply(Vector3 a, float b) noexcept
+    {
+        return { Multiply(Vector4{ a.V }, b).V };
+    }
+
+    mathinline Vector2 mathcall Multiply(Vector2 a, float b) noexcept
+    {
+        return { Multiply(Vector4{ a.V }, b).V };
+    }
+
+    mathinline Vector4 mathcall Reciprocal(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5963,14 +6405,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Reciprocal(Vector3 v) noexcept
+    {
+        return { Reciprocal(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Reciprocal(Vector2 v) noexcept
+    {
+        return { Reciprocal(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Reciprocal(float v) noexcept
     {
         return 1.0F / v;
     }
 
-    template <typename T>
-    mathinline T mathcall Divide(T a, T b) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall Divide(Vector4 a, Vector4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -5988,9 +6438,17 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Divide(T a, typename T::ComponentType b) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector3 mathcall Divide(Vector3 a, Vector3 b) noexcept
+    {
+        return { Divide(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector2 mathcall Divide(Vector2 a, Vector2 b) noexcept
+    {
+        return { Divide(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector4 mathcall Divide(Vector4 a, float b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const invb = 1.0F / b;
@@ -6011,10 +6469,18 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Divide(Vector3 a, float b) noexcept
+    {
+        return { Divide(Vector4{ a.V }, b).V };
+    }
+
+    mathinline Vector2 mathcall Divide(Vector2 a, float b) noexcept
+    {
+        return { Divide(Vector4{ a.V }, b).V };
+    }
+
     // (a * b) + c
-    template <typename T>
-    mathinline T mathcall MultiplyAdd(T a, T b, T c) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall MultiplyAdd(Vector4 a, Vector4 b, Vector4 c) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6032,17 +6498,23 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall MultiplyAdd(T a, T b, T c) noexcept
-        requires ScalarLike<T>
+    mathinline Vector3 mathcall MultiplyAdd(Vector3 a, Vector3 b, Vector3 c) noexcept
+    {
+        return { MultiplyAdd(Vector4{ a.V }, Vector4{ b.V }, Vector4{ c.V }).V };
+    }
+
+    mathinline Vector2 mathcall MultiplyAdd(Vector2 a, Vector2 b, Vector2 c) noexcept
+    {
+        return { MultiplyAdd(Vector4{ a.V }, Vector4{ b.V }, Vector4{ c.V }).V };
+    }
+
+    mathinline float mathcall MultiplyAdd(float a, float b, float c) noexcept
     {
         return (a * b) + c;
     }
 
     // (a * b) - c
-    template <typename T>
-    mathinline T mathcall MultiplySubtract(T a, T b, T c) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall MultiplySubtract(Vector4 a, Vector4 b, Vector4 c) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6060,17 +6532,23 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall MultiplySubtract(T a, T b, T c) noexcept
-        requires ScalarLike<T>
+    mathinline Vector3 mathcall MultiplySubtract(Vector3 a, Vector3 b, Vector3 c) noexcept
+    {
+        return { MultiplySubtract(Vector4{ a.V }, Vector4{ b.V }, Vector4{ c.V }).V };
+    }
+
+    mathinline Vector2 mathcall MultiplySubtract(Vector2 a, Vector2 b, Vector2 c) noexcept
+    {
+        return { MultiplySubtract(Vector4{ a.V }, Vector4{ b.V }, Vector4{ c.V }).V };
+    }
+
+    mathinline float mathcall MultiplySubtract(float a, float b, float c) noexcept
     {
         return (a * b) - c;
     }
 
     // -(a * b) + c
-    template <typename T>
-    mathinline T mathcall NegateMultiplyAdd(T a, T b, T c) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall NegateMultiplyAdd(Vector4 a, Vector4 b, Vector4 c) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6088,17 +6566,23 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall NegateMultiplyAdd(T a, T b, T c) noexcept
-        requires ScalarLike<T>
+    mathinline Vector3 mathcall NegateMultiplyAdd(Vector3 a, Vector3 b, Vector3 c) noexcept
+    {
+        return { NegateMultiplyAdd(Vector4{ a.V }, Vector4{ b.V }, Vector4{ c.V }).V };
+    }
+
+    mathinline Vector2 mathcall NegateMultiplyAdd(Vector2 a, Vector2 b, Vector2 c) noexcept
+    {
+        return { NegateMultiplyAdd(Vector4{ a.V }, Vector4{ b.V }, Vector4{ c.V }).V };
+    }
+
+    mathinline float mathcall NegateMultiplyAdd(float a, float b, float c) noexcept
     {
         return -(a * b) + c;
     }
 
     // -(a * b) - c
-    template <typename T>
-    mathinline T mathcall NegateMultiplySubtract(T a, T b, T c) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall NegateMultiplySubtract(Vector4 a, Vector4 b, Vector4 c) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6116,16 +6600,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall NegateMultiplySubtract(T a, T b, T c) noexcept
-        requires ScalarLike<T>
+    mathinline Vector3 mathcall NegateMultiplySubtract(Vector3 a, Vector3 b, Vector3 c) noexcept
+    {
+        return { NegateMultiplySubtract(Vector4{ a.V }, Vector4{ b.V }, Vector4{ c.V }).V };
+    }
+
+    mathinline Vector2 mathcall NegateMultiplySubtract(Vector2 a, Vector2 b, Vector2 c) noexcept
+    {
+        return { NegateMultiplySubtract(Vector4{ a.V }, Vector4{ b.V }, Vector4{ c.V }).V };
+    }
+
+    mathinline float mathcall NegateMultiplySubtract(float a, float b, float c) noexcept
     {
         return -(a * b) - c;
     }
 
-    template <typename T>
-    mathinline T mathcall Square(T v) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall Square(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6143,14 +6633,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Square(Vector3 v) noexcept
+    {
+        return { Square(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Square(Vector2 v) noexcept
+    {
+        return { Square(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Square(float v) noexcept
     {
         return v * v;
     }
 
-    template <typename T>
-    mathinline T mathcall SignedSquare(T v) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall SignedSquare(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6175,14 +6673,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall SignedSquare(Vector3 v) noexcept
+    {
+        return { SignedSquare(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall SignedSquare(Vector2 v) noexcept
+    {
+        return { SignedSquare(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall SignedSquare(float v) noexcept
     {
         return v * fabsf(v);
     }
 
-    template <typename T>
-    mathinline T mathcall Cube(T v) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall Cube(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6202,6 +6708,11 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Cube(Vector3 v) noexcept
+    {
+        return { Cube(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Cube(float v) noexcept
     {
         return v * v * v;
@@ -6216,14 +6727,12 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall Lerp(T a, T b, float t) noexcept
-        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
+    mathinline Vector4 mathcall Lerp(Vector4 a, Vector4 b, float t) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const scale = Replicate<T>(t);
-        T const length = Subtract<T>(b, a);
-        T const result = MultiplyAdd<T>(length, scale, a);
+        Vector4 const scale = Replicate<Vector4>(t);
+        Vector4 const length = Subtract(b, a);
+        Vector4 const result = MultiplyAdd(length, scale, a);
         return result;
 #elif GRAPHYTE_HW_AVX
         __m128 const length = _mm_sub_ps(b.V, a.V);
@@ -6233,19 +6742,37 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Lerp(T a, T b, T t) noexcept
-        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
+    mathinline Vector3 mathcall Lerp(Vector3 a, Vector3 b, float t) noexcept
+    {
+        return { Lerp(Vector4{ a.V }, Vector4{ b.V }, t).V };
+    }
+
+    mathinline Vector2 mathcall Lerp(Vector2 a, Vector2 b, float t) noexcept
+    {
+        return { Lerp(Vector4{ a.V }, Vector4{ b.V }, t).V };
+    }
+
+    mathinline Vector4 mathcall Lerp(Vector4 a, Vector4 b, Vector4 t) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const length = Subtract<T>(b, a);
-        T const result = MultiplyAdd<T>(length, t, a);
+        Vector4 const length = Subtract(b, a);
+        Vector4 const result = MultiplyAdd(length, t, a);
         return result;
 #elif GRAPHYTE_HW_AVX
         __m128 const length = _mm_sub_ps(b.V, a.V);
         __m128 const result = Impl::avx_fmadd_f32x4(length, t.V, a.V);
         return { result };
 #endif
+    }
+
+    mathinline Vector3 mathcall Lerp(Vector3 a, Vector3 b, Vector3 t) noexcept
+    {
+        return { Lerp(Vector4{ a.V }, Vector4{ b.V }, Vector4{ t.V }).V };
+    }
+
+    mathinline Vector2 mathcall Lerp(Vector2 a, Vector2 b, Vector2 t) noexcept
+    {
+        return { Lerp(Vector4{ a.V }, Vector4{ b.V }, Vector4{ t.V }).V };
     }
 
     mathinline float mathcall Lerp(float a, float b, float t) noexcept
@@ -6272,10 +6799,10 @@ namespace Graphyte::Maths
         T const p1 = Replicate<T>(-2.0F * t3 + 3.0F * t2);
         T const t1 = Replicate<T>(t3 - t2);
 
-        T const r0 = Multiply<T>(p0, position0);
-        T const r1 = MultiplyAdd<T>(t0, tangent0, r0);
-        T const r2 = MultiplyAdd<T>(p1, position1, r1);
-        T const r3 = MultiplyAdd<T>(t1, tangent1, r2);
+        T const r0 = Multiply(p0, position0);
+        T const r1 = MultiplyAdd(t0, tangent0, r0);
+        T const r2 = MultiplyAdd(p1, position1, r1);
+        T const r3 = MultiplyAdd(t1, tangent1, r2);
 
         return { r3 };
 #elif GRAPHYTE_HW_AVX
@@ -6301,18 +6828,18 @@ namespace Graphyte::Maths
         requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const t2 = Multiply<T>(t, t);
-        T const t3 = Multiply<T>(t, t2);
+        T const t2 = Multiply(t, t);
+        T const t3 = Multiply(t, t2);
 
         T const p0 = Replicate<T>(2.0F * t3.V.F[0] - 3.0F * t2.V.F[0] + 1.0F);
         T const t0 = Replicate<T>(t3.V.F[1] - 2.0F * t2.V.F[1] + t.V.F[1]);
         T const p1 = Replicate<T>(-2.0F * t3.V.F[2] + 3.0F * t2.V.F[2]);
         T const t1 = Replicate<T>(t3.V.F[2] - t2.V.F[2]);
 
-        T const r0 = Multiply<T>(p0, position0);
-        T const r1 = MultiplyAdd<T>(t0, tangent0, r0);
-        T const r2 = MultiplyAdd<T>(p1, position1, r1);
-        T const r3 = MultiplyAdd<T>(t1, tangent1, r2);
+        T const r0 = Multiply(p0, position0);
+        T const r1 = MultiplyAdd(t0, tangent0, r0);
+        T const r2 = MultiplyAdd(p1, position1, r1);
+        T const r3 = MultiplyAdd(t1, tangent1, r2);
 
         return { r3 };
 
@@ -6381,12 +6908,12 @@ namespace Graphyte::Maths
         requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const pba = Subtract<T>(b, a);
-        T const pca = Subtract<T>(c, a);
+        T const pba = Subtract(b, a);
+        T const pca = Subtract(c, a);
         T const sf = Replicate<T>(f);
         T const sg = Replicate<T>(g);
-        T const accum = MultiplyAdd<T>(pba, sf, a);
-        T const result = MultiplyAdd<T>(pca, sg, accum);
+        T const accum = MultiplyAdd(pba, sf, a);
+        T const result = MultiplyAdd(pca, sg, accum);
         return result;
 #elif GRAPHYTE_HW_AVX
         __m128 const pba = _mm_sub_ps(b.V, a.V);
@@ -6420,10 +6947,10 @@ namespace Graphyte::Maths
         requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const pba = Subtract<T>(b, a);
-        T const pca = Subtract<T>(c, a);
-        T const accum = MultiplyAdd<T>(pba, f, a);
-        T const result = MultiplyAdd<T>(pca, g, accum);
+        T const pba = Subtract(b, a);
+        T const pca = Subtract(c, a);
+        T const accum = MultiplyAdd(pba, f, a);
+        T const result = MultiplyAdd(pca, g, accum);
         return result;
 #elif GRAPHYTE_HW_AVX
         __m128 const pba = _mm_sub_ps(b.V, a.V);
@@ -6506,7 +7033,7 @@ namespace Graphyte::Maths
             + (-3.0F * fz * fz * fz + 4.0F * fz * fz + fz) * p2.V.F[2]
             + (fz * fz * fz - fz * fz) * p3.V.F[2]);
 
-            float const dw
+        float const dw
             = 0.5F * ((-fw * fw * fw + 2.0F * fw * fw - fw) * p0.V.F[3]
             + (3.0F * fw * fw * fw - 5.0F * fw * fw + 2.0F) * p1.V.F[3]
             + (-3.0F * fw * fw * fw + 4.0F * fw * fw + fw) * p2.V.F[3]
@@ -6583,21 +7110,17 @@ namespace Graphyte::Maths
         return r3;
     }
 
-
-
-    template <typename T>
-    mathinline T mathcall Remap(T value, T from_min, T from_max, T to_min, T to_max) noexcept
-        requires VectorLike<T> and Interpolable<T> and Arithmetic<T>
+    mathinline Vector4 mathcall Remap(Vector4 value, Vector4 from_min, Vector4 from_max, Vector4 to_min, Vector4 to_max) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const from_abs = Subtract(value, from_min);
-        T const from_max_abs = Subtract(from_max, from_min);
+        Vector4 const from_abs = Subtract(value, from_min);
+        Vector4 const from_max_abs = Subtract(from_max, from_min);
 
-        T const normal = Divide(from_abs, from_max_abs);
+        Vector4 const normal = Divide(from_abs, from_max_abs);
 
-        T const to_max_abs = Subtract(to_max, to_min);
+        Vector4 const to_max_abs = Subtract(to_max, to_min);
 
-        T const to = MultiplyAdd(to_max_abs, normal, to_min);
+        Vector4 const to = MultiplyAdd(to_max_abs, normal, to_min);
 
         return to;
 #elif GRAPHYTE_HW_AVX
@@ -6611,6 +7134,28 @@ namespace Graphyte::Maths
 
         return { to };
 #endif
+    }
+
+    mathinline Vector3 mathcall Remap(Vector3 value, Vector3 from_min, Vector3 from_max, Vector3 to_min, Vector3 to_max) noexcept
+    {
+        return Vector3{ Remap(
+            Vector4{ value.V },
+            Vector4{ from_min.V },
+            Vector4{ from_max.V },
+            Vector4{ to_min.V },
+            Vector4{ to_max.V }
+        ).V };
+    }
+
+    mathinline Vector2 mathcall Remap(Vector2 value, Vector2 from_min, Vector2 from_max, Vector2 to_min, Vector2 to_max) noexcept
+    {
+        return Vector2{ Remap(
+            Vector4{ value.V },
+            Vector4{ from_min.V },
+            Vector4{ from_max.V },
+            Vector4{ to_min.V },
+            Vector4{ to_max.V }
+        ).V };
     }
 
     mathinline float mathcall Remap(float value, float from_min, float from_max, float to_min, float to_max) noexcept
@@ -6628,14 +7173,12 @@ namespace Graphyte::Maths
         return to;
     }
 
-    template <typename T>
-    mathinline T mathcall Unlerp(T value, T min, T max) noexcept
-        requires VectorLike<T> and Arithmetic<T>
+    mathinline Vector4 mathcall Unlerp(Vector4 value, Vector4 min, Vector4 max) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const base = Subtract(value, min);
-        T const range = Subtract(max, min);
-        T const result = Divide(base, range);
+        Vector4 const base = Subtract(value, min);
+        Vector4 const range = Subtract(max, min);
+        Vector4 const result = Divide(base, range);
         return result;
 #elif GRAPHYTE_HW_AVX
         __m128 const base = _mm_sub_ps(value.V, min.V);
@@ -6643,6 +7186,16 @@ namespace Graphyte::Maths
         __m128 const result = _mm_div_ps(base, range);
         return { result };
 #endif
+    }
+
+    mathinline Vector3 mathcall Unlerp(Vector3 value, Vector3 min, Vector3 max) noexcept
+    {
+        return { Unlerp(Vector4{ value.V }, Vector4{ min.V }, Vector4{ max.V }).V };
+    }
+
+    mathinline Vector2 mathcall Unlerp(Vector2 value, Vector2 min, Vector2 max) noexcept
+    {
+        return { Unlerp(Vector4{ value.V }, Vector4{ min.V }, Vector4{ max.V }).V };
     }
 
     mathinline float mathcall Unlerp(float value, float min, float max) noexcept
@@ -6709,9 +7262,7 @@ namespace Graphyte::Maths::Impl
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall CopySign(T number, T sign) noexcept
-        requires VectorLike<T>
+    mathinline Vector4 mathcall CopySign(Vector4 number, Vector4 sign) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 result{ { {
@@ -6731,6 +7282,16 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall CopySign(Vector3 number, Vector3 sign) noexcept
+    {
+        return { CopySign(Vector4{ number.V }, Vector4{ sign.V }).V };
+    }
+
+    mathinline Vector2 mathcall CopySign(Vector2 number, Vector2 sign) noexcept
+    {
+        return { CopySign(Vector4{ number.V }, Vector4{ sign.V }).V };
+    }
+
     mathinline float mathcall CopySign(float number, float sign) noexcept
     {
         return copysignf(number, sign);
@@ -6743,8 +7304,7 @@ namespace Graphyte::Maths
         return gt_zero - lt_zero;
     }
 
-    template <typename T>
-    mathinline T mathcall Sign(T x) noexcept
+    mathinline Vector4 mathcall Sign(Vector4 x) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6777,9 +7337,17 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall Ceiling(T v) noexcept
-        requires VectorLike<T> and Roundable<T>
+    mathinline Vector3 mathcall Sign(Vector3 x) noexcept
+    {
+        return { Sign(Vector4{ x.V }).V };
+    }
+
+    mathinline Vector2 mathcall Sign(Vector2 x) noexcept
+    {
+        return { Sign(Vector4{ x.V }).V };
+    }
+
+    mathinline Vector4 mathcall Ceiling(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 result{ { {
@@ -6797,14 +7365,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Ceiling(Vector3 v) noexcept
+    {
+        return { Ceiling(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Ceiling(Vector2 v) noexcept
+    {
+        return { Ceiling(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Ceiling(float value) noexcept
     {
         return ceilf(value);
     }
 
-    template <typename T>
-    mathinline T mathcall Floor(T v) noexcept
-        requires VectorLike<T> and Roundable<T>
+    mathinline Vector4 mathcall Floor(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6822,14 +7398,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Floor(Vector3 v) noexcept
+    {
+        return { Floor(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Floor(Vector2 v) noexcept
+    {
+        return { Floor(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Floor(float value) noexcept
     {
         return floorf(value);
     }
 
-    template <typename T>
-    mathinline T mathcall Truncate(T v) noexcept
-        requires VectorLike<T> and Roundable<T>
+    mathinline Vector4 mathcall Truncate(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 result;
@@ -6858,14 +7442,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Truncate(Vector3 v) noexcept
+    {
+        return { Truncate(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Truncate(Vector2 v) noexcept
+    {
+        return { Truncate(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Truncate(float value) noexcept
     {
         return truncf(value);
     }
 
-    template <typename T>
-    mathinline T mathcall Round(T v) noexcept
-        requires VectorLike<T> and Roundable<T>
+    mathinline Vector4 mathcall Round(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6883,14 +7475,22 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Round(Vector3 v) noexcept
+    {
+        return { Round(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Round(Vector2 v) noexcept
+    {
+        return { Round(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Round(float value) noexcept
     {
         return roundf(value);
     }
 
-    template <typename T>
-    mathinline T mathcall Remainder(T x, T y) noexcept
-        requires VectorLike<T> and Roundable<T>
+    mathinline Vector4 mathcall Remainder(Vector4 x, Vector4 y) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -6922,16 +7522,34 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Remainder(Vector3 x, Vector3 y) noexcept
+    {
+        return { Remainder(Vector4{ x.V }, Vector4{ y.V }).V };
+    }
+
+    mathinline Vector2 mathcall Remainder(Vector2 x, Vector2 y) noexcept
+    {
+        return { Remainder(Vector4{ x.V }, Vector4{ y.V }).V };
+    }
+
     mathinline float mathcall Remainder(float x, float y) noexcept
     {
         return fmodf(x, y);
     }
 
-    template <typename T>
-    mathinline T mathcall Fraction(T x) noexcept
-        requires VectorLike<T> and Roundable<T>
+    mathinline Vector4 mathcall Fraction(Vector4 x) noexcept
     {
         return Subtract(x, Floor(x));
+    }
+
+    mathinline Vector3 mathcall Fraction(Vector3 x) noexcept
+    {
+        return { Fraction(Vector4{ x.V }).V };
+    }
+
+    mathinline Vector2 mathcall Fraction(Vector2 x) noexcept
+    {
+        return { Fraction(Vector4{ x.V }).V };
     }
 
     mathinline float mathcall Fraction(float x) noexcept
@@ -6948,9 +7566,71 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline typename T::MaskType mathcall CompareEqual(T a, T b) noexcept
-        requires VectorLike<T> and EqualComparable<T> and !Logical<T>
+    mathinline Bool4 mathcall BitCompareEqual(Vector4 a, Vector4 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                (a.V.U[0] == b.V.U[0]) ? SELECT_1 : SELECT_0,
+                (a.V.U[1] == b.V.U[1]) ? SELECT_1 : SELECT_0,
+                (a.V.U[2] == b.V.U[2]) ? SELECT_1 : SELECT_0,
+                (a.V.U[3] == b.V.U[3]) ? SELECT_1 : SELECT_0,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const result = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
+        return { _mm_castsi128_ps(result) };
+#endif
+    }
+
+    mathinline Bool3 mathcall BitCompareEqual(Vector3 a, Vector3 b) noexcept
+    {
+        return { BitCompareEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool2 mathcall BitCompareEqual(Vector2 a, Vector2 b) noexcept
+    {
+        return { BitCompareEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool1 mathcall BitCompareEqual(Vector1 a, Vector1 b) noexcept
+    {
+        return { BitCompareEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool4 mathcall BitCompareNotEqual(Vector4 a, Vector4 b) noexcept
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstUInt32x4 const result{ { {
+                (a.V.U[0] != b.V.U[0]) ? SELECT_1 : SELECT_0,
+                (a.V.U[1] != b.V.U[1]) ? SELECT_1 : SELECT_0,
+                (a.V.U[2] != b.V.U[2]) ? SELECT_1 : SELECT_0,
+                (a.V.U[3] != b.V.U[3]) ? SELECT_1 : SELECT_0,
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const result = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
+        return { _mm_xor_ps(_mm_castsi128_ps(result), Impl::VEC4_MASK_NEGATIVE_ONE.V) };
+#endif
+    }
+
+    mathinline Bool3 mathcall BitCompareNotEqual(Vector3 a, Vector3 b) noexcept
+    {
+        return { BitCompareNotEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool2 mathcall BitCompareNotEqual(Vector2 a, Vector2 b) noexcept
+    {
+        return { BitCompareNotEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool1 mathcall BitCompareNotEqual(Vector1 a, Vector1 b) noexcept
+    {
+        return { BitCompareNotEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool4 mathcall CompareEqual(Vector4 a, Vector4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -6968,9 +7648,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline typename T::MaskType mathcall CompareEqual(T a, T b, T epsilon) noexcept
-        requires VectorLike<T> and EqualComparable<T> and !Logical<T>
+    mathinline Bool3 mathcall CompareEqual(Vector3 a, Vector3 b) noexcept
+    {
+        return { CompareEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool2 mathcall CompareEqual(Vector2 a, Vector2 b) noexcept
+    {
+        return { CompareEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool1 mathcall CompareEqual(Vector1 a, Vector1 b) noexcept
+    {
+        return { CompareEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool4 mathcall CompareEqual(Vector4 a, Vector4 b, Vector4 epsilon) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const dx = (a.V.F[0] - b.V.F[0]);
@@ -7005,9 +7698,23 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline typename T::MaskType mathcall CompareNotEqual(T a, T b) noexcept
-        requires VectorLike<T> and EqualComparable<T> and !Logical<T>
+    mathinline Bool3 mathcall CompareEqual(Vector3 a, Vector3 b, Vector4 epsilon) noexcept
+    {
+        return { CompareEqual(Vector4{ a.V }, Vector4{ b.V }, epsilon).V };
+    }
+
+    mathinline Bool2 mathcall CompareEqual(Vector2 a, Vector2 b, Vector4 epsilon) noexcept
+    {
+        return { CompareEqual(Vector4{ a.V }, Vector4{ b.V }, epsilon).V };
+    }
+
+    mathinline Bool1 mathcall CompareEqual(Vector1 a, Vector1 b, Vector4 epsilon) noexcept
+    {
+        return { CompareEqual(Vector4{ a.V }, Vector4{ b.V }, epsilon).V };
+    }
+
+
+    mathinline Bool4 mathcall CompareNotEqual(Vector4 a, Vector4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -7025,6 +7732,21 @@ namespace Graphyte::Maths
         uint32x4_t const not_equal = vmvnq_u32(equal);
         return { vreinterpretq_f32_u32(not_equal) };
 #endif
+    }
+
+    mathinline Bool3 mathcall CompareNotEqual(Vector3 a, Vector3 b) noexcept
+    {
+        return { CompareNotEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool2 mathcall CompareNotEqual(Vector2 a, Vector2 b) noexcept
+    {
+        return { CompareNotEqual(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Bool1 mathcall CompareNotEqual(Vector1 a, Vector1 b) noexcept
+    {
+        return { CompareNotEqual(Vector4{ a.V }, Vector4{ b.V }).V };
     }
 
     template <typename T>
@@ -7763,9 +8485,7 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall Min(T a, T b) noexcept
-        requires VectorLike<T> and Comparable<T>
+    mathinline Vector4 mathcall Min(Vector4 a, Vector4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -7782,14 +8502,27 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Min(Vector3 a, Vector3 b) noexcept
+    {
+        return { Min(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector2 mathcall Min(Vector2 a, Vector2 b) noexcept
+    {
+        return { Min(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector1 mathcall Min(Vector1 a, Vector1 b) noexcept
+    {
+        return { Min(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
     mathinline float mathcall Min(float a, float b) noexcept
     {
         return (a < b) ? a : b;
     }
 
-    template <typename T>
-    mathinline T mathcall Max(T a, T b) noexcept
-        requires FloatVector<T> and Comparable<T>
+    mathinline Vector4 mathcall Max(Vector4 a, Vector4 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -7807,20 +8540,33 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Max(Vector3 a, Vector3 b) noexcept
+    {
+        return { Max(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector2 mathcall Max(Vector2 a, Vector2 b) noexcept
+    {
+        return { Max(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    mathinline Vector1 mathcall Max(Vector1 a, Vector1 b) noexcept
+    {
+        return { Max(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
     mathinline float mathcall Max(float a, float b) noexcept
     {
         return (a > b) ? a : b;
     }
 
-    template <typename T>
-    mathinline T mathcall Clamp(T v, T min, T max) noexcept
-        requires VectorLike<T> and Comparable<T>
+    mathinline Vector4 mathcall Clamp(Vector4 v, Vector4 min, Vector4 max) noexcept
     {
         GX_ASSERT(IsLessEqual(min, max));
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const below = Max<T>(min, v);
-        T const result = Min<T>(max, below);
+        Vector4 const below = Max(min, v);
+        Vector4 const result = Min(max, below);
         return result;
 #elif GRAPHYTE_HW_AVX
         __m128 const below = _mm_max_ps(min.V, v.V);
@@ -7833,6 +8579,21 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Clamp(Vector3 v, Vector3 min, Vector3 max) noexcept
+    {
+        return { Clamp(Vector4{ v.V }, Vector4{ min.V }, Vector4{ max.V }).V };
+    }
+
+    mathinline Vector2 mathcall Clamp(Vector2 v, Vector2 min, Vector2 max) noexcept
+    {
+        return { Clamp(Vector4{ v.V }, Vector4{ min.V }, Vector4{ max.V }).V };
+    }
+
+    mathinline Vector1 mathcall Clamp(Vector1 v, Vector1 min, Vector1 max) noexcept
+    {
+        return { Clamp(Vector4{ v.V }, Vector4{ min.V }, Vector4{ max.V }).V };
+    }
+
     mathinline float mathcall Clamp(float v, float min, float max) noexcept
     {
         float const below = Max(min, v);
@@ -7840,13 +8601,11 @@ namespace Graphyte::Maths
         return result;
     }
 
-    template <typename T>
-    mathinline T mathcall Saturate(T v) noexcept
-        requires VectorLike<T> and Comparable<T>
+    mathinline Vector4 mathcall Saturate(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const zero = Zero<T>();
-        T const one = One<T>();
+        Vector4 const zero = Zero<Vector4>();
+        Vector4 const one = One<Vector4>();
         return Clamp(v, zero, one);
 #elif GRAPHYTE_HW_AVX
         __m128 const zero = _mm_setzero_ps();
@@ -7863,6 +8622,21 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 mathcall Saturate(Vector3 v) noexcept
+    {
+        return { Saturate(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector2 mathcall Saturate(Vector2 v) noexcept
+    {
+        return { Saturate(Vector4{ v.V }).V };
+    }
+
+    mathinline Vector1 mathcall Saturate(Vector1 v) noexcept
+    {
+        return { Saturate(Vector4{ v.V }).V };
+    }
+
     mathinline float mathcall Saturate(float v) noexcept
     {
         float const below = Max(0.0F, v);
@@ -7870,9 +8644,7 @@ namespace Graphyte::Maths
         return result;
     }
 
-    template <typename T>
-    mathinline T mathcall Wrap(T v, T min, T max) noexcept
-        requires VectorLike<T> and Comparable<T>
+    mathinline Vector4 mathcall Wrap(Vector4 v, Vector4 min, Vector4 max) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const range0 = (max.V.F[0] - min.V.F[0]);
@@ -7905,6 +8677,21 @@ namespace Graphyte::Maths
 
         return { result };
 #endif
+    }
+
+    mathinline Vector3 mathcall Wrap(Vector3 v, Vector3 min, Vector3 max) noexcept
+    {
+        return { Wrap(Vector4{ v.V }, Vector4{ min.V }, Vector4{ max.V }).V };
+    }
+
+    mathinline Vector2 mathcall Wrap(Vector2 v, Vector2 min, Vector2 max) noexcept
+    {
+        return { Wrap(Vector4{ v.V }, Vector4{ min.V }, Vector4{ max.V }).V };
+    }
+
+    mathinline Vector1 mathcall Wrap(Vector1 v, Vector1 min, Vector1 max) noexcept
+    {
+        return { Wrap(Vector4{ v.V }, Vector4{ min.V }, Vector4{ max.V }).V };
     }
 
     mathinline float mathcall Wrap(float v, float min, float max) noexcept
@@ -8625,12 +9412,12 @@ namespace Graphyte::Maths
 
         Vector4 const rcp_length = InvSqrt(length_squared);
         Bool4 const mask_inf_length = BitCompareEqual(length_squared, Vector4{ Impl::VEC4_INFINITY.V });
-        Bool4 const masK_zero_length = CompareEqual(length_squared, zero);
+        Bool4 const mask_zero_length = CompareEqual(length_squared, zero);
 
         Vector4 const normal = Multiply(As<Vector4>(v), rcp_length);
         Vector4 const length = Multiply(length_squared, rcp_length);
 
-        Bool4 const select = BitCompareEqual(mask_inf_length, masK_zero_length);
+        Bool4 const select = CompareEqual(mask_inf_length, mask_zero_length);
         Vector4 const select_length = Select(length_squared, length, select);
         Vector4 const select_normal = Select(length_squared, normal, select);
 
@@ -8774,7 +9561,7 @@ namespace Graphyte::Maths
         Vector4 const cos_angle = Dot(a, b);
 
         // Clamp to Acos range
-        Vector4 const cos_angle_clamped = Clamp<Vector4>(cos_angle, { Impl::VEC4_NEGATIVE_ONE_4.V }, { Impl::VEC4_ONE_4.V });
+        Vector4 const cos_angle_clamped = Clamp(cos_angle, { Impl::VEC4_NEGATIVE_ONE_4.V }, { Impl::VEC4_ONE_4.V });
         Vector4 const angle = Acos(cos_angle_clamped);
         return angle;
     }
@@ -8791,7 +9578,7 @@ namespace Graphyte::Maths
         Vector4 const cos_angle = Multiply(a_dot_b, rcp_len_ab_sq);
 
         // Clamp to Acos range
-        Vector4 const cos_angle_clamped = Clamp<Vector4>(cos_angle, { Impl::VEC4_NEGATIVE_ONE_4.V }, { Impl::VEC4_ONE_4.V });
+        Vector4 const cos_angle_clamped = Clamp(cos_angle, { Impl::VEC4_NEGATIVE_ONE_4.V }, { Impl::VEC4_ONE_4.V });
         Vector4 const angle = Acos(cos_angle_clamped);
         return angle;
     }
@@ -9015,16 +9802,16 @@ namespace Graphyte::Maths
     {
         Vector3 const zzz = SplatZ(v);
         Vector3 const yzy = As<Vector3>(Swizzle<1, 2, 1, 1>(As<Vector4>(v)));
-        Vector3 const negv = Negate<Vector3>(v);
+        Vector3 const negv = Negate(v);
         Vector3 const zero = Zero<Vector3>();
 
         Bool3 const cmp_zzz_negative = CompareLess<Vector3>(zzz, zero);
         Bool3 const cmp_yzy_negative = CompareLess<Vector3>(yzy, zero);
 
-        Vector3 const s = Add<Vector3>(yzy, zzz);
-        Vector3 const d = Subtract<Vector3>(yzy, zzz);
+        Vector3 const s = Add(yzy, zzz);
+        Vector3 const d = Subtract(yzy, zzz);
 
-        Bool3 const select = CompareEqual<Bool3>(cmp_zzz_negative, cmp_yzy_negative);
+        Bool3 const select = CompareEqual(cmp_zzz_negative, cmp_yzy_negative);
 
         Vector4 const r0 = Permute<4, 0, 0, 0>(As<Vector4>(negv), As<Vector4>(s));
         Vector4 const r1 = Permute<4, 0, 0, 0>(As<Vector4>(v), As<Vector4>(d));
@@ -9047,12 +9834,12 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const v4 = As<Vector4>(v);
-        Vector4 const zzzz = SplatZ(v4);
-        Vector4 const r0 = MultiplyAdd<Vector4>(zzzz, { m.M.R[2] }, { m.M.R[3] });
-        Vector4 const yyyy = SplatY(v4);
-        Vector4 const r1 = MultiplyAdd<Vector4>(yyyy, { m.M.R[1] }, r0);
-        Vector4 const xxxx = SplatX(v4);
-        Vector4 const r2 = MultiplyAdd<Vector4>(xxxx, { m.M.R[0] }, r1);
+        Vector4 const zzzz = SplatZ<Vector4>(v4);
+        Vector4 const r0 = MultiplyAdd(zzzz, Vector4{ m.M.R[2] }, Vector4{ m.M.R[3] });
+        Vector4 const yyyy = SplatY<Vector4>(v4);
+        Vector4 const r1 = MultiplyAdd(yyyy, Vector4{ m.M.R[1] }, r0);
+        Vector4 const xxxx = SplatX<Vector4>(v4);
+        Vector4 const r2 = MultiplyAdd(xxxx, Vector4{ m.M.R[0] }, r1);
         return As<Vector3>(r2);
 #elif GRAPHYTE_HW_AVX
         __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
@@ -9076,13 +9863,13 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const v4 = As<Vector4>(v);
-        Vector4 const zzzz = SplatZ(v4);
-        Vector4 const r0 = MultiplyAdd<Vector4>(zzzz, { m.M.R[2] }, { m.M.R[3] });
-        Vector4 const yyyy = SplatY(v4);
-        Vector4 const r1 = MultiplyAdd<Vector4>(yyyy, { m.M.R[1] }, r0);
-        Vector4 const xxxx = SplatX(v4);
-        Vector4 const r2 = MultiplyAdd<Vector4>(xxxx, { m.M.R[0] }, r1);
-        Vector4 const wwww = SplatW(r2);
+        Vector4 const zzzz = SplatZ<Vector4>(v4);
+        Vector4 const r0 = MultiplyAdd(zzzz, Vector4{ m.M.R[2] }, Vector4{ m.M.R[3] });
+        Vector4 const yyyy = SplatY<Vector4>(v4);
+        Vector4 const r1 = MultiplyAdd(yyyy, Vector4{ m.M.R[1] }, r0);
+        Vector4 const xxxx = SplatX<Vector4>(v4);
+        Vector4 const r2 = MultiplyAdd(xxxx, Vector4{ m.M.R[0] }, r1);
+        Vector4 const wwww = SplatW<Vector4>(r2);
         Vector4 const result = Divide(r2, wwww);
         return As<Vector3>(result);
 #elif GRAPHYTE_HW_AVX
@@ -9102,12 +9889,12 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const v4 = As<Vector4>(v);
-        Vector4 const zzzz = SplatZ(v4);
-        Vector4 const r0 = Multiply<Vector4>(zzzz, { m.M.R[2] });
-        Vector4 const yyyy = SplatY(v4);
-        Vector4 const r1 = MultiplyAdd<Vector4>(yyyy, { m.M.R[1] }, r0);
-        Vector4 const xxxx = SplatX(v4);
-        Vector4 const r2 = MultiplyAdd<Vector4>(xxxx, { m.M.R[0] }, r1);
+        Vector4 const zzzz = SplatZ<Vector4>(v4);
+        Vector4 const r0 = Multiply(zzzz, Vector4{ m.M.R[2] });
+        Vector4 const yyyy = SplatY<Vector4>(v4);
+        Vector4 const r1 = MultiplyAdd(yyyy, Vector4{ m.M.R[1] }, r0);
+        Vector4 const xxxx = SplatX<Vector4>(v4);
+        Vector4 const r2 = MultiplyAdd(xxxx, Vector4{ m.M.R[0] }, r1);
         return As<Vector3>(r2);
 #elif GRAPHYTE_HW_AVX
         __m128 const xxxx = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
@@ -9734,7 +10521,11 @@ namespace Graphyte::Maths
 
     mathinline Vector3 Rotate(Vector3 v, Quaternion q) noexcept
     {
-        Quaternion const a = Select(Quaternion{ Impl::VEC4_MASK_SELECT_1110.V }, Quaternion{ v.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Quaternion const a = As<Quaternion>(Select(
+            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ v.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
+        ));
 
         Quaternion const qn = Conjugate(q);
         Quaternion const qa = Multiply(q, a);
@@ -9744,7 +10535,11 @@ namespace Graphyte::Maths
 
     mathinline Vector3 InverseRotate(Vector3 v, Quaternion q) noexcept
     {
-        Quaternion const a = Select(Quaternion{ Impl::VEC4_MASK_SELECT_1110.V }, Quaternion{ v.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Quaternion const a = As<Quaternion>(Select(
+            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ v.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
+        ));
 
         Quaternion const qn = Conjugate(q);
         Quaternion const qna = Multiply(qn, a);
@@ -10495,10 +11290,10 @@ namespace Graphyte::Maths
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        result.M.R[0] = Multiply<Vector4>(c, SplatX(r)).V;
-        result.M.R[1] = Multiply<Vector4>(c, SplatY(r)).V;
-        result.M.R[2] = Multiply<Vector4>(c, SplatZ(r)).V;
-        result.M.R[3] = Multiply<Vector4>(c, SplatW(r)).V;
+        result.M.R[0] = Multiply(c, SplatX<Vector4>(r)).V;
+        result.M.R[1] = Multiply(c, SplatY<Vector4>(r)).V;
+        result.M.R[2] = Multiply(c, SplatZ<Vector4>(r)).V;
+        result.M.R[3] = Multiply(c, SplatW<Vector4>(r)).V;
 #elif GRAPHYTE_HW_NEON
         result.M.R[0] = vmulq_f32(c.V, vdupq_lane_f32(vget_low_f32(r.V), 0));
         result.M.R[1] = vmulq_f32(c.V, vdupq_lane_f32(vget_low_f32(r.V), 1));
@@ -12260,11 +13055,11 @@ namespace Graphyte::Maths
         Vector2 translation
     ) noexcept
     {
-        Vector3 const v_scaling_origin = Select(
-            As<Vector3>(Impl::VEC4_MASK_SELECT_1100.V),
-            As<Vector3>(scaling_origin),
-            As<Bool3>(Impl::VEC4_MASK_SELECT_1100.V)
-        );
+        Vector3 const v_scaling_origin = As<Vector3>(Select(
+            As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
+            As<Vector4>(scaling_origin),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+        ));
 
         // Create scanling origin transform
         Vector3 const v_scaling_origin_negated = Negate(v_scaling_origin);
@@ -12275,11 +13070,11 @@ namespace Graphyte::Maths
         Matrix const m_scaling_orientation_trn = Transpose(m_scaling_orientation);
 
         // Create scaling transform
-        Vector3 const v_scaling_xy1 = Select(
-            As<Vector3>(Impl::VEC4_ONE_4.V),
-            As<Vector3>(scaling),
-            As<Bool3>(Impl::VEC4_MASK_SELECT_1100.V)
-        );
+        Vector3 const v_scaling_xy1 = As<Vector3>(Select(
+            As<Vector4>(Impl::VEC4_ONE_4.V),
+            As<Vector4>(scaling),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+        ));
 
         Matrix const m_scaling = CreateScaling(v_scaling_xy1);
 
@@ -12321,11 +13116,11 @@ namespace Graphyte::Maths
         Vector2 translation
     ) noexcept
     {
-        Vector3 const v_scaling = Select(
-            As<Vector3>(Impl::VEC4_ONE_4.V),
-            As<Vector3>(scaling),
-            As<Bool3>(Impl::VEC4_MASK_SELECT_1100.V)
-        );
+        Vector3 const v_scaling = As<Vector3>(Select(
+            As<Vector4>(Impl::VEC4_ONE_4.V),
+            As<Vector4>(scaling),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+        ));
 
         Vector4 const v_rotation_origin = Select(
             As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
@@ -12359,11 +13154,11 @@ namespace Graphyte::Maths
         Vector3 translation
     ) noexcept
     {
-        Vector3 const v_scaling_origin = Select(
-            As<Vector3>(Impl::VEC4_MASK_SELECT_1110.V),
-            scaling_origin,
-            As<Bool3>(Impl::VEC4_MASK_SELECT_1110.V)
-        );
+        Vector3 const v_scaling_origin = As<Vector3>(Select(
+            As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
+            As<Vector4>(scaling_origin),
+            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+        ));
 
         Vector3 const v_scaling_origin_negated = Negate(v_scaling_origin);
 
@@ -13493,7 +14288,11 @@ namespace Graphyte::Maths
         Vector4 const neg_plane_distance = DotNormal(As<Plane>(plane_normal), p1);
         Vector4 const plane_distance = Negate(neg_plane_distance);
 
-        Vector4 const result = Select<Vector4>(plane_distance, As<Vector4>(plane_normal), Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Vector4 const result = Select(
+            plane_distance,
+            As<Vector4>(plane_normal),
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
+        );
         Plane const plane = As<Plane>(result);
         return plane;
     }
@@ -13576,8 +14375,8 @@ namespace Graphyte::Maths
         Vector3 const point_on_plane = MultiplyAdd(point_distance, As<Vector3>(normalized), start);
 
         Vector3 const zero = Zero<Vector3>();
-        Bool3 const control = CompareEqual(As<Vector3>(diff), zero, Epsilon<Vector3>());
-        Vector3 const result = Select(point_on_plane, Nan<Vector3>(), control);
+        Bool4 const control = As<Bool4>(CompareEqual(As<Vector3>(diff), zero, Epsilon<Vector4>()));
+        Vector3 const result = As<Vector3>(Select(As<Vector4>(point_on_plane), Nan<Vector4>(), control));
         return result;
     }
 
@@ -13683,7 +14482,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline Vector4 mathcall LinePointDistance(T line1, T line2, T point) noexcept
-        requires VectorLike<T> and Arithmetic<T> and Geometric<T> and (T::Components >= 2) and (T::Components <= 3)
+        requires VectorLike<T> and Arithmetic<T> and (T::Components >= 2) and (T::Components <= 3)
     {
         T const vec_line_point = Subtract(point, line1);
         T const vec_line_line = Subtract(line2, line1);

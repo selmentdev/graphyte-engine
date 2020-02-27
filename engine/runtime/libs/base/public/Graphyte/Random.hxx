@@ -78,21 +78,61 @@ namespace Graphyte::Random
 
     template <typename T>
     inline T Next(RandomState& state, T max) noexcept
-        requires std::is_floating_point_v<T>
     {
-        T const sample = Next<T>(state);
-        T const result = sample * max;
-        return result;
+        if constexpr (std::is_floating_point_v<T>)
+        {
+            T const sample = Next<T>(state);
+            T const result = sample * max;
+            return result;
+        }
+        else if constexpr (std::is_unsigned_v<T>)
+        {
+            T const result = Next<T>(state, 0, max);
+            return result;
+        }
+        else
+        {
+            static_assert(false, "Type T is not supported");
+        }
     }
 
     template <typename T>
     inline T Next(RandomState& state, T min, T max) noexcept
-        requires std::is_floating_point_v<T>
     {
-        T const sample = Next<T>(state);
-        T const scale = (max - min);
-        T const result = (sample * scale) + min;
-        return result;
+        if constexpr (std::is_floating_point_v<T>)
+        {
+            T const sample = Next<T>(state);
+            T const scale = (max - min);
+            T const result = (sample * scale) + min;
+            return result;
+        }
+        else if constexpr (std::is_unsigned_v<T>)
+        {
+            T result;
+
+            if ((max - min) == std::numeric_limits<T>::max())
+            {
+                return Next<T>(state);
+            }
+            else
+            {
+                T const range = max - min + 1;
+                T const limit = std::numeric_limits<T>::max() - (std::numeric_limits<T>::max() % range);
+
+                do
+                {
+                    result = Next<T>(state);
+                } while (result >= limit);
+
+                result %= range;
+            }
+
+            return min + result;
+        }
+        else
+        {
+            static_assert(false, "Type T is not supported");
+        }
     }
 
     template <>
@@ -127,39 +167,6 @@ namespace Graphyte::Random
     }
 
     template <typename T>
-    inline T Next(RandomState& state, T min, T max) noexcept
-        requires std::is_unsigned_v<T>
-    {
-        T result;
-
-        if ((max - min) == std::numeric_limits<T>::max())
-        {
-            return Next<T>(state);
-        }
-        else
-        {
-            T const range = max - min + 1;
-            T const limit = std::numeric_limits<T>::max() - (std::numeric_limits<T>::max() % range);
-
-            do
-            {
-                result = Next<T>(state);
-            } while (result >= limit);
-
-            result %= range;
-        }
-
-        return min + result;
-    }
-
-    template <typename T>
-    inline T Next(RandomState& state, T max) noexcept
-        requires std::is_unsigned_v<T>
-    {
-        return Next<T>(state, 0, max);
-    }
-
-    template <typename T>
     inline T NextLaplace(RandomState& state, T mean, T scale) noexcept
     {
         T const variable = Next<T>(state);
@@ -171,8 +178,9 @@ namespace Graphyte::Random
 
     template <typename T>
     inline T NextNormal(RandomState& state) noexcept
-        requires std::is_floating_point_v<T>
     {
+        static_assert(std::is_floating_point_v<T>);
+
         T const u1 = Next<T>(state);
         T const u2 = Next<T>(state);
 
@@ -184,8 +192,9 @@ namespace Graphyte::Random
 
     template <typename T>
     inline T NextNormal(RandomState& state, T mean, T stddev) noexcept
-        requires std::is_floating_point_v<T>
     {
+        static_assert(std::is_floating_point_v<T>);
+
         return mean + NextNormal<T>(state) * stddev;
     }
 }
