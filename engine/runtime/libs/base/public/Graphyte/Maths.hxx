@@ -64,6 +64,24 @@ namespace Graphyte::Maths::Impl
 
     static_assert(alignof(NativeFloat32x4) == 16);
     static_assert(sizeof(NativeFloat32x4) == 16);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+    struct alignas(16) NativeUInt32x4 final
+    {
+        union
+        {
+            float F[4];
+            uint32_t U[4];
+            int32_t I[4];
+        };
+    };
+#elif GRAPHYTE_HW_NEON
+    using NativeUInt32x4 = uint32x4_t;
+#elif GRAPHYTE_HW_AVX
+    using NativeUInt32x4 = __m128i;
+#else
+#error Unknown architecture.
+#endif
 }
 
 
@@ -1133,7 +1151,6 @@ namespace Graphyte::Maths::Traits
     template <typename T> concept Loadable = requires { typename T::IsLoadable; };
     template <typename T> concept Storable = requires { typename T::IsStorable; };
     template <typename T> concept Interpolable = requires { typename T::IsInterpolable; };
-    template <typename T> concept FloatVector = requires { typename T::IsFloatVector; };
     template <typename T> concept FloatMatrix = requires { typename T::IsFloatMatrix; } and T::Components == (T::Rows * T::Columns) and T::Components >= 1;
 }
 
@@ -1197,12 +1214,6 @@ namespace Graphyte::Maths
 
     template <typename T>
     concept VectorLike = IsVectorLike<T>::value;
-
-    template <typename T>
-    struct IsFloatVector : std::false_type { };
-
-    template <typename T>
-    concept FloatVector = IsFloatVector<T>::value;
 
     template <typename T>
     struct IsMatrixLike : std::false_type { };
@@ -1296,7 +1307,6 @@ namespace Graphyte::Maths
     template <> struct IsEqualComparable<Vector4> : std::true_type { };
     template <> struct IsArithmetic<Vector4> : std::true_type { };
     template <> struct IsInterpolable<Vector4> : std::true_type { };
-    template <> struct IsFloatVector<Vector4> : std::true_type { };
 
     struct Vector3 final
     {
@@ -1314,7 +1324,6 @@ namespace Graphyte::Maths
     template <> struct IsEqualComparable<Vector3> : std::true_type { };
     template <> struct IsArithmetic<Vector3> : std::true_type { };
     template <> struct IsInterpolable<Vector3> : std::true_type { };
-    template <> struct IsFloatVector<Vector3> : std::true_type { };
 
     struct Vector2 final
     {
@@ -1332,7 +1341,6 @@ namespace Graphyte::Maths
     template <> struct IsEqualComparable<Vector2> : std::true_type { };
     template <> struct IsArithmetic<Vector2> : std::true_type { };
     template <> struct IsInterpolable<Vector2> : std::true_type { };
-    template <> struct IsFloatVector<Vector2> : std::true_type { };
 
     struct Vector1 final
     {
@@ -1349,7 +1357,26 @@ namespace Graphyte::Maths
     template <> struct IsEqualComparable<Vector1> : std::true_type { };
     template <> struct IsArithmetic<Vector1> : std::true_type { };
     template <> struct IsInterpolable<Vector1> : std::true_type { };
-    template <> struct IsFloatVector<Vector1> : std::true_type { };
+
+    struct Vector4U final
+    {
+        Impl::NativeUInt32x4 V;
+    };
+
+    struct Vector3U final
+    {
+        Impl::NativeUInt32x4 V;
+    };
+
+    struct Vector2U final
+    {
+        Impl::NativeUInt32x4 V;
+    };
+
+    struct Vector1U final
+    {
+        Impl::NativeUInt32x4 V;
+    };
 
 
     struct Quaternion final
@@ -1366,7 +1393,6 @@ namespace Graphyte::Maths
     template <> struct IsLoadable<Quaternion> : std::true_type { };
     template <> struct IsStorable<Quaternion> : std::true_type { };
     template <> struct IsArithmetic<Quaternion> : std::true_type { };
-    template <> struct IsFloatVector<Quaternion> : std::true_type { };
 
     struct Plane final
     {
@@ -1381,7 +1407,6 @@ namespace Graphyte::Maths
     template <> struct IsEqualComparable<Plane> : std::true_type { };
     template <> struct IsLoadable<Plane> : std::true_type { };
     template <> struct IsStorable<Plane> : std::true_type { };
-    template <> struct IsFloatVector<Plane> : std::true_type { };
 
     struct Sphere final
     {
@@ -1396,7 +1421,6 @@ namespace Graphyte::Maths
     template <> struct IsEqualComparable<Sphere> : std::true_type { };
     template <> struct IsLoadable<Sphere> : std::true_type { };
     template <> struct IsStorable<Sphere> : std::true_type { };
-    template <> struct IsFloatVector<Sphere> : std::true_type { };
 
     struct Matrix final
     {
@@ -1430,7 +1454,6 @@ namespace Graphyte::Maths
     template <> struct IsOrderComparable<Color> : std::true_type { };
     template <> struct IsEqualComparable<Color> : std::true_type { };
     template <> struct IsInterpolable<Color> : std::true_type { };
-    template <> struct IsFloatVector<Color> : std::true_type { };
 }
 
 
@@ -3113,9 +3136,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline float mathcall GetByIndex(T v, size_t index) noexcept
-        requires VectorLike<T>
+    mathinline float mathcall GetByIndex(Vector4 v, size_t index) noexcept
     {
         GX_ASSERT(index < 4);
         GX_COMPILER_ASSUME(index < 4);
@@ -3129,9 +3150,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SetByIndex(T v, float value, size_t index) noexcept
-        requires VectorLike<T>
+
+    mathinline Vector4 mathcall SetByIndex(Vector4 v, float value, size_t index) noexcept
     {
         GX_ASSERT(index < 4);
         GX_COMPILER_ASSUME(index < 4);
@@ -3142,9 +3162,7 @@ namespace Graphyte::Maths
         return { result.V };
     }
 
-    template <typename T>
-    mathinline void mathcall GetByIndex(float* result, T v, size_t index) noexcept
-        requires VectorLike<T>
+    mathinline void mathcall GetByIndex(float* result, Vector4 v, size_t index) noexcept
     {
         GX_ASSERT(result != nullptr);
         GX_ASSERT(index < 4);
@@ -3159,9 +3177,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SetByIndex(T v, float const* value, size_t index)
-        requires VectorLike<T>
+    mathinline Vector4 mathcall SetByIndex(Vector4 v, float const* value, size_t index)
     {
         GX_ASSERT(value != nullptr);
         GX_ASSERT(index < 4);
@@ -3173,9 +3189,7 @@ namespace Graphyte::Maths
         return { result.V };
     }
 
-    template <typename T>
-    mathinline float mathcall GetX(T v) noexcept
-        requires VectorLike<T> and (T::Components >= 1)
+    mathinline float mathcall GetX(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.F[0];
@@ -3186,9 +3200,32 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline float mathcall GetY(T v) noexcept
-        requires VectorLike<T> and (T::Components >= 2)
+    mathinline float mathcall GetX(Vector3 v) noexcept
+    {
+        return GetX(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetX(Vector2 v) noexcept
+    {
+        return GetX(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetX(Vector1 v) noexcept
+    {
+        return GetX(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetX(Quaternion v) noexcept
+    {
+        return GetX(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetX(Plane v) noexcept
+    {
+        return GetX(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetY(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.F[1];
@@ -3200,9 +3237,27 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline float mathcall GetZ(T v) noexcept
-        requires VectorLike<T> and (T::Components >= 3)
+    mathinline float mathcall GetY(Vector3 v) noexcept
+    {
+        return GetY(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetY(Vector2 v) noexcept
+    {
+        return GetY(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetY(Quaternion v) noexcept
+    {
+        return GetY(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetY(Plane v) noexcept
+    {
+        return GetY(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetZ(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.F[2];
@@ -3214,9 +3269,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline float mathcall GetW(T v) noexcept
-        requires VectorLike<T> and (T::Components >= 4)
+    mathinline float mathcall GetZ(Vector3 v) noexcept
+    {
+        return GetZ(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetZ(Quaternion v) noexcept
+    {
+        return GetZ(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetZ(Plane v) noexcept
+    {
+        return GetZ(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetW(Vector4 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return v.V.F[3];
@@ -3228,9 +3296,17 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall GetX(float* result, T v) noexcept
-        requires VectorLike<T> and (T::Components >= 1)
+    mathinline float mathcall GetW(Quaternion v) noexcept
+    {
+        return GetW(Vector4{ v.V });
+    }
+
+    mathinline float mathcall GetW(Plane v) noexcept
+    {
+        return GetW(Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetX(float* result, Vector4 v) noexcept
     {
         GX_ASSERT(result != nullptr);
 
@@ -3243,14 +3319,37 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall GetY(float* result, T v) noexcept
-        requires VectorLike<T> and (T::Components >= 2)
+    mathinline void mathcall GetX(float* result, Vector3 v) noexcept
+    {
+        GetX(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetX(float* result, Vector2 v) noexcept
+    {
+        GetX(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetX(float* result, Vector1 v) noexcept
+    {
+        GetX(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetX(float* result, Quaternion v) noexcept
+    {
+        GetX(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetX(float* result, Plane v) noexcept
+    {
+        GetX(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetY(float* result, Vector4 v) noexcept
     {
         GX_ASSERT(result != nullptr);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        (*result) =  v.V.F[1];
+        (*result) = v.V.F[1];
 #elif GRAPHYTE_HW_NEON
         (*result) = vgetq_lane_f32(v.V, 1);
 #elif GRAPHYTE_HW_AVX
@@ -3258,14 +3357,32 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall GetZ(float* result, T v) noexcept
-        requires VectorLike<T> and (T::Components >= 3)
+    mathinline void mathcall GetY(float* result, Vector3 v) noexcept
+    {
+        GetY(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetY(float* result, Vector2 v) noexcept
+    {
+        GetY(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetY(float* result, Quaternion v) noexcept
+    {
+        GetY(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetY(float* result, Plane v) noexcept
+    {
+        GetY(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetZ(float* result, Vector4 v) noexcept
     {
         GX_ASSERT(result != nullptr);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        (*result) =  v.V.F[2];
+        (*result) = v.V.F[2];
 #elif GRAPHYTE_HW_NEON
         (*result) = vgetq_lane_f32(v.V, 2);
 #elif GRAPHYTE_HW_AVX
@@ -3273,14 +3390,27 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall GetW(float* result, T v) noexcept
-        requires VectorLike<T> and (T::Components >= 4)
+    mathinline void mathcall GetZ(float* result, Vector3 v) noexcept
+    {
+        GetZ(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetZ(float* result, Quaternion v) noexcept
+    {
+        GetZ(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetZ(float* result, Plane v) noexcept
+    {
+        GetZ(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetW(float* result, Vector4 v) noexcept
     {
         GX_ASSERT(result != nullptr);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        (*result) =  v.V.F[3];
+        (*result) = v.V.F[3];
 #elif GRAPHYTE_HW_NEON
         (*result) = vgetq_lane_f32(v.V, 3);
 #elif GRAPHYTE_HW_AVX
@@ -3288,9 +3418,17 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SetX(T v, float value) noexcept
-        requires VectorLike<T> and (T::Components >= 1)
+    mathinline void mathcall GetW(float* result, Quaternion v) noexcept
+    {
+        GetW(result, Vector4{ v.V });
+    }
+
+    mathinline void mathcall GetW(float* result, Plane v) noexcept
+    {
+        GetW(result, Vector4{ v.V });
+    }
+
+    mathinline Vector4 mathcall SetX(Vector4 v, float value) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3310,9 +3448,32 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SetY(T v, float value) noexcept
-        requires VectorLike<T> and (T::Components >= 2)
+    mathinline Vector3 mathcall SetX(Vector3 v, float value) noexcept
+    {
+        return { SetX(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector2 mathcall SetX(Vector2 v, float value) noexcept
+    {
+        return { SetX(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector1 mathcall SetX(Vector1 v, float value) noexcept
+    {
+        return { SetX(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Quaternion mathcall SetX(Quaternion v, float value) noexcept
+    {
+        return { SetX(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Plane mathcall SetX(Plane v, float value) noexcept
+    {
+        return { SetX(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector4 mathcall SetY(Vector4 v, float value) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3332,9 +3493,27 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SetZ(T v, float value) noexcept
-        requires VectorLike<T> and (T::Components >= 3)
+    mathinline Vector3 mathcall SetY(Vector3 v, float value) noexcept
+    {
+        return { SetY(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector2 mathcall SetY(Vector2 v, float value) noexcept
+    {
+        return { SetY(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Quaternion mathcall SetY(Quaternion v, float value) noexcept
+    {
+        return { SetY(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Plane mathcall SetY(Plane v, float value) noexcept
+    {
+        return { SetY(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector4 mathcall SetZ(Vector4 v, float value) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3354,9 +3533,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SetW(T v, float value) noexcept
-        requires VectorLike<T> and (T::Components >= 4)
+    mathinline Vector3 mathcall SetZ(Vector3 v, float value) noexcept
+    {
+        return { SetZ(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Quaternion mathcall SetZ(Quaternion v, float value) noexcept
+    {
+        return { SetZ(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Plane mathcall SetZ(Plane v, float value) noexcept
+    {
+        return { SetZ(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector4 mathcall SetW(Vector4 v, float value) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3376,9 +3568,17 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SetX(T v, float const* value) noexcept
-        requires VectorLike<T> and (T::Components >= 1)
+    mathinline Quaternion mathcall SetW(Quaternion v, float value) noexcept
+    {
+        return { SetW(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Plane mathcall SetW(Plane v, float value) noexcept
+    {
+        return { SetW(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector4 mathcall SetX(Vector4 v, float const* value) noexcept
     {
         GX_ASSERT(value != nullptr);
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -3399,9 +3599,32 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SetY(T v, float const* value) noexcept
-        requires VectorLike<T> and (T::Components >= 2)
+    mathinline Vector3 mathcall SetX(Vector3 v, float const* value) noexcept
+    {
+        return { SetX(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector2 mathcall SetX(Vector2 v, float const* value) noexcept
+    {
+        return { SetX(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector1 mathcall SetX(Vector1 v, float const* value) noexcept
+    {
+        return { SetX(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Quaternion mathcall SetX(Quaternion v, float const* value) noexcept
+    {
+        return { SetX(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Plane mathcall SetX(Plane v, float const* value) noexcept
+    {
+        return { SetX(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector4 mathcall SetY(Vector4 v, float const* value) noexcept
     {
         GX_ASSERT(value != nullptr);
 
@@ -3424,9 +3647,27 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SetZ(T v, float const* value) noexcept
-        requires VectorLike<T> and (T::Components >= 3)
+    mathinline Vector3 mathcall SetY(Vector3 v, float const* value) noexcept
+    {
+        return { SetY(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector2 mathcall SetY(Vector2 v, float const* value) noexcept
+    {
+        return { SetY(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Quaternion mathcall SetY(Quaternion v, float const* value) noexcept
+    {
+        return { SetY(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Plane mathcall SetY(Plane v, float const* value) noexcept
+    {
+        return { SetY(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector4 mathcall SetZ(Vector4 v, float const* value) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3448,9 +3689,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline T mathcall SetW(T v, float const* value) noexcept
-        requires VectorLike<T> and (T::Components >= 4)
+    mathinline Vector3 mathcall SetZ(Vector3 v, float const* value) noexcept
+    {
+        return { SetZ(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Quaternion mathcall SetZ(Quaternion v, float const* value) noexcept
+    {
+        return { SetZ(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Plane mathcall SetZ(Plane v, float const* value) noexcept
+    {
+        return { SetZ(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Vector4 mathcall SetW(Vector4 v, float const* value) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -3470,6 +3724,16 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_NEON
         return { vld1q_lane_f32(value, v.V, 3) };
 #endif
+    }
+
+    mathinline Quaternion mathcall SetW(Quaternion v, float const* value) noexcept
+    {
+        return { SetW(Vector4{ v.V }, value).V };
+    }
+
+    mathinline Plane mathcall SetW(Plane v, float const* value) noexcept
+    {
+        return { SetW(Vector4{ v.V }, value).V };
     }
 }
 
@@ -3857,66 +4121,63 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall UnitX() noexcept
-        requires VectorLike<T> and (T::Components >= 1)
-    {
-        return { Impl::VEC4_POSITIVE_UNIT_X.V };
-    }
+    template <typename T> T UnitX() noexcept = delete;
 
-    template <typename T>
-    mathinline T mathcall UnitY() noexcept
-        requires VectorLike<T> and (T::Components >= 2)
-    {
-        return { Impl::VEC4_POSITIVE_UNIT_Y.V };
-    }
+    template <> mathinline Vector4 mathcall UnitX<Vector4>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_X.V }; }
+    template <> mathinline Vector3 mathcall UnitX<Vector3>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_X.V }; }
+    template <> mathinline Vector2 mathcall UnitX<Vector2>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_X.V }; }
+    template <> mathinline Vector1 mathcall UnitX<Vector1>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_X.V }; }
+    template <> mathinline Quaternion mathcall UnitX<Quaternion>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_X.V }; }
 
-    template <typename T>
-    mathinline T mathcall UnitZ() noexcept
-        requires VectorLike<T> and (T::Components >= 3)
-    {
-        return { Impl::VEC4_POSITIVE_UNIT_Z.V };
-    }
+    template <typename T> T UnitY() noexcept = delete;
 
-    template <typename T>
-    mathinline T mathcall UnitW() noexcept
-        requires VectorLike<T> and (T::Components >= 4)
-    {
-        return { Impl::VEC4_POSITIVE_UNIT_W.V };
-    }
+    template <> mathinline Vector4 mathcall UnitY<Vector4>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_Y.V }; }
+    template <> mathinline Vector3 mathcall UnitY<Vector3>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_Y.V }; }
+    template <> mathinline Vector2 mathcall UnitY<Vector2>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_Y.V }; }
+    template <> mathinline Quaternion mathcall UnitY<Quaternion>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_Y.V }; }
 
-    template <typename T>
-    mathinline T mathcall NegativeUnitX() noexcept
-        requires VectorLike<T> and (T::Components >= 1)
-    {
-        return { Impl::VEC4_NEGATIVE_UNIT_X.V };
-    }
+    template <typename T> T UnitZ() noexcept = delete;
 
-    template <typename T>
-    mathinline T mathcall NegativeUnitY() noexcept
-        requires VectorLike<T> and (T::Components >= 2)
-    {
-        return { Impl::VEC4_NEGATIVE_UNIT_Y.V };
-    }
+    template <> mathinline Vector4 mathcall UnitZ<Vector4>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_Z.V }; }
+    template <> mathinline Vector3 mathcall UnitZ<Vector3>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_Z.V }; }
+    template <> mathinline Quaternion mathcall UnitZ<Quaternion>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_Z.V }; }
 
-    template <typename T>
-    mathinline T mathcall NegativeUnitZ() noexcept
-        requires VectorLike<T> and (T::Components >= 3)
-    {
-        return { Impl::VEC4_NEGATIVE_UNIT_Z.V };
-    }
+    template <typename T> T UnitW() noexcept = delete;
 
-    template <typename T>
-    mathinline T mathcall NegativeUnitW() noexcept
-        requires VectorLike<T> and (T::Components >= 4)
-    {
-        return { Impl::VEC4_NEGATIVE_UNIT_W.V };
-    }
+    template <> mathinline Vector4 mathcall UnitW<Vector4>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_W.V }; }
+    template <> mathinline Quaternion mathcall UnitW<Quaternion>() noexcept { return { Impl::VEC4_POSITIVE_UNIT_W.V }; }
+
+    template <typename T> T NegativeUnitX() noexcept = delete;
+
+    template <> mathinline Vector4 mathcall NegativeUnitX<Vector4>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_X.V }; }
+    template <> mathinline Vector3 mathcall NegativeUnitX<Vector3>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_X.V }; }
+    template <> mathinline Vector2 mathcall NegativeUnitX<Vector2>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_X.V }; }
+    template <> mathinline Vector1 mathcall NegativeUnitX<Vector1>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_X.V }; }
+    template <> mathinline Quaternion mathcall NegativeUnitX<Quaternion>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_X.V }; }
+
+    template <typename T> T NegativeUnitY() noexcept = delete;
+
+    template <> mathinline Vector4 mathcall NegativeUnitY<Vector4>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_Y.V }; }
+    template <> mathinline Vector3 mathcall NegativeUnitY<Vector3>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_Y.V }; }
+    template <> mathinline Vector2 mathcall NegativeUnitY<Vector2>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_Y.V }; }
+    template <> mathinline Quaternion mathcall NegativeUnitY<Quaternion>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_Y.V }; }
+
+    template <typename T> T NegativeUnitZ() noexcept = delete;
+
+    template <> mathinline Vector4 mathcall NegativeUnitZ<Vector4>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_Z.V }; }
+    template <> mathinline Vector3 mathcall NegativeUnitZ<Vector3>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_Z.V }; }
+    template <> mathinline Quaternion mathcall NegativeUnitZ<Quaternion>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_Z.V }; }
+
+    template <typename T> T NegativeUnitW() noexcept = delete;
+
+    template <> mathinline Vector4 mathcall NegativeUnitW<Vector4>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_W.V }; }
+    template <> mathinline Quaternion mathcall NegativeUnitW<Quaternion>() noexcept { return { Impl::VEC4_NEGATIVE_UNIT_W.V }; }
 
 
-    template <typename T>
-    mathinline T mathcall Zero() noexcept
-        requires VectorLike<T>
+    template <typename T> T Zero() noexcept = delete;
+
+    template <>
+    mathinline Vector4 mathcall Zero<Vector4>() noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return { Impl::VEC4_ZERO_4.V };
@@ -3926,6 +4187,31 @@ namespace Graphyte::Maths
         return { vdupq_n_f32(0.0F) };
 #endif
     }
+
+    template <>
+    mathinline Vector3 mathcall Zero<Vector3>() noexcept
+    {
+        return { Zero<Vector4>().V };
+    }
+
+    template <>
+    mathinline Vector2 mathcall Zero<Vector2>() noexcept
+    {
+        return { Zero<Vector4>().V };
+    }
+
+    template <>
+    mathinline Vector1 mathcall Zero<Vector1>() noexcept
+    {
+        return { Zero<Vector4>().V };
+    }
+
+    template <>
+    mathinline Quaternion mathcall Zero<Quaternion>() noexcept
+    {
+        return { Zero<Vector4>().V };
+    }
+
 
     template <typename T>
     T Identity() noexcept = delete;
@@ -4276,7 +4562,7 @@ namespace Graphyte::Maths
 {
     template <typename T> T True() noexcept = delete;
     template <typename T> T False() noexcept = delete;
-    
+
     template <>
     mathinline Bool4 mathcall True<Bool4>() noexcept
     {
@@ -4296,19 +4582,19 @@ namespace Graphyte::Maths
         return { vdupq_n_u32(0xFFFFFFFFu) };
 #endif
     }
-    
+
     template <>
     mathinline Bool3 mathcall True<Bool3>() noexcept
     {
         return { True<Bool4>().V };
     }
-    
+
     template <>
     mathinline Bool2 mathcall True<Bool2>() noexcept
     {
         return { True<Bool4>().V };
     }
-    
+
     template <>
     mathinline Bool1 mathcall True<Bool1>() noexcept
     {
@@ -4714,7 +5000,7 @@ namespace Graphyte::Maths
         return _mm_movemask_ps(mask) != 0b1111;
 #endif
     }
-    
+
     mathinline bool mathcall IsNotEqual(Bool3 a, Bool3 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -4726,7 +5012,7 @@ namespace Graphyte::Maths
         return (_mm_movemask_ps(mask) & 0b0111) != 0b0111;
 #endif
     }
-    
+
     mathinline bool mathcall IsNotEqual(Bool2 a, Bool2 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -4737,7 +5023,7 @@ namespace Graphyte::Maths
         return (_mm_movemask_ps(mask) & 0b0011) != 0b0011;
 #endif
     }
-    
+
     mathinline bool mathcall IsNotEqual(Bool1 a, Bool1 b) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -10575,17 +10861,15 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall Make(
+    mathinline Matrix mathcall Make(
         float m00, float m01, float m02, float m03,
         float m10, float m11, float m12, float m13,
         float m20, float m21, float m22, float m23,
         float m30, float m31, float m32, float m33
     ) noexcept
-        requires FloatMatrix<T> and (T::Components == 16)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T result;
+        Matrix result;
         result.M.M[0][0] = m00;
         result.M.M[0][1] = m01;
         result.M.M[0][2] = m02;
@@ -10608,7 +10892,7 @@ namespace Graphyte::Maths
 
         return result;
 #elif GRAPHYTE_HW_AVX
-        T result;
+        Matrix result;
         result.M.R[0] = _mm_set_ps(m03, m02, m01, m00);
         result.M.R[1] = _mm_set_ps(m13, m12, m11, m10);
         result.M.R[2] = _mm_set_ps(m23, m22, m21, m20);
@@ -15241,9 +15525,7 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename T>
-    mathinline T mathcall Load(ColorBGRA const* source) noexcept
-        requires FloatVector<T> and (T::Components == 4)
+    mathinline Color mathcall Load(ColorBGRA const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 
@@ -15271,8 +15553,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    template <typename T>
-    mathinline void mathcall Store(ColorBGRA* destination, T color) noexcept
+    mathinline void mathcall Store(ColorBGRA* destination, Color color) noexcept
         requires VectorLike<T> and (T::Components == 4)
     {
         GX_ASSERT(destination != nullptr);
