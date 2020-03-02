@@ -41,7 +41,7 @@
 // Native vector type.
 //
 
-namespace Graphyte::MathsX::Impl
+namespace Graphyte::Maths::Impl
 {
 #if GRAPHYTE_MATH_NO_INTRINSICS
     struct alignas(16) NativeFloat32x4 final
@@ -86,7 +86,7 @@ namespace Graphyte::MathsX::Impl
 // Native matrix type
 //
 
-namespace Graphyte::MathsX::Impl
+namespace Graphyte::Maths::Impl
 {
 #if GRAPHYTE_MATH_NO_INTRINSICS
     struct alignas(16) NativeFloat32x4x4 final
@@ -123,7 +123,7 @@ namespace Graphyte::MathsX::Impl
 // Constant types
 //
 
-namespace Graphyte::MathsX::Impl
+namespace Graphyte::Maths::Impl
 {
     struct alignas(16) ConstFloat32x4 final
     {
@@ -144,6 +144,7 @@ namespace Graphyte::MathsX::Impl
         {
             alignas(16) int32_t I[4];
             NativeFloat32x4 V;
+            NativeUInt32x4 UV;
         };
     };
     static_assert(std::is_pod_v<ConstInt32x4>);
@@ -156,6 +157,7 @@ namespace Graphyte::MathsX::Impl
         {
             alignas(16) uint32_t U[4];
             NativeFloat32x4 V;
+            NativeUInt32x4 UV;
         };
     };
     static_assert(std::is_pod_v<ConstUInt32x4>);
@@ -168,6 +170,7 @@ namespace Graphyte::MathsX::Impl
         {
             alignas(16) uint8_t U[16];
             NativeFloat32x4 V;
+            NativeUInt32x4 UV;
         };
     };
     static_assert(std::is_pod_v<ConstUInt8x16>);
@@ -181,7 +184,7 @@ namespace Graphyte::MathsX::Impl
 // Scalar constants
 //
 
-namespace Graphyte::MathsX::Impl
+namespace Graphyte::Maths::Impl
 {
     template <typename T> constexpr const T PI = T(3.14159265358979323846264338327950288419716939937510);
     template <typename T> constexpr const T PI2 = T(6.28318530717958647692528676655900576839433879875021);
@@ -232,7 +235,7 @@ namespace Graphyte::MathsX::Impl
 // Vector constants
 //
 
-namespace Graphyte::MathsX::Impl
+namespace Graphyte::Maths::Impl
 {
     mathconst ConstFloat32x4 VEC4_POSITIVE_UNIT_X = { { {
             1.0F,
@@ -1140,190 +1143,183 @@ namespace Graphyte::MathsX::Impl
 // Supported types
 //
 
-namespace Graphyte::MathsX
+namespace Graphyte::Maths
 {
-    struct Bool4 final
+    struct Vector4U final
+    {
+        Impl::NativeUInt32x4 V;
+    };
+
+    struct Vector3U final
+    {
+        Impl::NativeUInt32x4 V;
+    };
+
+    struct Vector2U final
+    {
+        Impl::NativeUInt32x4 V;
+    };
+
+    struct Vector1U final
+    {
+        Impl::NativeUInt32x4 V;
+    };
+
+    struct Vector4F final
     {
         Impl::NativeFloat32x4 V;
     };
 
-    struct Bool3 final
+    struct Vector3F final
     {
         Impl::NativeFloat32x4 V;
     };
 
-    struct Bool2 final
+    struct Vector2F final
     {
         Impl::NativeFloat32x4 V;
     };
 
-    struct Bool1 final
+    struct Vector1F final
     {
         Impl::NativeFloat32x4 V;
     };
 
-    struct Vector4 final
+    struct QuaternionF final
     {
         Impl::NativeFloat32x4 V;
     };
 
-    struct Vector3 final
+    struct PlaneF final
     {
         Impl::NativeFloat32x4 V;
     };
 
-    struct Vector2 final
+    struct SphereF final
     {
         Impl::NativeFloat32x4 V;
     };
 
-    struct Vector1 final
+    struct ColorF final
     {
         Impl::NativeFloat32x4 V;
     };
 
-    struct Quaternion final
+    struct MatrixF final
     {
         Impl::NativeFloat32x4 V;
     };
+}
 
-    struct Matrix final
-    {
-        Impl::NativeFloat32x4x4 M;
-    };
+// =================================================================================================
+//
+// Constants.
+//
 
-    // extensions
-    struct Plane final
-    {
-        Impl::NativeFloat32x4 V;
-    };
+// =================================================================================================
+//
+// Vector construction.
+//
 
-    struct Sphere final
-    {
-        Impl::NativeFloat32x4 V;
-    };
+namespace Graphyte::Maths
+{
+    // Explicit Nth dimension construction.
+    template <typename R, typename C>
+    R Make(C x, C y, C z, C w) noexcept = delete;
 
-    struct Color final
-    {
-        Impl::NativeFloat32x4 V;
-    };
+    template <typename R, typename C>
+    R Make(C x, C y, C z) noexcept = delete;
+
+    template <typename R, typename C>
+    R Make(C x, C y) noexcept = delete;
+
+    template <typename R, typename C>
+    R Make(C x) noexcept = delete;
+
+    // Replicate value on all components.
+    template <typename R, typename C>
+    R Replicate(C value) noexcept = delete;
 }
 
 
 // =================================================================================================
 //
-// Common enum types
+// Bitwise arithmetic operations.
 //
 
 namespace Graphyte::Maths
 {
-    enum class SelectMask : uint32_t
-    {
-        Select0 = UINT32_C(0x00000000),
-        Select1 = UINT32_C(0xffffffff),
-    };
+    template <typename T>
+    T And(T a, T b) noexcept = delete;
 
-    // Order: X, Y, Z, W
-    enum class InsertMask : uint8_t
-    {
-        AAAA = 0b0000,
-        AAAB = 0b0001,
-        AABA = 0b0010,
-        AABB = 0b0011,
-        ABAA = 0b0100,
-        ABAB = 0b0101,
-        ABBA = 0b0110,
-        ABBB = 0b0111,
-        BAAA = 0b0000,
-        BAAB = 0b0001,
-        BABA = 0b0010,
-        BABB = 0b0011,
-        BBAA = 0b0100,
-        BBAB = 0b0101,
-        BBBA = 0b0110,
-        BBBB = 0b0111,
-    };
+    template <typename T>
+    T AndNot(T a, T b) noexcept = delete;
 
-    enum class SwizzleMask
-    {
-        XXXX, YXXX, ZXXX, WXXX,
-        XYXX, YYXX, ZYXX, WYXX,
-        XZXX, YZXX, ZZXX, WZXX,
-        XWXX, YWXX, ZWXX, WWXX,
-        XXYX, YXYX, ZXYX, WXYX,
-        XYYX, YYYX, ZYYX, WYYX,
-        XZYX, YZYX, ZZYX, WZYX,
-        XWYX, YWYX, ZWYX, WWYX,
-        XXZX, YXZX, ZXZX, WXZX,
-        XYZX, YYZX, ZYZX, WYZX,
-        XZZX, YZZX, ZZZX, WZZX,
-        XWZX, YWZX, ZWZX, WWZX,
-        XXWX, YXWX, ZXWX, WXWX,
-        XYWX, YYWX, ZYWX, WYWX,
-        XZWX, YZWX, ZZWX, WZWX,
-        XWWX, YWWX, ZWWX, WWWX,
+    template <typename T>
+    T Or(T a, T b) noexcept = delete;
 
-        XXXY, YXXY, ZXXY, WXXY,
-        XYXY, YYXY, ZYXY, WYXY,
-        XZXY, YZXY, ZZXY, WZXY,
-        XWXY, YWXY, ZWXY, WWXY,
-        XXYY, YXYY, ZXYY, WXYY,
-        XYYY, YYYY, ZYYY, WYYY,
-        XZYY, YZYY, ZZYY, WZYY,
-        XWYY, YWYY, ZWYY, WWYY,
-        XXZY, YXZY, ZXZY, WXZY,
-        XYZY, YYZY, ZYZY, WYZY,
-        XZZY, YZZY, ZZZY, WZZY,
-        XWZY, YWZY, ZWZY, WWZY,
-        XXWY, YXWY, ZXWY, WXWY,
-        XYWY, YYWY, ZYWY, WYWY,
-        XZWY, YZWY, ZZWY, WZWY,
-        XWWY, YWWY, ZWWY, WWWY,
+    template <typename T>
+    T Xor(T a, T b) noexcept = delete;
 
-        XXXZ, YXXZ, ZXXZ, WXXZ,
-        XYXZ, YYXZ, ZYXZ, WYXZ,
-        XZXZ, YZXZ, ZZXZ, WZXZ,
-        XWXZ, YWXZ, ZWXZ, WWXZ,
-        XXYZ, YXYZ, ZXYZ, WXYZ,
-        XYYZ, YYYZ, ZYYZ, WYYZ,
-        XZYZ, YZYZ, ZZYZ, WZYZ,
-        XWYZ, YWYZ, ZWYZ, WWYZ,
-        XXZZ, YXZZ, ZXZZ, WXZZ,
-        XYZZ, YYZZ, ZYZZ, WYZZ,
-        XZZZ, YZZZ, ZZZZ, WZZZ,
-        XWZZ, YWZZ, ZWZZ, WWZZ,
-        XXWZ, YXWZ, ZXWZ, WXWZ,
-        XYWZ, YYWZ, ZYWZ, WYWZ,
-        XZWZ, YZWZ, ZZWZ, WZWZ,
-        XWWZ, YWWZ, ZWWZ, WWWZ,
+    template <typename T>
+    T Nor(T a, T b) noexcept = delete;
 
-        XXXW, YXXW, ZXXW, WXXW,
-        XYXW, YYXW, ZYXW, WYXW,
-        XZXW, YZXW, ZZXW, WZXW,
-        XWXW, YWXW, ZWXW, WWXW,
-        XXYW, YXYW, ZXYW, WXYW,
-        XYYW, YYYW, ZYYW, WYYW,
-        XZYW, YZYW, ZZYW, WZYW,
-        XWYW, YWYW, ZWYW, WWYW,
-        XXZW, YXZW, ZXZW, WXZW,
-        XYZW, YYZW, ZYZW, WYZW,
-        XZZW, YZZW, ZZZW, WZZW,
-        XWZW, YWZW, ZWZW, WWZW,
-        XXWW, YXWW, ZXWW, WXWW,
-        XYWW, YYWW, ZYWW, WYWW,
-        XZWW, YZWW, ZZWW, WZWW,
-        XWWW, YWWW, ZWWW, WWWW,
-    };
-
-    constexpr const uint32_t PERMUTE_0X = 0;
-    constexpr const uint32_t PERMUTE_0Y = 1;
-    constexpr const uint32_t PERMUTE_0Z = 2;
-    constexpr const uint32_t PERMUTE_0W = 3;
-    constexpr const uint32_t PERMUTE_1X = 4;
-    constexpr const uint32_t PERMUTE_1Y = 5;
-    constexpr const uint32_t PERMUTE_1Z = 6;
-    constexpr const uint32_t PERMUTE_1W = 7;
+    template <typename T>
+    T Not(T x) noexcept = delete;
 }
+
+
+// =================================================================================================
+//
+// Comparison masking functions
+//
+
+namespace Graphyte::Maths
+{
+    template <typename R, typename T>
+    R CompareEqual(T a, T b) noexcept = delete;
+
+    template <typename R, typename T>
+    R CompareNotEqual(T a, T b) noexcept = delete;
+}
+
+
+// =================================================================================================
+//
+// Comparison logical functions
+//
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    bool IsEqual(T a, T b) noexcept = delete;
+
+    template <typename T>
+    bool IsNotEqual(T a, T b) noexcept = delete;
+}
+
+
+// =================================================================================================
+//
+// Bitwise testing functions.
+//
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    bool AllTrue(T v) noexcept = delete;
+
+    template <typename T>
+    bool AllFalse(T v) noexcept = delete;
+
+    template <typename T>
+    bool AnyTrue(T v) noexcept = delete;
+
+    template <typename T>
+    bool AnyFalse(T v) noexcept = delete;
+}
+
+#if false
 
 // =================================================================================================
 //
@@ -1843,3 +1839,4 @@ namespace Graphyte::MathsX
     }
 }
 
+#endif
