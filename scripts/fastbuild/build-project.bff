@@ -294,7 +294,7 @@
             'UnitTest'
             'Developer'
         }
-        
+
         ForEach(.CurrentTriplet in .Global_Triplets) {
             Using(.CurrentTriplet)
             Using(.'TripletEntry_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$')
@@ -313,7 +313,7 @@
 
                     // Define new alias
                     Alias('All-$CurrentTarget$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {}
-                    
+
                     .LocalTargetDef = [
                         .'Local_PerConfig_$CurrentConfig$' = { 'All-$CurrentTarget$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$' }
                     ]
@@ -366,7 +366,7 @@
 
                 ForEach(.CurrentTriplet in .Global_Triplets) {
                     Using(.CurrentTriplet)
-                    
+
                     ForEach(.CurrentConfig in .ValidConfigurations) {
                         .ConfigEntry = [
                             .Target = '$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
@@ -439,6 +439,8 @@
                     .ProjectOutput = 'tmp/$CurrentMetaProject$.vcxproj'
                     .ProjectConfigs = .ProjectConfigs
                     .PlatformToolset = 'v142'
+                    .OutputDirectory       = '^$(SolutionDir)\tmp'
+                    .IntermediateDirectory = '^$(SolutionDir)\tmp'
                 }
                 ^MetaProjectsList + '$CurrentMetaProject$'
             }
