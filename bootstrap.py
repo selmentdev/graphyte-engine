@@ -145,6 +145,9 @@ def _emit_toolchain_triplet(f, platform, architecture, compiler, msbuild_platfor
     f.write(']\n')
     f.write(f'.Global_Triplets + {varname}\n\n')
 
+def _emit_detected_platform(f, platform):
+    f.write(f'.Detected_Platforms + \'{platform}\'\n')
+
 def _emit_host_information(f):
     _emit_separator(f)
     f.write('// Host information\n')
@@ -161,9 +164,15 @@ def generate_compilers_gen_bff():
         _emit_host_information(f)
         _emit_toolchain_triplet(f, 'Windows', 'ARMv8', 'MSVC', 'ARM64')
         _emit_toolchain_triplet(f, 'Windows', 'x64', 'MSVC', 'x64')
+        _emit_toolchain_triplet(f, 'UWP', 'ARMv8', 'MSVC', 'ARM64')
+        _emit_toolchain_triplet(f, 'UWP', 'x64', 'MSVC', 'x64')
+
+        _emit_detected_platform(f, 'Windows')
+        _emit_detected_platform(f, 'UWP')
 
         if linux.is_linux:
             _emit_toolchain_triplet(f, 'Linux', 'x64', 'GCC', 'Linux')
+            _emit_detected_platform(f, 'Linux')
 
 if __name__ == "__main__":
 

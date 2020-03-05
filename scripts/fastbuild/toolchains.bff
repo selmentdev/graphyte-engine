@@ -79,7 +79,25 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .Platform_StaticLib_Suffix = '.lib'
     .Platform_SharedLib_Prefix = 'lib'
     .Platform_SharedLib_Suffix = '.dll'
-    
+
+    .VcxProjectPatternToExclude = {
+        '*/Impl.Linux/*'
+        '*/Impl.Android/*'
+        '*/Impl.Posix/*'
+    }
+]
+
+.PlatformDesc_UWP = [
+    .Platform_Name = 'UWP'
+    .Platform_ConsoleApp_Prefix = ''
+    .Platform_ConsoleApp_Suffix = '.exe'
+    .Platform_WindowedApp_Prefix = ''
+    .Platform_WindowedApp_Suffix = '.exe'
+    .Platform_StaticLib_Prefix = 'lib'
+    .Platform_StaticLib_Suffix = '.lib'
+    .Platform_SharedLib_Prefix = 'lib'
+    .Platform_SharedLib_Suffix = '.dll'
+
     .VcxProjectPatternToExclude = {
         '*/Impl.Linux/*'
         '*/Impl.Android/*'
@@ -97,7 +115,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .Platform_StaticLib_Suffix = '.a'
     .Platform_SharedLib_Prefix = 'lib'
     .Platform_SharedLib_Suffix = '.so'
-    
+
     .VcxProjectPatternToExclude = {
         '*/Impl.Android/*'
         '*/Impl.Windows/*'
@@ -114,7 +132,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .Platform_StaticLib_Suffix = '.a'
     .Platform_SharedLib_Prefix = 'lib'
     .Platform_SharedLib_Suffix = '.so'
-    
+
     .VcxProjectPatternToExclude = {
         '*/Impl.Linux/*'
         '*/Impl.Android/*'
@@ -163,6 +181,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
         + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\ucrt"'
         + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\um"'
         + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\winrt"'
+        + ' /I"$WindowsSdkLocation$\Include\$WindowsSdkVersion$\cppwinrt"'
 
     .CompilerOptions = ''
         + '"%1"'
@@ -367,6 +386,63 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 
 .ToolchainDesc_Windows_ARMv8_MSVC = [
     Using(.PlatformDesc_Windows)
+    Using(.ToolchainDesc_Windows_MSVC)
+
+    .Toolchain_Architecture = 'ARMv8'
+    .Toolchain_VisualStudio_Architecture = 'ARM64'
+
+
+    //
+    // Compilers
+    //
+
+    .Compiler = 'Compiler-Windows-ARMv8-MSVC'
+    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
+    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/link.exe'
+    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/lib.exe'
+
+    .CompilerOptions
+        + ' /DGRAPHYTE_MATH_NO_INTRINSICS=1'
+
+    .LinkerOptions
+        + ' /MACHINE:ARM64'
+        + ' /LIBPATH:"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/lib/arm64"'
+        + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\um\arm64"'
+        + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\arm64"'
+]
+
+.ToolchainDesc_UWP_x64_MSVC = [
+    Using(.PlatformDesc_UWP)
+    Using(.ToolchainDesc_Windows_MSVC)
+
+    .Toolchain_Architecture = 'x64'
+    .Toolchain_VisualStudio_Architecture = 'x64'
+
+
+    //
+    // Compilers
+    //
+
+    .Compiler = 'Compiler-Windows-x64-MSVC'
+    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
+    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/link.exe'
+    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/lib.exe'
+
+
+    // Additional compiler and linker options
+    .CompilerOptions
+        + ' /arch:AVX'
+        + ' /D__AVX__'
+
+    .LinkerOptions
+        + ' /MACHINE:X64'
+        + ' /LIBPATH:"$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/lib/x64"'
+        + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\um\x64"'
+        + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\x64"'
+]
+
+.ToolchainDesc_UWP_ARMv8_MSVC = [
+    Using(.PlatformDesc_UWP)
     Using(.ToolchainDesc_Windows_MSVC)
 
     .Toolchain_Architecture = 'ARMv8'
