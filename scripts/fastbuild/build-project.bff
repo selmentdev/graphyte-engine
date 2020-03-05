@@ -94,6 +94,14 @@
                     '*Linux.*.cxx'
                 }
             }
+
+            Unity('Unity-UWP-$ProjectName$') {
+                .UnityInputExcludePattern = {
+                    '*Linux.*.cxx'
+                    '*Posix.*.cxx'
+                    '*Android.*.cxx'
+                }
+            }
         }
 
         // Apply for all triplets
@@ -400,7 +408,6 @@
                 }
 
                 .VcxProjectDescriptor = [
-                    //.'VcxFolder_$ProjectType$' = { .ProjectName }
                     .'VcxFolder_$ProjectComponent$$ProjectType$' = { .ProjectName }
                     .VcxBuildableProjects = { .ProjectName }
                 ]
