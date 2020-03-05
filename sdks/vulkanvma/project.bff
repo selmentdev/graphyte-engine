@@ -3,6 +3,13 @@
         .ProjectName = 'sdk.vulkanvma'
         .ProjectPath = 'sdks/vulkanvma'
         .ProjectKind = 'StaticLib'
+        .ProjectType = 'Module'
+        .ProjectComponent = 'Sdks'
+
+        .ProjectIncludes = {
+            'sdks/vulkanvma/include'
+        }
+
         .ProjectFiles = {
             '$ProjectPath$/source/impl.cxx'
         }
@@ -39,5 +46,5 @@
         }
     ]
 
-    ^Global_SdkList + .ProjectDefinition
+    ^Global_ProjectList + .ProjectDefinition
 }

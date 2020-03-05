@@ -3,6 +3,12 @@
         .ProjectName = 'sdk.mbedtls'
         .ProjectPath = 'sdks/mbedtls'
         .ProjectKind = 'StaticLib'
+        .ProjectType = 'Module'
+        .ProjectComponent = 'Sdks'
+
+        .ProjectIncludes = {
+            'sdks/mbedtls/include'
+        }
 
         .ProjectFiles = {
             '$ProjectPath$/library/aes.c'
@@ -100,5 +106,5 @@
         }
     ]
 
-    ^Global_SdkList + .ProjectDefinition
+    ^Global_ProjectList + .ProjectDefinition
 }

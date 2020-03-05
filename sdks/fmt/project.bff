@@ -3,6 +3,12 @@
         .ProjectName = 'sdk.fmt'
         .ProjectPath = 'sdks/fmt'
         .ProjectKind = 'SharedLib'
+        .ProjectType = 'Module'
+        .ProjectComponent = 'Sdks'
+
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+        }
 
         .ProjectFiles = {
             '$ProjectPath$/source/format.cc'
@@ -16,5 +22,5 @@
         }
     ]
 
-    ^Global_SdkList + .ProjectDefinition
+    ^Global_ProjectList + .ProjectDefinition
 }

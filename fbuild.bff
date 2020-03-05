@@ -33,5 +33,95 @@
 
 #include "game/source/app.demo/project.bff"
 
-#include "scripts/fastbuild/build-sdk.bff"
 #include "scripts/fastbuild/build-project.bff"
+
+{
+    // All available platforms
+    .GxPlatforms = {
+        'Windows'
+        'UWP'
+        'Linux'
+        'Android'
+    }
+
+    .GxPlatformArchitectures_Windows   = { 'ARMv8', 'x64' }
+
+    .GxPlatformCompilers_Windows_ARMv8 = { 'MSVC', 'Clang' }
+    .GxPlatformCompilers_Windows_x64   = { 'MSVC', 'Clang' }
+
+    .GxPlatformExcludePattern_Windows = [
+        .ProjectPatternToExclude = {
+            '*/Impl.Linux/*'
+            '*/Impl.Android/*'
+            '*/Impl.Posix/*'
+            '*/Impl.UWP/*'
+        }
+        .UnityInputExcludePattern = {
+            '*Linux.*.cxx'
+            '*Android.*.cxx'
+            '*Posix.*.cxx'
+            '*UWP.*.cxx'
+        }
+    ]
+
+    .GxPlatformArchitectures_UWP       = { 'ARMv8', 'x64' }
+    .GxPlatformCompilers_UWP_ARMv8     = { 'MSVC' }
+    .GxPlatformCompilers_UWP_x64       = { 'MSVC' }
+
+    .GxPlatformExcludePatterns_UWP = [
+        .ProjectPatternToExclude = {
+            '*/Impl.Linux/*'
+            '*/Impl.Android/*'
+            '*/Impl.Posix/*'
+            '*/Impl.Windows/*'
+        }
+        .UnityInputExcludePattern = {
+            '*Linux.*.cxx'
+            '*Android.*.cxx'
+            '*Posix.*.cxx'
+            '*Windows.*.cxx'
+        }
+    ]
+
+    .GxPlatformArchitectures_Linux     = { 'ARMv8', 'x64' }
+    .GxPlatformCompilers_Linux_ARMv8   = { 'Clang', 'GCC' }
+    .GxPlatformCompilers_Linux_x64     = { 'Clang', 'GCC' }
+
+    .GxPlatformExcludePatterns_Linux = [
+        .ProjectPatternToExclude = {
+            '*/Impl.Android/*'
+            '*/Impl.Windows/*'
+            '*/Impl.UWP/*'
+        }
+        .UnityInputExcludePattern = {
+            '*Android.*.cxx'
+            '*Windows.*.cxx'
+            '*UWP.*.cxx'
+        }
+    ]
+
+    .GxPlatformArchitectures_Android   = { 'ARMv8', 'x64' }
+    .GxPlatformCompilers_Android_ARMv8 = { 'Clang' }
+    .GxPlatformCompilers_Android_x64   = { 'Clang' }
+
+    .GxPlatformExcludePatterns_Android = [
+        .ProjectPatternToExclude = {
+            '*/Impl.Linux/*'
+            '*/Impl.Windows/*'
+            '*/Impl.UWP/*'
+        }
+        .UnityInputExcludePattern = {
+            '*Linux.*.cxx'
+            '*Windows.*.cxx'
+            '*UWP.*.cxx'
+        }
+    ]
+
+    ForEach(.CurrentPlatform in .GxPlatforms) {
+        ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$') {
+            ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$_$CurrentArchitecture$') {
+                Print('$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$')
+            }
+        }
+    }
+}

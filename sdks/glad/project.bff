@@ -4,6 +4,12 @@
         .ProjectPath = 'sdks/glad'
         .ProjectKind = 'StaticLib'
         .ProjectSelector = { 'Windows-x64', 'Linux', 'Android' }
+        .ProjectType = 'Module'
+        .ProjectComponent = 'Sdks'
+
+        .ProjectIncludes = {
+            'sdks/glad/include'
+        }
 
         .ProjectFiles = {
             '$ProjectPath$/src/glad.c'
@@ -43,5 +49,5 @@
         }
     ]
 
-    ^Global_SdkList + .ProjectDefinition
+    ^Global_ProjectList + .ProjectDefinition
 }

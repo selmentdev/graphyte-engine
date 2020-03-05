@@ -3,6 +3,12 @@
         .ProjectName = 'sdk.lz4'
         .ProjectPath = 'sdks/lz4'
         .ProjectKind = 'StaticLib'
+        .ProjectType = 'Module'
+        .ProjectComponent = 'Sdks'
+
+        .ProjectIncludes = {
+            'sdks/lz4/include'
+        }
 
         .ProjectFiles = {
             '$ProjectPath$/source/lz4hc.c'

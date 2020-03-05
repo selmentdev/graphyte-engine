@@ -43,6 +43,7 @@
         .ProjectType = ''
         .ProjectKind = ''
         .ProjectComponent = ''
+        .ProjectFiles = {}
         .ProjectIncludes = {}
         .ProjectImports = {}
         .ProjectLinks = {}
@@ -126,6 +127,7 @@
                 .CompilerOptions = .CompilerOptions
                 .LinkerOptions = .LinkerOptions
 
+                .LocalFiles = .ProjectFiles
                 .LocalIncludes = .ProjectIncludes
                 .LocalImports = .ProjectImports
                 .LocalLinks = .ProjectLinks
@@ -160,6 +162,7 @@
                 // Apply variants for this project
                 ForEach(.CurrentVariant in .ProjectVariants) {
                     // default variant values
+                    .VariantFiles = {}
                     .VariantDefines = {}
                     .VariantIncludes = {}
                     .VariantLinks = {}
@@ -170,6 +173,7 @@
 
                     If (.LocalVariantSelector in .VariantSelector) {
                         // Apply variant specialization
+                        ^LocalFiles + .VariantFiles
                         ^LocalIncludes + .VariantIncludes
                         ^LocalImports + .VariantImports
                         ^LocalLinks + .VariantLinks
@@ -180,6 +184,7 @@
 
                 // Specify path where compiler should output object files
                 .CompilerOutputPath = '$OutputBase$/obj/$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$/$ProjectName$'
+
 
                 // Apply all defines for this config
                 ForEach(.CurrentDefine in .LocalDefines) {
@@ -204,9 +209,19 @@
                     }
                 }
 
-                // Generate object list for specified unity files
-                ObjectList('Lib-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
-                    .CompilerInputUnity = 'Unity-$Triplet_Platform$-$ProjectName$'
+                If(.ProjectComponent_Sdks == .ProjectComponent) {
+                    // Object list for SDKs aren't using unity files at all
+                    ObjectList('Lib-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
+                        .CompilerInputFiles = .LocalFiles
+                        .CompilerInputFilesRoot = .ProjectPath
+                    }
+                }
+
+                If(.ProjectComponent_Sdks != .ProjectComponent) {
+                    // Generate object list for specified unity files
+                    ObjectList('Lib-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
+                        .CompilerInputUnity = 'Unity-$Triplet_Platform$-$ProjectName$'
+                    }
                 }
 
                 // Specify librarian object files list
@@ -504,6 +519,11 @@
                     .Projects = .VcxFolder_DeveloperApplication
                 ]
 
+                .VcxFolderDef_Sdks = [
+                    .Path = 'Sdks'
+                    .Projects = .VcxFolder_SdksModule
+                ]
+
                 .VcxFolderDef_MetaProjects = [
                     .Path = 'Meta'
                     .Projects = .MetaProjectsList
@@ -517,6 +537,7 @@
                     .VcxFolderDef_DeveloperModules
                     .VcxFolderDef_DeveloperApplications
                     .VcxFolderDef_MetaProjects
+                    .VcxFolderDef_Sdks
                 }
 
                 //

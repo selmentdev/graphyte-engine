@@ -52,11 +52,13 @@
 .ProjectComponent_Game = 'Game'
 .ProjectComponent_Engine = 'Engine'
 .ProjectComponent_Developer = 'Developer'
+.ProjectComponent_Sdks = 'Sdks'
 
 .ValidProjectComponents = {
     .ProjectComponent_Game
     .ProjectComponent_Engine
     .ProjectComponent_Developer
+    .ProjectComponent_Sdks
 }
 
 .ProjectType_Module = 'Module'
@@ -136,5 +138,4 @@
 //--------------------------------------------------------------------------------------------------
 // List of all discovered SDKs
 
-.Global_SdkList = {}
 .Global_ProjectList = {}
