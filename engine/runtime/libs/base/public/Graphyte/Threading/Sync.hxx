@@ -73,6 +73,8 @@ namespace Graphyte::Threading
 
 #if GRAPHYTE_PLATFORM_WINDOWS
 #include <Graphyte/Threading/Impl.Windows/Windows.Sync.hxx>
+#elif GRAPHYTE_PLATFORM_UWP
+#include <Graphyte/Threading/Impl.UWP/UWP.Sync.hxx>
 #elif GRAPHYTE_PLATFORM_LINUX
 #include <Graphyte/Threading/Impl.Linux/Linux.Sync.hxx>
 #elif GRAPHYTE_PLATFORM_ANDROID

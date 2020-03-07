@@ -6,7 +6,7 @@
         .ProjectType = 'Plugin'
         .ProjectComponent = 'Engine'
 
-        .ProjectSelector = { 'Windows-x64', 'Windows-ARMv8' }
+        .ProjectSelector = { 'UWP-x64', 'UWP-ARMv8', 'Windows-x64', 'Windows-ARMv8' }
         .ProjectDefines = {
             'module_graphics_d3d11_EXPORTS=1'
         }
@@ -22,7 +22,7 @@
         }
 
         .VariantDef_Windows = [
-            .VariantSelector = { 'Windows-x64', 'Windows-ARMv8' }
+            .VariantSelector = { 'UWP-x64', 'UWP-ARMv8', 'Windows-x64', 'Windows-ARMv8' }
             .VariantLinks = {
                 'dxgi.lib'
                 'd3d11.lib'

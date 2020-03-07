@@ -142,6 +142,7 @@
 #define GRAPHYTE_PLATFORM_RPI 0
 #define GRAPHYTE_PLATFORM_STEAMLINK 0
 #define GRAPHYTE_PLATFORM_WINDOWS 0
+#define GRAPHYTE_PLATFORM_UWP 0
 #define GRAPHYTE_PLATFORM_XBOXONE 0
 
 
@@ -286,9 +287,20 @@
 // Detect platform
 //
 
+
 #if defined(_WIN32) || defined(_WIN64)
-#   undef  GRAPHYTE_PLATFORM_WINDOWS
-#   define GRAPHYTE_PLATFORM_WINDOWS 1
+// Try to include winapi family
+#   if defined(_MSC_VER) && (_MSC_VER >= 1700)
+#       include <winapifamily.h>
+#   endif
+
+#   if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
+#       undef  GRAPHYTE_PLATFORM_WINDOWS
+#       define GRAPHYTE_PLATFORM_WINDOWS 1
+#   else
+#       undef  GRAPHYTE_PLATFORM_UWP
+#       define GRAPHYTE_PLATFORM_UWP 1
+#   endif
 #elif defined(__ANDROID__)
 #   undef  GRAPHYTE_PLATFORM_ANDROID
 #   define GRAPHYTE_PLATFORM_ANDROID 1
