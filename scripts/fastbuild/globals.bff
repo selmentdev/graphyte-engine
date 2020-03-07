@@ -26,6 +26,7 @@
 // Platforms
 
 .Platform_Windows  = 'Windows'
+.Platform_UWP      = 'UWP'
 .Platform_Linux    = 'Linux'
 .Platform_Android  = 'Android'
 .Platform_IOS      = 'IOS'

@@ -2,38 +2,6 @@
 // This script defines targets for building game/engine modules and plugins
 
 // -------------------------------------------------------------------------------------------------
-// Define windows resources and solution configs for Visual Studio
-{
-    ForEach(.CurrentTriplet in .Global_Triplets) {
-        Using(.CurrentTriplet)
-
-        // Import toolchain definition
-        Using(.'ToolchainDesc_$Triplet_Platform$_$Triplet_Architecture$_$Triplet_Compiler$')
-
-        If (.Platform_Windows == .Platform_Name) {
-            ForEach(.CurrentConfig in .ValidConfigurations) {
-                .LocalTargetPrefix = '$Platform_Name$-$Toolchain_Architecture$-$Toolchain_Name$-$CurrentConfig$'
-
-                ObjectList('Graphyte-Res-$LocalTargetPrefix$')
-                {
-                    .Compiler = .ResCompiler
-                    .CompilerInputFiles = { 'engine/resources/resources.rc' }
-                    .CompilerOutputPath = '$OutputBase$/obj/$LocalTargetPrefix$/Graphyte-Res'
-                    .CompilerOutputExtension = '.res'
-                    .CompilerOptions
-                        = ' /nologo'
-                        + ' /fo"%2"'
-                        + .SystemIncludes
-                        + ' /I"engine/include"'
-                        + ' "%1"'
-                }
-            }
-        }
-    }
-}
-
-
-// -------------------------------------------------------------------------------------------------
 // Define targets for all available projects
 {
     .AliasTargetList = []
@@ -67,43 +35,43 @@
         }
 
         // Define unity files for each known platform
-        {
-            .UnityInputPath = '$ProjectPath$'
-            .UnityInputPattern = { '*.cxx' }
-            .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
-            .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
-            .UnityNumFiles = 1
-
-            Unity('Unity-Windows-$ProjectName$') {
-                .UnityInputExcludePattern = {
-                    '*Linux.*.cxx'
-                    '*Posix.*.cxx'
-                    '*Android.*.cxx'
-                }
-            }
-
-            Unity('Unity-Linux-$ProjectName$') {
-                .UnityInputExcludePattern = {
-                    '*Windows.*.cxx'
-                    '*Android.*.cxx'
-                }
-            }
-
-            Unity('Unity-Android-$ProjectName$') {
-                .UnityInputExcludePattern = {
-                    '*Windows.*.cxx'
-                    '*Linux.*.cxx'
-                }
-            }
-
-            Unity('Unity-UWP-$ProjectName$') {
-                .UnityInputExcludePattern = {
-                    '*Linux.*.cxx'
-                    '*Posix.*.cxx'
-                    '*Android.*.cxx'
-                }
-            }
-        }
+        //{
+        //    .UnityInputPath = '$ProjectPath$'
+        //    .UnityInputPattern = { '*.cxx' }
+        //    .UnityOutputPath = '$OutputBase$/unity/$ProjectPath$'
+        //    .UnityOutputPattern = '$ProjectName$-unity-*.cxx'
+        //    .UnityNumFiles = 1
+//
+        //    Unity('Unity-Windows-$ProjectName$') {
+        //        .UnityInputExcludePattern = {
+        //            '*Linux.*.cxx'
+        //            '*Posix.*.cxx'
+        //            '*Android.*.cxx'
+        //        }
+        //    }
+//
+        //    Unity('Unity-Linux-$ProjectName$') {
+        //        .UnityInputExcludePattern = {
+        //            '*Windows.*.cxx'
+        //            '*Android.*.cxx'
+        //        }
+        //    }
+//
+        //    Unity('Unity-Android-$ProjectName$') {
+        //        .UnityInputExcludePattern = {
+        //            '*Windows.*.cxx'
+        //            '*Linux.*.cxx'
+        //        }
+        //    }
+//
+        //    Unity('Unity-UWP-$ProjectName$') {
+        //        .UnityInputExcludePattern = {
+        //            '*Linux.*.cxx'
+        //            '*Posix.*.cxx'
+        //            '*Android.*.cxx'
+        //        }
+        //    }
+        //}
 
         // Apply for all triplets
         ForEach(.CurrentTriplet in .Global_Triplets) {
@@ -134,19 +102,11 @@
                 .LocalDefines = .ProjectDefines
                 .LocalLibPaths = .ProjectLibPaths
 
-                // Add project kind specific flags
-                {
-                    Using(.'Options_Kind_$ProjectKind$')
-                    ^CompilerOptions + .KindCompilerOptions
-                    ^LinkerOptions   + .KindLinkerOptions
-                }
+                .CompilerOptions + .'CompilerOptions_Kind_$ProjectKind$'
+                .LinkerOptions + .'LinkerOptions_Kind_$ProjectKind$'
 
-                // Add config specific flags
-                {
-                    Using(.'Options_Config_$CurrentConfig$')
-                    ^CompilerOptions + .ConfigCompilerOptions
-                    ^LinkerOptions   + .ConfigLinkerOptions
-                }
+                .CompilerOptions + .'CompilerOptions_Config_$CurrentConfig$'
+                .LinkerOptions + .'LinkerOptions_Config_$CurrentConfig$'
 
                 // Define valid variant selectors for this configuration
                 .LocalVariantSelector = {
@@ -196,19 +156,6 @@
                     ^CompilerOptions + ' $Toolchain_Include_Prefix$$CurrentInclude$$Toolchain_Include_Suffix$'
                 }
 
-                // Apply unit-test specific compiler options
-                If (.ProjectType == .ProjectType_UnitTest) {
-                    Using(.'UnitTest_CompilerOptions_$CurrentConfig$')
-
-                    ForEach(.Option in .RemoveCompilerOptions) {
-                        ^CompilerOptions - .Option
-                    }
-
-                    ForEach(.Option in .AddCompilerOptions) {
-                        ^CompilerOptions + .Option
-                    }
-                }
-
                 If(.ProjectComponent_Sdks == .ProjectComponent) {
                     // Object list for SDKs aren't using unity files at all
                     ObjectList('Lib-$ProjectName$-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$') {
@@ -252,7 +199,7 @@
 
                 // Add resources for windows platform
                 If (.Triplet_Platform == .Platform_Windows) {
-                    ^Libraries + 'Graphyte-Res-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
+                    ^Libraries + 'Graphyte-Resources-$Triplet_Platform$-$Triplet_Architecture$-$Triplet_Compiler$-$CurrentConfig$'
                 }
 
                 // Create actual targets:

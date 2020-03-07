@@ -34,14 +34,5 @@
 
 #include "game/source/app.demo/project.bff"
 
-#include "scripts/fastbuild/build-project.bff"
-
-{
-    ForEach(.CurrentPlatform in .GxPlatforms) {
-        ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$') {
-            ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$_$CurrentArchitecture$') {
-                Print('$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$')
-            }
-        }
-    }
-}
+#include "scripts/fastbuild/build.bff"
+;#include "scripts/fastbuild/build-project.bff"

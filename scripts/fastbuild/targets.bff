@@ -7,69 +7,26 @@
 .GxPlatforms = {
     'Windows'
     'UWP'
-    'Linux'
-    'Android'
+    ;'Linux'
+    ;'Android'
 }
 
 //--------------------------------------------------------------------------------------------------
 // Windows
 
-.GxPlatformExcludePattern_Windows = [
-        .ProjectPatternToExclude = {
-            '*/Impl.Linux/*'
-            '*/Impl.Android/*'
-            '*/Impl.Posix/*'
-            '*/Impl.UWP/*'
-        }
-        .UnityInputExcludePattern = {
-            '*Linux.*.cxx'
-            '*Android.*.cxx'
-            '*Posix.*.cxx'
-            '*UWP.*.cxx'
-        }
-]
-
 .GxPlatformArchitectures_Windows   = { 'ARMv8', 'x64' }
-.GxPlatformCompilers_Windows_ARMv8 = { 'MSVC', 'ClangCL' }
-.GxPlatformCompilers_Windows_x64   = { 'MSVC', 'ClangCL' }
+.GxPlatformCompilers_Windows_ARMv8 = { 'MSVC' } //, 'ClangCL' }
+.GxPlatformCompilers_Windows_x64   = { 'MSVC' } //, 'ClangCL' }
 
 //--------------------------------------------------------------------------------------------------
 // UWP
 
-.GxPlatformExcludePattern_UWP = [
-        .ProjectPatternToExclude = {
-            '*/Impl.Linux/*'
-            '*/Impl.Android/*'
-            '*/Impl.Posix/*'
-            '*/Impl.Windows/*'
-        }
-        .UnityInputExcludePattern = {
-            '*Linux.*.cxx'
-            '*Android.*.cxx'
-            '*Posix.*.cxx'
-            '*Windows.*.cxx'
-        }
-]
-
 .GxPlatformArchitectures_UWP   = { 'ARMv8', 'x64' }
-.GxPlatformCompilers_UWP_ARMv8 = { 'MSVC', 'ClangCL' }
-.GxPlatformCompilers_UWP_x64   = { 'MSVC', 'ClangCL' }
+.GxPlatformCompilers_UWP_ARMv8 = { 'MSVC' } //, 'ClangCL' }
+.GxPlatformCompilers_UWP_x64   = { 'MSVC' } //, 'ClangCL' }
 
 //--------------------------------------------------------------------------------------------------
 // Linux
-
-.GxPlatformExcludePatterns_Linux = [
-    .ProjectPatternToExclude = {
-        '*/Impl.Android/*'
-        '*/Impl.Windows/*'
-        '*/Impl.UWP/*'
-    }
-    .UnityInputExcludePattern = {
-        '*Android.*.cxx'
-        '*Windows.*.cxx'
-        '*UWP.*.cxx'
-    }
-]
 
 .GxPlatformArchitectures_Linux   = { 'ARMv8', 'x64' }
 .GxPlatformCompilers_Linux_ARMv8 = { 'Clang', 'GCC' }
@@ -77,19 +34,6 @@
 
 //--------------------------------------------------------------------------------------------------
 // Android
-
-.GxPlatformExcludePatterns_Android = [
-    .ProjectPatternToExclude = {
-        '*/Impl.Linux/*'
-        '*/Impl.Windows/*'
-        '*/Impl.UWP/*'
-    }
-    .UnityInputExcludePattern = {
-        '*Linux.*.cxx'
-        '*Windows.*.cxx'
-        '*UWP.*.cxx'
-    }
-]
 
 .GxPlatformArchitectures_Android   = { 'ARMv8', 'x64' }
 .GxPlatformCompilers_Android_ARMv8 = { 'Clang' }
