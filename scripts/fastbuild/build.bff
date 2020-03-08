@@ -89,6 +89,7 @@ ForEach(.CurrentProject in .Global_ProjectList) {
             ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$_$CurrentArchitecture$') {
                 Using(.'GxToolchainDef_Compiler_$CurrentCompiler$')
                 Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
+                Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$_Platform_$CurrentPlatform$')
 
                 ForEach(.CurrentConfig in .ValidConfigurations) {
                     Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Config_$CurrentConfig$')

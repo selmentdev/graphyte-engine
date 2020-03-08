@@ -384,11 +384,6 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 .GxToolchainDef_Compiler_MSVC_Architecture_x64 = [
     .VisualStudioPlatform = 'x64'
 
-    .Compiler = 'Compiler-Windows-x64-MSVC'
-    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
-    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/link.exe'
-    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/lib.exe'
-
     .CompilerOptions_Architecture
         = ' /arch:AVX'
         + ' /D__AVX__'
@@ -402,11 +397,6 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 .GxToolchainDef_Compiler_MSVC_Architecture_ARMv8 = [
     .VisualStudioPlatform = 'ARM64'
 
-    .Compiler = 'Compiler-Windows-ARMv8-MSVC'
-    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
-    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/link.exe'
-    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/lib.exe'
-
     .CompilerOptions_Architecture
         = ' /DGRAPHYTE_MATH_NO_INTRINSICS=1'
 
@@ -417,56 +407,238 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
         + ' /LIBPATH:"$WindowsSdkLocation$\Lib\$WindowsSdkVersion$\ucrt\arm64"'
 ]
 
-// .ToolchainDesc_GCC = [
-//     .Toolchain_Name = 'GCC'
-//     .Toolchain_Define_Prefix = '-D'
-//     .Toolchain_Define_Suffix = ''
-//     .Toolchain_Include_Prefix = '-I'
-//     .Toolchain_Include_Suffix = ''
-//     .Toolchain_Library_Prefix = '-L'
-//     .Toolchain_Library_Suffix = ''
-//     .Toolchain_Link_Prefix = '-l'
-//     .Toolchain_Link_Suffix = ''
+.GxToolchainDef_Compiler_MSVC_Architecture_x64_Platform_Windows = [
+    .Compiler = 'Compiler-Windows-x64-MSVC'
+    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
+    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/link.exe'
+    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/lib.exe'
+]
 
-//     .CompilerOptions
-//         = ' -o "%2" "%1" -c -g'
-//         + ' -std=c++2a'
-//         + ' -fconcepts'
-//         + ' -fdiagnostics-color=always'
+.GxToolchainDef_Compiler_MSVC_Architecture_ARMv8_Platform_Windows = [
+    .Compiler = 'Compiler-Windows-ARMv8-MSVC'
+    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
+    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/link.exe'
+    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/lib.exe'
+]
 
-//     .CompilerOptionsC
-//         = ' -std=c11'
-//         + ' -fdiagnostics-color=always'
+.GxToolchainDef_Compiler_MSVC_Architecture_x64_Platform_UWP = [
+    .Compiler = 'Compiler-Windows-x64-MSVC'
+    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
+    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/link.exe'
+    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/lib.exe'
+]
 
-//     .LinkerOptions
-//         = ' -Wl,--start-group "%1" -Wl,--end-group -o "%2"'
-//         + ' -lc'
-//         + ' -lm'
-//         + ' -lstdc++'
-//         + ' -pthread'
+.GxToolchainDef_Compiler_MSVC_Architecture_ARMv8_Platform_UWP = [
+    .Compiler = 'Compiler-Windows-ARMv8-MSVC'
+    .ResCompiler = 'Compiler-Windows-ResourceCompiler'
+    .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/link.exe'
+    .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/lib.exe'
+]
 
-//     .LibrarianOptions
-//         = 'rcs "%2" "%1"'
 
-//     .CompilerOptions_UnitTest_Debug_Add = {}
-//     .CompilerOptions_UnitTest_Debug_Remove = {}
+// -------------------------------------------------------------------------------------------------
+// Clang compiler definition
 
-//     .CompilerOptions_UnitTest_Checked_Add = {}
-//     .CompilerOptions_UnitTest_Checked_Remove = {}
+.GxToolchainDef_Compiler_Clang = [
+    .Prefix_Define = '-D'
+    .Suffix_Define = ''
+    .Prefix_Include = '-I'
+    .Suffix_Include = ''
+    .Prefix_LibPath = '-L'
+    .Suffix_LibPath = ''
+    .Prefix_Link = '-l'
+    .Suffix_Link = ''
 
-//     .CompilerOptions_UnitTest_Profile_Add = {}
-//     .CompilerOptions_UnitTest_Profile_Remove = {}
+    .ToolchainDefines = {
+    }
 
-//     .CompilerOptions_UnitTest_Release_Add = {}
-//     .CompilerOptions_UnitTest_Release_Remove = {}
-// ]
+    .ToolchainIncludes = {
+    }
+
+    .CompilerOptions_Before
+        = '"%1"'
+
+    .CompilerOptions_After
+        = ' -o "%2"'
+        
+    .LibrarianOptions_Before
+        = ''
+
+    .LibrarianOptions_After
+        = ' "%2" "%1"'
+
+    .LinkerOptions_Before
+        = ''
+
+    .LinkerOptions_After
+        = ' "%2" "%1"'
+
+    .CompilerOptions_Kind_SharedLib = ' -fpic'
+    .LinkerOptions_Kind_SharedLib = ' -shared'
+
+    .CompilerOptions_Kind_StaticLib = ' -fpic'
+    .LinkerOptions_Kind_StaticLib = ' -static'
+
+    .CompilerOptions_Kind_ConsoleApp = ' -fpic'
+    .LinkerOptions_Kind_ConsoleApp = ' -pie'
+
+    .CompilerOptions_Kind_WindowedApp = ' -fpic'
+    .LinkerOptions_Kind_WindowedApp = ' -pie'
+]
+
+.GxToolchainDef_Compiler_Clang_Config_Debug = [
+    .CompilerOptions_Config
+        = ' -DGX_CONFIG_DEBUG=1'
+        + ' -O0'
+    .LinkerOptions_Config = ''
+]
+
+.GxToolchainDef_Compiler_Clang_Config_Checked = [
+    .CompilerOptions_Config
+        = ' -DGX_CONFIG_CHECKED=1'
+        + ' -O1'
+    .LinkerOptions_Config = ''
+]
+    
+.GxToolchainDef_Compiler_Clang_Config_Profile = [
+    .CompilerOptions_Config
+        = ' -DGX_CONFIG_PROFILE=1'
+        + ' -O2'
+    .LinkerOptions_Config = ''
+]
+    
+.GxToolchainDef_Compiler_Clang_Config_Release = [
+    .CompilerOptions_Config
+        = ' -DGX_CONFIG_RELEASE=1'
+        + ' -O3'
+    .LinkerOptions_Config = ''
+]
+
+.GxToolchainDef_Compiler_Clang_UnitTest_Debug = [
+    .CompilerOptions_UnitTest_Remove = {}
+    .CompilerOptions_UnitTest_Add = {}
+]
+.GxToolchainDef_Compiler_Clang_UnitTest_Checked = [
+    .CompilerOptions_UnitTest_Remove = {}
+    .CompilerOptions_UnitTest_Add = {}
+]
+.GxToolchainDef_Compiler_Clang_UnitTest_Profile = [
+    .CompilerOptions_UnitTest_Remove = {}
+    .CompilerOptions_UnitTest_Add = {}
+]
+.GxToolchainDef_Compiler_Clang_UnitTest_Release = [
+    .CompilerOptions_UnitTest_Remove = {}
+    .CompilerOptions_UnitTest_Add = {}
+]
+
+
+// -------------------------------------------------------------------------------------------------
+// GCC definition
+
+.GxToolchainDef_Compiler_GCC = [
+    .Prefix_Define = '-D'
+    .Suffix_Define = ''
+    .Prefix_Include = '-I'
+    .Suffix_Include = ''
+    .Prefix_LibPath = '-L'
+    .Suffix_LibPath = ''
+    .Prefix_Link = '-l'
+    .Suffix_Link = ''
+
+    .ToolchainDefines = { }
+
+    .ToolchainIncludes = { }
+
+    .CompilerOptions_Before
+        = ' -o "%2" "%1" -c -g'
+        + ' -std=c++2a'
+        + ' -fconcepts'
+        + ' -fdiagnostics-color=always'
+
+    .CompilerOptions_After
+        = ''
+
+    .CompilerOptionsC_Before
+        = ' -std=c11'
+        + ' -fdiagnostics-color=always'
+        
+    .LibrarianOptions_Before
+        = 'rcs "%2" "%1"'
+
+    .LibrarianOptions_After
+        = ''
+
+    .LinkerOptions_Before
+        = ' -Wl,--start-group "%1" -Wl,--end-group -o "%2"'
+        + ' -lc'
+        + ' -lm'
+        + ' -lstdc++'
+        + ' -lpthread'
+
+    .LinkerOptions_After
+        = ''
+
+    .CompilerOptions_Kind_SharedLib = ' -fpic'
+    .LinkerOptions_Kind_SharedLib = ' -shared'
+
+    .CompilerOptions_Kind_StaticLib = ' -fpic'
+    .LinkerOptions_Kind_StaticLib = ' -static'
+
+    .CompilerOptions_Kind_ConsoleApp = ' -fpic'
+    .LinkerOptions_Kind_ConsoleApp = ' -pie'
+
+    .CompilerOptions_Kind_WindowedApp = ' -fpic'
+    .LinkerOptions_Kind_WindowedApp = ' -pie'
+]
+
+.GxToolchainDef_Compiler_Clang_Config_Debug = [
+    .CompilerOptions_Config
+        = ' -DGX_CONFIG_DEBUG=1'
+        + ' -O0'
+    .LinkerOptions_Config = ''
+]
+
+.GxToolchainDef_Compiler_Clang_Config_Checked = [
+    .CompilerOptions_Config
+        = ' -DGX_CONFIG_CHECKED=1'
+        + ' -O1'
+    .LinkerOptions_Config = ''
+]
+    
+.GxToolchainDef_Compiler_Clang_Config_Profile = [
+    .CompilerOptions_Config
+        = ' -DGX_CONFIG_PROFILE=1'
+        + ' -O2'
+    .LinkerOptions_Config = ''
+]
+    
+.GxToolchainDef_Compiler_Clang_Config_Release = [
+    .CompilerOptions_Config
+        = ' -DGX_CONFIG_RELEASE=1'
+        + ' -O3'
+    .LinkerOptions_Config = ''
+]
+
+.GxToolchainDef_Compiler_Clang_UnitTest_Debug = [
+    .CompilerOptions_UnitTest_Remove = {}
+    .CompilerOptions_UnitTest_Add = {}
+]
+.GxToolchainDef_Compiler_Clang_UnitTest_Checked = [
+    .CompilerOptions_UnitTest_Remove = {}
+    .CompilerOptions_UnitTest_Add = {}
+]
+.GxToolchainDef_Compiler_Clang_UnitTest_Profile = [
+    .CompilerOptions_UnitTest_Remove = {}
+    .CompilerOptions_UnitTest_Add = {}
+]
+.GxToolchainDef_Compiler_Clang_UnitTest_Release = [
+    .CompilerOptions_UnitTest_Remove = {}
+    .CompilerOptions_UnitTest_Add = {}
+]
+
 
 // .ToolchainDesc_Linux_x64_GCC = [
-//     Using(.PlatformDesc_Linux)
-//     Using(.ToolchainDesc_GCC)
-
 //     .Toolchain_Architecture = 'x64'
-
 //     .CompilerOptions
 //         + ' -mavx'
 //         + ' -msse4.1'
@@ -474,48 +646,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 //         + ' -mssse3'
 //         + ' -msse2'
 //         + ' -m64'
-
-
-//     //
-//     // Compilers
-//     //
-
 //     .ToolchainName = 'Linux-x64-GCC'
 //     .Compiler = 'Compiler-Linux-x64-GCC'
 //     .Linker = '/usr/bin/g++'
 //     .Librarian = '/usr/bin/ar'
-
-
-//     //
-//     // Configuration specific toolchain options
-//     //
-
-//     .CompilerOptions_Config_Debug = ' -DGX_CONFIG_DEBUG=1 -O0'
-//     .LinkerOptions_Config_Debug = ''
-    
-//     .CompilerOptions_Config_Checked = ' -DGX_CONFIG_CHECKED=1 -O1'
-//     .LinkerOptions_Config_Checked = ''
-    
-//     .CompilerOptions_Config_Profile = ' -DGX_CONFIG_PROFILE=1 -O2'
-//     .LinkerOptions_Config_Profile = ''
-    
-//     .CompilerOptions_Config_Release = ' -DGX_CONFIG_RELEASE=1 -O3'
-//     .LinkerOptions_Config_Release = ''
-
-//     //
-//     // Kind specific toolchain options.
-//     //
-
-
-//     .CompilerOptions_Kind_SharedLib = ' -fpic'
-//     .LinkerOptions_Kind_SharedLib = ' -shared'
-
-//     .CompilerOptions_Kind_StaticLib = ' -fpic'
-//     .LinkerOptions_Kind_StaticLib = ' -static'
-
-//     .CompilerOptions_Kind_ConsoleApp = ' -fpic'
-//     .LinkerOptions_Kind_ConsoleApp = ' -pie'
-
-//     .CompilerOptions_Kind_WindowedApp = ' -fpic'
-//     .LinkerOptions_Kind_WindowedApp = ' -pie'
-// ]
