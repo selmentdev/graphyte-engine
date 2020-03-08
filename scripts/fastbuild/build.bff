@@ -4,8 +4,8 @@
 ForEach(.CurrentPlatform in .GxPlatforms) {
     //If(.CurrentPlatform == .Platform_Windows)
     {
-        ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$') {
-            ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$_$CurrentArchitecture$') {
+        ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$') {
+            ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
                 Using(.'GxPlatformDef_$CurrentPlatform$')
 
                 .RcIncludes = ''
@@ -85,8 +85,8 @@ ForEach(.CurrentProject in .Global_ProjectList) {
             .UnityNumFiles = 1
         }
 
-        ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$') {
-            ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$_$CurrentArchitecture$') {
+        ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$') {
+            ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
                 Using(.'GxToolchainDef_Compiler_$CurrentCompiler$')
                 Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
                 Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$_Platform_$CurrentPlatform$')
@@ -323,8 +323,8 @@ ForEach(.CurrentProject in .Global_ProjectList) {
     }
 
     ForEach(.CurrentPlatform in .GxPlatforms) {
-        ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$') {
-            ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$_$CurrentArchitecture$') {
+        ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$') {
+            ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
 
                 Using(.'Platform_$CurrentPlatform$_Architecture_$CurrentArchitecture$_Compiler_$CurrentCompiler$')
 
@@ -396,8 +396,8 @@ ForEach(.CurrentProject in .Global_ProjectList) {
             .ProjectConfigs = {}
 
             ForEach(.CurrentPlatform in .GxPlatforms) {
-                ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$') {
-                    ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$_$CurrentArchitecture$') {
+                ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$') {
+                    ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
                         Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
                         ForEach(.CurrentConfig in .ValidConfigurations) {
                             .ConfigEntry = [
@@ -450,8 +450,8 @@ ForEach(.CurrentProject in .Global_ProjectList) {
             .ProjectConfigs = {}
 
             ForEach(.CurrentPlatform in .GxPlatforms) {
-                ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$') {
-                    ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$_$CurrentArchitecture$') {
+                ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$') {
+                    ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
                         Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
                         ForEach(.CurrentConfig in .ValidConfigurations) {
                             .ConfigEntry = [
@@ -484,8 +484,8 @@ ForEach(.CurrentProject in .Global_ProjectList) {
         .SolutionConfigs = {}
     
         ForEach(.CurrentPlatform in .GxPlatforms) {
-            ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$') {
-                ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$_$CurrentArchitecture$') {
+            ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$') {
+                ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
                     Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
                     ForEach(.Configuration in .ValidConfigurations) {
                         .CurrentSolutionConfig = [

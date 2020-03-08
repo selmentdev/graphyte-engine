@@ -6,7 +6,7 @@
 
 .GxPlatforms = {
     'Windows'
-    'UWP'
+    ;'UWP'
     ;'Linux'
     ;'Android'
 }
@@ -14,27 +14,27 @@
 //--------------------------------------------------------------------------------------------------
 // Windows
 
-.GxPlatformArchitectures_Windows   = { 'ARMv8', 'x64' }
-.GxPlatformCompilers_Windows_ARMv8 = { 'MSVC' } //, 'ClangCL' }
-.GxPlatformCompilers_Windows_x64   = { 'MSVC' } //, 'ClangCL' }
+.GxPlatformCompilers_Windows             = { 'MSVC' } // , 'ClangCL' }
+.GxPlatformArchitectures_Windows_MSVC    = { 'ARMv8', 'x64' }
+.GxPlatformArchitectures_Windows_ClangCL = { 'ARMv8', 'x64' }
 
 //--------------------------------------------------------------------------------------------------
 // UWP
 
-.GxPlatformArchitectures_UWP   = { 'ARMv8', 'x64' }
-.GxPlatformCompilers_UWP_ARMv8 = { 'MSVC' } //, 'ClangCL' }
-.GxPlatformCompilers_UWP_x64   = { 'MSVC' } //, 'ClangCL' }
+.GxPlatformCompilers_UWP             = { 'MSVC' } // , 'ClangCL' }
+.GxPlatformArchitectures_UWP_MSVC    = { 'ARMv8', 'x64' }
+.GxPlatformArchitectures_UWP_ClangCL = { 'ARMv8', 'x64' }
 
 //--------------------------------------------------------------------------------------------------
 // Linux
 
-.GxPlatformArchitectures_Linux   = { 'ARMv8', 'x64' }
-.GxPlatformCompilers_Linux_ARMv8 = { 'Clang', 'GCC' }
-.GxPlatformCompilers_Linux_x64   = { 'Clang', 'GCC' }
+.GxPlatformCompilers_Linux           = { 'Clang', 'GCC' }
+.GxPlatformArchitectures_Linux_Clang = { 'ARMv8', 'x64' }
+.GxPlatformArchitectures_Linux_GCC   = { 'ARMv8', 'x64' }
 
 //--------------------------------------------------------------------------------------------------
 // Android
 
-.GxPlatformArchitectures_Android   = { 'ARMv8', 'x64' }
-.GxPlatformCompilers_Android_ARMv8 = { 'Clang' }
-.GxPlatformCompilers_Android_x64   = { 'x64' }
+.GxPlatformCompilers_Android           = { 'Clang', 'GCC' }
+.GxPlatformArchitectures_Android_Clang = { 'ARMv8', 'x64' }
+.GxPlatformArchitectures_Android_GCC   = { 'ARMv8', 'x64' }
