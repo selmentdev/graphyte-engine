@@ -15,6 +15,6 @@ namespace Graphyte::Diagnostics::Impl
         (void)title;
         (void)content;
         (void)stacktrace;
-        return false;
+        return true;
     }
 }
