@@ -689,7 +689,7 @@ namespace Graphyte::Maths
         GX_ASSERT(z < 2);
         GX_ASSERT(w < 4);
 
-        uint32_t const control[2]{ SELECT_0, SELECT_1 };
+        uint32_t const control[2]{ Impl::SELECT_0, Impl::SELECT_1 };
 
         Impl::ConstUInt32x4 const result{ { {
                 control[x],
@@ -3730,10 +3730,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (a.V.U[0] == b.V.U[0]) ? SELECT_1 : SELECT_0,
-                (a.V.U[1] == b.V.U[1]) ? SELECT_1 : SELECT_0,
-                (a.V.U[2] == b.V.U[2]) ? SELECT_1 : SELECT_0,
-                (a.V.U[3] == b.V.U[3]) ? SELECT_1 : SELECT_0,
+                (a.V.U[0] == b.V.U[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[1] == b.V.U[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[2] == b.V.U[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[3] == b.V.U[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -3762,10 +3762,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (a.V.U[0] != b.V.U[0]) ? SELECT_1 : SELECT_0,
-                (a.V.U[1] != b.V.U[1]) ? SELECT_1 : SELECT_0,
-                (a.V.U[2] != b.V.U[2]) ? SELECT_1 : SELECT_0,
-                (a.V.U[3] != b.V.U[3]) ? SELECT_1 : SELECT_0,
+                (a.V.U[0] != b.V.U[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[1] != b.V.U[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[2] != b.V.U[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[3] != b.V.U[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6704,10 +6704,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (a.V.U[0] == b.V.U[0]) ? SELECT_1 : SELECT_0,
-                (a.V.U[1] == b.V.U[1]) ? SELECT_1 : SELECT_0,
-                (a.V.U[2] == b.V.U[2]) ? SELECT_1 : SELECT_0,
-                (a.V.U[3] == b.V.U[3]) ? SELECT_1 : SELECT_0,
+                (a.V.U[0] == b.V.U[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[1] == b.V.U[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[2] == b.V.U[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[3] == b.V.U[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6736,10 +6736,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (a.V.U[0] != b.V.U[0]) ? SELECT_1 : SELECT_0,
-                (a.V.U[1] != b.V.U[1]) ? SELECT_1 : SELECT_0,
-                (a.V.U[2] != b.V.U[2]) ? SELECT_1 : SELECT_0,
-                (a.V.U[3] != b.V.U[3]) ? SELECT_1 : SELECT_0,
+                (a.V.U[0] != b.V.U[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[1] != b.V.U[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[2] != b.V.U[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.U[3] != b.V.U[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6768,10 +6768,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (a.V.F[0] == b.V.F[0]) ? SELECT_1 : SELECT_0,
-                (a.V.F[1] == b.V.F[1]) ? SELECT_1 : SELECT_0,
-                (a.V.F[2] == b.V.F[2]) ? SELECT_1 : SELECT_0,
-                (a.V.F[3] == b.V.F[3]) ? SELECT_1 : SELECT_0,
+                (a.V.F[0] == b.V.F[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[1] == b.V.F[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[2] == b.V.F[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[3] == b.V.F[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6811,10 +6811,10 @@ namespace Graphyte::Maths
         float const absw = fabsf(dw);
 
         Impl::ConstUInt32x4 const result{ { {
-                (absx <= epsilon.V.F[0]) ? SELECT_1 : SELECT_0,
-                (absy <= epsilon.V.F[1]) ? SELECT_1 : SELECT_0,
-                (absz <= epsilon.V.F[2]) ? SELECT_1 : SELECT_0,
-                (absw <= epsilon.V.F[3]) ? SELECT_1 : SELECT_0,
+                (absx <= epsilon.V.F[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (absy <= epsilon.V.F[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (absz <= epsilon.V.F[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (absw <= epsilon.V.F[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6852,10 +6852,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (a.V.F[0] != b.V.F[0]) ? SELECT_1 : SELECT_0,
-                (a.V.F[1] != b.V.F[1]) ? SELECT_1 : SELECT_0,
-                (a.V.F[2] != b.V.F[2]) ? SELECT_1 : SELECT_0,
-                (a.V.F[3] != b.V.F[3]) ? SELECT_1 : SELECT_0,
+                (a.V.F[0] != b.V.F[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[1] != b.V.F[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[2] != b.V.F[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[3] != b.V.F[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6889,10 +6889,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (a.V.F[0] > b.V.F[0]) ? SELECT_1 : SELECT_0,
-                (a.V.F[1] > b.V.F[1]) ? SELECT_1 : SELECT_0,
-                (a.V.F[2] > b.V.F[2]) ? SELECT_1 : SELECT_0,
-                (a.V.F[3] > b.V.F[3]) ? SELECT_1 : SELECT_0,
+                (a.V.F[0] > b.V.F[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[1] > b.V.F[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[2] > b.V.F[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[3] > b.V.F[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6909,10 +6909,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (a.V.F[0] >= b.V.F[0]) ? SELECT_1 : SELECT_0,
-                (a.V.F[1] >= b.V.F[1]) ? SELECT_1 : SELECT_0,
-                (a.V.F[2] >= b.V.F[2]) ? SELECT_1 : SELECT_0,
-                (a.V.F[3] >= b.V.F[3]) ? SELECT_1 : SELECT_0,
+                (a.V.F[0] >= b.V.F[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[1] >= b.V.F[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[2] >= b.V.F[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[3] >= b.V.F[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6929,10 +6929,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (a.V.F[0] < b.V.F[0]) ? SELECT_1 : SELECT_0,
-                (a.V.F[1] < b.V.F[1]) ? SELECT_1 : SELECT_0,
-                (a.V.F[2] < b.V.F[2]) ? SELECT_1 : SELECT_0,
-                (a.V.F[3] < b.V.F[3]) ? SELECT_1 : SELECT_0,
+                (a.V.F[0] < b.V.F[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[1] < b.V.F[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[2] < b.V.F[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[3] < b.V.F[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6949,10 +6949,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (a.V.F[0] <= b.V.F[0]) ? SELECT_1 : SELECT_0,
-                (a.V.F[1] <= b.V.F[1]) ? SELECT_1 : SELECT_0,
-                (a.V.F[2] <= b.V.F[2]) ? SELECT_1 : SELECT_0,
-                (a.V.F[3] <= b.V.F[3]) ? SELECT_1 : SELECT_0,
+                (a.V.F[0] <= b.V.F[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[1] <= b.V.F[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[2] <= b.V.F[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (a.V.F[3] <= b.V.F[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6974,10 +6974,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                FloatTraits<float>::BitIsNan(v.V.U[0]) ? SELECT_1 : SELECT_0,
-                FloatTraits<float>::BitIsNan(v.V.U[1]) ? SELECT_1 : SELECT_0,
-                FloatTraits<float>::BitIsNan(v.V.U[2]) ? SELECT_1 : SELECT_0,
-                FloatTraits<float>::BitIsNan(v.V.U[3]) ? SELECT_1 : SELECT_0,
+                FloatTraits<float>::BitIsNan(v.V.U[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                FloatTraits<float>::BitIsNan(v.V.U[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                FloatTraits<float>::BitIsNan(v.V.U[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                FloatTraits<float>::BitIsNan(v.V.U[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -6996,10 +6996,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                FloatTraits<float>::BitIsInf(v.V.U[0]) ? SELECT_1 : SELECT_0,
-                FloatTraits<float>::BitIsInf(v.V.U[1]) ? SELECT_1 : SELECT_0,
-                FloatTraits<float>::BitIsInf(v.V.U[2]) ? SELECT_1 : SELECT_0,
-                FloatTraits<float>::BitIsInf(v.V.U[3]) ? SELECT_1 : SELECT_0,
+                FloatTraits<float>::BitIsInf(v.V.U[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                FloatTraits<float>::BitIsInf(v.V.U[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                FloatTraits<float>::BitIsInf(v.V.U[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                FloatTraits<float>::BitIsInf(v.V.U[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
@@ -7015,10 +7015,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                (-bounds.V.F[0] <= v.V.F[0]) && (v.V.F[0] <= bounds.V.F[0]) ? SELECT_1 : SELECT_0,
-                (-bounds.V.F[1] <= v.V.F[1]) && (v.V.F[1] <= bounds.V.F[1]) ? SELECT_1 : SELECT_0,
-                (-bounds.V.F[2] <= v.V.F[2]) && (v.V.F[2] <= bounds.V.F[2]) ? SELECT_1 : SELECT_0,
-                (-bounds.V.F[3] <= v.V.F[3]) && (v.V.F[3] <= bounds.V.F[3]) ? SELECT_1 : SELECT_0,
+                (-bounds.V.F[0] <= v.V.F[0]) && (v.V.F[0] <= bounds.V.F[0]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (-bounds.V.F[1] <= v.V.F[1]) && (v.V.F[1] <= bounds.V.F[1]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (-bounds.V.F[2] <= v.V.F[2]) && (v.V.F[2] <= bounds.V.F[2]) ? Impl::SELECT_1 : Impl::SELECT_0,
+                (-bounds.V.F[3] <= v.V.F[3]) && (v.V.F[3] <= bounds.V.F[3]) ? Impl::SELECT_1 : Impl::SELECT_0,
             } } };
 
         return { result.V };
@@ -13722,7 +13722,7 @@ namespace Graphyte::Maths
         requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const multiplier = Replicate<T>(1.0F / Maths::PI2<float>);
+        T const multiplier = Replicate<T>(1.0F / Maths::Impl::PI2<float>);
         T const result = Multiply(value, multiplier);
         return result;
 #elif GRAPHYTE_HW_AVX
@@ -13762,7 +13762,7 @@ namespace Graphyte::Maths
         requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const multiplier = Replicate<T>(200.0F / Maths::PI<float>);
+        T const multiplier = Replicate<T>(200.0F / Maths::Impl::PI<float>);
         T const result = Multiply(value, multiplier);
         return result;
 #elif GRAPHYTE_HW_AVX
@@ -13782,7 +13782,7 @@ namespace Graphyte::Maths
         requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const multiplier = Replicate<T>(Maths::PI<float> / 200.0F);
+        T const multiplier = Replicate<T>(Maths::Impl::PI<float> / 200.0F);
         T const result = Multiply(value, multiplier);
         return result;
 #elif GRAPHYTE_HW_AVX
@@ -13802,7 +13802,7 @@ namespace Graphyte::Maths
         requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const multiplier = Replicate<T>(180.0F / Maths::PI<float>);
+        T const multiplier = Replicate<T>(180.0F / Maths::Impl::PI<float>);
         T const result = Multiply(value, multiplier);
         return result;
 #elif GRAPHYTE_HW_AVX
@@ -13822,7 +13822,7 @@ namespace Graphyte::Maths
         requires VectorLike<T> and Arithmetic<T>
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        T const multiplier = Replicate<T>(Maths::PI<float> / 180.0F);
+        T const multiplier = Replicate<T>(Maths::Impl::PI<float> / 180.0F);
         T const result = Multiply(value, multiplier);
         return result;
 #elif GRAPHYTE_HW_AVX
