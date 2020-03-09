@@ -304,7 +304,7 @@ namespace Graphyte::Diagnostics
 
 namespace Graphyte::Diagnostics
 {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
     /*!
      * \brief   Handles crash request.
@@ -419,7 +419,7 @@ namespace Graphyte::Diagnostics
         std::vector<StackFrame>& frames
     ) noexcept;
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
 
     /*!
@@ -643,7 +643,7 @@ namespace Graphyte::Diagnostics
         Status status
     ) noexcept;
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
     /*!
      * \brief   Gets status from WinAPI Error Code.

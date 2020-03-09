@@ -6,6 +6,8 @@
         .ProjectType = 'Module'
         .ProjectComponent = 'Developer'
 
+        .ProjectSelector = { 'Windows-x64' }
+
         .ProjectDefines = {
             'assets_mesh_EXPORTS=1'
         }

@@ -10,43 +10,28 @@ namespace Graphyte::Threading
         Barrier& operator= (const Barrier&) = delete;
 
     private:
-#if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-        mutable SYNCHRONIZATION_BARRIER m_Barrier;
-#else
         mutable HANDLE m_Event;
         mutable HANDLE m_EventSync;
         mutable volatile LONG m_Count;
         mutable LONG m_InitialCount;
-#endif
 
     public:
         Barrier(uint32_t count) noexcept
         {
-#if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-            InitializeSynchronizationBarrier(&m_Barrier, static_cast<LONG>(count), 4000);
-#else
             m_Event = CreateEventW(nullptr, FALSE, FALSE, nullptr);
             m_EventSync = CreateEventW(nullptr, TRUE, FALSE, nullptr);
             m_Count = static_cast<DWORD>(count);
             m_InitialCount = static_cast<LONG>(count);
-#endif
         }
         ~Barrier() noexcept
         {
-#if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-            DeleteSynchronizationBarrier(&m_Barrier);
-#else
             CloseHandle(m_Event);
             CloseHandle(m_EventSync);
-#endif
         }
 
     public:
         bool Wait() noexcept
         {
-#if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-            return EnterSynchronizationBarrier(&m_Barrier, 0) != FALSE;
-#else
             LONG last = InterlockedDecrement(&m_Count);
 
             if (last == 0)
@@ -70,7 +55,6 @@ namespace Graphyte::Threading
             }
 
             return last == 0;
-#endif
         }
     };
 

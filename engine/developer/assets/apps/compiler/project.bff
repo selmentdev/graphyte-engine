@@ -6,6 +6,8 @@
         .ProjectType = 'Application'
         .ProjectComponent = 'Developer'
 
+        .ProjectSelector = { 'Windows-x64' }
+
         .ProjectIncludes = {
             'sdks/fmt/include'
             'engine/runtime/libs/base/public'

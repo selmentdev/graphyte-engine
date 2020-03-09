@@ -1,7 +1,7 @@
 #pragma once
 #include <Graphyte/Assets.Shader.module.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
 #include <Graphyte/AssetsPipeline/ShaderProcessor.hxx>
 #include <Graphyte/System/Library.hxx>

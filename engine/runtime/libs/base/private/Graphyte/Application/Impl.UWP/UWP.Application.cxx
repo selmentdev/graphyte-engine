@@ -15,9 +15,6 @@ namespace Graphyte::Application::Impl
 
     static bool GIsRequestingExit{ false };
     static Input::ModifierKeyState GApplicationModifierKeys{};
-    static STICKYKEYS GApplicationStartupStickyKeys{};
-    static TOGGLEKEYS GApplicationStartupToggleKeys{};
-    static FILTERKEYS GApplicationStartupFilterKeys{};
     static bool GApplicationActivateByMouse{};
     static bool GApplicationHighPrecisionMouse{};
     static bool GApplicationIsMouseAttached{};

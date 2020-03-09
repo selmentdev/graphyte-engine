@@ -22,10 +22,10 @@ namespace Graphyte::System
             return false;
         }
 
-        if (SetHandleInformation(read.Handle, HANDLE_FLAG_INHERIT, 0) == FALSE)
-        {
-            return false;
-        }
+        //if (SetHandleInformation(read.Handle, HANDLE_FLAG_INHERIT, 0) == FALSE)
+        //{
+        //    return false;
+        //}
 
         return true;
     }

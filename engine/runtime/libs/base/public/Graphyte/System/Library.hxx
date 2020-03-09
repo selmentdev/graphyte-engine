@@ -12,7 +12,7 @@ namespace Graphyte::System
 {
     struct LibraryHandle final
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         HMODULE Value;
 

@@ -19,7 +19,6 @@
         .ProjectImports = {
             'sdk.fmt'
             'sdk.lz4'
-            'sdk.mbedtls'
         }
 
         // Platform specific configurations
@@ -65,6 +64,9 @@
                 'user32.lib'
                 'Mincore.lib'
             }
+            .VariantImports = {        
+                'sdk.mbedtls'
+            }
         ]
 
         .VariantDef_Linux = [
@@ -76,6 +78,9 @@
                 'SDL2'
                 'unwind'
                 'unwind-generic'
+            }
+            .VariantImports = {        
+                'sdk.mbedtls'
             }
         ]
 

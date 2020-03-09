@@ -1,6 +1,6 @@
 #include <Graphyte/Assets.Shader.module.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
 #include "DXCShaderCompilerBackend.hxx"
 #include <Graphyte/AssetsPipeline/PlatformToolchain.hxx>

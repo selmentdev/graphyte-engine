@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 // Windows specific main.
 //
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 INT
 #if !defined(_MAC)
 #if defined(_M_CEE_PURE)

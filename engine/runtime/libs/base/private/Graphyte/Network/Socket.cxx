@@ -204,7 +204,7 @@ namespace Graphyte::Network
             if (result == -1)
             {
                 StoreLastError();
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
                 if (closesocket(handle) == -1)
 #else
                 if (close(handle) == -1)
@@ -226,7 +226,7 @@ namespace Graphyte::Network
         bool blocking
     ) noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         u_long value = static_cast<u_long>(blocking ? 0 : 1);
 

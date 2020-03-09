@@ -282,6 +282,10 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
 
                     If (.LocalProjectSelector in .ProjectSelector)
                     {
+                        Print(.ProjectSelector)
+                        ;Print(.LocalProjectSelector)
+                        Print(.ProjectName)
+
                         If(.GxProjectComponent_Sdks != .ProjectComponent) {
                             ^MetaBuildAllTargets + '$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
                             If (.ProjectType == .GxProjectType_UnitTest) {

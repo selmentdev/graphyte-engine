@@ -7,7 +7,7 @@
 #include <Graphyte/Hash/XXHash.hxx>
 #include <Graphyte/CommandLine.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #include "Backends/D3DShaderCompilerBackend.hxx"
 #include "Backends/DXCShaderCompilerBackend.hxx"
 #endif
@@ -234,7 +234,7 @@ namespace Graphyte::AssetsPipeline
     ShaderProcessor::ShaderProcessor() noexcept
         : m_Backends{}
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
         m_Backends.push_back(std::make_unique<D3DShaderCompilerBackend>());
         m_Backends.push_back(std::make_unique<DXCShaderCompilerBackend>());
 #endif

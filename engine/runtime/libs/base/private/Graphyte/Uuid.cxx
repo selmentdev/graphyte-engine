@@ -10,7 +10,7 @@ namespace Graphyte
     {
         Uuid result;
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         static_assert(sizeof(Uuid) == sizeof(UUID));
 

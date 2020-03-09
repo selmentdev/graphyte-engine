@@ -100,7 +100,7 @@ namespace Graphyte::Threading
 
     struct ThreadHandle final
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
         ::HANDLE Value;
 #elif GRAPHYTE_PLATFORM_POSIX
         ::pthread_t Value;
@@ -110,7 +110,7 @@ namespace Graphyte::Threading
 
         bool IsValid() const noexcept
         {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
             return Value != nullptr;
 #elif GRAPHYTE_PLATFORM_POSIX
             return Value != 0;
@@ -122,7 +122,7 @@ namespace Graphyte::Threading
 
     struct ThreadId final
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
         ::DWORD Value;
 #elif GRAPHYTE_PLATFORM_POSIX
         ::pthread_t Value;
@@ -145,7 +145,7 @@ namespace Graphyte::Threading
      */
     __forceinline void YieldThread() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         ::Sleep(0);
 
@@ -165,7 +165,7 @@ namespace Graphyte::Threading
      */
     __forceinline void SleepThread(uint32_t milliseconds) noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         ::Sleep(milliseconds);
 
@@ -183,7 +183,7 @@ namespace Graphyte::Threading
      */
     __forceinline ThreadId CurrentThreadId() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         return ThreadId{ .Value = ::GetCurrentThreadId() };
 

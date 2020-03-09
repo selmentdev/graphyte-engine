@@ -11,102 +11,15 @@ namespace Graphyte::System
         std::string& content
     ) noexcept
     {
-        bool result{ false };
-
-        if (OpenClipboard(GetActiveWindow()) != FALSE)
-        {
-            bool is_unicode{ true };
-            HGLOBAL memory = GetClipboardData(CF_UNICODETEXT);
-
-            if (memory == nullptr)
-            {
-                memory = GetClipboardData(CF_TEXT);
-            }
-
-            if (memory == nullptr)
-            {
-                content.clear();
-                result = true;
-            }
-            else
-            {
-                LPVOID data = GlobalLock(memory);
-                GX_ASSERT(data != nullptr);
-
-                if (data != nullptr)
-                {
-                    if (is_unicode)
-                    {
-                        content = Impl::NarrowString(reinterpret_cast<wchar_t*>(data));
-                    }
-                    else
-                    {
-                        content = reinterpret_cast<char*>(data);
-                    }
-
-                    GlobalUnlock(data);
-                }
-            }
-
-            CloseClipboard();
-        }
-
-        if (result)
-        {
-            return Status::Success;
-        }
-
-        return Diagnostics::GetStatusFromSystemError();
+        content = {};
+        return Status::NotImplemented;
     }
 
     BASE_API Status SetClipboardContent(
-        std::string_view content
+        [[maybe_unused]] std::string_view content
     ) noexcept
     {
-        bool result = false;
-
-        if (OpenClipboard(GetActiveWindow()) != FALSE)
-        {
-            EmptyClipboard();
-
-            std::wstring wvalue = Impl::WidenString(content);
-
-            size_t const length = wvalue.length();
-            size_t const buffer_size = sizeof(wchar_t) * (length + 1);
-
-            HGLOBAL memory = GlobalAlloc(GMEM_MOVEABLE, buffer_size);
-            GX_ASSERT(memory != nullptr);
-
-            if (memory != nullptr)
-            {
-                LPVOID data = GlobalLock(memory);
-                GX_ASSERT(data != nullptr);
-
-                if (data != nullptr)
-                {
-                    std::memcpy(data, wvalue.data(), buffer_size);
-                    result = true;
-
-                    GlobalUnlock(memory);
-                }
-
-                if (SetClipboardData(CF_UNICODETEXT, memory) == nullptr)
-                {
-                    GX_ASSERTF(false, "Cannot set clipboard data");
-                }
-
-                GlobalFree(memory);
-            }
-
-            CloseClipboard();
-        }
-
-        if (result)
-        {
-            return Status::Success;
-        }
-
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::NotImplemented;
     }
 
     BASE_API Status GetEnvironmentVariable(
@@ -288,79 +201,18 @@ namespace Graphyte::System
     }
 
     BASE_API Status Execute(
-        const char* type,
-        const char* command,
-        const char* params
+        [[maybe_unused]] const char* type,
+        [[maybe_unused]] const char* command,
+        [[maybe_unused]] const char* params
     ) noexcept
     {
-        //
-        // Convert argument strings.
-        //
-
-        std::wstring const wtype = Impl::WidenString(type);
-        std::wstring const wcommand = Impl::WidenString(command);
-        std::wstring const wparams = Impl::WidenString(params);
-
-        HINSTANCE handle = ShellExecuteW(
-            nullptr,
-            wtype.c_str(),
-            wcommand.c_str(),
-            wparams.c_str(),
-            nullptr,
-            SW_SHOWNORMAL
-        );
-
-
-        //
-        // Note:
-        //  According to documentation, this function returns value greater than 32 when function succeeds.
-        //  https://msdn.microsoft.com/en-us/library/windows/desktop/bb762153%28v=vs.85%29.aspx
-        //
-
-        if (handle > reinterpret_cast<HINSTANCE>(32))
-        {
-            return Status::Success;
-        }
-
-        return Status::Failure;
+        return Status::NotImplemented;
     }
 
     BASE_API Status Explore(
-        const char* path
+        [[maybe_unused]] const char* path
     ) noexcept
     {
-        std::wstring const wpath = Impl::WidenString(path);
-
-        bool success;
-
-        if (Storage::IFileSystem::GetPlatformNative().Exists(path) == Status::Success)
-        {
-            success = ShellExecuteW(
-                nullptr,
-                L"explore",
-                wpath.c_str(),
-                nullptr,
-                nullptr,
-                SW_SHOWNORMAL
-            ) != nullptr;
-        }
-        else
-        {
-            std::wstring params{ L"/select," };
-            params += wpath;
-
-            success = ShellExecuteW(
-                nullptr,
-                L"open",
-                L"explorer.exe",
-                params.c_str(),
-                nullptr,
-                SW_SHOWNORMAL
-            ) != nullptr;
-        }
-
-        return success
-            ? Status::Success
-            : Status::Failure;
+        return Status::NotImplemented;
     }
 }

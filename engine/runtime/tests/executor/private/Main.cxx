@@ -14,14 +14,14 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp
     Graphyte::Version{ 1, 0, 0, 0 }
 };
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #include <io.h>
 #include <fcntl.h>
 #endif
 
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
     ::_setmode(::_fileno(stdout), _O_TEXT);
 #endif
 

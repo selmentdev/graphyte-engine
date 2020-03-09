@@ -2,7 +2,7 @@
 #include <Graphyte/Storage/Path.hxx>
 #include <Graphyte/System.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #include <Graphyte/System/Impl.Windows/Windows.Helpers.hxx>
 #endif
 
@@ -10,7 +10,7 @@ namespace Graphyte::AssetsPipeline
 {
     std::string PlatformToolchain::GetWindowsSdkVersion() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
         static std::string version{};
 
         if (version.empty())
@@ -26,7 +26,7 @@ namespace Graphyte::AssetsPipeline
 
     std::string PlatformToolchain::GetWindowsSdkLocation() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
         static std::string path{};
 
         if (path.empty())
@@ -43,7 +43,7 @@ namespace Graphyte::AssetsPipeline
 
     std::string PlatformToolchain::GetWindowsSdkBinary() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
         static std::string path = GetWindowsSdkLocation();
 
         if (!path.empty())

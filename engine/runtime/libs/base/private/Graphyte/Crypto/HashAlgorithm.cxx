@@ -1,5 +1,7 @@
 #include <Graphyte/Crypto/HashAlgorithm.hxx>
 
+#if !GRAPHYTE_PLATFORM_UWP
+
 #include <mbedtls/md.h>
 
 namespace Graphyte::Crypto::MbedtlsHelpers::Impl
@@ -122,12 +124,15 @@ namespace Graphyte::Crypto
     };
 }
 
+#endif
+
 namespace Graphyte::Crypto
 {
     std::unique_ptr<HashAlgorithm> HashAlgorithm::Create(
-        HashType hashType
+        [[maybe_unused]] HashType hashType
     ) noexcept
     {
+#if !GRAPHYTE_PLATFORM_UWP
         mbedtls_md_type_t const type = MbedtlsHelpers::Impl::GetType(hashType);
         const mbedtls_md_info_t* const info = mbedtls_md_info_from_type(type);
 
@@ -137,14 +142,18 @@ namespace Graphyte::Crypto
         }
 
         return std::make_unique<MbedtlsCryptoProvider>(info);
+#else
+        return {};
+#endif
     }
 
     bool HashAlgorithm::ComputeHash(
-        HashType hashType,
-        std::vector<std::byte>& output,
-        notstd::span<const std::byte> input
+        [[maybe_unused]] HashType hashType,
+        [[maybe_unused]] std::vector<std::byte>& output,
+        [[maybe_unused]] notstd::span<const std::byte> input
     ) noexcept
     {
+#if !GRAPHYTE_PLATFORM_UWP
         mbedtls_md_type_t const type = MbedtlsHelpers::Impl::GetType(hashType);
         const mbedtls_md_info_t* const info = mbedtls_md_info_from_type(type);
 
@@ -173,5 +182,8 @@ namespace Graphyte::Crypto
         }
 
         return false;
+#else
+        return false;
+#endif
     }
 }

@@ -32,14 +32,22 @@ namespace Graphyte::Storage
         DWORD dwShare = static_cast<DWORD>(FILE_SHARE_READ | (share_write ? FILE_SHARE_WRITE : 0));
         DWORD dwCreate = static_cast<DWORD>(OPEN_EXISTING);
 
-        HANDLE handle = CreateFileW(
+        CREATEFILE2_EXTENDED_PARAMETERS create_parameters{
+            .dwSize = sizeof(CREATEFILE2_EXTENDED_PARAMETERS),
+            .dwFileAttributes = FILE_ATTRIBUTE_NORMAL,
+            .dwFileFlags = 0,
+            .dwSecurityQosFlags = 0,
+            .lpSecurityAttributes = nullptr,
+            .hTemplateFile = nullptr,
+        };
+
+        HANDLE handle = CreateFile2(
             wpath.data(),
             dwAccess,
             dwShare,
-            nullptr,
             dwCreate,
-            FILE_ATTRIBUTE_NORMAL,
-            nullptr);
+            &create_parameters
+        );
 
         if (handle != INVALID_HANDLE_VALUE)
         {
@@ -66,14 +74,23 @@ namespace Graphyte::Storage
         DWORD dwShare = static_cast<DWORD>(share_read ? FILE_SHARE_READ : 0);
         DWORD dwCreate = static_cast<DWORD>(append ? OPEN_ALWAYS : CREATE_ALWAYS);
 
-        HANDLE handle = CreateFileW(
+        CREATEFILE2_EXTENDED_PARAMETERS create_parameters{
+            .dwSize = sizeof(CREATEFILE2_EXTENDED_PARAMETERS),
+            .dwFileAttributes = FILE_ATTRIBUTE_NORMAL,
+            .dwFileFlags = 0,
+            .dwSecurityQosFlags = 0,
+            .lpSecurityAttributes = nullptr,
+            .hTemplateFile = nullptr,
+        };
+
+        HANDLE handle = CreateFile2(
             wpath.data(),
             dwAccess,
             dwShare,
-            nullptr,
             dwCreate,
-            FILE_ATTRIBUTE_NORMAL,
-            nullptr);
+            &create_parameters
+        );
+
 
         if (handle != INVALID_HANDLE_VALUE)
         {
@@ -213,21 +230,11 @@ namespace Graphyte::Storage
     }
 
     Status WindowsFileSystem::FileMove(
-        const std::string& destination,
-        const std::string& source
+        [[maybe_unused]] const std::string& destination,
+        [[maybe_unused]] const std::string& source
     ) noexcept
     {
-        System::Impl::WindowsPath wdestination{};
-        System::Impl::WidenStringPath(wdestination, destination);
-        System::Impl::WindowsPath wsource{};
-        System::Impl::WidenStringPath(wsource, source);
-
-        if (MoveFileW(wsource.data(), wdestination.data()) != FALSE)
-        {
-            return Status::Success;
-        }
-
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::NotSupported;
     }
 
     Status WindowsFileSystem::FileDelete(

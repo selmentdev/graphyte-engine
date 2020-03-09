@@ -1,7 +1,7 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
 
-#if !GRAPHYTE_PLATFORM_WINDOWS
+#if !(GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP)
 #   error "This header is usable only for Windows platform"
 #endif
 

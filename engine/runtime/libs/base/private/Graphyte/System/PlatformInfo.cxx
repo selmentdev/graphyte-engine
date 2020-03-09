@@ -27,7 +27,7 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetFileManagerName() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         return "explorer.exe";
 
@@ -42,7 +42,7 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetModuleExtension() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         return "dll";
 
@@ -57,7 +57,7 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetModulePrefix() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         return "lib";
 
@@ -72,7 +72,7 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetExecutableExtension() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         return "exe";
 

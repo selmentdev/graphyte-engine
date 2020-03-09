@@ -67,7 +67,7 @@ namespace Graphyte::Network
 
         GX_ASSERT(Impl::Windows::GNetworkListManager != nullptr);
 
-
+#elif GRAPHYTE_PLATFORM_UWP
 #elif GRAPHYTE_PLATFORM_LINUX
 #else
 #   error Not supported
@@ -113,6 +113,11 @@ namespace Graphyte::Network
 
         status = false;
         return Status::Failure;
+
+#elif GRAPHYTE_PLATFORM_UWP
+
+        status = false;
+        return Status::NotImplemented;
 
 #elif GRAPHYTE_PLATFORM_LINUX
 

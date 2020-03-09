@@ -43,11 +43,11 @@ namespace Graphyte::System
 
         if (Flags::Has(flags, CreateProcessFlags::Hidden))
         {
-            dw_flags = STARTF_USESHOWWINDOW;
+            //dw_flags = STARTF_USESHOWWINDOW;
         }
         else if (Flags::Has(flags, CreateProcessFlags::Minimized))
         {
-            dw_flags = STARTF_USESHOWWINDOW;
+            //dw_flags = STARTF_USESHOWWINDOW;
             w_show_window_flags = SW_SHOWMINNOACTIVE;
         }
 
@@ -57,7 +57,7 @@ namespace Graphyte::System
 
         if (pipe_stdin != nullptr && pipe_stdout != nullptr && pipe_stderr != nullptr)
         {
-            dw_flags |= STARTF_USESTDHANDLES;
+            //dw_flags |= STARTF_USESTDHANDLES;
             native_stdin_pipe = pipe_stdin->Handle;
             native_stdout_pipe = pipe_stdout->Handle;
             native_stderr_pipe = pipe_stderr->Handle;
@@ -184,42 +184,9 @@ namespace Graphyte::System
 
     void Process::Terminate(
         ProcessHandle& handle,
-        bool tree
+        [[maybe_unused]] bool tree
     ) noexcept
     {
-        if (tree)
-        {
-            HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-
-            if (snapshot != INVALID_HANDLE_VALUE)
-            {
-                DWORD process_id = GetProcessId(handle.Handle);
-
-                PROCESSENTRY32 entry{
-                    .dwSize = sizeof(PROCESSENTRY32),
-                };
-
-                if (Process32First(snapshot, &entry) != FALSE)
-                {
-                    do
-                    {
-                        if (entry.th32ParentProcessID == process_id)
-                        {
-                            HANDLE child_handle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
-
-                            if (child_handle != nullptr)
-                            {
-                                ProcessHandle child{ child_handle };
-                                Terminate(child, tree);
-                            }
-                        }
-                    } while (Process32Next(snapshot, &entry) != FALSE);
-                }
-
-                CloseHandle(snapshot);
-            }
-        }
-
         TerminateProcess(handle.Handle, 0);
     }
 
@@ -239,7 +206,7 @@ namespace Graphyte::System
 
         DWORD dw_create_flags = NORMAL_PRIORITY_CLASS | DETACHED_PROCESS;
 
-        DWORD dw_flags = STARTF_USESHOWWINDOW;
+        DWORD dw_flags = 0;// STARTF_USESHOWWINDOW;
         WORD w_show_window_flags = SW_SHOWMINNOACTIVE;
 
         std::array<PipeHandle, 2> pipe_read{};
@@ -249,12 +216,12 @@ namespace Graphyte::System
 
         if (redirect_output)
         {
-            dw_flags |= STARTF_USESTDHANDLES;
+            //dw_flags |= STARTF_USESTDHANDLES;
 
             for (size_t i = 0; i < std::size(pipe_read); ++i)
             {
                 CreatePipe(&pipe_read[i].Handle, &pipe_write[i].Handle, &security_attributes, 0);
-                SetHandleInformation(pipe_read[i].Handle, HANDLE_FLAG_INHERIT, 0);
+                //SetHandleInformation(pipe_read[i].Handle, HANDLE_FLAG_INHERIT, 0);
             }
         }
 
@@ -327,7 +294,7 @@ namespace Graphyte::System
             CloseHandle(process_information.hProcess);
             CloseHandle(process_information.hThread);
 
-            result.Status = Status::Success;
+            result.StatusCode = Status::Success;
             result.ExitCode = static_cast<int32_t>(dw_exit_code);
         }
         else
@@ -341,9 +308,8 @@ namespace Graphyte::System
                 }
             }
 
-            Status status = Diagnostics::GetStatusFromSystemError();
             result.ExitCode = 0;
-            result.Status = status;
+            result.StatusCode = Diagnostics::GetStatusFromSystemError();
         }
 
         if (redirect_output)
@@ -359,15 +325,6 @@ namespace Graphyte::System
 
     DateTime Process::GetLinkTime() noexcept
     {
-        HMODULE handle = GetModuleHandleW(nullptr);
-        IMAGE_NT_HEADERS* header = ImageNtHeader(handle);
-
-        GX_ASSERT(header != nullptr);
-        if (header != nullptr)
-        {
-            return DateTime::FromUnixTimestamp(header->FileHeader.TimeDateStamp);
-        }
-
         return {};
     }
 

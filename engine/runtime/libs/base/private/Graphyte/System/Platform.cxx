@@ -5,7 +5,7 @@
 #elif GRAPHYTE_CPU_ARM_32 || GRAPHYTE_CPU_ARM_64
 #   if GRAPHYTE_PLATFORM_LINUX
 #       include "Impl.Linux/ProcessorFeatures.arm.hxx"
-#   elif GRAPHYTE_PLATFORM_WINDOWS
+#   elif GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #       include "Impl.Windows/ProcessorFeatures.arm.hxx"
 #   else
 #       error "Not implemented"

@@ -1,10 +1,10 @@
 #include <Graphyte/Threading/Thread.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #include <Graphyte/System/Impl.Windows/Windows.Helpers.hxx>
 #endif
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
 static_assert(sizeof(unsigned) == sizeof(DWORD));
 static_assert(alignof(unsigned) == alignof(DWORD));
@@ -158,7 +158,7 @@ namespace Graphyte::Threading::Impl
         [[maybe_unused]] std::string_view name
     ) noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #if WDK_NTDDI_VERSION < NTDDI_WIN10_RS1
         if (IsDebuggerPresent() != FALSE)
         {
@@ -227,7 +227,7 @@ namespace Graphyte::Threading
 
         GX_ASSERT(runnable != nullptr);
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         m_Handle.Value = reinterpret_cast<HANDLE>(_beginthreadex(
             nullptr,
@@ -263,7 +263,7 @@ namespace Graphyte::Threading
                 Impl::SetThreadName(m_Handle, m_Id, name);
             }
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
             //
             // Thread was created suspended. Resume it.
@@ -296,7 +296,7 @@ namespace Graphyte::Threading
             this->Join();
         }
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         CloseHandle(m_Handle.Value);
         m_Handle.Value = nullptr;
@@ -312,7 +312,7 @@ namespace Graphyte::Threading
     {
         GX_ABORT_UNLESS(m_Handle.IsValid(), "Thread not created");
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         WaitForSingleObject(m_Handle.Value, INFINITE);
 
@@ -331,7 +331,7 @@ namespace Graphyte::Threading
     {
         GX_ABORT_UNLESS(m_Handle.IsValid(), "Thread not created");
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         SetThreadAffinityMask(m_Handle.Value, static_cast<DWORD_PTR>(affinity));
 
@@ -348,7 +348,7 @@ namespace Graphyte::Threading
     {
         GX_ABORT_UNLESS(m_Handle.IsValid(), "Thread not created");
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         SetThreadPriority(m_Handle.Value, Impl::ConvertThreadPriority(priority));
 

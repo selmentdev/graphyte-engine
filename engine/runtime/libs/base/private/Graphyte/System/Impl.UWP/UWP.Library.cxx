@@ -9,7 +9,7 @@ namespace Graphyte::System
         System::Impl::WindowsPath wpath{};
         System::Impl::WidenStringPath(wpath, path);
 
-        HMODULE const native = LoadLibraryExW(wpath.data(), nullptr, 0);
+        HMODULE const native = LoadPackagedLibrary(wpath.data(), 0);
 
         if (native != nullptr)
         {

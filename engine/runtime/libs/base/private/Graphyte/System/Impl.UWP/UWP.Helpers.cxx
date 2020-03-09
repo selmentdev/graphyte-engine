@@ -6,77 +6,21 @@ namespace Graphyte::System::Impl
     BASE_API HINSTANCE GInstanceHandle{};
 
     BASE_API bool IsSystemVersion(
-        uint32_t major,
-        uint32_t minor
+        [[maybe_unused]] uint32_t major,
+        [[maybe_unused]] uint32_t minor
     ) noexcept
     {
-        OSVERSIONINFOEXW osie{
-            .dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXW),
-            .dwMajorVersion = static_cast<DWORD>(major),
-            .dwMinorVersion = static_cast<DWORD>(minor),
-        };
-
-        ULONGLONG conditionMask = 0;
-        conditionMask = VerSetConditionMask(conditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
-        conditionMask = VerSetConditionMask(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
-
-        return VerifyVersionInfoW(&osie, VER_MAJORVERSION | VER_MINORVERSION, conditionMask) != FALSE;
+        return false;
     }
 
     BASE_API bool QueryRegistry(
-        HKEY key,
-        const wchar_t* subkey,
-        const wchar_t* name,
-        std::string& result
+        [[maybe_unused]] HKEY key,
+        [[maybe_unused]] const wchar_t* subkey,
+        [[maybe_unused]] const wchar_t* name,
+        [[maybe_unused]] std::string& result
     ) noexcept
     {
-        GX_ASSERT(subkey != nullptr);
-        GX_ASSERT(name != nullptr);
-
-        bool succeeded = false;
-
-        const uint32_t key_flags[] = {
-            KEY_WOW64_32KEY,
-            KEY_WOW64_64KEY
-        };
-
-        for (auto const key_flag : key_flags)
-        {
-            if (succeeded)
-            {
-                continue;
-            }
-
-            HKEY current = nullptr;
-
-            if (RegOpenKeyExW(key, subkey, 0, KEY_READ | key_flag, &current) == ERROR_SUCCESS)
-            {
-                DWORD dw_size = 0;
-
-                if (RegQueryValueExW(current, name, nullptr, nullptr, nullptr, &dw_size) == ERROR_SUCCESS)
-                {
-                    size_t const chars_count = static_cast<size_t>(dw_size / sizeof(wchar_t));
-
-                    if (chars_count != 0)
-                    {
-                        //
-                        // Storage for key value.
-                        //
-                        std::wstring data(chars_count - 1, L' ');
-
-                        if (RegQueryValueExW(current, name, nullptr, nullptr, reinterpret_cast<LPBYTE>(data.data()), &dw_size) == ERROR_SUCCESS)
-                        {
-                            result = Impl::NarrowString(data);
-                            succeeded = true;
-                        }
-                    }
-                }
-
-                RegCloseKey(current);
-            }
-        }
-
-        return succeeded;
+        return false;
     }
 
     BASE_API std::string NarrowString(

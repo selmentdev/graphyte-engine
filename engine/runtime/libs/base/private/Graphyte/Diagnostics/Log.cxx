@@ -4,7 +4,7 @@
 
 #include "Diagnostics.Impl.hxx"
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #   include <io.h>
 #endif
 

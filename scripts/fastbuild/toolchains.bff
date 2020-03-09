@@ -98,6 +98,8 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 
     .PlatformDefines = {
         '_WIN32'
+        '_WIN32_WINNT=0x0A00'
+        'WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP'
         '__WINDOWS__'
         '__STDC_WANT_LIB_EXT1__=1'
         '__STDINT_MACROS'
@@ -146,6 +148,8 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 
     .PlatformDefines = {
         '_WIN32'
+        '_WIN32_WINNT=0x0A00'
+        'WINAPI_FAMILY=WINAPI_FAMILY_PC_APP'
         '__WINDOWS__'
         '__STDC_WANT_LIB_EXT1__=1'
         '__STDINT_MACROS'

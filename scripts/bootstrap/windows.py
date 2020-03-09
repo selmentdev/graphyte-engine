@@ -28,7 +28,8 @@ def _enumerate_all_windows_10_sdk_kits():
     required_options : set[str] = {
         'OptionId.DesktopCPPx64',
         'OptionId.DesktopCPParm64',
-        'OptionId.SigningTools'
+        'OptionId.SigningTools',
+        'OptionId.UWPCPP',
     }
 
 

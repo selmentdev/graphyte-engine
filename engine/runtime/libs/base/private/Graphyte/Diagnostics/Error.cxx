@@ -83,7 +83,7 @@ namespace Graphyte::Diagnostics
 
         return { result };
 
-#elif GRAPHYTE_PLATFORM_WINDOWS
+#elif GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         char buffer[128];
         strerror_s(buffer, error);

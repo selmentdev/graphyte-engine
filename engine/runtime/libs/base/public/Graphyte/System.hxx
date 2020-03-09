@@ -555,6 +555,7 @@ namespace Graphyte::System
         RaspberryPI,
         SteamLink,
         Windows,
+        UWP,
         XBoxOne,
     };
 
@@ -580,6 +581,8 @@ namespace Graphyte::System
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::SteamLink;
 #elif GRAPHYTE_PLATFORM_WINDOWS
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::Windows;
+#elif GRAPHYTE_PLATFORM_UWP
+    inline constexpr const PlatformType CurrentPlatformType = PlatformType::UWP;
 #elif GRAPHYTE_PLATFORM_XBOXONE
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::XBoxOne;
 #endif

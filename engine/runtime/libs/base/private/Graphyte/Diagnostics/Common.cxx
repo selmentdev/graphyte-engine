@@ -16,11 +16,11 @@
 #   include <signal.h>
 #endif
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #   include <io.h>
 #endif
 
-#if GRAPHYTE_PLATFORM_WINDOWS && GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#if (GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP) && GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
 #include <DbgHelp.h>
 #endif
 
@@ -170,7 +170,7 @@ namespace Graphyte::Diagnostics
 
         if (Application::GetDescriptor().Type == Application::ApplicationType::ConsoleTool)
         {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
             if (_isatty(_fileno(stdout)))
 #endif
             {
@@ -248,7 +248,7 @@ namespace Graphyte::Diagnostics
 
     BASE_API bool IsDebuggerAttached() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         return IsDebuggerPresent() != FALSE;
 
@@ -303,7 +303,7 @@ namespace Graphyte::Diagnostics
 
         Impl::FinishLogOutput();
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         ExitProcess(static_cast<UINT>(exitCode));
 
@@ -337,7 +337,7 @@ namespace Graphyte::Diagnostics
         // And fail application.
         //
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         RaiseFailFastException(nullptr, nullptr, 0);
         TerminateProcess(GetCurrentProcess(), 1);

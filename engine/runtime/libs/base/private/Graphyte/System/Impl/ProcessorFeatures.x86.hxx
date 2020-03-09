@@ -29,7 +29,7 @@ namespace Graphyte::System::Impl
             uint32_t subleaf
         ) noexcept
         {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
             __cpuidex(as_int, static_cast<int>(leaf), static_cast<int>(subleaf));
 #elif GRAPHYTE_PLATFORM_LINUX
             __cpuid_count(leaf, subleaf, as_int[0], as_int[1], as_int[2], as_int[3]);
