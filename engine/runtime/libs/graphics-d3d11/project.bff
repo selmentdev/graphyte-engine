@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'com.graphyte.graphics.d3d11'
+        .ProjectName = 'GxGraphicsD3D11'
         .ProjectPath = 'engine/runtime/libs/graphics-d3d11'
         .ProjectKind = 'SharedLib'
         .ProjectType = 'Plugin'
@@ -16,9 +16,9 @@
             'engine/runtime/libs/graphics/public'
         }
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
-            'com.graphyte.graphics'
+            'SdkFmt'
+            'GxBase'
+            'GxGraphics'
         }
 
         .VariantDef_Windows = [

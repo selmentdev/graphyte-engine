@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'com.graphyte.launch'
+        .ProjectName = 'GxLaunch'
         .ProjectPath = 'engine/runtime/libs/launch'
         .ProjectKind = 'StaticLib'
         .ProjectType = 'Module'
@@ -15,9 +15,9 @@
             'engine/runtime/libs/graphics/public'
         }
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
-            'com.graphyte.graphics'
+            'SdkFmt'
+            'GxBase'
+            'GxGraphics'
         }
     ]
 

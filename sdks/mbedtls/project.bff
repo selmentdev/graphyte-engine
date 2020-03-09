@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'sdk.mbedtls'
+        .ProjectName = 'SdkMbedtls'
         .ProjectPath = 'sdks/mbedtls'
         .ProjectLanguage = 'CC'
         .ProjectKind = 'StaticLib'

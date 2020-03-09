@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'com.graphyte.assets.base'
+        .ProjectName = 'GxAssetsBase'
         .ProjectPath = 'engine/developer/assets/libs/base'
         .ProjectKind = 'SharedLib'
         .ProjectType = 'Module'
@@ -16,8 +16,8 @@
             'engine/runtime/libs/base/public'
         }
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
+            'SdkFmt'
+            'GxBase'
         }
     ]
     ^Global_ProjectList + .ProjectDefinition

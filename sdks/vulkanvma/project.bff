@@ -1,7 +1,7 @@
 #if exists(VULKAN_SDK)
 {
     .ProjectDefinition = [
-        .ProjectName = 'sdk.vulkanvma'
+        .ProjectName = 'SdkVulkanVMA'
         .ProjectPath = 'sdks/vulkanvma'
         .ProjectKind = 'StaticLib'
         .ProjectType = 'Module'

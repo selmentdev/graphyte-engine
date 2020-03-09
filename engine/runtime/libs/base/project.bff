@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'com.graphyte.base'
+        .ProjectName = 'GxBase'
         .ProjectPath = 'engine/runtime/libs/base'
         .ProjectKind = 'SharedLib'
         .ProjectType = 'Module'
@@ -17,8 +17,8 @@
         }
 
         .ProjectImports = {
-            'sdk.fmt'
-            'sdk.lz4'
+            'SdkFmt'
+            'SdkLz4'
         }
 
         // Platform specific configurations
@@ -65,7 +65,7 @@
                 'Mincore.lib'
             }
             .VariantImports = {        
-                'sdk.mbedtls'
+                'SdkMbedtls'
             }
         ]
 
@@ -80,7 +80,7 @@
                 'unwind-generic'
             }
             .VariantImports = {        
-                'sdk.mbedtls'
+                'SdkMbedtls'
             }
         ]
 

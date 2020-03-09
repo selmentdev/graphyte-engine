@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'sdk.lz4'
+        .ProjectName = 'SdkLz4'
         .ProjectPath = 'sdks/lz4'
         .ProjectKind = 'StaticLib'
         .ProjectType = 'Module'

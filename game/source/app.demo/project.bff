@@ -7,10 +7,10 @@
         .ProjectComponent = 'Game'
 
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
-            'com.graphyte.launch'
-            'com.graphyte.graphics'
+            'SdkFmt'
+            'GxBase'
+            'GxLaunch'
+            'GxGraphics'
         }
 
         .ProjectIncludes = {

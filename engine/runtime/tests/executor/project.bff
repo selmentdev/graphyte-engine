@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'test.graphyte.executor'
+        .ProjectName = 'GxTestExecutor'
         .ProjectPath = 'engine/runtime/tests/executor'
         .ProjectKind = 'StaticLib'
         .ProjectType = 'Module'

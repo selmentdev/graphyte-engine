@@ -1,7 +1,7 @@
 #if exists(VULKAN_SDK)
 {
     .ProjectDefinition = [
-        .ProjectName = 'com.graphyte.graphics.vulkan'
+        .ProjectName = 'GxGraphicsVulkan'
         .ProjectPath = 'engine/runtime/libs/graphics-vulkan'
         .ProjectKind = 'SharedLib'
         .ProjectType = 'Plugin'
@@ -17,10 +17,10 @@
         }
 
         .ProjectImports = {
-            'sdk.fmt'
-            'sdk.vulkanvma'
-            'com.graphyte.base'
-            'com.graphyte.graphics'
+            'SdkFmt'
+            'SdkVulkanVMA'
+            'GxBase'
+            'GxGraphics'
         }
 
         .VariantDef_Windows = [

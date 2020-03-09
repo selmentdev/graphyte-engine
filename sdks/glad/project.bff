@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'sdk.glad'
+        .ProjectName = 'SdkGlad'
         .ProjectPath = 'sdks/glad'
         .ProjectKind = 'StaticLib'
         .ProjectSelector = { 'Windows-x64', 'Linux', 'Android' }

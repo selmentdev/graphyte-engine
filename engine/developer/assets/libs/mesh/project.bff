@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'com.graphyte.assets.mesh'
+        .ProjectName = 'GxAssetsMesh'
         .ProjectPath = 'engine/developer/assets/libs/mesh'
         .ProjectKind = 'SharedLib'
         .ProjectType = 'Module'
@@ -19,11 +19,11 @@
             'engine/developer/assets/libs/base/public'
         }
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
-            'com.graphyte.graphics'
-            'com.graphyte.geometry'
-            'com.graphyte.assets.base'
+            'SdkFmt'
+            'GxBase'
+            'GxGraphics'
+            'GxGeometry'
+            'GxAssetsBase'
         }
     ]
     ^Global_ProjectList + .ProjectDefinition

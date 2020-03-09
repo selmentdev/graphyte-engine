@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'sdk.fmt'
+        .ProjectName = 'SdkFmt'
         .ProjectPath = 'sdks/fmt'
         .ProjectKind = 'SharedLib'
         .ProjectType = 'Module'

@@ -32,22 +32,22 @@ namespace Graphyte::Graphics::Impl
 
         if (force_glcore && graphicsModule == nullptr)
         {
-            graphicsModule = ModuleManager::Load<IGraphicsModule>("com.graphyte.graphics.glcore", &status);
+            graphicsModule = ModuleManager::Load<IGraphicsModule>("GxGraphicsGLCore", &status);
         }
 
         if (force_vulkan && graphicsModule == nullptr)
         {
-            graphicsModule = ModuleManager::Load<IGraphicsModule>("com.graphyte.graphics.vulkan", &status);
+            graphicsModule = ModuleManager::Load<IGraphicsModule>("GxGraphicsVulkan", &status);
         }
 
         if (force_d3d11 && graphicsModule == nullptr)
         {
-            graphicsModule = ModuleManager::Load<IGraphicsModule>("com.graphyte.graphics.d3d11", &status);
+            graphicsModule = ModuleManager::Load<IGraphicsModule>("GxGraphicsD3D11", &status);
         }
 
         if (force_d3d11 && graphicsModule == nullptr)
         {
-            graphicsModule = ModuleManager::Load<IGraphicsModule>("com.graphyte.graphics.d3d12", &status);
+            graphicsModule = ModuleManager::Load<IGraphicsModule>("GxGraphicsD3D12", &status);
         }
 
         if (status != Status::Success)

@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'com.graphyte.assets.shader'
+        .ProjectName = 'GxAssetsShader'
         .ProjectPath = 'engine/developer/assets/libs/shader'
         .ProjectKind = 'SharedLib'
         .ProjectType = 'Module'
@@ -18,10 +18,10 @@
             'engine/developer/assets/libs/base/public'
         }
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
-            'com.graphyte.graphics'
-            'com.graphyte.assets.base'
+            'SdkFmt'
+            'GxBase'
+            'GxGraphics'
+            'GxAssetsBase'
         }
     ]
     ^Global_ProjectList + .ProjectDefinition

@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'com.graphyte.geometry'
+        .ProjectName = 'GxGeometry'
         .ProjectPath = 'engine/runtime/libs/geometry'
         .ProjectKind = 'SharedLib'
         .ProjectType = 'Module'
@@ -14,8 +14,8 @@
             'engine/runtime/libs/base/public'
         }
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
+            'SdkFmt'
+            'GxBase'
         }
     ]
 

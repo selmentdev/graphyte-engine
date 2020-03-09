@@ -1,17 +1,17 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'test.graphyte.maths'
+        .ProjectName = 'TestGxMaths'
         .ProjectPath = 'engine/runtime/tests/maths'
         .ProjectKind = 'ConsoleApp'
         .ProjectType = 'UnitTest'
         .ProjectComponent = 'Engine'
 
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
-            'com.graphyte.launch'
-            'com.graphyte.graphics'
-            'test.graphyte.executor'
+            'SdkFmt'
+            'GxBase'
+            'GxLaunch'
+            'GxGraphics'
+            'GxTestExecutor'
         }
 
         .ProjectIncludes = {

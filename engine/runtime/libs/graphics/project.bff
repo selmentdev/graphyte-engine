@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'com.graphyte.graphics'
+        .ProjectName = 'GxGraphics'
         .ProjectPath = 'engine/runtime/libs/graphics'
         .ProjectKind = 'SharedLib'
         .ProjectType = 'Module'
@@ -14,8 +14,8 @@
             'engine/runtime/libs/base/public'
         }
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
+            'SdkFmt'
+            'GxBase'
         }
     ]
 

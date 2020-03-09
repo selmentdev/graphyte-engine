@@ -1,5 +1,5 @@
 .ProjectDefinition = [
-    .ProjectName = 'com.graphyte.rendering'
+    .ProjectName = 'GxRendering'
     .ProjectPath = 'engine/runtime/libs/rendering'
     .ProjectKind = 'SharedLib'
     .ProjectDefines = {
@@ -12,10 +12,10 @@
         'engine/runtime/libs/geometry/public'
     }
     .ProjectImports = {
-        'sdk.fmt'
-        'com.graphyte.base'
-        'com.graphyte.graphics'
-        'com.graphyte.geometry'
+        'SdkFmt'
+        'GxBase'
+        'GxGraphics'
+        'GxGeometry'
     }
     .ProjectTargets = {}
 ]

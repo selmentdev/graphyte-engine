@@ -16,12 +16,12 @@
             'engine/developer/assets/libs/shader/public'
         }
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
-            'com.graphyte.graphics'
-            'com.graphyte.launch'
-            'com.graphyte.assets.base'
-            'com.graphyte.assets.shader'
+            'SdkFmt'
+            'GxBase'
+            'GxGraphics'
+            'GxLaunch'
+            'GxAssetsBase'
+            'GxAssetsShader'
         }
 
         .VariantDef_Windows = [

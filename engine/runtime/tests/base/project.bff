@@ -1,6 +1,6 @@
 {
     .ProjectDefinition = [
-        .ProjectName = 'test.graphyte.base'
+        .ProjectName = 'TestGxBase'
         .ProjectPath = 'engine/runtime/tests/base'
         .ProjectKind = 'ConsoleApp'
 
@@ -8,11 +8,11 @@
         .ProjectComponent = 'Engine'
 
         .ProjectImports = {
-            'sdk.fmt'
-            'com.graphyte.base'
-            'com.graphyte.launch'
-            'com.graphyte.graphics'
-            'test.graphyte.executor'
+            'SdkFmt'
+            'GxBase'
+            'GxLaunch'
+            'GxGraphics'
+            'GxTestExecutor'
         }
 
         .ProjectIncludes = {
