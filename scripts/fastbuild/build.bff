@@ -3,16 +3,13 @@
 //      This scripts generates targets for all projects, platforms, compilers and architectures with
 //      proper Visual Studio solutions.
 
-ForEach(.CurrentPlatform in .GxPlatforms)
-{
+ForEach(.CurrentPlatform in .GxPlatforms) {
     Using(.'GxPlatformDef_$CurrentPlatform$')
 
-    ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$')
-    {
+    ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$') {
         Using(.'GxToolchainDef_Compiler_$CurrentCompiler$')
 
-        ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$')
-        {
+        ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
             Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
             Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$_Platform_$CurrentPlatform$')
 
@@ -20,15 +17,12 @@ ForEach(.CurrentPlatform in .GxPlatforms)
             {
                 .ResIncludePaths = ''
 
-                ForEach(.CurrentIncludePath in .PlatformIncludes)
-                {
+                ForEach(.CurrentIncludePath in .PlatformIncludes) {
                     ^ResIncludePaths + ' /I"$CurrentIncludePath$"'
                 }
 
-                ForEach(.CurrentConfig in .ValidConfigurations)
-                {
-                    ObjectList('Graphyte-Resources-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$')
-                    {
+                ForEach(.CurrentConfig in .ValidConfigurations) {
+                    ObjectList('Graphyte-Resources-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') {
                         .Compiler = 'Compiler-Windows-ResourceCompiler'
                         .CompilerInputFiles = { 'engine/resources/resources.rc' }
                         .CompilerOutputPath = '$OutputBase$/obj/$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$/Graphyte-Resources'
@@ -43,8 +37,7 @@ ForEach(.CurrentPlatform in .GxPlatforms)
                 }
             }
 
-            ForEach(.CurrentConfig in .ValidConfigurations)
-            {
+            ForEach(.CurrentConfig in .ValidConfigurations) {
                 Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Config_$CurrentConfig$')
                 Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_UnitTest_$CurrentConfig$')
 
@@ -54,8 +47,7 @@ ForEach(.CurrentPlatform in .GxPlatforms)
                 // List of targets ran with `Test-All meta-project
                 .MetaRunAllTargets = {}
 
-                ForEach(.CurrentProject in .Global_ProjectList)
-                {
+                ForEach(.CurrentProject in .Global_ProjectList) {
                     // Define project defaults
                     .ProjectSelector = { 'All' }
                     .ProjectType = ''
@@ -73,21 +65,18 @@ ForEach(.CurrentPlatform in .GxPlatforms)
                     Using(.CurrentProject)
 
                     // Validate required project settings
-                    If(.ProjectType not in .ValidProjectTypes)
-                    {
+                    If(.ProjectType not in .ValidProjectTypes) {
                         Print('$ProjectName$ type is `$ProjectType$`')
                         Print(.ValidProjectTypes)
                         Error('Invalid project type')
                     }
 
-                    If (.ProjectComponent not in .ValidProjectComponents)
-                    {
+                    If (.ProjectComponent not in .ValidProjectComponents) {
                         Print('$ProjectName$ component is `$ProjectComponent$`')
                         Error('Invalid project component')
                     }
 
-                    If (.ProjectKind not in .ValidProjectKinds)
-                    {
+                    If (.ProjectKind not in .ValidProjectKinds) {
                         Print('$ProjectName$ kind is `$ProjectKind$`')
                         Error('Invalid project kind')
                     }
@@ -96,10 +85,8 @@ ForEach(.CurrentPlatform in .GxPlatforms)
                     .LocalOutputName = .'Prefix_$ProjectKind$' + .ProjectName + .'Suffix_$ProjectKind$'
 
                     // Define unity files for project supporting them
-                    If(.ProjectComponent_Sdks != .ProjectComponent)
-                    {
-                        Unity('Unity-$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$')
-                        {
+                    If(.ProjectComponent_Sdks != .ProjectComponent) {
+                        Unity('Unity-$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') {
                             .UnityInputPath = '$ProjectPath$'
                             .UnityInputPattern = { '*.cxx' }
                             .UnityOutputPath = '$OutputBase$/unity/$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$' // TODO TEST IT
@@ -138,8 +125,7 @@ ForEach(.CurrentPlatform in .GxPlatforms)
                         '$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
                     }
 
-                    ForEach(.CurrentVariant in .ProjectVariants)
-                    {
+                    ForEach(.CurrentVariant in .ProjectVariants) {
                         // default variant values
                         .VariantFiles = {}
                         .VariantDefines = {}
@@ -150,8 +136,7 @@ ForEach(.CurrentPlatform in .GxPlatforms)
 
                         Using(.CurrentVariant)
 
-                        If (.LocalVariantSelector in .VariantSelector)
-                        {
+                        If (.LocalVariantSelector in .VariantSelector) {
                             // Apply variant specialization
                             ^LocalFiles + .VariantFiles
                             ^LocalIncludes + .VariantIncludes
@@ -303,21 +288,22 @@ ForEach(.CurrentPlatform in .GxPlatforms)
                     }
                 } // For Each Project
 
-                Alias('Build-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$')
-                {
+                //
+                // Define aliases for meta projects.
+                //
+
+                Alias('Build-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') {
                     .Targets = .MetaBuildAllTargets
                 }
-                Alias ('Test-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$')
-                {
+
+                Alias ('Test-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') {
                     .Targets = .MetaRunAllTargets
                 }
             } // For Each Configuration
 
-            Alias('Build-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$')
-            {
+            Alias('Build-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$') {
                 .Targets = {}
-                ForEach(.CurrentConfig in .ValidConfigurations)
-                {
+                ForEach(.CurrentConfig in .ValidConfigurations) {
                     ^Targets + 'Build-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
                 }
             }
@@ -327,7 +313,186 @@ ForEach(.CurrentPlatform in .GxPlatforms)
     } // For Each Compiler
 } // For Each Platform
 
+// -------------------------------------------------------------------------------------------------
+// Define Visual Studio projects
+//
+// Note:
+//      At this point, targets for all meta and regular projects are defined.
+//      Due to design choices in FastBuild and Visual Studio project definitions, this script define
+//      targets even for projects which doesn't make any sense.
+//
+// For each platform, we define separate Visual Studio solution.
+//
 
+// Projects + Meta: targets known from project name
+
+.FbBuildCommand = 'fbuild -ide -cache -monitor -fastcancel -dist'
+.FbRebuildCommand = 'fbuild -ide -clean -cache -monitor -fastcancel -dist'
+.FbCleanCommand = 'fbuild -ide -fastcancel'
+
+ForEach(.CurrentPlatform in .GxPlatforms) {
+    Using(.'GxPlatformDef_$CurrentPlatform$')
+
+    ForEach(.CurrentCompiler in .'GxPlatformCompilers_$CurrentPlatform$') {
+        .VcxProjectsList = []
+        .VcxBuildableProjects = {}
+
+        // Define Visual Studio projects for all projects available
+        ForEach(.CurrentProject in .Global_ProjectList) {
+            // Don't care about defaults - just want to list all projects within solution
+            Using(.CurrentProject)
+
+            VCXProject('$CurrentPlatform$-$CurrentCompiler$-$ProjectName$') {
+                .ProjectConfigs = {}
+
+                ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
+                    Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
+
+                    ForEach(.CurrentConfig in .ValidConfigurations) {
+                        .ConfigEntry = [
+                            .Target = '$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
+                            .Config = '$CurrentConfig$'
+                            .Platform = .VisualStudioPlatform
+                            .SolutionConfig = '$CurrentConfig$'
+                            .SolutionPlatform = '$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$'
+                            .ProjectBuildCommand = 'cd ^$(SolutionDir) &amp; $FbBuildCommand$ $Target$'
+                            .ProjectRebuildCommand = 'cd ^$(SolutionDir) &amp; $FbRebuildCommand$ $Target$'
+                            .ProjectCleanCommand = 'cd ^$(SolutionDir) &amp; $FbCleanCommand$ $Target$-Clean'
+                        ]
+
+                        ^ProjectConfigs + .ConfigEntry
+                    }
+                }
+
+                .ProjectOutput = 'tmp/$CurrentPlatform$-$CurrentCompiler$/$ProjectName$.vcxproj'
+                .ProjectInputPaths = { .ProjectPath }
+                .ProjectBasePath = .ProjectPath
+                .PlatformToolset = 'v142'
+                .OutputDirectory = '^$(SolutionDir)\tmp'
+                .IntermediateDirectory = '^$(SolutionDir)\tmp'
+            }
+            .VcxProjectDescriptor = [
+                .'VcxFolder_$ProjectComponent$$ProjectType$' = { '$CurrentPlatform$-$CurrentCompiler$-$ProjectName$' }
+                .VcxBuildableProjects = { '$CurrentPlatform$-$CurrentCompiler$-$ProjectName$' }
+            ]
+            ^VcxProjectsList + .VcxProjectDescriptor
+            ^VcxBuildableProjects + '$CurrentPlatform$-$CurrentCompiler$-$ProjectName$'
+        }
+
+        VCXProject('$CurrentPlatform$-$CurrentCompiler$-Build-All') {
+            .ProjectConfigs = {}
+
+            ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
+                Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
+
+                ForEach(.CurrentConfig in .ValidConfigurations) {
+                    .ConfigEntry = [
+                        .Target = 'Build-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
+                        .Config = '$CurrentConfig$'
+                        .Platform = .VisualStudioPlatform
+                        .SolutionConfig = '$CurrentConfig$'
+                        .SolutionPlatform = '$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$'
+                        .ProjectBuildCommand = 'cd ^$(SolutionDir) &amp; $FbBuildCommand$ $Target$'
+                        .ProjectRebuildCommand = 'cd ^$(SolutionDir) &amp; $FbRebuildCommand$ $Target$'
+                        .ProjectCleanCommand = 'cd ^$(SolutionDir) &amp; $FbCleanCommand$ $Target$-Clean'
+                    ]
+
+                    ^ProjectConfigs + .ConfigEntry
+                }
+            }
+
+            .ProjectOutput = 'tmp/$CurrentPlatform$-$CurrentCompiler$/Build-All.vcxproj'
+            .PlatformToolset = 'v142'
+            .OutputDirectory = '^$(SolutionDir)\tmp'
+            .IntermediateDirectory = '^$(SolutionDir)\tmp'
+        }
+
+        .MetaProjectsList = { '$CurrentPlatform$-$CurrentCompiler$-Build-All' }
+
+        .SolutionConfigs = {}
+        // Define Visual Studio solution
+        ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
+            Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
+            ForEach(.CurrentConfig in .ValidConfigurations) {
+                .CurrentSolutionConfig = [
+                    .SolutionPlatform = '$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$'
+                    .SolutionConfig = .CurrentConfig
+                    .Platform = .VisualStudioPlatform
+                    .Config = .CurrentConfig
+                ]
+                ^SolutionConfigs + .CurrentSolutionConfig
+            }
+        }
+
+        VSSolution('Graphyte-$CurrentPlatform$-$CurrentCompiler$') {
+           .SolutionOutput = 'Graphyte-$CurrentPlatform$-$CurrentCompiler$.sln'
+
+            Using(.VcxProjectsList)
+
+            .VcxFolderDef_EngineModules = [
+                .Path = 'Engine/Modules'
+                .Projects = .VcxFolder_EngineModule
+            ]
+
+            .VcxFolderDef_EnginePlugins = [
+                .Path = 'Engine/Plugins'
+                .Projects = .VcxFolder_EnginePlugin
+            ]
+
+            .VcxFolderDef_EngineUnitTests = [
+                .Path = 'Engine/UnitTest'
+                .Projects = .VcxFolder_EngineUnitTest
+            ]
+
+            .VcxFolderDef_GameApplications = [
+                .Path = 'Game/Application'
+                .Projects = .VcxFolder_GameApplication
+            ]
+
+            .VcxFolderDef_DeveloperModules = [
+                .Path = 'Developer/Modules'
+                .Projects = .VcxFolder_DeveloperModule
+            ]
+
+            .VcxFolderDef_DeveloperApplications = [
+                .Path = 'Developer/Applications'
+                .Projects = .VcxFolder_DeveloperApplication
+            ]
+
+            .VcxFolderDef_Sdks = [
+                .Path = 'Sdks'
+                .Projects = .VcxFolder_SdksModule
+            ]
+
+            .VcxFolderDef_MetaProjects = [
+                .Path = 'Meta'
+                .Projects = .MetaProjectsList
+            ]
+
+            .SolutionFolders = {
+                .VcxFolderDef_EngineModules
+                .VcxFolderDef_EnginePlugins
+                .VcxFolderDef_EngineUnitTests
+                .VcxFolderDef_GameApplications
+                .VcxFolderDef_DeveloperModules
+                .VcxFolderDef_DeveloperApplications
+                .VcxFolderDef_MetaProjects
+                .VcxFolderDef_Sdks
+            }
+
+            .SolutionBuildProject = '$CurrentPlatform$-$CurrentCompiler$-Build-All'
+
+            .Local_RunDependencies = [
+                .Projects = .VcxBuildableProjects
+                .Dependencies = { '$CurrentPlatform$-$CurrentCompiler$-Build-All' }
+            ]
+
+            .SolutionDependencies = {
+                .Local_RunDependencies
+            }
+        }
+    }
+}
 
 
 
