@@ -327,7 +327,7 @@ namespace Graphyte::System
             CloseHandle(process_information.hProcess);
             CloseHandle(process_information.hThread);
 
-            result.Status = Status::Success;
+            result.StatusCode = Status::Success;
             result.ExitCode = static_cast<int32_t>(dw_exit_code);
         }
         else
@@ -342,7 +342,7 @@ namespace Graphyte::System
             }
 
             result.ExitCode = 0;
-            result.Status = Diagnostics::GetStatusFromSystemError();
+            result.StatusCode = Diagnostics::GetStatusFromSystemError();
         }
 
         if (redirect_output)
