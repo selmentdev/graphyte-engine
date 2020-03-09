@@ -1,5 +1,13 @@
 #include <Graphyte/Crypto/HashAlgorithm.hxx>
 
+#if GRAPHYTE_PLATFORM_UWP
+#include <winrt/Windows.Security.Cryptography.Core.h>
+#include <winrt/Windows.Storage.Streams.h>
+
+#pragma warning(push)
+#pragma warning(disable : 4715)
+#endif
+
 #if !GRAPHYTE_PLATFORM_UWP
 
 #include <mbedtls/md.h>
@@ -153,7 +161,50 @@ namespace Graphyte::Crypto
         [[maybe_unused]] notstd::span<const std::byte> input
     ) noexcept
     {
-#if !GRAPHYTE_PLATFORM_UWP
+#if GRAPHYTE_PLATFORM_UWP
+
+        using winrt::Windows::Security::Cryptography::Core::HashAlgorithmNames;
+        using winrt::Windows::Security::Cryptography::Core::HashAlgorithmProvider;
+        using winrt::Windows::Security::Cryptography::CryptographicBuffer;
+        using winrt::Windows::Storage::Streams::IBuffer;
+
+        winrt::hstring algorithm_name{};
+
+        switch (hashType)
+        {
+        case HashType::MD5:
+            algorithm_name = HashAlgorithmNames::Md5();
+            break;
+        case HashType::SHA1:
+            algorithm_name = HashAlgorithmNames::Sha1();
+            break;
+        case HashType::SHA256:
+            algorithm_name = HashAlgorithmNames::Sha256();
+            break;
+        case HashType::SHA512:
+            algorithm_name = HashAlgorithmNames::Sha512();
+            break;
+        }
+
+
+        HashAlgorithmProvider provider = HashAlgorithmProvider::OpenAlgorithm(algorithm_name);
+
+        winrt::array_view<uint8_t const> input_view{
+            reinterpret_cast<uint8_t const*>(input.data()),
+            reinterpret_cast<uint8_t const*>(input.data() + input.size())
+        };
+
+        IBuffer input_buffer = CryptographicBuffer::CreateFromByteArray(input_view);
+
+        IBuffer hash_buffer = provider.HashData(input_buffer);
+
+        output.assign(
+            reinterpret_cast<std::byte*>(hash_buffer.data()),
+            reinterpret_cast<std::byte*>(hash_buffer.data() + hash_buffer.Length())
+        );
+
+        return true;
+#else
         mbedtls_md_type_t const type = MbedtlsHelpers::Impl::GetType(hashType);
         const mbedtls_md_info_t* const info = mbedtls_md_info_from_type(type);
 
@@ -182,8 +233,10 @@ namespace Graphyte::Crypto
         }
 
         return false;
-#else
-        return false;
 #endif
     }
 }
+
+#if GRAPHYTE_PLATFORM_UWP
+#pragma warning(pop)
+#endif

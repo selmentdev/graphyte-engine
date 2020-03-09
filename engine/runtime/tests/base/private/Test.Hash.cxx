@@ -248,6 +248,8 @@ TEST_CASE("Hashing functions")
                     Graphyte::Crypto::HashType::SHA256
                 );
 
+                REQUIRE(algorithm != nullptr);
+
                 algorithm->Initialize();
 
                 for (auto ch : sv)
