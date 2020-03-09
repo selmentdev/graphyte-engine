@@ -37,6 +37,7 @@ engine/include/Graphyte/Build.Version.hxx
 scripts/compiler.msvs.bff
 scripts/compiler.android.ndk.bff
 scripts/compilers.gen.bff
+scripts/host.config.bff
 Makefile
 *.make
 *.mk

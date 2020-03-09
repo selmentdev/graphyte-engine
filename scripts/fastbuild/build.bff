@@ -323,6 +323,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
 //
 
 // Projects + Meta: targets known from project name
+#if __WINDOWS__
 
 .FbBuildCommand = 'fbuild -ide -cache -monitor -fastcancel -dist'
 .FbRebuildCommand = 'fbuild -ide -clean -cache -monitor -fastcancel -dist'
@@ -500,3 +501,4 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
         }
     }
 }
+#endif

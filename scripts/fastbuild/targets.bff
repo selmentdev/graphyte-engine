@@ -6,14 +6,6 @@
 //--------------------------------------------------------------------------------------------------
 // Available platforms.
 
-.GxPlatforms = {
-    'Windows'
-    'UWP'
-    ;'Linux'
-    ;'Android'
-}
-
-
 .GxPlatform_Windows  = 'Windows'
 .GxPlatform_UWP      = 'UWP'
 .GxPlatform_Linux    = 'Linux'

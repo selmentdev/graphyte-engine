@@ -1,5 +1,6 @@
 #include "scripts/fastbuild/targets.bff"
 #include "scripts/fastbuild/toolchains.bff"
+#include "scripts/host.config.bff"
 
 .OutputBase = 'build'
 
