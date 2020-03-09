@@ -491,7 +491,7 @@ namespace Graphyte::Application::Impl
 
                 if (button_event.type == SDL_MOUSEBUTTONUP)
                 {
-                    Impl::GApplicationEventHandler->OnMouseUp(*current_window, button, Maths::Float2{});
+                    Impl::GApplicationEventHandler->OnMouseUp(*current_window, button, Float2{});
 
                     if (button_event.button == SDL_BUTTON_LEFT)
                     {
@@ -506,7 +506,7 @@ namespace Graphyte::Application::Impl
 
                     if (button_event.clicks == 2)
                     {
-                        Impl::GApplicationEventHandler->OnMouseDoubleClick(*current_window, button, Maths::Float2{});
+                        Impl::GApplicationEventHandler->OnMouseDoubleClick(*current_window, button, Float2{});
                     }
                 }
 
@@ -517,7 +517,7 @@ namespace Graphyte::Application::Impl
             {
                 auto amount = static_cast<float>(event.wheel.y);
 
-                Impl::GApplicationEventHandler->OnMouseWheel(amount, Maths::Float2{});
+                Impl::GApplicationEventHandler->OnMouseWheel(amount, Float2{});
 
                 break;
             }
@@ -535,7 +535,7 @@ namespace Graphyte::Application::Impl
 
                         Impl::GApplicationEventHandler->OnWindowSizeChanged(
                             *current_window,
-                            Maths::Float2{
+                            Float2{
                                 static_cast<float>(new_w),
                                 static_cast<float>(new_h)
                             },
@@ -566,7 +566,7 @@ namespace Graphyte::Application::Impl
                         
                         Impl::GApplicationEventHandler->OnWindowMoved(
                             *current_window,
-                            Maths::Float2{
+                            Float2{
                                 static_cast<float>(pos_x),
                                 static_cast<float>(pos_y)
                             }

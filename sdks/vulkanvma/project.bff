@@ -1,3 +1,4 @@
+#if exists(VULKAN_SDK)
 {
     .ProjectDefinition = [
         .ProjectName = 'sdk.vulkanvma'
@@ -48,3 +49,4 @@
 
     ^Global_ProjectList + .ProjectDefinition
 }
+#endif

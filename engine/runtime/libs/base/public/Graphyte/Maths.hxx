@@ -4394,7 +4394,7 @@ namespace Graphyte::Maths
         return { _mm_atan2_ps(y.V, x.V) };
 #else
         Impl::ConstFloat32x4 const components_y{ .V = y.V };
-        Impl::ConstFloat32x4 const components_x{ .X = x.V };
+        Impl::ConstFloat32x4 const components_x{ .V = x.V };
         Impl::ConstFloat32x4 const result{ { {
                 atan2f(components_y.F[0], components_x.F[0]),
                 atan2f(components_y.F[1], components_x.F[1]),
@@ -14402,7 +14402,6 @@ namespace Graphyte::Maths
     }
 
     mathinline void mathcall Store(ColorBGRA* destination, Color color) noexcept
-        requires VectorLike<T> and (T::Components == 4)
     {
         GX_ASSERT(destination != nullptr);
 

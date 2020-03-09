@@ -2,6 +2,7 @@
     .ProjectDefinition = [
         .ProjectName = 'sdk.mbedtls'
         .ProjectPath = 'sdks/mbedtls'
+        .ProjectLanguage = 'CC'
         .ProjectKind = 'StaticLib'
         .ProjectType = 'Module'
         .ProjectComponent = 'Sdks'

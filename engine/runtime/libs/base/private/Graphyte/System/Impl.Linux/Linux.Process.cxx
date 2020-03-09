@@ -5,6 +5,7 @@
 #include <Graphyte/Storage/FileManager.hxx>
 #include <Graphyte/Storage/IFileSystem.hxx>
 #include <Graphyte/Threading/Thread.hxx>
+#include <Graphyte/Diagnostics.hxx>
 
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -287,11 +288,10 @@ namespace Graphyte::System
         kill(handle.ProcessID, SIGTERM);
     }
         
-    bool Process::Execute(
+    ProcessResult Process::Execute(
         const char* path,
         const char* params,
         const char* working_directory,
-        int32_t& exit_code,
         std::string* out_stdout,
         std::string* out_stderr
     ) noexcept
@@ -323,12 +323,11 @@ namespace Graphyte::System
             &pipe_write[1]
         );
 
-        auto invoked{ false };
+        ProcessResult result;
+        int32_t exit_code;
 
         if (handle.IsValid())
         {
-            invoked = true;
-
             if (redirect_output)
             {
                 std::array<std::string*, 2> outputs{{out_stdout, out_stderr}};
@@ -347,6 +346,9 @@ namespace Graphyte::System
             }
 
             Close(handle);
+
+            result.StatusCode = Status::Success;
+            result.ExitCode = exit_code;
         }
         else
         {
@@ -361,6 +363,9 @@ namespace Graphyte::System
             }
 
             GX_LOG(LogPlatform, Error, "Cannot create process: `{}`\n", path);
+
+            result.ExitCode = 0;
+            result.StatusCode = Diagnostics::GetStatusFromErrno(errno);
         }
 
         if (redirect_output)
@@ -371,7 +376,7 @@ namespace Graphyte::System
             }
         }
 
-        return invoked;
+        return result;
     }
 
     DateTime Process::GetLinkTime() noexcept

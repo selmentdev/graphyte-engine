@@ -1,4 +1,3 @@
-#include "Base.pch.hxx"
 #include <Graphyte/Crypto/Random.hxx>
 
 #include <sys/random.h>

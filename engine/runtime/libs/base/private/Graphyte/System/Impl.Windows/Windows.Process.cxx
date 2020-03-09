@@ -341,9 +341,8 @@ namespace Graphyte::System
                 }
             }
 
-            Status status = Diagnostics::GetStatusFromSystemError();
             result.ExitCode = 0;
-            result.Status = status;
+            result.Status = Diagnostics::GetStatusFromSystemError();
         }
 
         if (redirect_output)

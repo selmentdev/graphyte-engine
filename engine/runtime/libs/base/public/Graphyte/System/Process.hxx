@@ -35,7 +35,7 @@ namespace Graphyte::System
 
     struct ProcessResult final
     {
-        Status Status;
+        Status StatusCode;
         int32_t ExitCode;
     };
 

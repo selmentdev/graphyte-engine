@@ -48,9 +48,9 @@
 //--------------------------------------------------------------------------------------------------
 // Linux
 
-.GxPlatformCompilers_Linux           = { 'Clang', 'GCC' }
+.GxPlatformCompilers_Linux           = { 'GCC' } // , 'Clang'
 .GxPlatformArchitectures_Linux_Clang = { 'ARMv8', 'x64' }
-.GxPlatformArchitectures_Linux_GCC   = { 'ARMv8', 'x64' }
+.GxPlatformArchitectures_Linux_GCC   = { 'x64' } // , 'ARMv8'
 
 //--------------------------------------------------------------------------------------------------
 // Android

@@ -1,3 +1,4 @@
+#if exists(VULKAN_SDK)
 {
     .ProjectDefinition = [
         .ProjectName = 'com.graphyte.graphics.vulkan'
@@ -57,3 +58,4 @@
 
     ^Global_ProjectList + .ProjectDefinition
 }
+#endif

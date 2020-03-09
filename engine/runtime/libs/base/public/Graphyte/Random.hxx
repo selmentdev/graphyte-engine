@@ -77,64 +77,58 @@ namespace Graphyte::Random
     }
 
     template <typename T>
-    inline T Next(RandomState& state, T max) noexcept
+    inline auto Next(RandomState& state, T max) noexcept
+        -> std::enable_if_t<std::is_floating_point_v<T>, T>
     {
-        if constexpr (std::is_floating_point_v<T>)
-        {
-            T const sample = Next<T>(state);
-            T const result = sample * max;
-            return result;
-        }
-        else if constexpr (std::is_unsigned_v<T>)
-        {
-            T const result = Next<T>(state, 0, max);
-            return result;
-        }
-        else
-        {
-            static_assert(false, "Type T is not supported");
-        }
+        T const sample = Next<T>(state);
+        T const result = sample * max;
+        return result;
     }
 
     template <typename T>
-    inline T Next(RandomState& state, T min, T max) noexcept
+    inline auto Next(RandomState& state, T max) noexcept
+        -> std::enable_if_t<std::is_unsigned_v<T>, T>
     {
-        if constexpr (std::is_floating_point_v<T>)
+        T const result = Next<T>(state, 0, max);
+        return result;
+    }
+
+    template <typename T>
+    inline auto Next(RandomState& state, T min, T max) noexcept
+        -> std::enable_if_t<std::is_floating_point_v<T>, T>
+    {
+        T const sample = Next<T>(state);
+        T const scale = (max - min);
+        T const result = (sample * scale) + min;
+        return result;
+    }
+
+    template <typename T>
+    inline auto Next(RandomState& state, T min, T max) noexcept
+        -> std::enable_if_t<std::is_unsigned_v<T>, T>
+    {
+        T result;
+
+        if ((max - min) == std::numeric_limits<T>::max())
         {
-            T const sample = Next<T>(state);
-            T const scale = (max - min);
-            T const result = (sample * scale) + min;
-            return result;
-        }
-        else if constexpr (std::is_unsigned_v<T>)
-        {
-            T result;
-
-            if ((max - min) == std::numeric_limits<T>::max())
-            {
-                return Next<T>(state);
-            }
-            else
-            {
-                T const range = max - min + 1;
-                T const limit = std::numeric_limits<T>::max() - (std::numeric_limits<T>::max() % range);
-
-                do
-                {
-                    result = Next<T>(state);
-                } while (result >= limit);
-
-                result %= range;
-            }
-
-            return min + result;
+            return Next<T>(state);
         }
         else
         {
-            static_assert(false, "Type T is not supported");
-        }
-    }
+            T const range = max - min + 1;
+            T const limit = std::numeric_limits<T>::max() - (std::numeric_limits<T>::max() % range);
 
+            do
+            {
+                result = Next<T>(state);
+            } while (result >= limit);
+
+            result %= range;
+        }
+
+        return min + result;
+    }
+        
     template <>
     inline Float4A Next(RandomState& state) noexcept
     {

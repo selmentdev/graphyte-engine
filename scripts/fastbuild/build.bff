@@ -60,6 +60,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                     .ProjectDefines = {}
                     .ProjectLibPaths = {}
                     .ProjectVariants = {}
+                    .ProjectLanguage = 'CXX'
 
                     // Import project settings
                     Using(.CurrentProject)
@@ -101,7 +102,6 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                         = .PlatformIncludes
                         + .ToolchainIncludes
                         + .ProjectIncludes
-                        ;+ '$ProjectPath$/private' // TODO DOES IT REALLY NEEDED NOW?
                         + '$ProjectPath$/public'
                         + 'engine/include'
                     .LocalImports
@@ -194,13 +194,16 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
 
                     // Default compiler, linker and librarian options from platform and toolchain definitions.
                     .CompilerOptions
-                        = .CompilerOptions_Before
+                        = .'CompilerOptions$ProjectLanguage$_Before'
                         + .'CompilerOptions_Kind_$ProjectKind$'
                         + .CompilerOptions_Config
                         + .CompilerOptions_Architecture
                         + .CompilerOptions_LocalIncludes
                         + .CompilerOptions_LocalDefines
                         + .CompilerOptions_After
+
+                    // Determine compiler
+                    .Compiler = .'Compiler$ProjectLanguage$'
 
                     // Additional unit test fixups for MSVC
                     If(.ProjectType == .GxProjectType_UnitTest) {

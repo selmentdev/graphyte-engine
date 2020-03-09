@@ -51,8 +51,12 @@ Compiler('Compiler-Windows-ARMv8-MSVC') {
     }
 }
 
-Compiler('Compiler-Linux-x64-GCC') {
+Compiler('Compiler-Linux-x64-GCC-C++') {
     .Executable = '/usr/bin/g++'
+}
+
+Compiler('Compiler-Linux-x64-GCC-C') {
+    .Executable = '/usr/bin/gcc'
 }
 
 Compiler('Compiler-Windows-x64-LLVM-Clang') {
@@ -246,7 +250,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
         '$VsToolsLocation$/VC/Auxiliary/VS/include'
     }
 
-    .CompilerOptions_Before
+    .CompilerOptionsCXX_Before
         = '"%1"'
         + ' /Z7'
         + ' /nologo'                // Don't display compiler logo banner
@@ -281,7 +285,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
         + ' /Zc:throwingNew'        // Assume operator new throws
         + ' /Zc:wchar_t'            // wchar_t Is Native Type
         // /GL (Whole Program Optimization)
-
+    .CompilerOptionsCC_Before = .CompilerOptionsCXX_Before
     .CompilerOptions_After
         = ' /Fo"%2"'
         
@@ -408,28 +412,32 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 ]
 
 .GxToolchainDef_Compiler_MSVC_Architecture_x64_Platform_Windows = [
-    .Compiler = 'Compiler-Windows-x64-MSVC'
+    .CompilerCXX = 'Compiler-Windows-x64-MSVC'
+    .CompilerCC = 'Compiler-Windows-x64-MSVC'
     .ResCompiler = 'Compiler-Windows-ResourceCompiler'
     .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/link.exe'
     .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/lib.exe'
 ]
 
 .GxToolchainDef_Compiler_MSVC_Architecture_ARMv8_Platform_Windows = [
-    .Compiler = 'Compiler-Windows-ARMv8-MSVC'
+    .CompilerCXX = 'Compiler-Windows-ARMv8-MSVC'
+    .CompilerCC = 'Compiler-Windows-ARMv8-MSVC'
     .ResCompiler = 'Compiler-Windows-ResourceCompiler'
     .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/link.exe'
     .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/lib.exe'
 ]
 
 .GxToolchainDef_Compiler_MSVC_Architecture_x64_Platform_UWP = [
-    .Compiler = 'Compiler-Windows-x64-MSVC'
+    .CompilerCXX = 'Compiler-Windows-x64-MSVC'
+    .CompilerCC = 'Compiler-Windows-x64-MSVC'
     .ResCompiler = 'Compiler-Windows-ResourceCompiler'
     .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/link.exe'
     .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/lib.exe'
 ]
 
 .GxToolchainDef_Compiler_MSVC_Architecture_ARMv8_Platform_UWP = [
-    .Compiler = 'Compiler-Windows-ARMv8-MSVC'
+    .CompilerCXX = 'Compiler-Windows-ARMv8-MSVC'
+    .CompilerCC = 'Compiler-Windows-ARMv8-MSVC'
     .ResCompiler = 'Compiler-Windows-ResourceCompiler'
     .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/link.exe'
     .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/lib.exe'
@@ -549,7 +557,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 
     .ToolchainIncludes = { }
 
-    .CompilerOptions_Before
+    .CompilerOptionsCXX_Before
         = ' -o "%2" "%1" -c -g'
         + ' -std=c++2a'
         + ' -fconcepts'
@@ -558,8 +566,9 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .CompilerOptions_After
         = ''
 
-    .CompilerOptionsC_Before
-        = ' -std=c11'
+    .CompilerOptionsCC_Before
+        = ' -o "%2" "%1" -c -g'
+        + ' -std=c11'
         + ' -fdiagnostics-color=always'
         
     .LibrarianOptions_Before
@@ -591,62 +600,84 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .LinkerOptions_Kind_WindowedApp = ' -pie'
 ]
 
-.GxToolchainDef_Compiler_Clang_Config_Debug = [
+
+.GxToolchainDef_Compiler_GCC_Architecture_x64 = [
+    .CompilerOptions_Architecture
+        = ' -mavx'
+        + ' -msse4.1'
+        + ' -msse3'
+        + ' -mssse3'
+        + ' -msse2'
+        + ' -m64'
+    .LinkerOptions_Architecture
+        = ''
+]
+
+.GxToolchainDef_Compiler_GCC_Architecture_ARMv8 = [
+    .CompilerOptions_Architecture
+        = ' -DGRAPHYTE_MATH_NO_INTRINSICS=1'
+
+    .LinkerOptions_Architecture
+        = ' /MACHINE:ARM64'
+]
+
+.GxToolchainDef_Compiler_GCC_Architecture_x64_Platform_Linux = [
+    .CompilerCXX = 'Compiler-Linux-x64-GCC-C++'
+    .CompilerCC = 'Compiler-Linux-x64-GCC-C'
+    .ResCompiler = ''
+    .Linker = '/usr/bin/g++'
+    .Librarian = '/usr/bin/ar'
+]
+
+.GxToolchainDef_Compiler_GCC_Architecture_ARMv8_Platform_Linux = [
+    .CompilerCXX = 'Compiler-Linux-x64-GCC-C++'
+    .CompilerCC = 'Compiler-Linux-x64-GCC-C'
+    .ResCompiler = ''
+    .Linker = '/usr/bin/g++'
+    .Librarian = '/usr/bin/ar'
+]
+
+.GxToolchainDef_Compiler_GCC_Config_Debug = [
     .CompilerOptions_Config
         = ' -DGX_CONFIG_DEBUG=1'
         + ' -O0'
     .LinkerOptions_Config = ''
 ]
 
-.GxToolchainDef_Compiler_Clang_Config_Checked = [
+.GxToolchainDef_Compiler_GCC_Config_Checked = [
     .CompilerOptions_Config
         = ' -DGX_CONFIG_CHECKED=1'
         + ' -O1'
     .LinkerOptions_Config = ''
 ]
     
-.GxToolchainDef_Compiler_Clang_Config_Profile = [
+.GxToolchainDef_Compiler_GCC_Config_Profile = [
     .CompilerOptions_Config
         = ' -DGX_CONFIG_PROFILE=1'
         + ' -O2'
     .LinkerOptions_Config = ''
 ]
     
-.GxToolchainDef_Compiler_Clang_Config_Release = [
+.GxToolchainDef_Compiler_GCC_Config_Release = [
     .CompilerOptions_Config
         = ' -DGX_CONFIG_RELEASE=1'
         + ' -O3'
     .LinkerOptions_Config = ''
 ]
 
-.GxToolchainDef_Compiler_Clang_UnitTest_Debug = [
+.GxToolchainDef_Compiler_GCC_UnitTest_Debug = [
     .CompilerOptions_UnitTest_Remove = {}
     .CompilerOptions_UnitTest_Add = {}
 ]
-.GxToolchainDef_Compiler_Clang_UnitTest_Checked = [
+.GxToolchainDef_Compiler_GCC_UnitTest_Checked = [
     .CompilerOptions_UnitTest_Remove = {}
     .CompilerOptions_UnitTest_Add = {}
 ]
-.GxToolchainDef_Compiler_Clang_UnitTest_Profile = [
+.GxToolchainDef_Compiler_GCC_UnitTest_Profile = [
     .CompilerOptions_UnitTest_Remove = {}
     .CompilerOptions_UnitTest_Add = {}
 ]
-.GxToolchainDef_Compiler_Clang_UnitTest_Release = [
+.GxToolchainDef_Compiler_GCC_UnitTest_Release = [
     .CompilerOptions_UnitTest_Remove = {}
     .CompilerOptions_UnitTest_Add = {}
 ]
-
-
-// .ToolchainDesc_Linux_x64_GCC = [
-//     .Toolchain_Architecture = 'x64'
-//     .CompilerOptions
-//         + ' -mavx'
-//         + ' -msse4.1'
-//         + ' -msse3'
-//         + ' -mssse3'
-//         + ' -msse2'
-//         + ' -m64'
-//     .ToolchainName = 'Linux-x64-GCC'
-//     .Compiler = 'Compiler-Linux-x64-GCC'
-//     .Linker = '/usr/bin/g++'
-//     .Librarian = '/usr/bin/ar'
