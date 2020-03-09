@@ -1,8 +1,5 @@
 #include "scripts/fastbuild/targets.bff"
-#include "scripts/fastbuild/globals.bff"
 #include "scripts/fastbuild/toolchains.bff"
-
-#include "scripts/compilers.gen.bff"
 
 .OutputBase = 'build'
 
@@ -35,4 +32,3 @@
 #include "game/source/app.demo/project.bff"
 
 #include "scripts/fastbuild/build.bff"
-;#include "scripts/fastbuild/build-project.bff"

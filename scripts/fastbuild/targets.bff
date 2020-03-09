@@ -1,6 +1,8 @@
 //--------------------------------------------------------------------------------------------------
 // This file defines all available fastbuild targets.
 
+.Global_ProjectList = {}
+
 //--------------------------------------------------------------------------------------------------
 // Available platforms.
 
@@ -9,6 +11,32 @@
     'UWP'
     ;'Linux'
     ;'Android'
+}
+
+
+.GxPlatform_Windows  = 'Windows'
+.GxPlatform_UWP      = 'UWP'
+.GxPlatform_Linux    = 'Linux'
+.GxPlatform_Android  = 'Android'
+.GxPlatform_IOS      = 'IOS'
+.GxPlatform_MacOS    = 'MacOS'
+.GxPlatform_NX       = 'NX'
+.GxPlatform_Orbis    = 'Orbis'
+.GxPlatform_Prospero = 'Prospero'
+.GxPlatform_Durango  = 'Durango'
+.GxPlatform_Scarlett = 'Scarlett'
+
+.GxValidPlatforms = {
+    .GxPlatform_Windows
+    .GxPlatform_Linux
+    .GxPlatform_Android
+    .GxPlatform_IOS
+    .GxPlatform_MacOS
+    .GxPlatform_NX
+    .GxPlatform_Orbis
+    .GxPlatform_Prospero
+    .GxPlatform_Durango
+    .GxPlatform_Scarlett
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -38,3 +66,72 @@
 .GxPlatformCompilers_Android           = { 'Clang', 'GCC' }
 .GxPlatformArchitectures_Android_Clang = { 'ARMv8', 'x64' }
 .GxPlatformArchitectures_Android_GCC   = { 'ARMv8', 'x64' }
+
+
+//--------------------------------------------------------------------------------------------------
+// Configurations
+
+.GxConfiguration_Debug   = 'Debug'
+.GxConfiguration_Checked = 'Checked'
+.GxConfiguration_Profile = 'Profile'
+.GxConfiguration_Release = 'Release'
+
+.GxValidConfigurations = {
+    .GxConfiguration_Debug
+    .GxConfiguration_Checked
+    .GxConfiguration_Profile
+    .GxConfiguration_Release
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// Component types
+
+.GxProjectComponent_Game = 'Game'
+.GxProjectComponent_Engine = 'Engine'
+.GxProjectComponent_Developer = 'Developer'
+.GxProjectComponent_Sdks = 'Sdks'
+
+.GxValidProjectComponents = {
+    .GxProjectComponent_Game
+    .GxProjectComponent_Engine
+    .GxProjectComponent_Developer
+    .GxProjectComponent_Sdks
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// Project types
+
+.GxProjectType_Module = 'Module'
+.GxProjectType_Plugin = 'Plugin'
+.GxProjectType_UnitTest = 'UnitTest'
+.GxProjectType_Application = 'Application'
+
+.GxValidProjectTypes = {
+    .GxProjectType_Module
+    .GxProjectType_Plugin
+    .GxProjectType_UnitTest
+    .GxProjectType_Application
+}
+
+
+//--------------------------------------------------------------------------------------------------
+// Project kinds
+
+.GxProjectKind_SharedLib = 'SharedLib'
+.GxProjectKind_StaticLib = 'StaticLib'
+.GxProjectKind_ConsoleApp = 'ConsoleApp'
+.GxProjectKind_WindowedApp = 'WindowedApp'
+
+.GxProjectKind_App = {
+    .GxProjectKind_ConsoleApp
+    .GxProjectKind_WindowedApp
+}
+
+.GxValidProjectKinds = {
+    .GxProjectKind_SharedLib
+    .GxProjectKind_StaticLib
+    .GxProjectKind_ConsoleApp
+    .GxProjectKind_WindowedApp
+}

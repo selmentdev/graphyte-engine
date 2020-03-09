@@ -21,7 +21,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                     ^ResIncludePaths + ' /I"$CurrentIncludePath$"'
                 }
 
-                ForEach(.CurrentConfig in .ValidConfigurations) {
+                ForEach(.CurrentConfig in .GxValidConfigurations) {
                     ObjectList('Graphyte-Resources-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') {
                         .Compiler = 'Compiler-Windows-ResourceCompiler'
                         .CompilerInputFiles = { 'engine/resources/resources.rc' }
@@ -37,7 +37,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                 }
             }
 
-            ForEach(.CurrentConfig in .ValidConfigurations) {
+            ForEach(.CurrentConfig in .GxValidConfigurations) {
                 Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Config_$CurrentConfig$')
                 Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_UnitTest_$CurrentConfig$')
 
@@ -65,18 +65,18 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                     Using(.CurrentProject)
 
                     // Validate required project settings
-                    If(.ProjectType not in .ValidProjectTypes) {
+                    If(.ProjectType not in .GxValidProjectTypes) {
                         Print('$ProjectName$ type is `$ProjectType$`')
-                        Print(.ValidProjectTypes)
+                        Print(.GxValidProjectTypes)
                         Error('Invalid project type')
                     }
 
-                    If (.ProjectComponent not in .ValidProjectComponents) {
+                    If (.ProjectComponent not in .GxValidProjectComponents) {
                         Print('$ProjectName$ component is `$ProjectComponent$`')
                         Error('Invalid project component')
                     }
 
-                    If (.ProjectKind not in .ValidProjectKinds) {
+                    If (.ProjectKind not in .GxValidProjectKinds) {
                         Print('$ProjectName$ kind is `$ProjectKind$`')
                         Error('Invalid project kind')
                     }
@@ -85,7 +85,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                     .LocalOutputName = .'Prefix_$ProjectKind$' + .ProjectName + .'Suffix_$ProjectKind$'
 
                     // Define unity files for project supporting them
-                    If(.ProjectComponent_Sdks != .ProjectComponent) {
+                    If(.GxProjectComponent_Sdks != .ProjectComponent) {
                         Unity('Unity-$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') {
                             .UnityInputPath = '$ProjectPath$'
                             .UnityInputPattern = { '*.cxx' }
@@ -101,7 +101,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                         = .PlatformIncludes
                         + .ToolchainIncludes
                         + .ProjectIncludes
-                        + '$ProjectPath$/private' // TODO DOES IT REALLY NEEDED NOW?
+                        ;+ '$ProjectPath$/private' // TODO DOES IT REALLY NEEDED NOW?
                         + '$ProjectPath$/public'
                         + 'engine/include'
                     .LocalImports
@@ -177,11 +177,11 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                     }
 
                     // Add resources for windows platform
-                    If (.CurrentPlatform == .Platform_Windows) {
+                    If (.CurrentPlatform == .GxPlatform_Windows) {
                         ^Libraries + 'Graphyte-Resources-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
                     }
 
-                    If (.CurrentPlatform == .Platform_UWP) {
+                    If (.CurrentPlatform == .GxPlatform_UWP) {
                         ^Libraries + 'Graphyte-Resources-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
                     }
 
@@ -203,7 +203,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                         + .CompilerOptions_After
 
                     // Additional unit test fixups for MSVC
-                    If(.ProjectType == .ProjectType_UnitTest) {
+                    If(.ProjectType == .GxProjectType_UnitTest) {
                         ForEach(.Option in .CompilerOptions_UnitTest_Remove) {
                             ^CompilerOptions - .Option
                         }
@@ -233,7 +233,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                         + .LinkerOptions_LocalLinks
                         + .LinkerOptions_After
 
-                    If(.ProjectComponent_Sdks == .ProjectComponent) {
+                    If(.GxProjectComponent_Sdks == .ProjectComponent) {
                         // Object list for SDKs aren't using unity files at all
                         ObjectList('Lib-$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') {
                             .CompilerInputFiles = .LocalFiles
@@ -241,7 +241,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                         }
                     }
 
-                    If(.ProjectComponent_Sdks != .ProjectComponent) {
+                    If(.GxProjectComponent_Sdks != .ProjectComponent) {
                         // Generate object list for specified unity files
                         ObjectList('Lib-$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') {
                             .CompilerInputUnity = 'Unity-$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
@@ -249,20 +249,20 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                     }
 
                     // Define actual Fastbuild targets
-                    If (.ProjectKind == .ProjectKind_SharedLib) {
+                    If (.ProjectKind == .GxProjectKind_SharedLib) {
                         DLL('$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') { }
                     }
 
-                    If (.ProjectKind == .ProjectKind_StaticLib) {
+                    If (.ProjectKind == .GxProjectKind_StaticLib) {
                         Library('$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') { }
                     }
 
-                    If (.ProjectKind in .ProjectKind_App) {
+                    If (.ProjectKind in .GxProjectKind_App) {
                         Executable('$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') { }
                     }
 
                     // If this executable was unit-test, define additional target
-                    If (.ProjectType == .ProjectType_UnitTest) {
+                    If (.ProjectType == .GxProjectType_UnitTest) {
                         Test('Test-$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') {
                             .TestExecutable = '$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
                             .TestOutput = '$OutputBase$/tests/$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$/$ProjectName$.out.txt'
@@ -279,9 +279,9 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
 
                     If (.LocalProjectSelector in .ProjectSelector)
                     {
-                        If(.ProjectComponent_Sdks != .ProjectComponent) {
+                        If(.GxProjectComponent_Sdks != .ProjectComponent) {
                             ^MetaBuildAllTargets + '$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
-                            If (.ProjectType == .ProjectType_UnitTest) {
+                            If (.ProjectType == .GxProjectType_UnitTest) {
                                 ^MetaRunAllTargets + 'Test-$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
                             }
                         }
@@ -298,19 +298,16 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
 
                 Alias ('Test-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$') {
                     .Targets = .MetaRunAllTargets
-                    Print(.Targets)
                 }
             } // For Each Configuration
 
             Alias('Build-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$') {
                 .Targets = {}
-                ForEach(.CurrentConfig in .ValidConfigurations) {
+                ForEach(.CurrentConfig in .GxValidConfigurations) {
                     ^Targets + 'Build-All-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
                 }
             }
         } // For Each Architecture
-
-        // Define Visual Studio solution
     } // For Each Compiler
 } // For Each Platform
 
@@ -349,7 +346,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                 ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
                     Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
 
-                    ForEach(.CurrentConfig in .ValidConfigurations) {
+                    ForEach(.CurrentConfig in .GxValidConfigurations) {
                         .ConfigEntry = [
                             .Target = '$ProjectName$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
                             .Config = '$CurrentConfig$'
@@ -393,7 +390,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                 ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
                     Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
 
-                    ForEach(.CurrentConfig in .ValidConfigurations) {
+                    ForEach(.CurrentConfig in .GxValidConfigurations) {
                         .ConfigEntry = [
                             .Target = '$CurrentMetaProject$-$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentConfig$'
                             .Config = '$CurrentConfig$'
@@ -423,7 +420,7 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
         // Define Visual Studio solution
         ForEach(.CurrentArchitecture in .'GxPlatformArchitectures_$CurrentPlatform$_$CurrentCompiler$') {
             Using(.'GxToolchainDef_Compiler_$CurrentCompiler$_Architecture_$CurrentArchitecture$')
-            ForEach(.CurrentConfig in .ValidConfigurations) {
+            ForEach(.CurrentConfig in .GxValidConfigurations) {
                 .CurrentSolutionConfig = [
                     .SolutionPlatform = '$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$'
                     .SolutionConfig = .CurrentConfig
