@@ -22,7 +22,7 @@ namespace Graphyte::Launch
         for (const winrt::Windows::Web::Syndication::SyndicationItem syndicationItem : syndicationFeed.Items())
         {
             winrt::hstring titleAsHstring = syndicationItem.Title().Text();
-            ::OutputDebugStringW(titleAsHstring.c_str());
+            wprintf(L"%s\n", titleAsHstring.c_str());
         }
     }
 }
