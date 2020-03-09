@@ -9,10 +9,11 @@ namespace Graphyte::System::Impl
         // Initialize COM.
         //
 
-        if (HRESULT hComInitialized = CoInitialize(nullptr); hComInitialized != S_OK && hComInitialized != S_FALSE)
-        {
-            GX_ABORT("Cannot initialize COM");
-        }
+        //if (HRESULT hComInitialized = CoInitialize(nullptr); hComInitialized != S_OK && hComInitialized != S_FALSE)
+        //{
+        //    GX_ABORT("Cannot initialize COM: {}", Graphyte::Diagnostics::GetMessageFromHRESULT(hComInitialized));
+        //}
+        // TODO: Remove this code. COM will be initialized in other way.
 
 
         //

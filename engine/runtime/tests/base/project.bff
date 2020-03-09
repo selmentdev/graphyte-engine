@@ -3,7 +3,7 @@
         .ProjectName = 'test.graphyte.base'
         .ProjectPath = 'engine/runtime/tests/base'
         .ProjectKind = 'ConsoleApp'
-        
+
         .ProjectType = 'UnitTest'
         .ProjectComponent = 'Engine'
 
@@ -38,9 +38,17 @@
             }
         ]
 
+        .VariantDef_UWP = [
+            .VariantSelector = { 'UWP' }
+            .VariantLinks = {
+                'WindowsApp.lib'
+            }
+        ]
+
         .ProjectVariants = {
             .VariantDef_Windows
             .VariantDef_Linux
+            .VariantDef_UWP
         }
     ]
 

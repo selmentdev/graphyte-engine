@@ -65,6 +65,6 @@
             //.VariantDef_Linux
         }
     ]
- 
+
     ^Global_ProjectList + .ProjectDefinition
 }

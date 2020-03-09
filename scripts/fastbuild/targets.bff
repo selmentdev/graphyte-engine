@@ -6,7 +6,7 @@
 
 .GxPlatforms = {
     'Windows'
-    ;'UWP'
+    'UWP'
     ;'Linux'
     ;'Android'
 }

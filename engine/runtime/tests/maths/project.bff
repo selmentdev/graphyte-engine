@@ -36,9 +36,17 @@
             }
         ]
 
+        .VariantDef_UWP = [
+            .VariantSelector = { 'UWP' }
+            .VariantLinks = {
+                'WindowsApp.lib'
+            }
+        ]
+
         .ProjectVariants = {
             .VariantDef_Windows
             .VariantDef_Linux
+            .VariantDef_UWP
         }
     ]
 
