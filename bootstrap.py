@@ -52,11 +52,14 @@ def generate_msvc_compiler_info():
 
         windows_sdk_version : int = 10
         (windows_sdk_location, windows_sdk_kit) = windows.find_windows_sdk()
+        windows_sdk_build_version = windows_sdk_kit.components[2]
+
         print('Using Windows SDK "{}"'.format(windows_sdk_kit))
     else:
         windows_sdk_version : int = -1
         windows_sdk_location = '/dev/null'
         windows_sdk_kit : str = 'unknown'
+        windows_sdk_build_version : str = 'unknown'
         vspath : str = '/dev/null'
         vsname : str = '/dev/null'
         vstoolset : str = '/dev/null'
@@ -77,6 +80,7 @@ def generate_msvc_compiler_info():
         f.write(f".WindowsSdkLocation = '{os.path.normpath(windows_sdk_location)}'\n")
         f.write(f".WindowsKitVersion = '{windows_sdk_version}'\n")
         f.write(f".WindowsSdkVersion = '{windows_sdk_kit}'\n")
+        f.write(f".WindowsSdkBuildVersion = '{windows_sdk_build_version}'\n")
         f.write(f".WindowsLlvmPath = '{llvm_path}'\n")
         f.write(f".WindowsVulkanPath = '{vulkan.find_vulkan_sdk()}'\n")
         f.write(f".LinuxVulkanPath = '{vulkan.find_vulkan_sdk()}'\n")
