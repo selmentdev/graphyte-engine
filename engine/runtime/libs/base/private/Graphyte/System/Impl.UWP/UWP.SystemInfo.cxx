@@ -5,6 +5,14 @@
 #include <ShlObj.h>
 #include <IPHlpApi.h>
 
+#pragma warning(push)
+#pragma warning(disable : 4715)
+
+#include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/windows.Storage.Pickers.h>
+#include <winrt/Windows.System.Profile.h>
+#include <winrt/Windows.System.UserProfile.h>
+
 namespace Graphyte::System
 {
     BASE_API std::string GetUserDirectory() noexcept
@@ -89,7 +97,17 @@ namespace Graphyte::System
 
     BASE_API std::string GetSystemVersion() noexcept
     {
-        return {};
+        winrt::Windows::System::Profile::AnalyticsVersionInfo version_info = winrt::Windows::System::Profile::AnalyticsInfo::VersionInfo();
+        winrt::hstring device_form = winrt::Windows::System::Profile::AnalyticsInfo::DeviceForm();
+
+
+        uint64_t const version = static_cast<uint64_t>(_wtoi64(version_info.DeviceFamilyVersion().c_str()));
+
+        uint64_t const major = version >> 48;
+        uint64_t const minor = (version >> 32) & 0xFFFF;
+        uint64_t const build = (version >> 16) & 0xFFFF;
+
+        return fmt::format("{}.{}.{}", major, minor, build);
     }
 
     BASE_API std::string GetSystemId() noexcept
@@ -199,3 +217,5 @@ namespace Graphyte::System
     {
     }
 }
+
+#pragma warning(pop)
