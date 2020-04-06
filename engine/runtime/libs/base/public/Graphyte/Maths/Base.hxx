@@ -134,7 +134,8 @@ namespace Graphyte::Maths::Impl
         };
     };
 
-    static_assert(std::is_pod_v<ConstFloat32x4>);
+    static_assert(std::is_trivially_copyable_v<ConstFloat32x4>);
+    static_assert(std::is_standard_layout_v<ConstFloat32x4>);
     static_assert(alignof(ConstFloat32x4) == 16);
     static_assert(sizeof(ConstFloat32x4) == 16);
 
@@ -147,7 +148,9 @@ namespace Graphyte::Maths::Impl
             NativeUInt32x4 UV;
         };
     };
-    static_assert(std::is_pod_v<ConstInt32x4>);
+
+    static_assert(std::is_trivially_copyable_v<ConstInt32x4>);
+    static_assert(std::is_standard_layout_v<ConstInt32x4>);
     static_assert(alignof(ConstInt32x4) == 16);
     static_assert(sizeof(ConstInt32x4) == 16);
 
@@ -160,7 +163,8 @@ namespace Graphyte::Maths::Impl
             NativeUInt32x4 UV;
         };
     };
-    static_assert(std::is_pod_v<ConstUInt32x4>);
+    static_assert(std::is_trivially_copyable_v<ConstUInt32x4>);
+    static_assert(std::is_standard_layout_v<ConstUInt32x4>);
     static_assert(alignof(ConstUInt32x4) == 16);
     static_assert(sizeof(ConstUInt32x4) == 16);
 
@@ -173,7 +177,8 @@ namespace Graphyte::Maths::Impl
             NativeUInt32x4 UV;
         };
     };
-    static_assert(std::is_pod_v<ConstUInt8x16>);
+    static_assert(std::is_trivially_copyable_v<ConstUInt8x16>);
+    static_assert(std::is_standard_layout_v<ConstUInt8x16>);
     static_assert(alignof(ConstUInt8x16) == 16);
     static_assert(sizeof(ConstUInt8x16) == 16);
 }

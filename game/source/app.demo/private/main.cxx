@@ -30,7 +30,7 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
         { "All Files", "*.*", },
     };
 
-    auto v = Graphyte::Maths::Make<Graphyte::Maths::Vector4>(1.0f, 2.0f, (float)argc);
+    auto v = Graphyte::Maths::Make<Graphyte::Maths::Vector4>(1.0f, 2.0f, (float)argc, 4.0f);
     auto c = Graphyte::Maths::Cos(v);
     Graphyte::Float4A ss;
     Graphyte::Maths::Store(&ss, c);

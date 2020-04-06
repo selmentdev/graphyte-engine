@@ -60,6 +60,16 @@ namespace Graphyte
         };
         static_assert(sizeof(Layout) == sizeof(uint16_t));
 
+        static constexpr Half FromBits(uint16_t bits) noexcept
+        {
+            return Half{ bits };
+        }
+
+        static constexpr uint16_t ToBits(Half value) noexcept
+        {
+            return value.Value;
+        }
+
         static constexpr bool BitIsNan(uint16_t bits) noexcept
         {
             return ((bits & Exponent) == Exponent)
@@ -71,14 +81,14 @@ namespace Graphyte
             return ((bits & ~Sign) == Exponent);
         }
 
-        static constexpr Half FromBits(uint16_t bits) noexcept
+        static constexpr bool IsInf(Half value) noexcept
         {
-            return Half{ bits };
+            return BitIsInf(ToBits(value));
         }
 
-        static constexpr uint16_t ToBits(Half value) noexcept
+        static constexpr bool IsNan(Half value) noexcept
         {
-            return value.Value;
+            return BitIsInf(ToBits(value));
         }
     };
 
@@ -132,17 +142,6 @@ namespace Graphyte
         };
         static_assert(sizeof(Layout) == sizeof(float));
 
-        static constexpr bool BitIsNan(uint32_t bits) noexcept
-        {
-            return ((bits & Exponent) == Exponent)
-                && ((bits & Mantissa) != 0);
-        }
-
-        static constexpr bool BitIsInf(uint32_t bits) noexcept
-        {
-            return ((bits & ~Sign) == Exponent);
-        }
-
         static constexpr float FromBits(uint32_t bits) noexcept
         {
             return Layout{ .AsUInt32 = bits }.AsFloat32;
@@ -151,6 +150,34 @@ namespace Graphyte
         static constexpr uint32_t ToBits(float value) noexcept
         {
             return Layout{ .AsFloat32 = value }.AsUInt32;
+        }
+
+        static constexpr bool BitIsNan(uint32_t bits) noexcept
+        {
+#if false
+            return ((bits & Exponent) == Exponent)
+                && ((bits & Mantissa) != 0);
+#else
+            uint32_t const umask = bits & 0x7fff'ffffU;
+            uint32_t const unan = umask - 0x7f80'0001U;
+
+            return (unan < 0x007f'ffffU);
+#endif
+        }
+
+        static constexpr bool BitIsInf(uint32_t bits) noexcept
+        {
+            return ((bits & ~Sign) == Exponent);
+        }
+
+        static constexpr bool IsInf(float value) noexcept
+        {
+            return BitIsInf(ToBits(value));
+        }
+
+        static constexpr bool IsNan(float value) noexcept
+        {
+            return BitIsInf(ToBits(value));
         }
 
         static constexpr float Range12FromHighBits(uint32_t value) noexcept
@@ -213,6 +240,16 @@ namespace Graphyte
         };
         static_assert(sizeof(Layout) == sizeof(double));
 
+        static constexpr double FromBits(uint64_t bits) noexcept
+        {
+            return Layout{ .AsUInt64 = bits }.AsFloat64;
+        }
+
+        static constexpr uint64_t ToBits(double value) noexcept
+        {
+            return Layout{ .AsFloat64 = value }.AsUInt64;
+        }
+
         static constexpr bool BitIsNan(uint64_t bits) noexcept
         {
             return ((bits & Exponent) == Exponent)
@@ -224,14 +261,14 @@ namespace Graphyte
             return ((bits & ~Sign) == Exponent);
         }
 
-        static constexpr double FromBits(uint64_t bits) noexcept
+        static constexpr bool IsInf(double value) noexcept
         {
-            return Layout{ .AsUInt64 = bits }.AsFloat64;
+            return BitIsInf(ToBits(value));
         }
 
-        static constexpr uint64_t ToBits(double value) noexcept
+        static constexpr bool IsNan(double value) noexcept
         {
-            return Layout{ .AsFloat64 = value }.AsUInt64;
+            return BitIsInf(ToBits(value));
         }
 
         static constexpr double Range12FromHighBits(uint64_t value) noexcept

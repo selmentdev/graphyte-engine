@@ -1338,16 +1338,16 @@ TEST_CASE("Maths / Matrix Invertability")
         Vector4 det2{};
 
         Float4x4A work{};
-        Matrix original = Load<Matrix>(&src);
+        Matrix original = Load(&src);
 
         Matrix inverted = Inverse(original, &det1);
-        Store<Matrix>(&work, inverted);
+        Store(&work, inverted);
 
         CHECK(IsEqual(det1, cdet1, epsilon));
 
 
         Matrix reconstructed = Inverse(inverted, &det2);
-        Store<Matrix>(&work, reconstructed);
+        Store(&work, reconstructed);
 
         CHECK(IsEqual(det2, cdet2, epsilon));
 
@@ -1742,7 +1742,7 @@ TEST_CASE("Maths / Vector / Reflection")
 
     SECTION("-45 deg Z reflection")
     {
-        Vector3 const n = Normalize(Make<Vector3>(1.0F, 1.0F, 0.0));
+        Vector3 const n = Normalize(Make<Vector3>(1.0F, 1.0F, 0.0f));
         Vector3 const i = NegativeUnitX<Vector3>();
         Vector3 const r = Reflect(i, n);
 
@@ -1753,7 +1753,7 @@ TEST_CASE("Maths / Vector / Reflection")
 
     SECTION("incident perpendicular to normal - not reflected")
     {
-        Vector3 const n = Normalize(Make<Vector3>(0.0F, 1.0F, 0.0));
+        Vector3 const n = Normalize(Make<Vector3>(0.0F, 1.0F, 0.0f));
         Vector3 const i = UnitX<Vector3>();
         Vector3 const r = Reflect(i, n);
 
@@ -1885,7 +1885,7 @@ TEST_CASE("Maths / Vector / Clamp length")
                 // And expected vector
                 Vector2 const e = As<Vector2>(Multiply(As<Vector4>(n), cl));
 
-                CHECK(IsEqual(c, e, Replicate<Vector2>(0.001F)));
+                CHECK(IsEqual(c, e, Replicate<Vector4>(0.001F)));
             }
         }
     }
@@ -1916,7 +1916,7 @@ TEST_CASE("Maths / Vector / Clamp length")
                     // And expected vector
                     Vector3 const e = As<Vector3>(Multiply(As<Vector4>(n), cl));
 
-                    CHECK(IsEqual(c, e, Replicate<Vector3>(0.001F)));
+                    CHECK(IsEqual(c, e, Replicate<Vector4>(0.001F)));
                 }
             }
         }
@@ -3243,11 +3243,11 @@ TEST_CASE("Maths / Matrix / Transpose")
         12.0F, 13.0F, 14.0F, 15.0F,
     } } };
 
-    Matrix const original = Load<Matrix>(&values);
+    Matrix const original = Load(&values);
     Matrix const transposed = Transpose(original);
 
     Float4x4A stored{};
-    Store<Matrix>(&stored, transposed);
+    Store(&stored, transposed);
 
     CHECK(stored.M11 == 0.0F);
     CHECK(stored.M12 == 4.0F);
@@ -3282,7 +3282,7 @@ TEST_CASE("Maths / Matrix / Load-Store")
         3.2F, 4.3F, 5.4F, 6.5F,
     } } };
 
-    Matrix const m = Load<Matrix>(&mm);
+    Matrix const m = Load(&mm);
 
     Vector4 r0 = GetBaseX(m);
     Vector4 r1 = GetBaseY(m);

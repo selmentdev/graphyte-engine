@@ -184,7 +184,7 @@ namespace Graphyte::AssetsPipeline::Meshes
             {
                 if (submesh.ViewMatrixIndex >= 0)
                 {
-                    Maths::Store(&part->LocalTransform, Maths::Load<Maths::Matrix>(&matrices[static_cast<size_t>(submesh.ViewMatrixIndex)]));
+                    Maths::Store(&part->LocalTransform, Maths::Load(&matrices[static_cast<size_t>(submesh.ViewMatrixIndex)]));
                 }
                 else
                 {
