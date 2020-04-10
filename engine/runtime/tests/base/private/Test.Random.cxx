@@ -100,22 +100,22 @@ TEST_CASE("Random Generator")
         Graphyte::Random::RandomState state{};
         Initialize(state, 0);
 
-        CHECK(Generate64(state) == uint64_t{ 0x99EC5F36CB75F2B4u });
-        CHECK(Generate64(state) == uint64_t{ 0xBF6E1F784956452Au });
-        CHECK(Generate64(state) == uint64_t{ 0x1A5F849D4933E6E0u });
-        CHECK(Generate64(state) == uint64_t{ 0x6AA594F1262D2D2Cu });
-        CHECK(Generate64(state) == uint64_t{ 0xBBA5AD4A1F842E59u });
-        CHECK(Generate64(state) == uint64_t{ 0xFFEF8375D9EBCACAu });
-        CHECK(Generate64(state) == uint64_t{ 0x6C160DEED2F54C98u });
-        CHECK(Generate64(state) == uint64_t{ 0x8920AD648FC30A3Fu });
-        CHECK(Generate64(state) == uint64_t{ 0xDB032C0BA7539731u });
-        CHECK(Generate64(state) == uint64_t{ 0xEB3A475A3E749A3Du });
-        CHECK(Generate64(state) == uint64_t{ 0x1D42993FA43F2A54u });
-        CHECK(Generate64(state) == uint64_t{ 0x11361BF526A14BB5u });
-        CHECK(Generate64(state) == uint64_t{ 0x1B4F07A5AB3D8E9Cu });
-        CHECK(Generate64(state) == uint64_t{ 0xA7A3257F6986DB7Fu });
-        CHECK(Generate64(state) == uint64_t{ 0x7EFDAA95605DFC9Cu });
-        CHECK(Generate64(state) == uint64_t{ 0x4BDE97C0A78EAAB8u });
+        CHECK(NextUInt64(state) == uint64_t{ 0x99EC5F36CB75F2B4u });
+        CHECK(NextUInt64(state) == uint64_t{ 0xBF6E1F784956452Au });
+        CHECK(NextUInt64(state) == uint64_t{ 0x1A5F849D4933E6E0u });
+        CHECK(NextUInt64(state) == uint64_t{ 0x6AA594F1262D2D2Cu });
+        CHECK(NextUInt64(state) == uint64_t{ 0xBBA5AD4A1F842E59u });
+        CHECK(NextUInt64(state) == uint64_t{ 0xFFEF8375D9EBCACAu });
+        CHECK(NextUInt64(state) == uint64_t{ 0x6C160DEED2F54C98u });
+        CHECK(NextUInt64(state) == uint64_t{ 0x8920AD648FC30A3Fu });
+        CHECK(NextUInt64(state) == uint64_t{ 0xDB032C0BA7539731u });
+        CHECK(NextUInt64(state) == uint64_t{ 0xEB3A475A3E749A3Du });
+        CHECK(NextUInt64(state) == uint64_t{ 0x1D42993FA43F2A54u });
+        CHECK(NextUInt64(state) == uint64_t{ 0x11361BF526A14BB5u });
+        CHECK(NextUInt64(state) == uint64_t{ 0x1B4F07A5AB3D8E9Cu });
+        CHECK(NextUInt64(state) == uint64_t{ 0xA7A3257F6986DB7Fu });
+        CHECK(NextUInt64(state) == uint64_t{ 0x7EFDAA95605DFC9Cu });
+        CHECK(NextUInt64(state) == uint64_t{ 0x4BDE97C0A78EAAB8u });
     }
 
     SECTION("Generate random uint32 values")
@@ -123,22 +123,22 @@ TEST_CASE("Random Generator")
         Graphyte::Random::RandomState state{};
         Initialize(state, 0);
 
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x5299AD82u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xF6385A52u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x536C627Du });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x4C88B9DDu });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xA4218313u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x260449BFu });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xBEE34176u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x06E3A75Bu });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x7C50BB3Au });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xD54EDD67u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xB97DB36Bu });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x37975040u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xB0728939u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xCE25FE00u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0x1EA05609u });
-        CHECK(Next<uint32_t>(state) == uint32_t{ 0xEC503D78u });
+        CHECK(NextUInt32(state) == uint32_t{ 0x5299AD82u });
+        CHECK(NextUInt32(state) == uint32_t{ 0xF6385A52u });
+        CHECK(NextUInt32(state) == uint32_t{ 0x536C627Du });
+        CHECK(NextUInt32(state) == uint32_t{ 0x4C88B9DDu });
+        CHECK(NextUInt32(state) == uint32_t{ 0xA4218313u });
+        CHECK(NextUInt32(state) == uint32_t{ 0x260449BFu });
+        CHECK(NextUInt32(state) == uint32_t{ 0xBEE34176u });
+        CHECK(NextUInt32(state) == uint32_t{ 0x06E3A75Bu });
+        CHECK(NextUInt32(state) == uint32_t{ 0x7C50BB3Au });
+        CHECK(NextUInt32(state) == uint32_t{ 0xD54EDD67u });
+        CHECK(NextUInt32(state) == uint32_t{ 0xB97DB36Bu });
+        CHECK(NextUInt32(state) == uint32_t{ 0x37975040u });
+        CHECK(NextUInt32(state) == uint32_t{ 0xB0728939u });
+        CHECK(NextUInt32(state) == uint32_t{ 0xCE25FE00u });
+        CHECK(NextUInt32(state) == uint32_t{ 0x1EA05609u });
+        CHECK(NextUInt32(state) == uint32_t{ 0xEC503D78u });
     }
 
     SECTION("Generate random uint32 values between 10 and 22")
@@ -146,38 +146,38 @@ TEST_CASE("Random Generator")
         Graphyte::Random::RandomState state{};
         Initialize(state, 0);
 
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 15 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 16 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 20 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 14 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 15 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 16 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 22 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 14 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 13 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 15 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 13 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 16 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 17 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 22 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 14 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 18 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 20 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 18 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 18 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 19 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 20 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 15 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 22 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 22 });
-        CHECK(Next<uint32_t>(state, 10, 22) == uint32_t{ 11 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 15 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 16 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 20 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 14 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 15 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 11 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 11 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 16 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 22 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 14 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 13 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 15 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 11 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 13 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 16 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 11 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 17 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 22 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 14 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 18 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 20 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 11 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 11 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 11 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 18 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 18 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 19 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 20 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 15 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 22 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 22 });
+        CHECK(NextUInt32(state, 10, 22) == uint32_t{ 11 });
     }
 
     SECTION("Next<uint32_t> follows uniform distribution")
@@ -189,7 +189,7 @@ TEST_CASE("Random Generator")
 
         for (uint64_t i = 0; i < 10'000'000u; ++i)
         {
-            size_t index = Next<uint32_t>(state, 0, 31);
+            size_t index = NextUInt32(state, 0, 31);
             ++histogram[index];
         }
 
@@ -214,7 +214,7 @@ TEST_CASE("Random Generator")
 
         for (uint64_t i = 0; i < 1'000'000'000u; ++i)
         {
-            float const sample = Next<float>(state, 1'000.0f);
+            float const sample = NextFloat(state, 1'000.0f);
             size_t const index = static_cast<size_t>(sample);
 
             ++histogram[index];
@@ -255,13 +255,11 @@ TEST_CASE("Random Generator")
         Graphyte::Random::RandomState state{};
         Initialize(state, 0);
 
-        Graphyte::Float4A const sample = Next<Graphyte::Float4A>(state);
+        Graphyte::Float4 const sample = NextFloat4(state);
 
         CHECK(Graphyte::FloatTraits<float>::ToBits(sample.X) == 0x3F4B75F2u);
-        CHECK(Graphyte::FloatTraits<float>::ToBits(sample.Y) == 0x3F19EC5Eu);
-        CHECK(Graphyte::FloatTraits<float>::ToBits(sample.Z) == 0x3E92AC88u);
+        CHECK(Graphyte::FloatTraits<float>::ToBits(sample.Y) == 0x3E92AC88u);
+        CHECK(Graphyte::FloatTraits<float>::ToBits(sample.Z) == 0x3F19EC5Eu);
         CHECK(Graphyte::FloatTraits<float>::ToBits(sample.W) == 0x3F3F6E1Eu);
-
-
     }
 }

@@ -2,6 +2,7 @@
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Types.hxx>
 #include <Graphyte/Span.hxx>
+#include <Graphyte/Maths.Types.hxx>
 
 namespace Graphyte::Random::Impl
 {
@@ -24,22 +25,6 @@ namespace Graphyte::Random
     /// ```
     extern BASE_API void Initialize(RandomState& state, uint64_t seed) noexcept;
 
-    /// Generates uint64_t and updates random generator.
-    ///
-    /// ```
-    /// uint64_t const value = Generate64(state);
-    /// ```
-    extern BASE_API uint64_t Generate64(RandomState& state) noexcept;
-
-    inline uint32_t Generate32(RandomState& state) noexcept
-    {
-        uint64_t const sample = Generate64(state);
-        uint32_t const hi = static_cast<uint32_t>(sample >> 32u);
-        uint32_t const lo = static_cast<uint32_t>(sample);
-        uint32_t const result = hi ^ lo;
-        return result;
-    }
-
     extern BASE_API void Generate(RandomState& state, notstd::span<std::byte> buffer) noexcept;
 
     /// Skips 2^128 generations.
@@ -59,136 +44,40 @@ namespace Graphyte::Random
 
 namespace Graphyte::Random
 {
-    template <typename T> T Next(RandomState&) noexcept = delete;
+    extern BASE_API uint32_t NextUInt32(RandomState& state) noexcept;
+    extern BASE_API uint32_t NextUInt32(RandomState& state, uint32_t max) noexcept;
+    extern BASE_API uint32_t NextUInt32(RandomState& state, uint32_t min, uint32_t max) noexcept;
 
-    template <>
-    inline float Next<float>(RandomState& state) noexcept
-    {
-        uint32_t const sample = Generate32(state);
+    extern BASE_API UInt32x4 NextUInt32x4(RandomState& state) noexcept;
+    extern BASE_API UInt32x3 NextUInt32x3(RandomState& state) noexcept;
+    extern BASE_API UInt32x2 NextUInt32x2(RandomState& state) noexcept;
 
-        return FloatTraits<float>::Range12FromHighBits(sample) - 1.0f;
-    }
+    extern BASE_API uint64_t NextUInt64(RandomState& state) noexcept;
+    extern BASE_API uint64_t NextUInt64(RandomState& state, uint64_t max) noexcept;
+    extern BASE_API uint64_t NextUInt64(RandomState& state, uint64_t min, uint64_t max) noexcept;
 
-    template <>
-    inline double Next<double>(RandomState& state) noexcept
-    {
-        uint64_t const sample = Generate64(state);
-        return FloatTraits<double>::Range12FromHighBits(sample) - 1.0;
-    }
+    extern BASE_API float NextFloat(RandomState& state) noexcept;
+    extern BASE_API float NextFloat(RandomState& state, float max) noexcept;
+    extern BASE_API float NextFloat(RandomState& state, float min, float max) noexcept;
 
-    template <typename T>
-    inline auto Next(RandomState& state, T max) noexcept
-        -> std::enable_if_t<std::is_floating_point_v<T>, T>
-    {
-        T const sample = Next<T>(state);
-        T const result = sample * max;
-        return result;
-    }
+    extern BASE_API double NextDouble(RandomState& state) noexcept;
+    extern BASE_API double NextDouble(RandomState& state, double max) noexcept;
+    extern BASE_API double NextDouble(RandomState& state, double min, double max) noexcept;
 
-    template <typename T>
-    inline auto Next(RandomState& state, T max) noexcept
-        -> std::enable_if_t<std::is_unsigned_v<T>, T>
-    {
-        T const result = Next<T>(state, 0, max);
-        return result;
-    }
+    extern BASE_API float NextLaplace(RandomState& state, float mean, float scale) noexcept;
 
-    template <typename T>
-    inline auto Next(RandomState& state, T min, T max) noexcept
-        -> std::enable_if_t<std::is_floating_point_v<T>, T>
-    {
-        T const sample = Next<T>(state);
-        T const scale = (max - min);
-        T const result = (sample * scale) + min;
-        return result;
-    }
+    extern BASE_API float NextNormal(RandomState& state) noexcept;
+    extern BASE_API float NextNormal(RandomState& state, float mean, float stddev) noexcept;
 
-    template <typename T>
-    inline auto Next(RandomState& state, T min, T max) noexcept
-        -> std::enable_if_t<std::is_unsigned_v<T>, T>
-    {
-        T result;
+    extern BASE_API Vector3 InsideUnitSphere(RandomState& state) noexcept;
+    extern BASE_API Vector3 OnUnitSphere(RandomState& state) noexcept;
+    extern BASE_API Vector2 OnUnitCircle(RandomState& state) noexcept;
 
-        if ((max - min) == std::numeric_limits<T>::max())
-        {
-            return Next<T>(state);
-        }
-        else
-        {
-            T const range = max - min + 1;
-            T const limit = std::numeric_limits<T>::max() - (std::numeric_limits<T>::max() % range);
+    extern BASE_API Vector4 NextVector4(RandomState& state) noexcept;
+    extern BASE_API Vector3 NextVector3(RandomState& state) noexcept;
+    extern BASE_API Vector2 NextVector2(RandomState& state) noexcept;
 
-            do
-            {
-                result = Next<T>(state);
-            } while (result >= limit);
-
-            result %= range;
-        }
-
-        return min + result;
-    }
-        
-    template <>
-    inline Float4A Next(RandomState& state) noexcept
-    {
-        uint64_t const sample0 = Generate64(state);
-        uint64_t const sample1 = Generate64(state);
-
-        uint32_t const c0_u32 = static_cast<uint32_t>(sample0);
-        uint32_t const c1_u32 = static_cast<uint32_t>(sample0 >> 32);
-        uint32_t const c2_u32 = static_cast<uint32_t>(sample1);
-        uint32_t const c3_u32 = static_cast<uint32_t>(sample1 >> 32);
-
-        return {
-            .X = FloatTraits<float>::Range12FromHighBits(c0_u32) - 1.0f,
-            .Y = FloatTraits<float>::Range12FromHighBits(c1_u32) - 1.0f,
-            .Z = FloatTraits<float>::Range12FromHighBits(c2_u32) - 1.0f,
-            .W = FloatTraits<float>::Range12FromHighBits(c3_u32) - 1.0f,
-        };
-    }
-
-    template <>
-    inline uint32_t Next<uint32_t>(RandomState& state) noexcept
-    {
-        return Generate32(state);
-    }
-
-    template <>
-    inline uint64_t Next<uint64_t>(RandomState& state) noexcept
-    {
-        return Generate64(state);
-    }
-
-    template <typename T>
-    inline T NextLaplace(RandomState& state, T mean, T scale) noexcept
-    {
-        T const variable = Next<T>(state);
-
-        return (variable < T(0.5))
-            ? (mean + scale * std::log2(T(2.0) * variable))
-            : (mean - scale * std::log2(T(2.0) * (T(1.0) - variable)));
-    }
-
-    template <typename T>
-    inline T NextNormal(RandomState& state) noexcept
-    {
-        static_assert(std::is_floating_point_v<T>);
-
-        T const u1 = Next<T>(state);
-        T const u2 = Next<T>(state);
-
-        T const r = std::sqrt(T(-2.0) * std::log(u1));
-        T const theta = T(6.183018) * u2;
-        T const result = r * std::sin(theta);
-        return result;
-    }
-
-    template <typename T>
-    inline T NextNormal(RandomState& state, T mean, T stddev) noexcept
-    {
-        static_assert(std::is_floating_point_v<T>);
-
-        return mean + NextNormal<T>(state) * stddev;
-    }
+    extern BASE_API Float4 NextFloat4(RandomState& state) noexcept;
+    extern BASE_API Float3 NextFloat3(RandomState& state) noexcept;
+    extern BASE_API Float2 NextFloat2(RandomState& state) noexcept;
 }

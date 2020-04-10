@@ -72,7 +72,7 @@ namespace Graphyte::Geometry
 
         std::vector<ModelPart*> FindChildren(ModelPart* parentPart) const noexcept;
 
-        Maths::Matrix ComputeWorldMatrix(ModelPart* part) const noexcept;
+        Matrix ComputeWorldMatrix(ModelPart* part) const noexcept;
 
         Model() noexcept;
         ~Model() noexcept;

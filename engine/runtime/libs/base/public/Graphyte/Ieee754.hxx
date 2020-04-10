@@ -90,6 +90,20 @@ namespace Graphyte
         {
             return BitIsInf(ToBits(value));
         }
+
+        static constexpr Half Range12FromHighBits(uint16_t value) noexcept
+        {
+            uint16_t const u = One | (value >> (ExponentBits + SignBits));
+            Half const f = FromBits(u);
+            return f;
+        }
+
+        static constexpr Half Range12FromLowBits(uint16_t value) noexcept
+        {
+            uint16_t const u = One | (value & Mantissa);
+            Half const f = FromBits(u);
+            return f;
+        }
     };
 
 
@@ -182,7 +196,14 @@ namespace Graphyte
 
         static constexpr float Range12FromHighBits(uint32_t value) noexcept
         {
-            uint32_t const u = One | (value >> (ExponentBits + 1));
+            uint32_t const u = One | (value >> (ExponentBits + SignBits));
+            float const f = FromBits(u);
+            return f;
+        }
+
+        static constexpr float Range12FromLowBits(uint32_t value) noexcept
+        {
+            uint32_t const u = One | (value & Mantissa);
             float const f = FromBits(u);
             return f;
         }
@@ -273,7 +294,14 @@ namespace Graphyte
 
         static constexpr double Range12FromHighBits(uint64_t value) noexcept
         {
-            uint64_t const u = One | (value >> (ExponentBits + 1));
+            uint64_t const u = One | (value >> (ExponentBits + SignBits));
+            double const f = FromBits(u);
+            return f;
+        }
+
+        static constexpr double Range12FromLowBits(uint64_t value) noexcept
+        {
+            uint64_t const u = One | (value & Mantissa);
             double const f = FromBits(u);
             return f;
         }

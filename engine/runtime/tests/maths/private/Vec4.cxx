@@ -4,6 +4,7 @@
 
 TEST_CASE("Maths / Quaternion / q mul conj(q) = identity")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Vector3 const axis = Make<Vector3>(1.0f, 2.0f, -3.0f);
@@ -18,6 +19,7 @@ TEST_CASE("Maths / Quaternion / q mul conj(q) = identity")
 
 TEST_CASE("Maths / Vector / Clamp")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Vector2 va2 = Make<Vector2>(1.0f, -2.0f);
@@ -28,6 +30,7 @@ TEST_CASE("Maths / Vector / Clamp")
 
 TEST_CASE("Maths / Vectors / Dot Product")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Vector2")
@@ -72,6 +75,7 @@ TEST_CASE("Maths / Vectors / Dot Product")
 
 TEST_CASE("Maths / Vectors / Angles")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Angle between vectors")
@@ -199,6 +203,7 @@ TEST_CASE("Maths / Vectors / Angles")
 
 TEST_CASE("Maths / Transforms")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Affine Transforms")
@@ -358,6 +363,7 @@ TEST_CASE("Maths / Transforms")
 
 TEST_CASE("Maths / Rotations / Matrix rotations around arbitrary axis")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Case 1")
@@ -417,6 +423,7 @@ TEST_CASE("Maths / Rotations / Matrix rotations around arbitrary axis")
 
 TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     constexpr float const angle_step = 5.0f;
@@ -552,6 +559,7 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
 
 TEST_CASE("Maths / Matrix / Rotations")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Rotation X")
@@ -1242,6 +1250,7 @@ TEST_CASE("Maths / Matrix / Rotations")
 
 TEST_CASE("Maths / Vector4 / Vector4 Cross Product")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Vector4 v0 = Make<Vector4>(1.0F, 2.0F, 1.0F, 3.0F);
@@ -1294,6 +1303,7 @@ TEST_CASE("Maths / Vector4 / Vector4 Cross Product")
 TEST_CASE("BitCast between floating type")
 {
     using namespace Graphyte;
+    using namespace Graphyte;
 
     CHECK(BitCast<uint32_t>(1.0f) == 0x3f800000u);
     CHECK(BitCast<uint32_t>(12.5f) == 0x41480000u);
@@ -1309,6 +1319,7 @@ TEST_CASE("BitCast between floating type")
 
 TEST_CASE("Maths / Vector / Copy Sign")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Vector4 const vn = Make<Vector4>(-1.0F, 2.0F, 3.0F, -4.0F);
@@ -1338,7 +1349,7 @@ TEST_CASE("Maths / Matrix Invertability")
         Vector4 det2{};
 
         Float4x4A work{};
-        Matrix original = Load(&src);
+        Matrix original = Load<Matrix>(&src);
 
         Matrix inverted = Inverse(original, &det1);
         Store(&work, inverted);
@@ -1397,6 +1408,7 @@ TEST_CASE("Maths / Matrix Invertability")
 
 TEST_CASE("Maths / Fresnel Term")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("index = 0.5")
@@ -1547,6 +1559,7 @@ TEST_CASE("Maths / Fresnel Term")
 
 TEST_CASE("Maths / Vector / Line - point distance")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Vector3 const p0 = Make<Vector3>(-1.0F, -1.0F, -1.0F);
@@ -1580,6 +1593,7 @@ TEST_CASE("Maths / Vector / Line - point distance")
 
 TEST_CASE("Maths / Vector / Refraction")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Vector2")
@@ -1738,6 +1752,7 @@ TEST_CASE("Maths / Vector / Refraction")
 
 TEST_CASE("Maths / Vector / Reflection")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("-45 deg Z reflection")
@@ -1776,6 +1791,7 @@ TEST_CASE("Maths / Vector / Reflection")
 
 TEST_CASE("Maths / Vector / Plane Intersection")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("+X -> point")
@@ -1859,6 +1875,7 @@ TEST_CASE("Maths / Vector / Plane Intersection")
 
 TEST_CASE("Maths / Vector / Clamp length")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Vector2")
@@ -1960,6 +1977,7 @@ TEST_CASE("Maths / Vector / Clamp length")
 
 TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Unit X")
@@ -2232,6 +2250,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
 
 TEST_CASE("Maths / Quaternion / Rotation from axis angle")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Axis X")
@@ -2484,6 +2503,7 @@ TEST_CASE("Maths / Quaternion / Rotation from axis angle")
 
 TEST_CASE("Maths / Quaternion / Multiply")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Quaternion const qx = UnitX<Quaternion>();
@@ -2638,6 +2658,7 @@ TEST_CASE("Maths / Quaternion / Multiply")
 
 TEST_CASE("Maths / Plane / Normalized")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Plane const p = CreateFromPoints(
@@ -2654,6 +2675,7 @@ TEST_CASE("Maths / Plane / Normalized")
 
 TEST_CASE("Maths / Vector / Horizontal operations")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
 
@@ -2882,6 +2904,7 @@ TEST_CASE("Maths / Vector / Horizontal operations")
 
 TEST_CASE("Maths / Quaternion / exp log identity")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Identity quaternion exp+log")
@@ -2904,6 +2927,7 @@ TEST_CASE("Maths / Quaternion / exp log identity")
 
 TEST_CASE("Maths / Vector / Interpolation")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
     constexpr float const DeltaT = 0.1F;
 
@@ -3074,6 +3098,7 @@ TEST_CASE("Maths / Vector / Interpolation")
 
 TEST_CASE("Maths / Vector / Permute")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Vector4 const a = Make<Vector4>(1.0F, 2.0F, 3.0F, 4.0F);
@@ -3108,6 +3133,7 @@ TEST_CASE("Maths / Vector / Permute")
 
 TEST_CASE("Maths / Vector / Swizzle")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Vector4 const a = Make<Vector4>(1.0F, 2.0F, 3.0F, 4.0F);
@@ -3141,6 +3167,7 @@ TEST_CASE("Maths / Vector / Swizzle")
 
 TEST_CASE("Maths / Vector / Compiled swizzles")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Vector4 const a = Make<Vector4>(1.0F, 2.0F, 3.0F, 4.0F);
@@ -3171,6 +3198,7 @@ TEST_CASE("Maths / Vector / Compiled swizzles")
 
 TEST_CASE("Maths / Vector / Orthogonal")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     SECTION("Vector2")
@@ -3243,7 +3271,7 @@ TEST_CASE("Maths / Matrix / Transpose")
         12.0F, 13.0F, 14.0F, 15.0F,
     } } };
 
-    Matrix const original = Load(&values);
+    Matrix const original = Load<Matrix>(&values);
     Matrix const transposed = Transpose(original);
 
     Float4x4A stored{};
@@ -3282,7 +3310,7 @@ TEST_CASE("Maths / Matrix / Load-Store")
         3.2F, 4.3F, 5.4F, 6.5F,
     } } };
 
-    Matrix const m = Load(&mm);
+    Matrix const m = Load<Matrix>(&mm);
 
     Vector4 r0 = GetBaseX(m);
     Vector4 r1 = GetBaseY(m);
@@ -3369,6 +3397,7 @@ TEST_CASE("Maths / LoadStore")
 
 TEST_CASE("Maths / Vector4 / Cross Product")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Vector4 const a = Make<Vector4>(1.0F, 5.0F, 3.0F, 4.0F);
@@ -3388,6 +3417,7 @@ TEST_CASE("Maths / Vector4 / Cross Product")
 
 TEST_CASE("Maths / Vector / Rounding")
 {
+    using namespace Graphyte;
     using namespace Graphyte::Maths;
 
     Vector4 const v1 = Make<Vector4>(0.1F, 0.4F, 0.6F, 0.9F);

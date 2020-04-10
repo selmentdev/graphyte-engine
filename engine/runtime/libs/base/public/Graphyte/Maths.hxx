@@ -4,143 +4,7 @@
 #include <Graphyte/Bitwise.hxx>
 #include <Graphyte/Half.hxx>
 #include <Graphyte/Types.hxx>
-#include <Graphyte/Maths/Base.hxx>
-
-
-// =================================================================================================
-//
-// Concepts
-//
-
-namespace Graphyte::Maths
-{
-}
-
-// =================================================================================================
-//
-// Math types
-//
-
-namespace Graphyte::Maths
-{
-    struct Bool4 final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 4;
-        using ComponentType = uint32_t;
-        using MaskType = Bool4;
-    };
-
-    struct Bool3 final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 3;
-        static constexpr const uint32_t CompareMask = 0b0111;
-        using ComponentType = uint32_t;
-        using MaskType = Bool3;
-    };
-
-    struct Bool2 final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 2;
-        using ComponentType = uint32_t;
-        using MaskType = Bool2;
-    };
-
-    struct Bool1 final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 1;
-        using ComponentType = uint32_t;
-        using MaskType = Bool1;
-    };
-
-    struct Vector4 final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 4;
-        using ComponentType = float;
-        using MaskType = Bool4;
-    };
-
-    struct Vector3 final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 3;
-        using ComponentType = float;
-        using MaskType = Bool3;
-    };
-
-    struct Vector2 final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 2;
-        using ComponentType = float;
-        using MaskType = Bool2;
-    };
-
-    struct Vector1 final
-    {
-        Impl::NativeFloat32x4 V;
-        static constexpr const size_t Components = 1;
-        using ComponentType = float;
-        using MaskType = Bool1;
-    };
-
-    struct Quaternion final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 4;
-        using ComponentType = float;
-        using MaskType = Bool4;
-    };
-
-    struct Plane final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 4;
-        using ComponentType = float;
-        using MaskType = Bool4;
-    };
-
-    struct Sphere final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 4;
-        using ComponentType = float;
-        using MaskType = Bool4;
-    };
-
-    struct Matrix final
-    {
-        Impl::NativeFloat32x4x4 M;
-
-        static constexpr const size_t Components = 16;
-        static constexpr const size_t Rows = 4;
-        static constexpr const size_t Columns = 4;
-        using ComponentType = float;
-    };
-
-    struct Color final
-    {
-        Impl::NativeFloat32x4 V;
-
-        static constexpr const size_t Components = 4;
-        using ComponentType = float;
-        using MaskType = Bool4;
-    };
-}
+#include <Graphyte/Maths.Types.hxx>
 
 
 // =================================================================================================
@@ -3171,6 +3035,34 @@ namespace Graphyte::Maths
     {
         return { SignMask<Vector4>().V };
     }
+
+    template <typename T> T Pi() noexcept = delete;
+
+    template <>
+    mathinline float mathcall Pi<float>() noexcept
+    {
+        return Impl::PI<float>;
+    }
+
+    template <>
+    mathinline Vector4 mathcall Pi<Vector4>() noexcept
+    {
+        return { Impl::VEC4_PI.V };
+    }
+
+    template <typename T> T TwoPi() noexcept = delete;
+
+    template <>
+    mathinline float mathcall TwoPi<float>() noexcept
+    {
+        return Impl::PI2<float>;
+    }
+
+    template <>
+    mathinline Vector4 mathcall TwoPi<Vector4>() noexcept
+    {
+        return { Impl::VEC4_2PI.V };
+    }
 }
 
 
@@ -4261,6 +4153,14 @@ namespace Graphyte::Maths
     {
         result_sin = sinf(v);
         result_cos = cosf(v);
+    }
+
+    mathinline Float2 SinCos(float v) noexcept
+    {
+        return Float2{
+            sinf(v),
+            cosf(v),
+        };
     }
 
     mathinline Vector4 mathcall Tan(Vector4 v) noexcept
@@ -9440,6 +9340,68 @@ namespace Graphyte::Maths
 
 // =================================================================================================
 //
+// Move towards
+//
+
+namespace Graphyte::Maths
+{
+    mathinline Vector4 mathcall MoveTowards(Vector4 current, Vector4 target, float max_distance) noexcept
+    {
+        Vector4 const diff = Subtract(target, current);
+        Vector4 const length = Length(diff);
+        Vector4 const vmax = Replicate<Vector4>(max_distance);
+
+        if (IsLessEqual(length, vmax) || IsZero(length))
+        {
+            return target;
+        }
+
+        return MultiplyAdd(current, Divide(diff, length), vmax);
+    }
+
+    mathinline Vector3 mathcall MoveTowards(Vector3 current, Vector3 target, float max_distance) noexcept
+    {
+        Vector3 const diff = Subtract(target, current);
+        Vector3 const length = Vector3{ Length(diff).V };
+        Vector3 const vmax = Replicate<Vector3>(max_distance);
+
+        if (IsLessEqual(length, vmax) || IsZero(length))
+        {
+            return target;
+        }
+
+        return MultiplyAdd(current, Divide(diff, length), vmax);
+    }
+
+    mathinline Vector2 mathcall MoveTowards(Vector2 current, Vector2 target, float max_distance) noexcept
+    {
+        Vector2 const diff = Subtract(target, current);
+        Vector2 const length = Vector2{ Length(diff).V };
+        Vector2 const vmax = Replicate<Vector2>(max_distance);
+
+        if (IsLessEqual(length, vmax) || IsZero(length))
+        {
+            return target;
+        }
+
+        return MultiplyAdd(current, Divide(diff, length), vmax);
+    }
+
+    mathinline float mathcall MoveTowards(float current, float target, float max_distance) noexcept
+    {
+        float const distance = target - current;
+
+        if (Abs(distance) <= max_distance)
+        {
+            return target;
+        }
+
+        return current + Sign(distance) * max_distance;
+    }
+}
+
+// =================================================================================================
+//
 // Vector4 operations
 //
 
@@ -10447,7 +10409,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Matrix mathcall Load(Float4x4A const* source) noexcept
+    template <>
+    mathinline Matrix mathcall Load<Matrix, Float4x4A>(Float4x4A const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -10492,7 +10455,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline void mathcall Store(Float4x4A* destination, Matrix m) noexcept
+    template <>
+    mathinline void mathcall Store<Float4x4A, Matrix>(Float4x4A* destination, Matrix m) noexcept
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
@@ -10529,7 +10493,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Matrix mathcall Load(Float4x3A const* source) noexcept
+    template <>
+    mathinline Matrix mathcall Load<Matrix, Float4x3A>(Float4x3A const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -10594,7 +10559,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline void mathcall Store(Float4x3A* destination, Matrix m) noexcept
+    template <>
+    mathinline void mathcall Store<Float4x3A, Matrix>(Float4x3A* destination, Matrix m) noexcept
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
@@ -10646,7 +10612,8 @@ namespace Graphyte::Maths
     }
 
     /// \note   Float3x4 is stored as transposed Float4x3
-    mathinline Matrix mathcall Load(Float3x4A const* source) noexcept
+    template <>
+    mathinline Matrix mathcall Load<Matrix, Float3x4A>(Float3x4A const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -10698,7 +10665,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline void mathcall Store(Float3x4A* destination, Matrix m) noexcept
+    template <>
+    mathinline void mathcall Store<Float3x4A, Matrix>(Float3x4A* destination, Matrix m) noexcept
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
@@ -10735,7 +10703,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Matrix mathcall Load(Float4x4 const* source) noexcept
+    template <>
+    mathinline Matrix mathcall Load<Matrix, Float4x4>(Float4x4 const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -10774,7 +10743,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline void mathcall Store(Float4x4* destination, Matrix m) noexcept
+    template <>
+    mathinline void mathcall Store<Float4x4, Matrix>(Float4x4* destination, Matrix m) noexcept
     {
         GX_ASSERT(destination != nullptr);
 
@@ -10806,7 +10776,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Matrix mathcall Load(Float4x3 const* source) noexcept
+    template <>
+    mathinline Matrix mathcall Load<Matrix, Float4x3>(Float4x3 const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 
@@ -10870,7 +10841,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline void mathcall Store(Float4x3* destination, Matrix m) noexcept
+    template <>
+    mathinline void mathcall Store<Float4x3, Matrix>(Float4x3* destination, Matrix m) noexcept
     {
         GX_ASSERT(destination != nullptr);
 
@@ -10921,7 +10893,8 @@ namespace Graphyte::Maths
     }
 
     /// \note   Float3x4 is stored as transposed Float4x3
-    mathinline Matrix mathcall Load(Float3x4 const* source) noexcept
+    template <>
+    mathinline Matrix mathcall Load<Matrix, Float3x4>(Float3x4 const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 
@@ -10972,7 +10945,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline void mathcall Store(Float3x4* destination, Matrix m) noexcept
+    template <>
+    mathinline void mathcall Store<Float3x4, Matrix>(Float3x4* destination, Matrix m) noexcept
     {
         GX_ASSERT(destination != nullptr);
 
@@ -11008,7 +10982,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Matrix mathcall Load(Float3x3 const* source) noexcept
+    template <>
+    mathinline Matrix mathcall Load<Matrix, Float3x3>(Float3x3 const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -11059,7 +11034,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline void mathcall Store(Float3x3* destination, Matrix m) noexcept
+    template <>
+    mathinline void mathcall Store<Float3x3, Matrix>(Float3x3* destination, Matrix m) noexcept
     {
         GX_ASSERT(destination != nullptr);
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -14935,7 +14911,8 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    mathinline Color mathcall Load(ColorBGRA const* source) noexcept
+    template <>
+    mathinline Color mathcall Load<Color, ColorBGRA>(ColorBGRA const* source) noexcept
     {
         GX_ASSERT(source != nullptr);
 
@@ -14963,7 +14940,8 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline void mathcall Store(ColorBGRA* destination, Color color) noexcept
+    template <>
+    mathinline void mathcall Store<ColorBGRA, Color>(ColorBGRA* destination, Color color) noexcept
     {
         GX_ASSERT(destination != nullptr);
 

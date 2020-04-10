@@ -38,19 +38,19 @@ namespace Graphyte::Geometry
         return result;
     }
 
-    Maths::Matrix Model::ComputeWorldMatrix([[maybe_unused]] ModelPart* part) const noexcept
+    Matrix Model::ComputeWorldMatrix([[maybe_unused]] ModelPart* part) const noexcept
     {
-        //Maths::Matrix result = Maths::Matrix::Identity();
-        //
-        //while (part != nullptr)
-        //{
-        //    auto const local = Maths::Matrix::Load(&part->LocalTransform);
-        //    result = Maths::Matrix::MultiplyTranspose(result, local);
-        //    part = part->Parent;
-        //}
-        //
-        //result = Maths::Matrix::Transpose(result);
-        //return result;
+        Matrix result = Maths::Identity<Matrix>();
+        
+        while (part != nullptr)
+        {
+            auto const local = Maths::Load<Matrix>(&part->LocalTransform);
+            result = Maths::MultiplyTranspose(result, local);
+            part = part->Parent;
+        }
+        
+        result = Maths::Transpose(result);
+        return result;
         return {};
     }
 

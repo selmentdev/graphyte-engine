@@ -184,14 +184,14 @@ namespace Graphyte::AssetsPipeline::Meshes
             {
                 if (submesh.ViewMatrixIndex >= 0)
                 {
-                    Maths::Store(&part->LocalTransform, Maths::Load(&matrices[static_cast<size_t>(submesh.ViewMatrixIndex)]));
+                    Maths::Store(&part->LocalTransform, Maths::Load<Matrix>(&matrices[static_cast<size_t>(submesh.ViewMatrixIndex)]));
                 }
                 else
                 {
-                    Maths::Store(&part->LocalTransform, Maths::Identity<Maths::Matrix>());
+                    Maths::Store(&part->LocalTransform, Maths::Identity<Matrix>());
                 }
 
-                Maths::Store(&part->BoneTransform, Maths::Identity<Maths::Matrix>());
+                Maths::Store(&part->BoneTransform, Maths::Identity<Matrix>());
 
                 if (submesh.NameIndex >= 0)
                 {
