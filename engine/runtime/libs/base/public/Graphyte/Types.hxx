@@ -1,6 +1,7 @@
 #pragma once
 #include <Graphyte/Base.module.hxx>
 #include <Graphyte/Half.hxx>
+#include <Graphyte/TypeTraits.hxx>
 
 namespace Graphyte
 {

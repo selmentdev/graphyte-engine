@@ -129,17 +129,17 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
-    template <typename TTo, typename TFrom>
-    mathinline TTo mathcall As(TFrom v) noexcept
-    {
-        return { v.V };
-    }
-
-    template <typename TTo>
-    mathinline TTo mathcall As(Impl::NativeFloat32x4 v) noexcept
-    {
-        return { v };
-    }
+    //template <typename TTo, typename TFrom, std::enable_if_t<!std::is_same_v<std::remove_cv_t<TTo>, std::remove_cv_t<TFrom>>, int> = 0>
+    //mathinline TTo mathcall As(TFrom v) noexcept
+    //{
+    //    return { v.V };
+    //}
+    //
+    //template <typename TTo>
+    //mathinline TTo mathcall As(Impl::NativeFloat32x4 v) noexcept
+    //{
+    //    return { v };
+    //}
 }
 
 
@@ -591,13 +591,13 @@ namespace Graphyte::Maths
     template <size_t X, size_t Y, size_t Z>
     mathinline Vector3 mathcall Swizzle(Vector3 v) noexcept
     {
-        return As<Vector3>(Swizzle<X, Y, Z, X>(As<Vector4>(v)));
+        return Vector3{ Swizzle<X, Y, Z, X>(Vector4{ v.V }).V };
     }
 
     template <size_t X, size_t Y>
     mathinline Vector2 mathcall Swizzle(Vector2 v) noexcept
     {
-        return As<Vector2>(Swizzle<X, Y, X, Y>(As<Vector2>(v)));
+        return Vector2{ Swizzle<X, Y, X, Y>(Vector4{ v.V }).V };
     }
 
     template <SwizzleMask M>
@@ -3036,30 +3036,14 @@ namespace Graphyte::Maths
         return { SignMask<Vector4>().V };
     }
 
-    template <typename T> T Pi() noexcept = delete;
-
-    template <>
-    mathinline float mathcall Pi<float>() noexcept
-    {
-        return Impl::PI<float>;
-    }
-
     template <>
     mathinline Vector4 mathcall Pi<Vector4>() noexcept
     {
         return { Impl::VEC4_PI.V };
     }
 
-    template <typename T> T TwoPi() noexcept = delete;
-
     template <>
-    mathinline float mathcall TwoPi<float>() noexcept
-    {
-        return Impl::PI2<float>;
-    }
-
-    template <>
-    mathinline Vector4 mathcall TwoPi<Vector4>() noexcept
+    mathinline Vector4 mathcall Pi2<Vector4>() noexcept
     {
         return { Impl::VEC4_2PI.V };
     }
@@ -8302,7 +8286,7 @@ namespace Graphyte::Maths
 
     mathinline float mathcall Cosine(float a, float b, float t) noexcept
     {
-        float const t0 = (1.0F - Cos(t * Impl::PI<float>)) * 0.5F;
+        float const t0 = (1.0F - Cos(t * Impl::ConstPi<float>)) * 0.5F;
         return Lerp(a, b, t0);
     }
 
@@ -9245,7 +9229,7 @@ namespace Graphyte::Maths
 
     mathinline Vector3 mathcall FaceForward(Vector3 normal, Vector3 incident, Vector3 reference) noexcept
     {
-        Vector3 const dot0 = Vector3{ Dot(reference, incident).V };
+        Vector3 const dot0{ Dot(reference, incident).V };
         Vector3 const sign0 = Sign(dot0);
         Vector3 const r0 = Multiply(sign0, Replicate<Vector3>(-1.0f));
         Vector3 const r1 = Multiply(normal, r0);
@@ -9254,7 +9238,7 @@ namespace Graphyte::Maths
 
     mathinline Vector2 mathcall FaceForward(Vector2 normal, Vector2 incident, Vector2 reference) noexcept
     {
-        Vector2 const dot0 = Vector2{ Dot(reference, incident).V };
+        Vector2 const dot0{ Dot(reference, incident).V };
         Vector2 const sign0 = Sign(dot0);
         Vector2 const r0 = Multiply(sign0, Replicate<Vector2>(-1.0f));
         Vector2 const r1 = Multiply(normal, r0);
@@ -9362,7 +9346,7 @@ namespace Graphyte::Maths
     mathinline Vector3 mathcall MoveTowards(Vector3 current, Vector3 target, float max_distance) noexcept
     {
         Vector3 const diff = Subtract(target, current);
-        Vector3 const length = Vector3{ Length(diff).V };
+        Vector3 const length{ Length(diff).V };
         Vector3 const vmax = Replicate<Vector3>(max_distance);
 
         if (IsLessEqual(length, vmax) || IsZero(length))
@@ -9376,7 +9360,7 @@ namespace Graphyte::Maths
     mathinline Vector2 mathcall MoveTowards(Vector2 current, Vector2 target, float max_distance) noexcept
     {
         Vector2 const diff = Subtract(target, current);
-        Vector2 const length = Vector2{ Length(diff).V };
+        Vector2 const length { Length(diff).V };
         Vector2 const vmax = Replicate<Vector2>(max_distance);
 
         if (IsLessEqual(length, vmax) || IsZero(length))
@@ -9628,18 +9612,18 @@ namespace Graphyte::Maths
 
         Bool3 const select = CompareEqual(cmp_zzz_negative, cmp_yzy_negative);
 
-        Vector4 const r0 = Permute<4, 0, 0, 0>(As<Vector4>(negv), As<Vector4>(s));
-        Vector4 const r1 = Permute<4, 0, 0, 0>(As<Vector4>(v), As<Vector4>(d));
+        Vector4 const r0 = Permute<4, 0, 0, 0>(Vector4{ negv.V }, Vector4{ s.V });
+        Vector4 const r1 = Permute<4, 0, 0, 0>(Vector4{ v.V }, Vector4{ d.V });
 
         Vector4 const result = Select(r1, r0, Bool4{ select.V });
 
-        return As<Vector3>(result);
+        return Vector3{ result.V };
     }
 
     mathinline void mathcall ComponentsFromNormal(Vector3& out_parallel, Vector3& out_perpendicular, Vector3 v, Vector3 n) noexcept
     {
         Vector4 const scale = Dot(v, n);
-        Vector3 const parallel = Multiply(n, As<Vector3>(scale));
+        Vector3 const parallel = Multiply(n, Vector3{ scale.V });
 
         out_parallel = parallel;
         out_perpendicular = Subtract(v, parallel);
@@ -9648,14 +9632,14 @@ namespace Graphyte::Maths
     mathinline Vector3 mathcall Transform(Vector3 v, Matrix m) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const v4 = As<Vector4>(v);
+        Vector4 const v4{ v.V };
         Vector4 const zzzz = SplatZ<Vector4>(v4);
         Vector4 const r0 = MultiplyAdd(zzzz, Vector4{ m.M.R[2] }, Vector4{ m.M.R[3] });
         Vector4 const yyyy = SplatY<Vector4>(v4);
         Vector4 const r1 = MultiplyAdd(yyyy, Vector4{ m.M.R[1] }, r0);
         Vector4 const xxxx = SplatX<Vector4>(v4);
         Vector4 const r2 = MultiplyAdd(xxxx, Vector4{ m.M.R[0] }, r1);
-        return As<Vector3>(r2);
+        return Vector3{ r2.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
         __m128 const r0 = Impl::avx_fmadd_f32x4(zzzz, m.M.R[2], m.M.R[3]);
@@ -9677,7 +9661,7 @@ namespace Graphyte::Maths
     mathinline Vector3 mathcall TransformCoord(Vector3 v, Matrix m) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const v4 = As<Vector4>(v);
+        Vector4 const v4{ v.V };
         Vector4 const zzzz = SplatZ<Vector4>(v4);
         Vector4 const r0 = MultiplyAdd(zzzz, Vector4{ m.M.R[2] }, Vector4{ m.M.R[3] });
         Vector4 const yyyy = SplatY<Vector4>(v4);
@@ -9686,7 +9670,7 @@ namespace Graphyte::Maths
         Vector4 const r2 = MultiplyAdd(xxxx, Vector4{ m.M.R[0] }, r1);
         Vector4 const wwww = SplatW<Vector4>(r2);
         Vector4 const result = Divide(r2, wwww);
-        return As<Vector3>(result);
+        return Vector3{ result.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const zzzz = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
         __m128 const r0 = Impl::avx_fmadd_f32x4(zzzz, m.M.R[2], m.M.R[3]);
@@ -9703,14 +9687,14 @@ namespace Graphyte::Maths
     mathinline Vector3 mathcall TransformNormal(Vector3 v, Matrix m) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const v4 = As<Vector4>(v);
+        Vector4 const v4{ v.V };
         Vector4 const zzzz = SplatZ<Vector4>(v4);
         Vector4 const r0 = Multiply(zzzz, Vector4{ m.M.R[2] });
         Vector4 const yyyy = SplatY<Vector4>(v4);
         Vector4 const r1 = MultiplyAdd(yyyy, Vector4{ m.M.R[1] }, r0);
         Vector4 const xxxx = SplatX<Vector4>(v4);
         Vector4 const r2 = MultiplyAdd(xxxx, Vector4{ m.M.R[0] }, r1);
-        return As<Vector3>(r2);
+        return Vector3{ r2.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const xxxx = _mm_permute_ps(v.V, _MM_SHUFFLE(2, 2, 2, 2));
         __m128 const r0 = _mm_mul_ps(xxxx, m.M.R[2]);
@@ -9776,12 +9760,12 @@ namespace Graphyte::Maths
     mathinline Vector2 mathcall Transform(Vector2 v, Matrix m) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const v4 = As<Vector4>(v);
+        Vector4 const v4{ v.V };
         Vector4 const yyyy = SplatY(v4);
         Vector4 const r0 = MultiplyAdd(yyyy, { m.M.R[1] }, { m.M.R[3] });
         Vector4 const xxxx = SplatX(v4);
         Vector4 const r1 = MultiplyAdd(xxxx, { m.M.R[0] }, r0);
-        return As<Vector2>(r1);
+        return Vector2{ r1.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
         __m128 const r0 = Impl::avx_fmadd_f32x4(yyyy, m.M.R[1], m.M.R[3]);
@@ -9799,14 +9783,14 @@ namespace Graphyte::Maths
     mathinline Vector2 mathcall TransformCoord(Vector2 v, Matrix m) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const v4 = As<Vector4>(v);
+        Vector4 const v4{ v.V };
         Vector4 const yyyy = SplatY(v4);
         Vector4 const r0 = MultiplyAdd(yyyy, { m.M.R[1] }, { m.M.R[3] });
         Vector4 const xxxx = SplatX(v4);
         Vector4 const r1 = MultiplyAdd(xxxx, { m.M.R[0] }, r0);
         Vector4 const wwww = SplatW(r1);
         Vector4 const r2 = Divide(r1, wwww);
-        return As<Vector2>(r2);
+        return Vector2{ r2.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
         __m128 const r0 = Impl::avx_fmadd_f32x4(yyyy, m.M.R[1], m.M.R[3]);
@@ -9821,12 +9805,12 @@ namespace Graphyte::Maths
     mathinline Vector2 mathcall TransformNormal(Vector2 v, Matrix m) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const v4 = As<Vector4>(v);
+        Vector4 const v4{ v.V };
         Vector4 const yyyy = SplatY(v4);
         Vector4 const r0 = Multiply(yyyy, { m.M.R[1] });
         Vector4 const xxxx = SplatX(v4);
         Vector4 const r1 = MultiplyAdd(xxxx, { m.M.R[0] }, r0);
-        return As<Vector2>(r1);
+        return Vector2{ r1.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const yyyy = _mm_permute_ps(v.V, _MM_SHUFFLE(1, 1, 1, 1));
         __m128 const r0 = _mm_mul_ps(yyyy, m.M.R[1]);
@@ -9912,9 +9896,9 @@ namespace Graphyte::Maths
         Vector4 const length = Length(q);
         Quaternion const conj = Conjugate(q);
         Bool4 const control = CompareLessEqual(length, Epsilon<Vector4>());
-        Vector4 const normalized_conj = Divide(As<Vector4>(conj), length);
+        Vector4 const normalized_conj = Divide(Vector4{ conj.V }, length);
         Vector4 const result = Select(normalized_conj, zero, control);
-        return As<Quaternion>(result);
+        return Quaternion{ result.V };
     }
 
     mathinline Quaternion mathcall Multiply(Quaternion q1, Quaternion q2) noexcept
@@ -9959,12 +9943,12 @@ namespace Graphyte::Maths
 
     mathinline Quaternion mathcall Multiply(Quaternion q, Vector4 v) noexcept
     {
-        return As<Quaternion>(Multiply(As<Vector4>(q), v));
+        return Quaternion{ Multiply(Vector4{ q.V }, v).V };
     }
 
     mathinline Quaternion mathcall Divide(Quaternion q, Vector4 v) noexcept
     {
-        return As<Quaternion>(Divide(As<Vector4>(q), v));
+        return Quaternion{ Divide(Vector4{ q.V }, v).V };
     }
 
     mathinline Quaternion mathcall Exp(Quaternion q) noexcept
@@ -9984,7 +9968,7 @@ namespace Graphyte::Maths
         Vector4 const w = SplatW(Vector4{ q.V });
         Vector4 const wexp = Exp(w);
         Vector4 const result = Multiply(r1, wexp);
-        return As<Quaternion>(result);
+        return Quaternion{ result.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const v_len_sq = _mm_dp_ps(q.V, q.V, 0x7F);
         __m128 const v_rcp_len = _mm_rsqrt_ps(v_len_sq);
@@ -10125,7 +10109,7 @@ namespace Graphyte::Maths
 
         Vector4 const scale = Make<Vector4>(fsin, fsin, fsin, fcos);
         Vector4 const result = Multiply(qv, scale);
-        return As<Quaternion>(result);
+        return Quaternion{ result.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const normal_xyz = _mm_and_ps(normal.V, Impl::VEC4_MASK_SELECT_1110.V);
         __m128 const normal_xyz1 = _mm_or_ps(normal_xyz, Impl::VEC4_POSITIVE_UNIT_W.V);
@@ -10309,7 +10293,7 @@ namespace Graphyte::Maths
     __m128 const m1 = _mm_andnot_ps(mask_x2y2_ge_z2w2, t1);
     __m128 const m2 = _mm_or_ps(m0, m1);
 
-    __m128 const length = Length(As<Vector4>(m2)).V;
+    __m128 const length = Length(Vector4{ m2 }).V;
 
     return { _mm_div_ps(m2, length) };
 #endif
@@ -10328,36 +10312,36 @@ namespace Graphyte::Maths
 
     mathinline void mathcall ToAxisAngle(Vector3& axis, float& angle, Quaternion q) noexcept
     {
-        axis = As<Vector3>(q);
+        axis = Vector3{ q.V };
         angle = 2.0F * Acos(GetW(q));
     }
 
     mathinline Vector3 Rotate(Vector3 v, Quaternion q) noexcept
     {
-        Quaternion const a = As<Quaternion>(Select(
+        Quaternion const a{ Select(
             Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
             Vector4{ v.V },
             Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
-        ));
+        ).V };
 
         Quaternion const qn = Conjugate(q);
         Quaternion const qa = Multiply(q, a);
         Quaternion const qaqn = Multiply(qa, qn);
-        return As<Vector3>(qaqn);
+        return Vector3{ qaqn.V };
     }
 
     mathinline Vector3 InverseRotate(Vector3 v, Quaternion q) noexcept
     {
-        Quaternion const a = As<Quaternion>(Select(
+        Quaternion const a{ Select(
             Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
             Vector4{ v.V },
             Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
-        ));
+        ).V };
 
         Quaternion const qn = Conjugate(q);
         Quaternion const qna = Multiply(qn, a);
         Quaternion const qnaq = Multiply(qna, q);
-        return As<Vector3>(qnaq);
+        return Vector3{ qnaq.V };
     }
 }
 
@@ -11134,10 +11118,10 @@ namespace Graphyte::Maths
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        result.M.R[0] = Add(As<Vector4>(m1.M.R[0]), As<Vector4>(m2.M.R[0])).V;
-        result.M.R[1] = Add(As<Vector4>(m1.M.R[1]), As<Vector4>(m2.M.R[1])).V;
-        result.M.R[2] = Add(As<Vector4>(m1.M.R[2]), As<Vector4>(m2.M.R[2])).V;
-        result.M.R[3] = Add(As<Vector4>(m1.M.R[3]), As<Vector4>(m2.M.R[3])).V;
+        result.M.R[0] = Add(Vector4{ m1.M.R[0] }, Vector4{ m2.M.R[0] }).V;
+        result.M.R[1] = Add(Vector4{ m1.M.R[1] }, Vector4{ m2.M.R[1] }).V;
+        result.M.R[2] = Add(Vector4{ m1.M.R[2] }, Vector4{ m2.M.R[2] }).V;
+        result.M.R[3] = Add(Vector4{ m1.M.R[3] }, Vector4{ m2.M.R[3] }).V;
 #elif GRAPHYTE_HW_NEON
         result.M.R[0] = vaddq_f32(m1.M.R[0], m2.M.R[0]);
         result.M.R[1] = vaddq_f32(m1.M.R[1], m2.M.R[1]);
@@ -11156,10 +11140,10 @@ namespace Graphyte::Maths
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        result.M.R[0] = Subtract(As<Vector4>(m1.M.R[0]), As<Vector4>(m2.M.R[0])).V;
-        result.M.R[1] = Subtract(As<Vector4>(m1.M.R[1]), As<Vector4>(m2.M.R[1])).V;
-        result.M.R[2] = Subtract(As<Vector4>(m1.M.R[2]), As<Vector4>(m2.M.R[2])).V;
-        result.M.R[3] = Subtract(As<Vector4>(m1.M.R[3]), As<Vector4>(m2.M.R[3])).V;
+        result.M.R[0] = Subtract(Vector4{ m1.M.R[0] }, Vector4{ m2.M.R[0] }).V;
+        result.M.R[1] = Subtract(Vector4{ m1.M.R[1] }, Vector4{ m2.M.R[1] }).V;
+        result.M.R[2] = Subtract(Vector4{ m1.M.R[2] }, Vector4{ m2.M.R[2] }).V;
+        result.M.R[3] = Subtract(Vector4{ m1.M.R[3] }, Vector4{ m2.M.R[3] }).V;
 #elif GRAPHYTE_HW_NEON
         result.M.R[0] = vsubq_f32(m1.M.R[0], m2.M.R[0]);
         result.M.R[1] = vsubq_f32(m1.M.R[1], m2.M.R[1]);
@@ -11177,10 +11161,10 @@ namespace Graphyte::Maths
     mathinline Matrix mathcall Negate(Matrix m) noexcept
     {
         Matrix result;
-        result.M.R[0] = Negate(As<Vector4>(m.M.R[0])).V;
-        result.M.R[1] = Negate(As<Vector4>(m.M.R[1])).V;
-        result.M.R[2] = Negate(As<Vector4>(m.M.R[2])).V;
-        result.M.R[3] = Negate(As<Vector4>(m.M.R[3])).V;
+        result.M.R[0] = Negate(Vector4{ m.M.R[0] }).V;
+        result.M.R[1] = Negate(Vector4{ m.M.R[1] }).V;
+        result.M.R[2] = Negate(Vector4{ m.M.R[2] }).V;
+        result.M.R[3] = Negate(Vector4{ m.M.R[3] }).V;
         return result;
     }
 
@@ -11188,10 +11172,10 @@ namespace Graphyte::Maths
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        result.M.R[0] = Multiply(As<Vector4>(m.M.R[0]), s).V;
-        result.M.R[1] = Multiply(As<Vector4>(m.M.R[1]), s).V;
-        result.M.R[2] = Multiply(As<Vector4>(m.M.R[2]), s).V;
-        result.M.R[3] = Multiply(As<Vector4>(m.M.R[3]), s).V;
+        result.M.R[0] = Multiply(Vector4{ m.M.R[0] }, s).V;
+        result.M.R[1] = Multiply(Vector4{ m.M.R[1] }, s).V;
+        result.M.R[2] = Multiply(Vector4{ m.M.R[2] }, s).V;
+        result.M.R[3] = Multiply(Vector4{ m.M.R[3] }, s).V;
 #elif GRAPHYTE_HW_NEON
         float32x4_t const sv = vdupq_n_f32(s);
         result.M.R[0] = vmulq_f32(m.M.R[0], sv);
@@ -11212,10 +11196,10 @@ namespace Graphyte::Maths
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        result.M.R[0] = Multiply(As<Vector4>(m.M.R[0]), s).V;
-        result.M.R[1] = Multiply(As<Vector4>(m.M.R[1]), s).V;
-        result.M.R[2] = Multiply(As<Vector4>(m.M.R[2]), s).V;
-        result.M.R[3] = Multiply(As<Vector4>(m.M.R[3]), s).V;
+        result.M.R[0] = Multiply(Vector4{ m.M.R[0] }, s).V;
+        result.M.R[1] = Multiply(Vector4{ m.M.R[1] }, s).V;
+        result.M.R[2] = Multiply(Vector4{ m.M.R[2] }, s).V;
+        result.M.R[3] = Multiply(Vector4{ m.M.R[3] }, s).V;
 #elif GRAPHYTE_HW_NEON
         float32x4_t const sv = vdupq_n_f32(s);
         result.M.R[0] = vmulq_f32(m.M.R[0], sv);
@@ -11237,10 +11221,10 @@ namespace Graphyte::Maths
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const sv = Replicate<Vector4>(s);
-        result.M.R[0] = Divide(As<Vector4>(m.M.R[0]), sv).V;
-        result.M.R[1] = Divide(As<Vector4>(m.M.R[1]), sv).V;
-        result.M.R[2] = Divide(As<Vector4>(m.M.R[2]), sv).V;
-        result.M.R[3] = Divide(As<Vector4>(m.M.R[3]), sv).V;
+        result.M.R[0] = Divide(Vector4{ m.M.R[0] }, sv).V;
+        result.M.R[1] = Divide(Vector4{ m.M.R[1] }, sv).V;
+        result.M.R[2] = Divide(Vector4{ m.M.R[2] }, sv).V;
+        result.M.R[3] = Divide(Vector4{ m.M.R[3] }, sv).V;
 #elif GRAPHYTE_HW_NEON
         float32x4_t const sv = vdupq_n_f32(s);
         result.M.R[0] = vdivq_f32(m.M.R[0], sv);
@@ -11261,10 +11245,10 @@ namespace Graphyte::Maths
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        result.M.R[0] = Multiply(As<Vector4>(a.M.R[0]), As<Vector4>(b.M.R[0])).V;
-        result.M.R[1] = Multiply(As<Vector4>(a.M.R[1]), As<Vector4>(b.M.R[1])).V;
-        result.M.R[2] = Multiply(As<Vector4>(a.M.R[2]), As<Vector4>(b.M.R[2])).V;
-        result.M.R[3] = Multiply(As<Vector4>(a.M.R[3]), As<Vector4>(b.M.R[3])).V;
+        result.M.R[0] = Multiply(Vector4{ a.M.R[0] }, Vector4{ b.M.R[0] }).V;
+        result.M.R[1] = Multiply(Vector4{ a.M.R[1] }, Vector4{ b.M.R[1] }).V;
+        result.M.R[2] = Multiply(Vector4{ a.M.R[2] }, Vector4{ b.M.R[2] }).V;
+        result.M.R[3] = Multiply(Vector4{ a.M.R[3] }, Vector4{ b.M.R[3] }).V;
 #elif GRAPHYTE_HW_NEON
         result.M.R[0] = vmulq_f32(a.M.R[0], b.M.R[0]);
         result.M.R[1] = vmulq_f32(a.M.R[1], b.M.R[1]);
@@ -11889,27 +11873,27 @@ namespace Graphyte::Maths
                 -1.0f
             } } };
 
-        Vector4 const r2_yxxx = Swizzle<1, 0, 0, 0>(As<Vector4>(m.M.R[2]));
-        Vector4 const r3_zzyy = Swizzle<2, 2, 1, 1>(As<Vector4>(m.M.R[3]));
-        Vector4 const r3_wwwz = Swizzle<3, 3, 3, 2>(As<Vector4>(m.M.R[3]));
-        Vector4 const r2_zzyy = Swizzle<2, 2, 1, 1>(As<Vector4>(m.M.R[2]));
+        Vector4 const r2_yxxx = Swizzle<1, 0, 0, 0>(Vector4{ m.M.R[2] });
+        Vector4 const r3_zzyy = Swizzle<2, 2, 1, 1>(Vector4{ m.M.R[3] });
+        Vector4 const r3_wwwz = Swizzle<3, 3, 3, 2>(Vector4{ m.M.R[3] });
+        Vector4 const r2_zzyy = Swizzle<2, 2, 1, 1>(Vector4{ m.M.R[2] });
 
         Vector4 const pa0 = Multiply(r2_yxxx, r3_zzyy);
         Vector4 const pa1 = Multiply(r2_yxxx, r3_wwwz);
         Vector4 const pa2 = Multiply(r2_zzyy, r3_wwwz);
 
-        Vector4 const r3_yxxx = Swizzle<1, 0, 0, 0>(As<Vector4>(m.M.R[3]));
-        Vector4 const r2_wwwz = Swizzle<3, 3, 3, 2>(As<Vector4>(m.M.R[2]));
+        Vector4 const r3_yxxx = Swizzle<1, 0, 0, 0>(Vector4{ m.M.R[3] });
+        Vector4 const r2_wwwz = Swizzle<3, 3, 3, 2>(Vector4{ m.M.R[2] });
 
         Vector4 const pb0 = NegateMultiplyAdd(r2_zzyy, r3_yxxx, pa0);
         Vector4 const pb1 = NegateMultiplyAdd(r2_wwwz, r3_yxxx, pa1);
         Vector4 const pb2 = NegateMultiplyAdd(r2_wwwz, r3_zzyy, pa2);
 
-        Vector4 const r1_wwwz = Swizzle<3, 3, 3, 2>(As<Vector4>(m.M.R[1]));
-        Vector4 const r1_zzyy = Swizzle<2, 2, 1, 1>(As<Vector4>(m.M.R[1]));
-        Vector4 const r1_yxxx = Swizzle<1, 0, 0, 0>(As<Vector4>(m.M.R[1]));
+        Vector4 const r1_wwwz = Swizzle<3, 3, 3, 2>(Vector4{ m.M.R[1] });
+        Vector4 const r1_zzyy = Swizzle<2, 2, 1, 1>(Vector4{ m.M.R[1] });
+        Vector4 const r1_yxxx = Swizzle<1, 0, 0, 0>(Vector4{ m.M.R[1] });
 
-        Vector4 const s0 = Multiply(As<Vector4>(m.M.R[0]), As<Vector4>(sign.V));
+        Vector4 const s0 = Multiply(Vector4{ m.M.R[0] }, Vector4{ sign.V });
         Vector4 const t0 = Multiply(r1_wwwz, pb0);
         Vector4 const t1 = NegateMultiplyAdd(r1_zzyy, pb1, t0);
         Vector4 const t2 = MultiplyAdd(r1_yxxx, pb2, t1);
@@ -11947,9 +11931,9 @@ namespace Graphyte::Maths
         };
 
         float* scales = reinterpret_cast<float*>(&out_scale.V);
-        GetX(&scales[0], Length(As<Vector3>(*basis[0])));
-        GetX(&scales[1], Length(As<Vector3>(*basis[1])));
-        GetX(&scales[2], Length(As<Vector3>(*basis[2])));
+        GetX(&scales[0], Length(Vector3{ *basis[0] }));
+        GetX(&scales[1], Length(Vector3{ *basis[1] }));
+        GetX(&scales[2], Length(Vector3{ *basis[2] }));
         scales[3] = 0.0f;
 
         auto decompose_rank_abc = [](size_t& a, size_t& b, size_t& c, float x, float y, float z)
@@ -12015,13 +11999,13 @@ namespace Graphyte::Maths
             (*basis[a]) = (*canonical_basis[a]);
         }
 
-        (*basis[a]) = Normalize(As<Vector3>(*basis[a])).V;
+        (*basis[a]) = Normalize(Vector3{ *basis[a] }).V;
 
         if (scales[b] < DecomposeEpsilon)
         {
-            float const absx = fabsf(GetX(As<Vector4>(*basis[a])));
-            float const absy = fabsf(GetY(As<Vector4>(*basis[a])));
-            float const absz = fabsf(GetZ(As<Vector4>(*basis[a])));
+            float const absx = fabsf(GetX(Vector4{ *basis[a] }));
+            float const absy = fabsf(GetY(Vector4{ *basis[a] }));
+            float const absz = fabsf(GetZ(Vector4{ *basis[a] }));
 
             size_t const cc = [](float x, float y, float z) -> size_t
             {
@@ -12049,24 +12033,24 @@ namespace Graphyte::Maths
                 }
             }(absx, absy, absz);
 
-            (*basis[b]) = Cross(As<Vector3>(*basis[a]), As<Vector3>(*canonical_basis[cc])).V;
+            (*basis[b]) = Cross(Vector3{ *basis[a] }, Vector3{ *canonical_basis[cc] }).V;
         }
 
-        (*basis[b]) = Normalize(As<Vector3>(*basis[b])).V;
+        (*basis[b]) = Normalize(Vector3{ *basis[b] }).V;
 
         if (scales[c] < DecomposeEpsilon)
         {
-            (*basis[c]) = Cross(As<Vector3>(*basis[a]), As<Vector3>(*basis[b])).V;
+            (*basis[c]) = Cross(Vector3{ *basis[a] }, Vector3{ *basis[b] }).V;
         }
 
-        (*basis[c]) = Normalize(As<Vector3>(*basis[c])).V;
+        (*basis[c]) = Normalize(Vector3{ *basis[c] }).V;
 
         float det = GetX(Determinant(temp));
 
         if (det < 0.0f)
         {
             scales[a] = -scales[a];
-            (*basis[a]) = Negate(As<Vector4>(*basis[a])).V;
+            (*basis[a]) = Negate(Vector4{ *basis[a] }).V;
             det = -det;
         }
 
@@ -12309,19 +12293,19 @@ namespace Graphyte::Maths
         Vector4 const c1 = SplatY(a);
         Vector4 const c2 = SplatZ(a);
 
-        Vector4 const n0 = Swizzle<1, 2, 0, 3>(As<Vector4>(normal));
-        Vector4 const n1 = Swizzle<2, 0, 1, 3>(As<Vector4>(normal));
+        Vector4 const n0 = Swizzle<1, 2, 0, 3>(Vector4{ normal.V });
+        Vector4 const n1 = Swizzle<2, 0, 1, 3>(Vector4{ normal.V });
 
         Vector4 const g0 = Multiply(c2, n0);
         Vector4 const g1 = Multiply(g0, n1);
 
-        Vector4 const h0 = Multiply(c2, As<Vector4>(normal));
-        Vector4 const h1 = MultiplyAdd(h0, As<Vector4>(normal), c1);
+        Vector4 const h0 = Multiply(c2, Vector4{ normal.V });
+        Vector4 const h1 = MultiplyAdd(h0, Vector4{ normal.V }, c1);
 
-        Vector4 const i0 = MultiplyAdd(c0, As<Vector4>(normal), g1);
-        Vector4 const i1 = NegateMultiplyAdd(c0, As<Vector4>(normal), g1);
+        Vector4 const i0 = MultiplyAdd(c0, Vector4{ normal.V }, g1);
+        Vector4 const i1 = NegateMultiplyAdd(c0, Vector4{ normal.V }, g1);
 
-        Vector4 const r0 = Select(a, h1, As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V));
+        Vector4 const r0 = Select(a, h1, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
 
         Vector4 const r1 = Permute<2, 5, 6, 0>(i0, i1);
         Vector4 const r2 = Permute<1, 4, 1, 4>(i0, i1);
@@ -12394,14 +12378,14 @@ namespace Graphyte::Maths
     mathinline Matrix mathcall CreateFromQuaternion(Quaternion q) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const q_xyzw = As<Vector4>(q);
+        Vector4 const q_xyzw{ q.V };
 
         Vector4 const q0 = Add(q_xyzw, q_xyzw);
         Vector4 const q1 = Multiply(q_xyzw, q0);
 
-        Vector4 const q1_yxx_1 = Permute<1, 0, 0, 7>(q1, As<Vector4>(Impl::VEC4_ONE_3.V));
-        Vector4 const q1_zzy_1 = Permute<2, 2, 1, 7>(q1, As<Vector4>(Impl::VEC4_ONE_3.V));
-        Vector4 const o0 = Subtract(As<Vector4>(Impl::VEC4_ONE_3.V), q1_yxx_1);
+        Vector4 const q1_yxx_1 = Permute<1, 0, 0, 7>(q1, Vector4{ Impl::VEC4_ONE_3.V });
+        Vector4 const q1_zzy_1 = Permute<2, 2, 1, 7>(q1, Vector4{ Impl::VEC4_ONE_3.V });
+        Vector4 const o0 = Subtract(Vector4{ Impl::VEC4_ONE_3.V }, q1_yxx_1);
         Vector4 const s0 = Subtract(o0, q1_zzy_1);
 
         Vector4 const q_xxyw = Swizzle<0, 0, 1, 3>(q_xyzw);
@@ -12564,9 +12548,9 @@ namespace Graphyte::Maths
         result.M.R[1] = Impl::VEC4_POSITIVE_UNIT_Y.V;
         result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
         result.M.R[3] = Select(
-            As<Vector4>(Impl::VEC4_POSITIVE_UNIT_W.V),
-            As<Vector4>(translation),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+            Vector4{ Impl::VEC4_POSITIVE_UNIT_W.V },
+            Vector4{ translation.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
         ).V;
 
         return result;
@@ -12822,11 +12806,11 @@ namespace Graphyte::Maths
         Vector2 translation
     ) noexcept
     {
-        Vector3 const v_scaling_origin = As<Vector3>(Select(
-            As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
-            As<Vector4>(scaling_origin),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
-        ));
+        Vector3 const v_scaling_origin{ Select(
+            Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
+            Vector4{ scaling_origin.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1100.V }
+        ).V };
 
         // Create scanling origin transform
         Vector3 const v_scaling_origin_negated = Negate(v_scaling_origin);
@@ -12837,19 +12821,19 @@ namespace Graphyte::Maths
         Matrix const m_scaling_orientation_trn = Transpose(m_scaling_orientation);
 
         // Create scaling transform
-        Vector3 const v_scaling_xy1 = As<Vector3>(Select(
-            As<Vector4>(Impl::VEC4_ONE_4.V),
-            As<Vector4>(scaling),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
-        ));
+        Vector3 const v_scaling_xy1{ Select(
+            Vector4{ Impl::VEC4_ONE_4.V },
+            Vector4{ scaling.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1100.V }
+        ).V };
 
         Matrix const m_scaling = CreateScaling(v_scaling_xy1);
 
         // Create rotation origin
         Vector4 const v_rotation_origin = Select(
-            As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
-            As<Vector4>(rotation_origin),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+            Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
+            Vector4{ rotation_origin.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1100.V }
         );
 
         // Create rotation transform
@@ -12857,21 +12841,21 @@ namespace Graphyte::Maths
 
         // Create translation vector
         Vector4 const v_translation = Select(
-            As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
-            As<Vector4>(translation),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+            Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
+            Vector4{ translation.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1100.V }
         );
 
         Matrix const m0 = Multiply(m_scaling_origin, m_scaling_orientation_trn);
         Matrix const m1 = Multiply(m0, m_scaling);
 
         Matrix m2 = Multiply(m1, m_scaling_orientation);
-        m2.M.R[3] = Add(As<Vector4>(m2.M.R[3]), As<Vector4>(v_scaling_origin)).V;
-        m2.M.R[3] = Subtract(As<Vector4>(m2.M.R[3]), v_rotation_origin).V;
+        m2.M.R[3] = Add(Vector4{ m2.M.R[3] }, Vector4{ v_scaling_origin.V }).V;
+        m2.M.R[3] = Subtract(Vector4{ m2.M.R[3] }, v_rotation_origin).V;
 
         Matrix m3 = Multiply(m2, m_rotation);
-        m3.M.R[3] = Add(As<Vector4>(m3.M.R[3]), v_rotation_origin).V;
-        m3.M.R[3] = Add(As<Vector4>(m3.M.R[3]), v_translation).V;
+        m3.M.R[3] = Add(Vector4{ m3.M.R[3] }, v_rotation_origin).V;
+        m3.M.R[3] = Add(Vector4{ m3.M.R[3] }, v_translation).V;
 
         return m3;
     }
@@ -12883,31 +12867,31 @@ namespace Graphyte::Maths
         Vector2 translation
     ) noexcept
     {
-        Vector3 const v_scaling = As<Vector3>(Select(
-            As<Vector4>(Impl::VEC4_ONE_4.V),
-            As<Vector4>(scaling),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
-        ));
+        Vector3 const v_scaling{ Select(
+            Vector4{ Impl::VEC4_ONE_4.V },
+            Vector4{ scaling.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1100.V }
+        ).V };
 
         Vector4 const v_rotation_origin = Select(
-            As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
-            As<Vector4>(rotation_origin),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+            Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
+            Vector4{ rotation_origin.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1100.V }
         );
 
         Vector4 const v_translation = Select(
-            As<Vector4>(Impl::VEC4_MASK_SELECT_1100.V),
-            As<Vector4>(translation),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1100.V)
+            Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
+            Vector4{ translation.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1100.V }
         );
 
         Matrix const m_rotation = CreateRotationZ(rotation);
 
         Matrix result = CreateScaling(v_scaling);
-        result.M.R[3] = Subtract(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
+        result.M.R[3] = Subtract(Vector4{ result.M.R[3] }, v_rotation_origin).V;
         result = Multiply(result, m_rotation);
-        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
-        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_translation).V;
+        result.M.R[3] = Add(Vector4{ result.M.R[3] }, v_rotation_origin).V;
+        result.M.R[3] = Add(Vector4{ result.M.R[3] }, v_translation).V;
 
         return result;
     }
@@ -12921,24 +12905,24 @@ namespace Graphyte::Maths
         Vector3 translation
     ) noexcept
     {
-        Vector3 const v_scaling_origin = As<Vector3>(Select(
-            As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
-            As<Vector4>(scaling_origin),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
-        ));
+        Vector3 const v_scaling_origin{ Select(
+            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ scaling_origin.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
+        ).V };
 
         Vector3 const v_scaling_origin_negated = Negate(v_scaling_origin);
 
         Vector4 const v_rotation_origin = Select(
-            As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
-            As<Vector4>(rotation_origin),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ rotation_origin.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
         );
 
         Vector4 const v_translation = Select(
-            As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
-            As<Vector4>(translation),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ translation.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
         );
 
         Matrix const m_scaling_origin = CreateTranslation(v_scaling_origin_negated);
@@ -12950,11 +12934,11 @@ namespace Graphyte::Maths
         Matrix result = Multiply(m_scaling_origin, m_scaling_orientation_trn);
         result = Multiply(result, m_scaling);
         result = Multiply(result, m_scaling_orientation);
-        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), As<Vector4>(v_scaling_origin)).V;
-        result.M.R[3] = Subtract(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
+        result.M.R[3] = Add(Vector4{ result.M.R[3] }, Vector4{ v_scaling_origin.V }).V;
+        result.M.R[3] = Subtract(Vector4{ result.M.R[3] }, v_rotation_origin).V;
         result = Multiply(result, m_rotation);
-        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
-        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_translation).V;
+        result.M.R[3] = Add(Vector4{ result.M.R[3] }, v_rotation_origin).V;
+        result.M.R[3] = Add(Vector4{ result.M.R[3] }, v_translation).V;
 
         return result;
     }
@@ -12968,24 +12952,24 @@ namespace Graphyte::Maths
     {
 
         Vector4 const v_rotation_origin = Select(
-            As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
-            As<Vector4>(rotation_origin),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ rotation_origin.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
         );
 
         Vector4 const v_translation = Select(
-            As<Vector4>(Impl::VEC4_MASK_SELECT_1110.V),
-            As<Vector4>(translation),
-            As<Bool4>(Impl::VEC4_MASK_SELECT_1110.V)
+            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ translation.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
         );
 
         Matrix const m_rotation = CreateFromQuaternion(rotation);
 
         Matrix result = CreateScaling(scaling);
-        result.M.R[3] = Subtract(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
+        result.M.R[3] = Subtract(Vector4{ result.M.R[3] }, v_rotation_origin).V;
         result = Multiply(result, m_rotation);
-        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_rotation_origin).V;
-        result.M.R[3] = Add(As<Vector4>(result.M.R[3]), v_translation).V;
+        result.M.R[3] = Add(Vector4{ result.M.R[3] }, v_rotation_origin).V;
+        result.M.R[3] = Add(Vector4{ result.M.R[3] }, v_translation).V;
 
         return result;
     }
@@ -13937,7 +13921,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         // v4 = {v3, 1}
-        Vector4 const v4_1 = Select(Vector4{ Impl::VEC4_ONE_4.V }, As<Vector4>(v), Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Vector4 const v4_1 = Select(Vector4{ Impl::VEC4_ONE_4.V }, Vector4{ v.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
         Vector4 const result = Dot(Vector4{ p.V }, v4_1);
         return result;
 #elif GRAPHYTE_HW_AVX
@@ -13958,7 +13942,7 @@ namespace Graphyte::Maths
     mathinline Vector4 mathcall DotNormal(Plane p, Vector3 n) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        return As<Vector4>(Dot(As<Vector3>(p), As<Vector3>(n)));
+        return Vector4{ Dot(Vector3{ p.V }, n).V };
 #elif GRAPHYTE_HW_AVX
         __m128 const result = _mm_dp_ps(p.V, n.V, 0x3F);
         return { result };
@@ -14000,9 +13984,9 @@ namespace Graphyte::Maths
     mathinline Plane mathcall NormalizeEst(Plane p) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const length = ReciprocalLengthEst(As<Vector3>(p));
-        Vector4 const result = Multiply(As<Vector4>(p), length);
-        return As<Plane>(result);
+        Vector4 const length = ReciprocalLengthEst(Vector3{ p.V });
+        Vector4 const result = Multiply(Vector4{ p.V }, length);
+        return Plane{ result.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const length = _mm_dp_ps(p.V, p.V, 0x7F);
         __m128 const rcp_length = _mm_rsqrt_ps(length);
@@ -14020,7 +14004,7 @@ namespace Graphyte::Maths
 
     mathinline Plane mathcall Transform(Plane p, Matrix m) noexcept
     {
-        Vector4 const pl = As<Vector4>(p);
+        Vector4 const pl{ p.V };
 
         Vector4 const vw = SplatW(pl);
         Vector4 const vz = SplatZ(pl);
@@ -14032,15 +14016,15 @@ namespace Graphyte::Maths
         Vector4 const r2 = MultiplyAdd(vy, GetBaseY(m), r1);
         Vector4 const r3 = MultiplyAdd(vx, GetBaseX(m), r2);
 
-        return As<Plane>(r3);
+        return Plane{ r3.V };
     }
 
     mathinline Plane mathcall CreateFromPointNormal(Vector3 point, Vector3 normal) noexcept
     {
         Vector4 const p_wwww = Dot(point, normal);
         Vector4 const n_wwww = Negate(p_wwww);
-        Vector4 const abcw = Select(n_wwww, As<Vector4>(normal), Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
-        Plane const result = As<Plane>(abcw);
+        Vector4 const abcw = Select(n_wwww, Vector4{ normal.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Plane const result{ abcw.V };
         return result;
     }
 
@@ -14052,21 +14036,21 @@ namespace Graphyte::Maths
         Vector3 const plane_perpendicular = Cross(d_p21, d_p31);
         Vector3 const plane_normal = Normalize(plane_perpendicular);
 
-        Vector4 const neg_plane_distance = DotNormal(As<Plane>(plane_normal), p1);
+        Vector4 const neg_plane_distance = DotNormal(Plane{ plane_normal.V }, p1);
         Vector4 const plane_distance = Negate(neg_plane_distance);
 
         Vector4 const result = Select(
             plane_distance,
-            As<Vector4>(plane_normal),
+            Vector4{ plane_normal.V },
             Bool4{ Impl::VEC4_MASK_SELECT_1110.V }
         );
-        Plane const plane = As<Plane>(result);
+        Plane const plane{ result.V };
         return plane;
     }
 
     mathinline Matrix mathcall Reflect(Plane reflection) noexcept
     {
-        GX_ASSERT(!IsEqual(As<Vector3>(reflection), Zero<Vector3>()));
+        GX_ASSERT(!IsEqual(Vector3{ reflection.V }, Zero<Vector3>()));
         GX_ASSERT(!IsInfinity(reflection));
 
         static Impl::ConstFloat32x4 const negative_two{ { {
@@ -14076,8 +14060,8 @@ namespace Graphyte::Maths
                 0.0f
             } } };
 
-        Vector4 const vp = As<Vector4>(Normalize(reflection));
-        Vector4 const vs = Multiply(vp, As<Vector4>(negative_two.V));
+        Vector4 const vp{ Normalize(reflection).V };
+        Vector4 const vs = Multiply(vp, Vector4{ negative_two.V });
 
         Vector4 const p_aaaa = SplatX(vp);
         Vector4 const p_bbbb = SplatY(vp);
@@ -14096,10 +14080,10 @@ namespace Graphyte::Maths
 
     mathinline Matrix mathcall Shadow(Plane shadow, Vector4 light) noexcept
     {
-        GX_ASSERT(!IsEqual(As<Vector3>(shadow), Zero<Vector3>()));
+        GX_ASSERT(!IsEqual(Vector3{ shadow.V }, Zero<Vector3>()));
         GX_ASSERT(!IsInfinity(shadow));
 
-        Vector4 const vp = As<Vector4>(Normalize(shadow));
+        Vector4 const vp{ Normalize(shadow).V };
         Vector4 const pp = Negate(vp);
         Vector4 const p_aaaa = SplatX(pp);
         Vector4 const p_bbbb = SplatY(pp);
@@ -14107,7 +14091,7 @@ namespace Graphyte::Maths
         Vector4 const p_dddd = SplatW(pp);
 
         Vector4 dot = Dot(vp, light);
-        dot = Select(As<Vector4>(Impl::VEC4_MASK_SELECT_0001.V), dot, As<Bool4>(Impl::VEC4_MASK_SELECT_0001.V));
+        dot = Select(Vector4{ Impl::VEC4_MASK_SELECT_0001.V }, dot, Bool4{ Impl::VEC4_MASK_SELECT_0001.V });
 
         Matrix result;
         result.M.R[3] = MultiplyAdd(p_dddd, light, dot).V;
@@ -14131,7 +14115,7 @@ namespace Graphyte::Maths
 {
     mathinline Vector3 mathcall LinePlaneIntersection(Plane plane, Vector3 start, Vector3 end) noexcept
     {
-        Vector3 const plane_normal = As<Vector3>(plane);
+        Vector3 const plane_normal{ plane.V };
         Vector4 const plane_normal_dot_start = Dot(plane_normal, start);
         Vector4 const plane_normal_dot_end = Dot(plane_normal, end);
         Vector4 const diff = Subtract(plane_normal_dot_start, plane_normal_dot_end);
@@ -14139,11 +14123,11 @@ namespace Graphyte::Maths
         Vector4 const normalized = Divide(plane_dot_start, diff);
 
         Vector3 const point_distance = Subtract(end, start);
-        Vector3 const point_on_plane = MultiplyAdd(point_distance, As<Vector3>(normalized), start);
+        Vector3 const point_on_plane = MultiplyAdd(point_distance, Vector3{ normalized.V }, start);
 
         Vector3 const zero = Zero<Vector3>();
-        Bool4 const control = As<Bool4>(CompareEqual(As<Vector3>(diff), zero, Epsilon<Vector4>()));
-        Vector3 const result = As<Vector3>(Select(As<Vector4>(point_on_plane), Nan<Vector4>(), control));
+        Bool4 const control = Bool4{ CompareEqual(Vector3{ diff.V}, zero, Epsilon<Vector4>()).V };
+        Vector3 const result{ Select(Vector4{ point_on_plane.V }, Nan<Vector4>(), control).V };
         return result;
     }
 
@@ -14154,20 +14138,20 @@ namespace Graphyte::Maths
         Plane plane2
     ) noexcept
     {
-        Vector3 const cross0 = Cross(As<Vector3>(plane2), As<Vector3>(plane1));
+        Vector3 const cross0 = Cross(Vector3{ plane2.V }, Vector3{ plane1.V });
         Vector4 const cross0_length = Length(cross0);
-        Vector3 const cross1 = Cross(As<Vector3>(plane2), cross0);
-        Vector4 const plane1_wwww = SplatW(As<Vector4>(plane1));
-        Vector4 const point0 = Multiply(As<Vector4>(cross1), plane1_wwww);
-        Vector3 const cross2 = Cross(cross0, As<Vector3>(plane1));
-        Vector4 const plane2_wwww = SplatW(As<Vector4>(plane2));
-        Vector4 const point1 = MultiplyAdd(As<Vector4>(cross2), plane2_wwww, point0);
+        Vector3 const cross1 = Cross(Vector3{ plane2.V }, cross0);
+        Vector4 const plane1_wwww = SplatW(Vector4{ plane1.V });
+        Vector4 const point0 = Multiply(Vector4{ cross1.V }, plane1_wwww);
+        Vector3 const cross2 = Cross(cross0, Vector3{ plane1.V });
+        Vector4 const plane2_wwww = SplatW(Vector4{ plane2.V });
+        Vector4 const point1 = MultiplyAdd(Vector4{ cross2.V }, plane2_wwww, point0);
         Vector4 const linepoint1 = Divide(point1, cross0_length);
-        Vector4 const linepoint2 = Add(linepoint1, As<Vector4>(cross0));
+        Vector4 const linepoint2 = Add(linepoint1, Vector4{ cross0.V });
         Bool4 const control = CompareLessEqual(cross0_length, Vector4{ Impl::VEC4_EPSILON.V });
 
-        out_line1 = As<Vector3>(Select(linepoint1, Nan<Vector4>(), control));
-        out_line2 = As<Vector3>(Select(linepoint2, Nan<Vector4>(), control));
+        out_line1 = Vector3{ Select(linepoint1, Nan<Vector4>(), control).V };
+        out_line2 = Vector3{ Select(linepoint2, Nan<Vector4>(), control).V };
     }
 
     mathinline Vector2 mathcall LineLineIntersection(
@@ -14255,11 +14239,11 @@ namespace Graphyte::Maths
         Vector4 const length_squared = LengthSquared(vec_line_line);
 
         Vector4 const projection_scale_0 = Dot(vec_line_point, vec_line_line);
-        T const projection_scale_1 = As<T>(Divide(projection_scale_0, length_squared));
+        T const projection_scale_1 = T{ Divide(projection_scale_0, length_squared).V };
 
         T const distance_0 = Multiply(vec_line_line, projection_scale_1);
         T const distance_1 = Subtract(vec_line_point, distance_0);
-        return Length(As<T>(distance_1));
+        return Length(T{ distance_1 });
     }
 }
 
@@ -14292,7 +14276,7 @@ namespace Graphyte::Maths
 
     mathinline float mathcall RevolutionsToRadians(float value) noexcept
     {
-        return value * Maths::Impl::PI<float>;
+        return value * Maths::Impl::ConstPi<float>;
     }
 
     mathinline Vector4 mathcall RevolutionsToGradians(Vector4 value) noexcept
@@ -14321,14 +14305,14 @@ namespace Graphyte::Maths
 
     mathinline Vector4 mathcall RadiansToRevolutions(Vector4 value) noexcept
     {
-        Vector4 const multiplier = Replicate<Vector4>(1.0F / Maths::Impl::PI2<float>);
+        Vector4 const multiplier = Replicate<Vector4>(1.0F / Maths::Impl::ConstPi2<float>);
         Vector4 const result = Multiply(value, multiplier);
         return result;
     }
 
     mathinline float mathcall RadiansToRevolutions(float value) noexcept
     {
-        return value / Maths::Impl::PI2<float>;
+        return value / Maths::Impl::ConstPi2<float>;
     }
 
     mathinline Vector4 mathcall GradiansToRevolutions(Vector4 value) noexcept
@@ -14345,50 +14329,50 @@ namespace Graphyte::Maths
 
     mathinline Vector4 mathcall RadiansToGradians(Vector4 value) noexcept
     {
-        Vector4 const multiplier = Replicate<Vector4>(200.0F / Maths::Impl::PI<float>);
+        Vector4 const multiplier = Replicate<Vector4>(200.0F / Maths::Impl::ConstPi<float>);
         Vector4 const result = Multiply(value, multiplier);
         return result;
     }
 
     mathinline float mathcall RadiansToGradians(float value) noexcept
     {
-        return value * (200.0F / Maths::Impl::PI<float>);
+        return value * (200.0F / Maths::Impl::ConstPi<float>);
     }
 
     mathinline Vector4 mathcall GradiansToRadians(Vector4 value) noexcept
     {
-        Vector4 const multiplier = Replicate<Vector4>(Maths::Impl::PI<float> / 200.0F);
+        Vector4 const multiplier = Replicate<Vector4>(Maths::Impl::ConstPi<float> / 200.0F);
         Vector4 const result = Multiply(value, multiplier);
         return result;
     }
 
     mathinline float mathcall GradiansToRadians(float value) noexcept
     {
-        return value * (Maths::Impl::PI<float> / 200.0F);
+        return value * (Maths::Impl::ConstPi<float> / 200.0F);
     }
 
     mathinline Vector4 mathcall RadiansToDegrees(Vector4 value) noexcept
     {
-        Vector4 const multiplier = Replicate<Vector4>(180.0F / Maths::Impl::PI<float>);
+        Vector4 const multiplier = Replicate<Vector4>(180.0F / Maths::Impl::ConstPi<float>);
         Vector4 const result = Multiply(value, multiplier);
         return result;
     }
 
     mathinline float mathcall RadiansToDegrees(float value) noexcept
     {
-        return value * (180.0F / Maths::Impl::PI<float>);
+        return value * (180.0F / Maths::Impl::ConstPi<float>);
     }
 
     mathinline Vector4 mathcall DegreesToRadians(Vector4 value) noexcept
     {
-        Vector4 const multiplier = Replicate<Vector4>(Maths::Impl::PI<float> / 180.0F);
+        Vector4 const multiplier = Replicate<Vector4>(Maths::Impl::ConstPi<float> / 180.0F);
         Vector4 const result = Multiply(value, multiplier);
         return result;
     }
 
     mathinline float mathcall DegreesToRadians(float value) noexcept
     {
-        return value * (Maths::Impl::PI<float> / 180.0F);
+        return value * (Maths::Impl::ConstPi<float> / 180.0F);
     }
 
     mathinline Vector4 mathcall GradiansToDegrees(Vector4 value) noexcept
@@ -14510,15 +14494,15 @@ namespace Graphyte::Maths
 {
     mathinline Float3A mathcall CartesianToSpherical(const Float3A& value) noexcept
     {
-        const auto radius = Sqrt(
+        float const radius = Sqrt(
             value.X * value.X +
             value.Y * value.Y +
             value.Z * value.Z
         );
-        const auto theta = Acos(
+        float const theta = Acos(
             value.Z / radius
         );
-        const auto phi = Atan(
+        float const phi = Atan(
             value.Y / value.X
         );
 
@@ -14531,34 +14515,34 @@ namespace Graphyte::Maths
         float cos_theta;
         float sin_phi;
         float cos_phi;
-        const auto radius = value.X;
+        float const radius = value.X;
         SinCos(sin_theta, cos_theta, value.Y);
         SinCos(sin_phi, cos_phi, value.Z);
 
-        const auto partial = radius * sin_theta;
+        float const partial = radius * sin_theta;
 
         return { partial * cos_phi, partial * sin_phi, radius * cos_theta };
     }
 
     mathinline Float3A mathcall CartesianToCylindrical(const Float3A& value) noexcept
     {
-        const auto radius = Sqrt(
+        float const radius = Sqrt(
             value.X * value.X +
             value.Y * value.Y
         );
-        const auto angle = Atan(
+        float const angle = Atan(
             value.Y / value.X
         );
-        const auto elevation = value.Z;
+        float const elevation = value.Z;
 
         return { radius, angle, elevation };
     }
 
     mathinline Float3A mathcall CylindricalToCartesian(const Float3A& value) noexcept
     {
-        const auto radius = value.X;
-        const auto angle = value.Y;
-        const auto elevation = value.Z;
+        float const radius = value.X;
+        float const angle = value.Y;
+        float const elevation = value.Z;
 
         float sin_angle;
         float cos_angle;
@@ -14569,26 +14553,26 @@ namespace Graphyte::Maths
 
     mathinline Float2A mathcall PolarToCartesian(const Float2A& value) noexcept
     {
-        const auto radius = value.X;
-        const auto angle = value.Y;
+        float const radius = value.X;
+        float const angle = value.Y;
 
         float sin_angle;
         float cos_angle;
         SinCos(sin_angle, cos_angle, angle);
 
-        const auto x = radius * cos_angle;
-        const auto y = radius * sin_angle;
+        float const x = radius * cos_angle;
+        float const y = radius * sin_angle;
 
         return { x, y };
     }
 
     mathinline Float2A mathcall CartesianToPolar(const Float2A& value) noexcept
     {
-        const auto radius = Sqrt(
+        float const radius = Sqrt(
             value.X * value.X +
             value.Y * value.Y
         );
-        const auto angle = Atan2(value.Y, value.X);
+        float const angle = Atan2(value.Y, value.X);
 
         return { radius, angle };
     }
@@ -14604,8 +14588,8 @@ namespace Graphyte::Maths
 {
     mathinline float mathcall Gain(float value, float gain) noexcept
     {
-        const auto g = -Log2(1.0F - gain);
-        const auto c = Power(value, gain);
+        float const g = -Log2(1.0F - gain);
+        float const c = Power(value, gain);
         return c / (c + Power(1.0F - value, g));
     }
 
@@ -14623,7 +14607,7 @@ namespace Graphyte::Maths
 
     mathinline int mathcall QuadricEquation(float a, float b, float c, float& out_x1, float& out_x2) noexcept
     {
-        const auto delta = (b * b) - (4.0F * a * c);
+        float const delta = (b * b) - (4.0F * a * c);
 
         if (delta < 0.0F)
         {
@@ -14636,8 +14620,8 @@ namespace Graphyte::Maths
             return 1;
         }
 
-        const auto denominator = 1.0F / (2.0F * a);
-        const auto delta_sqrt = Sqrt(delta);
+        float const denominator = 1.0F / (2.0F * a);
+        float const delta_sqrt = Sqrt(delta);
 
         out_x1 = (-b - delta_sqrt) * denominator;
         out_x2 = (-b + delta_sqrt) * denominator;
@@ -14667,20 +14651,20 @@ namespace Graphyte::Maths
         seed *= 0x27d4eb2d;
         seed = seed ^ (seed >> 15U);
 
-        auto value = static_cast<float>(seed);
+        float value = static_cast<float>(seed);
         value = static_cast<float>(static_cast<double>(value)* (1.0 / 4294967296.0));
         return value;
     }
 
     mathinline float mathcall WrapAngle(float value) noexcept
     {
-        const auto raw = value + Maths::Impl::PI<float>;
-        auto abs = Abs(raw);
+        float const raw = value + Maths::Impl::ConstPi<float>;
+        float abs = Abs(raw);
 
-        const auto scaled = static_cast<float>(static_cast<int32_t>(abs / Maths::Impl::PI<float>));
+        float const scaled = static_cast<float>(static_cast<int32_t>(abs / Maths::Impl::ConstPi<float>));
 
-        abs -= Maths::Impl::PI<float> * scaled;
-        abs -= Maths::Impl::PI<float>;
+        abs -= Maths::Impl::ConstPi<float> * scaled;
+        abs -= Maths::Impl::ConstPi<float>;
 
         if (raw < 0.0F)
         {
@@ -14692,13 +14676,13 @@ namespace Graphyte::Maths
 
     mathinline float mathcall DiffAngle(float angle1, float angle2) noexcept
     {
-        const auto r1 = angle2 - angle1;
-        const auto r2 = r1 - Maths::Impl::PI2<float>;
-        const auto r3 = r1 + Maths::Impl::PI2<float>;
+        float const r1 = angle2 - angle1;
+        float const r2 = r1 - Maths::Impl::ConstPi2<float>;
+        float const r3 = r1 + Maths::Impl::ConstPi2<float>;
 
-        const auto a1 = Abs(r1);
-        const auto a2 = Abs(r2);
-        const auto a3 = Abs(r3);
+        float const a1 = Abs(r1);
+        float const a2 = Abs(r2);
+        float const a3 = Abs(r3);
 
         if ((a1 < a2) && (a1 < a3))
         {
@@ -14946,8 +14930,8 @@ namespace Graphyte::Maths
         GX_ASSERT(destination != nullptr);
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const c0 = Saturate(As<Vector4>(color));
-        Vector4 const c1 = Multiply(c0, As<Vector4>(Impl::VEC4_UBYTE_MAX.V));
+        Vector4 const c0 = Saturate(Vector4{ color.V });
+        Vector4 const c1 = Multiply(c0, Vector4{ Impl::VEC4_UBYTE_MAX.V });
         Vector4 const c2 = Round(c1);
 
         Float4A buffer;

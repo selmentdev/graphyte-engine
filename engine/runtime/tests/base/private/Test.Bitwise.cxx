@@ -57,58 +57,6 @@ TEST_CASE("Bitwise ops")
         CHECK(CountLeadingZeros<uint32_t>(UINT32_C(1) << 31) == (32 - 31 - 1));
     }
 
-    SECTION("msb64")
-    {
-        CHECK(LeastSignificantBit<uint64_t>(0) == -1);
-        CHECK(LeastSignificantBit<uint64_t>(UINT64_C(1) << 0) == 0);
-        CHECK(LeastSignificantBit<uint64_t>(UINT64_C(1) << 1) == 1);
-        CHECK(LeastSignificantBit<uint64_t>(UINT64_C(1) << 2) == 2);
-        CHECK(LeastSignificantBit<uint64_t>(UINT64_C(1) << 3) == 3);
-        CHECK(LeastSignificantBit<uint64_t>(UINT64_C(1) << 60) == 60);
-        CHECK(LeastSignificantBit<uint64_t>(UINT64_C(1) << 61) == 61);
-        CHECK(LeastSignificantBit<uint64_t>(UINT64_C(1) << 62) == 62);
-        CHECK(LeastSignificantBit<uint64_t>(UINT64_C(1) << 63) == 63);
-    }
-
-    SECTION("lsb64")
-    {
-        CHECK(MostSignificantBit<uint64_t>(0) == -1);
-        CHECK(MostSignificantBit<uint64_t>(UINT64_C(1) << 0) == (64 - 0 - 1));
-        CHECK(MostSignificantBit<uint64_t>(UINT64_C(1) << 1) == (64 - 1 - 1));
-        CHECK(MostSignificantBit<uint64_t>(UINT64_C(1) << 2) == (64 - 2 - 1));
-        CHECK(MostSignificantBit<uint64_t>(UINT64_C(1) << 3) == (64 - 3 - 1));
-        CHECK(MostSignificantBit<uint64_t>(UINT64_C(1) << 60) == (64 - 60 - 1));
-        CHECK(MostSignificantBit<uint64_t>(UINT64_C(1) << 61) == (64 - 61 - 1));
-        CHECK(MostSignificantBit<uint64_t>(UINT64_C(1) << 62) == (64 - 62 - 1));
-        CHECK(MostSignificantBit<uint64_t>(UINT64_C(1) << 63) == (64 - 63 - 1));
-    }
-
-    SECTION("ctz32")
-    {
-        CHECK(LeastSignificantBit<uint32_t>(0) == -1);
-        CHECK(LeastSignificantBit<uint32_t>(UINT32_C(1) << 0) == 0);
-        CHECK(LeastSignificantBit<uint32_t>(UINT32_C(1) << 1) == 1);
-        CHECK(LeastSignificantBit<uint32_t>(UINT32_C(1) << 2) == 2);
-        CHECK(LeastSignificantBit<uint32_t>(UINT32_C(1) << 3) == 3);
-        CHECK(LeastSignificantBit<uint32_t>(UINT32_C(1) << 28) == 28);
-        CHECK(LeastSignificantBit<uint32_t>(UINT32_C(1) << 29) == 29);
-        CHECK(LeastSignificantBit<uint32_t>(UINT32_C(1) << 30) == 30);
-        CHECK(LeastSignificantBit<uint32_t>(UINT32_C(1) << 31) == 31);
-    }
-
-    SECTION("clz32")
-    {
-        CHECK(MostSignificantBit<uint32_t>(0) == -1);
-        CHECK(MostSignificantBit<uint32_t>(UINT32_C(1) << 0) == (32 - 0 - 1));
-        CHECK(MostSignificantBit<uint32_t>(UINT32_C(1) << 1) == (32 - 1 - 1));
-        CHECK(MostSignificantBit<uint32_t>(UINT32_C(1) << 2) == (32 - 2 - 1));
-        CHECK(MostSignificantBit<uint32_t>(UINT32_C(1) << 3) == (32 - 3 - 1));
-        CHECK(MostSignificantBit<uint32_t>(UINT32_C(1) << 28) == (32 - 28 - 1));
-        CHECK(MostSignificantBit<uint32_t>(UINT32_C(1) << 29) == (32 - 29 - 1));
-        CHECK(MostSignificantBit<uint32_t>(UINT32_C(1) << 30) == (32 - 30 - 1));
-        CHECK(MostSignificantBit<uint32_t>(UINT32_C(1) << 31) == (32 - 31 - 1));
-    }
-
     SECTION("popcnt64")
     {
         CHECK(CountBits<uint64_t>(UINT64_C(0x00)) == 0);

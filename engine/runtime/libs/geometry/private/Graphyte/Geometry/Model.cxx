@@ -51,7 +51,6 @@ namespace Graphyte::Geometry
         
         result = Maths::Transpose(result);
         return result;
-        return {};
     }
 
     GEOMETRY_API Storage::Archive& operator<< (Storage::Archive& archive, Model& model) noexcept

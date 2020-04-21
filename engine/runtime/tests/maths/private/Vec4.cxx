@@ -1900,7 +1900,7 @@ TEST_CASE("Maths / Vector / Clamp length")
                 Vector4 const cl = Clamp(l, Replicate<Vector4>(0.5F), Replicate<Vector4>(1.5F));
 
                 // And expected vector
-                Vector2 const e = As<Vector2>(Multiply(As<Vector4>(n), cl));
+                Vector2 const e{ Multiply(Vector4{ n.V }, cl).V };
 
                 CHECK(IsEqual(c, e, Replicate<Vector4>(0.001F)));
             }
@@ -1931,7 +1931,7 @@ TEST_CASE("Maths / Vector / Clamp length")
                     Vector4 const cl = Clamp(l, Replicate<Vector4>(0.5F), Replicate<Vector4>(1.5F));
 
                     // And expected vector
-                    Vector3 const e = As<Vector3>(Multiply(As<Vector4>(n), cl));
+                    Vector3 const e{ Multiply(Vector4{ n.V }, cl).V };
 
                     CHECK(IsEqual(c, e, Replicate<Vector4>(0.001F)));
                 }
@@ -1965,7 +1965,7 @@ TEST_CASE("Maths / Vector / Clamp length")
                         Vector4 const cl = Clamp(l, Replicate<Vector4>(0.5F), Replicate<Vector4>(1.5F));
 
                         // And expected vector
-                        Vector4 const e = As<Vector4>(Multiply(As<Vector4>(n), cl));
+                        Vector4 const e = Multiply(n, cl);
 
                         CHECK(IsEqual(c, e, Replicate<Vector4>(0.001F)));
                     }

@@ -295,7 +295,7 @@ namespace Graphyte::Random
         Float2 const sample = NextFloat2(state);
 
         float const r = std::sqrtf(-2.0f * std::logf(sample.X));
-        float const theta = sample.Y * Maths::TwoPi<float>();
+        float const theta = sample.Y * Maths::Pi2<float>();
         float const result = r * std::sinf(theta);
         return result;
     }
@@ -307,7 +307,7 @@ namespace Graphyte::Random
 
     Vector3 InsideUnitSphere(RandomState& state) noexcept
     {
-        float const theta = NextFloat(state, Maths::TwoPi<float>());
+        float const theta = NextFloat(state, Maths::Pi2<float>());
         float const v = NextFloat(state);
         float const phi = Maths::Acos((2.0f * v) - 1.0f);
         float const r = Maths::Power(NextFloat(state), 1.0f / 3.0f);
@@ -334,7 +334,7 @@ namespace Graphyte::Random
 
     Vector2 OnUnitCircle(RandomState& state) noexcept
     {
-        float const theta = NextFloat(state, Maths::TwoPi<float>());
+        float const theta = NextFloat(state, Maths::Pi2<float>());
         Float2 const coords = Maths::SinCos(theta);
         return Maths::Load<Vector2>(&coords);
     }
