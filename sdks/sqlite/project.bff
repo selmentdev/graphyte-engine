@@ -1,0 +1,19 @@
+{
+    .ProjectDefinition = [
+        .ProjectName = 'SdkSqlite'
+        .ProjectPath = 'sdks/sqlite'
+        .ProjectKind = 'StaticLib'
+        .ProjectType = 'Module'
+        .ProjectComponent = 'Sdks'
+
+        .ProjectIncludes = {
+            'sdks/sqlite/include'
+        }
+
+        .ProjectFiles = {
+            '$ProjectPath$/source/sqlite3.c'
+        }
+    ]
+
+    ^Global_ProjectList + .ProjectDefinition
+}

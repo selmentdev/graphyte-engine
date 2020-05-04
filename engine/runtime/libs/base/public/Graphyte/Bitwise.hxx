@@ -350,7 +350,7 @@ namespace Graphyte
     template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr int CountTrailingOnes(T value) noexcept
     {
-        return COuntTrailingZero(static_cast<T>(~value));
+        return CountTrailingZero(static_cast<T>(~value));
     }
 
     template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
