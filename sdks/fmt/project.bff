@@ -12,7 +12,7 @@
 
         .ProjectFiles = {
             '$ProjectPath$/source/format.cc'
-            '$ProjectPath$/source/posix.cc'
+            '$ProjectPath$/source/os.cc'
         }
 
         .ProjectDefines = {
