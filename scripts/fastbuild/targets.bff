@@ -75,6 +75,16 @@
     .GxConfiguration_Release
 }
 
+.GxBuildType_Developer = 'Developer'
+.GxBuildType_Testing = 'Testing'
+.GxBuildType_Retail = 'Retail'
+
+.GxValidBuildTypes = {
+    .GxBuildType_Developer
+    .GxBuildType_Testing
+    .GxBuildType_Retail
+}
+
 
 //--------------------------------------------------------------------------------------------------
 // Component types

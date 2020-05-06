@@ -452,11 +452,11 @@ namespace Graphyte::System
         Retail,
     };
 
-#if GRAPHYTE_BUILD_TYPE_DEVELOPER
+#if GX_BUILD_TYPE_DEVELOPER
     inline constexpr const BuildType CurrentBuildType = BuildType::Developer;
-#elif GRAPHYTE_BUILD_TYPE_TESTING
+#elif GX_BUILD_TYPE_TESTING
     inline constexpr const BuildType CurrentBuildType = BuildType::Testing;
-#elif GRAPHYTE_BUILD_TYPE_RETAIL
+#elif GX_BUILD_TYPE_RETAIL
     inline constexpr const BuildType CurrentBuildType = BuildType::Retail;
 #endif
 

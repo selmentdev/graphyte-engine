@@ -61,7 +61,16 @@
             }
         ]
 
+        .VariantDef_Retail = [
+            .VariantSelector = { 'Retail' }
+            .VariantImports = {
+                'SdkLz4'
+                'SdkMbedtls'
+            }
+        ]
+
         .ProjectVariants = {
+            .VariantDef_Retail
             .VariantDef_Windows
             //.VariantDef_Linux
             .VariantDef_UWP

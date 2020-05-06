@@ -1,7 +1,7 @@
 #pragma once
 #include <GxBase/Platform/Impl/Detect.hxx>
 
-#if GRAPHYTE_STATIC_BUILD
+#if GX_STATIC_BUILD
 #define GRAPHICS_API
 #else
 #if defined(module_graphics_EXPORTS)

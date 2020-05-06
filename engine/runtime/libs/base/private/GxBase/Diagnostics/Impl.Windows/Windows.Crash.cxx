@@ -153,7 +153,7 @@ namespace Graphyte::Diagnostics
         {
             [[maybe_unused]] auto result = ReportFault(exception, 0);
 
-#if GRAPHYTE_BUILD_TYPE_DEVELOPER
+#if GX_BUILD_TYPE_DEVELOPER
 
             switch (result)
             {

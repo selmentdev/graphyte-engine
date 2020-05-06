@@ -688,11 +688,47 @@
 #define GX_CONFIG_CHECKED 0
 #endif
 
+// Validate definitions
+
+#if (GX_CONFIG_RELEASE + GX_CONFIG_PROFILE + GX_CONFIG_DEBUG + GX_CONFIG_CHECKED) != 1
+#error Invalid config specified
+#endif
+
+
+// =================================================================================================
+//
+// Build type
+//
+
+#if !defined(GX_BUILD_TYPE_DEVELOPER)
+#define GX_BUILD_TYPE_DEVELOPER 0
+#endif
+
+#if !defined(GX_BUILD_TYPE_TESTING)
+#define GX_BUILD_TYPE_TESTING 0
+#endif
+
+#if !defined(GX_BUILD_TYPE_RETAIL)
+#define GX_BUILD_TYPE_RETAIL 0
+#endif
+
+// Validate build type
+
+#if (GX_BUILD_TYPE_DEVELOPER + GX_BUILD_TYPE_TESTING + GX_BUILD_TYPE_RETAIL) != 1
+#error Invalid build type specified
+#endif
+
 
 // =================================================================================================
 //
 // Asserts configuration
 //
+
+#if GX_BUILD_TYPE_RETAIL
+#   define GRAPHYTE_CONFIG_DO_ASSERT 0
+#   define GRAPHYTE_CONFIG_DO_VERIFY 0
+#   define GRAPHYTE_CONFIG_DO_ENSURE 0
+#endif
 
 #if !defined(GRAPHYTE_CONFIG_DO_ASSERT)
 #   define GRAPHYTE_CONFIG_DO_ASSERT 1
@@ -709,18 +745,13 @@
 
 // =================================================================================================
 //
-// Configure build types
+// Configure build options
 //
 
-#if !defined(GRAPHYTE_BUILD_TYPE_DEVELOPER)
-#   define GRAPHYTE_BUILD_TYPE_DEVELOPER 1
-#endif
-
-#if !defined(GRAPHYTE_BUILD_TYPE_TESTING)
-#   define GRAPHYTE_BUILD_TYPE_TESTING 0
-#endif
-#if !defined(GRAPHYTE_BUILD_TYPE_RETAIL)
-#   define GRAPHYTE_BUILD_TYPE_RETAIL 0
+#if GX_BUILD_TYPE_RETAIL
+#define GX_STATIC_BUILD 0 // requires more support from fastbuild right now :(
+#else
+#define GX_STATIC_BUILD 0
 #endif
 
 #if !defined(GRAPHYTE_MATH_NO_INTRINSICS)

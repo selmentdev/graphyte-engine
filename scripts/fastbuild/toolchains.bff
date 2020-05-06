@@ -374,6 +374,19 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
         = ' msvcprt.lib'
 ]
 
+.GxToolchainDef_Compiler_MSVC_BuildType_Developer = [
+    .CompilerOptions_BuildType
+        = ' /DGX_BUILD_TYPE_DEVELOPER=1'
+]
+.GxToolchainDef_Compiler_MSVC_BuildType_Testing = [
+    .CompilerOptions_BuildType
+        = ' /DGX_BUILD_TYPE_TESTING=1'
+]
+.GxToolchainDef_Compiler_MSVC_BuildType_Retail = [
+    .CompilerOptions_BuildType
+        = ' /DGX_BUILD_TYPE_RETAIL=1'
+]
+
 .GxToolchainDef_Compiler_MSVC_UnitTest_Debug = [
     .CompilerOptions_UnitTest_Remove = {}
     .CompilerOptions_UnitTest_Add = {}
@@ -528,6 +541,19 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .LinkerOptions_Config = ''
 ]
 
+.GxToolchainDef_Compiler_Clang_BuildType_Developer = [
+    .CompilerOptions_BuildType
+        = ' -DGX_BUILD_TYPE_DEVELOPER=1'
+]
+.GxToolchainDef_Compiler_Clang_BuildType_Testing = [
+    .CompilerOptions_BuildType
+        = ' -DGX_BUILD_TYPE_TESTING=1'
+]
+.GxToolchainDef_Compiler_Clang_BuildType_Retail = [
+    .CompilerOptions_BuildType
+        = ' -DGX_BUILD_TYPE_RETAIL=1'
+]
+
 .GxToolchainDef_Compiler_Clang_UnitTest_Debug = [
     .CompilerOptions_UnitTest_Remove = {}
     .CompilerOptions_UnitTest_Add = {}
@@ -669,6 +695,19 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
         = ' -DGX_CONFIG_RELEASE=1'
         + ' -O3'
     .LinkerOptions_Config = ''
+]
+
+.GxToolchainDef_Compiler_GCC_BuildType_Developer = [
+    .CompilerOptions_BuildType
+        = ' -DGX_BUILD_TYPE_DEVELOPER=1'
+]
+.GxToolchainDef_Compiler_GCC_BuildType_Testing = [
+    .CompilerOptions_BuildType
+        = ' -DGX_BUILD_TYPE_TESTING=1'
+]
+.GxToolchainDef_Compiler_GCC_BuildType_Retail = [
+    .CompilerOptions_BuildType
+        = ' -DGX_BUILD_TYPE_RETAIL=1'
 ]
 
 .GxToolchainDef_Compiler_GCC_UnitTest_Debug = [

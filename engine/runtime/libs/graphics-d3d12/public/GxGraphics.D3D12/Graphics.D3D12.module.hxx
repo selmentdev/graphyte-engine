@@ -1,7 +1,7 @@
 #pragma once
 #include <Graphyte/Platform/Impl/Detect.hxx>
 
-#if GRAPHYTE_STATIC_BUILD
+#if GX_STATIC_BUILD
 #define GRAPHICS_D3D12_API
 #else
 #if defined(module_graphics_d3d12_EXPORTS)

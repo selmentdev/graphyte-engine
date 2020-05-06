@@ -1,7 +1,7 @@
 #pragma once
 #include <Graphyte/Platform/Impl/Detect.hxx>
 
-#if GRAPHYTE_STATIC_BUILD
+#if GX_STATIC_BUILD
 #define RENDERING_API
 #else
 #if defined(module_rendering_EXPORTS)

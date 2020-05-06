@@ -45,7 +45,7 @@ namespace Graphyte::Diagnostics
 }
 
 
-#if GRAPHYTE_BUILD_TYPE_RETAIL && !GRAPHYTE_ENABLE_PROFILE
+#if GX_BUILD_TYPE_RETAIL && !GRAPHYTE_ENABLE_PROFILE
 #define GX_PROFILE_REGION(name, ...)
 #define GX_PROFILE_MARKER(name, ...)
 #else
