@@ -1,11 +1,11 @@
-#include <Graphyte/CommandLine.hxx>
-#include <Graphyte/AssetsPipeline/AssetProcessorFactory.hxx>
-#include <Graphyte/Modules.hxx>
+#include <GxBase/CommandLine.hxx>
+#include <GxAssetsBase/AssetsPipeline/AssetProcessorFactory.hxx>
+#include <GxBase/Modules.hxx>
 
 GX_DECLARE_LOG_CATEGORY(LogAssetsCompiler, Trace, Trace);
 GX_DEFINE_LOG_CATEGORY(LogAssetsCompiler);
 
-#include <Graphyte/Launch/Main.hxx>
+#include <GxLaunch/Launch/Main.hxx>
 
 Graphyte::Application::ApplicationDescriptor GraphyteApp
 {
@@ -16,18 +16,18 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp
     Graphyte::Version{ 1, 0, 0, 0 }
 };
 
-#include <Graphyte/Status.hxx>
-#include <Graphyte/Storage/IFileSystem.hxx>
+#include <GxBase/Status.hxx>
+#include <GxBase/Storage/IFileSystem.hxx>
 
-#include <Graphyte/Bitwise.hxx>
-#include <Graphyte/Network.hxx>
+#include <GxBase/Bitwise.hxx>
+#include <GxBase/Network.hxx>
 
-#include <Graphyte/Crypto/HashAlgorithm.hxx>
-#include <Graphyte/System/Process.hxx>
-#include <Graphyte/System/Library.hxx>
-#include <Graphyte/Storage/FileManager.hxx>
+#include <GxBase/Crypto/HashAlgorithm.hxx>
+#include <GxBase/System/Process.hxx>
+#include <GxBase/System/Library.hxx>
+#include <GxBase/Storage/FileManager.hxx>
 
-#include <Graphyte/Diagnostics.hxx>
+#include <GxBase/Diagnostics.hxx>
 
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {

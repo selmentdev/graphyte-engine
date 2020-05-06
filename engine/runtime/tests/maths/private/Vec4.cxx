@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Maths.hxx>
+#include <GxBase/Maths.hxx>
 
 
 TEST_CASE("Maths / Quaternion / q mul conj(q) = identity")

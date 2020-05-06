@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/ByteAccess.hxx>
+#include <GxBase/ByteAccess.hxx>
 
 TEST_CASE("Bitwise ops")
 {

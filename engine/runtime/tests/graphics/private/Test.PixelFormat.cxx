@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Graphics/PixelFormat.hxx>
+#include <GxGraphics/Graphics/PixelFormat.hxx>
 
 TEST_CASE("Pixel format tests")
 {

@@ -1,9 +1,9 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Storage/IFileSystem.hxx>
-#include <Graphyte/Storage/Path.hxx>
-#include <Graphyte/Application.hxx>
-#include <Graphyte/System.hxx>
-#include <Graphyte/Storage/FileManager.hxx>
+#include <GxBase/Storage/IFileSystem.hxx>
+#include <GxBase/Storage/Path.hxx>
+#include <GxBase/Application.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/Storage/FileManager.hxx>
 //#include <Graphyte/Crypto/HashAlgorithm.hxx>
 
 TEST_CASE("Checking if commmon paths exist")

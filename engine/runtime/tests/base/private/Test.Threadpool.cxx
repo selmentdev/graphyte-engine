@@ -1,9 +1,9 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Threading/Thread.hxx>
-#include <Graphyte/Threading/Sync.hxx>
-#include <Graphyte/String.hxx>
-#include <Graphyte/Diagnostics/Stopwatch.hxx>
-#include <Graphyte/Diagnostics/Profiler.hxx>
+#include <GxBase/Threading/Thread.hxx>
+#include <GxBase/Threading/Sync.hxx>
+#include <GxBase/String.hxx>
+#include <GxBase/Diagnostics/Stopwatch.hxx>
+#include <GxBase/Diagnostics/Profiler.hxx>
 
 namespace GraphyteX::Threading
 {
@@ -136,7 +136,7 @@ namespace GraphyteX::Threading
     }
 }
 
-#include <Graphyte/Diagnostics.hxx>
+#include <GxBase/Diagnostics.hxx>
 
 GX_DECLARE_LOG_CATEGORY(LogTestThreadpool, Trace, Trace);
 GX_DEFINE_LOG_CATEGORY(LogTestThreadpool);

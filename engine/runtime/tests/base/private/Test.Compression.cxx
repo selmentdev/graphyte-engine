@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Compression.hxx>
+#include <GxBase/Compression.hxx>
 
 TEST_CASE("Compression")
 {

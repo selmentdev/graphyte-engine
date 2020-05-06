@@ -1,1 +1,0 @@
-#include <Graphyte/Delegate.hxx>

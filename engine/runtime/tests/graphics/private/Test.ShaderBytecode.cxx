@@ -1,8 +1,8 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Storage/ArchiveMemoryReader.hxx>
-#include <Graphyte/Storage/ArchiveMemoryWriter.hxx>
-#include <Graphyte/Storage/IFileSystem.hxx>
-#include <Graphyte/Graphics/ShaderBytecode.hxx>
+#include <GxBase/Storage/ArchiveMemoryReader.hxx>
+#include <GxBase/Storage/ArchiveMemoryWriter.hxx>
+#include <GxBase/Storage/IFileSystem.hxx>
+#include <GxGraphics/Graphics/ShaderBytecode.hxx>
 
 TEST_CASE("Shader Bytecode loading & saving")
 {

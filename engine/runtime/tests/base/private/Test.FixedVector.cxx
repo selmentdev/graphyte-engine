@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/FixedVector.hxx>
+#include <GxBase/FixedVector.hxx>
 
 #include <algorithm>
 #include <numeric>

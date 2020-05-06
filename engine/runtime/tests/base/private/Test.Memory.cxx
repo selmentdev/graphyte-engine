@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Base.module.hxx>
-#include <Graphyte/System.hxx>
-#include <Graphyte/ObjectPool.hxx>
+#include <GxBase/Base.module.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/ObjectPool.hxx>
 
 #include <random>
 

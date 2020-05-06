@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Hash/XXHash.hxx>
-#include <Graphyte/Crypto/HashAlgorithm.hxx>
+#include <GxBase/Hash/XXHash.hxx>
+#include <GxBase/Crypto/HashAlgorithm.hxx>
 
 TEST_CASE("Hashing functions")
 {

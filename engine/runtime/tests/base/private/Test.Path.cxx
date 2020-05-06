@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Storage/Path.hxx>
+#include <GxBase/Storage/Path.hxx>
 
 using Graphyte::Storage::Path;
 

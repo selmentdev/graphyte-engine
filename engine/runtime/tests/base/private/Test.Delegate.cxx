@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Delegate.hxx>
-#include <Graphyte/Diagnostics.hxx>
-#include <Graphyte/Delegate.hxx>
+#include <GxBase/Delegate.hxx>
+#include <GxBase/Diagnostics.hxx>
+#include <GxBase/Delegate.hxx>
 
 namespace
 {

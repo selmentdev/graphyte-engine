@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/String.hxx>
+#include <GxBase/String.hxx>
 
 TEST_CASE("String pattern matching")
 {

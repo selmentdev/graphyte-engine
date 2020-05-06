@@ -1,13 +1,13 @@
-#include <Graphyte/Base.module.hxx>
-#include <Graphyte/Diagnostics.hxx>
-#include <Graphyte/Threading.hxx>
-#include <Graphyte/Graphics/Image.hxx>
-#include <Graphyte/Storage/FileManager.hxx>
+#include <GxBase/Base.module.hxx>
+#include <GxBase/Diagnostics.hxx>
+#include <GxBase/Threading.hxx>
+#include <GxGraphics/Graphics/Image.hxx>
+#include <GxBase/Storage/FileManager.hxx>
 
 GX_DECLARE_LOG_CATEGORY(LogAssetsCompiler, Trace, Trace);
 GX_DEFINE_LOG_CATEGORY(LogAssetsCompiler);
 
-#include <Graphyte/Launch/Main.hxx>
+#include <GxLaunch/Launch/Main.hxx>
 
 Graphyte::Application::ApplicationDescriptor GraphyteApp
 {
@@ -18,10 +18,10 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp
     Graphyte::Version{ 1, 0, 0, 0 }
 };
 
-#include <Graphyte/Uuid.hxx>
-#include <Graphyte/Maths.hxx>
-#include <Graphyte/System/Dialogs.hxx>
-#include <Graphyte/Random.hxx>
+#include <GxBase/Uuid.hxx>
+#include <GxBase/Maths.hxx>
+#include <GxBase/System/Dialogs.hxx>
+#include <GxBase/Random.hxx>
 
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {

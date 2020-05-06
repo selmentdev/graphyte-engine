@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Flags.hxx>
+#include <GxBase/Flags.hxx>
 
 TEST_CASE("Flags")
 {

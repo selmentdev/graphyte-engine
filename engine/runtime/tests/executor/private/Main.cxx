@@ -3,7 +3,7 @@
 
 #include <catch2/catch.hpp>
 
-#include <Graphyte/Launch/Main.hxx>
+#include <GxLaunch/Launch/Main.hxx>
 
 Graphyte::Application::ApplicationDescriptor GraphyteApp
 {

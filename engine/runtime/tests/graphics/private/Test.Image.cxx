@@ -1,12 +1,12 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Graphics/PixelFormat.hxx>
-#include <Graphyte/Graphics/Image.hxx>
-#include <Graphyte/ByteAccess.hxx>
-#include <Graphyte/Hash/XXHash.hxx>
-#include <Graphyte/Storage/FileManager.hxx>
-#include <Graphyte/Graphics/ImageCodecs/ImageCodec.DDS.hxx>
-#include <Graphyte/Storage/ArchiveMemoryReader.hxx>
-#include <Graphyte/Types.hxx>
+#include <GxGraphics/Graphics/PixelFormat.hxx>
+#include <GxGraphics/Graphics/Image.hxx>
+#include <GxBase/ByteAccess.hxx>
+#include <GxBase/Hash/XXHash.hxx>
+#include <GxBase/Storage/FileManager.hxx>
+#include <GxGraphics/Graphics/ImageCodecs/ImageCodec.DDS.hxx>
+#include <GxBase/Storage/ArchiveMemoryReader.hxx>
+#include <GxBase/Types.hxx>
 
 
 using Graphyte::Graphics::PixelFormat;

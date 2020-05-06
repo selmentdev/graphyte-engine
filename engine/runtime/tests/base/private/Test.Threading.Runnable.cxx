@@ -1,3 +1,3 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Diagnostics.hxx>
-#include <Graphyte/Threading/Thread.hxx>
+#include <GxBase/Diagnostics.hxx>
+#include <GxBase/Threading/Thread.hxx>

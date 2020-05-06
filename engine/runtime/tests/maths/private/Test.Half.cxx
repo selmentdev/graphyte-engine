@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Half.hxx>
+#include <GxBase/Half.hxx>
 
 TEST_CASE("Maths / Half <-> Float conversion")
 {

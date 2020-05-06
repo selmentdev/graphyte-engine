@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Storage/ArchiveMemoryReader.hxx>
-#include <Graphyte/Storage/ArchiveMemoryWriter.hxx>
+#include <GxBase/Storage/ArchiveMemoryReader.hxx>
+#include <GxBase/Storage/ArchiveMemoryWriter.hxx>
 #if false
 TEST_CASE("Memory reader and writer")
 {

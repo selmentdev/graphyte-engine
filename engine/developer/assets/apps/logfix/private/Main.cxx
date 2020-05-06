@@ -1,12 +1,12 @@
-#include <Graphyte/Diagnostics.hxx>
-#include <Graphyte/CommandLine.hxx>
-#include <Graphyte/Modules.hxx>
-#include <Graphyte/System/Process.hxx>
+#include <GxBase/Diagnostics.hxx>
+#include <GxBase/CommandLine.hxx>
+#include <GxBase/Modules.hxx>
+#include <GxBase/System/Process.hxx>
 
 GX_DECLARE_LOG_CATEGORY(LogFixTool, Trace, Trace);
 GX_DEFINE_LOG_CATEGORY(LogFixTool);
 
-#include <Graphyte/Launch/Main.hxx>
+#include <GxLaunch/Launch/Main.hxx>
 
 #include <Graphyte/Developer/Elf.hxx>
 

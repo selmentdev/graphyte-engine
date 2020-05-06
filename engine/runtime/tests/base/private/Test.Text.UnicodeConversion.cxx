@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Unicode.hxx>
+#include <GxBase/Unicode.hxx>
 
 TEST_CASE("Unicode conversion")
 {

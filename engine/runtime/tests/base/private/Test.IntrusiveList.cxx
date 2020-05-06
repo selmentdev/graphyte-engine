@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/IntrusiveList.hxx>
+#include <GxBase/IntrusiveList.hxx>
 
 struct Item
 {

@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Network/IpEndPoint.hxx>
-#include <Graphyte/Network/IpAddress.hxx>
+#include <GxBase/Network/IpEndPoint.hxx>
+#include <GxBase/Network/IpAddress.hxx>
 
 TEST_CASE("IpEndPoint tests")
 {

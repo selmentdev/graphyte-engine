@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Random.hxx>
-#include <Graphyte/Ieee754.hxx>
+#include <GxBase/Random.hxx>
+#include <GxBase/Ieee754.hxx>
 
 TEST_CASE("Float Traits")
 {

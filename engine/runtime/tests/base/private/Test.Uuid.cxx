@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Uuid.hxx>
+#include <GxBase/Uuid.hxx>
 
 TEST_CASE("Uuid")
 {

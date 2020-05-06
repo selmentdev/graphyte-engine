@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Network/IpAddress.hxx>
+#include <GxBase/Network/IpAddress.hxx>
 
 TEST_CASE("IpAddress tests")
 {

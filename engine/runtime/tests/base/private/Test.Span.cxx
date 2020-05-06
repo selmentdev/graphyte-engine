@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Span.hxx>
+#include <GxBase/Span.hxx>
 
 TEST_CASE("Span type")
 {

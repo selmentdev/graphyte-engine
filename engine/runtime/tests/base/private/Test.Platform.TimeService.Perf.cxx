@@ -1,8 +1,8 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/System.hxx>
-#include <Graphyte/Threading/Thread.hxx>
-#include <Graphyte/Diagnostics.hxx>
-#include <Graphyte/Diagnostics/Stopwatch.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/Threading/Thread.hxx>
+#include <GxBase/Diagnostics.hxx>
+#include <GxBase/Diagnostics/Stopwatch.hxx>
 
 TEST_CASE("Performance Counter Frequency", "[.][performance]")
 {

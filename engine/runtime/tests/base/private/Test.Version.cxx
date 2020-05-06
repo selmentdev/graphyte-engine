@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Base.module.hxx>
-#include <Graphyte/Version.hxx>
+#include <GxBase/Base.module.hxx>
+#include <GxBase/Version.hxx>
 
 TEST_CASE("Version")
 {

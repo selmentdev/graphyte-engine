@@ -1,10 +1,10 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Diagnostics.hxx>
-#include <Graphyte/Threading/Thread.hxx>
-#include <Graphyte/Threading/Runnable.hxx>
-#include <Graphyte/Threading/Sync.hxx>
-#include <Graphyte/Threading.hxx>
-#include <Graphyte/Diagnostics/Stopwatch.hxx>
+#include <GxBase/Diagnostics.hxx>
+#include <GxBase/Threading/Thread.hxx>
+#include <GxBase/Threading/Runnable.hxx>
+#include <GxBase/Threading/Sync.hxx>
+#include <GxBase/Threading.hxx>
+#include <GxBase/Diagnostics/Stopwatch.hxx>
 
 TEST_CASE("Threading / Parallel For")
 {

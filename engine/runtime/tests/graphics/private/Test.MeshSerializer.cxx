@@ -1,9 +1,9 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/Storage/ArchiveMemoryReader.hxx>
-#include <Graphyte/Storage/ArchiveMemoryWriter.hxx>
-#include <Graphyte/Storage/IFileSystem.hxx>
-#include <Graphyte/Storage/BinaryFormat.hxx>
-#include <Graphyte/Compression.hxx>
+#include <GxBase/Storage/ArchiveMemoryReader.hxx>
+#include <GxBase/Storage/ArchiveMemoryWriter.hxx>
+#include <GxBase/Storage/IFileSystem.hxx>
+#include <GxBase/Storage/BinaryFormat.hxx>
+#include <GxBase/Compression.hxx>
 
 #if false
 TEST_CASE("Mesh serializer with wedges")

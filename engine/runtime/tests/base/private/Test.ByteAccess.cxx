@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <Graphyte/ByteAccess.hxx>
+#include <GxBase/ByteAccess.hxx>
 
 template <typename T>
 struct ByteAccess;

@@ -1,5 +1,5 @@
-#include <Graphyte/Base.module.hxx>
-#include <Graphyte/Modules.hxx>
+#include <GxBase/Base.module.hxx>
+#include <GxBase/Modules.hxx>
 
 class BaseModule final : public Graphyte::IModule
 {
