@@ -1,7 +1,7 @@
 #pragma once
-#include <Graphyte/Base.module.hxx>
-#include <Graphyte/Threading/Sync.hxx>
-#include <Graphyte/System/Impl.Posix/Posix.Types.hxx>
+#include <GxBase/Base.module.hxx>
+#include <GxBase/Threading/Sync.hxx>
+#include <GxBase/System/Impl.Posix/Posix.Types.hxx>
 
 namespace Graphyte::Threading
 {

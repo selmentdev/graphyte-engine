@@ -294,9 +294,9 @@ namespace Graphyte::Random
     {
         Float2 const sample = NextFloat2(state);
 
-        float const r = std::sqrtf(-2.0f * std::logf(sample.X));
+        float const r = Maths::Sqrt(-2.0f * Maths::Log(sample.X));
         float const theta = sample.Y * Maths::Pi2<float>();
-        float const result = r * std::sinf(theta);
+        float const result = r * Maths::Sin(theta);
         return result;
     }
 

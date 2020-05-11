@@ -1,4 +1,4 @@
-#include <Graphyte/System/Dialogs.hxx>
+#include <GxBase/System/Dialogs.hxx>
 
 namespace Graphyte::System
 {

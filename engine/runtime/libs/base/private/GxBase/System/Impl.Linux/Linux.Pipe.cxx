@@ -1,5 +1,5 @@
-#include <Graphyte/System.hxx>
-#include <Graphyte/System/Pipe.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/System/Pipe.hxx>
 
 namespace Graphyte::System
 {

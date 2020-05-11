@@ -1,4 +1,4 @@
-#include <Graphyte/Crypto/Random.hxx>
+#include <GxBase/Crypto/Random.hxx>
 
 #include <sys/random.h>
 

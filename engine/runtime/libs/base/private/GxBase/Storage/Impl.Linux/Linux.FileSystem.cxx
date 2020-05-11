@@ -1,7 +1,7 @@
-#include <Graphyte/System/Impl.Posix/Posix.Types.hxx>
-#include <Graphyte/ByteAccess.hxx>
-#include <Graphyte/Diagnostics.hxx>
-#include <Graphyte/Storage/Path.hxx>
+#include <GxBase/System/Impl.Posix/Posix.Types.hxx>
+#include <GxBase/ByteAccess.hxx>
+#include <GxBase/Diagnostics.hxx>
+#include <GxBase/Storage/Path.hxx>
 #include "Linux.FileSystem.hxx"
 #include "Linux.FileStream.hxx"
 

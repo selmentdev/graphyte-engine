@@ -1,7 +1,7 @@
-#include <Graphyte/Application.hxx>
-#include <Graphyte/Input/Input.hxx>
-#include <Graphyte/Storage/Path.hxx>
-#include <Graphyte/System.hxx>
+#include <GxBase/Application.hxx>
+#include <GxBase/Input/Input.hxx>
+#include <GxBase/Storage/Path.hxx>
+#include <GxBase/System.hxx>
 
 #include "Linux.Window.hxx"
 

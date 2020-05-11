@@ -1,4 +1,4 @@
-#include <Graphyte/Diagnostics.hxx>
+#include <GxBase/Diagnostics.hxx>
 
 #ifdef __GNUC__
 #pragma GCC diagnostic push

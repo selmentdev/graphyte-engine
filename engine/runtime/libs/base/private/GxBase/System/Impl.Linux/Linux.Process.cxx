@@ -1,11 +1,11 @@
-#include <Graphyte/System.hxx>
-#include <Graphyte/System/Process.hxx>
-#include <Graphyte/String.hxx>
-#include <Graphyte/Storage/Path.hxx>
-#include <Graphyte/Storage/FileManager.hxx>
-#include <Graphyte/Storage/IFileSystem.hxx>
-#include <Graphyte/Threading/Thread.hxx>
-#include <Graphyte/Diagnostics.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/System/Process.hxx>
+#include <GxBase/String.hxx>
+#include <GxBase/Storage/Path.hxx>
+#include <GxBase/Storage/FileManager.hxx>
+#include <GxBase/Storage/IFileSystem.hxx>
+#include <GxBase/Threading/Thread.hxx>
+#include <GxBase/Diagnostics.hxx>
 
 #include <sys/time.h>
 #include <sys/resource.h>

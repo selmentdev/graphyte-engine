@@ -1,4 +1,4 @@
-#include <Graphyte/System.hxx>
+#include <GxBase/System.hxx>
 #include "../Platform.impl.hxx"
 
 namespace Graphyte::System

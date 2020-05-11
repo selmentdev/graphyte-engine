@@ -1,6 +1,6 @@
-#include <Graphyte/Base.module.hxx>
+#include <GxBase/Base.module.hxx>
 
-#include <Graphyte/System.hxx>
+#include <GxBase/System.hxx>
 
 #include "../Platform.impl.hxx"
 

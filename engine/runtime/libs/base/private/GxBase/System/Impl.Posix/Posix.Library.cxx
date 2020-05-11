@@ -1,6 +1,6 @@
-#include <Graphyte/System.hxx>
-#include <Graphyte/System/Library.hxx>
-#include <Graphyte/Diagnostics.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/System/Library.hxx>
+#include <GxBase/Diagnostics.hxx>
 
 #include <dlfcn.h>
 

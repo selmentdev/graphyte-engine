@@ -1,4 +1,4 @@
-#include <Graphyte/Diagnostics.hxx>
+#include <GxBase/Diagnostics.hxx>
 
 #include <link.h>
 
@@ -8,7 +8,7 @@ namespace Graphyte::Diagnostics
     {
         std::vector<std::string> result{};
         dl_iterate_phdr(
-            [](struct dl_phdr_info* info, size_t size, void* context) -> int
+            [](struct dl_phdr_info* info, [[maybe_unused]] size_t size, void* context) -> int
             {
                 auto* modules = reinterpret_cast<std::vector<std::string>*>(context);
                 GX_ASSERT(modules != nullptr);

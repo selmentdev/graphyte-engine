@@ -1,6 +1,6 @@
 #pragma once
-#include <Graphyte/Base.module.hxx>
-#include <Graphyte/Storage/IFileSystem.hxx>
+#include <GxBase/Base.module.hxx>
+#include <GxBase/Storage/IFileSystem.hxx>
 
 namespace Graphyte::Storage
 {

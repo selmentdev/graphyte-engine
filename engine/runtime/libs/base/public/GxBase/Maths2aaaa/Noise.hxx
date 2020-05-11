@@ -1,6 +1,6 @@
 #pragma once
-#include <Graphyte/Maths2/Vector.hxx>
-#include <Graphyte/Maths/Scalar.hxx>
+#include <GxBase/Maths2/Vector.hxx>
+#include <GxBase/Maths/Scalar.hxx>
 
 namespace Graphyte::Maths::Noises::Impl
 {

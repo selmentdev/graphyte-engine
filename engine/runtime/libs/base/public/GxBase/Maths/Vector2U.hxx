@@ -1,6 +1,6 @@
 #pragma once
-#include <Graphyte/Maths/Base.hxx>
-#include <Graphyte/Maths/Vector4U.hxx>
+#include <GxBase/Maths/Base.hxx>
+#include <GxBase/Maths/Vector4U.hxx>
 
 // =================================================================================================
 //

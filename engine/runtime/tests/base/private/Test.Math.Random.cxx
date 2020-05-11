@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 #if false
-#include <Graphyte/Maths/Random.hxx>
+#include <GxBase/Maths/Random.hxx>
 
 TEST_CASE("Default random number generator")
 {

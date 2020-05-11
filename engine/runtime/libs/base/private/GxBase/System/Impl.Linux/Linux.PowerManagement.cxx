@@ -1,5 +1,5 @@
-#include <Graphyte/System.hxx>
-#include <Graphyte/Diagnostics.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/Diagnostics.hxx>
 
 #include "../Platform.impl.hxx"
 

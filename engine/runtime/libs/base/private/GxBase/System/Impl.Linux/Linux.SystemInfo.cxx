@@ -1,6 +1,6 @@
-#include <Graphyte/System.hxx>
-#include <Graphyte/Storage/Path.hxx>
-#include <Graphyte/Diagnostics.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/Storage/Path.hxx>
+#include <GxBase/Diagnostics.hxx>
 
 #include <unistd.h>
 #include <sys/utsname.h>

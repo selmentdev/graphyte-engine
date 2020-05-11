@@ -1,5 +1,5 @@
 #pragma once
-#include <Graphyte/Storage/IStream.hxx>
+#include <GxBase/Storage/IStream.hxx>
 
 namespace Graphyte::Storage
 {

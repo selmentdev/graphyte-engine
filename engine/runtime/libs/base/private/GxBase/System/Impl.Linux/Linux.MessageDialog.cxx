@@ -1,7 +1,7 @@
-#include <Graphyte/System.hxx>
+#include <GxBase/System.hxx>
 #include "../Platform.impl.hxx"
 
-#include <Graphyte/Span.hxx>
+#include <GxBase/Span.hxx>
 
 #include <SDL2/SDL.h>
 

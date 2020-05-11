@@ -1,5 +1,5 @@
-#include <Graphyte/System.hxx>
-#include <Graphyte/System/Impl.Posix/Posix.Types.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/System/Impl.Posix/Posix.Types.hxx>
 
 namespace Graphyte::System
 {

@@ -1,4 +1,4 @@
-#include <Graphyte/Diagnostics.hxx>
+#include <GxBase/Diagnostics.hxx>
 
 #include <sys/types.h>
 #include <sys/resource.h>

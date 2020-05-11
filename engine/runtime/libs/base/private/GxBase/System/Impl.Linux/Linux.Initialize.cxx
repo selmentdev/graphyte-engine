@@ -1,4 +1,4 @@
-#include <Graphyte/Application.hxx>
+#include <GxBase/Application.hxx>
 
 #include "../Platform.impl.hxx"
 

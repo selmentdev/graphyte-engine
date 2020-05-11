@@ -1,5 +1,5 @@
 #pragma once
-#include <Graphyte/Maths/Base.hxx>
+#include <GxBase/Maths/Base.hxx>
 
 // =================================================================================================
 //

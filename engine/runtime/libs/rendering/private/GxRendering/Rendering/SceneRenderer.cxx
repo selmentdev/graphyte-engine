@@ -1,4 +1,4 @@
-#include <Graphyte/Rendering/SceneRenderer.hxx>
+#include <GxRendering/Rendering/SceneRenderer.hxx>
 
 namespace Graphyte::Rendering
 {

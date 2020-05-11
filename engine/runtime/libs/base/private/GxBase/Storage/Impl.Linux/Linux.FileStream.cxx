@@ -1,4 +1,4 @@
-#include <Graphyte/Bitwise.hxx>
+#include <GxBase/Bitwise.hxx>
 #include "Linux.FileStream.hxx"
 
 namespace Graphyte::Storage

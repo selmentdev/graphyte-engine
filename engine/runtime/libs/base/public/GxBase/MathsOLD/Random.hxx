@@ -1,5 +1,5 @@
 #pragma once
-#include <Graphyte/Maths/Scalar.hxx>
+#include <GxBase/Maths/Scalar.hxx>
 
 namespace Graphyte::Maths::Random
 {

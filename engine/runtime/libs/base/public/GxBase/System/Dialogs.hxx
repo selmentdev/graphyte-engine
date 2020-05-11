@@ -1,7 +1,7 @@
 #pragma once
-#include <gxBase/Base.module.hxx>
-#include <gxBase/Span.hxx>
-#include <gxBase/Status.hxx>
+#include <GxBase/Base.module.hxx>
+#include <GxBase/Span.hxx>
+#include <GxBase/Status.hxx>
 
 namespace Graphyte::System
 {

@@ -1,6 +1,6 @@
 #pragma once
-#include <Graphyte/System.hxx>
-#include <Graphyte/DateTime.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/DateTime.hxx>
 
 namespace Graphyte::System
 {

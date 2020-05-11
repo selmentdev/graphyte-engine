@@ -1,6 +1,6 @@
-#include <Graphyte/System.hxx>
-#include <Graphyte/Storage/IFileSystem.hxx>
-#include <Graphyte/Storage/Path.hxx>
+#include <GxBase/System.hxx>
+#include <GxBase/Storage/IFileSystem.hxx>
+#include <GxBase/Storage/Path.hxx>
 
 #include "../Platform.impl.hxx"
 

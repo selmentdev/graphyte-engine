@@ -1,7 +1,7 @@
 #pragma once
-#include <Graphyte/Base.module.hxx>
-#include <Graphyte/Threading/Sync.hxx>
-#include <Graphyte/System/Android/AndroidTypeConverter.hxx>
+#include <GxBase/Base.module.hxx>
+#include <GxBase/Threading/Sync.hxx>
+#include <GxBase/System/Android/AndroidTypeConverter.hxx>
 
 namespace Graphyte::Threading
 {

@@ -1,9 +1,9 @@
 #pragma once
-#include <Graphyte/Rendering.module.hxx>
-#include <Graphyte/Graphics/Gpu/GpuResources.hxx>
-#include <Graphyte/Graphics/Gpu/GpuCommandList.hxx>
-#include <Graphyte/Geometry/Mesh.hxx>
-#include <Graphyte/Graphics/Gpu/GpuVertex.hxx>
+#include <GxRendering/Rendering.module.hxx>
+#include <GxGraphics/Graphics/Gpu/GpuResources.hxx>
+#include <GxGraphics/Graphics/Gpu/GpuCommandList.hxx>
+#include <GxGeometry/Geometry/Mesh.hxx>
+#include <GxGraphics/Graphics/Gpu/GpuVertex.hxx>
 
 namespace Graphyte::Rendering
 {

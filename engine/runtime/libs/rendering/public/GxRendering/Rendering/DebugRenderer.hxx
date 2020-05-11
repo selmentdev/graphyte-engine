@@ -1,6 +1,6 @@
 #pragma once
-#include <Graphyte/Rendering.module.hxx>
-#include <Graphyte/Graphics/Gpu/GpuDefinitions.hxx>
+#include <GxRendering/Rendering.module.hxx>
+#include <GxGraphics/Graphics/Gpu/GpuDefinitions.hxx>
 
 namespace Graphyte::Rendering
 {

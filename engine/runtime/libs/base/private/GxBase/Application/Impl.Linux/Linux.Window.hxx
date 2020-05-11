@@ -1,5 +1,5 @@
 #pragma once
-#include <Graphyte/Application.hxx>
+#include <GxBase/Application.hxx>
 
 #include <SDL2/SDL.h>
 

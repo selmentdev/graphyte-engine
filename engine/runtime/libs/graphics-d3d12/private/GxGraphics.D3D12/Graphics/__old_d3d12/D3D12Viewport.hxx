@@ -1,6 +1,6 @@
 #pragma once
-//#include <Graphyte/Graphics/Render/Viewport.hxx>
-#include <Graphyte/Graphics/PixelFormat.hxx>
+//#include <GxGraphics/Graphics/Render/Viewport.hxx>
+#include <GxGraphics/Graphics/PixelFormat.hxx>
 #include "D3D12Common.hxx"
 
 namespace Graphyte::Graphics::Render
