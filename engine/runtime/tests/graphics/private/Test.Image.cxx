@@ -6,7 +6,9 @@
 #include <GxBase/Storage/FileManager.hxx>
 #include <GxGraphics/Graphics/ImageCodecs/ImageCodec.DDS.hxx>
 #include <GxBase/Storage/ArchiveMemoryReader.hxx>
+#include <GxBase/Storage/ArchiveMemoryWriter.hxx>
 #include <GxBase/Types.hxx>
+#include <GxBase/Random.hxx>
 
 
 using Graphyte::Graphics::PixelFormat;
@@ -20,10 +22,12 @@ using Graphyte::Graphics::CubeFace;
 using Graphyte::Hash::XXHash64;
 using Graphyte::ColorBGRA;
 using Graphyte::Storage::ArchiveMemoryReader;
+using Graphyte::Storage::ArchiveMemoryWriter;
 
 TEST_CASE("gen-1d.dds")
 {
-    static constexpr const unsigned char source[] = {
+    static constexpr std::array<const unsigned char, 172> source
+    {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x05, 0x10, 0x02, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -41,7 +45,8 @@ TEST_CASE("gen-1d.dds")
         0xc8, 0x33, 0x6f, 0x2c
     };
 
-    std::vector<std::byte> contents(reinterpret_cast<const std::byte*>(std::begin(source)), reinterpret_cast<const std::byte*>(std::end(source)));
+    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
     ImageCodecDDS codec{};
@@ -99,7 +104,8 @@ TEST_CASE("gen-1d.dds")
 
 TEST_CASE("gen-1d-array.dds")
 {
-    static constexpr const unsigned char source[] = {
+    static constexpr std::array<const unsigned char, 244> source
+    {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x05, 0x10, 0x02, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -123,7 +129,8 @@ TEST_CASE("gen-1d-array.dds")
         0x1d, 0xa5, 0xf5, 0x89
     };
 
-    std::vector<std::byte> contents(reinterpret_cast<const std::byte*>(std::begin(source)), reinterpret_cast<const std::byte*>(std::end(source)));
+    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
     ImageCodecDDS codec{};
@@ -290,7 +297,8 @@ TEST_CASE("gen-1d-array.dds")
 
 TEST_CASE("gen-2d.dds")
 {
-    static constexpr const unsigned char source[] = {
+    static constexpr std::array<const unsigned char, 168> source
+    {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x02, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -307,7 +315,8 @@ TEST_CASE("gen-2d.dds")
         0x78, 0xec, 0xeb, 0x8b, 0x00, 0xc4, 0x51, 0xb7, 0xbf, 0xba, 0x4c, 0xcd
     };
 
-    std::vector<std::byte> contents(reinterpret_cast<const std::byte*>(std::begin(source)), reinterpret_cast<const std::byte*>(std::end(source)));
+    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
     ImageCodecDDS codec{};
@@ -366,7 +375,8 @@ TEST_CASE("gen-2d.dds")
 
 TEST_CASE("gen-2d-array.dds")
 {
-    static constexpr const unsigned char source[] = {
+    static constexpr std::array<const unsigned char, 188> source
+    {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x02, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -385,7 +395,8 @@ TEST_CASE("gen-2d-array.dds")
         0xc7, 0xff, 0x14, 0x41, 0xd1, 0xa6, 0x2e, 0x07
     };
 
-    std::vector<std::byte> contents(reinterpret_cast<const std::byte*>(std::begin(source)), reinterpret_cast<const std::byte*>(std::end(source)));
+    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
     ImageCodecDDS codec{};
@@ -481,7 +492,8 @@ TEST_CASE("gen-2d-array.dds")
 
 TEST_CASE("gen-2d-cube.dds")
 {
-    static constexpr const unsigned char source[] = {
+    static constexpr std::array<const unsigned char, 268> source
+    {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x02, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -507,7 +519,8 @@ TEST_CASE("gen-2d-cube.dds")
         0x3b, 0x72, 0xaa, 0x97
     };
 
-    std::vector<std::byte> contents(reinterpret_cast<const std::byte*>(std::begin(source)), reinterpret_cast<const std::byte*>(std::end(source)));
+    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
     ImageCodecDDS codec{};
@@ -751,7 +764,8 @@ TEST_CASE("gen-2d-cube.dds")
 
 TEST_CASE("gen-2d-cube-array.dds")
 {
-    static constexpr const unsigned char source[] = {
+    static constexpr std::array<const unsigned char, 388> source
+    {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x02, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -787,7 +801,8 @@ TEST_CASE("gen-2d-cube-array.dds")
         0x50, 0x3e, 0xf0, 0x8e
     };
 
-    std::vector<std::byte> contents(reinterpret_cast<const std::byte*>(std::begin(source)), reinterpret_cast<const std::byte*>(std::end(source)));
+    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
     ImageCodecDDS codec{};
@@ -1257,7 +1272,8 @@ TEST_CASE("gen-2d-cube-array.dds")
 
 TEST_CASE("gen-3d.dds")
 {
-    static constexpr const unsigned char source[] = {
+    static constexpr std::array<const unsigned char, 184> source
+    {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x82, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -1276,7 +1292,8 @@ TEST_CASE("gen-3d.dds")
         0xbf, 0xba, 0x4c, 0xcd
     };
 
-    std::vector<std::byte> contents(reinterpret_cast<const std::byte*>(std::begin(source)), reinterpret_cast<const std::byte*>(std::end(source)));
+    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
     ImageCodecDDS codec{};
@@ -1339,4 +1356,85 @@ TEST_CASE("gen-3d.dds")
             CHECK(scanline_0_0[0].Value == 0xCD4CBABF);
         }
     }
+}
+
+TEST_CASE("image generation")
+{
+    auto image = Graphyte::Graphics::Image::Create2D(
+        PixelFormat::B8G8R8A8_UNORM,
+        4,
+        4,
+        2,
+        1,
+        ImageAlphaMode::Opaque
+    );
+
+    REQUIRE(image != nullptr);
+    REQUIRE(image->GetWidth() == 4);
+    REQUIRE(image->GetHeight() == 4);
+    REQUIRE(image->GetDepth() == 1);
+    REQUIRE(image->GetMipmapCount() == 2);
+    REQUIRE(image->GetArrayCount() == 1);
+    REQUIRE(image->GetAlphaMode() == ImageAlphaMode::Opaque);
+    REQUIRE(image->GetPixelFormat() == PixelFormat::B8G8R8A8_UNORM);
+
+    Graphyte::Random::RandomState state{};
+    Graphyte::Random::Initialize(state, 0x2137);
+
+    for (auto subresource : image->GetSubresources())
+    {
+        for (uint32_t y = 0; y < subresource.Height; ++y)
+        {
+            auto scanline = subresource.GetPixels<ColorBGRA>(y);
+
+            for (uint32_t x = 0; x < scanline.size(); ++x)
+            {
+                auto& pixel = scanline[x];
+
+                pixel.R = static_cast<uint8_t>(Graphyte::Random::NextUInt32(state, 0xff));
+                pixel.G = static_cast<uint8_t>(Graphyte::Random::NextUInt32(state, 0xff));
+                pixel.B = static_cast<uint8_t>(Graphyte::Random::NextUInt32(state, 0xff));
+                pixel.A = 0xFF;
+            }
+        }
+    }
+
+    std::vector<std::byte> buffer{};
+    ArchiveMemoryWriter writer{ buffer };
+
+    ImageCodecDDS codec{};
+    REQUIRE(codec.Encode(image, writer) == Graphyte::Status::Success);
+
+    if constexpr (true)
+    {
+        [[maybe_unused]] auto status = Graphyte::Storage::FileManager::WriteBinary({ buffer }, "d:/test.dds");
+    }
+
+    static constexpr std::array<const unsigned char, 228> source{
+        0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x02, 0x00, 0x04, 0x00, 0x00, 0x00,
+        0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00,
+        0x04, 0x00, 0x00, 0x00, 0x44, 0x58, 0x31, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08, 0x10, 0x40, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x57, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+        0x03, 0x00, 0x00, 0x00, 0xef, 0x7c, 0x56, 0xff, 0xae, 0xb4, 0x7e, 0xff, 0xca, 0xe3, 0xe2, 0xff,
+        0xec, 0xa1, 0x5e, 0xff, 0x40, 0xca, 0x05, 0xff, 0xb8, 0x4b, 0x93, 0xff, 0x21, 0x9a, 0xae, 0xff,
+        0xec, 0xa9, 0xee, 0xff, 0x12, 0xca, 0x09, 0xff, 0x49, 0x99, 0x1f, 0xff, 0x57, 0x39, 0x0b, 0xff,
+        0x9c, 0x86, 0x3a, 0xff, 0xd6, 0x59, 0xa9, 0xff, 0xcb, 0x20, 0x4f, 0xff, 0xc2, 0xd7, 0x0a, 0xff,
+        0xfd, 0x42, 0x14, 0xff, 0xbc, 0x7b, 0xeb, 0xff, 0x15, 0x9b, 0x96, 0xff, 0x1c, 0xa0, 0x94, 0xff,
+        0xa7, 0xb9, 0x97, 0xff,
+    };
+
+    auto const source_view_bytes = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+
+    REQUIRE(std::equal(
+        std::begin(buffer),
+        std::end(buffer),
+        std::begin(source_view_bytes),
+        std::end(source_view_bytes)
+    ));
+
 }
