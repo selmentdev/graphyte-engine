@@ -6,14 +6,6 @@
 
 namespace Graphyte::Graphics
 {
-    class GRAPHICS_API ImageCodec
-    {
-    public:
-        ImageCodec() noexcept;
-        virtual ~ImageCodec() noexcept;
-
-    public:
-        virtual Status Decode(Storage::Archive& archive, std::unique_ptr<Image>& out_image) noexcept = 0;
-        virtual Status Encode(const std::unique_ptr<Image>& image, Storage::Archive& archive) noexcept = 0;
-    };
+    using DecodeImageFn = Status(std::unique_ptr<Image>& result, Storage::Archive& archive) noexcept;
+    using EncodeImageFn = Status(Storage::Archive& archive, Image const& image) noexcept;
 }

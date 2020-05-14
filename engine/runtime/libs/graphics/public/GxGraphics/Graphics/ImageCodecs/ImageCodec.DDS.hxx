@@ -3,14 +3,13 @@
 
 namespace Graphyte::Graphics
 {
-    class GRAPHICS_API ImageCodecDDS : public ImageCodec
-    {
-    public:
-        ImageCodecDDS() noexcept;
-        virtual ~ImageCodecDDS() noexcept;
+    GRAPHICS_API Status DecodeImage_DDS(
+        std::unique_ptr<Image>& result,
+        Storage::Archive& archive
+    ) noexcept;
 
-    public:
-        virtual Status Decode(Storage::Archive& archive, std::unique_ptr<Image>& out_image) noexcept override;
-        virtual Status Encode(const std::unique_ptr<Image>& image, Storage::Archive& archive) noexcept override;
-    };
+    GRAPHICS_API Status EncodeImage_DDS(
+        Storage::Archive& archive,
+        Image const& image
+    ) noexcept;
 }

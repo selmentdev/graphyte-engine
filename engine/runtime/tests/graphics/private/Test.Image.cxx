@@ -16,7 +16,6 @@ using Graphyte::Graphics::PixelFormatProperties;
 using Graphyte::Graphics::Image;
 using Graphyte::Graphics::ImageDimension;
 using Graphyte::Graphics::ImageAlphaMode;
-using Graphyte::Graphics::ImageCodecDDS;
 using Graphyte::Graphics::ImagePixels;
 using Graphyte::Graphics::CubeFace;
 using Graphyte::Hash::XXHash64;
@@ -49,10 +48,9 @@ TEST_CASE("gen-1d.dds")
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
-    ImageCodecDDS codec{};
     std::unique_ptr<Image> image{};
 
-    REQUIRE(codec.Decode(reader, image) == Graphyte::Status::Success);
+    REQUIRE(DecodeImage_DDS(image, reader) == Graphyte::Status::Success);
     CHECK(image->GetWidth() == 4);
     CHECK(image->GetHeight() == 1);
     CHECK(image->GetDepth() == 1);
@@ -133,10 +131,9 @@ TEST_CASE("gen-1d-array.dds")
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
-    ImageCodecDDS codec{};
     std::unique_ptr<Image> image{};
 
-    REQUIRE(codec.Decode(reader, image) == Graphyte::Status::Success);
+    REQUIRE(DecodeImage_DDS(image, reader) == Graphyte::Status::Success);
     CHECK(image->GetWidth() == 4);
     CHECK(image->GetHeight() == 1);
     CHECK(image->GetDepth() == 1);
@@ -319,10 +316,9 @@ TEST_CASE("gen-2d.dds")
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
-    ImageCodecDDS codec{};
     std::unique_ptr<Image> image{};
 
-    REQUIRE(codec.Decode(reader, image) == Graphyte::Status::Success);
+    REQUIRE(DecodeImage_DDS(image, reader) == Graphyte::Status::Success);
     CHECK(image->GetWidth() == 2);
     CHECK(image->GetHeight() == 2);
     CHECK(image->GetDepth() == 1);
@@ -399,10 +395,9 @@ TEST_CASE("gen-2d-array.dds")
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
-    ImageCodecDDS codec{};
     std::unique_ptr<Image> image{};
 
-    REQUIRE(codec.Decode(reader, image) == Graphyte::Status::Success);
+    REQUIRE(DecodeImage_DDS(image, reader) == Graphyte::Status::Success);
     CHECK(image->GetWidth() == 2);
     CHECK(image->GetHeight() == 2);
     CHECK(image->GetDepth() == 1);
@@ -523,10 +518,9 @@ TEST_CASE("gen-2d-cube.dds")
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
-    ImageCodecDDS codec{};
     std::unique_ptr<Image> image{};
 
-    REQUIRE(codec.Decode(reader, image) == Graphyte::Status::Success);
+    REQUIRE(DecodeImage_DDS(image, reader) == Graphyte::Status::Success);
     CHECK(image->GetWidth() == 2);
     CHECK(image->GetHeight() == 2);
     CHECK(image->GetDepth() == 1);
@@ -805,10 +799,9 @@ TEST_CASE("gen-2d-cube-array.dds")
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
-    ImageCodecDDS codec{};
     std::unique_ptr<Image> image{};
 
-    REQUIRE(codec.Decode(reader, image) == Graphyte::Status::Success);
+    REQUIRE(DecodeImage_DDS(image, reader) == Graphyte::Status::Success);
     CHECK(image->GetWidth() == 2);
     CHECK(image->GetHeight() == 2);
     CHECK(image->GetDepth() == 1);
@@ -1296,10 +1289,9 @@ TEST_CASE("gen-3d.dds")
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
-    ImageCodecDDS codec{};
     std::unique_ptr<Image> image{};
 
-    REQUIRE(codec.Decode(reader, image) == Graphyte::Status::Success);
+    REQUIRE(DecodeImage_DDS(image, reader) == Graphyte::Status::Success);
     CHECK(image->GetWidth() == 2);
     CHECK(image->GetHeight() == 2);
     CHECK(image->GetDepth() == 2);
@@ -1402,8 +1394,7 @@ TEST_CASE("image generation")
     std::vector<std::byte> buffer{};
     ArchiveMemoryWriter writer{ buffer };
 
-    ImageCodecDDS codec{};
-    REQUIRE(codec.Encode(image, writer) == Graphyte::Status::Success);
+    REQUIRE(EncodeImage_DDS(writer, *image) == Graphyte::Status::Success);
 
     if constexpr (true)
     {

@@ -137,12 +137,12 @@ namespace Graphyte::Graphics
             return nullptr;
         }
 
-        if (ImageDimensionProperties::IsCube(m_Dimension))
+        if (IsCube(m_Dimension))
         {
             return nullptr;
         }
 
-        if (array_index != 0 && !ImageDimensionProperties::IsArray(m_Dimension))
+        if (array_index != 0 && !IsArray(m_Dimension))
         {
             return nullptr;
         }
@@ -163,7 +163,7 @@ namespace Graphyte::Graphics
         uint32_t mipmap_index
     ) noexcept
     {
-        if (!ImageDimensionProperties::IsCube(m_Dimension))
+        if (!IsCube(m_Dimension))
         {
             return nullptr;
         }
@@ -175,7 +175,7 @@ namespace Graphyte::Graphics
 
         GX_ASSERT((m_SubresourcesCount % 6) == 0);
 
-        if (array_index != 0 && !ImageDimensionProperties::IsArray(m_Dimension))
+        if (array_index != 0 && !IsArray(m_Dimension))
         {
             return nullptr;
         }

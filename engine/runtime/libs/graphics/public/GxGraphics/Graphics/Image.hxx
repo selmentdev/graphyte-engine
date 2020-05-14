@@ -37,41 +37,34 @@ namespace Graphyte::Graphics
         Texture3D = 7,
     };
 
-    struct ImageDimensionProperties final
+    inline bool IsArray(ImageDimension dimension) noexcept
     {
-        static bool IsArray(
-            ImageDimension dimension
-        ) noexcept
+        switch (dimension)
         {
-            switch (dimension)
-            {
-            case ImageDimension::Texture1DArray:
-            case ImageDimension::Texture2DArray:
-            case ImageDimension::TextureCubeArray:
-                return true;
-            default:
-                break;
-            }
-
-            return false;
+        case ImageDimension::Texture1DArray:
+        case ImageDimension::Texture2DArray:
+        case ImageDimension::TextureCubeArray:
+            return true;
+        default:
+            break;
         }
 
-        static bool IsCube(
-            ImageDimension dimension
-        ) noexcept
-        {
-            switch (dimension)
-            {
-            case ImageDimension::TextureCube:
-            case ImageDimension::TextureCubeArray:
-                return true;
-            default:
-                break;
-            }
+        return false;
+    }
 
-            return false;
+    inline bool IsCube(ImageDimension dimension) noexcept
+    {
+        switch (dimension)
+        {
+        case ImageDimension::TextureCube:
+        case ImageDimension::TextureCubeArray:
+            return true;
+        default:
+            break;
         }
-    };
+
+        return false;
+    }
 
     struct ImagePixels final
     {
@@ -300,7 +293,7 @@ namespace Graphyte::Graphics
         }
         uint32_t GetFacesCount() const noexcept
         {
-            return static_cast<uint32_t>(ImageDimensionProperties::IsCube(m_Dimension) ? 6 : 1);
+            return static_cast<uint32_t>(IsCube(m_Dimension) ? 6 : 1);
         }
 
         ImageDimension GetDimension() const noexcept

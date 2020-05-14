@@ -237,6 +237,7 @@ namespace Graphyte::Diagnostics
 
         while (success)
         {
+            SetLastError(0);
             success = !!StackWalk64(
                 machine,
                 process,

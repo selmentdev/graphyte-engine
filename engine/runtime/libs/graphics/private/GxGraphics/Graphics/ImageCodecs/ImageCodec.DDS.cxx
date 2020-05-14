@@ -963,7 +963,7 @@ namespace Graphyte::Graphics::Impl::DDS
     constexpr const uint32_t DDS_ALPHA_MODE_OPAQUE = 3;
     constexpr const uint32_t DDS_ALPHA_MODE_CUSTOM = 4;
 
-    static inline ImageAlphaMode ConvertAlphaMode(uint32_t value) noexcept
+    static inline ImageAlphaMode ConvertAlphaMode_DXT10(uint32_t value) noexcept
     {
         switch (value)
         {
@@ -977,7 +977,7 @@ namespace Graphyte::Graphics::Impl::DDS
         return ImageAlphaMode::Unknown;
     }
 
-    static inline uint32_t ConvertAlphaMode(ImageAlphaMode value) noexcept
+    static inline uint32_t ConvertAlphaMode_DXT10(ImageAlphaMode value) noexcept
     {
         switch (value)
         {
@@ -995,13 +995,9 @@ namespace Graphyte::Graphics::Impl::DDS
 
 namespace Graphyte::Graphics
 {
-    ImageCodecDDS::ImageCodecDDS() noexcept = default;
-
-    ImageCodecDDS::~ImageCodecDDS() noexcept = default;
-
-    Status ImageCodecDDS::Decode(
-        Storage::Archive& archive,
-        std::unique_ptr<Image>& out_image
+    GRAPHICS_API Status DecodeImage_DDS(
+        std::unique_ptr<Image>& result,
+        Storage::Archive& archive
     ) noexcept
     {
         int64_t stream_size = archive.GetSize();
@@ -1041,6 +1037,7 @@ namespace Graphyte::Graphics
         ImageAlphaMode alpha_mode = ImageAlphaMode::Unknown;
 
         uint32_t mipmap_count = header.MipMapCount;
+
         if (mipmap_count == 0)
         {
             mipmap_count = 1;
@@ -1058,7 +1055,7 @@ namespace Graphyte::Graphics
             archive.Serialize(&dxt10, sizeof(dxt10));
 
             array_size = dxt10.ArraySize;
-            alpha_mode = Impl::DDS::ConvertAlphaMode(dxt10.MiscFlags2 & Impl::DDS::DDS_MISC_FLAGS2_ALPHA_MODE_MASK);
+            alpha_mode = Impl::DDS::ConvertAlphaMode_DXT10(dxt10.MiscFlags2 & Impl::DDS::DDS_MISC_FLAGS2_ALPHA_MODE_MASK);
 
             if (array_size == 0)
             {
@@ -1085,42 +1082,42 @@ namespace Graphyte::Graphics
             switch (dxt10.ResourceDimension)
             {
             case Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_1D:
+            {
+                if ((header.Flags & Impl::DDS::DDS_HEADER_HEIGHT) && height != 1)
                 {
-                    if ((header.Flags & Impl::DDS::DDS_HEADER_HEIGHT) && height != 1)
-                    {
-                        return Status::InvalidFormat;
-                    }
-
-                    height = depth = 1;
-                    dimension = ImageDimension::Texture1D;
-                    break;
+                    return Status::InvalidFormat;
                 }
+
+                height = depth = 1;
+                dimension = ImageDimension::Texture1D;
+                break;
+            }
             case Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_2D:
+            {
+                if (dxt10.MiscFlags & Impl::DDS::DDS_RESOURCE_MISC_FLAG_TEXTURE_CUBE)
                 {
-                    if (dxt10.MiscFlags & Impl::DDS::DDS_RESOURCE_MISC_FLAG_TEXTURE_CUBE)
-                    {
-                        is_cubemap = true;
-                    }
-
-                    depth = 1;
-                    dimension = ImageDimension::Texture2D;
-                    break;
+                    is_cubemap = true;
                 }
+
+                depth = 1;
+                dimension = ImageDimension::Texture2D;
+                break;
+            }
             case Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_3D:
+            {
+                if (!(header.Flags & Impl::DDS::DDS_HEADER_VOLUME))
                 {
-                    if (!(header.Flags & Impl::DDS::DDS_HEADER_VOLUME))
-                    {
-                        return Status::InvalidFormat;
-                    }
-
-                    if (array_size > 1)
-                    {
-                        return Status::InvalidFormat;
-                    }
-
-                    dimension = ImageDimension::Texture3D;
-                    break;
+                    return Status::InvalidFormat;
                 }
+
+                if (array_size > 1)
+                {
+                    return Status::InvalidFormat;
+                }
+
+                dimension = ImageDimension::Texture3D;
+                break;
+            }
             default:
                 return Status::InvalidFormat;
             }
@@ -1161,56 +1158,56 @@ namespace Graphyte::Graphics
         switch (dimension)
         {
         case ImageDimension::Texture1D:
-            {
-                if (array_size > Impl::DDS::DDS_TEXTURE_1D_ARRAY_AXIS_DIMENSION ||
-                    width > Impl::DDS::DDS_TEXTURE_1D_U_DIMENSION)
-                {
-                    return Status::InvalidFormat;
-                }
-                break;
-            }
-        case ImageDimension::Texture2D:
-            {
-                if (is_cubemap)
-                {
-                    if (array_size > Impl::DDS::DDS_TEXTURE_1D_ARRAY_AXIS_DIMENSION ||
-                        width > Impl::DDS::DDS_TEXTURE_CUBE_DIMENSION ||
-                        height > Impl::DDS::DDS_TEXTURE_CUBE_DIMENSION)
-                    {
-                        return Status::InvalidFormat;
-                    }
-
-                    if (width != height)
-                    {
-                        return Status::InvalidFormat;
-                    }
-                }
-                else
-                {
-                    if (array_size > Impl::DDS::DDS_TEXTURE_1D_ARRAY_AXIS_DIMENSION ||
-                        width > Impl::DDS::DDS_TEXTURE_2D_UV_DIMENSION ||
-                        height > Impl::DDS::DDS_TEXTURE_2D_UV_DIMENSION)
-                    {
-                        return Status::InvalidFormat;
-                    }
-                }
-                break;
-            }
-        case ImageDimension::Texture3D:
-            {
-                if (array_size > 1 ||
-                    width > Impl::DDS::DDS_TEXTURE_3D_UVW_DIMENSION ||
-                    height > Impl::DDS::DDS_TEXTURE_3D_UVW_DIMENSION ||
-                    depth > Impl::DDS::DDS_TEXTURE_3D_UVW_DIMENSION)
-                {
-                    return Status::InvalidFormat;
-                }
-                break;
-            }
-        default:
+        {
+            if (array_size > Impl::DDS::DDS_TEXTURE_1D_ARRAY_AXIS_DIMENSION ||
+                width > Impl::DDS::DDS_TEXTURE_1D_U_DIMENSION)
             {
                 return Status::InvalidFormat;
             }
+            break;
+        }
+        case ImageDimension::Texture2D:
+        {
+            if (is_cubemap)
+            {
+                if (array_size > Impl::DDS::DDS_TEXTURE_1D_ARRAY_AXIS_DIMENSION ||
+                    width > Impl::DDS::DDS_TEXTURE_CUBE_DIMENSION ||
+                    height > Impl::DDS::DDS_TEXTURE_CUBE_DIMENSION)
+                {
+                    return Status::InvalidFormat;
+                }
+
+                if (width != height)
+                {
+                    return Status::InvalidFormat;
+                }
+            }
+            else
+            {
+                if (array_size > Impl::DDS::DDS_TEXTURE_1D_ARRAY_AXIS_DIMENSION ||
+                    width > Impl::DDS::DDS_TEXTURE_2D_UV_DIMENSION ||
+                    height > Impl::DDS::DDS_TEXTURE_2D_UV_DIMENSION)
+                {
+                    return Status::InvalidFormat;
+                }
+            }
+            break;
+        }
+        case ImageDimension::Texture3D:
+        {
+            if (array_size > 1 ||
+                width > Impl::DDS::DDS_TEXTURE_3D_UVW_DIMENSION ||
+                height > Impl::DDS::DDS_TEXTURE_3D_UVW_DIMENSION ||
+                depth > Impl::DDS::DDS_TEXTURE_3D_UVW_DIMENSION)
+            {
+                return Status::InvalidFormat;
+            }
+            break;
+        }
+        default:
+        {
+            return Status::InvalidFormat;
+        }
         }
 
         PixelFormat pixel_format = Impl::DDS::ConvertPixelFormat(format);
@@ -1226,27 +1223,27 @@ namespace Graphyte::Graphics
         switch (dimension)
         {
         case ImageDimension::Texture1D:
-            {
-                image = Image::Create1D(pixel_format, width, mipmap_count, array_size, alpha_mode);
-                break;
-            }
+        {
+            image = Image::Create1D(pixel_format, width, mipmap_count, array_size, alpha_mode);
+            break;
+        }
         case ImageDimension::Texture2D:
+        {
+            if (is_cubemap)
             {
-                if (is_cubemap)
-                {
-                    image = Image::CreateCube(pixel_format, width, mipmap_count, array_size, alpha_mode);
-                }
-                else
-                {
-                    image = Image::Create2D(pixel_format, width, height, mipmap_count, array_size, alpha_mode);
-                }
-                break;
+                image = Image::CreateCube(pixel_format, width, mipmap_count, array_size, alpha_mode);
             }
+            else
+            {
+                image = Image::Create2D(pixel_format, width, height, mipmap_count, array_size, alpha_mode);
+            }
+            break;
+        }
         case ImageDimension::Texture3D:
-            {
-                image = Image::Create3D(pixel_format, width, height, depth, mipmap_count, alpha_mode);
-                break;
-            }
+        {
+            image = Image::Create3D(pixel_format, width, height, depth, mipmap_count, alpha_mode);
+            break;
+        }
         default:
             return Status::InvalidFormat;
         }
@@ -1283,205 +1280,166 @@ namespace Graphyte::Graphics
         int64_t stream_position = archive.GetPosition();
 
         GX_ASSERTF(stream_size == stream_position, "Garbage after file content: strean-position: {}, stream-size: {}", stream_position, stream_size);
-        
+
         if (stream_size != stream_position)
         {
             return Status::InvalidFormat;
         }
 
-        out_image = std::move(image);
+        result = std::move(image);
         return Status::Success;
     }
 
-    Status ImageCodecDDS::Encode(
-        const std::unique_ptr<Image>& image,
-        Storage::Archive& archive
+    GRAPHICS_API Status EncodeImage_DDS(
+        Storage::Archive& archive,
+        Image const& image
     ) noexcept
     {
-        if (image != nullptr)
+        uint32_t const mipmap_count = image.GetMipmapCount();
+
+        if (mipmap_count == 0)
         {
-            uint32_t signature = Impl::DDS::DDS_HEADER_SIGNATURE;
+            return Status::InvalidFormat;
+        }
 
-            ImageDimension dimension = image->GetDimension();
+        uint32_t const array_count = image.GetArrayCount();
 
-            Impl::DDS::DDS_HEADER header{};
-            header.Size = sizeof(header);
-            header.Flags = Impl::DDS::DDS_HEADER_CAPS | Impl::DDS::DDS_HEADER_PIXELFORMAT;
-            header.Surface = Impl::DDS::DDS_SURFACE_TEXTURE;
-            header.Cubemap = 0;
+        if (array_count == 0)
+        {
+            // Image must have at least one array element - no matter of image dimension.
+            return Status::InvalidFormat;
+        }
 
-            uint32_t width = image->GetWidth();
-            uint32_t height = image->GetHeight();
-            uint32_t depth = image->GetDepth();
-            uint32_t mipmap_count = image->GetMipmapCount();
-            uint32_t array_count = image->GetArrayCount();
-            ImageAlphaMode alpha_mode = image->GetAlphaMode();
+        ImageDimension const dimension = image.GetDimension();
 
-            PixelFormat format = image->GetPixelFormat();
+        if (!IsArray(dimension) && array_count > 1)
+        {
+            // This is invalid situation - non-array images must have one element.
+            return Status::InvalidFormat;
+        }
 
-            switch (dimension)
+        PixelFormat const format = image.GetPixelFormat();
+
+        uint32_t dxt10_resource_dimension = 0;
+        uint32_t image_width = 0;
+        uint32_t image_height = 0;
+        uint32_t image_depth = 0;
+        uint32_t header_flags = Impl::DDS::DDS_HEADER_CAPS | Impl::DDS::DDS_HEADER_PIXELFORMAT;
+        uint32_t header_surface = Impl::DDS::DDS_SURFACE_TEXTURE;
+        uint32_t header_cubemap = 0;
+
+        switch (dimension)
+        {
+        case ImageDimension::Texture1DArray:
+        case ImageDimension::Texture1D:
             {
-            case ImageDimension::Texture1DArray:
-            case ImageDimension::Texture1D:
-                {
-                    header.Width = width;
-                    header.Height = 1;
-                    header.Depth = 1;
-                    header.Flags |= Impl::DDS::DDS_HEADER_WIDTH;
-                    break;
-                }
-            case ImageDimension::Texture2D:
-            case ImageDimension::Texture2DArray:
-                {
-                    header.Width = width;
-                    header.Height = height;
-                    header.Depth = 1;
-                    header.Flags |= Impl::DDS::DDS_HEADER_WIDTH | Impl::DDS::DDS_HEADER_HEIGHT;
-                    break;
-                }
-            case ImageDimension::TextureCube:
-            case ImageDimension::TextureCubeArray:
-                {
-                    header.Width = width;
-                    header.Height = height;
-                    header.Depth = 1;
-                    header.Flags |= Impl::DDS::DDS_HEADER_WIDTH | Impl::DDS::DDS_HEADER_HEIGHT;
-                    header.Surface |= Impl::DDS::DDS_SURFACE_CUBEMAP;
-                    header.Cubemap = Impl::DDS::DDS_CUBEMAP_ALLFACES;
+                dxt10_resource_dimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_1D;
+                image_width = image.GetWidth();
+                image_height = 1;
+                image_depth = 1;
+                header_flags |= Impl::DDS::DDS_HEADER_WIDTH;
+                break;
+            }
+        case ImageDimension::Texture2D:
+        case ImageDimension::Texture2DArray:
+            {
+                dxt10_resource_dimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_2D;
+                image_width = image.GetWidth();
+                image_height = image.GetHeight();
+                image_depth = 1;
+                header_flags |= Impl::DDS::DDS_HEADER_WIDTH | Impl::DDS::DDS_HEADER_HEIGHT;
+                break;
+            }
+        case ImageDimension::TextureCube:
+        case ImageDimension::TextureCubeArray:
+            {
+                dxt10_resource_dimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_2D;
+                image_width = image.GetWidth();
+                image_height = image.GetHeight();
+                image_depth = 1;
+                header_flags |= Impl::DDS::DDS_HEADER_WIDTH | Impl::DDS::DDS_HEADER_HEIGHT;
+                header_surface |= Impl::DDS::DDS_SURFACE_CUBEMAP;
+                header_cubemap = Impl::DDS::DDS_CUBEMAP_ALLFACES;
 
-                    GX_ASSERT(header.Width == header.Height);
-                    break;
-                }
-            case ImageDimension::Texture3D:
-                {
-                    GX_ASSERT(array_count == 1);
-                    if (array_count != 1)
-                    {
-                        return Status::InvalidFormat;
-                    }
+                GX_ASSERT(image_width == image_height);
 
-                    header.Width = width;
-                    header.Height = height;
-                    header.Depth = depth;
-                    header.Flags |= Impl::DDS::DDS_HEADER_WIDTH | Impl::DDS::DDS_HEADER_HEIGHT | Impl::DDS::DDS_HEADER_VOLUME;
-                    header.Cubemap |= Impl::DDS::DDS_CUBEMAP_VOLUME;
-                    break;
-                }
-
-            case ImageDimension::Unknown:
+                if (image_width != image_height)
                 {
                     return Status::InvalidFormat;
                 }
+
+                break;
             }
-
-            header.MipMapCount = mipmap_count;
-            header.PixelFormat = Impl::DDS::DDSPF_DX10;
-
-            if (mipmap_count < 1)
+        case ImageDimension::Texture3D:
             {
-                return Status::InvalidFormat;
-            }
-
-            if (mipmap_count > 1)
-            {
-                header.Flags |= Impl::DDS::DDS_HEADER_MIPMAP;
-                header.Surface |= Impl::DDS::DDS_SURFACE_MIPMAP;
-            }
-
-            if (array_count == 0)
-            {
-                return Status::InvalidFormat;
-            }
-
-            Impl::DDS::DDS_HEADER_DXT10 dxt10{};
-
-            dxt10.Format = Impl::DDS::ConvertPixelFormat(format);
-            dxt10.ArraySize = array_count;
-            dxt10.MiscFlags2 = Impl::DDS::ConvertAlphaMode(alpha_mode);
-
-            switch (dimension)
-            {
-            case ImageDimension::Texture1DArray:
-                {
-                    dxt10.ResourceDimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_1D;
-                    break;
-                }
-            case ImageDimension::Texture1D:
-                {
-                    dxt10.ResourceDimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_1D;
-                    if (array_count > 1)
-                    {
-                        return Status::InvalidFormat;
-                    }
-
-                    break;
-                }
-            case ImageDimension::Texture2D:
-                {
-                    dxt10.ResourceDimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_2D;
-                    if (array_count > 1)
-                    {
-                        return Status::InvalidFormat;
-                    }
-
-                    break;
-                }
-            case ImageDimension::Texture2DArray:
-                {
-                    dxt10.ResourceDimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_2D;
-                    break;
-                }
-            case ImageDimension::TextureCube:
-                {
-                    dxt10.ResourceDimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_2D;
-                    dxt10.MiscFlags = Impl::DDS::DDS_RESOURCE_MISC_FLAG_TEXTURE_CUBE;
-
-                    if (array_count > 1)
-                    {
-                        return Status::InvalidFormat;
-                    }
-
-                    break;
-                }
-            case ImageDimension::TextureCubeArray:
-                {
-                    dxt10.ResourceDimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_2D;
-                    dxt10.MiscFlags = Impl::DDS::DDS_RESOURCE_MISC_FLAG_TEXTURE_CUBE;
-                    break;
-                }
-            case ImageDimension::Texture3D:
-                {
-                    dxt10.ResourceDimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_3D;
-                    if (array_count > 1)
-                    {
-                        return Status::InvalidFormat;
-                    }
-
-                    break;
-                }
-
-            case ImageDimension::Unknown:
+                dxt10_resource_dimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_3D;
+                GX_ASSERT(array_count == 1);
+                if (array_count != 1)
                 {
                     return Status::InvalidFormat;
                 }
+
+                image_width = image.GetWidth();
+                image_height = image.GetHeight();
+                image_depth = image.GetDepth();
+                header_flags |= Impl::DDS::DDS_HEADER_WIDTH | Impl::DDS::DDS_HEADER_HEIGHT | Impl::DDS::DDS_HEADER_VOLUME;
+                header_cubemap |= Impl::DDS::DDS_CUBEMAP_VOLUME;
+                break;
             }
 
-            archive.Serialize(&signature, sizeof(signature));
-            archive.Serialize(&header, sizeof(header));
-            archive.Serialize(&dxt10, sizeof(dxt10));
-
-            for (size_t i = 0; i < image->GetSubresourcesCount(); ++i)
+        default:
+        case ImageDimension::Unknown:
             {
-                ImagePixels* subresource = image->GetSubresource(i);
-                GX_ASSERT(subresource != nullptr);
-
-                archive.Serialize(subresource->Buffer, subresource->Size);
+                return Status::InvalidFormat;
             }
+        }
 
-            return Status::Success;
+        if (mipmap_count > 1)
+        {
+            header_flags |= Impl::DDS::DDS_HEADER_MIPMAP;
+            header_surface |= Impl::DDS::DDS_SURFACE_MIPMAP;
         }
 
 
-        return Status::InvalidArgument;
+        Impl::DDS::DDS_HEADER header{
+            .Size = sizeof(header),
+            .Flags = header_flags,
+            .Height = image_height,
+            .Width = image_width,
+            .Depth = image_depth,
+            .MipMapCount = mipmap_count,
+            .PixelFormat = Impl::DDS::DDSPF_DX10,
+            .Surface = header_surface,
+            .Cubemap = header_cubemap,
+        };
+
+        uint32_t const dxt10_misc_flags = IsCube(dimension)
+            ? Impl::DDS::DDS_RESOURCE_MISC_FLAG_TEXTURE_CUBE
+            : 0;
+
+        Impl::DDS::DDS_HEADER_DXT10 dxt10{
+            .Format = Impl::DDS::ConvertPixelFormat(format),
+            .ResourceDimension = dxt10_resource_dimension,
+            .MiscFlags = dxt10_misc_flags,
+            .ArraySize = array_count,
+            .MiscFlags2 = Impl::DDS::ConvertAlphaMode_DXT10(image.GetAlphaMode()),
+        };
+
+
+
+        uint32_t signature = Impl::DDS::DDS_HEADER_SIGNATURE;
+        archive.Serialize(&signature, sizeof(signature));
+        archive.Serialize(&header, sizeof(header));
+        archive.Serialize(&dxt10, sizeof(dxt10));
+
+        for (size_t i = 0; i < image.GetSubresourcesCount(); ++i)
+        {
+            ImagePixels const* subresource = image.GetSubresource(i);
+            GX_ASSERT(subresource != nullptr);
+
+            archive.Serialize(subresource->Buffer, subresource->Size);
+        }
+
+        return Status::Success;
     }
 }
