@@ -434,8 +434,6 @@ namespace Graphyte::Graphics::Impl::DDS
 
     constexpr const uint32_t DDS_CUBEMAP_VOLUME = 0x200000;
 
-    constexpr const uint32_t DDS_MISC_FLAGS2_ALPHA_MODE_MASK = 7;
-
     struct DDS_HEADER final
     {
         uint32_t Size;
@@ -460,6 +458,14 @@ namespace Graphyte::Graphics::Impl::DDS
     constexpr const uint32_t DDS_RESOURCE_DIMENSION_TEXTURE_3D      = 4;
 
     constexpr const uint32_t DDS_RESOURCE_MISC_FLAG_TEXTURE_CUBE    = 0x4;
+
+    constexpr const uint32_t DDS_ALPHA_MODE_UNKNOWN = 0;
+    constexpr const uint32_t DDS_ALPHA_MODE_STRAIGHT = 1;
+    constexpr const uint32_t DDS_ALPHA_MODE_PREMULTIPLIED = 2;
+    constexpr const uint32_t DDS_ALPHA_MODE_OPAQUE = 3;
+    constexpr const uint32_t DDS_ALPHA_MODE_CUSTOM = 4;
+
+    constexpr const uint32_t DDS_MISC_FLAGS2_ALPHA_MODE_MASK = 7;
 
     struct DDS_HEADER_DXT10 final
     {
@@ -957,12 +963,6 @@ namespace Graphyte::Graphics::Impl::DDS
     constexpr const uint32_t DDS_TEXTURE_3D_UVW_DIMENSION = 2048;
     constexpr const uint32_t DDS_TEXTURE_CUBE_DIMENSION = 16384;
 
-    constexpr const uint32_t DDS_ALPHA_MODE_UNKNOWN = 0;
-    constexpr const uint32_t DDS_ALPHA_MODE_STRAIGHT = 1;
-    constexpr const uint32_t DDS_ALPHA_MODE_PREMULTIPLIED = 2;
-    constexpr const uint32_t DDS_ALPHA_MODE_OPAQUE = 3;
-    constexpr const uint32_t DDS_ALPHA_MODE_CUSTOM = 4;
-
     static inline ImageAlphaMode ConvertAlphaMode_DXT10(uint32_t value) noexcept
     {
         switch (value)
@@ -1321,12 +1321,20 @@ namespace Graphyte::Graphics
         PixelFormat const format = image.GetPixelFormat();
 
         uint32_t dxt10_resource_dimension = 0;
-        uint32_t image_width = 0;
-        uint32_t image_height = 0;
-        uint32_t image_depth = 0;
-        uint32_t header_flags = Impl::DDS::DDS_HEADER_CAPS | Impl::DDS::DDS_HEADER_PIXELFORMAT;
-        uint32_t header_surface = Impl::DDS::DDS_SURFACE_TEXTURE;
+
+        uint32_t image_width = image.GetWidth();
+        uint32_t image_height = image.GetHeight();
+        uint32_t image_depth = image.GetDepth();
         uint32_t header_cubemap = 0;
+
+        uint32_t header_surface = Impl::DDS::DDS_SURFACE_TEXTURE;
+        uint32_t header_flags = Impl::DDS::DDS_HEADER_CAPS | Impl::DDS::DDS_HEADER_PIXELFORMAT;
+
+        if (mipmap_count > 1)
+        {
+            header_flags |= Impl::DDS::DDS_HEADER_MIPMAP;
+            header_surface |= Impl::DDS::DDS_SURFACE_MIPMAP;
+        }
 
         switch (dimension)
         {
@@ -1334,7 +1342,8 @@ namespace Graphyte::Graphics
         case ImageDimension::Texture1D:
             {
                 dxt10_resource_dimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_1D;
-                image_width = image.GetWidth();
+                GX_ASSERT(image_height == 1);
+                GX_ASSERT(image_depth == 1);
                 image_height = 1;
                 image_depth = 1;
                 header_flags |= Impl::DDS::DDS_HEADER_WIDTH;
@@ -1344,8 +1353,7 @@ namespace Graphyte::Graphics
         case ImageDimension::Texture2DArray:
             {
                 dxt10_resource_dimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_2D;
-                image_width = image.GetWidth();
-                image_height = image.GetHeight();
+                GX_ASSERT(image_depth == 1);
                 image_depth = 1;
                 header_flags |= Impl::DDS::DDS_HEADER_WIDTH | Impl::DDS::DDS_HEADER_HEIGHT;
                 break;
@@ -1354,8 +1362,7 @@ namespace Graphyte::Graphics
         case ImageDimension::TextureCubeArray:
             {
                 dxt10_resource_dimension = Impl::DDS::DDS_RESOURCE_DIMENSION_TEXTURE_2D;
-                image_width = image.GetWidth();
-                image_height = image.GetHeight();
+                GX_ASSERT(image_depth == 1);
                 image_depth = 1;
                 header_flags |= Impl::DDS::DDS_HEADER_WIDTH | Impl::DDS::DDS_HEADER_HEIGHT;
                 header_surface |= Impl::DDS::DDS_SURFACE_CUBEMAP;
@@ -1392,12 +1399,6 @@ namespace Graphyte::Graphics
             {
                 return Status::InvalidFormat;
             }
-        }
-
-        if (mipmap_count > 1)
-        {
-            header_flags |= Impl::DDS::DDS_HEADER_MIPMAP;
-            header_surface |= Impl::DDS::DDS_SURFACE_MIPMAP;
         }
 
 
