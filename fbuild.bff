@@ -11,6 +11,8 @@
 #include "sdks/vulkanvma/project.bff"
 #include "sdks/sqlite/project.bff"
 
+;#include "source/runtime/GxCore/project.bff"
+
 #include "engine/runtime/libs/base/project.bff"
 #include "engine/runtime/libs/geometry/project.bff"
 #include "engine/runtime/libs/graphics/project.bff"

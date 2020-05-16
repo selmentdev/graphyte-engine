@@ -1,0 +1,117 @@
+{
+    .ProjectDefinition = [
+        .ProjectName = 'GxCore'
+        .ProjectPath = 'source/runtime/GxCore'
+        .ProjectKind = 'SharedLib'
+        .ProjectType = 'Module'
+        .ProjectComponent = 'Engine'
+
+        .ProjectDefines = {
+            'module_base_EXPORTS=1'
+        }
+
+        .ProjectIncludes = {
+            'sdks/fmt/include'
+            'sdks/lz4/include'
+            'sdks/mbedtls/include'
+        }
+
+        .ProjectImports = {
+            'SdkFmt'
+            'SdkLz4'
+        }
+
+        // Platform specific configurations
+        .VariantDef_UWP = [
+            .VariantSelector = { 'UWP' }
+            .VariantLinks = {
+                'ntdll.lib'
+                'comctl32.lib'
+                'dbghelp.lib'
+                'iphlpapi.lib'
+                'ws2_32.lib'
+                'dwmapi.lib'
+                'xinput.lib'
+                'xaudio2.lib'
+                'advapi32.lib'
+                'gdi32.lib'
+                'shell32.lib'
+                'ole32.lib'
+                'Faultrep.lib'
+                'Bcrypt.lib'
+                'user32.lib'
+                'Mincore.lib'
+            }
+        ]
+
+        .VariantDef_Windows = [
+            .VariantSelector = { 'Windows' }
+            .VariantLinks = {
+                'ntdll.lib'
+                'comctl32.lib'
+                'dbghelp.lib'
+                'iphlpapi.lib'
+                'ws2_32.lib'
+                'dwmapi.lib'
+                'xinput.lib'
+                'xaudio2.lib'
+                'advapi32.lib'
+                'gdi32.lib'
+                'shell32.lib'
+                'ole32.lib'
+                'Faultrep.lib'
+                'Bcrypt.lib'
+                'user32.lib'
+                'Mincore.lib'
+            }
+            .VariantImports = {        
+                'SdkMbedtls'
+            }
+        ]
+
+        .VariantDef_Linux = [
+            .VariantSelector = { 'Linux' }
+            .VariantLinks = {
+                'pthread'
+                'uuid'
+                'dl'
+                'SDL2'
+                'unwind'
+                'unwind-generic'
+            }
+            .VariantImports = {        
+                'SdkMbedtls'
+            }
+        ]
+
+        .VariantDef_Linux_x64 = [
+            .VariantSelector = { 'Linux-x64' }
+            .VariantLinks = {
+                'unwind-x86_64'
+            }
+        ]
+
+        .VariantDef_Linux_ARMv8 = [
+            .VariantSelector = { 'Linux-ARMv8' }
+            .VariantLinks = {
+                'pthread'
+                'uuid'
+                'dl'
+                'SDL2'
+                'unwind'
+                'unwind-generic'
+                'unwind-aarch64'
+            }
+        ]
+
+        .ProjectVariants = {
+            .VariantDef_Windows
+            .VariantDef_UWP
+            .VariantDef_Linux
+            .VariantDef_Linux_x64
+            .VariantDef_Linux_ARMv8
+        }
+    ]
+
+    ^Global_ProjectList + .ProjectDefinition
+}
