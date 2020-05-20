@@ -230,7 +230,7 @@ namespace Graphyte::System
         }
 
         result = System::Impl::NarrowString(wszPath);
-        Storage::Path::Normalize(result);
+        Storage::NormalizePath(result);
 
         return Status::Success;
     }
@@ -256,8 +256,8 @@ namespace Graphyte::System
                 }
             );
 
-            Storage::Path::Normalize(result);
-            Storage::Path::Canonicalize(result);
+            Storage::NormalizePath(result);
+            Storage::CanonicalizePath(result);
         }
 
         return result;
@@ -267,7 +267,7 @@ namespace Graphyte::System
     {
         std::string path = System::GetExecutablePath();
 
-        std::string result = Storage::Path::GetFilename(path);
+        std::string result{ Storage::GetFilename(path) };
 
         return result;
     }
@@ -281,8 +281,8 @@ namespace Graphyte::System
         // Remove file name and ensure that path to directory ends with `/`.
         //
 
-        Storage::Path::ChangeFilename(result, {});
-        Storage::Path::AddDirectorySeparator(result);
+        Storage::ChangeFilename(result, {});
+        Storage::AddDirectorySeparator(result);
 
         return result;
     }

@@ -60,14 +60,14 @@ namespace Graphyte
      */
     template <typename TContainer>
     inline std::string Join(
-        TContainer container,
+        TContainer const& container,
         std::string_view separator
     ) noexcept
     {
         std::string result{};
 
-        auto it = std::begin(container);
-        auto end = std::end(container);
+        auto it = std::cbegin(container);
+        auto end = std::cend(container);
 
         if (it != end)
         {
@@ -126,7 +126,8 @@ namespace Graphyte
         std::string_view value
     ) noexcept
     {
-        size_t const offset = value.find_first_not_of(" \t\f\r\n\v\b");
+        std::size_t const offset = value.find_first_not_of(" \t\f\r\n\v\b");
+
         if (offset != std::string_view::npos)
         {
             return value.substr(offset);
@@ -146,7 +147,8 @@ namespace Graphyte
         std::string_view value
     ) noexcept
     {
-        size_t const offset = value.find_last_not_of(" \t\f\r\n\v\b");
+        std::size_t const offset = value.find_last_not_of(" \t\f\r\n\v\b");
+
         if (offset != std::string_view::npos)
         {
             return value.substr(0, offset + 1);
@@ -166,9 +168,7 @@ namespace Graphyte
         std::string_view value
     ) noexcept
     {
-        value = TrimLeft(value);
-        value = TrimRight(value);
-        return value;
+        return TrimLeft(TrimRight(value));
     }
 
     BASE_API bool MatchWildcard(
@@ -191,7 +191,13 @@ namespace Graphyte
         );
     }
 
-    BASE_API bool FromString(std::vector<std::byte>& output, std::string_view input) noexcept;
+    BASE_API bool HexStringToByteStream(
+        std::vector<std::byte>& output,
+        std::string_view input
+    ) noexcept;
 
-    BASE_API bool ToString(std::string& output, notstd::span<const std::byte> input) noexcept;
+    BASE_API bool HexStringFromByteStream(
+        std::string& output,
+        notstd::span<const std::byte> input
+    ) noexcept;
 }

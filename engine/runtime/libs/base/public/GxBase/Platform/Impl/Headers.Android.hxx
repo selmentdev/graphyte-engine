@@ -48,6 +48,8 @@
 #include <optional>
 #include <charconv>
 #include <functional>
+#include <bit>
+#include <compare>
 
 //
 // C Library Headers.

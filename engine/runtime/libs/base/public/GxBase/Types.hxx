@@ -1,7 +1,6 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
-#include <GxBase/Half.hxx>
-#include <GxBase/TypeTraits.hxx>
+#include <GxBase/Ieee754.hxx>
 
 namespace Graphyte
 {

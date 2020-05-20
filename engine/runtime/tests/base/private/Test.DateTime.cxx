@@ -16,7 +16,7 @@ TEST_CASE("DateTime")
         CHECK(dt.Value == 636487836850000000);
 
         CalendarTime members{};
-        REQUIRE(ToCalendar(members, dt));
+        REQUIRE(dt.ToCalendar(members));
 
         CHECK(members.Year == 2017);
         CHECK(members.Month == 12);
@@ -78,7 +78,7 @@ TEST_CASE("DateTime")
             CHECK(FromString(result, "1989-11-03T23:45:59"));
 
             CalendarTime time{};
-            CHECK(ToCalendar(time, result));
+            CHECK(result.ToCalendar(time));
 
             CHECK(time.Year == 1989);
             CHECK(time.Month == 11);
@@ -95,7 +95,7 @@ TEST_CASE("DateTime")
             CHECK(FromString(result, "2019-01-19T18:39:31.018"));
 
             CalendarTime time{};
-            CHECK(ToCalendar(time, result));
+            CHECK(result.ToCalendar(time));
 
             CHECK(time.Year == 2019);
             CHECK(time.Month == 1);
@@ -112,7 +112,7 @@ TEST_CASE("DateTime")
             CHECK(FromString(result, "2019-01-19T18:39:31+00:00"));
 
             CalendarTime time{};
-            CHECK(ToCalendar(time, result));
+            CHECK(result.ToCalendar(time));
 
             CHECK(time.Year == 2019);
             CHECK(time.Month == 1);
@@ -129,7 +129,7 @@ TEST_CASE("DateTime")
             CHECK(FromString(result, "2019-01-19T18:39:31.018+04:15"));
 
             CalendarTime time{};
-            CHECK(ToCalendar(time, result));
+            CHECK(result.ToCalendar(time));
 
             CHECK(time.Year == 2019);
             CHECK(time.Month == 1);
@@ -146,7 +146,7 @@ TEST_CASE("DateTime")
             CHECK(FromString(result, "2019-12-31T21:39:31.018-04:15"));
 
             CalendarTime time{};
-            CHECK(ToCalendar(time, result));
+            CHECK(result.ToCalendar(time));
 
             CHECK(time.Year == 2020);
             CHECK(time.Month == 1);
@@ -207,7 +207,7 @@ TEST_CASE("DateTime")
         CHECK(dt.Value == 636515422062040000);
 
         CalendarTime members{};
-        CHECK(ToCalendar(members, dt));
+        CHECK(dt.ToCalendar(members));
 
         CHECK(members.Year == 2018);
         CHECK(members.Month == 1);
@@ -252,7 +252,7 @@ TEST_CASE("DateTime")
         CHECK(as_string == "1.00:00:21.000");
 
         TimeSpanMembers members{};
-        ToMembers(members, ts1);
+        ts1.ToMembers(members);
         CHECK(members.Days == 0);
         CHECK(members.Hours == 11);
         CHECK(members.Minutes == 14);
@@ -265,7 +265,7 @@ TEST_CASE("DateTime")
         CHECK(static_cast<int64_t>(ts1.GetTotalSeconds()) == 40470);
         CHECK(static_cast<int64_t>(ts1.GetTotalMilliseconds()) == 40470000);
 
-        ToMembers(members, ts2);
+        ts2.ToMembers(members);
         CHECK(members.Days == 0);
         CHECK(members.Hours == 12);
         CHECK(members.Minutes == 44);
@@ -278,7 +278,7 @@ TEST_CASE("DateTime")
         CHECK(static_cast<int64_t>(ts2.GetTotalSeconds()) == 45869);
         CHECK(static_cast<int64_t>(ts2.GetTotalMilliseconds()) == 45869000);
 
-        ToMembers(members, ts3);
+        ts3.ToMembers(members);
         CHECK(members.Days == 0);
         CHECK(members.Hours == 0);
         CHECK(members.Minutes == 1);
@@ -291,7 +291,7 @@ TEST_CASE("DateTime")
         CHECK(static_cast<int64_t>(ts3.GetTotalSeconds()) == 82);
         CHECK(static_cast<int64_t>(ts3.GetTotalMilliseconds()) == 82000);
 
-        ToMembers(members, dts1);
+        dts1.ToMembers(members);
         CHECK(members.Days == 0);
         CHECK(members.Hours == 23);
         CHECK(members.Minutes == 58);
@@ -304,7 +304,7 @@ TEST_CASE("DateTime")
         CHECK(static_cast<int64_t>(dts1.GetTotalSeconds()) == 86339);
         CHECK(static_cast<int64_t>(dts1.GetTotalMilliseconds()) == 86339000);
 
-        ToMembers(members, dts2);
+        dts2.ToMembers(members);
         CHECK(members.Days == 0);
         CHECK(members.Hours == 12);
         CHECK(members.Minutes == 45);
@@ -317,7 +317,7 @@ TEST_CASE("DateTime")
         CHECK(static_cast<int64_t>(dts2.GetTotalSeconds()) == 45951);
         CHECK(static_cast<int64_t>(dts2.GetTotalMilliseconds()) == 45951000);
 
-        ToMembers(members, tts);
+        tts.ToMembers(members);
         CHECK(members.Days == 1);
         CHECK(members.Hours == 0);
         CHECK(members.Minutes == 0);

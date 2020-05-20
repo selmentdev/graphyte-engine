@@ -123,13 +123,13 @@ namespace Graphyte::Diagnostics
         ToString(filename, DateTime::Now(), DateTimeFormat::FileSafe);
         filename.append(".dmp");
 
-        std::string dump_path = Storage::FileManager::GetCrashdumpDirectory();
+        std::string dump_path = Storage::GetCrashdumpDirectory();
 
         Status status = Storage::IFileSystem::GetPlatformNative().DirectoryTreeCreate(dump_path);
 
         if (status == Status::Success)
         {
-            Storage::Path::Append(dump_path, filename);
+            Storage::AppendPath(dump_path, filename);
 
             HANDLE hFile = CreateFileW(
                 System::Impl::WidenString(dump_path).c_str(),

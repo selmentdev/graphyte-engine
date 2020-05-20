@@ -38,30 +38,31 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     ModuleManager::LoadChecked("GxAssetsMesh");
     ModuleManager::LoadChecked("GxAssetsShader");
 
-    std::string_view value{};
-    if (Graphyte::CommandLine::Has("--help"))
+    if (Graphyte::CommandLine::Get("--help").has_value())
     {
         fmt::print("This is assets compiler\n");
 
     }
-    else if (Graphyte::CommandLine::Get("--processor", value))
+    else if (auto processor = Graphyte::CommandLine::Get("--processor"); processor.has_value())
     {
+        std::string_view value = processor.value();
+
         if (value.empty())
         {
             fmt::print("List of available processors:\n");
             auto processors = AssetsPipeline::AssetProcessorFactory::Get().GetNames();
 
-            for (auto&& processor : processors)
+            for (auto&& current : processors)
             {
-                fmt::print("  {}\n", processor);
+                fmt::print("  {}\n", current);
             }
         }
         else
         {
-            auto processor = AssetsPipeline::AssetProcessorFactory::Get().ActivateInstance(value);
-            if (processor != nullptr)
+            auto instance = AssetsPipeline::AssetProcessorFactory::Get().ActivateInstance(value);
+            if (instance != nullptr)
             {
-                if (!processor->Process())
+                if (!instance->Process())
                 {
                     fmt::print("Processor failed\n");
                 }

@@ -1,144 +1,62 @@
 #include <GxBase/CommandLine.hxx>
 #include <GxBase/Diagnostics.hxx>
 
-namespace Graphyte
+namespace Graphyte::CommandLine::Impl
 {
-    CommandLineEnumerator::CommandLineEnumerator(
-        int argc,
-        const char** argv
-    ) noexcept
-        : m_ArgV{ argv }
-        , m_ArgC{ argc }
-        , m_ArgN{ 1 }
+    static notstd::span<const char*> GCommandLineArgs;
+
+    auto SplitCommandLineNameValue(
+        std::string_view value
+    ) noexcept->std::pair<std::string_view, std::optional<std::string_view>>
     {
-    }
+        std::size_t const separator = value.find_first_not_of('=');
+        std::string_view const name = value.substr(0, separator);
 
-    bool CommandLineEnumerator::Get(
-        std::string_view& name,
-        std::string_view& value
-    ) noexcept
-    {
-        if (m_ArgN >= m_ArgC)
-        {
-            name = value = {};
-            return false;
-        }
+        bool const has_value = (separator != std::string_view::npos);
 
-        std::string_view item{ m_ArgV[m_ArgN++] };
-
-
-        //
-        // Option name will be either whole item or substring up to '=' character.
-        //
-
-        auto offset = item.find_first_of('=');
-
-        // Name is [0..offset]
-        name = item.substr(0, offset);
-
-        if (offset != std::string_view::npos)
-        {
-            // Value is [offset..end]
-            value = item.substr(offset + 1);
-        }
-        else
-        {
-            value = {};
-        }
-
-        return true;
+        return {
+            name,
+            has_value
+                ? std::make_optional(value.substr(separator + 1))
+                : std::nullopt
+        };
     }
 }
 
-namespace Graphyte
+namespace Graphyte::CommandLine
 {
-    int GCommandLineArgC{ 0 };
-    const char** GCommandLineArgV{ nullptr };
-
-    void CommandLine::Initialize(
-        int argc,
-        const char** argv
-    ) noexcept
+    extern BASE_API void Initialize(int argc, const char** argv) noexcept
     {
-        GX_ASSERT(GCommandLineArgV == nullptr);
         GX_ASSERT(argv != nullptr);
+        GX_ASSERT(Impl::GCommandLineArgs.empty());
 
-        GCommandLineArgC = argc;
-        GCommandLineArgV = argv;
+        Impl::GCommandLineArgs = notstd::span<const char*>(argv, argc);
     }
 
-    void CommandLine::Finalize() noexcept
+    extern BASE_API void Finalize() noexcept
     {
-        GX_ASSERT(GCommandLineArgV != nullptr);
+        GX_ASSERT(!Impl::GCommandLineArgs.empty());
 
-        GCommandLineArgC = 0;
-        GCommandLineArgV = nullptr;
+        Impl::GCommandLineArgs = {};
     }
 
-    bool CommandLine::Get(
-        std::string_view name,
-        std::string_view& value
-    ) noexcept
+    extern BASE_API std::optional<std::string_view> Get(std::string_view name) noexcept
     {
-        for (int i = 0; i < GCommandLineArgC; ++i)
+        for (auto const item : Impl::GCommandLineArgs)
         {
-            std::string_view item{ GCommandLineArgV[i] };
+            std::string_view line = item;
 
-
-            //
-            // Option name will be either whole item or substring up to '=' character.
-            //
-
-            auto offset = item.find_first_of('=');
-            auto parsed_name = item.substr(0, offset);
-
-            if (parsed_name == name)
+            if (auto [parsed_name, value] = Impl::SplitCommandLineNameValue(line); parsed_name == name)
             {
-                //
-                // Option name matched.
-                //
-
-                if (offset != std::string_view::npos)
-                {
-                    //
-                    // Option value will be everything after option name.
-                    //
-
-                    value = item.substr(offset + 1);
-                }
-                else
-                {
-                    //
-                    // If no '=' character could be found, clear value out.
-                    //
-
-                    value = {};
-                }
-
-                return true;
+                return value;
             }
         }
 
-
-        //
-        // Cannot find that option in command line.
-        //
-
-        value = {};
-
-        return false;
+        return std::nullopt;
     }
 
-    bool CommandLine::Has(
-        std::string_view name
-    ) noexcept
+    extern BASE_API CommandLine::Enumerator GetEnumerator() noexcept
     {
-        [[maybe_unused]] std::string_view value{};
-        return CommandLine::Get(name, value);
-    }
-
-    CommandLineEnumerator CommandLine::GetEnumerator() noexcept
-    {
-        return { GCommandLineArgC, GCommandLineArgV };
+        return Enumerator{ Impl::GCommandLineArgs };
     }
 }

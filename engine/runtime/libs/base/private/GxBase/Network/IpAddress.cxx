@@ -1,6 +1,6 @@
 #include <GxBase/Network/IpAddress.hxx>
 #include <GxBase/Diagnostics.hxx>
-#include <GxBase/ByteAccess.hxx>
+//#include <GxBase/ByteAccess.hxx>
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #include <mstcpip.h>

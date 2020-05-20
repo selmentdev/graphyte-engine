@@ -43,7 +43,7 @@ namespace Graphyte::AssetsPipeline
         (void)parent_data;
 
         std::vector<std::byte> content{};
-        if (Storage::FileManager::ReadBinary(content, Storage::Path::Combine(m_BasePath, filename)) != Status::Success)
+        if (Storage::ReadBinary(content, Storage::CombinePath(m_BasePath, filename)) != Status::Success)
         {
             (*data) = nullptr;
             (*size) = 0;
@@ -97,12 +97,10 @@ namespace Graphyte::AssetsPipeline
         : m_LibD3DCompiler{}
         ,  m_D3DCompile{}
     {
-        using Storage::Path;
-
         auto sdk_path = PlatformToolchain::GetWindowsSdkBinary();
 
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, Path::Combine(sdk_path, "d3dcompiler_47.dll"));
+        System::Impl::WidenStringPath(wpath, Storage::CombinePath(sdk_path, "d3dcompiler_47.dll"));
 
         m_LibD3DCompiler = ::LoadLibraryW(wpath.data());
 
@@ -253,7 +251,7 @@ namespace Graphyte::AssetsPipeline
         Microsoft::WRL::ComPtr<ID3DBlob> bytecode{};
         Microsoft::WRL::ComPtr<ID3DBlob> errors{};
 
-        D3DShaderIncludeHandler include_handler{ Storage::FileManager::GetProjectContentDirectory() + "shaders/" };
+        D3DShaderIncludeHandler include_handler{ Storage::GetProjectContentDirectory() + "shaders/" };
 
         HRESULT hr_compile = m_D3DCompile(
             std::data(input.Source),

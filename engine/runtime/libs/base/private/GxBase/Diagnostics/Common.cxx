@@ -183,9 +183,9 @@ namespace Graphyte::Diagnostics
         // Check if application wants to output data to log file.
         //
 
-        if (!CommandLine::Has("--force-no-log"))
+        if (!CommandLine::Get("--force-no-log").has_value())
         {
-            std::string log_path = Storage::FileManager::GetLogsDirectory();
+            std::string log_path = Storage::GetLogsDirectory();
 
             if (Storage::IFileSystem::GetPlatformNative().DirectoryTreeCreate(log_path) == Status::Success)
             {
@@ -193,7 +193,7 @@ namespace Graphyte::Diagnostics
                 std::string timestamp{};
                 ToString(timestamp, DateTime::Now(), DateTimeFormat::FileSafe);
 
-                Storage::Path::Append(log_path, fmt::format("{}-{}.txt", executable, timestamp));
+                Storage::AppendPath(log_path, fmt::format("{}-{}.txt", executable, timestamp));
 
                 Status status = Storage::IFileSystem::GetPlatformNative().OpenWrite(
                     Impl::GLogOutputFile,

@@ -179,7 +179,7 @@ namespace Graphyte
         return pattern_first == pattern_last;
     }
 
-    BASE_API bool FromString(
+    BASE_API bool HexStringToByteStream(
         std::vector<std::byte>& output,
         std::string_view input
     ) noexcept
@@ -209,7 +209,7 @@ namespace Graphyte
         return false;
     }
 
-    BASE_API bool ToString(
+    BASE_API bool HexStringFromByteStream(
         std::string& output,
         notstd::span<const std::byte> input
     ) noexcept

@@ -32,7 +32,7 @@ namespace Graphyte::AssetsPipeline
         if (path.empty())
         {
             System::Impl::QueryRegistry(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows\\v10.0", L"InstallationFolder", path);
-            Storage::Path::Normalize(path);
+            Storage::NormalizePath(path);
         }
 
         return path;
@@ -50,18 +50,18 @@ namespace Graphyte::AssetsPipeline
         {
             std::string version = GetWindowsSdkVersion();
 
-            Storage::Path::Append(path, "bin");
-            Storage::Path::Append(path, version);
+            Storage::AppendPath(path, "bin");
+            Storage::AppendPath(path, version);
             path.append(".0");
 
 #if GRAPHYTE_CPU_X86_64
-            Storage::Path::Append(path, "x64");
+            Storage::AppendPath(path, "x64");
 #elif GRAPHYTE_CPU_X86_32
-            Storage::Path::Append(path, "x86");
+            Storage::AppendPath(path, "x86");
 #elif GRAPHYTE_CPU_ARM_64
-            Storage::Path::Append(path, "arm64");
+            Storage::AppendPath(path, "arm64");
 #elif GRAPHYTE_CPU_ARM_32
-            Storage::Path::Append(path, "arm");
+            Storage::AppendPath(path, "arm");
 #else
 #error "Unknown"
 #endif
@@ -81,7 +81,7 @@ namespace Graphyte::AssetsPipeline
         {
             if (System::GetEnvironmentVariable(path, "VULKAN_SDK") == Status::Success)
             {
-                Storage::Path::Normalize(path);
+                Storage::NormalizePath(path);
             }
         }
 
@@ -98,7 +98,7 @@ namespace Graphyte::AssetsPipeline
 
             if (!path.empty())
             {
-                Storage::Path::Append(path, "bin/");
+                Storage::AppendPath(path, "bin/");
             }
         }
 

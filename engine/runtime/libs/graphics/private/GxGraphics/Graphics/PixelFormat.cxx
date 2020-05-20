@@ -1,5 +1,5 @@
 #include <GxGraphics/Graphics/PixelFormat.hxx>
-#include <GxBase/ByteAccess.hxx>
+//#include <GxBase/Bitwise.hxx>
 
 namespace Graphyte::Graphics
 {

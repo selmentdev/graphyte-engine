@@ -8,26 +8,26 @@
 
 namespace Graphyte::Impl
 {
-    static constexpr const int64_t GTicksInMicrosecond{ 10 };
-    static constexpr const int64_t GTicksInMillisecond{ GTicksInMicrosecond * int64_t{ 1000 } };
-    static constexpr const int64_t GTicksInSecond{ GTicksInMillisecond * int64_t{ 1000 } };
-    static constexpr const int64_t GTicksInMinute{ GTicksInSecond * int64_t{ 60 } };
-    static constexpr const int64_t GTicksInHour{ GTicksInMinute * int64_t{ 60 } };
-    static constexpr const int64_t GTicksInDay{ GTicksInHour * int64_t{ 24 } };
+    static constexpr const std::int64_t GTicksInMicrosecond{ 10 };
+    static constexpr const std::int64_t GTicksInMillisecond{ GTicksInMicrosecond * std::int64_t{ 1000 } };
+    static constexpr const std::int64_t GTicksInSecond{ GTicksInMillisecond * std::int64_t{ 1000 } };
+    static constexpr const std::int64_t GTicksInMinute{ GTicksInSecond * std::int64_t{ 60 } };
+    static constexpr const std::int64_t GTicksInHour{ GTicksInMinute * std::int64_t{ 60 } };
+    static constexpr const std::int64_t GTicksInDay{ GTicksInHour * std::int64_t{ 24 } };
 
-    static constexpr const int32_t GDaysInYear{ 365 };
-    static constexpr const int32_t GDaysIn4Years{ (4 * 365) + 1 };
-    static constexpr const int32_t GDaysIn100Years{ (100 * 365) + 24 };
-    static constexpr const int32_t GDaysIn400Years{ (400 * 365) + 97 };
+    static constexpr const std::int32_t GDaysInYear{ 365 };
+    static constexpr const std::int32_t GDaysIn4Years{ (4 * 365) + 1 };
+    static constexpr const std::int32_t GDaysIn100Years{ (100 * 365) + 24 };
+    static constexpr const std::int32_t GDaysIn400Years{ (400 * 365) + 97 };
 
-    static constexpr const int32_t GDaysTo1601{ GDaysIn400Years * 4 };
-    static constexpr const int32_t GDaysTo1899{ GDaysIn400Years * 4 + GDaysIn100Years * 3 - 367 };
-    static constexpr const int32_t GDaysTo10000{ GDaysIn400Years * 25 - 366 };
+    static constexpr const std::int32_t GDaysTo1601{ GDaysIn400Years * 4 };
+    static constexpr const std::int32_t GDaysTo1899{ GDaysIn400Years * 4 + GDaysIn100Years * 3 - 367 };
+    static constexpr const std::int32_t GDaysTo10000{ GDaysIn400Years * 25 - 366 };
 
-    static constexpr const int64_t GTicksMinValue{ 0 };
-    static constexpr const int64_t GTicksMaxValue{ GDaysTo10000 * GTicksInDay - 1 };
-    static constexpr const int64_t GDateAdjustOffset{ GDaysTo1601 * GTicksInDay };
-    static constexpr const int64_t GUnixAdjustOffset{ 621355968000000000 };
+    static constexpr const std::int64_t GTicksMinValue{ 0 };
+    static constexpr const std::int64_t GTicksMaxValue{ GDaysTo10000 * GTicksInDay - 1 };
+    static constexpr const std::int64_t GDateAdjustOffset{ GDaysTo1601 * GTicksInDay };
+    static constexpr const std::int64_t GUnixAdjustOffset{ 621355968000000000 };
 
     static_assert(GDaysTo1601 == 584388, "Invalid number of days from 0001-01-01 to 1601-12-31");
     static_assert(GDaysTo1899 == 693593, "Invalid number of days from 0001-01-01 to 1899-12-31");
@@ -94,27 +94,27 @@ namespace Graphyte
 
     struct CalendarTime final
     {
-        uint16_t Year;
-        uint16_t Month;
-        uint16_t Day;
-        uint16_t Hour;
-        uint16_t Minute;
-        uint16_t Second;
-        uint16_t Millisecond;
-        uint16_t DayOfWeek;
-        uint16_t DayOfYear;
+        std::uint16_t Year;
+        std::uint16_t Month;
+        std::uint16_t Day;
+        std::uint16_t Hour;
+        std::uint16_t Minute;
+        std::uint16_t Second;
+        std::uint16_t Millisecond;
+        std::uint16_t DayOfWeek;
+        std::uint16_t DayOfYear;
 
-        BASE_API int64_t ToTicks() const noexcept;
+        BASE_API std::int64_t ToTicks() const noexcept;
         BASE_API bool IsValid() const noexcept;
     };
 
     struct TimeSpanMembers final
     {
-        int32_t Days;
-        int32_t Hours;
-        int32_t Minutes;
-        int32_t Seconds;
-        int32_t Milliseconds;
+        std::int32_t Days;
+        std::int32_t Hours;
+        std::int32_t Minutes;
+        std::int32_t Seconds;
+        std::int32_t Milliseconds;
     };
 
     struct DateTime;
@@ -125,31 +125,31 @@ namespace Graphyte
 {
     struct DateTime final
     {
-        int64_t Value;
+        std::int64_t Value;
 
         BASE_API static DateTime Create(
-            int year,
-            int month,
-            int day
+            std::int32_t year,
+            std::int32_t month,
+            std::int32_t day
         ) noexcept;
 
         BASE_API static DateTime Create(
-            int year,
-            int month,
-            int day,
-            int hour,
-            int minute,
-            int second
+            std::int32_t year,
+            std::int32_t month,
+            std::int32_t day,
+            std::int32_t hour,
+            std::int32_t minute,
+            std::int32_t second
         ) noexcept;
 
         BASE_API static DateTime Create(
-            int year,
-            int month,
-            int day,
-            int hour,
-            int minute,
-            int second,
-            int millisecond
+            std::int32_t year,
+            std::int32_t month,
+            std::int32_t day,
+            std::int32_t hour,
+            std::int32_t minute,
+            std::int32_t second,
+            std::int32_t millisecond
         ) noexcept;
 
         BASE_API static DateTime Now() noexcept;
@@ -158,63 +158,84 @@ namespace Graphyte
         BASE_API static DateTime Today(DateTimeKind kind) noexcept;
         BASE_API static DateTime Today() noexcept;
 
-        BASE_API static DateTime FromUnixTimestamp(int64_t seconds) noexcept;
+        BASE_API static DateTime FromUnixTimestamp(std::int64_t seconds) noexcept;
 
-        BASE_API int64_t ToUnixTimestamp() noexcept;
+        BASE_API static DateTime FromCalendar(CalendarTime const& value) noexcept;
+
+        BASE_API bool ToCalendar(CalendarTime& result) noexcept;
+
+        BASE_API std::int64_t ToUnixTimestamp() noexcept;
 
         BASE_API TimeSpan GetTimeOfDay() const noexcept;
         BASE_API DateTime GetDate() const noexcept;
+
+        constexpr auto operator <=> (DateTime const& rhs) const noexcept = default;
     };
 
-    static_assert(sizeof(DateTime) == sizeof(int64_t));
+    static_assert(sizeof(DateTime) == sizeof(std::int64_t));
 
-    BASE_API DateTime FromCalendar(CalendarTime const& value) noexcept;
+    BASE_API bool ToString(
+        std::string& result,
+        DateTime value,
+        DateTimeFormat format = DateTimeFormat::DateTime
+    ) noexcept;
 
-    BASE_API bool ToCalendar(CalendarTime& result, DateTime value) noexcept;
+    BASE_API bool ToString(
+        std::string& result,
+        DateTime value,
+        std::string_view format
+    ) noexcept;
 
-    BASE_API bool ToString(std::string& result, DateTime value, DateTimeFormat format = DateTimeFormat::DateTime) noexcept;
-
-    BASE_API bool ToString(std::string& result, DateTime value, std::string_view format) noexcept;
-
-    BASE_API bool FromString(DateTime& result, std::string_view value) noexcept;
+    BASE_API bool FromString(
+        DateTime& result,
+        std::string_view value
+    ) noexcept;
 }
 
 namespace Graphyte
 {
     struct TimeSpan final
     {
-        int64_t Value;
+        std::int64_t Value;
 
         BASE_API static TimeSpan Create(
-            int hours,
-            int minutes,
-            int seconds
+            std::int32_t hours,
+            std::int32_t minutes,
+            std::int32_t seconds
         ) noexcept;
 
         BASE_API static TimeSpan Create(
-            int days,
-            int hours,
-            int minutes,
-            int seconds
+            std::int32_t days,
+            std::int32_t hours,
+            std::int32_t minutes,
+            std::int32_t seconds
         ) noexcept;
 
         BASE_API static TimeSpan Create(
-            int days,
-            int hours,
-            int minutes,
-            int seconds,
-            int milliseconds
+            std::int32_t days,
+            std::int32_t hours,
+            std::int32_t minutes,
+            std::int32_t seconds,
+            std::int32_t milliseconds
         ) noexcept;
 
-        constexpr static TimeSpan FromSeconds(int64_t seconds) noexcept
+        constexpr static TimeSpan FromSeconds(std::int64_t seconds) noexcept
         {
             return { seconds * Impl::GTicksInSecond };
         }
 
-        constexpr int64_t ToSeconds() const noexcept
+        constexpr std::int64_t ToSeconds() const noexcept
         {
             return Value / Impl::GTicksInSecond;
         }
+
+        BASE_API void ToMembers(
+            TimeSpanMembers& result
+        ) noexcept;
+
+        BASE_API static TimeSpan FromMembers(
+            TimeSpanMembers const& value
+        ) noexcept;
 
         TimeSpan GetDuration() const noexcept
         {
@@ -245,71 +266,27 @@ namespace Graphyte
         {
             return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInMillisecond);
         }
+
+        constexpr auto operator <=> (TimeSpan const& rhs) const noexcept = default;
     };
 
-    static_assert(sizeof(TimeSpan) == sizeof(int64_t));
+    static_assert(sizeof(TimeSpan) == sizeof(std::int64_t));
+    static_assert(alignof(TimeSpan) == alignof(std::int64_t));
 
-    BASE_API void ToMembers(TimeSpanMembers& result, TimeSpan value) noexcept;
+    BASE_API bool ToString(
+        std::string& result,
+        TimeSpan value
+    ) noexcept;
 
-    BASE_API TimeSpan FromMembers(TimeSpanMembers const& value) noexcept;
-
-    BASE_API bool ToString(std::string& result, TimeSpan value) noexcept;
-
-    BASE_API bool ToString(std::string& result, TimeSpan value, std::string_view format) noexcept;
+    BASE_API bool ToString(
+        std::string& result,
+        TimeSpan value,
+        std::string_view format
+    ) noexcept;
 }
 
 namespace Graphyte
 {
-    constexpr bool Equals(DateTime lhs, DateTime rhs) noexcept
-    {
-        return lhs.Value == rhs.Value;
-    }
-
-    constexpr int Compare(DateTime lhs, DateTime rhs) noexcept
-    {
-        if (lhs.Value < rhs.Value)
-        {
-            return -1;
-        }
-
-        if (lhs.Value > rhs.Value)
-        {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    constexpr bool operator==(DateTime lhs, DateTime rhs) noexcept
-    {
-        return lhs.Value == rhs.Value;
-    }
-
-    constexpr bool operator!=(DateTime lhs, DateTime rhs) noexcept
-    {
-        return lhs.Value != rhs.Value;
-    }
-
-    constexpr bool operator<=(DateTime lhs, DateTime rhs) noexcept
-    {
-        return lhs.Value <= rhs.Value;
-    }
-
-    constexpr bool operator>=(DateTime lhs, DateTime rhs) noexcept
-    {
-        return lhs.Value >= rhs.Value;
-    }
-
-    constexpr bool operator<(DateTime lhs, DateTime rhs) noexcept
-    {
-        return lhs.Value < rhs.Value;
-    }
-
-    constexpr bool operator>(DateTime lhs, DateTime rhs) noexcept
-    {
-        return lhs.Value > rhs.Value;
-    }
-
     constexpr TimeSpan operator-(DateTime lhs, DateTime rhs) noexcept
     {
         return { lhs.Value - rhs.Value };
@@ -340,56 +317,6 @@ namespace Graphyte
 
 namespace Graphyte
 {
-    constexpr bool Equals(TimeSpan lhs, TimeSpan rhs) noexcept
-    {
-        return lhs.Value == rhs.Value;
-    }
-
-    constexpr int Compare(TimeSpan lhs, TimeSpan rhs) noexcept
-    {
-        if (lhs.Value < rhs.Value)
-        {
-            return -1;
-        }
-
-        if (lhs.Value > rhs.Value)
-        {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    constexpr bool operator==(TimeSpan lhs, TimeSpan rhs) noexcept
-    {
-        return lhs.Value == rhs.Value;
-    }
-
-    constexpr bool operator!=(TimeSpan lhs, TimeSpan rhs) noexcept
-    {
-        return lhs.Value != rhs.Value;
-    }
-
-    constexpr bool operator<=(TimeSpan lhs, TimeSpan rhs) noexcept
-    {
-        return lhs.Value <= rhs.Value;
-    }
-
-    constexpr bool operator>=(TimeSpan lhs, TimeSpan rhs) noexcept
-    {
-        return lhs.Value >= rhs.Value;
-    }
-
-    constexpr bool operator<(TimeSpan lhs, TimeSpan rhs) noexcept
-    {
-        return lhs.Value < rhs.Value;
-    }
-
-    constexpr bool operator>(TimeSpan lhs, TimeSpan rhs) noexcept
-    {
-        return lhs.Value > rhs.Value;
-    }
-
     constexpr TimeSpan operator-(TimeSpan value) noexcept
     {
         return { -value.Value };

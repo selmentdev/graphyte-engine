@@ -3,47 +3,46 @@
 #include <GxBase/String.hxx>
 #include <GxBase/Uuid.hxx>
 
+namespace Graphyte::Storage::Impl
+{
+    static constexpr const char GFolderSeparators[] = {
+        Storage::DirectorySeparator,
+        Storage::AlternativeDirectorySeparator,
+        0,
+    };
+}
+
 namespace Graphyte::Storage
 {
-    namespace Impl
-    {
-        // TODO: replace with string_view
-        static const char GFolderSeparators[] = {
-            Path::DirectorySeparator,
-            Path::AlternativeDirectorySeparator,
-            0
-        };
-    }
-
-    void Path::Append(
+    void AppendPath(
         std::string& path,
         std::string_view subpath
     ) noexcept
     {
         if (!subpath.empty())
         {
-            if (!Path::IsDirectorySeparator(subpath[0]))
+            if (!Storage::IsDirectorySeparator(subpath[0]))
             {
-                Path::AddDirectorySeparator(path);
+                Storage::AddDirectorySeparator(path);
             }
 
             path.append(subpath);
         }
     }
 
-    std::string Path::Combine(
+    std::string CombinePath(
         std::string_view path1,
         std::string_view path2
     ) noexcept
     {
         std::string result{ path1 };
 
-        Path::Append(result, path2);
+        Storage::AppendPath(result, path2);
 
         return result;
     }
 
-    std::string Path::Combine(
+    std::string CombinePath(
         std::string_view path1,
         std::string_view path2,
         std::string_view path3
@@ -51,13 +50,13 @@ namespace Graphyte::Storage
     {
         std::string result{ path1 };
 
-        Path::Append(result, path2);
-        Path::Append(result, path3);
+        Storage::AppendPath(result, path2);
+        Storage::AppendPath(result, path3);
 
         return result;
     }
 
-    std::string Path::Combine(
+    std::string CombinePath(
         std::string_view path1,
         std::string_view path2,
         std::string_view path3,
@@ -66,14 +65,14 @@ namespace Graphyte::Storage
     {
         std::string result{ path1 };
 
-        Path::Append(result, path2);
-        Path::Append(result, path3);
-        Path::Append(result, path4);
+        Storage::AppendPath(result, path2);
+        Storage::AppendPath(result, path3);
+        Storage::AppendPath(result, path4);
 
         return result;
     }
 
-    std::string Path::Combine(
+    std::string CombinePath(
         std::string_view path1,
         std::string_view path2,
         std::string_view path3,
@@ -83,15 +82,15 @@ namespace Graphyte::Storage
     {
         std::string result{ path1 };
 
-        Path::Append(result, path2);
-        Path::Append(result, path3);
-        Path::Append(result, path4);
-        Path::Append(result, path5);
+        Storage::AppendPath(result, path2);
+        Storage::AppendPath(result, path3);
+        Storage::AppendPath(result, path4);
+        Storage::AppendPath(result, path5);
 
         return result;
     }
 
-    std::string Path::Combine(
+    std::string CombinePath(
         std::string_view path1,
         std::string_view path2,
         std::string_view path3,
@@ -102,47 +101,47 @@ namespace Graphyte::Storage
     {
         std::string result{ path1 };
 
-        Path::Append(result, path2);
-        Path::Append(result, path3);
-        Path::Append(result, path4);
-        Path::Append(result, path5);
-        Path::Append(result, path6);
+        Storage::AppendPath(result, path2);
+        Storage::AppendPath(result, path3);
+        Storage::AppendPath(result, path4);
+        Storage::AppendPath(result, path5);
+        Storage::AppendPath(result, path6);
 
         return result;
     }
 
-    void Path::AddDirectorySeparator(
+    void AddDirectorySeparator(
         std::string& path
     ) noexcept
     {
         if (!path.empty())
         {
-            if (!Path::IsDirectorySeparator(path.back()))
+            if (!Storage::IsDirectorySeparator(path.back()))
             {
-                path.append(1, Path::DirectorySeparator);
+                path.append(1, Storage::DirectorySeparator);
             }
         }
     }
 
-    void Path::RemoveDirectorySeparator(
+    void RemoveDirectorySeparator(
         std::string& path
     ) noexcept
     {
         if (!path.empty())
         {
-            if (Path::IsDirectorySeparator(path.back()))
+            if (Storage::IsDirectorySeparator(path.back()))
             {
                 path.pop_back();
             }
         }
     }
 
-    void Path::ChangeExtension(
+    void ChangeExtension(
         std::string& path,
         std::string_view extension
     ) noexcept
     {
-        size_t const separator_position = path.find_last_of(Path::ExtensionSeparator);
+        std::size_t const separator_position = path.find_last_of(Storage::ExtensionSeparator);
 
         if (separator_position != std::string::npos)
         {
@@ -151,21 +150,21 @@ namespace Graphyte::Storage
 
         if (!extension.empty())
         {
-            if (!Path::IsExtensionSeparator(extension[0]))
+            if (!Storage::IsExtensionSeparator(extension[0]))
             {
-                path.append(1, Path::ExtensionSeparator);
+                path.append(1, Storage::ExtensionSeparator);
             }
 
             path.append(extension);
         }
     }
 
-    void Path::ChangeFilename(
+    void ChangeFilename(
         std::string& path,
         std::string_view filename
     ) noexcept
     {
-        size_t const separator_position = path.find_last_of(Impl::GFolderSeparators);
+        std::size_t const separator_position = path.find_last_of(Impl::GFolderSeparators);
 
         if (separator_position != std::string::npos)
         {
@@ -183,106 +182,14 @@ namespace Graphyte::Storage
         }
     }
 
-    std::string Path::GetExtension(
-        std::string_view path,
-        bool include_separator
-    ) noexcept
-    {
-        std::string result{};
-
-        size_t separator_position = path.find_last_of(Path::ExtensionSeparator);
-
-        if (separator_position != std::string::npos)
-        {
-            if (!include_separator)
-            {
-                ++separator_position;
-            }
-
-            result.assign(path.substr(separator_position));
-        }
-
-        return result;
-    }
-
-    std::string Path::GetFilename(
-        std::string_view path
-    ) noexcept
-    {
-        std::string result{};
-
-        size_t separator_position = path.find_last_of(Impl::GFolderSeparators);
-
-        if (separator_position != std::string::npos)
-        {
-            ++separator_position;
-            result.assign(path.substr(separator_position));
-        }
-        else
-        {
-            result.assign(path);
-        }
-
-        return result;
-    }
-
-    std::string Path::GetBaseFilename(
-        std::string_view path
-    ) noexcept
-    {
-        std::string result{ Path::GetFilename(path) };
-
-        size_t const separator_position = result.find_last_of(Path::ExtensionSeparator);
-
-        if (separator_position != std::string::npos)
-        {
-            result.resize(separator_position);
-        }
-
-        return result;
-    }
-
-    std::string Path::GetPath(
-        std::string_view path
-    ) noexcept
-    {
-        std::string result{};
-
-        size_t separator_position = path.find_last_of(Impl::GFolderSeparators);
-
-        if (separator_position != std::string::npos)
-        {
-            ++separator_position;
-            result.assign(path.substr(0, separator_position));
-        }
-
-        return result;
-    }
-
-    std::string Path::GetScheme(
-        std::string_view path
-    ) noexcept
-    {
-        std::string result{};
-
-        size_t separator_position = path.rfind("://");
-
-        if (separator_position != std::string::npos)
-        {
-            result.assign(path.substr(0, separator_position));
-        }
-
-        return result;
-    }
-
-    std::string_view Path::GetExtensionRef(
+    std::string_view GetExtension(
         std::string_view path,
         bool include_separator
     ) noexcept
     {
         std::string_view result{};
 
-        size_t separator_position = path.find_last_of(Path::ExtensionSeparator);
+        std::size_t separator_position = path.find_last_of(Storage::ExtensionSeparator);
 
         if (separator_position != std::string::npos)
         {
@@ -297,13 +204,13 @@ namespace Graphyte::Storage
         return result;
     }
 
-    std::string_view Path::GetFilenameRef(
+    std::string_view GetFilename(
         std::string_view path
     ) noexcept
     {
         std::string_view result{};
 
-        size_t separator_position = path.find_last_of(Impl::GFolderSeparators);
+        std::size_t separator_position = path.find_last_of(Impl::GFolderSeparators);
 
         if (separator_position != std::string::npos)
         {
@@ -318,13 +225,13 @@ namespace Graphyte::Storage
         return result;
     }
 
-    std::string_view Path::GetBaseFilenameRef(
+    std::string_view GetBaseFilename(
         std::string_view path
     ) noexcept
     {
-        std::string_view result{ Path::GetFilenameRef(path) };
+        std::string_view result{ Storage::GetFilename(path) };
 
-        size_t const separator_position = result.find_last_of(Path::ExtensionSeparator);
+        std::size_t const separator_position = result.find_last_of(Storage::ExtensionSeparator);
 
         if (separator_position != std::string::npos)
         {
@@ -334,13 +241,13 @@ namespace Graphyte::Storage
         return result;
     }
 
-    std::string_view Path::GetPathRef(
+    std::string_view GetPath(
         std::string_view path
     ) noexcept
     {
         std::string_view result{};
 
-        size_t separator_position = path.find_last_of(Impl::GFolderSeparators);
+        std::size_t separator_position = path.find_last_of(Impl::GFolderSeparators);
 
         if (separator_position != std::string::npos)
         {
@@ -351,13 +258,13 @@ namespace Graphyte::Storage
         return result;
     }
 
-    std::string_view Path::GetSchemeRef(
+    extern BASE_API std::string_view GetScheme(
         std::string_view path
     ) noexcept
     {
         std::string_view result{};
 
-        size_t const separator_position = path.rfind("://");
+        std::size_t const separator_position = path.rfind("://");
 
         if (separator_position != std::string::npos)
         {
@@ -367,43 +274,43 @@ namespace Graphyte::Storage
         return result;
     }
 
-    void Path::Split(
+    void SplitPath(
         std::string_view path,
         std::string_view& path_part,
         std::string_view& filename_part,
         std::string_view& extension_part
     ) noexcept
     {
-        path_part = Path::GetPathRef(path);
-        filename_part = Path::GetBaseFilenameRef(path);
-        extension_part = Path::GetExtensionRef(path, false);
+        path_part = Storage::GetPath(path);
+        filename_part = Storage::GetBaseFilename(path);
+        extension_part = Storage::GetExtension(path, false);
     }
 
-    void Path::Normalize(
+    void NormalizePath(
         std::string& path
     ) noexcept
     {
         for (char& c : path)
         {
-            if (c == Path::AlternativeDirectorySeparator)
+            if (c == Storage::AlternativeDirectorySeparator)
             {
-                c = Path::DirectorySeparator;
+                c = Storage::DirectorySeparator;
             }
         }
     }
 
-    std::string Path::Normalized(
+    std::string NormalizedPath(
         std::string_view path
     ) noexcept
     {
         std::string result{ path };
 
-        Path::Normalize(result);
+        Storage::NormalizePath(result);
 
         return result;
     }
 
-    bool Path::Canonicalize(
+    bool CanonicalizePath(
         std::string& path
     ) noexcept
     {
@@ -465,20 +372,20 @@ namespace Graphyte::Storage
         return true;
     }
 
-    bool Path::Relative(
+    bool RelativePath(
         std::string& result,
         std::string_view source,
         std::string_view target
     ) noexcept
     {
-        std::string normalized_source = Path::Normalized(source);
-        std::string normalized_target = Path::Normalized(target);
+        std::string normalized_source = Storage::NormalizedPath(source);
+        std::string normalized_target = Storage::NormalizedPath(target);
 
-        Path::Canonicalize(normalized_source);
-        Path::Canonicalize(normalized_target);
+        Storage::CanonicalizePath(normalized_source);
+        Storage::CanonicalizePath(normalized_target);
 
-        auto parts_source = Graphyte::Split(normalized_source, Path::DirectorySeparator);
-        auto parts_target = Graphyte::Split(normalized_target, Path::DirectorySeparator);
+        auto parts_source = Graphyte::Split(normalized_source, Storage::DirectorySeparator);
+        auto parts_target = Graphyte::Split(normalized_target, Storage::DirectorySeparator);
 
         if (!parts_source.empty() && !parts_target.empty())
         {
@@ -526,22 +433,21 @@ namespace Graphyte::Storage
         return true;
     }
 
-    std::string Path::CreateTempFilename(
+    std::string CreateTemporaryFilePath(
         std::string_view path,
         std::string_view prefix,
-        std::string_view extension
+        std::string_view suffix
     ) noexcept
     {
-        std::string unique{};
+        std::string result{};
 
         do
         {
-            auto const id = Uuid::Create();
-            auto const filename = fmt::format("{}{:016x}{:016x}{}", prefix, id.Low, id.High, extension);
+            Uuid const unique = Uuid::Create();
+            std::string filename = fmt::format("{}{}{}", prefix, unique, suffix);
+            result = Storage::CombinePath(path, filename);
+        } while (Storage::IFileSystem::GetPlatformNative().Exists(result) == Status::Success);
 
-            unique = Path::Combine(path, filename);
-        } while (Storage::IFileSystem::GetPlatformNative().Exists(unique) == Status::Success);
-
-        return unique;
+        return result;
     }
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Bitwise.hxx>
+#error "do not use"
 
 namespace Graphyte::Intrinsics
 {

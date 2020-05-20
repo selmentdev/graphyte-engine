@@ -168,7 +168,7 @@ namespace Graphyte::Storage
         const std::string& path
     ) noexcept
     {
-        GX_ASSERT(Path::IsValid(path));
+        GX_ASSERT(Storage::IsValidPath(path));
 
         size_t position = 0;
 
@@ -255,8 +255,8 @@ namespace Graphyte::Storage
         bool overwrite
     ) noexcept
     {
-        GX_ASSERT(Path::IsValid(destination));
-        GX_ASSERT(Path::IsValid(source));
+        GX_ASSERT(IsValidPath(destination));
+        GX_ASSERT(IsValidPath(source));
 
         if (Exists(source) != Status::Success)
         {
@@ -328,8 +328,8 @@ namespace Graphyte::Storage
         std::string path_source{ source };
         std::string path_destination{ destination };
 
-        Path::AddDirectorySeparator(path_source);
-        Path::AddDirectorySeparator(path_destination);
+        Storage::AddDirectorySeparator(path_source);
+        Storage::AddDirectorySeparator(path_destination);
 
         CopyRecursive copy_recursive{ *this, path_source, path_destination, overwrite };
 
@@ -369,8 +369,8 @@ namespace Graphyte::Storage
                     if (!m_Extension.empty())
                     {
                         std::string_view const path_view{ path };
-                        std::string_view const path_extension = Path::GetExtensionRef(path_view, false);
-                        std::string_view const sanitized = Path::GetExtensionRef(m_Extension, false);
+                        std::string_view const path_extension = Storage::GetExtension(path_view, false);
+                        std::string_view const sanitized = Storage::GetExtension(m_Extension, false);
 
                         if (path_extension != sanitized)
                         {

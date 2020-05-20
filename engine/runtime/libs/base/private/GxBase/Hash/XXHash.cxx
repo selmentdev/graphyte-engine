@@ -1,5 +1,5 @@
 #include <GxBase/Hash/XXHash.hxx>
-#include <GxBase/ByteAccess.hxx>
+#include <GxBase/Bitwise.hxx>
 
 namespace Graphyte::Hash
 {
@@ -87,10 +87,10 @@ namespace Graphyte::Hash
         if (m_Length >= MaxBufferSize)
         {
             result
-                = RotateLeft<uint64_t>(m_State[0], 1)
-                + RotateLeft<uint64_t>(m_State[1], 7)
-                + RotateLeft<uint64_t>(m_State[2], 12)
-                + RotateLeft<uint64_t>(m_State[3], 18);
+                = BitRotateLeft<uint64_t>(m_State[0], 1)
+                + BitRotateLeft<uint64_t>(m_State[1], 7)
+                + BitRotateLeft<uint64_t>(m_State[2], 12)
+                + BitRotateLeft<uint64_t>(m_State[3], 18);
 
             result = (result ^ ProcessSingle(0, m_State[0])) * Prime1 + Prime4;
             result = (result ^ ProcessSingle(0, m_State[1])) * Prime1 + Prime4;
@@ -109,18 +109,18 @@ namespace Graphyte::Hash
 
         for (; (data + 8) <= stop; data += 8)
         {
-            result = RotateLeft<uint64_t>(result ^ ProcessSingle(0, *reinterpret_cast<const uint64_t*>(data)), 27) * Prime1 + Prime4;
+            result = BitRotateLeft<uint64_t>(result ^ ProcessSingle(0, *reinterpret_cast<const uint64_t*>(data)), 27) * Prime1 + Prime4;
         }
 
         if ((data + 4) <= stop)
         {
-            result = RotateLeft<uint64_t>(result ^ *reinterpret_cast<const uint32_t*>(data) * Prime1, 23) * Prime2 + Prime3;
+            result = BitRotateLeft<uint64_t>(result ^ *reinterpret_cast<const uint32_t*>(data) * Prime1, 23) * Prime2 + Prime3;
             data += 4;
         }
 
         while (data != stop)
         {
-            result = RotateLeft(result ^ (*data++) * Prime5, 11) * Prime1;
+            result = BitRotateLeft(result ^ (*data++) * Prime5, 11) * Prime1;
         }
 
         result ^= result >> 33;
@@ -148,7 +148,7 @@ namespace Graphyte::Hash
         uint64_t input
     ) noexcept
     {
-        return RotateLeft<uint64_t>(previous + input * Prime2, 31) * Prime1;
+        return BitRotateLeft<uint64_t>(previous + input * Prime2, 31) * Prime1;
     }
 
     void XXHash64::ProcessBlock(

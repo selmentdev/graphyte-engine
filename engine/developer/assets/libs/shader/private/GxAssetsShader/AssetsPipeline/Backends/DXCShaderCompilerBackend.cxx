@@ -33,12 +33,10 @@ namespace Graphyte::AssetsPipeline
         , m_DxcLibrary{}
         , m_DxcCompiler{}
     {
-        using Storage::Path;
-
         auto sdk_path = PlatformToolchain::GetWindowsSdkBinary();
 
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, Path::Combine(sdk_path, "dxcompiler.dll"));
+        System::Impl::WidenStringPath(wpath, Storage::CombinePath(sdk_path, "dxcompiler.dll"));
 
         m_LibDxCompiler = ::LoadLibraryW(wpath.data());
 
@@ -66,7 +64,7 @@ namespace Graphyte::AssetsPipeline
 
                 GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to create DXC Compiler");
 
-                System::Impl::WidenStringPath(wpath, Path::Combine(sdk_path, "dxil.dll"));
+                System::Impl::WidenStringPath(wpath, Storage::CombinePath(sdk_path, "dxil.dll"));
                 m_LibDxil = ::LoadLibraryW(wpath.data());
             }
         }
@@ -127,8 +125,6 @@ namespace Graphyte::AssetsPipeline
 
     bool DXCShaderCompilerBackend::Compile(ShaderCompilerInput& input, ShaderCompilerOutput& output) const noexcept
     {
-        using Storage::Path;
-
         Microsoft::WRL::ComPtr<IDxcBlobEncoding> source_blob{};
         if (FAILED(m_DxcLibrary->CreateBlobWithEncodingFromPinned(std::data(input.Source), static_cast<UINT32>(std::size(input.Source)), CP_UTF8, source_blob.GetAddressOf())))
         {

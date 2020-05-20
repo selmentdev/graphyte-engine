@@ -2,6 +2,7 @@
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Span.hxx>
 
+//! \todo Scrap this implementation. We need specific algorithms available as always compiled API.
 namespace Graphyte::Crypto
 {
     //! \brief  This enum provides set of available crypto hash types.

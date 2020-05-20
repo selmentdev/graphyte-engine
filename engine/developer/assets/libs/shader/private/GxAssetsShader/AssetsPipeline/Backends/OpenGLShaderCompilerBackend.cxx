@@ -14,7 +14,7 @@ namespace Graphyte::AssetsPipeline
         : m_Glslc{}
         , m_IsValid{}
     {
-        m_Glslc = Storage::Path::Combine(
+        m_Glslc = Storage::CombinePath(
             PlatformToolchain::PlatformToolchain::GetVulkanSdkBinary(),
             "glslc"
         );
@@ -86,7 +86,7 @@ namespace Graphyte::AssetsPipeline
         std::string std_output{};
         std::string std_error{};
 
-        auto temp_directory = Storage::FileManager::GetProjectIntermediateDirectory() + "shader-temp/";
+        auto temp_directory = Storage::GetProjectIntermediateDirectory() + "shader-temp/";
         if (Storage::IFileSystem::GetPlatformNative().DirectoryTreeCreate(temp_directory) != Status::Success)
         {
             GX_LOG(LogShaderCompilerFrontend, Error, "Cannot create directory: `{}`\n", temp_directory);
@@ -98,7 +98,7 @@ namespace Graphyte::AssetsPipeline
             input.GetHash()
         );
 
-        if (Storage::FileManager::WriteText(input.Source, source_temp) != Status::Success)
+        if (Storage::WriteText(input.Source, source_temp) != Status::Success)
         {
             GX_LOG(LogShaderCompilerFrontend, Error, "Cannot write source file: `{}`\n", source_temp);
             return false;
@@ -109,7 +109,7 @@ namespace Graphyte::AssetsPipeline
         commandline += " --target-env=opengl";
         //commandline += " --std=450core";
         //commandline += " --fshader-stage="s + GetShaderStage(input.Stage);
-        commandline += " -I "s + Storage::FileManager::GetProjectContentDirectory() + "shaders/"s;
+        commandline += " -I "s + Storage::GetProjectContentDirectory() + "shaders/"s;
         //commandline += " -o "s + target_temp;
         commandline += " -c "s + source_temp;
         commandline += " -E";

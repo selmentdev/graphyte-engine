@@ -1,7 +1,6 @@
 #include <catch2/catch.hpp>
 #include <GxGraphics/Graphics/PixelFormat.hxx>
 #include <GxGraphics/Graphics/Image.hxx>
-#include <GxBase/ByteAccess.hxx>
 #include <GxBase/Hash/XXHash.hxx>
 #include <GxBase/Storage/FileManager.hxx>
 #include <GxGraphics/Graphics/ImageCodecs/ImageCodec.DDS.hxx>
@@ -10,22 +9,14 @@
 #include <GxBase/Types.hxx>
 #include <GxBase/Random.hxx>
 
-
-using Graphyte::Graphics::PixelFormat;
-using Graphyte::Graphics::PixelFormatProperties;
-using Graphyte::Graphics::Image;
-using Graphyte::Graphics::ImageDimension;
-using Graphyte::Graphics::ImageAlphaMode;
-using Graphyte::Graphics::ImagePixels;
-using Graphyte::Graphics::CubeFace;
-using Graphyte::Hash::XXHash64;
-using Graphyte::ColorBGRA;
-using Graphyte::Storage::ArchiveMemoryReader;
-using Graphyte::Storage::ArchiveMemoryWriter;
-
 TEST_CASE("gen-1d.dds")
 {
-    static constexpr std::array<const unsigned char, 172> source
+    using namespace Graphyte;
+    using namespace Graphyte::Graphics;
+    using namespace Graphyte::Hash;
+    using namespace Graphyte::Storage;
+
+    static constexpr std::array<unsigned char, 172> const source
     {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x05, 0x10, 0x02, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -102,7 +93,12 @@ TEST_CASE("gen-1d.dds")
 
 TEST_CASE("gen-1d-array.dds")
 {
-    static constexpr std::array<const unsigned char, 244> source
+    using namespace Graphyte;
+    using namespace Graphyte::Graphics;
+    using namespace Graphyte::Hash;
+    using namespace Graphyte::Storage;
+
+    static constexpr std::array<unsigned char, 244> source
     {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x05, 0x10, 0x02, 0x00,
         0x01, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -294,7 +290,12 @@ TEST_CASE("gen-1d-array.dds")
 
 TEST_CASE("gen-2d.dds")
 {
-    static constexpr std::array<const unsigned char, 168> source
+    using namespace Graphyte;
+    using namespace Graphyte::Graphics;
+    using namespace Graphyte::Hash;
+    using namespace Graphyte::Storage;
+
+    static constexpr std::array<unsigned char, 168> source
     {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x02, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -371,7 +372,12 @@ TEST_CASE("gen-2d.dds")
 
 TEST_CASE("gen-2d-array.dds")
 {
-    static constexpr std::array<const unsigned char, 188> source
+    using namespace Graphyte;
+    using namespace Graphyte::Graphics;
+    using namespace Graphyte::Hash;
+    using namespace Graphyte::Storage;
+
+    static constexpr std::array<unsigned char, 188> source
     {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x02, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -487,7 +493,12 @@ TEST_CASE("gen-2d-array.dds")
 
 TEST_CASE("gen-2d-cube.dds")
 {
-    static constexpr std::array<const unsigned char, 268> source
+    using namespace Graphyte;
+    using namespace Graphyte::Graphics;
+    using namespace Graphyte::Hash;
+    using namespace Graphyte::Storage;
+
+    static constexpr std::array<unsigned char, 268> source
     {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x02, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -758,7 +769,12 @@ TEST_CASE("gen-2d-cube.dds")
 
 TEST_CASE("gen-2d-cube-array.dds")
 {
-    static constexpr std::array<const unsigned char, 388> source
+    using namespace Graphyte;
+    using namespace Graphyte::Graphics;
+    using namespace Graphyte::Hash;
+    using namespace Graphyte::Storage;
+
+    static constexpr std::array<unsigned char, 388> source
     {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x02, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -1265,7 +1281,12 @@ TEST_CASE("gen-2d-cube-array.dds")
 
 TEST_CASE("gen-3d.dds")
 {
-    static constexpr std::array<const unsigned char, 184> source
+    using namespace Graphyte;
+    using namespace Graphyte::Graphics;
+    using namespace Graphyte::Hash;
+    using namespace Graphyte::Storage;
+
+    static constexpr std::array<unsigned char, 184> source
     {
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x82, 0x00,
         0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -1352,6 +1373,11 @@ TEST_CASE("gen-3d.dds")
 
 TEST_CASE("image generation")
 {
+    using namespace Graphyte;
+    using namespace Graphyte::Graphics;
+    using namespace Graphyte::Hash;
+    using namespace Graphyte::Storage;
+
     auto image = Graphyte::Graphics::Image::Create2D(
         PixelFormat::B8G8R8A8_UNORM,
         4,
@@ -1398,10 +1424,10 @@ TEST_CASE("image generation")
 
     if constexpr (true)
     {
-        [[maybe_unused]] auto status = Graphyte::Storage::FileManager::WriteBinary({ buffer }, "d:/test.dds");
+        [[maybe_unused]] auto status = Graphyte::Storage::WriteBinary({ buffer }, "d:/test.dds");
     }
 
-    static constexpr std::array<const unsigned char, 228> source{
+    static constexpr std::array<unsigned char, 228> source{
         0x44, 0x44, 0x53, 0x20, 0x7c, 0x00, 0x00, 0x00, 0x07, 0x10, 0x02, 0x00, 0x04, 0x00, 0x00, 0x00,
         0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

@@ -193,7 +193,7 @@ namespace Graphyte::Random
 
     uint64_t NextUInt64(RandomState& state) noexcept
     {
-        uint64_t const result = RotateLeft<uint64_t>(state.State[1] * 5, 7) * 9;
+        uint64_t const result = BitRotateLeft<uint64_t>(state.State[1] * 5, 7) * 9;
 
         uint64_t const t = state.State[1] << 17;
 
@@ -203,7 +203,7 @@ namespace Graphyte::Random
         state.State[0] ^= state.State[3];
 
         state.State[2] ^= t;
-        state.State[3] = RotateLeft<uint64_t>(state.State[3], 45);
+        state.State[3] = BitRotateLeft<uint64_t>(state.State[3], 45);
 
         return result;
     }

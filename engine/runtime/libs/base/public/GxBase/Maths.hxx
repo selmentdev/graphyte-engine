@@ -1,8 +1,7 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Diagnostics.hxx>
-#include <GxBase/Bitwise.hxx>
-#include <GxBase/Half.hxx>
+#include <GxBase/Ieee754.hxx>
 #include <GxBase/Types.hxx>
 #include <GxBase/Maths.Types.hxx>
 

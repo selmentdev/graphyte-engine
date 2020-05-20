@@ -1,48 +1,59 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
+#include <GxBase/Span.hxx>
 
-namespace Graphyte
+namespace Graphyte::CommandLine::Impl
 {
-    struct BASE_API CommandLineEnumerator final
+    extern BASE_API auto SplitCommandLineNameValue(
+        std::string_view value
+    ) noexcept->std::pair<std::string_view, std::optional<std::string_view>>;
+}
+
+namespace Graphyte::CommandLine
+{
+    class Enumerator final
     {
     private:
-        const char** m_ArgV{};
-        int m_ArgC{};
-        int m_ArgN{};
+        notstd::span<const char*> m_Args{};
+        std::size_t m_Index{};
 
     public:
-        CommandLineEnumerator(
-            int argc,
-            const char** argv
-        ) noexcept;
+        std::string_view Name{};
+        std::optional<std::string_view> Value{};
 
     public:
-        bool Get(
-            std::string_view& name,
-            std::string_view& value
-        ) noexcept;
+        Enumerator(notstd::span<const char*> args) noexcept
+            : m_Args{ args }
+            , m_Index{ 0 }
+        {
+        }
+
+        bool Next() noexcept
+        {
+            if (m_Index < m_Args.size())
+            {
+                std::tie(this->Name, this->Value) = Impl::SplitCommandLineNameValue(
+                    std::string_view{ m_Args[m_Index] }
+                );
+
+                ++m_Index;
+                return true;
+            }
+
+            return false;
+        }
+
+        void Reset() noexcept
+        {
+            m_Index = 0;
+        }
     };
 
-    class CommandLine final
-    {
-    public:
-        BASE_API static void Initialize(
-            int argc,
-            const char** argv
-        ) noexcept;
+    extern BASE_API void Initialize(int argc, const char** argv) noexcept;
 
-        BASE_API static void Finalize() noexcept;
+    extern BASE_API void Finalize() noexcept;
 
-    public:
-        BASE_API static bool Get(
-            std::string_view name,
-            std::string_view& value
-        ) noexcept;
+    extern BASE_API std::optional<std::string_view> Get(std::string_view name) noexcept;
 
-        BASE_API static bool Has(
-            std::string_view name
-        ) noexcept;
-
-        BASE_API static CommandLineEnumerator GetEnumerator() noexcept;
-    };
+    extern BASE_API CommandLine::Enumerator GetEnumerator() noexcept;
 }

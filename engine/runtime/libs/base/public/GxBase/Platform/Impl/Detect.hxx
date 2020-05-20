@@ -960,18 +960,19 @@
 
 // =================================================================================================
 //
-// Some non-standard extensions
-//
-// http://open-std.org/JTC1/SC22/WG21/docs/papers/2016/p0482r0.html
-// char8_t as unsigned char and separate type
+// Validate minimum required version
 //
 
 #if GRAPHYTE_COMPILER_MSVC
-#if _MSC_VER <= 1920
-using char8_t = unsigned char;
+#if _MSC_VER < 1925
+#error "MSVC version not supported"
 #endif
-#elif GRAPHYTE_COMPILER_GCC
-//using char8_t = unsigned char;
+#endif
+
+#if GRAPHYTE_COMPILER_CLANG
+#if __clang_major__ < 10
+#error "Clang version not supported"
+#endif
 #endif
 
 

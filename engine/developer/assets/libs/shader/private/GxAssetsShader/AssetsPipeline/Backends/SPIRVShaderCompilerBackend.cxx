@@ -14,7 +14,7 @@ namespace Graphyte::AssetsPipeline
         : m_CompilerPath{}
         , m_IsValid{}
     {
-        m_CompilerPath = Storage::Path::Combine(
+        m_CompilerPath = Storage::CombinePath(
             PlatformToolchain::PlatformToolchain::GetVulkanSdkBinary(),
             "glslc"
         );
@@ -82,8 +82,8 @@ namespace Graphyte::AssetsPipeline
         std::string std_error{};
         int32_t exit_code;
 
-        std::string temp_directory = Storage::FileManager::GetProjectIntermediateDirectory();
-        Storage::Path::Append(temp_directory, "shader-temp/");
+        std::string temp_directory = Storage::GetProjectIntermediateDirectory();
+        Storage::AppendPath(temp_directory, "shader-temp/");
 
         if (Storage::IFileSystem::GetPlatformNative().DirectoryTreeCreate(temp_directory) != Status::Success)
         {
@@ -103,7 +103,7 @@ namespace Graphyte::AssetsPipeline
             input.GetHash()
         );
 
-        if (Storage::FileManager::WriteText(input.Source, source_temp) != Status::Success)
+        if (Storage::WriteText(input.Source, source_temp) != Status::Success)
         {
             GX_LOG(LogShaderCompilerFrontend, Error, "Cannot write source file: `{}`\n", source_temp);
             return false;
@@ -114,7 +114,7 @@ namespace Graphyte::AssetsPipeline
         commandline += " --target-env=vulkan";
         //commandline += " --std=450core";
         commandline += " -fshader-stage="s + GetShaderStage(input.Stage);
-        commandline += " -I "s + Storage::FileManager::GetProjectContentDirectory() + "shaders/"s;
+        commandline += " -I "s + Storage::GetProjectContentDirectory() + "shaders/"s;
         commandline += " -c "s + source_temp;
         commandline += " -o "s + target_temp;
 
@@ -139,7 +139,7 @@ namespace Graphyte::AssetsPipeline
 
             if (success)
             {
-                if (Storage::FileManager::ReadBinary(output.Bytecode, target_temp) == Status::Success)
+                if (Storage::ReadBinary(output.Bytecode, target_temp) == Status::Success)
                 {
                     for (auto&& line : Split(std_output, '\n'))
                     {

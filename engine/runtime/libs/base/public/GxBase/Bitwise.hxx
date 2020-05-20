@@ -1,33 +1,28 @@
 #pragma once
-#include <GxBase/Base.module.hxx>
-#include <GxBase/Ieee754.hxx>
 #include <GxBase/TypeTraits.hxx>
 
-namespace Graphyte::Impl
-{
-    template <typename T>
-    inline constexpr bool IsStandardUnsignedType = IsAnyOfType<
-        std::remove_cv_t<T>,
-        unsigned char, unsigned short, unsigned int, unsigned long, unsigned long long
-    >;
-}
+
+// =================================================================================================
+//
+// Bit casting support.
+//
 
 namespace Graphyte
 {
-    /// Performs safe bit casting between two types.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// float f = BitCast(0x3F80'0000);
-    /// GX_ASSERT(f == 1.0F);
-    /// ```
-    template <
-        typename TTo,
-        typename TFrom,
-        std::enable_if_t<sizeof(TTo) == sizeof(TFrom) && std::is_trivially_copyable_v<TTo> && std::is_trivially_constructible_v<TFrom>, int> = 0
+    //! Performs safe bit casting between two types.
+    //!
+    //! # Examples
+    //!
+    //! ```
+    //! float f = BitCast(0x3F800000);
+    //! GX_ASSERT(f == 1.0f);
+    //! ```
+    template <typename TTo, typename TFrom,
+        std::enable_if_t<sizeof(TTo) == sizeof(TFrom) &&
+        std::is_trivially_copyable_v<TTo> &&
+        std::is_trivially_constructible_v<TFrom>, int> = 0
     >
-    [[nodiscard]] inline TTo BitCast(const TFrom& source)
+    [[nodiscard]] constexpr TTo BitCast(TFrom const& source) noexcept
     {
         TTo result;
         memcpy(&result, &source, sizeof(result));
@@ -35,9 +30,15 @@ namespace Graphyte
     }
 }
 
+
+// =================================================================================================
+//
+// Byte encoding definition.
+//
+
 namespace Graphyte
 {
-    enum struct ByteEncoding : uint32_t
+    enum class ByteEncoding : uint32_t
     {
         LittleEndian = 0x01020304,
         BigEndian = 0x04030201,
@@ -48,12 +49,21 @@ namespace Graphyte
 #elif GRAPHYTE_ENDIAN_BIG
         Host = BigEndian,
 #else
-#   error "Unknown endianess"
+#error "Unknown endianess"
 #endif
     };
+}
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    constexpr T ByteSwap(T value) noexcept
+
+// =================================================================================================
+//
+// Byte swapping
+//
+
+namespace Graphyte
+{
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T ByteSwap(T value) noexcept
     {
         if (std::is_constant_evaluated())
         {
@@ -131,12 +141,8 @@ namespace Graphyte
         }
     }
 
-    template <
-        ByteEncoding Encoding,
-        typename T,
-        std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0
-    >
-    constexpr T ByteSwap(T value) noexcept
+    template <ByteEncoding Encoding, typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T ByteSwap(T value) noexcept
     {
         if constexpr (Encoding == ByteEncoding::Host)
         {
@@ -148,163 +154,137 @@ namespace Graphyte
         }
     }
 
-
-
-    //
-    // Network endian support.
-    //
-
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    constexpr __forceinline T NetworkToHost(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T NetworkToHost(T value) noexcept
     {
-        return ByteSwap<ByteEncoding::Network>(value);
+        return ByteSwap<ByteEncoding::Network, T>(value);
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    constexpr __forceinline T HostToNetwork(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T HostToNetwork(T value) noexcept
     {
-        return ByteSawp<ByteEncoding::Network>(value);
+        return ByteSwap<ByteEncoding::Network, T>(value);
     }
 
-
-    //
-    // Generic endian support.
-    //
-
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    constexpr __forceinline T ToBigEndian(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T ToBigEndian(T value) noexcept
     {
-        return ByteSwap<ByteEncoding::BigEndian>(value);
+        return ByteSwap<ByteEncoding::BigEndian, T>(value);
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    constexpr __forceinline T FromBigEndian(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T FromBigEndian(T value) noexcept
     {
-        return ByteSwap<ByteEncoding::BigEndian>(value);
+        return ByteSwap<ByteEncoding::BigEndian, T>(value);
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    constexpr __forceinline T ToLittleEndian(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T ToLittleEndian(T value) noexcept
     {
-        return ByteSwap<ByteEncoding::LittleEndian>(value);
+        return ByteSwap<ByteEncoding::LittleEndian, T>(value);
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    constexpr __forceinline T FromLittleEndian(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T FromLittleEndian(T value) noexcept
     {
-        return ByteSwap<ByteEncoding::LittleEndian>(value);
+        return ByteSwap<ByteEncoding::LittleEndian, T>(value);
     }
+}
 
 
-    //
-    // Alignment intrinsics.
-    //
+// =================================================================================================
+//
+// Alignment operations
+//
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    constexpr __forceinline bool IsAligned(T value, T alignment) noexcept
+namespace Graphyte
+{
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr bool IsAligned(T value, T alignment) noexcept
     {
-        static_assert(std::is_unsigned_v<T>);
         return (value & (alignment - 1)) == 0;
     }
 
-    __forceinline bool IsAligned(const void* pointer, std::align_val_t alignment) noexcept
+    [[nodiscard]] inline bool IsAligned(const void* pointer, std::align_val_t alignment) noexcept
     {
-        return IsAligned<uintptr_t>(reinterpret_cast<uintptr_t>(pointer), static_cast<uintptr_t>(alignment));
+        return IsAligned<std::uintptr_t>(
+            reinterpret_cast<std::uintptr_t>(pointer),
+            static_cast<std::uintptr_t>(alignment)
+            );
     }
 
-
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    constexpr __forceinline T AlignUp(T value, T alignment) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T AlignUp(T value, T alignment) noexcept
     {
-        static_assert(std::is_unsigned_v<T>);
         return (value + (alignment - 1)) & (~(alignment - 1));
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    constexpr __forceinline T AlignDown(T value, T alignment) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T AlignDown(T value, T alignment) noexcept
     {
-        return value & (~(alignment - 1));
+        return (value & (~(alignment)-1));
     }
 
-    __forceinline void* AlignUp(void* pointer, std::align_val_t alignment) noexcept
+    template <typename T, std::enable_if_t<std::is_pointer_v<T>, int> = 0>
+    [[nodiscard]] inline T AlignUp(T pointer, std::align_val_t alignment) noexcept
     {
-        return reinterpret_cast<void*>(AlignUp<uintptr_t>(reinterpret_cast<uintptr_t>(pointer), static_cast<uintptr_t>(alignment)));
+        return reinterpret_cast<T>(AlignUp<uintptr_t>(
+            reinterpret_cast<uintptr_t>(pointer),
+            static_cast<uintptr_t>(alignment)
+            ));
     }
 
-    __forceinline void* AlignDown(void* pointer, std::align_val_t alignment) noexcept
+    template <typename T, std::enable_if_t<std::is_pointer_v<T>, int> = 0>
+    [[nodiscard]] inline T AlignDown(T pointer, std::align_val_t alignment) noexcept
     {
-        return reinterpret_cast<void*>(AlignDown<uintptr_t>(reinterpret_cast<uintptr_t>(pointer), static_cast<uintptr_t>(alignment)));
+        return reinterpret_cast<T>(AlignDown<std::uintptr_t>(
+            reinterpret_cast<std::uintptr_t>(pointer),
+            static_cast<std::uintptr_t>(alignment)
+            ));
     }
 
-    template <typename T>
-    __forceinline T* AdvancePointer(T* value, ptrdiff_t offset) noexcept
+    template <typename T, std::enable_if_t<std::is_pointer_v<T>, int> = 0>
+    [[nodiscard]] inline T AdvancePointer(T value, ptrdiff_t offset) noexcept
     {
-        return reinterpret_cast<T*>(reinterpret_cast<std::byte*>(value) + offset);
+        if constexpr (std::is_const_v<T>)
+        {
+            return reinterpret_cast<T>(reinterpret_cast<const std::byte*>(value) + offset);
+        }
+        else
+        {
+            return reinterpret_cast<T>(reinterpret_cast<std::byte*>(value) + offset);
+        }
     }
-
-    template <typename T>
-    __forceinline const T* AdvancePointer(const T* value, ptrdiff_t offset) noexcept
-    {
-        return reinterpret_cast<const T*>(reinterpret_cast<const std::byte*>(value) + offset);
-    }
-
-    //
-    // Integer parts access.
-    //
-
-    template <typename T, typename S> constexpr __forceinline T HighPart(S value) noexcept = delete;
-
-    template <> constexpr __forceinline uint8_t HighPart<uint8_t, uint16_t>(uint16_t value) noexcept
-    {
-        return static_cast<uint8_t>(value >> 8);
-    }
-    template <> constexpr __forceinline uint16_t HighPart<uint16_t, uint32_t>(uint32_t value) noexcept
-    {
-        return static_cast<uint16_t>(value >> 16);
-    }
-    template <> constexpr __forceinline uint32_t HighPart<uint32_t, uint64_t>(uint64_t value) noexcept
-    {
-        return static_cast<uint32_t>(value >> 32);
-    }
-
-    template <typename T, typename S> constexpr __forceinline T LowPart(S value) noexcept = delete;
-
-    template <> constexpr __forceinline uint8_t LowPart<uint8_t, uint16_t>(uint16_t value) noexcept
-    {
-        return static_cast<uint8_t>(value);
-    }
-
-    template <> constexpr __forceinline uint16_t LowPart<uint16_t, uint32_t>(uint32_t value) noexcept
-    {
-        return static_cast<uint16_t>(value);
-    }
-
-    template <> constexpr __forceinline uint32_t LowPart<uint32_t, uint64_t>(uint64_t value) noexcept
-    {
-        return static_cast<uint32_t>(value);
-    }
+}
 
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    [[nodiscard]] constexpr T RotateLeft(T value, int bits) noexcept
+// =================================================================================================
+//
+// Bit functions.
+//
+
+namespace Graphyte
+{
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T BitRotateLeft(T value, int bits) noexcept
     {
         return static_cast<T>(
             static_cast<T>(value << bits) |
             static_cast<T>(value >> (std::numeric_limits<T>::digits - bits))
-        );
+            );
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    [[nodiscard]] constexpr T RotateRight(T value, int bits) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr T BitRotateRight(T value, int bits) noexcept
     {
         return static_cast<T>(
             static_cast<T>(value >> bits) |
             static_cast<T>(value << (std::numeric_limits<T>::digits - bits))
-        );
+            );
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    [[nodiscard]] constexpr int CountLeadingZeros(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr int BitCountLeadingZeros(T value) noexcept
     {
         constexpr int digits = std::numeric_limits<T>::digits;
 
@@ -323,8 +303,8 @@ namespace Graphyte
         }
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    [[nodiscard]] constexpr int CountTrailingZeros(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr int BitCountTrailingZeros(T value) noexcept
     {
         if (value == 0)
         {
@@ -341,20 +321,20 @@ namespace Graphyte
         }
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    [[nodiscard]] constexpr int CountLeadingOnes(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr int BitCountLeadingOnes(T value) noexcept
     {
-        return CountLeadingZero(static_cast<T>(~value));
+        return BitCountLeadingZeros(static_cast<T>(~value));
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    [[nodiscard]] constexpr int CountTrailingOnes(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr int BitCountTrailingOnes(T value) noexcept
     {
-        return CountTrailingZero(static_cast<T>(~value));
+        return BitCountTrailingZeros(static_cast<T>(~value));
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
-    [[nodiscard]] constexpr int CountBits(T value) noexcept
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
+    [[nodiscard]] constexpr int BitCount(T value) noexcept
     {
         if constexpr (sizeof(T) <= sizeof(unsigned int))
         {
@@ -366,21 +346,20 @@ namespace Graphyte
         }
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr size_t BitWidth(T value) noexcept
     {
-        return std::numeric_limits<T>::digits - CountLeadingZeros(value);
+        return std::numeric_limits<T>::digits - BitCountLeadingZeros(value);
     }
 
-
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr bool IsPowerOf2(T value) noexcept
     {
         return value != 0
             && (value & (value - 1)) == 0;
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr T BitCeil(T value) noexcept
     {
         if (value == 0)
@@ -388,10 +367,10 @@ namespace Graphyte
             return 1;
         }
 
-        return static_cast<T>(T{ 1 } << (std::numeric_limits<T>::digits - CountLeadingZeros(static_cast<T>(value - 1))));
+        return static_cast<T>(T{ 1 } << (std::numeric_limits<T>::digits - BitCountLeadingZeros(static_cast<T>(value - 1))));
     }
 
-    template <typename T, std::enable_if_t<Impl::IsStandardUnsignedType<T>, int> = 0>
+    template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr T BitFloor(T value) noexcept
     {
         if (value == 0)
@@ -399,6 +378,6 @@ namespace Graphyte
             return 0;
         }
 
-        return static_cast<T>(T{ 1 } << (std::numeric_limits<T>::digits - 1 - CountLeadingZeros(value)));
+        return static_cast<T>(T{ 1 } << (std::numeric_limits<T>::digits - 1 - BitCountLeadingZeros(value)));
     }
 }

@@ -150,6 +150,12 @@
 #include <atomic>
 #include <charconv>
 #include <functional>
+#include <bit>
+#include <compare>
+
+#if __has_include(<span>)
+#include <span>
+#endif
 
 //
 // C Library Headers.

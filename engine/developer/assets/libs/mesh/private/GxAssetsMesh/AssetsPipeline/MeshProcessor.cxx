@@ -26,12 +26,12 @@ namespace Graphyte::AssetsPipeline
     {
         auto mesh = std::make_unique<Graphyte::Geometry::Model>();
 
-        auto path = Graphyte::Storage::FileManager::GetProjectContentDirectory();
-        Graphyte::Storage::Path::Append(path, "models/201e.e3d");
+        auto path = Graphyte::Storage::GetProjectContentDirectory();
+        Graphyte::Storage::AppendPath(path, "models/201e.e3d");
 
         std::vector<std::byte> content{};
         
-        if (Graphyte::Storage::FileManager::ReadBinary(content, path) == Status::Success)
+        if (Graphyte::Storage::ReadBinary(content, path) == Status::Success)
         {
             Graphyte::Storage::ArchiveMemoryReader reader{ content };
             Meshes::E3DImporter importer{};
@@ -47,11 +47,11 @@ namespace Graphyte::AssetsPipeline
                 GX_LOG(LogMeshProcessor, Error, "Failed to parse `{}`\n", path);
             }
 
-            auto destination = Graphyte::Storage::FileManager::GetProjectContentDirectory();
-            Graphyte::Storage::Path::Append(destination, "models/111a28.mesh");
+            auto destination = Graphyte::Storage::GetProjectContentDirectory();
+            Graphyte::Storage::AppendPath(destination, "models/111a28.mesh");
             {
                 std::unique_ptr<Graphyte::Storage::Archive> writer{};
-                if (Graphyte::Storage::FileManager::CreateWriter(writer, destination) == Status::Success)
+                if (Graphyte::Storage::CreateWriter(writer, destination) == Status::Success)
                 {
                     *writer << model;
                 }
@@ -61,7 +61,7 @@ namespace Graphyte::AssetsPipeline
                 Geometry::Model model2{};
 
                 std::unique_ptr<Graphyte::Storage::Archive> reader2{};
-                if (Graphyte::Storage::FileManager::CreateReader(reader2, destination) == Status::Success)
+                if (Graphyte::Storage::CreateReader(reader2, destination) == Status::Success)
                 {
                     *reader2 << model2;
                 }
@@ -69,7 +69,7 @@ namespace Graphyte::AssetsPipeline
                 destination += ".copy";
 
                 std::unique_ptr<Graphyte::Storage::Archive> writer{};
-                if (Graphyte::Storage::FileManager::CreateWriter(writer, destination) == Status::Success)
+                if (Graphyte::Storage::CreateWriter(writer, destination) == Status::Success)
                 {
                     *writer << model2;
                 }

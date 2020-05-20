@@ -18,7 +18,7 @@ namespace Graphyte::Diagnostics
 
         if (!frame.Module.empty() && Flags::Has(format, StackFrameFormat::Module))
         {
-            result += Storage::Path::GetFilenameRef(frame.Module);
+            result += Storage::GetFilename(frame.Module);
             result += '!';
         }
 
@@ -26,7 +26,7 @@ namespace Graphyte::Diagnostics
 
         if (!frame.File.empty() && Flags::Has(format, StackFrameFormat::Location))
         {
-            result += fmt::format(" {}:{}", Storage::Path::GetFilenameRef(frame.File), frame.Line);
+            result += fmt::format(" {}:{}", Storage::GetFilename(frame.File), frame.Line);
         }
 
         return result;

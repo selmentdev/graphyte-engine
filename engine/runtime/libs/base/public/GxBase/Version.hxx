@@ -19,11 +19,10 @@ namespace Graphyte
 
         constexpr bool IsEmpty() const noexcept
         {
-            return Major == 0
-                && Minor == 0
-                && Patch == 0
-                && Build == 0;
+            return (this->Major | this->Minor | this->Patch | this->Build) == 0;
         }
+
+        constexpr auto operator <=> (Version const& rhs) const noexcept = default;
     };
 }
 

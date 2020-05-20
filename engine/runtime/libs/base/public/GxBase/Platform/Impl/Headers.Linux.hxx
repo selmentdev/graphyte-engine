@@ -56,6 +56,8 @@
 #include <atomic>
 #include <charconv>
 #include <functional>
+#include <bit>
+#include <compare>
 
 //
 // C Library Headers.

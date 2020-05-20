@@ -2,7 +2,7 @@
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Diagnostics.hxx>
 #include <GxBase/TypeTraits.hxx>
-#include <GxBase/Half.hxx>
+#include <GxBase/Ieee754.hxx>
 
 // =================================================================================================
 //
@@ -224,7 +224,7 @@ namespace Graphyte::Maths::Impl
     inline constexpr const uint32_t SELECT_1 = 0xFFFFFFFFu;
     inline constexpr const size_t CACHE_LINE_SIZE = 64;
 
-    template <typename T> inline constexpr const T RoundingError = Graphyte::Impl::InvalidType<T>{};
+    template <typename T> inline constexpr const T RoundingError = Graphyte::InvalidType<T>{};
 
     template <> inline constexpr const int32_t RoundingError<int32_t> = 0;
     template <> inline constexpr const int64_t RoundingError<int64_t> = 0;

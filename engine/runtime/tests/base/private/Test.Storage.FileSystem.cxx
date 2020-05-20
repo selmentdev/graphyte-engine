@@ -18,8 +18,8 @@ TEST_CASE("Checking if commmon paths exist")
 
     SECTION("Engine specific paths")
     {
-        CHECK(Graphyte::Storage::IFileSystem::GetPlatformNative().Exists(Graphyte::Storage::FileManager::GetEngineDirectory()) == Graphyte::Status::Success);
-        CHECK(Graphyte::Storage::IFileSystem::GetPlatformNative().Exists(Graphyte::Storage::FileManager::GetEngineUserDirectory()) == Graphyte::Status::Success);
+        CHECK(Graphyte::Storage::IFileSystem::GetPlatformNative().Exists(Graphyte::Storage::GetEngineDirectory()) == Graphyte::Status::Success);
+        CHECK(Graphyte::Storage::IFileSystem::GetPlatformNative().Exists(Graphyte::Storage::GetEngineUserDirectory()) == Graphyte::Status::Success);
     }
 }
 
@@ -29,7 +29,7 @@ TEST_CASE("File stream reading and writing")
 
     {
         auto temp_dir = System::GetUserTemporaryDirectory();
-        auto temp_file = Storage::Path::CreateTempFilename(temp_dir, "test.base", ".bin");
+        auto temp_file = Storage::CreateTemporaryFilePath(temp_dir, "test.base", ".bin");
 
         {
             //
@@ -55,7 +55,7 @@ TEST_CASE("File stream reading and writing")
                     // We can open file for write. It must be empty.
                     //
 
-                    REQUIRE(Storage::FileManager::OpenWrite(file, temp_file) == Status::Success);
+                    REQUIRE(Storage::OpenWrite(file, temp_file) == Status::Success);
                     REQUIRE(file->GetPosition() == 0);
                     REQUIRE(file->GetSize() == 0);
 
@@ -78,7 +78,7 @@ TEST_CASE("File stream reading and writing")
                     // We can open file for read.
                     //
 
-                    REQUIRE(Storage::FileManager::OpenRead(file, temp_file) == Status::Success);
+                    REQUIRE(Storage::OpenRead(file, temp_file) == Status::Success);
                     REQUIRE(file->GetPosition() == 0);
                     REQUIRE(file->GetSize() == 32);
 
@@ -157,7 +157,7 @@ TEST_CASE("File stream reading and writing")
                 {
                     std::unique_ptr<Storage::IStream> file{};
 
-                    REQUIRE(Storage::FileManager::OpenWrite(file, temp_file) == Status::Success);
+                    REQUIRE(Storage::OpenWrite(file, temp_file) == Status::Success);
                     REQUIRE(file->GetPosition() == 0);
                     REQUIRE(file->GetSize() == 0);
 
@@ -186,7 +186,7 @@ TEST_CASE("File stream reading and writing")
                 {
                     std::unique_ptr<Storage::IStream> file{};
 
-                    REQUIRE(Storage::FileManager::OpenRead(file, temp_file) == Status::Success);
+                    REQUIRE(Storage::OpenRead(file, temp_file) == Status::Success);
                     REQUIRE(file->GetPosition() == 0);
                     REQUIRE(file->GetSize() == static_cast<int64_t>(Count * original_buffer_view.size() + 16));
 
@@ -247,7 +247,7 @@ TEST_CASE("Reading large files byte by byte; checking file consistency")
     // create file
     {
         std::unique_ptr<Storage::IStream> file{};
-        REQUIRE(Storage::FileManager::OpenWrite(file, temp_file) == Status::Success);
+        REQUIRE(Storage::OpenWrite(file, temp_file) == Status::Success);
 
         for (uint64_t i = 0; i < Count; ++i)
         {
@@ -273,7 +273,7 @@ TEST_CASE("Reading large files byte by byte; checking file consistency")
     // read file
     {
         std::unique_ptr<Storage::IStream> file{};
-        REQUIRE(Storage::FileManager::OpenRead(file, temp_file) == Status::Success);
+        REQUIRE(Storage::OpenRead(file, temp_file) == Status::Success);
 
         std::array<std::byte, 187> buffer{};
         notstd::span<std::byte> buffer_view{ buffer };

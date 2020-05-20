@@ -4,7 +4,7 @@
 #include <GxBase/Threading/Runnable.hxx>
 #include <GxBase/Threading/Sync.hxx>
 #include <GxBase/Threading.hxx>
-#include <GxBase/Diagnostics/Stopwatch.hxx>
+#include <GxBase/Stopwatch.hxx>
 
 TEST_CASE("Threading / Parallel For")
 {

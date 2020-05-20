@@ -2,7 +2,7 @@
 #include <GxBase/System.hxx>
 #include <GxBase/Threading/Thread.hxx>
 #include <GxBase/Diagnostics.hxx>
-#include <GxBase/Diagnostics/Stopwatch.hxx>
+#include <GxBase/Stopwatch.hxx>
 
 TEST_CASE("Performance Counter Frequency", "[.][performance]")
 {

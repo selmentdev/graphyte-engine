@@ -2,7 +2,7 @@
 #include <GxBase/Threading/Thread.hxx>
 #include <GxBase/Threading/Sync.hxx>
 #include <GxBase/String.hxx>
-#include <GxBase/Diagnostics/Stopwatch.hxx>
+#include <GxBase/Stopwatch.hxx>
 #include <GxBase/Diagnostics/Profiler.hxx>
 
 namespace GraphyteX::Threading

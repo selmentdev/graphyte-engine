@@ -1,5 +1,5 @@
 #include <catch2/catch.hpp>
-#include <GxBase/Half.hxx>
+#include <GxBase/Ieee754.hxx>
 
 TEST_CASE("Maths / Half <-> Float conversion")
 {

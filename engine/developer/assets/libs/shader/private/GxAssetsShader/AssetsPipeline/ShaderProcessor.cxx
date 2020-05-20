@@ -253,9 +253,6 @@ namespace Graphyte::AssetsPipeline
 
     bool ShaderProcessor::Process() noexcept
     {
-        using Storage::FileManager;
-        using Storage::Path;
-
         std::string_view path{};
         std::string_view outputFilename{};
 
@@ -264,44 +261,50 @@ namespace Graphyte::AssetsPipeline
         input.RenderAPI = Graphics::GpuRenderAPI::OpenGL;
         input.Profile = Graphics::GpuShaderProfile::GLSL_4_50;
 
-        std::string_view value{};
-
-        if (CommandLine::Get("--input", value))
+        if (auto option = CommandLine::Get("--input"); option.has_value())
         {
-            path = value;
+            path = option.value();
         }
 
-        if (CommandLine::Get("--output", value))
+        if (auto option = CommandLine::Get("--output"); option.has_value())
         {
-            outputFilename = value;
+            outputFilename = option.value();
         }
 
-        if (CommandLine::Get("--stage", value))
+        if (auto option = CommandLine::Get("--stage"); option.has_value())
         {
+            auto value = option.value();
+
             if (!FromString(input.Stage, value))
             {
                 GX_LOG(LogShaderCompilerFrontend, Error, "Invalid stage type: {}\n", value);
             }
         }
 
-        if (CommandLine::Get("--platform", value))
+        if (auto option = CommandLine::Get("--platform"); option.has_value())
         {
+            auto value = option.value();
+
             if (!FromString(input.Platform, value))
             {
                 GX_LOG(LogShaderCompilerFrontend, Error, "Invalid platform type: {}\n", value);
             }
         }
 
-        if (CommandLine::Get("--render", value))
+        if (auto option = CommandLine::Get("--render"); option.has_value())
         {
+            auto value = option.value();
+
             if (!FromString(input.RenderAPI, value))
             {
                 GX_LOG(LogShaderCompilerFrontend, Error, "Invalid render api type: {}\n", value);
             }
         }
 
-        if (CommandLine::Get("--profile", value))
+        if (auto option = CommandLine::Get("--profile"); option.has_value())
         {
+            auto value = option.value();
+
             if (!FromString(input.Profile, value))
             {
                 GX_LOG(LogShaderCompilerFrontend, Error, "Invalid profile name: {}\n", value);
@@ -312,7 +315,7 @@ namespace Graphyte::AssetsPipeline
 
         if (!path.empty())
         {
-            if (FileManager::ReadText(input.Source, std::string{ path }) != Status::Success)
+            if (Storage::ReadText(input.Source, std::string{ path }) != Status::Success)
             {
                 GX_LOG(LogShaderCompilerFrontend, Error, "Cannot read shader file: {}\n", path);
                 return false;
@@ -330,7 +333,7 @@ namespace Graphyte::AssetsPipeline
             return false;
         }
 
-        input.FileName = Path::GetFilenameRef(path);
+        input.FileName = Storage::GetFilename(path);
 
         for (auto&& backend : m_Backends)
         {
@@ -353,7 +356,7 @@ namespace Graphyte::AssetsPipeline
                 return false;
             }
 
-            output.FileName = Storage::Path::GetBaseFilenameRef(outputFilename);
+            output.FileName = Storage::GetBaseFilename(outputFilename);
             output.FileName += '.';
             output.FileName += ToString(input.Stage);
             output.FileName += ".shader";
@@ -366,8 +369,8 @@ namespace Graphyte::AssetsPipeline
             bytecode.Stage = input.Stage;
             bytecode.Flags = input.EnableDebugInfo ? Graphics::ShaderBytecodeFlags::Debug : Graphics::ShaderBytecodeFlags::None;
 
-            auto content_path = Storage::Path::Combine(
-                Storage::FileManager::GetProjectContentDirectory(),
+            auto content_path = Storage::CombinePath(
+                Storage::GetProjectContentDirectory(),
                 "shaders_compiled/",
                 ToString(input.Platform),
                 ToString(input.RenderAPI)
@@ -381,7 +384,7 @@ namespace Graphyte::AssetsPipeline
 
             std::unique_ptr<Storage::Archive> writer{};
 
-            if (Storage::FileManager::CreateWriter(writer, Storage::Path::Combine(content_path, output.FileName)) == Status::Success)
+            if (Storage::CreateWriter(writer, Storage::CombinePath(content_path, output.FileName)) == Status::Success)
             {
                 *writer << bytecode;
                 return true;

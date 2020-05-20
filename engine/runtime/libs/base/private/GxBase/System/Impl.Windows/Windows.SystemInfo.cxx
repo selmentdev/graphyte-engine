@@ -25,8 +25,8 @@ namespace Graphyte::System
         {
             result = Impl::NarrowString(wszPath.data());
 
-            Storage::Path::Normalize(result);
-            Storage::Path::AddDirectorySeparator(result);
+            Storage::NormalizePath(result);
+            Storage::AddDirectorySeparator(result);
         }
 
         return result;
@@ -54,8 +54,8 @@ namespace Graphyte::System
 
             result = Impl::NarrowString(wszPath.data());
 
-            Storage::Path::Normalize(result);
-            Storage::Path::AddDirectorySeparator(result);
+            Storage::NormalizePath(result);
+            Storage::AddDirectorySeparator(result);
         }
 
         return result;
@@ -97,8 +97,8 @@ namespace Graphyte::System
 
             result = Impl::NarrowString(wszFullPath.data());
 
-            Storage::Path::Normalize(result);
-            Storage::Path::AddDirectorySeparator(result);
+            Storage::NormalizePath(result);
+            Storage::AddDirectorySeparator(result);
 
         }
 
@@ -123,8 +123,8 @@ namespace Graphyte::System
         {
             result = Impl::NarrowString(wszPath.data());
 
-            Storage::Path::Normalize(result);
-            Storage::Path::AddDirectorySeparator(result);
+            Storage::NormalizePath(result);
+            Storage::AddDirectorySeparator(result);
         }
 
         return result;
@@ -148,8 +148,8 @@ namespace Graphyte::System
         {
             result = Impl::NarrowString(wszPath.data());
 
-            Storage::Path::Normalize(result);
-            Storage::Path::AddDirectorySeparator(result);
+            Storage::NormalizePath(result);
+            Storage::AddDirectorySeparator(result);
         }
 
         return result;

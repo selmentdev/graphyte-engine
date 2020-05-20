@@ -8,46 +8,46 @@
 
 namespace Graphyte::Storage
 {
-    std::string FileManager::GetRootDirectory() noexcept
+    std::string GetRootDirectory() noexcept
     {
         static std::string result{};
 
         if (result.empty())
         {
             result = System::GetBaseDirectory();
-            Storage::Path::Append(result, "../../../");
-            Storage::Path::Canonicalize(result);
+            Storage::AppendPath(result, "../../../");
+            Storage::CanonicalizePath(result);
         }
 
         return result;
     }
 
-    std::string FileManager::GetLaunchDirectory() noexcept
+    std::string GetLaunchDirectory() noexcept
     {
         return System::GetBaseDirectory();
     }
 
-    std::string FileManager::GetEngineDirectory() noexcept
+    std::string GetEngineDirectory() noexcept
     {
         return "../../../engine/";
     }
 
-    std::string FileManager::GetEngineContentDirectory() noexcept
+    std::string GetEngineContentDirectory() noexcept
     {
         return GetEngineDirectory() + "content/";
     }
 
-    std::string FileManager::GetEngineConfigDirectory() noexcept
+    std::string GetEngineConfigDirectory() noexcept
     {
         return GetEngineDirectory() + "config/";
     }
 
-    std::string FileManager::GetEngineSourceDirectory() noexcept
+    std::string GetEngineSourceDirectory() noexcept
     {
         return GetEngineDirectory() + "source/";
     }
 
-    std::string FileManager::GetEngineUserDirectory() noexcept
+    std::string GetEngineUserDirectory() noexcept
     {
         // TODO: Fix this.
 
@@ -61,43 +61,43 @@ namespace Graphyte::Storage
         //}
     }
 
-    std::string FileManager::GetEngineIntermediateDirectory() noexcept
+    std::string GetEngineIntermediateDirectory() noexcept
     {
         return GetEngineDirectory() + "intermediate/";
     }
 
-    std::string FileManager::GetEngineSavedDirectory() noexcept
+    std::string GetEngineSavedDirectory() noexcept
     {
         return GetEngineUserDirectory() + "saved/";
     }
 
-    std::string FileManager::GetProjectDirectory() noexcept
+    std::string GetProjectDirectory() noexcept
     {
         static std::string result{};
         if (result.empty())
         {
-            Storage::Path::Append(result, "../../../game/");
+            Storage::AppendPath(result, "../../../game/");
         }
 
         return result;
     }
 
-    std::string FileManager::GetProjectContentDirectory() noexcept
+    std::string GetProjectContentDirectory() noexcept
     {
         return GetProjectDirectory() + "content/";
     }
 
-    std::string FileManager::GetProjectConfigDirectory() noexcept
+    std::string GetProjectConfigDirectory() noexcept
     {
         return GetProjectDirectory() + "config/";
     }
 
-    std::string FileManager::GetProjectSourceDirectory() noexcept
+    std::string GetProjectSourceDirectory() noexcept
     {
         return GetProjectDirectory() + "source/";
     }
 
-    std::string FileManager::GetProjectUserDirectory() noexcept
+    std::string GetProjectUserDirectory() noexcept
     {
         // TODO: Fix this
 
@@ -111,76 +111,76 @@ namespace Graphyte::Storage
         //}
     }
 
-    std::string FileManager::GetProjectIntermediateDirectory() noexcept
+    std::string GetProjectIntermediateDirectory() noexcept
     {
         return GetProjectDirectory() + "intermediate/";
     }
 
-    std::string FileManager::GetProjectSavedDirectory() noexcept
+    std::string GetProjectSavedDirectory() noexcept
     {
         return GetProjectUserDirectory() + "saved/";
     }
 
-    std::string FileManager::GetScreenshotsDirectory() noexcept
+    std::string GetScreenshotsDirectory() noexcept
     {
         return GetProjectUserDirectory() + "screenshots/";
     }
 
-    std::string FileManager::GetCacheDirectory() noexcept
+    std::string GetCacheDirectory() noexcept
     {
         return GetProjectUserDirectory() + "cache/";
     }
 
-    std::string FileManager::GetLogsDirectory() noexcept
+    std::string GetLogsDirectory() noexcept
     {
         return GetProjectUserDirectory() + "logs/";
     }
 
-    std::string FileManager::GetCrashdumpDirectory() noexcept
+    std::string GetCrashdumpDirectory() noexcept
     {
         return GetProjectUserDirectory() + "crashdump/";
     }
 
-    std::string FileManager::GetDeveloperDirectory() noexcept
+    std::string GetDeveloperDirectory() noexcept
     {
         return GetProjectUserDirectory() + "developer/";
     }
 
-    std::string FileManager::GetBugReportDirectory() noexcept
+    std::string GetBugReportDirectory() noexcept
     {
         return GetProjectUserDirectory() + "bugreport/";
     }
 
-    std::string FileManager::GetProfilingDirectory() noexcept
+    std::string GetProfilingDirectory() noexcept
     {
         return GetProjectUserDirectory() + "profiling/";
     }
 
-    std::string FileManager::GetUserSettingsDirectory() noexcept
+    std::string GetUserSettingsDirectory() noexcept
     {
         std::string result = System::GetUserSettingsDirectory();
 
-        Storage::Path::Normalize(result);
-        Storage::Path::Append(result, Application::GetDescriptor().Company);
-        Storage::Path::Append(result, Application::GetDescriptor().Name);
-        Storage::Path::AddDirectorySeparator(result);
+        Storage::NormalizePath(result);
+        Storage::AppendPath(result, Application::GetDescriptor().Company);
+        Storage::AppendPath(result, Application::GetDescriptor().Name);
+        Storage::AddDirectorySeparator(result);
 
         return result;
     }
 
-    std::string FileManager::GetApplicationCommonDataDirectory() noexcept
+    std::string GetApplicationCommonDataDirectory() noexcept
     {
         std::string result = System::GetApplicationCommonDataDirectory();
 
-        Storage::Path::Normalize(result);
-        Storage::Path::Append(result, Application::GetDescriptor().Company);
-        Storage::Path::Append(result, Application::GetDescriptor().Name);
-        Storage::Path::AddDirectorySeparator(result);
+        Storage::NormalizePath(result);
+        Storage::AppendPath(result, Application::GetDescriptor().Company);
+        Storage::AppendPath(result, Application::GetDescriptor().Name);
+        Storage::AddDirectorySeparator(result);
 
         return result;
     }
 
-    Status FileManager::OpenRead(
+    Status OpenRead(
         std::unique_ptr<IStream>& result,
         const std::string& path,
         bool share
@@ -193,7 +193,7 @@ namespace Graphyte::Storage
         );
     }
     
-    Status FileManager::OpenWrite(
+    Status OpenWrite(
         std::unique_ptr<IStream>& result,
         const std::string& path,
         bool append,
@@ -208,7 +208,7 @@ namespace Graphyte::Storage
         );
     }
 
-    Status FileManager::CreateReader(
+    Status CreateReader(
         std::unique_ptr<Archive>& archive,
         const std::string& path,
         bool share
@@ -231,7 +231,7 @@ namespace Graphyte::Storage
         return status;
     }
 
-    Status FileManager::CreateWriter(
+    Status CreateWriter(
         std::unique_ptr<Archive>& archive,
         const std::string& path,
         bool append,
@@ -256,7 +256,7 @@ namespace Graphyte::Storage
         return status;
     }
 
-    Status FileManager::ReadText(
+    Status ReadText(
         std::string& content,
         const std::string& path
     ) noexcept
@@ -291,7 +291,7 @@ namespace Graphyte::Storage
         return Status::InvalidPath;
     }
 
-    Status FileManager::WriteText(
+    Status WriteText(
         std::string_view content,
         const std::string& path
     ) noexcept
@@ -312,7 +312,7 @@ namespace Graphyte::Storage
         return Status::InvalidPath;
     }
 
-    Status FileManager::ReadBinary(
+    Status ReadBinary(
         std::vector<std::byte>& content,
         const std::string& path
     ) noexcept
@@ -348,7 +348,7 @@ namespace Graphyte::Storage
         return Status::InvalidPath;
     }
 
-    Status FileManager::WriteBinary(
+    Status WriteBinary(
         const std::vector<std::byte>& content,
         const std::string& path
     ) noexcept
@@ -370,7 +370,7 @@ namespace Graphyte::Storage
         return Status::InvalidPath;
     }
 
-    Status FileManager::ReadBinary(
+    Status ReadBinary(
         std::unique_ptr<std::byte[]>& contents,
         size_t& size,
         const std::string& path
@@ -410,7 +410,7 @@ namespace Graphyte::Storage
         return Status::InvalidPath;
     }
 
-    Status FileManager::WriteBinary(
+    Status WriteBinary(
         const std::unique_ptr<std::byte[]>& contents,
         size_t size,
         const std::string& path
