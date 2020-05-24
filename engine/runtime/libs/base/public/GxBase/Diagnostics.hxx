@@ -21,14 +21,10 @@ namespace notstd
 
 namespace Graphyte::Diagnostics
 {
-    /*!
-     * \brief   Initializes diagnostics subsystem.
-     */
+    //! Initializes diagnostics subsystem.
     BASE_API void Initialize() noexcept;
 
-    /*!
-     * \brief   Shuts down diagnostics subsystem.
-     */
+    //! Shuts down diagnostics subsystem.
     BASE_API void Finalize() noexcept;
 }
 
@@ -40,18 +36,14 @@ namespace Graphyte::Diagnostics
 
 namespace Graphyte::Diagnostics
 {
-    /*!
-     * \brief   Determines whether debugger is attached to current process.
-     *
-     * \return  \c true when debugger is attached, \c false otherwise.
-     */
+    //! Determines whether debugger is attached to current process.
+    //!
+    //! \return \c true when debugger is attached, \c false otherwise.
     BASE_API bool IsDebuggerAttached() noexcept;
 
-    /*!
-     * \brief   Exits from current process with provided exit code.
-     *
-     * \param   exitCode    Provides exit code.
-     */
+    //! Exits from current process with provided exit code.
+    //!
+    //! \param exitCode Provides exit code.
     [[noreturn]]
     BASE_API void Exit(int32_t exitCode) noexcept;
 
@@ -211,18 +203,16 @@ namespace Graphyte::Diagnostics
      */
     BASE_API bool IsAborting() noexcept;
 
-    /*!
-     * \brief   Handles abort request.
-     *
-     * \param   condition   Provides string expression of failing condition.
-     * \param   function    Provides name of function.
-     * \param   file        Provides name of file.
-     * \param   line        Provides line number.
-     * \param   format      Provides formatter string.
-     * \param   args        Provides list of format args.
-     *
-     * \return  \c true when assert should continue, \c false otherwise.
-     */
+    //! Handles abort request.
+    //!
+    //! \param condition    Provides string expression of failing condition.
+    //! \param function     Provides name of function.
+    //! \param file         Provides name of file.
+    //! \param line         Provides line number.
+    //! \param format       Provides formatter string.
+    //! \param args         Provides list of format args.
+    //!
+    //! \return \c true when assert should continue, \c false otherwise.
     BASE_API bool OnAbortArgs(
         std::string_view condition,
         std::string_view function,
@@ -581,6 +571,12 @@ namespace Graphyte::Diagnostics
 #define GX_DEFINE_LOG_CATEGORY(name) \
     LogCategory##name name{}
 
+
+//! Outputs formatted log message.
+//!
+//! \param category Provides log category.
+//! \param level Provides severity level.
+//! \param format
 #define GX_LOG(category, level, format, ...) \
     { \
         if constexpr (::Graphyte::Diagnostics::LogLevel::level == ::Graphyte::Diagnostics::LogLevel::Fatal) \

@@ -8,7 +8,7 @@ namespace Graphyte::Graphics
 {
     GRAPHICS_API Storage::Archive& operator << (Storage::Archive& archive, ShaderBytecode& bytecode) noexcept
     {
-        constexpr const CompressionMethod CompressUsing = CompressionMethod::LZ4HC;
+        constexpr const Compression::CompressionMethod CompressUsing = Compression::CompressionMethod::LZ4HC;
 
         Storage::BinaryFormatHeader header{
             .Signature = Storage::BinarySignature{ 0xb084f8149e928dd6 },
@@ -25,7 +25,7 @@ namespace Graphyte::Graphics
         GX_ASSERT(header.FileSize == 0);
         GX_ASSERT(header.OffsetToFirstBlock == 0);
 
-        CompressionMethod compression_method = CompressUsing;
+        Compression::CompressionMethod compression_method = CompressUsing;
         archive << compression_method;
         GX_ASSERT(compression_method == CompressUsing);
 

@@ -17,16 +17,21 @@ namespace Graphyte
     //! float f = BitCast(0x3F800000);
     //! GX_ASSERT(f == 1.0f);
     //! ```
-    template <typename TTo, typename TFrom,
-        std::enable_if_t<sizeof(TTo) == sizeof(TFrom) &&
-        std::is_trivially_copyable_v<TTo> &&
-        std::is_trivially_constructible_v<TFrom>, int> = 0
-    >
+    template <typename TTo, typename TFrom>
     [[nodiscard]] constexpr TTo BitCast(TFrom const& source) noexcept
+        requires std::conjunction_v<
+            std::bool_constant<sizeof(TTo) == sizeof(TFrom)>,
+            std::is_trivially_copyable<TTo>,
+            std::is_trivially_copyable<TFrom>
+        >
     {
+#if (defined(_MSC_VER) && (_MSC_VER >= 1926)) || (defined(__clang__) && (__clang_major__ >= 10))
+        return __builtin_bit_cast(TTo, source);
+#elif
         TTo result;
         memcpy(&result, &source, sizeof(result));
         return result;
+#endif
     }
 }
 

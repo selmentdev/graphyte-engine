@@ -31,7 +31,7 @@ TEST_CASE("Compression")
     SECTION("LZ4")
     {
         std::vector<std::byte> output{};
-        CHECK(Graphyte::Compression::CompressBlock(Graphyte::CompressionMethod::LZ4, output, data));
+        CHECK(Graphyte::Compression::CompressBlock(Graphyte::Compression::CompressionMethod::LZ4, output, data));
 
         CHECK(output.size() < data.size());
     }
@@ -39,7 +39,7 @@ TEST_CASE("Compression")
     SECTION("LZ4HC")
     {
         std::vector<std::byte> output{};
-        CHECK(Graphyte::Compression::CompressBlock(Graphyte::CompressionMethod::LZ4HC, output, data));
+        CHECK(Graphyte::Compression::CompressBlock(Graphyte::Compression::CompressionMethod::LZ4HC, output, data));
 
         CHECK(output.size() < data.size());
     }
@@ -48,7 +48,7 @@ TEST_CASE("Compression")
     SECTION("ZLIB")
     {
         std::vector<std::byte> output{};
-        CHECK(Graphyte::Compression::CompressBlock(Graphyte::CompressionMethod::Zlib, output, data));
+        CHECK(Graphyte::Compression::CompressBlock(Graphyte::Compression::CompressionMethod::Zlib, output, data));
 
         CHECK(output.size() < data.size());
     }

@@ -11,7 +11,7 @@
 
 
 #if GRAPHYTE_SDKS_WITH_ZLIB
-namespace Graphyte
+namespace Graphyte::Compression::Impl
 {
     struct ZlibHelper final
     {
@@ -170,13 +170,13 @@ namespace Graphyte
 }
 #endif
 
-namespace Graphyte
+namespace Graphyte::Compression
 {
 #if GRAPHYTE_SDKS_WITH_ZLIB
     constexpr const int BitWindow = ZlibHelper::DEFAULT_BIT_WINDOW;
 #endif
 
-    BASE_API size_t Compression::MemoryBound(
+    size_t MemoryBound(
         CompressionMethod method,
         size_t size
     ) noexcept
@@ -216,7 +216,7 @@ namespace Graphyte
         return 0;
     }
 
-    BASE_API bool Compression::CompressBlock(
+    bool CompressBlock(
         CompressionMethod method,
         void* output_buffer,
         size_t& output_size,
@@ -287,7 +287,7 @@ namespace Graphyte
         return false;
     }
 
-    BASE_API bool Compression::DecompressBlock(
+    bool DecompressBlock(
         CompressionMethod method,
         void* output_buffer,
         size_t output_size,
@@ -341,7 +341,7 @@ namespace Graphyte
         return false;
     }
 
-    BASE_API bool Compression::CompressBlock(
+    bool CompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
         notstd::span<const std::byte> input
@@ -377,7 +377,7 @@ namespace Graphyte
         return result;
     }
 
-    BASE_API bool Compression::DecompressBlock(
+    bool DecompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
         notstd::span<const std::byte> input
@@ -397,7 +397,7 @@ namespace Graphyte
         );
     }
 
-    BASE_API bool Compression::CompressString(
+    bool CompressString(
         CompressionMethod method,
         std::vector<std::byte>& output,
         std::string_view input
@@ -426,7 +426,7 @@ namespace Graphyte
         return result;
     }
 
-    BASE_API bool Compression::DecompressString(
+    bool DecompressString(
         CompressionMethod method,
         std::string& output,
         const std::vector<std::byte>& input

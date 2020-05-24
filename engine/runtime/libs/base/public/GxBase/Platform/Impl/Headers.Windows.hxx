@@ -157,6 +157,10 @@
 #include <span>
 #endif
 
+#if __has_include(<concepts>)
+#include <concepts>
+#endif
+
 //
 // C Library Headers.
 //
