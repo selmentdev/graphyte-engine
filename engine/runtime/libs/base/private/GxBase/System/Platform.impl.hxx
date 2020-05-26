@@ -63,6 +63,7 @@ namespace Graphyte::System::Impl
     extern PlatformFeatureSet GPlatformFeatureSet;
 
     extern MemoryProperties GMemoryProperties;
+    extern bool GIsBuildMachine;
 
     extern size_t GIoWorkerThreads;
     extern size_t GWorkerThreads;

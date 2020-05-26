@@ -1,6 +1,11 @@
 #include <GxBase/System.hxx>
 #include <Graphyte/Build.Version.hxx>
 
+namespace Graphyte::System::Impl
+{
+    bool GIsBuildMachine = false;
+}
+
 namespace Graphyte::System
 {
     BASE_API BuildKind GetBuildKind() noexcept
@@ -15,8 +20,11 @@ namespace Graphyte::System
 
     BASE_API bool IsBuildMachine() noexcept
     {
-        // #todo Implement this properly.
+#if GX_BUILD_TYPE_RETAIL
         return false;
+#else
+        return Impl::GIsBuildMachine;
+#endif
     }
 
     BASE_API std::string_view GetBuildId() noexcept

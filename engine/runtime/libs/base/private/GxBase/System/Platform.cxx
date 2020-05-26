@@ -1,4 +1,5 @@
 #include "Platform.impl.hxx"
+#include <GxBase/CommandLine.hxx>
 
 #if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
 #   include "Impl/ProcessorFeatures.x86.hxx"
@@ -42,7 +43,9 @@ namespace Graphyte::System
         Impl::DetectPlatformFeatures();
         Impl::InitializePlatform();
 
-        // TODO: Check for build machine here
+#if GX_BUILD_TYPE_RETAIL
+        Impl::GIsBuildMachine = Graphyte::CommandLine::Get("--build-machine").has_value();
+#endif
     }
 
     BASE_API void Finalize() noexcept
