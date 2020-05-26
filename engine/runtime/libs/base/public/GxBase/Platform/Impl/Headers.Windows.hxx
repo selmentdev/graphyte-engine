@@ -99,21 +99,7 @@
 //
 #include <Windows.h>
 #include <errno.h>
-#include <process.h>
-#include <ShellAPI.h>
-#include <Psapi.h>
-#include <Ole2.h>
-#include <dwmapi.h>
-#include <wincrypt.h>
-#include <strsafe.h>
 
-//
-// Winsock implementation
-//
-#include <WinSock2.h>
-#include <in6addr.h>
-#include <ws2ipdef.h>
-#include <WS2tcpip.h>
 
 //
 // Remove unnecessary preprocessor macros.

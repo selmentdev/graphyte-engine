@@ -3,6 +3,7 @@
 #include <GxBase/System.hxx>
 
 #include <ErrorRep.h>
+#include <CommCtrl.h>
 
 namespace Graphyte::Diagnostics
 {

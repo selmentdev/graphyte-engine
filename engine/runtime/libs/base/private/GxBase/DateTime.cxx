@@ -8,6 +8,13 @@ namespace Graphyte::Impl
         31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
     };
 
+    static constexpr const std::int32_t GDaysToMonth365[13] = {
+        0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365,
+    };
+    static constexpr const std::int32_t GDaysToMonth366[13] = {
+        0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366,
+    };
+
     static constexpr const std::int32_t GDaysBeforeMonth[12] = {
         0,
         31,
@@ -30,12 +37,10 @@ namespace Graphyte::Impl
 
     static constexpr std::int32_t DaysInMonth(std::int32_t year, std::int32_t month) noexcept
     {
-        if (IsLeapYear(year) && (month == 2))
-        {
-            return 29;
-        }
+        bool const leap_year = IsLeapYear(year);
+        auto const& days_to_month = leap_year ? GDaysToMonth366 : GDaysToMonth365;
 
-        return Impl::GDaysPerMonth[month - 1];
+        return days_to_month[month] - days_to_month[month - 1];
     }
 
     static constexpr std::int64_t YearToTicks(std::int32_t year) noexcept
@@ -102,164 +107,82 @@ namespace Graphyte::Impl
 
     }
 
-    static std::int32_t GetYear(DateTime value) noexcept
-    {
-        std::int32_t days = static_cast<std::int32_t>(value.Value / Impl::GTicksInDay);
-        std::int32_t year_base = ((days / Impl::GDaysIn400Years) * 400) + 1;
-        std::int32_t year_offset = days % Impl::GDaysIn400Years;
-
-        if (year_offset >= Impl::GDaysIn100Years * 3)
-        {
-            year_base += 300;
-            year_offset -= Impl::GDaysIn100Years * 3;
-
-            if (year_offset >= Impl::GDaysIn100Years)
-            {
-                year_base += 399;
-            }
-        }
-        else if (year_offset >= Impl::GDaysIn100Years * 2)
-        {
-            year_base += 200;
-            year_offset -= Impl::GDaysIn100Years * 2;
-        }
-        else if (year_offset >= Impl::GDaysIn100Years)
-        {
-            year_base += 100;
-            year_offset -= Impl::GDaysIn100Years;
-        }
-
-        std::int32_t t = year_offset / Impl::GDaysIn4Years;
-        year_base += t * 4;
-        year_offset -= t * Impl::GDaysIn4Years;
-
-        if (year_offset >= Impl::GDaysInYear * 3)
-        {
-            year_base += 3;
-        }
-        else if (year_offset >= Impl::GDaysInYear * 2)
-        {
-            year_base += 2;
-        }
-        else if (year_offset >= Impl::GDaysInYear)
-        {
-            year_base += 1;
-        }
-
-        return year_base;
-    }
-
-    static std::int32_t GetMonth(
-        DateTime value,
-        int32_t year
+    static constexpr void GetDatePart(
+        std::int64_t ticks,
+        std::int32_t& year,
+        std::int32_t& month,
+        std::int32_t& day,
+        std::int32_t& year_day,
+        std::int32_t& week_day
     ) noexcept
     {
-        std::int64_t ticks = value.Value - YearToTicks(year);
+        int32_t n = static_cast<int32_t>(ticks / GTicksInDay);
 
-        std::int32_t days = static_cast<std::int32_t>(ticks / Impl::GTicksInDay);
+        week_day = (n + 1) % 7;
 
-        if (IsLeapYear(year))
+        int32_t y400 = n / GDaysIn400Years;
+        n -= y400 * GDaysIn400Years;
+        int32_t y100 = n / GDaysIn100Years;
+
+        if (y100 == 4)
         {
-            if (days < 31)
-            {
-                return 1;
-            }
-            else if (days < (31 + 29))
-            {
-                return 2;
-            }
-
-            --days;
+            y100 = 3;
         }
 
-        std::int32_t month = static_cast<std::int32_t>(Month::First);
+        n -= y100 * GDaysIn100Years;
 
-        while ((month < static_cast<std::int32_t>(Month::Last)) && (days >= Impl::GDaysBeforeMonth[month]))
+        int32_t y4 = n / GDaysIn4Years;
+        n -= y4 * GDaysIn4Years;
+
+        int32_t y1 = n / GDaysInYear;
+
+        if (y1 == 4)
         {
-            ++month;
+            y1 = 3;
         }
 
-        return month;
+        year = y400 * 400 + y100 * 100 + y4 * 4 + y1 + 1;
+
+        n -= y1 * GDaysInYear;
+
+        year_day = n + 1;
+
+        bool is_leap = (y1 == 3 && (y4 != 24 || y100 == 3));
+
+        auto const& days = is_leap ? GDaysToMonth366 : GDaysToMonth365;
+
+        int32_t m = (n >> 5) + 1;
+
+        while (n >= days[m])
+        {
+            ++m;
+        }
+
+        month = m;
+        day = n - days[m - 1] + 1;
     }
 
-#if false
-    static int32_t GetMonth(DateTime value) noexcept
-    {
-        return GetMonth(value, GetYear(value));
-    }
-#endif
-
-    static std::int32_t GetDay(
-        DateTime value,
-        std::int32_t year
+    static constexpr void GetTimePart(
+        std::int64_t ticks,
+        std::int32_t& hour,
+        std::int32_t& minute,
+        std::int32_t& second,
+        std::int32_t& millisecond
     ) noexcept
     {
-        std::int64_t ticks = value.Value - YearToTicks(year);
+        std::int64_t n = ticks / Impl::GTicksInMillisecond;
 
-        std::int32_t days = static_cast<std::int32_t>(ticks / Impl::GTicksInDay);
+        millisecond = static_cast<std::int32_t>(n % 1000);
+        n = n / 1000;
 
-        if (IsLeapYear(year))
-        {
-            if (days < 31)
-            {
-                return days + 1;
-            }
-            else if (days < (31 + 29))
-            {
-                return days - 30;
-            }
+        second = static_cast<std::int32_t>(n % 60);
+        n = n / 60;
 
-            --days;
-        }
+        minute = static_cast<std::int32_t>(n % 60);
+        n = n / 60;
 
-        std::int32_t month = static_cast<std::int32_t>(Month::First);
-
-        while ((month < static_cast<std::int32_t>(Month::Last)) && (days >= Impl::GDaysBeforeMonth[month]))
-        {
-            ++month;
-        }
-
-        return days - Impl::GDaysBeforeMonth[month - 1] + 1;
+        hour = static_cast<std::int32_t>(n % 24);
     }
-
-#if false
-    static int32_t GetDay(DateTime value) noexcept
-    {
-        return GetDay(value, GetYear(value));
-    }
-#endif
-
-    static std::int32_t GetHour(DateTime value) noexcept
-    {
-        return static_cast<std::int32_t>((value.Value / Impl::GTicksInHour) % 24);
-    }
-
-    static std::int32_t GetMinute(DateTime value) noexcept
-    {
-        return static_cast<std::int32_t>((value.Value / Impl::GTicksInMinute) % 60);
-    }
-
-    static std::int32_t GetSecond(DateTime value) noexcept
-    {
-        return static_cast<std::int32_t>((value.Value / Impl::GTicksInSecond) % 60);
-    }
-
-    static std::int32_t GetMillisecond(DateTime value) noexcept
-    {
-        return static_cast<std::int32_t>((value.Value / Impl::GTicksInMillisecond) % 1000);
-    }
-
-    static std::int32_t GetDayOfWeek(DateTime value) noexcept
-    {
-        return static_cast<std::int32_t>(((value.Value / Impl::GTicksInDay) + 1) % static_cast<std::int32_t>(WeekDay::Count));
-    }
-
-    static std::int32_t GetDayOfYear(DateTime value) noexcept
-    {
-        std::int64_t ticks = value.Value - YearToTicks(GetYear(value));
-        return static_cast<std::int32_t>(ticks / Impl::GTicksInDay) + 1;
-    }
-
 }
 
 namespace Graphyte
@@ -407,17 +330,23 @@ namespace Graphyte
 
     BASE_API bool DateTime::ToCalendar(CalendarTime& result) noexcept
     {
-        std::int32_t const year = Impl::GetYear(*this);
+        Impl::GetDatePart(
+            this->Value,
+            result.Year,
+            result.Month,
+            result.Day,
+            result.DayOfYear,
+            result.DayOfWeek
+        );
 
-        result.Year        = static_cast<std::uint16_t>(year);
-        result.Month       = static_cast<std::uint16_t>(Impl::GetMonth(*this, year));
-        result.Day         = static_cast<std::uint16_t>(Impl::GetDay(*this, year));
-        result.Hour        = static_cast<std::uint16_t>(Impl::GetHour(*this));
-        result.Minute      = static_cast<std::uint16_t>(Impl::GetMinute(*this));
-        result.Second      = static_cast<std::uint16_t>(Impl::GetSecond(*this));
-        result.Millisecond = static_cast<std::uint16_t>(Impl::GetMillisecond(*this));
-        result.DayOfWeek   = static_cast<std::uint16_t>(Impl::GetDayOfWeek(*this));
-        result.DayOfYear   = static_cast<std::uint16_t>(Impl::GetDayOfYear(*this));
+        Impl::GetTimePart(
+            this->Value,
+            result.Hour,
+            result.Minute,
+            result.Second,
+            result.Millisecond
+        );
+
         return true;
     }
 

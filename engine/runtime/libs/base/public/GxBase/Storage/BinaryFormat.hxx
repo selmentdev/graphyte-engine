@@ -40,7 +40,8 @@ namespace Graphyte::Storage
             return archive << signature.Value;
         }
     };
-    static_assert(sizeof(BinarySignature) == 8);
+    static_assert(sizeof(BinarySignature) == alignof(uint64_t));
+    static_assert(alignof(BinarySignature) == alignof(uint64_t));
 
     struct BinaryFormatVersion final
     {
@@ -76,7 +77,9 @@ namespace Graphyte::Storage
                 << version.Minor;
         }
     };
-    static_assert(sizeof(BinaryFormatVersion) == 4);
+    static_assert(sizeof(BinaryFormatVersion) == sizeof(uint32_t));
+    static_assert(alignof(BinaryFormatVersion) == alignof(uint16_t));
+
 
     struct BinaryBlockHeader final
     {
@@ -96,6 +99,7 @@ namespace Graphyte::Storage
         }
     };
     static_assert(sizeof(BinaryBlockHeader) == 24);
+    static_assert(alignof(BinaryBlockHeader) == alignof(uint64_t));
 
     struct BinaryFormatHeader final
     {
@@ -121,4 +125,5 @@ namespace Graphyte::Storage
         }
     };
     static_assert(sizeof(BinaryFormatHeader) == 40);
+    static_assert(alignof(BinaryFormatHeader) == alignof(uint64_t));
 }

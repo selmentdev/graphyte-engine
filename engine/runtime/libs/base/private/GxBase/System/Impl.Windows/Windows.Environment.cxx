@@ -5,6 +5,8 @@
 
 #include "../Platform.impl.hxx"
 
+#include <shellapi.h>
+
 namespace Graphyte::System
 {
     BASE_API Status GetClipboardContent(

@@ -2,6 +2,7 @@
 #include <GxAssetsShader/AssetsPipeline/ShaderProcessor.hxx>
 #include <GxBase/System/Library.hxx>
 
+#include <Unknwn.h>
 #include <dxcapi.h>
 #include <wrl/client.h>
 

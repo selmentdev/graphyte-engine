@@ -2,7 +2,6 @@
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Diagnostics.hxx>
 #include <GxBase/Types.hxx>
-#include <GxBase/Storage/EnumSerialize.hxx>
 #include <GxBase/Uuid.hxx>
 #include <GxBase/DateTime.hxx>
 
@@ -100,6 +99,11 @@ namespace Graphyte::Storage
             return archive;
         }
         __forceinline friend Archive& operator << (Archive& archive, char& value) noexcept
+        {
+            archive.Serialize(&value, sizeof(value));
+            return archive;
+        }
+        __forceinline friend Archive& operator << (Archive& archive, char8_t& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
@@ -244,24 +248,19 @@ namespace Graphyte::Storage
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-
-        template <typename TEnumType, typename TStorageType>
-        __forceinline friend Archive& operator << (Archive& archive, EnumStorage<TEnumType, TStorageType>& value) noexcept
-        {
-            archive.Serialize(&value.StorageValue, sizeof(value.StorageValue));
-            return archive;
-        }
     };
 
-    template <typename TEnumType, typename = std::enable_if_t<std::is_enum_v<TEnumType>>>
+    template <typename TEnumType>
     __forceinline Archive& operator<< (Archive& archive, TEnumType& value) noexcept
+        requires (std::is_enum_v<TEnumType>)
     {
         archive.Serialize(&value, sizeof(value));
         return archive;
     }
 
-    template <typename T, typename = std::enable_if_t<!std::is_polymorphic_v<T>>>
+    template <typename T>
     __forceinline Archive& operator<< (Archive& archive, std::vector<T>& value) noexcept
+        requires (!std::is_polymorphic_v<T>)
     {
         if (archive.IsLoading())
         {

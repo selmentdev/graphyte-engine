@@ -1,3 +1,4 @@
+#if false
 #include <GxBase/Network/Socket.hxx>
 #include <GxBase/Flags.hxx>
 #include <GxBase/Diagnostics.hxx>
@@ -264,3 +265,4 @@ namespace Graphyte::Network
         return WaitStatus::Success;
     }
 }
+#endif

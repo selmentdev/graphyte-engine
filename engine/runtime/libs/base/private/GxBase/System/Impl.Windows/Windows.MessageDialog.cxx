@@ -2,6 +2,8 @@
 #include <GxBase/System/Impl.Windows/Windows.Helpers.hxx>
 #include "../Platform.impl.hxx"
 
+#include <CommCtrl.h>
+
 namespace Graphyte::System::Impl
 {
     static const TASKDIALOG_BUTTON GMessageDialogButtonOk         { IDOK,       L"&OK" };

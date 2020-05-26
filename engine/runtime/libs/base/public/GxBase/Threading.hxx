@@ -1,7 +1,6 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Diagnostics.hxx>
-//#include <GxBase/Delegate.hxx>
 
 // =================================================================================================
 //
@@ -10,27 +9,23 @@
 
 namespace Graphyte::Threading
 {
-    /*!
-     * \brief   Executes specified code in parallel threads for specified amount of items.
-     *
-     * \param   count           Provides number of items to run on parallel threads.
-     * \param   code            Provides delegate to invoke for each item in parallel.
-     * \param   singlethreaded  Specifies whether this loop should be invoked on single thread.
-     */
+    //! Executes specified code in parallel threads for specified amount of items.
+    //!
+    //! \param count         Provides number of items to run on parallel threads.
+    //! \param code          Provides delegate to invoke for each item in parallel.
+    //! \param single_thread Specifies whether this loop should be invoked on single thread.
     BASE_API void ParallelFor(
         uint32_t count,
         std::function<void(uint32_t)> code,
-        bool singlethreaded = false
+        bool single_thread = false
     ) noexcept;
 
-    /*!
-     * \brief   Executes specified code in parallel threads for specified amount of items.
-     *
-     * \param   count           Provides number of items to run on parallel threads.
-     * \param   code            Provides delegate to invoke for each item in parallel.
-     * \param   preprocess      Provides delegate to invoke before parallel for runs.
-     * \param   singlethreaded  Specifies whether this loop should be invoked on single thread.
-     */
+    //! Executes specified code in parallel threads for specified amount of items.
+    //!
+    //! \param count         Provides number of items to run on parallel threads.
+    //! \param code          Provides delegate to invoke for each item in parallel.
+    //! \param preprocess    Provides delegate to invoke before parallel for runs.
+    //! \param single_thread Specifies whether this loop should be invoked on single thread.
     BASE_API void ParallelFor(
         uint32_t count,
         std::function<void(uint32_t)> code,
@@ -51,19 +46,19 @@ namespace Graphyte::Threading
 {
     template <typename T>
     inline T VolatileLoad(const T* p) noexcept
+        requires (std::is_trivially_copyable_v<T>)
     {
         GX_ASSERT(p != nullptr);
 
-        static_assert(std::is_trivially_copyable_v<T>);
         return *static_cast<const volatile T*>(p);
     }
 
     template <typename T>
     inline void VolatileStore(T* p, T v) noexcept
+        requires (std::is_trivially_copyable_v<T>)
     {
         GX_ASSERT(p != nullptr);
 
-        static_assert(std::is_trivially_copyable_v<T>);
         *static_cast<volatile T*>(p) = v;
     }
 }
@@ -140,9 +135,7 @@ namespace Graphyte::Threading
 
 namespace Graphyte::Threading
 {
-    /*!
-     * \brief   Yields execution of current thread.
-     */
+    //! Yields execution of current thread.
     __forceinline void YieldThread() noexcept
     {
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
@@ -158,11 +151,9 @@ namespace Graphyte::Threading
 #endif
     }
 
-    /*!
-     * \brief   Sleeps current thread for specified time in milliseconds.
-     *
-     * \param   milliseconds    Provides timeout in milliseconds.
-     */
+    //! Sleeps current thread for specified time in milliseconds.
+    //!
+    //! \param milliseconds Provides timeout in milliseconds.
     __forceinline void SleepThread(uint32_t milliseconds) noexcept
     {
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
@@ -178,9 +169,7 @@ namespace Graphyte::Threading
 #endif
     }
 
-    /*!
-     * \brief   Gets current thread id.
-     */
+    //! Gets current thread id.
     __forceinline ThreadId CurrentThreadId() noexcept
     {
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP

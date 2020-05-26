@@ -2,6 +2,7 @@
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #include <GxBase/System/Impl.Windows/Windows.Helpers.hxx>
+#include <process.h>
 #endif
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP

@@ -27,7 +27,7 @@ namespace Graphyte
     {
 #if (defined(_MSC_VER) && (_MSC_VER >= 1926)) || (defined(__clang__) && (__clang_major__ >= 10))
         return __builtin_bit_cast(TTo, source);
-#elif
+#else
         TTo result;
         memcpy(&result, &source, sizeof(result));
         return result;

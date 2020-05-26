@@ -138,14 +138,14 @@ namespace Graphyte::System
         }
         __forceinline static void Convert(SYSTEMTIME& result, const CalendarTime& value) noexcept
         {
-            result.wYear = value.Year;
-            result.wMonth = value.Month;
-            result.wDayOfWeek = value.DayOfWeek;
-            result.wDay = value.Day;
-            result.wHour = value.Hour;
-            result.wMinute = value.Minute;
-            result.wSecond = value.Second;
-            result.wMilliseconds = value.Millisecond;
+            result.wYear = static_cast<WORD>(value.Year);
+            result.wMonth = static_cast<WORD>(value.Month);
+            result.wDayOfWeek = static_cast<WORD>(value.DayOfWeek);
+            result.wDay = static_cast<WORD>(value.Day);
+            result.wHour = static_cast<WORD>(value.Hour);
+            result.wMinute = static_cast<WORD>(value.Minute);
+            result.wSecond = static_cast<WORD>(value.Second);
+            result.wMilliseconds = static_cast<WORD>(value.Millisecond);
         }
     };
 

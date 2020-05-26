@@ -2,6 +2,7 @@
 #include <GxBase/System/Impl.Windows/Windows.Helpers.hxx>
 #include <GxBase/System.hxx>
 
+#include <CommCtrl.h>
 #include "../Diagnostics.Impl.hxx"
 
 namespace Graphyte::Diagnostics::Impl

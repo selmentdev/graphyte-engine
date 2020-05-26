@@ -1,5 +1,6 @@
 #include <GxBase/Network.hxx>
 
+#if false
 namespace Graphyte::Network::Impl
 {
     static Status MapGAIResult(
@@ -222,3 +223,4 @@ namespace Graphyte::Network
 #endif
     }
 }
+#endif

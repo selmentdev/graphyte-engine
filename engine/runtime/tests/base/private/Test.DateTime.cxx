@@ -3,6 +3,26 @@
 
 TEST_CASE("DateTime")
 {
+    SECTION("Create simple time")
+    {
+        using namespace Graphyte;
+
+        auto dt = DateTime::Create(2020, 5, 26, 7, 52, 11, 115);
+
+        CalendarTime ct;
+        dt.ToCalendar(ct);
+
+        REQUIRE(ct.Year == 2020);
+        REQUIRE(ct.Month == 5);
+        REQUIRE(ct.Day == 26);
+        REQUIRE(ct.Hour == 7);
+        REQUIRE(ct.Minute == 52);
+        REQUIRE(ct.Second == 11);
+        REQUIRE(ct.Millisecond == 115);
+        REQUIRE(ct.DayOfWeek == 2);
+        REQUIRE(ct.DayOfYear == 147);
+    }
+
     SECTION("ToString")
     {
         using namespace Graphyte;

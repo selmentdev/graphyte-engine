@@ -4,6 +4,8 @@
 
 #include "../Diagnostics.Impl.hxx"
 
+#include <CommCtrl.h>
+
 namespace Graphyte::Diagnostics::Impl
 {
     AssertResult ReportAssertion(

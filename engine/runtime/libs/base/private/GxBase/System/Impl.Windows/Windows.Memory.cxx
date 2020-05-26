@@ -1,6 +1,8 @@
 #include <GxBase/System.hxx>
 #include "../Platform.impl.hxx"
 
+#include <Psapi.h>
+
 namespace Graphyte::System
 {
     BASE_API MemoryUsage GetMemoryUsage() noexcept

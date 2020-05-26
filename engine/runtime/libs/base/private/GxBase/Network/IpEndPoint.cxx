@@ -1,3 +1,4 @@
+#if false
 #include <GxBase/Network/IpEndPoint.hxx>
 #include <GxBase/Network/IpAddress.hxx>
 #include <GxBase/String.hxx>
@@ -379,3 +380,4 @@ namespace Graphyte::Network
 #endif
     }
 }
+#endif

@@ -23,37 +23,8 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp
 #include <GxBase/System/Dialogs.hxx>
 #include <GxBase/Random.hxx>
 
-template <typename To, typename From, std::enable_if_t<std::conjunction_v<std::bool_constant<sizeof(To) == sizeof(From)>, std::is_trivially_copyable<To>, std::is_trivially_copyable<From>>, int> = 0>
-GX_NOINLINE [[nodiscard]] To BitGazd(const From& value) noexcept
-{
-    return __builtin_bit_cast(To, value);
-}
-
-template <typename TTo, typename TFrom,
-    std::enable_if_t<sizeof(TTo) == sizeof(TFrom) &&
-    std::is_trivially_copyable_v<TTo> &&
-    std::is_trivially_constructible_v<TFrom>, int> = 0
->
-GX_NOINLINE [[nodiscard]] TTo BitChwast(TFrom const& source) noexcept
-{
-    TTo result;
-    memcpy(&result, &source, sizeof(result));
-    return result;
-}
-
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {
-    float f1 = BitGazd<float>(uint32_t{ 0x3f800000 });
-    float f2 = BitChwast<float>(uint32_t{ 0x40000000 });
-    GX_LOG(LogAssetsCompiler, Info, "{} {}", f1, f2);
-
-    char buffer[64];
-    snprintf(buffer, sizeof(buffer), "%.2f", 3.14159f);
-    std::string cc = fmt::format("{:.2f}", 3.14159f);
-    GX_ASSERT(false);
-    GX_ABORT("failed to reason");
-
-
     std::vector<std::string> paths{};
     std::vector<Graphyte::System::FileDialogFilter> filters{
         { "Text Files", "*.txt", },

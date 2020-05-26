@@ -19,14 +19,10 @@ GX_DECLARE_LOG_CATEGORY(LogPlatform, Trace, Trace);
 
 namespace Graphyte::System
 {
-    /*!
-     * \brief   Initializes platform specific engine part.
-     */
+    //! Initializes platform specific engine part.
     extern BASE_API void Initialize() noexcept;
 
-    /*!
-     * \brief   Finalizes platform specific engine part.
-     */
+    //! Finalizes platform specific engine part.
     extern BASE_API void Finalize() noexcept;
 }
 
@@ -108,9 +104,7 @@ namespace Graphyte::System
         uint64_t PeakUsedPhysical;
     };
 
-    /*!
-     * \brief   Gets current application memory usage.
-     */
+    //! Gets current application memory usage.
     extern BASE_API MemoryUsage GetMemoryUsage() noexcept;
 
     struct MemoryProperties final
@@ -123,9 +117,7 @@ namespace Graphyte::System
         uint64_t AddressLimit;
     };
 
-    /*!
-     * \brief   Gets system memory properties.
-     */
+    //! Gets system memory properties.
     extern BASE_API MemoryProperties GetMemoryProperties() noexcept;
 }
 
@@ -667,24 +659,21 @@ namespace Graphyte::System
 
 namespace Graphyte::System
 {
-    /*!
-     * \brief   Gets content of clipboard.
-     *
-     * \param   content     Returns current content of clipboard.
-     *
-     * \return  The status code.
-     */
+    //! Gets content of clipboard.
+    //!
+    //! \param content Returns current content of clipboard.
+    //!
+    //! \return The status code.
     extern BASE_API Status GetClipboardContent(
         std::string& content
     ) noexcept;
 
-    /*!
-     * \brief   Sets content of clipboard.
-     *
-     * \param   content     Provides new content of clipboard.
-     *
-     * \return  The status code.
-     */
+
+    //! Sets content of clipboard.
+    //!
+    //! \param content Provides new content of clipboard.
+    //!
+    //! \return The status code.
     extern BASE_API Status SetClipboardContent(
         std::string_view content
     ) noexcept;
@@ -1072,14 +1061,12 @@ namespace Graphyte::System
      */
     extern BASE_API DeviceScreenOrientation GetScreenOrientation() noexcept;
 
-    /*!
-     * \brief   Gets color of pixel on screen.
-     *
-     * \param   position    Provides pixel position.
-     * \param   gamma       Provides gamma factor.
-     *
-     * \return  The color on screen. Returns (0, 0, 0) for invalid position / when not supported.
-     */
+    //! Gets color of pixel on screen.
+    //!
+    //! \param position Provides pixel position.
+    //! \param gamma    Provides gamma factor.
+    //!
+    //! \return The color on screen. Returns (0, 0, 0) for invalid position / when not supported.
     extern BASE_API ColorF GetScreenPixel(
         Point position,
         float gamma

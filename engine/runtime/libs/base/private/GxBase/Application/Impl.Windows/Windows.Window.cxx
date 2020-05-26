@@ -5,6 +5,8 @@
 #include <GxBase/System/Impl.Windows/Windows.Types.hxx>
 #include <GxBase/Application.hxx>
 
+#include <dwmapi.h>
+
 namespace Graphyte::Application::Impl
 {
     const wchar_t* WindowsWindow::WindowsClassName = L"Graphyte::Window";

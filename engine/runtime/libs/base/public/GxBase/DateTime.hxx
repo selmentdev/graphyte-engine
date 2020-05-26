@@ -94,15 +94,15 @@ namespace Graphyte
 
     struct CalendarTime final
     {
-        std::uint16_t Year;
-        std::uint16_t Month;
-        std::uint16_t Day;
-        std::uint16_t Hour;
-        std::uint16_t Minute;
-        std::uint16_t Second;
-        std::uint16_t Millisecond;
-        std::uint16_t DayOfWeek;
-        std::uint16_t DayOfYear;
+        std::int32_t Year;
+        std::int32_t Month;
+        std::int32_t Day;
+        std::int32_t Hour;
+        std::int32_t Minute;
+        std::int32_t Second;
+        std::int32_t Millisecond;
+        std::int32_t DayOfWeek;
+        std::int32_t DayOfYear;
 
         BASE_API std::int64_t ToTicks() const noexcept;
         BASE_API bool IsValid() const noexcept;

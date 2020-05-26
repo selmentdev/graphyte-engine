@@ -1,5 +1,7 @@
 #include <GxBase/Crypto/Random.hxx>
 
+#include <wincrypt.h>
+
 namespace Graphyte::Crypto
 {
     BASE_API Status GetRandomBytes(notstd::span<std::byte> buffer) noexcept

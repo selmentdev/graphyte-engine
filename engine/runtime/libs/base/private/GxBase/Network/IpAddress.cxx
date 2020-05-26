@@ -1,3 +1,4 @@
+#if false
 #include <GxBase/Network/IpAddress.hxx>
 #include <GxBase/Diagnostics.hxx>
 //#include <GxBase/ByteAccess.hxx>
@@ -834,3 +835,4 @@ namespace Graphyte::Network
         return result;
     }
 }
+#endif

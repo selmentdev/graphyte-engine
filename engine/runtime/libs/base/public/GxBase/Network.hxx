@@ -1,7 +1,7 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Status.hxx>
-#include <GxBase/Network/IpEndPoint.hxx>
+//#include <GxBase/Network/IpEndPoint.hxx>
 
 namespace Graphyte::Network
 {
@@ -13,6 +13,7 @@ namespace Graphyte::Network
         bool& status
     ) noexcept;
 
+#if false
     BASE_API Status Download(
         std::unique_ptr<std::byte[]>& result,
         size_t& size,
@@ -40,4 +41,5 @@ namespace Graphyte::Network
         std::vector<std::string>& host_list,
         const IpEndPoint& address
     ) noexcept;
+#endif
 }

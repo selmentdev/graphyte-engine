@@ -1,4 +1,5 @@
 #pragma once
+#error Do not include now
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Network/IpAddress.hxx>
 #include <GxBase/Network/IpEndPoint.hxx>

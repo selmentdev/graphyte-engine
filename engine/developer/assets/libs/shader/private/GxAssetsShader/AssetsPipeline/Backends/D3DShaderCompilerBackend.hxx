@@ -6,7 +6,8 @@
 #include <GxAssetsShader/AssetsPipeline/ShaderProcessor.hxx>
 #include <GxBase/System/Library.hxx>
 
-#include "dxcapi.h"
+#include <Unknwn.h>
+#include <dxcapi.h>
 #include <d3dcompiler.h>
 
 namespace Graphyte::AssetsPipeline
