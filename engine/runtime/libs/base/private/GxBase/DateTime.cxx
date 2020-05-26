@@ -4,10 +4,6 @@
 
 namespace Graphyte::Impl
 {
-    static constexpr const std::int32_t GDaysPerMonth[12] = {
-        31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
-    };
-
     static constexpr const std::int32_t GDaysToMonth365[13] = {
         0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365,
     };
@@ -15,24 +11,9 @@ namespace Graphyte::Impl
         0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366,
     };
 
-    static constexpr const std::int32_t GDaysBeforeMonth[12] = {
-        0,
-        31,
-        31 + 28,
-        31 + 28 + 31,
-        31 + 28 + 31 + 30,
-        31 + 28 + 31 + 30 + 31,
-        31 + 28 + 31 + 30 + 31 + 30,
-        31 + 28 + 31 + 30 + 31 + 30 + 31,
-        31 + 28 + 31 + 30 + 31 + 30 + 31 + 31,
-        31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30,
-        31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31,
-        31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30
-    };
-
     static constexpr bool IsLeapYear(std::int32_t year) noexcept
     {
-        return ((year % 4) == 0) && (((year % 100) != 0) || ((year % 400) == 0));
+        return (year & 3) == 0 && ((year & 15) == 0 || (year % 25) != 0);
     }
 
     static constexpr std::int32_t DaysInMonth(std::int32_t year, std::int32_t month) noexcept
@@ -43,68 +24,50 @@ namespace Graphyte::Impl
         return days_to_month[month] - days_to_month[month - 1];
     }
 
-    static constexpr std::int64_t YearToTicks(std::int32_t year) noexcept
-    {
-        --year;
-
-        auto const days =
-            static_cast<std::int64_t>(year) * 365 +
-            static_cast<std::int64_t>(year) / 4 -
-            static_cast<std::int64_t>(year) / 100 +
-            static_cast<std::int64_t>(year) / 400;
-
-        return days * Impl::GTicksInDay;
-    }
-
-    static std::int64_t DateToTicks(
+    static constexpr std::int64_t DateToTicks(
         std::int32_t year,
         std::int32_t month,
-        std::int32_t day
+        std::int32_t day,
+        Status& status
     ) noexcept
     {
-        GX_ASSERT((year >= 1) && (year <= 9999));
-        GX_ASSERT((month >= 1) && (month <= 12));
-        GX_ASSERT((day >= 1) && (day <= 31));
-
-        bool is_leap_year = Impl::IsLeapYear(year);
-        std::int32_t days_in_month = GDaysPerMonth[month - 1];
-
-        if ((month == 2) && is_leap_year)
+        if (year < 1 || year > 9999 || month < 1 || month > 12 || day < 1)
         {
-            ++days_in_month;
+            status = Status::InvalidArgument;
         }
 
-        GX_ASSERT((day >= 1) && (day <= days_in_month));
-
-        std::int64_t result = YearToTicks(year) / Impl::GTicksInDay;
-        result += static_cast<std::int64_t>(Impl::GDaysBeforeMonth[month - 1]);
-
-        if ((month > 2) && is_leap_year)
+        auto const& days = IsLeapYear(year) ? GDaysToMonth366 : GDaysToMonth365;
+        if (day > days[month] - days[month - 1])
         {
-            ++result;
+            status = Status::InvalidArgument;
         }
 
-        auto const days = (result + static_cast<std::int64_t>(day) - 1);
+        status = Status::Success;
 
-        return days * Impl::GTicksInDay;
+        std::int32_t const y = year - 1;
+        std::int32_t const n = y * 365 + y / 4 - y / 100 + y / 400 + days[month - 1] + day - 1;
+
+        return n * GTicksInDay;
     }
 
-    static std::int64_t TimeToTicks(
+
+    static constexpr std::int64_t TimeToTicks(
         std::int32_t hour,
         std::int32_t minute,
-        std::int32_t second
+        std::int32_t second,
+        Status& status
     ) noexcept
     {
-        GX_ASSERT((hour >= 0) && (hour <= 23));
-        GX_ASSERT((minute >= 0) && (minute <= 59));
-        GX_ASSERT((second >= 0) && (second <= 59));
-
-        std::int64_t const seconds = (static_cast<std::int64_t>(hour) * 3600
+        std::int64_t const total
+            = static_cast<std::int64_t>(hour) * 3600
             + static_cast<std::int64_t>(minute) * 60
-            + static_cast<std::int64_t>(second));
+            + static_cast<std::int64_t>(second);
 
-        return seconds * Impl::GTicksInSecond;
+        status = (total > GMaxSeconds || total < GMinSeconds)
+            ? Status::Failure
+            : Status::Success;
 
+        return total * GTicksInSecond;
     }
 
     static constexpr void GetDatePart(
@@ -189,8 +152,14 @@ namespace Graphyte
 {
     BASE_API std::int64_t CalendarTime::ToTicks() const noexcept
     {
-        std::int64_t const ticksDate = Impl::DateToTicks(this->Year, this->Month, this->Day);
-        std::int64_t const ticksTime = Impl::TimeToTicks(this->Hour, this->Minute, this->Second);
+        Status status{};
+
+        std::int64_t const ticksDate = Impl::DateToTicks(this->Year, this->Month, this->Day, status);
+        GX_ASSERT(status == Status::Success);
+
+        std::int64_t const ticksTime = Impl::TimeToTicks(this->Hour, this->Minute, this->Second, status);
+        GX_ASSERT(status == Status::Success);
+
         std::int64_t const ticksMillisecond = this->Millisecond * Impl::GTicksInMillisecond;
 
         return ticksDate + ticksTime + ticksMillisecond;
@@ -219,9 +188,12 @@ namespace Graphyte
         std::int32_t day
     ) noexcept
     {
-        return {
-            Impl::DateToTicks(year, month, day)
-        };
+        Status status = Status::Success;
+
+        std::int64_t const ticks = Impl::DateToTicks(year, month, day, status);
+        GX_ASSERT(status == Status::Success);
+
+        return { ticks };
     }
 
     BASE_API DateTime DateTime::Create(
@@ -233,10 +205,15 @@ namespace Graphyte
         std::int32_t second
     ) noexcept
     {
-        return {
-            Impl::DateToTicks(year, month, day) +
-            Impl::TimeToTicks(hour, minute, second)
-        };
+        Status status = Status::Success;
+
+        std::int64_t const date_ticks = Impl::DateToTicks(year, month, day, status);
+        GX_ASSERT(status == Status::Success);
+
+        std::int64_t const time_ticks = Impl::TimeToTicks(hour, minute, second, status);
+        GX_ASSERT(status == Status::Success);
+
+        return { date_ticks + time_ticks };
     }
 
     BASE_API DateTime DateTime::Create(
@@ -249,11 +226,17 @@ namespace Graphyte
         std::int32_t millisecond
     ) noexcept
     {
-        return {
-            Impl::DateToTicks(year, month, day) +
-            Impl::TimeToTicks(hour, minute, second) +
-            static_cast<std::int64_t>(millisecond)* Impl::GTicksInMillisecond
-        };
+        Status status = Status::Success;
+
+        std::int64_t const date_ticks = Impl::DateToTicks(year, month, day, status);
+        GX_ASSERT(status == Status::Success);
+
+        std::int64_t const time_ticks = Impl::TimeToTicks(hour, minute, second, status);
+        GX_ASSERT(status == Status::Success);
+
+        std::int64_t const part_ticks = static_cast<std::int64_t>(millisecond) * Impl::GTicksInMillisecond;
+
+        return { date_ticks + time_ticks + part_ticks };
     }
 
     BASE_API DateTime DateTime::Now() noexcept

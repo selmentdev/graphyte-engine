@@ -15,6 +15,9 @@ namespace Graphyte::Impl
     static constexpr const std::int64_t GTicksInHour{ GTicksInMinute * std::int64_t{ 60 } };
     static constexpr const std::int64_t GTicksInDay{ GTicksInHour * std::int64_t{ 24 } };
 
+    static constexpr const std::int64_t GMaxSeconds = std::numeric_limits<std::int64_t>::max() / GTicksInSecond;
+    static constexpr const std::int64_t GMinSeconds = std::numeric_limits<std::int64_t>::min() / GTicksInSecond;
+
     static constexpr const std::int32_t GDaysInYear{ 365 };
     static constexpr const std::int32_t GDaysIn4Years{ (4 * 365) + 1 };
     static constexpr const std::int32_t GDaysIn100Years{ (100 * 365) + 24 };
