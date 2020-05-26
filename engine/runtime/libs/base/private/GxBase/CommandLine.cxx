@@ -25,7 +25,7 @@ namespace Graphyte::CommandLine::Impl
 
 namespace Graphyte::CommandLine
 {
-    extern BASE_API void Initialize(int argc, const char** argv) noexcept
+    extern BASE_API void Initialize(size_t argc, const char** argv) noexcept
     {
         GX_ASSERT(argv != nullptr);
         GX_ASSERT(Impl::GCommandLineArgs.empty());

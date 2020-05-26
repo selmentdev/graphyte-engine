@@ -67,10 +67,10 @@ namespace Graphyte
         if (ecc0 == std::errc{} && ecc1 == std::errc{})
         {
             result.reserve(32);
-            result.assign(buffer_low.size() - (ptr0 - buffer_low.data()), '0');
+            result.assign(buffer_low.size() - static_cast<size_t>(ptr0 - buffer_low.data()), '0');
             result.append(buffer_low.data(), ptr0);
 
-            result.append(buffer_high.size() - (ptr1 - buffer_high.data()), '0');
+            result.append(buffer_high.size() - static_cast<size_t>(ptr1 - buffer_high.data()), '0');
             result.append(buffer_high.data(), ptr1);
             return true;
         }

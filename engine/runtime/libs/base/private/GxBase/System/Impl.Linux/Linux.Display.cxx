@@ -79,15 +79,17 @@ namespace Graphyte::System
                 virtual_span_r - virtual_span_l,
                 virtual_span_b - virtual_span_t,
             };
+
+            return Status::Success;
         }
         else
         {
             result.PrimaryDisplaySize = {};
             result.PrimaryDisplayWorkArea = {};
             result.VirtualDisplayRect = {};
-        }
 
-        return Status::Success;
+            return Status::Failure;
+        }
     }
 
     BASE_API DeviceScreenOrientation GetScreenOrientation() noexcept

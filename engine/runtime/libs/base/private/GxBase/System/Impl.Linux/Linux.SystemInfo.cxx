@@ -34,7 +34,7 @@ namespace Graphyte::System
             }
         }
 
-        Storage::Path::AddDirectorySeparator(result);
+        Storage::AddDirectorySeparator(result);
 
         return result;
     }
@@ -55,7 +55,7 @@ namespace Graphyte::System
                     std::string_view path_view{ path.data() };
                     path_view.remove_suffix(1);
                     result.assign(path_view);
-                    Storage::Path::AddDirectorySeparator(result);
+                    Storage::AddDirectorySeparator(result);
                 }
                 pclose(file);
             }
@@ -65,11 +65,11 @@ namespace Graphyte::System
         {
             if (GetEnvironmentVariable(result, "HOME") == Status::Success)
             {
-                Storage::Path::Append(result, "/Documents/");
+                Storage::AppendPath(result, "/Documents/");
             }
         }
 
-        Storage::Path::AddDirectorySeparator(result);
+        Storage::AddDirectorySeparator(result);
 
         return result;
     }
@@ -104,14 +104,14 @@ namespace Graphyte::System
     BASE_API std::string GetUserSettingsDirectory() noexcept
     {
         std::string result = GetUserDirectory();
-        Storage::Path::Append(result, ".config/");
+        Storage::AppendPath(result, ".config/");
         return result;
     }
 
     BASE_API std::string GetApplicationCommonDataDirectory() noexcept
     {
         std::string result = GetUserDirectory();
-        Storage::Path::Append(result, ".config/");
+        Storage::AppendPath(result, ".config/");
         return result;
     }
 

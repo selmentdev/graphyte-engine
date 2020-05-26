@@ -59,6 +59,14 @@ Compiler('Compiler-Linux-x64-GCC-C') {
     .Executable = '/usr/bin/gcc'
 }
 
+Compiler('Compiler-Linux-x64-Clang-C++') {
+    .Executable = '/usr/bin/clang++'
+}
+
+Compiler('Compiler-Linux-x64-Clang-C') {
+    .Executable = '/usr/bin/clang'
+}
+
 Compiler('Compiler-Windows-x64-LLVM-Clang') {
     .Root = '$WindowsLlvmPath$/bin'
     .Executable = '$Root$/clang++.exe'
@@ -198,6 +206,8 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .PlatformDefines = {
     }
     .PlatformIncludes = {
+        ;; workaround for clang-10 and SDL2 fucking with wrong include headers
+        '/usr/include/SDL2'
     }
 ]
 
@@ -725,4 +735,94 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 .GxToolchainDef_Compiler_GCC_UnitTest_Release = [
     .CompilerOptions_UnitTest_Remove = {}
     .CompilerOptions_UnitTest_Add = {}
+]
+
+
+// -------------------------------------------------------------------------------------------------
+// Clang Definition
+
+.GxToolchainDef_Compiler_Clang = [
+    .Prefix_Define = '-D'
+    .Suffix_Define = ''
+    .Prefix_Include = '-I'
+    .Suffix_Include = ''
+    .Prefix_LibPath = '-L'
+    .Suffix_LibPath = ''
+    .Prefix_Link = '-l'
+    .Suffix_Link = ''
+
+    .ToolchainDefines = { }
+
+    .ToolchainIncludes = { }
+
+    .CompilerOptionsCXX_Before
+        = ' -o "%2" "%1" -c -g'
+        + ' -std=c++20'
+        + ' -fdiagnostics-color=always'
+        + ' -stdlib=libc++'
+
+    .CompilerOptions_After
+        = ''
+
+    .CompilerOptionsCC_Before
+        = ' -o "%2" "%1" -c -g'
+        + ' -std=c11'
+        + ' -fdiagnostics-color=always'
+        
+    .LibrarianOptions_Before
+        = 'rcs "%2" "%1"'
+
+    .LibrarianOptions_After
+        = ''
+
+    .LinkerOptions_Before
+        = ' -Wl,--start-group "%1" -Wl,--end-group -o "%2"'
+        + ' -lc'
+        + ' -lm'
+        + ' -lstdc++'
+        + ' -lpthread'
+        + ' -stdlib=libc++'
+
+    .LinkerOptions_After
+        = ''
+
+    .CompilerOptions_Kind_SharedLib = ' -fpic'
+    .LinkerOptions_Kind_SharedLib = ' -shared'
+
+    .CompilerOptions_Kind_StaticLib = ' -fpic'
+    .LinkerOptions_Kind_StaticLib = ' -static'
+
+    .CompilerOptions_Kind_ConsoleApp = ' -fpic'
+    .LinkerOptions_Kind_ConsoleApp = ' -pie'
+
+    .CompilerOptions_Kind_WindowedApp = ' -fpic'
+    .LinkerOptions_Kind_WindowedApp = ' -pie'
+]
+
+.GxToolchainDef_Compiler_Clang_Architecture_x64 = [
+    .CompilerOptions_Architecture
+        = ' -mavx'
+        + ' -msse4.1'
+        + ' -msse3'
+        + ' -mssse3'
+        + ' -msse2'
+        + ' -m64'
+    .LinkerOptions_Architecture
+        = ''
+]
+
+.GxToolchainDef_Compiler_Clang_Architecture_ARMv8 = [
+    .CompilerOptions_Architecture
+        = ' -DGRAPHYTE_MATH_NO_INTRINSICS=1'
+
+    .LinkerOptions_Architecture
+        = ''
+]
+
+.GxToolchainDef_Compiler_Clang_Architecture_x64_Platform_Linux = [
+    .CompilerCXX = 'Compiler-Linux-x64-Clang-C++'
+    .CompilerCC = 'Compiler-Linux-x64-Clang-C'
+    .ResCompiler = ''
+    .Linker = '/usr/bin/clang++'
+    .Librarian = '/usr/bin/llvm-ar'
 ]

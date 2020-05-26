@@ -56,8 +56,22 @@
 #include <atomic>
 #include <charconv>
 #include <functional>
+
+#if __has_include(<bit>)
 #include <bit>
+#endif
+
+#if __has_include(<compare>)
 #include <compare>
+#endif
+
+#if __has_include(<span>)
+#include <span>
+#endif
+
+#if __has_include(<concepts>)
+#include <concepts>
+#endif
 
 //
 // C Library Headers.

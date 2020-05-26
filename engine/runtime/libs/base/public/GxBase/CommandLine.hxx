@@ -49,7 +49,7 @@ namespace Graphyte::CommandLine
         }
     };
 
-    extern BASE_API void Initialize(int argc, const char** argv) noexcept;
+    extern BASE_API void Initialize(size_t argc, const char** argv) noexcept;
 
     extern BASE_API void Finalize() noexcept;
 

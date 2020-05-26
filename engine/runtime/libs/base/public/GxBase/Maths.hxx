@@ -14474,7 +14474,7 @@ namespace Graphyte::Maths
         }
 
 
-        return static_cast<uint32_t>(value * (1U << bits));
+        return static_cast<uint32_t>(value * static_cast<float>(1U << bits));
     }
 
     mathinline float mathcall FixedToFloat(uint32_t value, uint32_t bits) noexcept

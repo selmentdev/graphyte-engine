@@ -139,6 +139,14 @@
 #include <bit>
 #include <compare>
 
+#if __has_include(<bit>)
+#include <bit>
+#endif
+
+#if __has_include(<compare>)
+#include <compare>
+#endif
+
 #if __has_include(<span>)
 #include <span>
 #endif

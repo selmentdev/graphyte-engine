@@ -395,7 +395,7 @@ TEST_CASE("BarrierCase", "[.][performance]")
 
             for (size_t i = 0; i < 10; ++i)
             {
-                SleepThread(static_cast<uint32_t>(i * 1.125F));
+                SleepThread(static_cast<uint32_t>(static_cast<float>(i) * 1.125F));
             }
 
             {

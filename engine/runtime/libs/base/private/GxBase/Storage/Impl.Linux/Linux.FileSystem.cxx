@@ -1,5 +1,5 @@
 #include <GxBase/System/Impl.Posix/Posix.Types.hxx>
-#include <GxBase/ByteAccess.hxx>
+//#include <GxBase/ByteAccess.hxx>
 #include <GxBase/Diagnostics.hxx>
 #include <GxBase/Storage/Path.hxx>
 #include "Linux.FileSystem.hxx"
@@ -304,7 +304,7 @@ namespace Graphyte::Storage
 
                 if (filename != "." && filename != "..")
                 {
-                    std::string const report_path = Path::Combine(path, filename);
+                    std::string const report_path = Storage::CombinePath(path, filename);
                     bool const is_directory = entry->d_type == DT_DIR;
                     
                     result = visitor.Visit(report_path, is_directory) == Status::Success;
@@ -334,7 +334,7 @@ namespace Graphyte::Storage
 
                 if (filename != "." && filename != "..")
                 {
-                    std::string const report_path = Path::Combine(path, filename);
+                    std::string const report_path = Storage::CombinePath(path, filename);
                     
                     FileInfo fileinfo{};
                     if (GetFileInfo(fileinfo, report_path) != Status::Success)

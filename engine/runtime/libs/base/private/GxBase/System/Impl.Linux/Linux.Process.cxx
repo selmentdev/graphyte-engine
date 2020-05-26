@@ -29,7 +29,7 @@ namespace Graphyte::System
     {
         std::string full_path{ path };
 
-        if (!Storage::Path::IsAbsolute(full_path))
+        if (!Storage::IsAbsolutePath(full_path))
         {
             // XXX: Convert to absolute path.
         }

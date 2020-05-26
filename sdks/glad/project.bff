@@ -3,6 +3,7 @@
         .ProjectName = 'SdkGlad'
         .ProjectPath = 'sdks/glad'
         .ProjectKind = 'StaticLib'
+        .ProjectLanguage = 'CC'
         .ProjectSelector = { 'Windows-x64', 'Linux', 'Android' }
         .ProjectType = 'Module'
         .ProjectComponent = 'Sdks'

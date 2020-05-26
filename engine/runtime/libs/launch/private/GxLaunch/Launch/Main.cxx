@@ -323,7 +323,10 @@ namespace Graphyte::Launch
             GX_ABORT_UNLESS(status == Status::Success, "Cannot set current directory");
         }
 
-        CommandLine::Initialize(argc, const_cast<const char**>(argv));
+        CommandLine::Initialize(
+            static_cast<size_t>(argc),
+            const_cast<const char**>(argv)
+        );
 
         Diagnostics::Initialize();
 

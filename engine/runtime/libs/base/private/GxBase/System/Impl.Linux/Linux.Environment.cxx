@@ -133,7 +133,7 @@ namespace Graphyte::System
         if (cwd != nullptr)
         {
             result.assign(cwd);
-            Storage::Path::AddDirectorySeparator(result);
+            Storage::AddDirectorySeparator(result);
 
             return Status::Success;
         }
@@ -166,7 +166,7 @@ namespace Graphyte::System
         GX_ASSERT(length >= 0);
         length = std::max<ssize_t>(0, length);
 
-        return Storage::Path::GetBaseFilename({ execpath.data(), static_cast<size_t>(length) });
+        return std::string{ Storage::GetBaseFilename({ execpath.data(), static_cast<size_t>(length) }) };
     }
 
     BASE_API std::string GetBaseDirectory() noexcept
@@ -180,7 +180,7 @@ namespace Graphyte::System
         GX_ASSERT(length >= 0);
         length = std::max<ssize_t>(0, length);
 
-        return Storage::Path::GetPath({ execpath.data(), static_cast<size_t>(length) });
+        return std::string{ Storage::GetPath({ execpath.data(), static_cast<size_t>(length) }) };
     }
 
 

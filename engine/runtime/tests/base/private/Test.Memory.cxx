@@ -118,7 +118,7 @@ TEST_CASE("Object pool")
 
             while (!allocations.empty())
             {
-                std::uniform_int_distribution<size_t> sample{ 0, allocations.size() - 1 };
+                std::uniform_int_distribution<ptrdiff_t> sample{ 0, static_cast<ptrdiff_t>(allocations.size() - 1) };
                 auto it = allocations.begin();
                 auto distance = sample(random);
 
@@ -162,7 +162,7 @@ TEST_CASE("Object pool")
 
             for (size_t i = 0; i < (5 * AllocsCount); ++i)
             {
-                std::uniform_int_distribution<size_t> sample{ 0, allocations.size() - 1 };
+                std::uniform_int_distribution<ptrdiff_t> sample{ 0, static_cast<ptrdiff_t>(allocations.size() - 1) };
                 auto it = allocations.begin();
                 auto distance = sample(random);
 
@@ -180,7 +180,7 @@ TEST_CASE("Object pool")
             for (size_t i = 0; i < (5 * AllocsCount); ++i)
             {
                 auto it = allocations.begin();
-                std::uniform_int_distribution<size_t> sample{ 0, allocations.size() - 1 };
+                std::uniform_int_distribution<ptrdiff_t> sample{ 0, static_cast<ptrdiff_t>(allocations.size() - 1) };
                 auto distance = sample(random);
 
                 std::advance(it, distance);

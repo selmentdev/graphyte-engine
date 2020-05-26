@@ -2,6 +2,7 @@
     .ProjectDefinition = [
         .ProjectName = 'SdkSqlite'
         .ProjectPath = 'sdks/sqlite'
+        .ProjectLanguage = 'CC'
         .ProjectKind = 'StaticLib'
         .ProjectType = 'Module'
         .ProjectComponent = 'Sdks'

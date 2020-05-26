@@ -6,7 +6,7 @@ TEST_CASE("Maths / Half <-> Float conversion")
     using namespace Graphyte;
 
     float const f0 = 3.14f;
-    float const f1 = -1.1e-3;
+    float const f1 = -1.1e-3f;
     float const f2 = BitCast<float>(FloatTraits<float>::Infinity);
     float const f3 = BitCast<float>(FloatTraits<float>::QNaN);
     float const f4 = 65500.0f;

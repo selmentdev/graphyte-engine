@@ -2,6 +2,7 @@
     .ProjectDefinition = [
         .ProjectName = 'SdkLz4'
         .ProjectPath = 'sdks/lz4'
+        .ProjectLanguage = 'CC'
         .ProjectKind = 'StaticLib'
         .ProjectType = 'Module'
         .ProjectComponent = 'Sdks'
