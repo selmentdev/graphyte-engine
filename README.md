@@ -1,5 +1,13 @@
 # Readme
 
+## Supported platforms
+
+- Windows / AMD64 - mainline
+- Windows / ARMv8 - partial
+- UWP - partial
+- Linux - partial
+
+
 ## Requirements
 
 ### Fedora

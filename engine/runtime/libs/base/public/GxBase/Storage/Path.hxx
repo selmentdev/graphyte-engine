@@ -16,6 +16,7 @@ namespace Graphyte::Storage
 
 namespace Graphyte::Storage
 {
+    [[nodiscard]]
     constexpr bool IsDirectorySeparator(
         char character
     ) noexcept
@@ -24,6 +25,7 @@ namespace Graphyte::Storage
             || character == Storage::AlternativeDirectorySeparator;
     }
 
+    [[nodiscard]]
     constexpr bool IsVolumeSeparator(
         char character
     ) noexcept
@@ -31,6 +33,7 @@ namespace Graphyte::Storage
         return character == Storage::VolumeSeparator;
     }
 
+    [[nodiscard]]
     constexpr bool IsExtensionSeparator(
         char character
     ) noexcept
@@ -38,6 +41,7 @@ namespace Graphyte::Storage
         return character == Storage::ExtensionSeparator;
     }
 
+    [[nodiscard]]
     constexpr bool IsDirectoryOrVolumeSeparator(
         char character
     ) noexcept
@@ -46,6 +50,7 @@ namespace Graphyte::Storage
             || Storage::IsVolumeSeparator(character);
     }
 
+    [[nodiscard]]
     constexpr bool IsPathSeparator(
         char character
     ) noexcept
@@ -62,17 +67,20 @@ namespace Graphyte::Storage
         std::string_view subpath
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string CombinePath(
         std::string_view path1,
         std::string_view path2
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string CombinePath(
         std::string_view path1,
         std::string_view path2,
         std::string_view path3
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string CombinePath(
         std::string_view path1,
         std::string_view path2,
@@ -80,6 +88,7 @@ namespace Graphyte::Storage
         std::string_view path4
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string CombinePath(
         std::string_view path1,
         std::string_view path2,
@@ -88,6 +97,7 @@ namespace Graphyte::Storage
         std::string_view path5
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string CombinePath(
         std::string_view path1,
         std::string_view path2,
@@ -114,24 +124,29 @@ namespace Graphyte::Storage
         std::string& path,
         std::string_view filename
     ) noexcept;
-        
+
+    [[nodiscard]]
     extern BASE_API std::string_view GetExtension(
         std::string_view path,
         bool include_separator = false
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string_view GetFilename(
         std::string_view path
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string_view GetBaseFilename(
         std::string_view path
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string_view GetPath(
         std::string_view path
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string_view GetScheme(
         std::string_view path
     ) noexcept;
@@ -155,6 +170,7 @@ namespace Graphyte::Storage
         std::string& path
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string NormalizedPath(
         std::string_view path
     ) noexcept;
@@ -169,12 +185,14 @@ namespace Graphyte::Storage
         std::string_view target
     ) noexcept;
 
+    [[nodiscard]]
     extern BASE_API std::string CreateTemporaryFilePath(
         std::string_view path,
         std::string_view prefix,
         std::string_view suffix
     ) noexcept;
 
+    [[nodiscard]]
     constexpr bool IsAbsolutePath(
         std::string_view path
     ) noexcept
@@ -187,6 +205,7 @@ namespace Graphyte::Storage
         return false;
     }
 
+    [[nodiscard]]
     constexpr bool IsValidPath(
         std::string_view path
     ) noexcept
@@ -194,6 +213,7 @@ namespace Graphyte::Storage
         return path.find(AlternativeDirectorySeparator) == std::string_view::npos;
     }
 
+    [[nodiscard]]
     inline std::vector<std::string_view> SplitPath(
         std::string_view path
     ) noexcept

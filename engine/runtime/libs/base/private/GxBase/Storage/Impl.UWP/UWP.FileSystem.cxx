@@ -1,5 +1,5 @@
 #include <GxBase/Storage/IFileSystem.hxx>
-#include <GxBase/ByteAccess.hxx>
+#include <GxBase/Bitwise.hxx>
 #include <GxBase/Diagnostics.hxx>
 #include <GxBase/Storage/Path.hxx>
 #include <GxBase/System/Impl.Windows/Windows.Helpers.hxx>
@@ -290,7 +290,7 @@ namespace Graphyte::Storage
         IDirectoryVisitor& visitor
     ) noexcept
     {
-        std::string const wildcard = Path::Combine(path, "*.*");
+        std::string const wildcard = Storage::CombinePath(path, "*.*");
 
         System::Impl::WindowsPath wpath{};
         System::Impl::WidenStringPath(wpath, wildcard);
@@ -309,7 +309,7 @@ namespace Graphyte::Storage
 
                 if (filename != L"." && filename != L"..")
                 {
-                    std::string const report_path = Path::Combine(path, System::Impl::NarrowString(filename));
+                    std::string const report_path = Storage::CombinePath(path, System::Impl::NarrowString(filename));
                     bool const is_directory = !!(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 
                     status = visitor.Visit(report_path, is_directory);
@@ -329,7 +329,7 @@ namespace Graphyte::Storage
         IDirectoryInfoVisitor& visitor
     ) noexcept
     {
-        std::string const wildcard = Path::Combine(path, "*.*");
+        std::string const wildcard = Storage::CombinePath(path, "*.*");
 
         System::Impl::WindowsPath wpath{};
         System::Impl::WidenStringPath(wpath, wildcard);
@@ -348,7 +348,7 @@ namespace Graphyte::Storage
 
                 if (filename != L"." && filename != L"..")
                 {
-                    std::string const report_path = Path::Combine(path, System::Impl::NarrowString(filename));
+                    std::string const report_path = Storage::CombinePath(path, System::Impl::NarrowString(filename));
 
                     ULARGE_INTEGER li_file_size{};
                     li_file_size.LowPart = wfd.nFileSizeLow;

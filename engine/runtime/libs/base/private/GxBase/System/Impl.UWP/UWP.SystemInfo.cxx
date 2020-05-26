@@ -61,8 +61,8 @@ namespace Graphyte::System
 
             result = Impl::NarrowString(wszFullPath.data());
 
-            Storage::Path::Normalize(result);
-            Storage::Path::AddDirectorySeparator(result);
+            Storage::NormalizePath(result);
+            Storage::AddDirectorySeparator(result);
 
         }
 

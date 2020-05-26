@@ -1,6 +1,8 @@
 
 #include "../Platform.impl.hxx"
 
+#include <WinSock2.h>
+
 namespace Graphyte::System::Impl
 {
     void InitializePlatform() noexcept

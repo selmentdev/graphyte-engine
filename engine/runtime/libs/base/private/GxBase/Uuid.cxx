@@ -1,6 +1,6 @@
 #include <GxBase/Uuid.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #include <rpc.h>
 #elif GRAPHYTE_PLATFORM_LINUX
 #include <uuid/uuid.h>

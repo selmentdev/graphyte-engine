@@ -268,10 +268,7 @@ namespace Graphyte::System
     BASE_API std::string GetExecutableName() noexcept
     {
         std::string path = System::GetExecutablePath();
-
-        std::string result{ Storage::GetFilename(path) };
-
-        return result;
+        return std::string{ Storage::GetFilename(path) };
     }
 
     BASE_API std::string GetBaseDirectory() noexcept
