@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 #include <GxBase/Random.hxx>
 #include <GxBase/Ieee754.hxx>
+#include <GxBase/Storage/Path.hxx>
 
 TEST_CASE("Float Traits")
 {
@@ -262,4 +263,47 @@ TEST_CASE("Random Generator")
         CHECK(Graphyte::FloatTraits<float>::ToBits(sample.Z) == 0x3F19EC5Eu);
         CHECK(Graphyte::FloatTraits<float>::ToBits(sample.W) == 0x3F3F6E1Eu);
     }
+}
+
+TEST_CASE("Random temporary path")
+{
+    using namespace Graphyte::Random;
+    using namespace Graphyte::Storage;
+
+    RandomState state;
+    Initialize(state, 0x1337);
+
+    std::string_view const path = "/home/user";
+    std::string_view const prefix = "prefix_";
+    std::string_view const suffix = ".extension";
+
+    CHECK(CreateTemporaryFilePath(state, path, prefix, suffix) == "/home/user/prefix_l56uaknv26clgc3k.extension");
+    CHECK(CreateTemporaryFilePath(state, path, prefix, suffix) == "/home/user/prefix_qmjnbf7ihd40tiaj.extension");
+    CHECK(CreateTemporaryFilePath(state, path, prefix, suffix) == "/home/user/prefix_dboi32ifli29s0k3.extension");
+    CHECK(CreateTemporaryFilePath(state, path, prefix, suffix) == "/home/user/prefix_t4ft1ti2bolk7i6p.extension");
+    CHECK(CreateTemporaryFilePath(state, path, prefix, suffix) == "/home/user/prefix_l1anfquolti14v7t.extension");
+    CHECK(CreateTemporaryFilePath(state, path, prefix, suffix) == "/home/user/prefix_8196mkd3nulmvve4.extension");
+    CHECK(CreateTemporaryFilePath(state, path, prefix, suffix) == "/home/user/prefix_f2mktcvhuuoddq20.extension");
+    CHECK(CreateTemporaryFilePath(state, path, prefix, suffix) == "/home/user/prefix_lv1u42ua2n42o2i3.extension");
+}
+
+TEST_CASE("Random temporary filename")
+{
+    using namespace Graphyte::Random;
+    using namespace Graphyte::Storage;
+
+    RandomState state;
+    Initialize(state, 0x1337);
+
+    std::string_view const prefix = "prefix_";
+    std::string_view const suffix = ".extension";
+
+    CHECK(CreateRandomFilename(state, prefix, suffix) == "prefix_l56uaknv26clgc3k.extension");
+    CHECK(CreateRandomFilename(state, prefix, suffix) == "prefix_qmjnbf7ihd40tiaj.extension");
+    CHECK(CreateRandomFilename(state, prefix, suffix) == "prefix_dboi32ifli29s0k3.extension");
+    CHECK(CreateRandomFilename(state, prefix, suffix) == "prefix_t4ft1ti2bolk7i6p.extension");
+    CHECK(CreateRandomFilename(state, prefix, suffix) == "prefix_l1anfquolti14v7t.extension");
+    CHECK(CreateRandomFilename(state, prefix, suffix) == "prefix_8196mkd3nulmvve4.extension");
+    CHECK(CreateRandomFilename(state, prefix, suffix) == "prefix_f2mktcvhuuoddq20.extension");
+    CHECK(CreateRandomFilename(state, prefix, suffix) == "prefix_lv1u42ua2n42o2i3.extension");
 }

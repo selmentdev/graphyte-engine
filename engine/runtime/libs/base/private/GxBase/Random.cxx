@@ -390,3 +390,57 @@ namespace Graphyte::Random
         };
     }
 }
+
+
+namespace Graphyte::Random::Impl
+{
+    static constexpr const char GBase32Chars[32] = {
+        '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+        'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+    };
+}
+
+namespace Graphyte::Random
+{
+    void GenerateReadableString(RandomState& state, notstd::span<char> characters) noexcept
+    {
+        if (!characters.empty())
+        {
+            union
+            {
+                std::uint8_t bytes[8];
+                std::uint64_t value;
+            } random;
+
+
+
+            //
+            // Generate 8 random characters at once.
+            //
+
+            while (characters.size() >= 8)
+            {
+                random.value = NextUInt64(state);
+
+                for (size_t i = 0; i < 8; ++i)
+                {
+                    characters[i] = Impl::GBase32Chars[static_cast<size_t>(random.bytes[i] & 0x1Fu)];
+                }
+
+                characters.remove_prefix(8);
+            }
+
+            if (!characters.empty())
+            {
+                random.value = NextUInt64(state);
+
+                for (size_t i = 0, count = characters.size(); i < count; ++i)
+                {
+                    characters[i] = Impl::GBase32Chars[static_cast<size_t>(random.bytes[i] & 0x1Fu)];
+                }
+            }
+        }
+    }
+}

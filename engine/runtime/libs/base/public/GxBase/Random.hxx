@@ -80,4 +80,6 @@ namespace Graphyte::Random
     extern BASE_API Float4 NextFloat4(RandomState& state) noexcept;
     extern BASE_API Float3 NextFloat3(RandomState& state) noexcept;
     extern BASE_API Float2 NextFloat2(RandomState& state) noexcept;
+
+    extern BASE_API void GenerateReadableString(RandomState& state, notstd::span<char> characters) noexcept;
 }

@@ -10,14 +10,10 @@
 
 ## Requirements
 
-### Fedora
-
-```sh
-sudo dnf install libuuid-devel SDL2-devel
-```
 
 ### Ubuntu
 
 ```.sh
-sudo apt install uuid-dev libsdl2-dev libx11-dev libunwind-dev
+sudo apt install clang lld llvm
+sudo apt install uuid-dev libsdl2-dev libx11-dev libunwind-dev libc++-dev libc++abi-dev
 ```

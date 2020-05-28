@@ -450,4 +450,62 @@ namespace Graphyte::Storage
 
         return result;
     }
+
+    std::string CreateTemporaryFilePath(
+        Random::RandomState& state,
+        std::string_view path,
+        std::string_view prefix,
+        std::string_view suffix
+    ) noexcept
+    {
+        //
+        // Generate string with random characters.
+        //
+
+        static constexpr const size_t random_count = 16;
+
+        std::array<char, random_count> random_chars;
+
+        Random::GenerateReadableString(state, { random_chars.data(), random_chars.size() });
+
+
+        //
+        // Final filename.
+        //
+
+        fmt::memory_buffer filename{};
+        fmt::format_to(filename, "{}{}{}",
+            prefix,
+            std::string_view{ random_chars.data(), random_chars.size() },
+            suffix
+        );
+
+
+        //
+        // Combine path with random filename.
+        //
+
+        return Storage::CombinePath(
+            path,
+            std::string_view{ filename.data(), filename.size() }
+        );
+    }
+
+    [[nodiscard]]
+    extern BASE_API std::string CreateRandomFilename(
+        Random::RandomState& state,
+        std::string_view prefix,
+        std::string_view suffix
+    ) noexcept
+    {
+        static constexpr const size_t random_count = 16;
+        std::array<char, random_count> random_chars;
+        Random::GenerateReadableString(state, { random_chars.data(), random_chars.size() });
+
+        return fmt::format("{}{}{}",
+            prefix,
+            std::string_view{ random_chars.data(), random_chars.size() },
+            suffix
+        );
+    }
 }

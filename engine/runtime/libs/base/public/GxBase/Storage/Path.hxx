@@ -1,6 +1,7 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
 #include <GxBase/String.hxx>
+#include <GxBase/Random.hxx>
 
 
 namespace Graphyte::Storage
@@ -188,6 +189,21 @@ namespace Graphyte::Storage
     [[nodiscard]]
     extern BASE_API std::string CreateTemporaryFilePath(
         std::string_view path,
+        std::string_view prefix,
+        std::string_view suffix
+    ) noexcept;
+
+    [[nodiscard]]
+    extern BASE_API std::string CreateTemporaryFilePath(
+        Random::RandomState& state,
+        std::string_view path,
+        std::string_view prefix,
+        std::string_view suffix
+    ) noexcept;
+
+    [[nodiscard]]
+    extern BASE_API std::string CreateRandomFilename(
+        Random::RandomState& state,
         std::string_view prefix,
         std::string_view suffix
     ) noexcept;
