@@ -394,6 +394,28 @@ namespace Graphyte::Graphics::Impl::DDS
     constexpr const DDS_PIXELFORMAT DDSPF_V16U16 = { sizeof(DDS_PIXELFORMAT), DDS_PIXELFORMAT_BUMPDUDV, 0, 32, 0x0000ffff, 0xffff0000, 0x00000000, 0x00000000 };
     constexpr const DDS_PIXELFORMAT DDSPF_DX10 = { sizeof(DDS_PIXELFORMAT), DDS_PIXELFORMAT_FOURCC, MakeFourCC('D', 'X', '1', '0'), 0, 0, 0, 0, 0 };
 
+    constexpr const uint32_t D3DFMT_ATI1          = MakeFourCC('A', 'T', 'I', '1');
+    constexpr const uint32_t D3DFMT_ATI2          = MakeFourCC('A', 'T', 'I', '2');
+    constexpr const uint32_t D3DFMT_BC4S          = MakeFourCC('B', 'C', '4', 'S');
+    constexpr const uint32_t D3DFMT_BC4U          = MakeFourCC('B', 'C', '4', 'U');
+    constexpr const uint32_t D3DFMT_BC5S          = MakeFourCC('B', 'C', '5', 'S');
+    constexpr const uint32_t D3DFMT_BC5U          = MakeFourCC('B', 'C', '5', 'U');
+    constexpr const uint32_t D3DFMT_DXT1          = MakeFourCC('D', 'X', 'T', '1');
+    constexpr const uint32_t D3DFMT_DXT2          = MakeFourCC('D', 'X', 'T', '2');
+    constexpr const uint32_t D3DFMT_DXT3          = MakeFourCC('D', 'X', 'T', '3');
+    constexpr const uint32_t D3DFMT_DXT4          = MakeFourCC('D', 'X', 'T', '4');
+    constexpr const uint32_t D3DFMT_DXT5          = MakeFourCC('D', 'X', 'T', '5');
+    constexpr const uint32_t D3DFMT_GRGB          = MakeFourCC('G', 'R', 'G', 'B');
+    constexpr const uint32_t D3DFMT_RGBG          = MakeFourCC('R', 'G', 'B', 'G');
+    constexpr const uint32_t D3DFMT_YUY2          = MakeFourCC('Y', 'U', 'Y', '2');
+    constexpr const uint32_t D3DFMT_A16B16G16R16  = 36;
+    constexpr const uint32_t D3DFMT_Q16W16V16U16  = 110;
+    constexpr const uint32_t D3DFMT_R16F          = 111;
+    constexpr const uint32_t D3DFMT_G16R16F       = 112;
+    constexpr const uint32_t D3DFMT_A16B16G16R16F = 113;
+    constexpr const uint32_t D3DFMT_R32F          = 114;
+    constexpr const uint32_t D3DFMT_G32R32F       = 115;
+    constexpr const uint32_t D3DFMT_A32B32G32R32F = 116;
 
     constexpr const uint32_t DDS_HEADER_SIGNATURE = 0x20534444;
 
@@ -858,97 +880,66 @@ namespace Graphyte::Graphics::Impl::DDS
         }
         else if (format.Flags & DDS_PIXELFORMAT_FOURCC)
         {
-            if (MakeFourCC('D', 'X', 'T', '1') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC1_UNORM;
-            }
-            if (MakeFourCC('D', 'X', 'T', '3') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC2_UNORM;
-            }
-            if (MakeFourCC('D', 'X', 'T', '5') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC3_UNORM;
-            }
-
-            // While pre-multiplied alpha isn't directly supported by the DXGI formats,
-            // they are basically the same as these BC formats so they can be mapped
-            if (MakeFourCC('D', 'X', 'T', '2') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC2_UNORM;
-            }
-            if (MakeFourCC('D', 'X', 'T', '4') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC3_UNORM;
-            }
-
-            if (MakeFourCC('A', 'T', 'I', '1') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC4_UNORM;
-            }
-            if (MakeFourCC('B', 'C', '4', 'U') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC4_UNORM;
-            }
-            if (MakeFourCC('B', 'C', '4', 'S') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC4_SNORM;
-            }
-
-            if (MakeFourCC('A', 'T', 'I', '2') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC5_UNORM;
-            }
-            if (MakeFourCC('B', 'C', '5', 'U') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC5_UNORM;
-            }
-            if (MakeFourCC('B', 'C', '5', 'S') == format.FourCC)
-            {
-                return DXGI_FORMAT::BC5_SNORM;
-            }
-
-            // BC6H and BC7 are written using the "DX10" extended header
-
-            if (MakeFourCC('R', 'G', 'B', 'G') == format.FourCC)
-            {
-                return DXGI_FORMAT::R8G8_B8G8_UNORM;
-            }
-            if (MakeFourCC('G', 'R', 'G', 'B') == format.FourCC)
-            {
-                return DXGI_FORMAT::G8R8_G8B8_UNORM;
-            }
-
-            if (MakeFourCC('Y', 'U', 'Y', '2') == format.FourCC)
-            {
-                return DXGI_FORMAT::YUY2;
-            }
-
-            // Check for D3DFORMAT enums being set here
             switch (format.FourCC)
             {
-            case 36: // D3DFMT_A16B16G16R16
+            case D3DFMT_DXT1:
+                return DXGI_FORMAT::BC1_UNORM;
+
+            case D3DFMT_DXT3:
+                return DXGI_FORMAT::BC2_UNORM;
+            case D3DFMT_DXT5:
+                return DXGI_FORMAT::BC3_UNORM;
+
+                // While pre-multiplied alpha isn't directly supported by the DXGI formats,
+                // they are basically the same as these BC formats so they can be mapped
+            case D3DFMT_DXT2:
+                return DXGI_FORMAT::BC2_UNORM;
+            case D3DFMT_DXT4:
+                return DXGI_FORMAT::BC3_UNORM;
+            case D3DFMT_ATI1:
+                return DXGI_FORMAT::BC4_UNORM;
+            case D3DFMT_BC4U:
+                return DXGI_FORMAT::BC4_UNORM;
+            case D3DFMT_BC4S:
+                return DXGI_FORMAT::BC4_SNORM;
+            case D3DFMT_ATI2:
+                return DXGI_FORMAT::BC5_UNORM;
+            case D3DFMT_BC5U:
+                return DXGI_FORMAT::BC5_UNORM;
+            case D3DFMT_BC5S:
+                return DXGI_FORMAT::BC5_SNORM;
+
+                // BC6H and BC7 are written using the "DX10" extended header
+            case D3DFMT_RGBG:
+                return DXGI_FORMAT::R8G8_B8G8_UNORM;
+            case D3DFMT_GRGB:
+                return DXGI_FORMAT::G8R8_G8B8_UNORM;
+
+            case D3DFMT_YUY2:
+                return DXGI_FORMAT::YUY2;
+
+            case D3DFMT_A16B16G16R16:
                 return DXGI_FORMAT::R16G16B16A16_UNORM;
 
-            case 110: // D3DFMT_Q16W16V16U16
+            case D3DFMT_Q16W16V16U16:
                 return DXGI_FORMAT::R16G16B16A16_SNORM;
 
-            case 111: // D3DFMT_R16F
+            case D3DFMT_R16F:
                 return DXGI_FORMAT::R16_FLOAT;
 
-            case 112: // D3DFMT_G16R16F
+            case D3DFMT_G16R16F:
                 return DXGI_FORMAT::R16G16_FLOAT;
 
-            case 113: // D3DFMT_A16B16G16R16F
+            case D3DFMT_A16B16G16R16F:
                 return DXGI_FORMAT::R16G16B16A16_FLOAT;
 
-            case 114: // D3DFMT_R32F
+            case D3DFMT_R32F:
                 return DXGI_FORMAT::R32_FLOAT;
 
-            case 115: // D3DFMT_G32R32F
+            case D3DFMT_G32R32F:
                 return DXGI_FORMAT::R32G32_FLOAT;
 
-            case 116: // D3DFMT_A32B32G32R32F
+            case D3DFMT_A32B32G32R32F:
                 return DXGI_FORMAT::R32G32B32A32_FLOAT;
             }
         }
