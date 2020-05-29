@@ -1,6 +1,64 @@
 #include <catch2/catch.hpp>
 #include <GxBase/Hash/XXHash.hxx>
 #include <GxBase/Crypto/HashAlgorithm.hxx>
+#include <GxBase/Hash/Crc.hxx>
+
+TEST_CASE("Crc hashes")
+{
+    std::array<std::uint8_t, 8> buffer{
+        { 0, 1, 2, 3, 4, 5, 6, 7 }
+    };
+
+    auto const view = notstd::as_bytes(notstd::span<std::uint8_t>{ buffer });
+
+    SECTION("Crc32")
+    {
+        SECTION("Whole buffer")
+        {
+            uint32_t const result = Graphyte::Crc32(view, 1, true);
+
+            REQUIRE(result == 0x953CFF39u);
+        }
+
+        SECTION("Partial buffer")
+        {
+            uint32_t const r0 = Graphyte::Crc32(view.subspan<0, 1>(), 1, false);
+            uint32_t const r1 = Graphyte::Crc32(view.subspan<1, 1>(), r0, false);
+            uint32_t const r2 = Graphyte::Crc32(view.subspan<2, 1>(), r1, false);
+            uint32_t const r3 = Graphyte::Crc32(view.subspan<3, 1>(), r2, false);
+            uint32_t const r4 = Graphyte::Crc32(view.subspan<4, 1>(), r3, false);
+            uint32_t const r5 = Graphyte::Crc32(view.subspan<5, 1>(), r4, false);
+            uint32_t const r6 = Graphyte::Crc32(view.subspan<6, 1>(), r5, false);
+            uint32_t const r7 = Graphyte::Crc32(view.subspan<7, 1>(), r6, true);
+
+            REQUIRE(r7 == 0x953CFF39u);
+        }
+    }
+
+    SECTION("Crc64")
+    {
+        SECTION("Whole buffer")
+        {
+            uint64_t const result = Graphyte::Crc64(view, 1, true);
+
+            REQUIRE(result == 0x1F25FACEF3B30EA0u);
+        }
+
+        SECTION("Partial buffer")
+        {
+            uint64_t const r0 = Graphyte::Crc64(view.subspan<0, 1>(), 1, false);
+            uint64_t const r1 = Graphyte::Crc64(view.subspan<1, 1>(), r0, false);
+            uint64_t const r2 = Graphyte::Crc64(view.subspan<2, 1>(), r1, false);
+            uint64_t const r3 = Graphyte::Crc64(view.subspan<3, 1>(), r2, false);
+            uint64_t const r4 = Graphyte::Crc64(view.subspan<4, 1>(), r3, false);
+            uint64_t const r5 = Graphyte::Crc64(view.subspan<5, 1>(), r4, false);
+            uint64_t const r6 = Graphyte::Crc64(view.subspan<6, 1>(), r5, false);
+            uint64_t const r7 = Graphyte::Crc64(view.subspan<7, 1>(), r6, true);
+
+            REQUIRE(r7 == 0x1F25FACEF3B30EA0u);
+        }
+    }
+}
 
 TEST_CASE("Hashing functions")
 {

@@ -95,6 +95,7 @@ namespace Graphyte::System::Impl
             Impl::GProcessorFeatureSet.Set(ProcessorFeature::FMA3,            (std_features.regs.rcx & (1U << 12)) != 0);
             Impl::GProcessorFeatureSet.Set(ProcessorFeature::SSE41,           (std_features.regs.rcx & (1U << 19)) != 0);
             Impl::GProcessorFeatureSet.Set(ProcessorFeature::SSE42,           (std_features.regs.rcx & (1U << 20)) != 0);
+            Impl::GProcessorFeatureSet.Set(ProcessorFeature::CRC32,           (std_features.regs.rcx & (1U << 20)) != 0);
             Impl::GProcessorFeatureSet.Set(ProcessorFeature::MOVBE,           (std_features.regs.rcx & (1U << 22)) != 0);
             Impl::GProcessorFeatureSet.Set(ProcessorFeature::POPCNT,          (std_features.regs.rcx & (1U << 23)) != 0);
             Impl::GProcessorFeatureSet.Set(ProcessorFeature::AES,             (std_features.regs.rcx & (1U << 25)) != 0);
@@ -178,7 +179,6 @@ namespace Graphyte::System::Impl
             max_threads = (apic >> 16) & 0xff;
         }
 
-        // ProcessorFeature::CRC32,
         // ProcessorFeature::FMA4,
         // ProcessorFeature::SSE4A,
 
