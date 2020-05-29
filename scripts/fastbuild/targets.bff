@@ -49,7 +49,7 @@
 // Linux
 
 .GxPlatformCompilers_Linux           = { 'GCC' , 'Clang' }
-.GxPlatformArchitectures_Linux_Clang = { 'x64' } // , 'ARMv8'
+.GxPlatformArchitectures_Linux_Clang = { 'x64', 'ARMv8' }
 .GxPlatformArchitectures_Linux_GCC   = { 'x64' } // , 'ARMv8'
 
 //--------------------------------------------------------------------------------------------------

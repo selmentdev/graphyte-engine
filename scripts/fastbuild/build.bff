@@ -214,15 +214,16 @@ ForEach(.CurrentPlatform in .GxPlatforms) {
                         .CompilerOutputPath = '$OutputBase$/obj/$CurrentPlatform$-$CurrentArchitecture$-$CurrentCompiler$-$CurrentBuildType$-$CurrentConfig$/$ProjectName$'
 
                         // Default compiler, linker and librarian options from platform and toolchain definitions.
-                        .CompilerOptions
-                            = .'CompilerOptions$ProjectLanguage$_Before'
+                        .CompilerOptions = ''
+                            + .'CompilerOptions$ProjectLanguage$_Before'
+                            + .CompilerOptions_Architecture
                             + .'CompilerOptions_Kind_$ProjectKind$'
                             + .CompilerOptions_Config
                             + .CompilerOptions_BuildType
-                            + .CompilerOptions_Architecture
                             + .CompilerOptions_LocalIncludes
                             + .CompilerOptions_LocalDefines
                             + .CompilerOptions_After
+                            + .CompilerOptions_Architecture_Platform
 
                         // Determine compiler
                         .Compiler = .'Compiler$ProjectLanguage$'

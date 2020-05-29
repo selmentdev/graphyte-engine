@@ -446,6 +446,9 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .ResCompiler = 'Compiler-Windows-ResourceCompiler'
     .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/link.exe'
     .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/lib.exe'
+
+    .CompilerOptions_Architecture_Platform = ''
+    .LinkerOptions_Architecture_Platform = ''
 ]
 
 .GxToolchainDef_Compiler_MSVC_Architecture_ARMv8_Platform_Windows = [
@@ -454,6 +457,9 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .ResCompiler = 'Compiler-Windows-ResourceCompiler'
     .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/link.exe'
     .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/lib.exe'
+    
+    .CompilerOptions_Architecture_Platform = ''
+    .LinkerOptions_Architecture_Platform = ''
 ]
 
 .GxToolchainDef_Compiler_MSVC_Architecture_x64_Platform_UWP = [
@@ -462,6 +468,9 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .ResCompiler = 'Compiler-Windows-ResourceCompiler'
     .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/link.exe'
     .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/x64/lib.exe'
+    
+    .CompilerOptions_Architecture_Platform = ''
+    .LinkerOptions_Architecture_Platform = ''
 ]
 
 .GxToolchainDef_Compiler_MSVC_Architecture_ARMv8_Platform_UWP = [
@@ -470,6 +479,9 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .ResCompiler = 'Compiler-Windows-ResourceCompiler'
     .Linker = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/link.exe'
     .Librarian = '$VsToolsLocation$/VC/Tools/MSVC/$VsToolsVersion$/bin/HostX64/arm64/lib.exe'
+    
+    .CompilerOptions_Architecture_Platform = ''
+    .LinkerOptions_Architecture_Platform = ''
 ]
 
 
@@ -669,6 +681,9 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .ResCompiler = ''
     .Linker = '/usr/bin/g++'
     .Librarian = '/usr/bin/ar'
+    
+    .CompilerOptions_Architecture_Platform = ''
+    .LinkerOptions_Architecture_Platform = ''
 ]
 
 .GxToolchainDef_Compiler_GCC_Architecture_ARMv8_Platform_Linux = [
@@ -677,6 +692,9 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .ResCompiler = ''
     .Linker = '/usr/bin/g++'
     .Librarian = '/usr/bin/ar'
+    
+    .CompilerOptions_Architecture_Platform = ''
+    .LinkerOptions_Architecture_Platform = ''
 ]
 
 .GxToolchainDef_Compiler_GCC_Config_Debug = [
@@ -825,4 +843,19 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .ResCompiler = ''
     .Linker = '/usr/bin/clang++'
     .Librarian = '/usr/bin/llvm-ar'
+
+    .CompilerOptions_Architecture_Platform = ''
+    .LinkerOptions_Architecture_Platform = ''
+]
+
+.GxToolchainDef_Compiler_Clang_Architecture_ARMv8_Platform_Linux = [
+    .CompilerCXX = 'Compiler-Linux-x64-Clang-C++'
+    .CompilerCC = 'Compiler-Linux-x64-Clang-C'
+    .ResCompiler = ''
+    .Linker = '/usr/bin/clang++'
+    .Librarian = '/usr/bin/llvm-ar'
+    .CompilerOptions_Architecture_Platform = ''
+        + ' --target=aarch64-linux-gnu'
+        + ' --sysroot=/usr/aarch64-linux-gnu'
+    .LinkerOptions_Architecture_Platform = ''
 ]
