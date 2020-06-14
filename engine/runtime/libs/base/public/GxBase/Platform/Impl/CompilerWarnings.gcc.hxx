@@ -200,7 +200,7 @@
 #pragma GCC diagnostic ignored "-Wsuggest-attribute=pure"
 #pragma GCC diagnostic ignored "-Wsuggest-final-methods"
 #pragma GCC diagnostic ignored "-Wsuggest-final-types"
-#pragma GCC diagnostic ignored "-Wsuggest-override"             // doesn't takes into account `final` attribute...
+#pragma GCC diagnostic ignored "-Wsuggest-override" // doesn't takes into account `final` attribute...
 #pragma GCC diagnostic ignored "-Wswitch-default"
 #pragma GCC diagnostic ignored "-Wswitch-enum"
 #pragma GCC diagnostic ignored "-Wunused-const-variable"

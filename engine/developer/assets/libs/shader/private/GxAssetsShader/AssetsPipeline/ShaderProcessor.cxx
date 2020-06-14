@@ -34,8 +34,7 @@ namespace Graphyte::AssetsPipeline
 
     std::string_view ToString(System::PlatformType value) noexcept
     {
-        auto it = std::find_if(std::begin(GPlatformTypeNames), std::end(GPlatformTypeNames), [&](auto v)
-        {
+        auto it = std::find_if(std::begin(GPlatformTypeNames), std::end(GPlatformTypeNames), [&](auto v) {
             return v.Value == value;
         });
 
@@ -49,8 +48,7 @@ namespace Graphyte::AssetsPipeline
 
     bool FromString(System::PlatformType& result, std::string_view value) noexcept
     {
-        auto it = std::find_if(std::begin(GPlatformTypeNames), std::end(GPlatformTypeNames), [&](auto v)
-        {
+        auto it = std::find_if(std::begin(GPlatformTypeNames), std::end(GPlatformTypeNames), [&](auto v) {
             return v.Name == value;
         });
 
@@ -72,8 +70,7 @@ namespace Graphyte::AssetsPipeline
 
     std::string_view ToString(Graphics::GpuRenderAPI value) noexcept
     {
-        auto it = std::find_if(std::begin(GRenderAPINames), std::end(GRenderAPINames), [&](auto v)
-        {
+        auto it = std::find_if(std::begin(GRenderAPINames), std::end(GRenderAPINames), [&](auto v) {
             return v.Value == value;
         });
 
@@ -87,8 +84,7 @@ namespace Graphyte::AssetsPipeline
 
     bool FromString(Graphics::GpuRenderAPI& result, std::string_view value) noexcept
     {
-        auto it = std::find_if(std::begin(GRenderAPINames), std::end(GRenderAPINames), [&](auto v)
-        {
+        auto it = std::find_if(std::begin(GRenderAPINames), std::end(GRenderAPINames), [&](auto v) {
             return v.Name == value;
         });
 
@@ -121,8 +117,7 @@ namespace Graphyte::AssetsPipeline
 
     std::string_view ToString(Graphics::GpuShaderProfile value) noexcept
     {
-        auto it = std::find_if(std::begin(GGpuShaderProfileNames), std::end(GGpuShaderProfileNames), [&](auto v)
-        {
+        auto it = std::find_if(std::begin(GGpuShaderProfileNames), std::end(GGpuShaderProfileNames), [&](auto v) {
             return v.Value == value;
         });
 
@@ -136,8 +131,7 @@ namespace Graphyte::AssetsPipeline
 
     bool FromString(Graphics::GpuShaderProfile& result, std::string_view value) noexcept
     {
-        auto it = std::find_if(std::begin(GGpuShaderProfileNames), std::end(GGpuShaderProfileNames), [&](auto v)
-        {
+        auto it = std::find_if(std::begin(GGpuShaderProfileNames), std::end(GGpuShaderProfileNames), [&](auto v) {
             return v.Name == value;
         });
 
@@ -161,8 +155,7 @@ namespace Graphyte::AssetsPipeline
 
     std::string_view ToString(Graphics::GpuShaderStage value) noexcept
     {
-        auto it = std::find_if(std::begin(GGpuShaderStageNames), std::end(GGpuShaderStageNames), [&](auto v)
-        {
+        auto it = std::find_if(std::begin(GGpuShaderStageNames), std::end(GGpuShaderStageNames), [&](auto v) {
             return v.Value == value;
         });
 
@@ -176,8 +169,7 @@ namespace Graphyte::AssetsPipeline
 
     bool FromString(Graphics::GpuShaderStage& result, std::string_view value) noexcept
     {
-        auto it = std::find_if(std::begin(GGpuShaderStageNames), std::end(GGpuShaderStageNames), [&](auto v)
-        {
+        auto it = std::find_if(std::begin(GGpuShaderStageNames), std::end(GGpuShaderStageNames), [&](auto v) {
             return v.Name == value;
         });
 
@@ -257,9 +249,9 @@ namespace Graphyte::AssetsPipeline
         std::string_view outputFilename{};
 
         ShaderCompilerInput input{};
-        input.Platform = System::PlatformType::Windows;
+        input.Platform  = System::PlatformType::Windows;
         input.RenderAPI = Graphics::GpuRenderAPI::OpenGL;
-        input.Profile = Graphics::GpuShaderProfile::GLSL_4_50;
+        input.Profile   = Graphics::GpuShaderProfile::GLSL_4_50;
 
         if (auto option = CommandLine::Get("--input"); option.has_value())
         {
@@ -362,19 +354,18 @@ namespace Graphyte::AssetsPipeline
             output.FileName += ".shader";
 
             Graphics::ShaderBytecode bytecode{};
-            bytecode.Bytecode = output.Bytecode;
-            bytecode.Platform = input.Platform;
+            bytecode.Bytecode  = output.Bytecode;
+            bytecode.Platform  = input.Platform;
             bytecode.RenderAPI = input.RenderAPI;
-            bytecode.Profile = input.Profile;
-            bytecode.Stage = input.Stage;
-            bytecode.Flags = input.EnableDebugInfo ? Graphics::ShaderBytecodeFlags::Debug : Graphics::ShaderBytecodeFlags::None;
+            bytecode.Profile   = input.Profile;
+            bytecode.Stage     = input.Stage;
+            bytecode.Flags     = input.EnableDebugInfo ? Graphics::ShaderBytecodeFlags::Debug : Graphics::ShaderBytecodeFlags::None;
 
             auto content_path = Storage::CombinePath(
                 Storage::GetProjectContentDirectory(),
                 "shaders_compiled/",
                 ToString(input.Platform),
-                ToString(input.RenderAPI)
-            );
+                ToString(input.RenderAPI));
 
             if (Storage::IFileSystem::GetPlatformNative().DirectoryTreeCreate(content_path) != Status::Success)
             {

@@ -4,6 +4,8 @@
 
 namespace Graphyte::Graphics
 {
-    class NullGpuUniformBuffer : public GpuUniformBuffer { };
+    class NullGpuUniformBuffer : public GpuUniformBuffer
+    {
+    };
     static_assert(!std::is_polymorphic_v<NullGpuUniformBuffer>);
 }

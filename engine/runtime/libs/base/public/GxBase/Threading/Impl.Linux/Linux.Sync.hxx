@@ -8,7 +8,9 @@ namespace Graphyte::Threading
     class LinuxBarrier final
     {
         LinuxBarrier(const LinuxBarrier&) = delete;
-        LinuxBarrier& operator= (const LinuxBarrier&) = delete;
+
+        LinuxBarrier& operator=(const LinuxBarrier&) = delete;
+
     private:
         mutable pthread_barrier_t m_Barrier;
 
@@ -33,8 +35,11 @@ namespace Graphyte::Threading
     class LinuxCriticalSection final
     {
         friend class LinuxConditionVariable;
+
         LinuxCriticalSection(const LinuxCriticalSection&) = delete;
-        LinuxCriticalSection& operator= (const LinuxCriticalSection&) = delete;
+
+        LinuxCriticalSection& operator=(const LinuxCriticalSection&) = delete;
+
     private:
         pthread_mutex_t m_CriticalSection;
 
@@ -73,7 +78,9 @@ namespace Graphyte::Threading
     class LinuxConditionVariable final
     {
         LinuxConditionVariable(const LinuxConditionVariable&) = delete;
-        LinuxConditionVariable& operator= (const LinuxConditionVariable&) = delete;
+
+        LinuxConditionVariable& operator=(const LinuxConditionVariable&) = delete;
+
     private:
         pthread_cond_t m_ConditionVariable;
 
@@ -119,7 +126,9 @@ namespace Graphyte::Threading
     class LinuxSemaphore final
     {
         LinuxSemaphore(const LinuxSemaphore&) = delete;
-        LinuxSemaphore& operator= (const LinuxSemaphore&) = delete;
+
+        LinuxSemaphore& operator=(const LinuxSemaphore&) = delete;
+
     private:
         sem_t m_Handle;
 
@@ -178,7 +187,9 @@ namespace Graphyte::Threading
     class LinuxReaderWriterLock final
     {
         LinuxReaderWriterLock(const LinuxReaderWriterLock&) = delete;
-        LinuxReaderWriterLock& operator= (const LinuxReaderWriterLock&) = delete;
+
+        LinuxReaderWriterLock& operator=(const LinuxReaderWriterLock&) = delete;
+
     private:
         pthread_rwlock_t m_Lock;
 
@@ -227,7 +238,9 @@ namespace Graphyte::Threading
     class LinuxEvent final
     {
         LinuxEvent(const LinuxEvent&) = delete;
-        LinuxEvent& operator= (const LinuxEvent&) = delete;
+
+        LinuxEvent& operator=(const LinuxEvent&) = delete;
+
     private:
         LinuxCriticalSection m_CriticalSection;
         LinuxConditionVariable m_ConditionVariable;
@@ -328,10 +341,10 @@ namespace Graphyte::Threading
 
 namespace Graphyte::Threading
 {
-    using Barrier = LinuxBarrier;
-    using CriticalSection = LinuxCriticalSection;
+    using Barrier           = LinuxBarrier;
+    using CriticalSection   = LinuxCriticalSection;
     using ConditionVariable = LinuxConditionVariable;
-    using Semaphore = LinuxSemaphore;
-    using ReaderWriterLock = LinuxReaderWriterLock;
-    using Event = LinuxEvent;
+    using Semaphore         = LinuxSemaphore;
+    using ReaderWriterLock  = LinuxReaderWriterLock;
+    using Event             = LinuxEvent;
 }

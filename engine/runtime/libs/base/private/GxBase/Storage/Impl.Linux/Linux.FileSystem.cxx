@@ -18,12 +18,11 @@ namespace Graphyte::Storage
     }
 
     LinuxFileSystem::~LinuxFileSystem() noexcept = default;
-    
+
     Status LinuxFileSystem::OpenRead(
         std::unique_ptr<IStream>& result,
         const std::string& path,
-        bool share_write
-    ) noexcept
+        bool share_write) noexcept
     {
         int flags = O_CLOEXEC;
         if (share_write)
@@ -41,7 +40,7 @@ namespace Graphyte::Storage
             result = std::make_unique<LinuxFileStream>(handle, path.c_str(), false);
             return Status::Success;
         }
-        
+
         result = nullptr;
         return Status::Failure;
     }
@@ -50,8 +49,7 @@ namespace Graphyte::Storage
         std::unique_ptr<IStream>& result,
         const std::string& path,
         bool append,
-        bool share_read
-    ) noexcept
+        bool share_read) noexcept
     {
         int flags = O_CREAT | O_CLOEXEC;
 
@@ -70,7 +68,7 @@ namespace Graphyte::Storage
             if (flock(handle, LOCK_EX | LOCK_NB) == -1)
             {
                 bool failed{ false };
-                
+
                 if (EAGAIN == errno)
                 {
                     failed = true;
@@ -99,7 +97,7 @@ namespace Graphyte::Storage
             }
 
             result = std::make_unique<LinuxFileStream>(handle, path.c_str(), true);
-            
+
             if (append)
             {
                 return result->SetPosition(0, SeekOrigin::End);
@@ -113,12 +111,11 @@ namespace Graphyte::Storage
 
     Status LinuxFileSystem::IsReadonly(
         bool& result,
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
-        bool failed = access(path.c_str(), W_OK) == -1;
+        bool failed   = access(path.c_str(), W_OK) == -1;
         error_t error = errno;
-        
+
         if (failed)
         {
             if (error == EACCES)
@@ -126,33 +123,35 @@ namespace Graphyte::Storage
                 //
                 // Failed to access file with write.
                 //
-                
+
                 result = false;
                 return Status::Success;
             }
-            
+
             //
             // Failed due to different reasons.
             //
-            
+
             result = false;
             return Status::Failure; // XXX: Match errno
         }
-        
+
         //
         // Write access available.
         //
-        
+
         result = true;
         return Status::Success;
     }
 
     Status LinuxFileSystem::SetReadonly(
         const std::string& path,
-        bool value
-    ) noexcept
+        bool value) noexcept
     {
+        // clang-format off
         struct stat fileinfo{};
+        // clang-format on
+
         if (stat(path.c_str(), &fileinfo) == 0)
         {
             if (value)
@@ -175,18 +174,20 @@ namespace Graphyte::Storage
 
     Status LinuxFileSystem::GetFileInfo(
         FileInfo& result,
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
+        // clang-format off
         struct stat fileinfo{};
+        // clang-format on
+
         if (stat(path.c_str(), &fileinfo) == -1)
         {
-            result.CreationTime = DateTime::FromUnixTimestamp(fileinfo.st_ctime);
-            result.AccessTime = DateTime::FromUnixTimestamp(fileinfo.st_atime);
+            result.CreationTime     = DateTime::FromUnixTimestamp(fileinfo.st_ctime);
+            result.AccessTime       = DateTime::FromUnixTimestamp(fileinfo.st_atime);
             result.ModificationTime = DateTime::FromUnixTimestamp(fileinfo.st_mtime);
-            result.FileSize = static_cast<int64_t>(fileinfo.st_size);
-            result.IsDirectory = S_ISDIR(fileinfo.st_mode);
-            result.IsValid = true;
+            result.FileSize         = static_cast<int64_t>(fileinfo.st_size);
+            result.IsDirectory      = S_ISDIR(fileinfo.st_mode);
+            result.IsValid          = true;
             return IsReadonly(result.IsReadonly, path);
         }
 
@@ -195,12 +196,14 @@ namespace Graphyte::Storage
 
     Status LinuxFileSystem::GetFileSize(
         int64_t& result,
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
+        // clang-format off
         struct stat fileinfo{};
+        // clang-format on
+
         fileinfo.st_size = -1;
-        
+
         if (stat(path.c_str(), &fileinfo) != -1)
         {
             if (S_ISDIR(fileinfo.st_mode))
@@ -217,19 +220,18 @@ namespace Graphyte::Storage
 
     Status LinuxFileSystem::FileMove(
         const std::string& destination,
-        const std::string& source
-    ) noexcept
+        const std::string& source) noexcept
     {
         int const result = rename(source.c_str(), destination.c_str());
         if (result == -1 && errno == EXDEV)
         {
             Status const status = FileCopy(destination, source);
-            
+
             if (status == Status::Success)
             {
                 return FileDelete(source);
             }
-            
+
             return status;
         }
 
@@ -237,35 +239,35 @@ namespace Graphyte::Storage
     }
 
     Status LinuxFileSystem::FileDelete(
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
         if (unlink(path.c_str()) == 0)
         {
             return Status::Success;
         }
-        
+
         return Status::Failure; // XXX: Map
     }
 
     Status LinuxFileSystem::Exists(
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
+        // clang-format off
         struct stat fileinfo{};
+        // clang-format on
+
         if (stat(path.c_str(), &fileinfo) != -1)
         {
             return (S_ISREG(fileinfo.st_mode) || S_ISDIR(fileinfo.st_mode))
-                ? Status::Success
-                : Status::Failure;
+                       ? Status::Success
+                       : Status::Failure;
         }
 
         return Status::Failure;
     }
 
     Status LinuxFileSystem::DirectoryCreate(
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
         if (mkdir(path.c_str(), 0755) == 0)
         {
@@ -276,8 +278,7 @@ namespace Graphyte::Storage
     }
 
     Status LinuxFileSystem::DirectoryDelete(
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
         if (rmdir(path.c_str()) == 0)
         {
@@ -289,8 +290,7 @@ namespace Graphyte::Storage
 
     Status LinuxFileSystem::Enumerate(
         const std::string& path,
-        IDirectoryVisitor& visitor
-    ) noexcept
+        IDirectoryVisitor& visitor) noexcept
     {
         bool result = true;
         DIR* handle = opendir(path.c_str());
@@ -305,8 +305,8 @@ namespace Graphyte::Storage
                 if (filename != "." && filename != "..")
                 {
                     std::string const report_path = Storage::CombinePath(path, filename);
-                    bool const is_directory = entry->d_type == DT_DIR;
-                    
+                    bool const is_directory       = entry->d_type == DT_DIR;
+
                     result = visitor.Visit(report_path, is_directory) == Status::Success;
                 }
             }
@@ -319,8 +319,7 @@ namespace Graphyte::Storage
 
     Status LinuxFileSystem::Enumerate(
         const std::string& path,
-        IDirectoryInfoVisitor& visitor
-    ) noexcept
+        IDirectoryInfoVisitor& visitor) noexcept
     {
         bool result = true;
         DIR* handle = opendir(path.c_str());
@@ -335,8 +334,9 @@ namespace Graphyte::Storage
                 if (filename != "." && filename != "..")
                 {
                     std::string const report_path = Storage::CombinePath(path, filename);
-                    
+
                     FileInfo fileinfo{};
+
                     if (GetFileInfo(fileinfo, report_path) != Status::Success)
                     {
                         GX_ASSERTF(false, "Failed to get file info for {}", path);

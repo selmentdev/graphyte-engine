@@ -10,8 +10,7 @@
 namespace Graphyte::Graphics
 {
     void OpenGLGpuCommandList::BindResourceSet(
-        GpuResourceSetHandle handle
-    ) noexcept
+        GpuResourceSetHandle handle) noexcept
     {
         auto native = static_cast<OpenGLGpuResourceSet*>(handle);
 
@@ -22,29 +21,25 @@ namespace Graphyte::Graphics
             GPU_GL_VALIDATE(glBindBufferBase(
                 GL_UNIFORM_BUFFER,
                 static_cast<GLuint>(i),
-                native->m_UniformBuffers[i]
-            ));
+                native->m_UniformBuffers[i]));
         }
 
         for (size_t i = 0; i < std::size(native->m_Textures); ++i)
         {
             GPU_GL_VALIDATE(glBindTextureUnit(
                 static_cast<GLuint>(i),
-                native->m_Textures[i]
-            ));
+                native->m_Textures[i]));
         }
 
         for (size_t i = 0; i < std::size(native->m_Textures); ++i)
         {
             GPU_GL_VALIDATE(glBindSampler(
                 static_cast<GLuint>(i),
-                native->m_Samplers[i]
-            ));
+                native->m_Samplers[i]));
 
             GPU_GL_VALIDATE(glBindTextureUnit(
                 static_cast<GLuint>(i),
-                native->m_Textures[i]
-            ));
+                native->m_Textures[i]));
         }
 
 #else
@@ -52,31 +47,25 @@ namespace Graphyte::Graphics
             GL_UNIFORM_BUFFER,
             0,
             static_cast<GLsizei>(std::size(native->m_UniformBuffers)),
-            std::data(native->m_UniformBuffers)
-        ));
+            std::data(native->m_UniformBuffers)));
 
         GPU_GL_VALIDATE(glBindTextures(
             0,
             static_cast<GLsizei>(std::size(native->m_Textures)),
-            std::data(native->m_Textures)
-        ));
+            std::data(native->m_Textures)));
 
         GPU_GL_VALIDATE(glBindSamplers(
             0,
             static_cast<GLsizei>(std::size(native->m_Samplers)),
-            std::data(native->m_Samplers)
-        ));
+            std::data(native->m_Samplers)));
 #endif
-
-
     }
 }
 
 namespace Graphyte::Graphics
 {
     GpuResourceSetHandle OpenGLGpuDevice::CreateResourceSet(
-        const GpuResourceSetDesc& desc
-    ) noexcept
+        const GpuResourceSetDesc& desc) noexcept
     {
         auto native = new OpenGLGpuResourceSet();
 
@@ -107,8 +96,7 @@ namespace Graphyte::Graphics
     }
 
     void OpenGLGpuDevice::DestroyResourceSet(
-        GpuResourceSetHandle handle
-    ) noexcept
+        GpuResourceSetHandle handle) noexcept
     {
         auto native = static_cast<OpenGLGpuResourceSet*>(handle);
         delete native;
@@ -116,8 +104,7 @@ namespace Graphyte::Graphics
 
     void OpenGLGpuDevice::UpdateResourceSet(
         GpuResourceSetHandle handle,
-        const GpuResourceSetDesc& desc
-    ) noexcept
+        const GpuResourceSetDesc& desc) noexcept
     {
         (void)handle;
         (void)desc;

@@ -20,6 +20,7 @@ namespace Graphyte::Network
     class BASE_API IpEndPoint final
     {
         friend class Dns;
+
     public:
         AddressStorage m_Address;
 

@@ -7,8 +7,7 @@ GX_DEFINE_LOG_CATEGORY(LogAssetsCompiler);
 
 #include <GxLaunch/Launch/Main.hxx>
 
-Graphyte::Application::ApplicationDescriptor GraphyteApp
-{
+Graphyte::Application::ApplicationDescriptor GraphyteApp{
     "Graphyte Assets Compiler",
     "assets.compiler",
     "Graphyte",
@@ -41,7 +40,6 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     if (Graphyte::CommandLine::Get("--help").has_value())
     {
         fmt::print("This is assets compiler\n");
-
     }
     else if (auto processor = Graphyte::CommandLine::Get("--processor"); processor.has_value())
     {

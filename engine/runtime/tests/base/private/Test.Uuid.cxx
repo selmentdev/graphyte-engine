@@ -29,7 +29,10 @@ TEST_CASE("Uuid")
 
     SECTION("Some random uuid")
     {
-        Uuid value{ 0xdeadbeefdeadc0de, 0xbeefcacecafebabe, };
+        Uuid value{
+            0xdeadbeefdeadc0de,
+            0xbeefcacecafebabe,
+        };
 
         std::string str{};
         REQUIRE(Converter<Uuid>::ToString(str, value));

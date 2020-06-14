@@ -39,7 +39,7 @@ namespace Graphyte::Launch
             {
                 result = MainWrapper(argc, argv);
             }
-            __except(Diagnostics::OnCrash(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
+            __except (Diagnostics::OnCrash(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
             {
                 Graphyte::Application::RequestExit(true);
             }

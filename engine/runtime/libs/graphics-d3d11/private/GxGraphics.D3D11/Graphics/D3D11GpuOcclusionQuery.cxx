@@ -5,8 +5,7 @@
 namespace Graphyte::Graphics
 {
     void D3D11GpuCommandList::BeginOcclusionQuery(
-        GpuOcclusionQueryHandle handle
-    ) noexcept
+        GpuOcclusionQueryHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuOcclusionQuery*>(handle);
@@ -16,8 +15,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuCommandList::EndOcclusionQuery(
-        GpuOcclusionQueryHandle handle
-    ) noexcept
+        GpuOcclusionQueryHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuOcclusionQuery*>(handle);
@@ -29,8 +27,7 @@ namespace Graphyte::Graphics
     bool D3D11GpuCommandList::GetOcclusionQueryResult(
         GpuOcclusionQueryHandle handle,
         uint64_t& result,
-        bool wait
-    ) noexcept
+        bool wait) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuOcclusionQuery*>(handle);
@@ -44,8 +41,7 @@ namespace Graphyte::Graphics
                 native->m_Query,
                 &result,
                 sizeof(result),
-                0
-            );
+                0);
         } while (hr == S_FALSE && wait);
 
         return SUCCEEDED(hr);
@@ -59,7 +55,7 @@ namespace Graphyte::Graphics
         auto native = new D3D11GpuOcclusionQuery();
 
         D3D11_QUERY_DESC desc{
-            .Query = D3D11_QUERY_OCCLUSION,
+            .Query     = D3D11_QUERY_OCCLUSION,
             .MiscFlags = 0,
         };
 
@@ -69,8 +65,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::DestroyOcclusionQuery(
-        GpuOcclusionQueryHandle handle
-    ) noexcept
+        GpuOcclusionQueryHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuOcclusionQuery*>(handle);

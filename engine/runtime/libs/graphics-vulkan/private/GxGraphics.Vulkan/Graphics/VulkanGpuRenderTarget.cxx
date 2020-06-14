@@ -6,8 +6,7 @@ namespace Graphyte::Graphics
     GpuRenderTargetHandle VulkanGpuDevice::BeginCreateRenderTarget(
         uint32_t width,
         uint32_t height,
-        uint32_t surfaces
-    ) noexcept
+        uint32_t surfaces) noexcept
     {
         (void)width;
         (void)height;
@@ -16,8 +15,7 @@ namespace Graphyte::Graphics
     }
 
     void VulkanGpuDevice::EndCreateRenderTarget(
-        GpuRenderTargetHandle handle
-    ) noexcept
+        GpuRenderTargetHandle handle) noexcept
     {
         (void)handle;
     }
@@ -26,8 +24,7 @@ namespace Graphyte::Graphics
         GpuRenderTargetHandle handle,
         int32_t index,
         GpuTexture2DHandle texture,
-        uint32_t mip_index
-    ) noexcept
+        uint32_t mip_index) noexcept
     {
         (void)handle;
         (void)index;
@@ -36,8 +33,7 @@ namespace Graphyte::Graphics
     }
 
     void VulkanGpuDevice::DestroyRenderTarget(
-        GpuRenderTargetHandle handle
-    ) noexcept
+        GpuRenderTargetHandle handle) noexcept
     {
         (void)handle;
     }

@@ -17,19 +17,19 @@
 #endif
 #endif
 
-#define rtti_function(name)                 static void rtticall_##name(Runtime::Object* $this, Runtime::StackFrame& $frame)
-#define rtti_begin_call(count)              [[maybe_unused]] void** $stack = reinterpret_cast<void**>($frame.Stack)
-#define rtti_argument(type, name)           type name = *reinterpret_cast<type*>(*$stack++)
+#define rtti_function(name)       static void rtticall_##name(Runtime::Object* $this, Runtime::StackFrame& $frame)
+#define rtti_begin_call(count)    [[maybe_unused]] void** $stack = reinterpret_cast<void**>($frame.Stack)
+#define rtti_argument(type, name) type name = *reinterpret_cast<type*>(*$stack++)
 #define rtti_end_call()
-#define rtti_this                           (static_cast<ThisClass*>($this))
-#define rtti_return(type)                   *reinterpret_cast<type*>(*$stack)
+#define rtti_this         (static_cast<ThisClass*>($this))
+#define rtti_return(type) *reinterpret_cast<type*>(*$stack)
 
-#define xtti_function(name)                 static void rtticall_##name(Runtime::Object* $this, Runtime::StackFrame& $frame)
-#define xtti_signature(...)                 auto& $params = *reinterpret_cast<std::tuple<__VA_ARGS__>*>($frame.Stack)
-#define xtti_call(name)                     std::apply()
-#define xtti_arg(index)                     std::get<index>($params)
-#define xtti_return                         std::get<std::tuple_size<decltype($params)>::value - 1>($params)
-#define xtti_this                           ((ThisClass*)$this)
+#define xtti_function(name) static void rtticall_##name(Runtime::Object* $this, Runtime::StackFrame& $frame)
+#define xtti_signature(...) auto& $params = *reinterpret_cast<std::tuple<__VA_ARGS__>*>($frame.Stack)
+#define xtti_call(name)     std::apply()
+#define xtti_arg(index)     std::get<index>($params)
+#define xtti_return         std::get<std::tuple_size<decltype($params)>::value - 1>($params)
+#define xtti_this           ((ThisClass*)$this)
 
 namespace GenericMethodInvocation
 {
@@ -40,7 +40,8 @@ namespace GenericMethodInvocation
     {
         class Object
         {
-        public: virtual ~Object() noexcept = default;
+        public:
+            virtual ~Object() noexcept = default;
         };
 
         enum class FunctionSignature : uint32_t
@@ -71,7 +72,7 @@ namespace GenericMethodInvocation
 
             size_t GetResultOffset() const noexcept
             {
-                auto& last = std::get<sizeof...(TArgs)>(Values);
+                auto& last  = std::get<sizeof...(TArgs)>(Values);
                 auto& first = std::get<0>(Values);
                 return static_cast<char*>(&first) - static_cast<char*>(&last);
             }
@@ -99,7 +100,7 @@ namespace GenericMethodInvocation
             size_t Count;
         };
 
-        using FunctionPointer = void(*)(Object*, StackFrame& frame);
+        using FunctionPointer = void (*)(Object*, StackFrame& frame);
 
         struct Function final
         {
@@ -122,26 +123,26 @@ namespace GenericMethodInvocation
         };
 
         template <typename TType, typename TResult, typename... TArgs>
-        struct DecayFunction<TResult(TType::*)(TArgs...)> final
+        struct DecayFunction<TResult (TType::*)(TArgs...)> final
         {
-            using Type = TResult(TArgs...);
-            using Args = std::tuple<TArgs...>;
+            using Type   = TResult(TArgs...);
+            using Args   = std::tuple<TArgs...>;
             using Result = TResult;
         };
 
         template <typename TResult, typename... TArgs>
-        struct DecayFunction<TResult(*)(TArgs...)> final
+        struct DecayFunction<TResult (*)(TArgs...)> final
         {
-            using Type = TResult(TArgs...);
-            using Args = std::tuple<TArgs...>;
+            using Type   = TResult(TArgs...);
+            using Args   = std::tuple<TArgs...>;
             using Result = TResult;
         };
 
         template <typename TResult, typename... TArgs>
         struct DecayFunction<TResult(TArgs...)> final
         {
-            using Type = TResult(TArgs...);
-            using Args = std::tuple<TArgs...>;
+            using Type   = TResult(TArgs...);
+            using Args   = std::tuple<TArgs...>;
             using Result = TResult;
         };
 
@@ -232,7 +233,7 @@ namespace GenericMethodInvocation
                 return Runtime::Invoke<TResult(TArgs...)>::Dispatchable(*this, std::forward<TArgs>(args)...);
             }
 
-            Runtime::FunctionSignature GetSignature() const noexcept  final
+            Runtime::FunctionSignature GetSignature() const noexcept final
             {
                 return FunctionTypeToSignature<TResult(TArgs...)>::Signature;
             }
@@ -277,13 +278,13 @@ namespace GenericMethodInvocation
 }
 
 
-
 namespace GenericMethodInvocation
 {
 
 #define RTTI_FUNCTION_SIGNATURE(function, signature) \
     template <> \
-    struct FunctionTypeToSignature<function> final { \
+    struct FunctionTypeToSignature<function> final \
+    { \
         static const Runtime::FunctionSignature Signature = Runtime::FunctionSignature(signature); \
     }
 
@@ -296,6 +297,7 @@ namespace GenericMethodInvocation
     class Pawn : public Runtime::Object
     {
         using ThisClass = Pawn;
+
     public:
         Pawn() noexcept;
         virtual ~Pawn() noexcept = default;
@@ -405,7 +407,7 @@ TEST_CASE("Generic Method invocation")
 
     // Dispatch addition via pipe
     {
-        pawn.C = 0;
+        pawn.C    = 0;
         int32_t a = 3;
         int32_t b = 5;
 
@@ -453,7 +455,8 @@ namespace Techland
     {
         class Object
         {
-        public: virtual ~Object() noexcept = default;
+        public:
+            virtual ~Object() noexcept = default;
         };
 
         struct StackFrame final
@@ -462,7 +465,7 @@ namespace Techland
             void* Result;
         };
 
-        using FunctionPointer = void(*)(Object*, StackFrame&);
+        using FunctionPointer = void (*)(Object*, StackFrame&);
 
         struct Function final
         {
@@ -482,30 +485,30 @@ namespace Techland
         };
 
         template <typename TType, typename TResult, typename... TArgs>
-        struct DecayFunction<TResult(TType::*)(TArgs...)> final
+        struct DecayFunction<TResult (TType::*)(TArgs...)> final
         {
-            using Type = TResult(TArgs...);
-            using Args = std::tuple<TArgs...>;
+            using Type    = TResult(TArgs...);
+            using Args    = std::tuple<TArgs...>;
             using ArgsRef = std::tuple<TArgs&...>;
-            using Result = TResult;
+            using Result  = TResult;
         };
 
         template <typename TResult, typename... TArgs>
-        struct DecayFunction<TResult(*)(TArgs...)> final
+        struct DecayFunction<TResult (*)(TArgs...)> final
         {
-            using Type = TResult(TArgs...);
-            using Args = std::tuple<TArgs...>;
+            using Type    = TResult(TArgs...);
+            using Args    = std::tuple<TArgs...>;
             using ArgsRef = std::tuple<TArgs&...>;
-            using Result = TResult;
+            using Result  = TResult;
         };
 
         template <typename TResult, typename... TArgs>
         struct DecayFunction<TResult(TArgs...)> final
         {
-            using Type = TResult(TArgs...);
-            using Args = std::tuple<TArgs...>;
+            using Type    = TResult(TArgs...);
+            using Args    = std::tuple<TArgs...>;
             using ArgsRef = std::tuple<TArgs&...>;
-            using Result = TResult;
+            using Result  = TResult;
         };
 
         struct IDispatchable
@@ -597,23 +600,23 @@ namespace Techland
 }
 
 #define RTTI_FUNCTION_RESULT(name) \
-static void rtticall_##name(Techland::Runtime::Object* object, Techland::Runtime::StackFrame& frame) \
-{ \
-    using FunctionType = Techland::Runtime::DecayFunction<decltype(&this_class_t::name)>; \
-    auto&& args = *reinterpret_cast<typename FunctionType::ArgsRef*>(frame.Params); \
-    auto&& result = *reinterpret_cast<typename FunctionType::Result*>(frame.Result); \
-    auto fn = std::mem_fn(&this_class_t::name); \
-    result = std::apply(fn, std::tuple_cat(std::forward_as_tuple(*static_cast<this_class_t*>(object)), args)); \
-}
+    static void rtticall_##name(Techland::Runtime::Object* object, Techland::Runtime::StackFrame& frame) \
+    { \
+        using FunctionType = Techland::Runtime::DecayFunction<decltype(&this_class_t::name)>; \
+        auto&& args        = *reinterpret_cast<typename FunctionType::ArgsRef*>(frame.Params); \
+        auto&& result      = *reinterpret_cast<typename FunctionType::Result*>(frame.Result); \
+        auto fn            = std::mem_fn(&this_class_t::name); \
+        result             = std::apply(fn, std::tuple_cat(std::forward_as_tuple(*static_cast<this_class_t*>(object)), args)); \
+    }
 
 #define RTTI_FUNCTION_VOID(name) \
-static void rtticall_##name(Techland::Runtime::Object* object, Techland::Runtime::StackFrame& frame) \
-{ \
-    using FunctionType = Techland::Runtime::DecayFunction<decltype(&this_class_t::name)>; \
-    auto&& args = *reinterpret_cast<typename FunctionType::ArgsRef*>(frame.Params); \
-    auto fn = std::mem_fn(&this_class_t::name); \
-    std::apply(fn, std::tuple_cat(std::forward_as_tuple(*static_cast<this_class_t*>(object)), args)); \
-}
+    static void rtticall_##name(Techland::Runtime::Object* object, Techland::Runtime::StackFrame& frame) \
+    { \
+        using FunctionType = Techland::Runtime::DecayFunction<decltype(&this_class_t::name)>; \
+        auto&& args        = *reinterpret_cast<typename FunctionType::ArgsRef*>(frame.Params); \
+        auto fn            = std::mem_fn(&this_class_t::name); \
+        std::apply(fn, std::tuple_cat(std::forward_as_tuple(*static_cast<this_class_t*>(object)), args)); \
+    }
 
 
 namespace Demo
@@ -621,6 +624,7 @@ namespace Demo
     class Pawn : public Techland::Runtime::Object
     {
         using this_class_t = Pawn;
+
     public:
         Pawn();
         virtual ~Pawn();

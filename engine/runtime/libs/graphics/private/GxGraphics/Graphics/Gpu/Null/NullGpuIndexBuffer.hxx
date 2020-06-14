@@ -4,6 +4,8 @@
 
 namespace Graphyte::Graphics
 {
-    class NullGpuIndexBuffer : public GpuIndexBuffer { };
+    class NullGpuIndexBuffer : public GpuIndexBuffer
+    {
+    };
     static_assert(!std::is_polymorphic_v<NullGpuIndexBuffer>);
 }

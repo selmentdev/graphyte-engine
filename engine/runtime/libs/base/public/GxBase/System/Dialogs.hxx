@@ -14,18 +14,15 @@ namespace Graphyte::System
     BASE_API Status OpenFile(
         std::string& out_path,
         notstd::span<FileDialogFilter> filters = {},
-        std::string_view title = {}
-    ) noexcept;
+        std::string_view title                 = {}) noexcept;
 
     BASE_API Status OpenFile(
         std::vector<std::string>& out_paths,
         notstd::span<FileDialogFilter> filters = {},
-        std::string_view title = {}
-    ) noexcept;
+        std::string_view title                 = {}) noexcept;
 
     BASE_API Status SaveFile(
         std::string& out_path,
         notstd::span<FileDialogFilter> filters = {},
-        std::string_view title = {}
-    ) noexcept;
+        std::string_view title                 = {}) noexcept;
 }

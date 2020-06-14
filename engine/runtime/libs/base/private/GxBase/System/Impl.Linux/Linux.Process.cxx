@@ -24,8 +24,7 @@ namespace Graphyte::System
         ProcessId* id,
         PipeHandle* pipe_stdin,
         PipeHandle* pipe_stdout,
-        PipeHandle* pipe_stderr
-    ) noexcept
+        PipeHandle* pipe_stderr) noexcept
     {
         std::string full_path{ path };
 
@@ -41,8 +40,8 @@ namespace Graphyte::System
         }
 
         std::string full_params = (params != nullptr)
-            ? fmt::format("\"{}\" {}", full_path.c_str(), params)
-            : fmt::format("\"{}\"", full_path.c_str());
+                                      ? fmt::format("\"{}\" {}", full_path.c_str(), params)
+                                      : fmt::format("\"{}\"", full_path.c_str());
 
         wordexp_t exp_status{};
 
@@ -91,8 +90,7 @@ namespace Graphyte::System
                 posix_spawn_file_actions_adddup2(
                     &files,
                     pipe_stdout->Descriptor,
-                    STDOUT_FILENO
-                );
+                    STDOUT_FILENO);
             }
 
             if (pipe_stdin != nullptr)
@@ -100,8 +98,7 @@ namespace Graphyte::System
                 posix_spawn_file_actions_adddup2(
                     &files,
                     pipe_stdin->Descriptor,
-                    STDIN_FILENO
-                );
+                    STDIN_FILENO);
             }
 
             if (pipe_stderr != nullptr)
@@ -109,8 +106,7 @@ namespace Graphyte::System
                 posix_spawn_file_actions_adddup2(
                     &files,
                     pipe_stderr->Descriptor,
-                    STDERR_FILENO
-                );
+                    STDERR_FILENO);
             }
 
             posix_spawnattr_setflags(&spawn_attributes, spawn_flags);
@@ -121,8 +117,7 @@ namespace Graphyte::System
                 &files,
                 &spawn_attributes,
                 exp_status.we_wordv,
-                environ
-            );
+                environ);
 
             posix_spawn_file_actions_destroy(&files);
         }
@@ -138,8 +133,7 @@ namespace Graphyte::System
                 nullptr,
                 &spawn_attributes,
                 exp_status.we_wordv,
-                environ
-            );
+                environ);
         }
 
         if (spawn_result != 0)
@@ -159,19 +153,17 @@ namespace Graphyte::System
     }
 
     void Process::Close(
-        ProcessHandle& handle
-    ) noexcept
+        ProcessHandle& handle) noexcept
     {
         handle.ProcessID = 0;
     }
 
     bool Process::IsRunning(
         ProcessHandle& handle,
-        int32_t& exit_code
-    ) noexcept
+        int32_t& exit_code) noexcept
     {
         auto kill_status = kill(handle.ProcessID, 0);
-        auto is_running = (kill_status == 0) || (kill_status == -1 && errno == EPERM);
+        auto is_running  = (kill_status == 0) || (kill_status == -1 && errno == EPERM);
 
         exit_code = 0;
 
@@ -183,12 +175,11 @@ namespace Graphyte::System
                 signal_info.si_pid = 0;
 
                 if (waitid(
-                    P_PID,
-                    static_cast<id_t>(handle.ProcessID),
-                    &signal_info,
-                    WEXITED | WNOHANG | WNOWAIT
-                    ) != 0
-                )
+                        P_PID,
+                        static_cast<id_t>(handle.ProcessID),
+                        &signal_info,
+                        WEXITED | WNOHANG | WNOWAIT)
+                    != 0)
                 {
                     auto error = errno;
                     if (error == ECHILD)
@@ -208,8 +199,7 @@ namespace Graphyte::System
                             "Wait for process failed: {} ({}: `{}`)\n",
                             handle.ProcessID,
                             error,
-                            strerror(error)
-                        );
+                            strerror(error));
 
                         break;
                     }
@@ -239,8 +229,7 @@ namespace Graphyte::System
 
     bool Process::Wait(
         ProcessHandle& handle,
-        int32_t& exit_code
-    ) noexcept
+        int32_t& exit_code) noexcept
     {
         for (;;)
         {
@@ -255,7 +244,7 @@ namespace Graphyte::System
                     //
                     // Other wait operation succeeded before us / process already exited.
                     //
-    
+
                     exit_code = 0;
                     return true;
                 }
@@ -277,8 +266,7 @@ namespace Graphyte::System
 
     void Process::Terminate(
         ProcessHandle& handle,
-        bool tree
-    ) noexcept
+        bool tree) noexcept
     {
         if (tree)
         {
@@ -287,14 +275,13 @@ namespace Graphyte::System
 
         kill(handle.ProcessID, SIGTERM);
     }
-        
+
     ProcessResult Process::Execute(
         const char* path,
         const char* params,
         const char* working_directory,
         std::string* out_stdout,
-        std::string* out_stderr
-    ) noexcept
+        std::string* out_stderr) noexcept
     {
         std::array<PipeHandle, 2> pipe_read{};
         std::array<PipeHandle, 2> pipe_write{};
@@ -320,8 +307,7 @@ namespace Graphyte::System
             nullptr,
             nullptr,
             &pipe_write[0],
-            &pipe_write[1]
-        );
+            &pipe_write[1]);
 
         ProcessResult result;
         int32_t exit_code;
@@ -330,7 +316,7 @@ namespace Graphyte::System
         {
             if (redirect_output)
             {
-                std::array<std::string*, 2> outputs{{out_stdout, out_stderr}};
+                std::array<std::string*, 2> outputs{ { out_stdout, out_stderr } };
 
                 do
                 {
@@ -348,7 +334,7 @@ namespace Graphyte::System
             Close(handle);
 
             result.StatusCode = Status::Success;
-            result.ExitCode = exit_code;
+            result.ExitCode   = exit_code;
         }
         else
         {
@@ -364,7 +350,7 @@ namespace Graphyte::System
 
             GX_LOG(LogPlatform, Error, "Cannot create process: `{}`\n", path);
 
-            result.ExitCode = 0;
+            result.ExitCode   = 0;
             result.StatusCode = Diagnostics::GetStatusFromErrno(errno);
         }
 

@@ -4,17 +4,16 @@
 namespace Graphyte::Graphics
 {
     GpuTexture2DHandle VulkanGpuDevice::CreateTexture2D(
-        [[maybe_unused]] const GpuTextureCreateArgs& args
-    ) noexcept
+        [[maybe_unused]] const GpuTextureCreateArgs& args) noexcept
     {
         //
         // Compute buffer size based on input data.
         //
 
         [[maybe_unused]] VkBufferCreateInfo ci{};
-        ci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        ci.size = 1000;
-        ci.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+        ci.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        ci.size        = 1000;
+        ci.usage       = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         ci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
         [[maybe_unused]] VmaAllocationCreateInfo vmaci{};
@@ -31,8 +30,7 @@ namespace Graphyte::Graphics
     }
 
     void VulkanGpuDevice::DestroyTexture2D(
-        GpuTexture2DHandle texture
-    ) noexcept
+        GpuTexture2DHandle texture) noexcept
     {
         (void)texture;
     }
@@ -42,8 +40,7 @@ namespace Graphyte::Graphics
         uint32_t mip_level,
         const GpuRect* rect,
         const void* data,
-        uint32_t pitch
-    ) noexcept
+        uint32_t pitch) noexcept
     {
         (void)texture;
         (void)mip_level;
@@ -53,61 +50,53 @@ namespace Graphyte::Graphics
     }
 
     void VulkanGpuDevice::GenerateMipmapsTexture2D(
-        GpuTexture2DHandle texture
-    ) noexcept
+        GpuTexture2DHandle texture) noexcept
     {
         (void)texture;
     }
 
     std::unique_ptr<Image> VulkanGpuDevice::SaveTexture2D(
-        GpuTexture2DHandle texture
-    ) noexcept
+        GpuTexture2DHandle texture) noexcept
     {
         (void)texture;
         return nullptr;
     }
 
     GpuTexture2DArrayHandle VulkanGpuDevice::CreateTexture2DArray(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         (void)args;
         return nullptr;
     }
 
     void VulkanGpuDevice::DestroyTexture2DArray(
-        GpuTexture2DArrayHandle handle
-    ) noexcept
+        GpuTexture2DArrayHandle handle) noexcept
     {
         (void)handle;
     }
 
     GpuTexture3DHandle VulkanGpuDevice::CreateTexture3D(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         (void)args;
         return nullptr;
     }
 
     void VulkanGpuDevice::DestroyTexture3D(
-        GpuTexture3DHandle handle
-    ) noexcept
+        GpuTexture3DHandle handle) noexcept
     {
         (void)handle;
     }
 
     GpuTextureCubeHandle VulkanGpuDevice::CreateTextureCube(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         (void)args;
         return nullptr;
     }
 
     void VulkanGpuDevice::DestroyTextureCube(
-        GpuTextureCubeHandle handle
-    ) noexcept
+        GpuTextureCubeHandle handle) noexcept
     {
         (void)handle;
     }

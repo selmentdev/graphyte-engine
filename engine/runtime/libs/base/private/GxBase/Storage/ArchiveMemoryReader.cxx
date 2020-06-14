@@ -4,13 +4,12 @@ namespace Graphyte::Storage
 {
     ArchiveMemoryReader::ArchiveMemoryReader(
         const std::vector<std::byte>& buffer,
-        bool persistent
-    ) noexcept
+        bool persistent) noexcept
         : Archive{}
         , m_Offset{ 0 }
         , m_Buffer{ buffer }
     {
-        m_IsLoading = true;
+        m_IsLoading  = true;
         m_Persistent = persistent;
     }
 
@@ -20,8 +19,7 @@ namespace Graphyte::Storage
 
     void ArchiveMemoryReader::Serialize(
         void* buffer,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         if (size != 0 && !m_Error)
         {

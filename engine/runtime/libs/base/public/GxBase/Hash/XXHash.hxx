@@ -11,11 +11,12 @@ namespace Graphyte::Hash
     struct BASE_API XXHash64 final
     {
     private:
-        static constexpr const uint64_t Prime1 = 11400714785074694791U;
-        static constexpr const uint64_t Prime2 = 14029467366897019727U;
-        static constexpr const uint64_t Prime3 = 1609587929392839161U;
-        static constexpr const uint64_t Prime4 = 9650029242287828579U;
-        static constexpr const uint64_t Prime5 = 2870177450012600261U;
+        static constexpr const uint64_t Prime1 = 11400714785074694791u;
+        static constexpr const uint64_t Prime2 = 14029467366897019727u;
+        static constexpr const uint64_t Prime3 = 1609587929392839161u;
+        static constexpr const uint64_t Prime4 = 9650029242287828579u;
+        static constexpr const uint64_t Prime5 = 2870177450012600261u;
+
         static constexpr const size_t MaxBufferSize = 32;
 
     private:

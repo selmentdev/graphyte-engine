@@ -15,12 +15,10 @@ TEST_CASE("Threading / Parallel For")
     std::atomic<uint32_t> counter{};
     std::atomic<uint32_t> multiplier{};
 
-    Graphyte::Threading::ParallelFor(N, [&](uint32_t index)
-        {
-            ++counter;
-            multiplier += index;
-        }
-    );
+    Graphyte::Threading::ParallelFor(N, [&](uint32_t index) {
+        ++counter;
+        multiplier += index;
+    });
 
     REQUIRE(multiplier == (N * (N - 1)) / 2);
     REQUIRE(counter == N);
@@ -33,11 +31,12 @@ TEST_CASE("ReaderWriterLockCase", "[.][performance]")
     class ProducerRunnable : public IRunnable
     {
     private:
-        ReaderWriterLock * _lock;
+        ReaderWriterLock* _lock;
         std::vector<uint32_t>* _data;
         uint32_t _limit;
         uint32_t _id;
         std::atomic<uint32_t>* _total;
+
     public:
         ProducerRunnable(uint32_t id, ReaderWriterLock* lock, std::vector<uint32_t>* data, uint32_t limit, std::atomic<uint32_t>* total)
             : _lock(lock)
@@ -129,7 +128,8 @@ TEST_CASE("IncrementInterlockedCase", "[.][performance]")
     {
     private:
         std::atomic<uint32_t>* _count;
-        size_t              _reps;
+        size_t _reps;
+
     public:
         Incrementer(size_t reps, std::atomic<uint32_t>* count)
             : _count(count)
@@ -209,9 +209,10 @@ TEST_CASE("IncrementCriticalSectionCase", "[.][performance]")
     class Incrementer : public IRunnable
     {
     private:
-        uint32_t * _count;
-        size_t              _reps;
-        CriticalSection*    _cs;
+        uint32_t* _count;
+        size_t _reps;
+        CriticalSection* _cs;
+
     public:
         Incrementer(size_t reps, uint32_t* count, CriticalSection* cs)
             : _count(count)
@@ -294,9 +295,10 @@ TEST_CASE("IncrementReaderWriterLockCase", "[.][performance]")
     class Incrementer : public IRunnable
     {
     private:
-        uint32_t * _count;
-        size_t              _reps;
-        ReaderWriterLock*   _rwl;
+        uint32_t* _count;
+        size_t _reps;
+        ReaderWriterLock* _rwl;
+
     public:
         Incrementer(size_t reps, uint32_t* count, ReaderWriterLock* rwl)
             : _count(count)
@@ -378,7 +380,7 @@ TEST_CASE("BarrierCase", "[.][performance]")
     class ThreadBarrier : public IRunnable
     {
     private:
-        Barrier * _barrier;
+        Barrier* _barrier;
 
     public:
         ThreadBarrier(Barrier* barrier)
@@ -429,28 +431,28 @@ TEST_CASE("ProducerConsumerCase", "[.][performance]")
 {
     using namespace Graphyte::Threading;
 
-    constexpr size_t BUFFER_SIZE = 10;
+    constexpr size_t BUFFER_SIZE            = 10;
     constexpr size_t PRODUCER_SLEEP_TIME_MS = 50;
     constexpr size_t CONSUMER_SLEEP_TIME_MS = 200;
 
     struct Context
     {
-        int32_t             Buffer[BUFFER_SIZE];
-        std::atomic<int32_t>    LastItemProduced;
-        uint32_t            QueueSize;
-        uint32_t            QueueStartOffset;
-        uint32_t            TotalItemsProduced;
-        uint32_t            TotalItemsConsumed;
-        ConditionVariable   BufferNotEmpty;
-        ConditionVariable   BufferNotFull;
-        CriticalSection     BufferLock;
-        bool                StopRequested;
+        int32_t Buffer[BUFFER_SIZE];
+        std::atomic<int32_t> LastItemProduced;
+        uint32_t QueueSize;
+        uint32_t QueueStartOffset;
+        uint32_t TotalItemsProduced;
+        uint32_t TotalItemsConsumed;
+        ConditionVariable BufferNotEmpty;
+        ConditionVariable BufferNotFull;
+        CriticalSection BufferLock;
+        bool StopRequested;
     };
 
     class Producer : public IRunnable
     {
     private:
-        Context * _context;
+        Context* _context;
         uint32_t _id;
 
     public:
@@ -503,7 +505,7 @@ TEST_CASE("ProducerConsumerCase", "[.][performance]")
     class Consumer : public IRunnable
     {
     private:
-        Context * _context;
+        Context* _context;
         uint32_t _id;
 
     public:
@@ -558,12 +560,12 @@ TEST_CASE("ProducerConsumerCase", "[.][performance]")
 
     Context context;
 
-    context.QueueSize = 0;
-    context.QueueStartOffset = 0;
+    context.QueueSize          = 0;
+    context.QueueStartOffset   = 0;
     context.TotalItemsConsumed = 0;
     context.TotalItemsProduced = 0;
-    context.LastItemProduced = 0;
-    context.StopRequested = false;
+    context.LastItemProduced   = 0;
+    context.StopRequested      = false;
 
     Producer producer(&context, 0);
     Consumer consumer1(&context, 1);
@@ -598,7 +600,7 @@ TEST_CASE("Non-portable threading test", "[.][performance]")
     public:
         bool Started = false;
         bool Stopped = false;
-        bool Exited = false;
+        bool Exited  = false;
 
         virtual uint32_t OnRun() noexcept override
         {

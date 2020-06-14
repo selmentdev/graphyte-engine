@@ -49,6 +49,6 @@ namespace Graphyte::Diagnostics
 #define GX_PROFILE_REGION(name, ...)
 #define GX_PROFILE_MARKER(name, ...)
 #else
-#define GX_PROFILE_REGION(name, ...) ::Graphyte::Diagnostics::ProfilerScopedRegion GX_UNIQUE_NAME(gx_profile_region_)(name, ## __VA_ARGS__)
-#define GX_PROFILE_MARKER(name, ...) ::Graphyte::Diagnostics::Profiler::MarkEvent(name, ## __VA_ARGS__)
+#define GX_PROFILE_REGION(name, ...) ::Graphyte::Diagnostics::ProfilerScopedRegion GX_UNIQUE_NAME(gx_profile_region_)(name, ##__VA_ARGS__)
+#define GX_PROFILE_MARKER(name, ...) ::Graphyte::Diagnostics::Profiler::MarkEvent(name, ##__VA_ARGS__)
 #endif

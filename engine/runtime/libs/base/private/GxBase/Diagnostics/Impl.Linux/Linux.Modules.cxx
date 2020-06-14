@@ -8,8 +8,7 @@ namespace Graphyte::Diagnostics
     {
         std::vector<std::string> result{};
         dl_iterate_phdr(
-            [](struct dl_phdr_info* info, [[maybe_unused]] size_t size, void* context) -> int
-            {
+            [](struct dl_phdr_info* info, [[maybe_unused]] size_t size, void* context) -> int {
                 auto* modules = reinterpret_cast<std::vector<std::string>*>(context);
                 GX_ASSERT(modules != nullptr);
                 GX_ASSERT(size != 0);
@@ -17,8 +16,7 @@ namespace Graphyte::Diagnostics
                 modules->emplace_back(info->dlpi_name);
                 return 0;
             },
-            reinterpret_cast<void*>(&result)
-        );
+            reinterpret_cast<void*>(&result));
 
         return result;
     }

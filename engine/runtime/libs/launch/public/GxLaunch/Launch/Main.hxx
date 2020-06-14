@@ -7,10 +7,14 @@
 // GPU driver markers.
 //
 
-// https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
-extern "C" { GX_LIB_EXPORT uint32_t NvOptimusEnablement = 1; }
-// https://gpuopen.com/amdpowerxpressrequesthighperformance/
-extern "C" { GX_LIB_EXPORT uint32_t AmdPowerXpressRequestHighPerformance = 1; }
+extern "C"
+{
+    // https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
+    GX_LIB_EXPORT uint32_t NvOptimusEnablement = 1;
+
+    // https://gpuopen.com/amdpowerxpressrequesthighperformance/
+    GX_LIB_EXPORT uint32_t AmdPowerXpressRequestHighPerformance = 1;
+}
 
 
 // =================================================================================================
@@ -52,19 +56,18 @@ int main(int argc, char** argv)
 INT
 #if !defined(_MAC)
 #if defined(_M_CEE_PURE)
-__clrcall
+    __clrcall
 #else
-WINAPI
+    WINAPI
 #endif
 #else
-CALLBACK
+    CALLBACK
 #endif
-WinMain(
-    [[maybe_unused]] _In_       HINSTANCE hInstance,
-    [[maybe_unused]] _In_opt_   HINSTANCE hPrevInstance,
-    [[maybe_unused]] _In_       LPSTR lpCmdLine,
-    [[maybe_unused]] _In_       INT nShowCmd
-)
+    WinMain(
+        [[maybe_unused]] _In_ HINSTANCE hInstance,
+        [[maybe_unused]] _In_opt_ HINSTANCE hPrevInstance,
+        [[maybe_unused]] _In_ LPSTR lpCmdLine,
+        [[maybe_unused]] _In_ INT nShowCmd)
 {
     return Graphyte::Launch::Main(__argc, __argv);
 }

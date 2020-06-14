@@ -34,8 +34,7 @@ namespace Graphyte::Application::Impl
     static_assert(std::size(XBoxPadInputMapping) == WindowsXInputDevice::MaxButtons);
 
     constexpr float NormalizeAnalog(
-        int16_t value
-    ) noexcept
+        int16_t value) noexcept
     {
         float const length = (value <= 0 ? 32768.0F : 32767.0F);
         return static_cast<float>(value) / length;
@@ -60,24 +59,21 @@ namespace Graphyte::Application::Impl
         int16_t value,
         float normalized,
         int16_t& previous_value,
-        int32_t deadzone
-    ) noexcept
+        int32_t deadzone) noexcept
     {
         if (previous_value != value || std::abs(static_cast<int32_t>(value)) > deadzone)
         {
             m_Handler->OnControllerAnalog(
                 key,
                 controller,
-                normalized
-            );
+                normalized);
         }
 
         previous_value = value;
     }
 
     void WindowsXInputDevice::Poll(
-        float delta_time
-    ) noexcept
+        float delta_time) noexcept
     {
         bool connected[MaxControllers];
         XINPUT_STATE input_states[MaxControllers];
@@ -87,11 +83,12 @@ namespace Graphyte::Application::Impl
         for (size_t i = 0; i < MaxControllers; ++i)
         {
             auto& current_state = m_Controllers[i];
-            connected[i] = current_state.IsConnected;
+            connected[i]        = current_state.IsConnected;
 
             if (current_state.IsConnected || m_NeedsUpdate)
             {
                 XINPUT_STATE& state = input_states[i];
+
                 state = {};
 
                 current_state.IsConnected = XInputGetState(static_cast<DWORD>(i), &state) == ERROR_SUCCESS;
@@ -110,7 +107,7 @@ namespace Graphyte::Application::Impl
             for (uint32_t controller = 0; controller < MaxControllers; ++controller)
             {
                 auto& current_state = m_Controllers[controller];
-                bool was_connected = connected[controller];
+                bool was_connected  = connected[controller];
 
                 if (current_state.IsConnected && was_connected)
                 {
@@ -118,16 +115,16 @@ namespace Graphyte::Application::Impl
 
                     bool button_states[MaxButtons];
 
-                    button_states[0] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_A);
-                    button_states[1] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_B);
-                    button_states[2] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_X);
-                    button_states[3] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_Y);
-                    button_states[4] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER);
-                    button_states[5] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER);
-                    button_states[6] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_BACK);
-                    button_states[7] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_START);
-                    button_states[8] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB);
-                    button_states[9] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB);
+                    button_states[0]  = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_A);
+                    button_states[1]  = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_B);
+                    button_states[2]  = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_X);
+                    button_states[3]  = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_Y);
+                    button_states[4]  = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER);
+                    button_states[5]  = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER);
+                    button_states[6]  = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_BACK);
+                    button_states[7]  = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_START);
+                    button_states[8]  = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB);
+                    button_states[9]  = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB);
                     button_states[10] = 0 != (state.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
                     button_states[11] = 0 != (state.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
                     button_states[12] = 0 != (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
@@ -149,8 +146,7 @@ namespace Graphyte::Application::Impl
                         state.Gamepad.sThumbLX,
                         NormalizeAnalog(state.Gamepad.sThumbLX),
                         current_state.LeftXAnalog,
-                        XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
-                    );
+                        XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
 
                     ControllerAnalog(
                         Input::GamepadKey::LeftAnalogY,
@@ -158,8 +154,7 @@ namespace Graphyte::Application::Impl
                         state.Gamepad.sThumbLY,
                         NormalizeAnalog(state.Gamepad.sThumbLY),
                         current_state.LeftYAnalog,
-                        XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE
-                    );
+                        XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
 
                     ControllerAnalog(
                         Input::GamepadKey::RightAnalogX,
@@ -167,8 +162,7 @@ namespace Graphyte::Application::Impl
                         state.Gamepad.sThumbRX,
                         NormalizeAnalog(state.Gamepad.sThumbRX),
                         current_state.RightXAnalog,
-                        XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE
-                    );
+                        XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
 
                     ControllerAnalog(
                         Input::GamepadKey::RightAnalogY,
@@ -176,8 +170,7 @@ namespace Graphyte::Application::Impl
                         state.Gamepad.sThumbRY,
                         NormalizeAnalog(state.Gamepad.sThumbRY),
                         current_state.RightYAnalog,
-                        XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE
-                    );
+                        XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE);
 
                     ControllerAnalog(
                         Input::GamepadKey::LeftTriggerAnalog,
@@ -185,8 +178,7 @@ namespace Graphyte::Application::Impl
                         state.Gamepad.bLeftTrigger,
                         static_cast<float>(state.Gamepad.bLeftTrigger) / 255.0F,
                         current_state.LeftTriggerAnalog,
-                        XINPUT_GAMEPAD_TRIGGER_THRESHOLD
-                    );
+                        XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
 
                     ControllerAnalog(
                         Input::GamepadKey::RightTriggerAnalog,
@@ -194,8 +186,7 @@ namespace Graphyte::Application::Impl
                         state.Gamepad.bRightTrigger,
                         static_cast<float>(state.Gamepad.bRightTrigger) / 255.0F,
                         current_state.RightTriggerAnalog,
-                        XINPUT_GAMEPAD_TRIGGER_THRESHOLD
-                    );
+                        XINPUT_GAMEPAD_TRIGGER_THRESHOLD);
 
                     for (size_t i = 0; i < MaxButtons; ++i)
                     {
@@ -207,8 +198,7 @@ namespace Graphyte::Application::Impl
                                 m_Handler->OnControllerButtonPressed(
                                     XBoxPadInputMapping[i],
                                     controller,
-                                    false
-                                );
+                                    false);
 
                                 current_state.RepeatTime[i] = current_time + m_ButtonInitialDelay;
                             }
@@ -217,8 +207,7 @@ namespace Graphyte::Application::Impl
                                 m_Handler->OnControllerButtonReleased(
                                     XBoxPadInputMapping[i],
                                     controller,
-                                    false
-                                );
+                                    false);
                             }
                         }
                         else if (current_state.Button[i] && current_state.RepeatTime[i] <= current_time)
@@ -226,8 +215,7 @@ namespace Graphyte::Application::Impl
                             m_Handler->OnControllerButtonPressed(
                                 XBoxPadInputMapping[i],
                                 controller,
-                                true
-                            );
+                                true);
 
                             current_state.RepeatTime[i] = current_time + m_ButtonRepeatDelay;
                         }

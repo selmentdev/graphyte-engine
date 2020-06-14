@@ -13,10 +13,15 @@ namespace Graphyte::Threading
 
     public:
         Thread() noexcept;
+
         Thread(const Thread&) = delete;
+
         Thread(Thread&& other) noexcept;
+
         ~Thread() noexcept;
+
         Thread& operator=(const Thread&) = delete;
+
         Thread& operator=(Thread&& other) noexcept;
 
     public:
@@ -45,10 +50,9 @@ namespace Graphyte::Threading
         bool Start(
             IRunnable* runnable,
             std::string_view name,
-            size_t stacksize = 0,
+            size_t stacksize        = 0,
             ThreadPriority priority = ThreadPriority::Normal,
-            ThreadAffinity affinity = ThreadAffinity::All
-        ) noexcept;
+            ThreadAffinity affinity = ThreadAffinity::All) noexcept;
 
         bool Stop(bool wait) noexcept;
 

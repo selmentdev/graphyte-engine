@@ -5,8 +5,7 @@
 namespace Graphyte::Diagnostics
 {
     BASE_API Status GetStatusFromErrno(
-        int error
-    ) noexcept
+        int error) noexcept
     {
         switch (error)
         {
@@ -59,8 +58,7 @@ namespace Graphyte::Diagnostics
             default:
                 GX_LOG(LogPlatform, Error, "Unmapped errno: {} -> {}\n",
                     error,
-                    GetMessageFromErrno(error)
-                );
+                    GetMessageFromErrno(error));
                 break;
         }
 
@@ -68,18 +66,16 @@ namespace Graphyte::Diagnostics
     }
 
     BASE_API std::string GetMessageFromErrno(
-        int error
-    ) noexcept
+        int error) noexcept
     {
 #if GRAPHYTE_PLATFORM_POSIX
 
         std::array<char, 128> buffer{};
-        
+
         char* result = strerror_r(
             error,
             std::data(buffer),
-            std::size(buffer)
-        );
+            std::size(buffer));
 
         return { result };
 
@@ -92,42 +88,67 @@ namespace Graphyte::Diagnostics
         return { buffer };
 
 #else
-#   error "Not implemented"
+#error "Not implemented"
 #endif
     }
 
     BASE_API std::string_view GetMessageFromStatus(
-        Status value
-    ) noexcept
+        Status value) noexcept
     {
         switch (value)
         {
-            case Status::Success:               return "Success";
-            case Status::Failure:               return "Failure";
-            case Status::InvalidArgument:       return "InvalidArgument";
-            case Status::InvalidPath:           return "InvalidPath";
-            case Status::InvalidFile:           return "InvalidFile";
-            case Status::InvalidDirectory:      return "InvalidDirectory";
-            case Status::InvalidFormat:         return "InvalidFormat";
-            case Status::NotInitialized:        return "NotInitialized";
-            case Status::NotImplemented:        return "NotImplemented";
-            case Status::NotSupported:          return "NotSupported";
-            case Status::NotFound:              return "NotFound";
-            case Status::NotEnoughMemory:       return "NotEnoughMemory";
-            case Status::AccessDenied:          return "AccessDenied";
-            case Status::SharingViolation:      return "SharingViolation";
-            case Status::DirectoryNotEmpty:     return "DirectoryNotEmpty";
-            case Status::AlreadyExists:         return "AlreadyExists";
-            case Status::Timeout:               return "Timeout";
-            case Status::TryAgain:              return "TryAgain";
-            case Status::ReadFault:             return "ReadFault";
-            case Status::WriteFault:            return "WriteFault";
-            case Status::FileExists:            return "FileExists";
-            case Status::EndOfStream:           return "EndOfStream";
-            case Status::Breakpoint:            return "Breakpoint";
-            case Status::StackOverflow:         return "StackOverflow";
-            case Status::InvalidInstruction:    return "InvalidInstruction";
-            case Status::FloatingPointError:    return "FloatingPointError";
+            case Status::Success:
+                return "Success";
+            case Status::Failure:
+                return "Failure";
+            case Status::InvalidArgument:
+                return "InvalidArgument";
+            case Status::InvalidPath:
+                return "InvalidPath";
+            case Status::InvalidFile:
+                return "InvalidFile";
+            case Status::InvalidDirectory:
+                return "InvalidDirectory";
+            case Status::InvalidFormat:
+                return "InvalidFormat";
+            case Status::NotInitialized:
+                return "NotInitialized";
+            case Status::NotImplemented:
+                return "NotImplemented";
+            case Status::NotSupported:
+                return "NotSupported";
+            case Status::NotFound:
+                return "NotFound";
+            case Status::NotEnoughMemory:
+                return "NotEnoughMemory";
+            case Status::AccessDenied:
+                return "AccessDenied";
+            case Status::SharingViolation:
+                return "SharingViolation";
+            case Status::DirectoryNotEmpty:
+                return "DirectoryNotEmpty";
+            case Status::AlreadyExists:
+                return "AlreadyExists";
+            case Status::Timeout:
+                return "Timeout";
+            case Status::TryAgain:
+                return "TryAgain";
+            case Status::ReadFault:
+                return "ReadFault";
+            case Status::WriteFault:
+                return "WriteFault";
+            case Status::FileExists:
+                return "FileExists";
+            case Status::EndOfStream:
+                return "EndOfStream";
+            case Status::Breakpoint:
+                return "Breakpoint";
+            case Status::StackOverflow:
+                return "StackOverflow";
+            case Status::InvalidInstruction:
+                return "InvalidInstruction";
+            case Status::FloatingPointError:
+                return "FloatingPointError";
         }
 
         return "<unknown>";

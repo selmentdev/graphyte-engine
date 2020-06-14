@@ -11,7 +11,7 @@ namespace Graphyte::System::Impl
 {
     void DetectProcessorFeatures() noexcept
     {
-        uint64_t hwcap = getauxval(AT_HWCAP);
+        uint64_t hwcap                   = getauxval(AT_HWCAP);
         [[maybe_unused]] uint64_t hwcap2 = getauxval(AT_HWCAP2);
 
         GX_LOG(LogPlatform, Trace, "HWCAP: {:016x}, HWCAP2: {:016x}\n", hwcap, hwcap2);

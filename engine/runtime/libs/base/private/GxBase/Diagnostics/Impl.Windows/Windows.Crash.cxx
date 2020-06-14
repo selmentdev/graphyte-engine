@@ -44,14 +44,13 @@ namespace Graphyte::Diagnostics
         GX_LOG(LogPlatform, Error, " cpsr = {:08x}\n", context.Cpsr);
 
 #else
-#   error "Not implemented"
+#error "Not implemented"
 #endif
     }
 
     //[[noreturn]]
     BASE_API void OnCrash(
-        EXCEPTION_POINTERS* exception
-    ) noexcept
+        EXCEPTION_POINTERS* exception) noexcept
     {
         GX_LOG(LogPlatform, Error, "Application crashed:\n");
 
@@ -65,23 +64,19 @@ namespace Graphyte::Diagnostics
             GX_LOG(LogPlatform, Error, "Exception:\n");
             GX_LOG(LogPlatform, Error, "    code:     {} ({:08x})\n",
                 Diagnostics::GeMessageFromtExceptionCode(exception->ExceptionRecord->ExceptionCode),
-                exception->ExceptionRecord->ExceptionCode
-            );
+                exception->ExceptionRecord->ExceptionCode);
 
             GX_LOG(LogPlatform, Error, "    address:  {}\n",
-                exception->ExceptionRecord->ExceptionAddress
-            );
+                exception->ExceptionRecord->ExceptionAddress);
 
             GX_LOG(LogPlatform, Error, "Params: {}\n",
-                exception->ExceptionRecord->NumberParameters
-            );
+                exception->ExceptionRecord->NumberParameters);
 
             for (DWORD i = 0; i < exception->ExceptionRecord->NumberParameters; ++i)
             {
                 GX_LOG(LogPlatform, Error, "    [{:2}] {}\n",
                     i,
-                    reinterpret_cast<void*>(exception->ExceptionRecord->ExceptionInformation[i])
-                );
+                    reinterpret_cast<void*>(exception->ExceptionRecord->ExceptionInformation[i]));
             }
 
 
@@ -113,8 +108,7 @@ namespace Graphyte::Diagnostics
             {
                 GX_LOG(LogPlatform, Error, "    [{:4}] {}\n",
                     i,
-                    ToString(trace[i], StackFrameFormat::Extended)
-                );
+                    ToString(trace[i], StackFrameFormat::Extended));
             }
         }
         else
@@ -158,25 +152,25 @@ namespace Graphyte::Diagnostics
 
             switch (result)
             {
-            case frrvOk:
-            case frrvOkManifest:
-            case frrvOkQueued:
-            case frrvOkHeadless:
-                GX_LOG(LogPlatform, Error, "Report fault = OK\n");
-                break;
+                case frrvOk:
+                case frrvOkManifest:
+                case frrvOkQueued:
+                case frrvOkHeadless:
+                    GX_LOG(LogPlatform, Error, "Report fault = OK\n");
+                    break;
 
-            case frrvLaunchDebugger:
-                GX_LOG(LogPlatform, Error, "Report fault = Launch Debugger\n");
-                break;
+                case frrvLaunchDebugger:
+                    GX_LOG(LogPlatform, Error, "Report fault = Launch Debugger\n");
+                    break;
 
-            case frrvErr:
-            case frrvErrNoDW:
-            case frrvErrTimeout:
-            case frrvErrAnotherInstance:
-            case frrvErrNoMemory:
-            case frrvErrDoubleFault:
-                GX_LOG(LogPlatform, Error, "Report fault = Error\n");
-                break;
+                case frrvErr:
+                case frrvErrNoDW:
+                case frrvErrTimeout:
+                case frrvErrAnotherInstance:
+                case frrvErrNoMemory:
+                case frrvErrDoubleFault:
+                    GX_LOG(LogPlatform, Error, "Report fault = Error\n");
+                    break;
             }
 
 #endif

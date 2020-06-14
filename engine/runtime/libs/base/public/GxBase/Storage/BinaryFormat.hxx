@@ -12,30 +12,26 @@ namespace Graphyte::Storage
         BinarySignature() noexcept = default;
 
         explicit constexpr BinarySignature(
-            uint64_t value
-        ) noexcept
+            uint64_t value) noexcept
             : Value{ value }
         {
         }
 
-        constexpr bool operator == (
-            const BinarySignature& other
-        ) const noexcept
+        constexpr bool operator==(
+            const BinarySignature& other) const noexcept
         {
             return this->Value == other.Value;
         }
 
-        constexpr bool operator != (
-            const BinarySignature& other
-        ) const noexcept
+        constexpr bool operator!=(
+            const BinarySignature& other) const noexcept
         {
             return this->Value != other.Value;
         }
 
-        friend inline Archive& operator << (
+        friend inline Archive& operator<<(
             Archive& archive,
-            BinarySignature& signature
-        ) noexcept
+            BinarySignature& signature) noexcept
         {
             return archive << signature.Value;
         }
@@ -52,29 +48,26 @@ namespace Graphyte::Storage
 
         constexpr BinaryFormatVersion(
             uint16_t major,
-            uint16_t minor
-        ) noexcept
+            uint16_t minor) noexcept
             : Major{ major }
             , Minor{ minor }
         {
         }
 
-        constexpr bool operator == (
-            const BinaryFormatVersion& other
-        ) const noexcept
+        constexpr bool operator==(
+            const BinaryFormatVersion& other) const noexcept
         {
             return this->Major == other.Major
-                && this->Minor == other.Minor;
+                   && this->Minor == other.Minor;
         }
 
-        friend inline Archive& operator << (
+        friend inline Archive& operator<<(
             Archive& archive,
-            BinaryFormatVersion& version
-        ) noexcept
+            BinaryFormatVersion& version) noexcept
         {
             return archive
-                << version.Major
-                << version.Minor;
+                   << version.Major
+                   << version.Minor;
         }
     };
     static_assert(sizeof(BinaryFormatVersion) == sizeof(uint32_t));
@@ -87,15 +80,14 @@ namespace Graphyte::Storage
         uint64_t Size;
         uint64_t Offset;
 
-        friend inline Archive& operator << (
+        friend inline Archive& operator<<(
             Archive& archive,
-            BinaryBlockHeader& header
-        ) noexcept
+            BinaryBlockHeader& header) noexcept
         {
             return archive
-                << header.Signature
-                << header.Size
-                << header.Offset;
+                   << header.Signature
+                   << header.Size
+                   << header.Offset;
         }
     };
     static_assert(sizeof(BinaryBlockHeader) == 24);
@@ -110,18 +102,17 @@ namespace Graphyte::Storage
         uint64_t FileSize;
         uint64_t OffsetToFirstBlock;
 
-        friend inline Archive& operator << (
+        friend inline Archive& operator<<(
             Archive& archive,
-            BinaryFormatHeader& header
-        ) noexcept
+            BinaryFormatHeader& header) noexcept
         {
             return archive
-                << header.Signature
-                << header.Version
-                << header.Encoding
-                << header.CustomFlags
-                << header.FileSize
-                << header.OffsetToFirstBlock;
+                   << header.Signature
+                   << header.Version
+                   << header.Encoding
+                   << header.CustomFlags
+                   << header.FileSize
+                   << header.OffsetToFirstBlock;
         }
     };
     static_assert(sizeof(BinaryFormatHeader) == 40);

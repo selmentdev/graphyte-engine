@@ -40,17 +40,17 @@ namespace Graphyte::AssetsPipeline
         Graphics::GpuShaderProfile Profile;
         Graphics::GpuShaderStage Stage;
 
-        bool EnableAggresiveFlattening = false;
-        bool Enable16BitTypes = false;
-        bool EnableStrictMode = true;
-        bool AvoidFlowControlConstructs = false;
+        bool EnableAggresiveFlattening   = false;
+        bool Enable16BitTypes            = false;
+        bool EnableStrictMode            = true;
+        bool AvoidFlowControlConstructs  = false;
         bool PreferFlowControlConstructs = false;
-        bool ForceIEEE = false;
-        bool SuppressWarnings = false;
-        bool DisableOptimizations = false;
-        bool DisableValidation = false;
-        bool WarningsAsErrors = false;
-        bool EnableDebugInfo = false;
+        bool ForceIEEE                   = false;
+        bool SuppressWarnings            = false;
+        bool DisableOptimizations        = false;
+        bool DisableValidation           = false;
+        bool WarningsAsErrors            = false;
+        bool EnableDebugInfo             = false;
 
         ShaderOptimizationLevel OptimizationLevel;
 
@@ -72,7 +72,9 @@ namespace Graphyte::AssetsPipeline
     {
     public:
         virtual ~IShaderCompilerBackend() noexcept;
+
         virtual bool IsSupported(ShaderCompilerInput& input) const noexcept = 0;
+
         virtual bool Compile(ShaderCompilerInput& input, ShaderCompilerOutput& output) const noexcept = 0;
     };
 
@@ -86,6 +88,7 @@ namespace Graphyte::AssetsPipeline
         virtual ~ShaderProcessor() noexcept;
 
         bool Process(const AssetProcessorRequest& request, AssetProcessorResponse& response) noexcept override;
+
         bool Process() noexcept override;
 
     public:

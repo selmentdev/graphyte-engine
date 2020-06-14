@@ -17,8 +17,7 @@ namespace Graphyte::Diagnostics::Impl
 {
     static Status GetLibUnwindStackTrace(
         std::vector<StackFrame>& frames,
-        unw_context_t* context
-    ) noexcept
+        unw_context_t* context) noexcept
     {
         unw_cursor_t cursor{};
         unw_init_local(&cursor, context);
@@ -68,22 +67,19 @@ namespace Graphyte::Diagnostics::Impl
 namespace Graphyte::Diagnostics
 {
     BASE_API Status GetStackTrace(
-        std::vector<StackFrame>& frames
-    ) noexcept
+        std::vector<StackFrame>& frames) noexcept
     {
         unw_context_t context{};
         unw_getcontext(&context);
 
         return Impl::GetLibUnwindStackTrace(
             frames,
-            &context
-        );
+            &context);
     }
 
     BASE_API Status GetStackTrace(
         std::vector<StackFrame>& frames,
-        [[maybe_unused]] ucontext_t* context
-    ) noexcept
+        [[maybe_unused]] ucontext_t* context) noexcept
     {
         return GetStackTrace(frames);
     }

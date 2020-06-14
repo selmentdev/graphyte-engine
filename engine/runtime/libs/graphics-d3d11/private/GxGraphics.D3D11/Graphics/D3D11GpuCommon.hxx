@@ -26,8 +26,7 @@ namespace Graphyte::Graphics
         const char* expression,
         const char* file,
         unsigned int line,
-        ID3D11Device* device
-    ) noexcept;
+        ID3D11Device* device) noexcept;
 
     GX_DECLARE_LOG_CATEGORY(LogD3D11Render, Trace, Trace);
 
@@ -52,14 +51,12 @@ namespace Graphyte::Graphics
     template <size_t N>
     __forceinline void D3D11SetDebugObjectName(
         ID3D11DeviceChild* resource,
-        const char(&name)[N]
-    ) noexcept
+        const char (&name)[N]) noexcept
     {
-        [[maybe_unused]] HRESULT hr =resource->SetPrivateData(
+        [[maybe_unused]] HRESULT hr = resource->SetPrivateData(
             WKPDID_D3DDebugObjectName,
             static_cast<UINT>(N - 1),
-            name
-        );
+            name);
 
         GPU_DX_VALIDATE(hr);
     }
@@ -67,14 +64,12 @@ namespace Graphyte::Graphics
     __forceinline void D3D11SetDebugObjectName(
         ID3D11DeviceChild* resource,
         const char* name,
-        size_t length
-    ) noexcept
+        size_t length) noexcept
     {
-        [[maybe_unused]] HRESULT hr =resource->SetPrivateData(
+        [[maybe_unused]] HRESULT hr = resource->SetPrivateData(
             WKPDID_D3DDebugObjectName,
             static_cast<UINT>(length),
-            name
-        );
+            name);
 
         GPU_DX_VALIDATE(hr);
     }

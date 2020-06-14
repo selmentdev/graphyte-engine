@@ -9,6 +9,7 @@ namespace Graphyte::Threading
     {
     public:
         BaseTask() noexcept = default;
+
         virtual ~BaseTask() noexcept = default;
 
     public:
@@ -20,6 +21,7 @@ namespace Graphyte::Threading
     class BASE_API TaskDispatcher final
     {
         friend class TaskWorkerThread;
+
     private:
         struct WorkerData final
         {
@@ -62,6 +64,7 @@ namespace Graphyte::Threading
         struct TaskConstructor final
         {
             friend class Task;
+
         public:
             template <typename... TArgs>
             void Dispatch(TArgs&&... args) noexcept

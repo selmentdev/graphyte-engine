@@ -10,8 +10,7 @@
 namespace Graphyte::Diagnostics
 {
     Status CreateCoreDump(
-        EXCEPTION_POINTERS* exception
-    ) noexcept
+        EXCEPTION_POINTERS* exception) noexcept
     {
         (void)exception;
         return Status::NotImplemented;

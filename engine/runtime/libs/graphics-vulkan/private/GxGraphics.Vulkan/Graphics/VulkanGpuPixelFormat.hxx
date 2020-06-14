@@ -5,6 +5,5 @@
 namespace Graphyte::Graphics
 {
     VkFormat VKGetPixelFormat(
-        PixelFormat format
-    ) noexcept;
+        PixelFormat format) noexcept;
 }

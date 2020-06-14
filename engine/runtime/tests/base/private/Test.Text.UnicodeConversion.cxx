@@ -10,7 +10,7 @@ TEST_CASE("Unicode conversion")
         const char8_t sequence[] = u8"\U0001F601";
 
         auto source_start = std::begin(sequence);
-        auto source_end = std::end(sequence) - 1;
+        auto source_end   = std::end(sequence) - 1;
 
         char32_t cp1 = 0;
         char32_t cp2 = 0;
@@ -35,7 +35,7 @@ TEST_CASE("Unicode conversion")
         // { '\xf0', '\x9f', '\x98', '\x81' };
 
         const char8_t* source_start = std::begin(sequence);
-        const char8_t* source_end = std::end(sequence) - 1;
+        const char8_t* source_end   = std::end(sequence) - 1;
 
         char32_t cp1 = 0;
         char32_t cp2 = 0;
@@ -55,7 +55,7 @@ TEST_CASE("Unicode conversion")
 
         std::array<char8_t, 8> target{};
         auto start = target.data();
-        auto end = target.data() + target.size();
+        auto end   = target.data() + target.size();
 
         REQUIRE(ConvertUTF8Sequence(ch1, &start, end, ConversionType::Strict) == ConversionResult::Success);
         REQUIRE(target[0] == 0xe2);

@@ -40,14 +40,13 @@ namespace Graphyte::Diagnostics
         GX_LOG(LogPlatform, Error, " cpsr = {:08x}\n", context->uc_mcontext.arm_cpsr);
 
 #else
-#   error "Not implemented"
+#error "Not implemented"
 #endif
     }
 
     BASE_API void OnCrash(
         ucontext_t* context,
-        siginfo_t* signal_info
-    ) noexcept
+        siginfo_t* signal_info) noexcept
     {
         (void)signal_info;
         (void)context;
@@ -70,17 +69,17 @@ namespace Graphyte::Diagnostics
 
             switch (signal_info->si_signo)
             {
-            case SIGKILL:
+                case SIGKILL:
                 {
                     GX_LOG(LogPlatform, Error, "       pid: {}\n", signal_info->si_pid);
                     GX_LOG(LogPlatform, Error, "       uid: {}\n", signal_info->si_uid);
                     break;
                 }
 
-            case SIGILL:
-            case SIGFPE:
-            case SIGSEGV:
-            case SIGBUS:
+                case SIGILL:
+                case SIGFPE:
+                case SIGSEGV:
+                case SIGBUS:
                 {
                     GX_LOG(LogPlatform, Error, "      addr: {}\n", signal_info->si_addr);
                     GX_LOG(LogPlatform, Error, "     lower: {}\n", signal_info->si_lower);
@@ -89,7 +88,7 @@ namespace Graphyte::Diagnostics
                     break;
                 }
 
-            default:
+                default:
                 {
                     break;
                 }
@@ -102,7 +101,7 @@ namespace Graphyte::Diagnostics
         //
 
         std::vector<Diagnostics::StackFrame> stacktrace{};
-        
+
         if (Status status = GetStackTrace(stacktrace, context); status == Status::Success)
         {
             GX_LOG(LogPlatform, Error, "Stack Trace:\n");
@@ -114,10 +113,10 @@ namespace Graphyte::Diagnostics
         }
         else
         {
-                GX_LOG(LogPlatform, Error, "-- no stack trace --\n");
+            GX_LOG(LogPlatform, Error, "-- no stack trace --\n");
         }
 
-        
+
         //
         // Terminate application.
         //

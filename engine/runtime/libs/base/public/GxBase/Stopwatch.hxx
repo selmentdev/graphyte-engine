@@ -39,10 +39,8 @@ namespace Graphyte::Diagnostics
 
         double GetElapsedTime() const noexcept
         {
-            return
-                static_cast<double>(this->m_Elapsed)
-                /
-                static_cast<double>(m_Resolution);
+            return static_cast<double>(this->m_Elapsed)
+                   / static_cast<double>(m_Resolution);
         }
 
     public:
@@ -50,7 +48,7 @@ namespace Graphyte::Diagnostics
         {
             if (!this->m_IsRunning)
             {
-                this->m_Start = static_cast<int64_t>(System::GetTimestamp());
+                this->m_Start     = static_cast<int64_t>(System::GetTimestamp());
                 this->m_IsRunning = true;
             }
         }
@@ -59,7 +57,7 @@ namespace Graphyte::Diagnostics
         {
             if (this->m_IsRunning)
             {
-                int64_t const end = static_cast<int64_t>(System::GetTimestamp());
+                int64_t const end     = static_cast<int64_t>(System::GetTimestamp());
                 int64_t const elapsed = end - this->m_Start;
 
                 this->m_Elapsed += elapsed;
@@ -73,15 +71,15 @@ namespace Graphyte::Diagnostics
 
         void Reset() noexcept
         {
-            this->m_Elapsed = 0;
-            this->m_Start = 0;
+            this->m_Elapsed   = 0;
+            this->m_Start     = 0;
             this->m_IsRunning = false;
         }
 
         void Restart() noexcept
         {
-            this->m_Elapsed = 0;
-            this->m_Start = static_cast<int64_t>(System::GetTimestamp());
+            this->m_Elapsed   = 0;
+            this->m_Start     = static_cast<int64_t>(System::GetTimestamp());
             this->m_IsRunning = true;
         }
     };

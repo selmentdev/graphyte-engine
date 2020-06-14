@@ -7,15 +7,14 @@ namespace Graphyte::Graphics
     GpuVertexBufferHandle D3D11GpuDevice::CreateVertexBuffer(
         uint32_t size,
         GpuBufferUsage usage,
-        const GpuSubresourceData* subresource
-    ) noexcept
+        const GpuSubresourceData* subresource) noexcept
     {
         GX_ASSERT(size != 0);
 
         D3D11_BUFFER_DESC desc{
-            .ByteWidth = size,
-            .Usage = Flags::Any(usage, GpuBufferUsage::AnyDynamic) ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT,
-            .BindFlags = D3D11_BIND_VERTEX_BUFFER,
+            .ByteWidth      = size,
+            .Usage          = Flags::Any(usage, GpuBufferUsage::AnyDynamic) ? D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT,
+            .BindFlags      = D3D11_BIND_VERTEX_BUFFER,
             .CPUAccessFlags = Flags::Any(usage, GpuBufferUsage::AnyDynamic) ? D3D11_CPU_ACCESS_WRITE : UINT{},
         };
 
@@ -53,8 +52,8 @@ namespace Graphyte::Graphics
             GX_ASSERT(size == subresource->Pitch);
 
             init_data = {
-                .pSysMem = subresource->Memory,
-                .SysMemPitch = size,
+                .pSysMem          = subresource->Memory,
+                .SysMemPitch      = size,
                 .SysMemSlicePitch = 0,
             };
 
@@ -66,19 +65,17 @@ namespace Graphyte::Graphics
         GPU_DX_VALIDATE(m_Device->CreateBuffer(
             &desc,
             native_data,
-            &buffer
-        ));
+            &buffer));
 
-        auto result = new D3D11GpuVertexBuffer();
+        auto result        = new D3D11GpuVertexBuffer();
         result->m_Resource = buffer;
-        result->m_Size = size;
-        result->m_Usage = usage;
+        result->m_Size     = size;
+        result->m_Usage    = usage;
         return result;
     }
 
     void D3D11GpuDevice::DestroyVertexBuffer(
-        GpuVertexBufferHandle handle
-    ) noexcept
+        GpuVertexBufferHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuVertexBuffer*>(handle);
@@ -93,8 +90,7 @@ namespace Graphyte::Graphics
         GpuVertexBufferHandle handle,
         uint32_t offset,
         uint32_t size,
-        GpuResourceLockMode lock_mode
-    ) noexcept
+        GpuResourceLockMode lock_mode) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuVertexBuffer*>(handle);
@@ -121,11 +117,10 @@ namespace Graphyte::Graphics
                 0,
                 D3D11_MAP_WRITE_DISCARD,
                 0,
-                &mapped
-            ));
+                &mapped));
 
             data.SetData(mapped.pData);
-            data.Pitch = mapped.RowPitch;
+            data.Pitch      = mapped.RowPitch;
             data.DepthPitch = mapped.DepthPitch;
         }
         else
@@ -133,11 +128,11 @@ namespace Graphyte::Graphics
             if (lock_mode == GpuResourceLockMode::ReadOnly)
             {
                 D3D11_BUFFER_DESC staging{
-                    .ByteWidth = size,
-                    .Usage = D3D11_USAGE_STAGING,
-                    .BindFlags = 0,
+                    .ByteWidth      = size,
+                    .Usage          = D3D11_USAGE_STAGING,
+                    .BindFlags      = 0,
                     .CPUAccessFlags = D3D11_CPU_ACCESS_READ,
-                    .MiscFlags = 0,
+                    .MiscFlags      = 0,
                 };
 
                 Microsoft::WRL::ComPtr<ID3D11Buffer> staging_buffer{};
@@ -145,15 +140,14 @@ namespace Graphyte::Graphics
                 GPU_DX_VALIDATE(m_Device->CreateBuffer(
                     &staging,
                     nullptr,
-                    staging_buffer.GetAddressOf()
-                ));
+                    staging_buffer.GetAddressOf()));
 
                 data.StagingResource = staging_buffer;
 
                 D3D11_BOX box{
                     .left = offset,
                     .top = box.front = 0,
-                    .right = size,
+                    .right           = size,
                     .bottom = box.back = 1,
                 };
 
@@ -165,8 +159,7 @@ namespace Graphyte::Graphics
                     0,
                     native->m_Resource,
                     0,
-                    &box
-                );
+                    &box);
 
                 D3D11_MAPPED_SUBRESOURCE mapped{};
 
@@ -175,11 +168,10 @@ namespace Graphyte::Graphics
                     0,
                     D3D11_MAP_READ,
                     0,
-                    &mapped
-                ));
+                    &mapped));
 
                 data.SetData(mapped.pData);
-                data.Pitch = mapped.RowPitch;
+                data.Pitch      = mapped.RowPitch;
                 data.DepthPitch = mapped.DepthPitch;
             }
             else
@@ -196,8 +188,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::UnlockVertexBuffer(
-        GpuVertexBufferHandle handle
-    ) noexcept
+        GpuVertexBufferHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuVertexBuffer*>(handle);
@@ -216,8 +207,7 @@ namespace Graphyte::Graphics
         {
             m_Context->Unmap(
                 native->m_Resource,
-                0
-            );
+                0);
         }
         else
         {
@@ -228,8 +218,7 @@ namespace Graphyte::Graphics
                 ID3D11Buffer* staging_buffer = (ID3D11Buffer*)staging.StagingResource.Get();
                 m_Context->Unmap(
                     staging_buffer,
-                    0
-                );
+                    0);
             }
             else
             {
@@ -239,8 +228,7 @@ namespace Graphyte::Graphics
                     nullptr,
                     staging.GetData(),
                     staging.Pitch,
-                    0
-                );
+                    0);
 
                 staging.DeallocateData();
             }
@@ -251,10 +239,9 @@ namespace Graphyte::Graphics
 
     void D3D11GpuDevice::CopyVertexBuffer(
         GpuVertexBufferHandle source,
-        GpuVertexBufferHandle destination
-    ) noexcept
+        GpuVertexBufferHandle destination) noexcept
     {
-        auto native_source = static_cast<D3D11GpuVertexBuffer*>(source);
+        auto native_source      = static_cast<D3D11GpuVertexBuffer*>(source);
         auto native_destination = static_cast<D3D11GpuVertexBuffer*>(destination);
 
 #if ENABLE_GPU_API_DEBUG
@@ -269,7 +256,6 @@ namespace Graphyte::Graphics
 
         m_Context->CopyResource(
             native_destination->m_Resource,
-            native_source->m_Resource
-        );
+            native_source->m_Resource);
     }
 }

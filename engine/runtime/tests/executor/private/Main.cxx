@@ -5,8 +5,7 @@
 
 #include <GxLaunch/Launch/Main.hxx>
 
-Graphyte::Application::ApplicationDescriptor GraphyteApp
-{
+Graphyte::Application::ApplicationDescriptor GraphyteApp{
     "Graphyte Engine Unit Test",
     "unittest",
     "Graphyte",

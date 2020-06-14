@@ -23,8 +23,7 @@ namespace Graphyte::Diagnostics
         std::string_view file,
         std::uint_least32_t line,
         std::string_view format,
-        fmt::format_args args
-    ) noexcept
+        fmt::format_args args) noexcept
     {
         if (always_ignore)
         {
@@ -116,13 +115,11 @@ namespace Graphyte::Diagnostics
 
         GX_LOG(LogPlatform, Error,
             "Assertion failed:\n{}",
-            content
-        );
+            content);
 
         GX_LOG(LogPlatform, Error,
             "Stack Trace:\n{}",
-            stacktrace
-        );
+            stacktrace);
 
         auto result = Impl::AssertResult::Abort;
 
@@ -135,8 +132,7 @@ namespace Graphyte::Diagnostics
             result = Diagnostics::Impl::ReportAssertion(
                 "Graphyte Engine",
                 content,
-                stacktrace
-            );
+                stacktrace);
         }
 
 

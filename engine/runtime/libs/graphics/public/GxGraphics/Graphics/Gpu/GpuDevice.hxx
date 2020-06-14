@@ -10,12 +10,12 @@ namespace Graphyte::Graphics
     {
     public:
         GpuDevice() noexcept;
+
         virtual ~GpuDevice() noexcept;
 
     public:
         virtual void Tick(
-            float time
-        ) noexcept;
+            float time) noexcept;
 
         //
         // Shader.
@@ -24,12 +24,10 @@ namespace Graphyte::Graphics
         virtual GpuShaderHandle CreateShader(
             GpuShaderStage stage,
             GpuShaderBytecode bytecode,
-            GpuInputLayout inputLayout
-        ) noexcept = 0;
+            GpuInputLayout inputLayout) noexcept = 0;
 
         virtual void DestroyShader(
-            GpuShaderHandle handle
-        ) noexcept = 0;
+            GpuShaderHandle handle) noexcept = 0;
 
 
         //
@@ -41,12 +39,10 @@ namespace Graphyte::Graphics
         virtual GpuCommandListHandle CreateCommandList() noexcept = 0;
 
         virtual void DestroyCommandList(
-            GpuCommandListHandle handle
-        ) noexcept = 0;
+            GpuCommandListHandle handle) noexcept = 0;
 
         virtual void PlayCommandList(
-            GpuCommandListHandle handle
-        ) const noexcept = 0;
+            GpuCommandListHandle handle) const noexcept = 0;
 
 
         //
@@ -60,30 +56,25 @@ namespace Graphyte::Graphics
             bool fullscreen,
             PixelFormat color_format,
             PixelFormat depth_format,
-            GpuMsaaQuality msaa
-        ) noexcept = 0;
+            GpuMsaaQuality msaa) noexcept = 0;
 
         virtual void DestroyViewport(
-            GpuViewportHandle handle
-        ) noexcept = 0;
+            GpuViewportHandle handle) noexcept = 0;
 
         virtual void ResizeViewport(
             GpuViewportHandle handle,
             uint32_t width,
             uint32_t height,
             bool fullscreen,
-            PixelFormat format
-        ) noexcept = 0;
+            PixelFormat format) noexcept = 0;
 
         virtual void BeginDrawViewport(
-            GpuViewportHandle handle
-        ) noexcept = 0;
+            GpuViewportHandle handle) noexcept = 0;
 
         virtual void EndDrawViewport(
             GpuViewportHandle handle,
             bool present,
-            int interval
-        ) noexcept = 0;
+            int interval) noexcept = 0;
 
 
         //
@@ -93,23 +84,19 @@ namespace Graphyte::Graphics
         virtual GpuRenderTargetHandle BeginCreateRenderTarget(
             uint32_t width,
             uint32_t height,
-            uint32_t surfaces
-        ) noexcept = 0;
+            uint32_t surfaces) noexcept = 0;
 
         virtual void EndCreateRenderTarget(
-            GpuRenderTargetHandle handle
-        ) noexcept = 0;
+            GpuRenderTargetHandle handle) noexcept = 0;
 
         virtual void SetRenderTargetSurface(
             GpuRenderTargetHandle handle,
             int32_t index,
             GpuTexture2DHandle texture,
-            uint32_t mip_index
-        ) noexcept = 0;
+            uint32_t mip_index) noexcept = 0;
 
         virtual void DestroyRenderTarget(
-            GpuRenderTargetHandle handle
-        ) noexcept = 0;
+            GpuRenderTargetHandle handle) noexcept = 0;
 
         //virtual void SetRenderTargetSurface(GpuRenderTargetHandle handle, int32_t index, GpuTexture2DArrayHandle texture, uint32_t array_index, uint32_t mip_index) noexcept = 0;
         //virtual void SetRenderTargetSurface(GpuRenderTargetHandle handle, int32_t index, GpuTexture3DHandle texture, uint32_t slice_index, uint32_t mip_index) noexcept = 0;
@@ -121,12 +108,10 @@ namespace Graphyte::Graphics
     public:
         virtual GpuGraphicsPipelineStateHandle CreateGraphicsPipelineState(
             const GpuGraphicsPipelineStateCreateArgs& args,
-            const GpuResourceSetDesc& layout
-        ) noexcept = 0;
+            const GpuResourceSetDesc& layout) noexcept = 0;
 
         virtual void DestroyGraphicsPipelineState(
-            GpuGraphicsPipelineStateHandle handle
-        ) noexcept = 0;
+            GpuGraphicsPipelineStateHandle handle) noexcept = 0;
 
 
         //
@@ -135,12 +120,10 @@ namespace Graphyte::Graphics
     public:
         virtual GpuComputePipelineStateHandle CreateComputePipelineState(
             const GpuComputePipelineStateCreateArgs& args,
-            const GpuResourceSetDesc& layout
-        ) noexcept = 0;
+            const GpuResourceSetDesc& layout) noexcept = 0;
 
         virtual void DestroyComputePipelineState(
-            GpuComputePipelineStateHandle handle
-        ) noexcept = 0;
+            GpuComputePipelineStateHandle handle) noexcept = 0;
 
 
         //
@@ -148,12 +131,10 @@ namespace Graphyte::Graphics
         //
     public:
         virtual GpuSamplerHandle CreateSampler(
-            const GpuSamplerCreateArgs& args
-        ) noexcept = 0;
+            const GpuSamplerCreateArgs& args) noexcept = 0;
 
         virtual void DestroySampler(
-            GpuSamplerHandle handle
-        ) noexcept = 0;
+            GpuSamplerHandle handle) noexcept = 0;
 
 
         //
@@ -161,28 +142,23 @@ namespace Graphyte::Graphics
         //
     public:
         virtual GpuTexture2DHandle CreateTexture2D(
-            const GpuTextureCreateArgs& args
-        ) noexcept = 0;
+            const GpuTextureCreateArgs& args) noexcept = 0;
 
         virtual void DestroyTexture2D(
-            GpuTexture2DHandle texture
-        ) noexcept = 0;
+            GpuTexture2DHandle texture) noexcept = 0;
 
         virtual void UpdateTexture2D(
             GpuTexture2DHandle texture,
             uint32_t mip_level,
             const GpuRect* rect,
             const void* data,
-            uint32_t pitch
-        ) noexcept = 0;
+            uint32_t pitch) noexcept = 0;
 
         virtual void GenerateMipmapsTexture2D(
-            GpuTexture2DHandle texture
-        ) noexcept = 0;
+            GpuTexture2DHandle texture) noexcept = 0;
 
         virtual std::unique_ptr<Image> SaveTexture2D(
-            GpuTexture2DHandle texture
-        ) noexcept = 0;
+            GpuTexture2DHandle texture) noexcept = 0;
 
 
         //
@@ -190,12 +166,10 @@ namespace Graphyte::Graphics
         //
     public:
         virtual GpuTexture2DArrayHandle CreateTexture2DArray(
-            const GpuTextureCreateArgs& args
-        ) noexcept = 0;
+            const GpuTextureCreateArgs& args) noexcept = 0;
 
         virtual void DestroyTexture2DArray(
-            GpuTexture2DArrayHandle handle
-        ) noexcept = 0;
+            GpuTexture2DArrayHandle handle) noexcept = 0;
 
 
         //
@@ -203,12 +177,10 @@ namespace Graphyte::Graphics
         //
     public:
         virtual GpuTexture3DHandle CreateTexture3D(
-            const GpuTextureCreateArgs& args
-        ) noexcept = 0;
+            const GpuTextureCreateArgs& args) noexcept = 0;
 
         virtual void DestroyTexture3D(
-            GpuTexture3DHandle handle
-        ) noexcept = 0;
+            GpuTexture3DHandle handle) noexcept = 0;
 
 
         //
@@ -216,12 +188,10 @@ namespace Graphyte::Graphics
         //
     public:
         virtual GpuTextureCubeHandle CreateTextureCube(
-            const GpuTextureCreateArgs& args
-        ) noexcept = 0;
+            const GpuTextureCreateArgs& args) noexcept = 0;
 
         virtual void DestroyTextureCube(
-            GpuTextureCubeHandle handle
-        ) noexcept = 0;
+            GpuTextureCubeHandle handle) noexcept = 0;
 
 
         //
@@ -231,28 +201,23 @@ namespace Graphyte::Graphics
         virtual GpuUniformBufferHandle CreateUniformBuffer(
             size_t size,
             GpuBufferUsage usage,
-            const GpuSubresourceData* subresource
-        ) noexcept = 0;
+            const GpuSubresourceData* subresource) noexcept = 0;
 
         virtual void DestroyUniformBuffer(
-            GpuUniformBufferHandle handle
-        ) noexcept = 0;
+            GpuUniformBufferHandle handle) noexcept = 0;
 
         virtual void* LockUniformBuffer(
             GpuUniformBufferHandle handle,
             uint32_t offset,
             uint32_t size,
-            GpuResourceLockMode lock_mode
-        ) noexcept = 0;
+            GpuResourceLockMode lock_mode) noexcept = 0;
 
         virtual void UnlockUniformBuffer(
-            GpuUniformBufferHandle handle
-        ) noexcept = 0;
+            GpuUniformBufferHandle handle) noexcept = 0;
 
         virtual void CopyUniformBuffer(
             GpuUniformBufferHandle source,
-            GpuUniformBufferHandle destination
-        ) noexcept = 0;
+            GpuUniformBufferHandle destination) noexcept = 0;
 
         //
         // Vertex buffer.
@@ -261,28 +226,23 @@ namespace Graphyte::Graphics
         virtual GpuVertexBufferHandle CreateVertexBuffer(
             uint32_t size,
             GpuBufferUsage usage,
-            const GpuSubresourceData* subresource
-        ) noexcept = 0;
+            const GpuSubresourceData* subresource) noexcept = 0;
 
         virtual void DestroyVertexBuffer(
-            GpuVertexBufferHandle handle
-        ) noexcept = 0;
+            GpuVertexBufferHandle handle) noexcept = 0;
 
         virtual void* LockVertexBuffer(
             GpuVertexBufferHandle handle,
             uint32_t offset,
             uint32_t size,
-            GpuResourceLockMode lock_mode
-        ) noexcept = 0;
+            GpuResourceLockMode lock_mode) noexcept = 0;
 
         virtual void UnlockVertexBuffer(
-            GpuVertexBufferHandle handle
-        ) noexcept = 0;
+            GpuVertexBufferHandle handle) noexcept = 0;
 
         virtual void CopyVertexBuffer(
             GpuVertexBufferHandle source,
-            GpuVertexBufferHandle destination
-        ) noexcept = 0;
+            GpuVertexBufferHandle destination) noexcept = 0;
 
 
         //
@@ -293,28 +253,23 @@ namespace Graphyte::Graphics
             uint32_t stride,
             uint32_t size,
             GpuBufferUsage usage,
-            const GpuSubresourceData* subresource
-        ) noexcept = 0;
+            const GpuSubresourceData* subresource) noexcept = 0;
 
         virtual void DestroyIndexBuffer(
-            GpuIndexBufferHandle handle
-        ) noexcept = 0;
+            GpuIndexBufferHandle handle) noexcept = 0;
 
         virtual void* LockIndexBuffer(
             GpuIndexBufferHandle handle,
             uint32_t offset,
             uint32_t size,
-            GpuResourceLockMode lock_mode
-        ) noexcept = 0;
+            GpuResourceLockMode lock_mode) noexcept = 0;
 
         virtual void UnlockIndexBuffer(
-            GpuIndexBufferHandle handle
-        ) noexcept = 0;
+            GpuIndexBufferHandle handle) noexcept = 0;
 
         virtual void CopyIndexBuffer(
             GpuIndexBufferHandle source,
-            GpuIndexBufferHandle destination
-        ) noexcept = 0;
+            GpuIndexBufferHandle destination) noexcept = 0;
 
 
         //
@@ -322,17 +277,14 @@ namespace Graphyte::Graphics
         //
     public:
         virtual GpuResourceSetHandle CreateResourceSet(
-            const GpuResourceSetDesc& desc
-        ) noexcept = 0;
+            const GpuResourceSetDesc& desc) noexcept = 0;
 
         virtual void DestroyResourceSet(
-            GpuResourceSetHandle handle
-        ) noexcept = 0;
+            GpuResourceSetHandle handle) noexcept = 0;
 
         virtual void UpdateResourceSet(
             GpuResourceSetHandle handle,
-            const GpuResourceSetDesc& desc
-        ) noexcept = 0;
+            const GpuResourceSetDesc& desc) noexcept = 0;
 
 
         //
@@ -342,8 +294,7 @@ namespace Graphyte::Graphics
         virtual GpuOcclusionQueryHandle CreateOcclusionQuery() noexcept = 0;
 
         virtual void DestroyOcclusionQuery(
-            GpuOcclusionQueryHandle handle
-        ) noexcept = 0;
+            GpuOcclusionQueryHandle handle) noexcept = 0;
     };
 }
 

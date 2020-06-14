@@ -21,14 +21,12 @@ namespace Graphyte::Diagnostics::Impl
     extern AssertResult ReportAssertion(
         std::string_view title,
         std::string_view content,
-        std::string_view stacktrace
-    ) noexcept;
+        std::string_view stacktrace) noexcept;
 
     extern bool ReportAbort(
         std::string_view title,
         std::string_view content,
-        std::string_view stacktrace
-    ) noexcept;
+        std::string_view stacktrace) noexcept;
 
     /*!
      * \brief   Writes text to debugger output.

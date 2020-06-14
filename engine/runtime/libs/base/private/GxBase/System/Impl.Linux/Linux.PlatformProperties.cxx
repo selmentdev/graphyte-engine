@@ -53,16 +53,20 @@ namespace Graphyte::System::Impl
         //
 
         {
-            struct sysinfo info {};
+            // clang-format off
+            struct sysinfo info{};
             sysinfo(&info);
+            // clang-format on
 
-            Impl::GMemoryProperties.TotalPhysical = info.mem_unit * info.totalram;
-            Impl::GMemoryProperties.TotalVirtual = info.mem_unit * info.totalswap;
-            Impl::GMemoryProperties.TotalPagefile = info.mem_unit * info.totalswap;
-            Impl::GMemoryProperties.PageSize = static_cast<uint64_t>(sysconf(_SC_PAGE_SIZE));
+            Impl::GMemoryProperties.TotalPhysical               = info.mem_unit * info.totalram;
+            Impl::GMemoryProperties.TotalVirtual                = info.mem_unit * info.totalswap;
+            Impl::GMemoryProperties.TotalPagefile               = info.mem_unit * info.totalswap;
+            Impl::GMemoryProperties.PageSize                    = static_cast<uint64_t>(sysconf(_SC_PAGE_SIZE));
             Impl::GMemoryProperties.SystemAllocationGranularity = Impl::GMemoryProperties.PageSize * 16;
 
-            struct rlimit64 limits {};
+            // clang-format off
+            struct rlimit64 limits{};
+            // clang-format on
             getrlimit64(RLIMIT_AS, &limits);
             Impl::GMemoryProperties.AddressLimit = limits.rlim_cur;
         }
@@ -104,7 +108,7 @@ namespace Graphyte::System::Impl
                     break;
                 }
 
-                auto key = Trim(values[0]);
+                auto key   = Trim(values[0]);
                 auto value = Trim(values[1]);
 
                 if (key == "physical id")

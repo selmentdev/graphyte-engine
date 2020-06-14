@@ -9,6 +9,7 @@ namespace Graphyte::AssetsPipeline
     private:
         std::string m_Glslc;
         bool m_IsValid;
+
     public:
         OpenGLShaderCompilerBackend() noexcept;
         virtual ~OpenGLShaderCompilerBackend() noexcept;

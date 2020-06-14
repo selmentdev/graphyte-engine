@@ -15,30 +15,21 @@ namespace Graphyte::Diagnostics::Impl
     AssertResult ReportAssertion(
         std::string_view title,
         std::string_view content,
-        std::string_view stacktrace
-    ) noexcept
+        std::string_view stacktrace) noexcept
     {
         const SDL_MessageBoxButtonData buttons[] = {
-            {
-                0,
+            { 0,
                 static_cast<int>(AssertResult::Abort),
-                "Abort"
-            },
-            {
-                SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
+                "Abort" },
+            { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
                 static_cast<int>(AssertResult::Retry),
-                "Retry"
-            },
-            {
-                SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
+                "Retry" },
+            { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
                 static_cast<int>(AssertResult::Ignore),
-                "Ignore"
-            },
-            {
-                0,
+                "Ignore" },
+            { 0,
                 static_cast<int>(AssertResult::IgnoreAlways),
-                "Ignore Always"
-            },
+                "Ignore Always" },
         };
 
         std::string utitle{ title };

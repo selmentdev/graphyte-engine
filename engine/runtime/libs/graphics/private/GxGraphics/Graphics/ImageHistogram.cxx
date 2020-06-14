@@ -4,8 +4,7 @@ namespace Graphyte::Graphics
 {
     bool ImageHistogram::Compute(
         ImageHistogram& histogram,
-        const std::unique_ptr<Image>& image
-    ) noexcept
+        const std::unique_ptr<Image>& image) noexcept
     {
         for (auto& channel : histogram.Channels)
         {

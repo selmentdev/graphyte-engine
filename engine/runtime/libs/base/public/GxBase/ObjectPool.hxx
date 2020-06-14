@@ -58,12 +58,10 @@ namespace Graphyte
          */
         static constexpr Address MakeAddress(
             PoolIndex pool,
-            ItemIndex item
-        ) noexcept
+            ItemIndex item) noexcept
         {
             return static_cast<Address>(
-                (ElementCount * static_cast<uintptr_t>(pool)) + static_cast<uintptr_t>(item)
-            );
+                (ElementCount * static_cast<uintptr_t>(pool)) + static_cast<uintptr_t>(item));
         }
 
         /**
@@ -74,12 +72,10 @@ namespace Graphyte
          * @returns The pool descriptor index.
          */
         static constexpr PoolIndex GetPoolIndex(
-            Address address
-        ) noexcept
+            Address address) noexcept
         {
             return static_cast<PoolIndex>(
-                static_cast<uintptr_t>(address) / ElementCount
-            );
+                static_cast<uintptr_t>(address) / ElementCount);
         }
 
         /**
@@ -90,12 +86,10 @@ namespace Graphyte
          * @returns The item allocation index.
          */
         static constexpr ItemIndex GetItemIndex(
-            Address address
-        ) noexcept
+            Address address) noexcept
         {
             return static_cast<ItemIndex>(
-                static_cast<uintptr_t>(address) % ElementCount
-            );
+                static_cast<uintptr_t>(address) % ElementCount);
         }
 
     private:
@@ -146,11 +140,10 @@ namespace Graphyte
              * @param   item    Provides item index.
              */
             void SetAllocated(
-                ItemIndex item
-            ) noexcept
+                ItemIndex item) noexcept
             {
-                const auto base = static_cast<uintptr_t>(item) >> 6;
-                const auto bits = static_cast<uintptr_t>(item) & 0b11'1111;
+                const auto base     = static_cast<uintptr_t>(item) >> 6;
+                const auto bits     = static_cast<uintptr_t>(item) & 0b11'1111;
                 const uint64_t mask = uint64_t{ 1 } << bits;
                 this->Mask[base] |= mask;
             }
@@ -161,11 +154,10 @@ namespace Graphyte
              * @param   item    Provides item index.
              */
             void ClearAllocated(
-                ItemIndex item
-            ) noexcept
+                ItemIndex item) noexcept
             {
-                const auto base = static_cast<uintptr_t>(item) >> 6;
-                const auto bits = static_cast<uintptr_t>(item) & 0b11'1111;
+                const auto base     = static_cast<uintptr_t>(item) >> 6;
+                const auto bits     = static_cast<uintptr_t>(item) & 0b11'1111;
                 const uint64_t mask = uint64_t{ 1 } << bits;
                 this->Mask[base] &= ~mask;
             }
@@ -178,11 +170,10 @@ namespace Graphyte
              * @returns The value indicating whether specified item is allocated.
              */
             bool IsAllocated(
-                ItemIndex item
-            ) const noexcept
+                ItemIndex item) const noexcept
             {
-                const auto base = static_cast<uintptr_t>(item) >> 6;
-                const auto bits = static_cast<uintptr_t>(item) & 0b11'1111;
+                const auto base     = static_cast<uintptr_t>(item) >> 6;
+                const auto bits     = static_cast<uintptr_t>(item) & 0b11'1111;
                 const uint64_t mask = uint64_t{ 1 } << bits;
                 return (this->Mask[base] & mask) != 0;
             }
@@ -207,8 +198,7 @@ namespace Graphyte
         bool FindPool(
             void* pointer,
             PoolIndex& pool,
-            ItemIndex& item
-        ) const noexcept
+            ItemIndex& item) const noexcept
         {
             if (pointer != nullptr)
             {
@@ -233,7 +223,7 @@ namespace Graphyte
                         //
 
                         std::byte* dataBegin = descriptor.Data;
-                        std::byte* dataEnd = dataBegin + (m_ItemSize * ElementCount);
+                        std::byte* dataEnd   = dataBegin + (m_ItemSize * ElementCount);
 
                         if (dataBegin <= raw && raw < dataEnd)
                         {
@@ -243,8 +233,7 @@ namespace Graphyte
 
                             pool = static_cast<PoolIndex>(i);
                             item = static_cast<ItemIndex>(
-                                static_cast<uintptr_t>(raw - dataBegin) / m_ItemSize
-                            );
+                                static_cast<uintptr_t>(raw - dataBegin) / m_ItemSize);
 
                             return true;
                         }
@@ -269,8 +258,7 @@ namespace Graphyte
          */
         std::byte* GetPoolItem(
             PoolDescriptor& descriptor,
-            ItemIndex item
-        ) const noexcept
+            ItemIndex item) const noexcept
         {
             GX_ASSERTF(descriptor.Data != nullptr, "This pool has no data allocated.");
             return descriptor.Data + (static_cast<size_t>(item) * m_ItemSize);
@@ -286,8 +274,7 @@ namespace Graphyte
          */
         std::byte* GetPoolItem(
             PoolIndex pool,
-            ItemIndex item
-        ) const noexcept
+            ItemIndex item) const noexcept
         {
             GX_ASSERT(static_cast<size_t>(pool) < m_PoolDescriptors.size());
             GX_ASSERT(static_cast<size_t>(item) < ElementCount);
@@ -305,8 +292,7 @@ namespace Graphyte
          */
         FreeItem* GetPoolFreeItem(
             PoolDescriptor& descriptor,
-            ItemIndex item
-        ) const noexcept
+            ItemIndex item) const noexcept
         {
             return reinterpret_cast<FreeItem*>(GetPoolItem(descriptor, item));
         }
@@ -317,13 +303,12 @@ namespace Graphyte
          * @param   address     Provides address of allocation.
          * 
          * @returns The pointer to allocation data.
-         */ 
+         */
         std::byte* GetPoolItem(Address address) const noexcept
         {
             return GetPoolItem(
                 GetPoolIndex(address),
-                GetItemIndex(address)
-            );
+                GetItemIndex(address));
         }
 
         /**
@@ -393,7 +378,7 @@ namespace Graphyte
             //
 
             descriptor.NextFreeDescriptor = m_FreePoolDescriptor;
-            m_FreePoolDescriptor = pool;
+            m_FreePoolDescriptor          = pool;
 
             return pool;
         }
@@ -445,7 +430,7 @@ namespace Graphyte
                 if (current.NextFreeItem != ItemIndex::Invalid)
                 {
                     *freePool = static_cast<PoolIndex>(i);
-                    freePool = &current.NextFreeDescriptor;
+                    freePool  = &current.NextFreeDescriptor;
                 }
             }
 
@@ -491,15 +476,15 @@ namespace Graphyte
                     //
 
                     descriptor.NextFreeDescriptor = m_FreePoolDescriptor;
-                    m_FreePoolDescriptor = pool;
+                    m_FreePoolDescriptor          = pool;
                 }
 
                 //
                 // Link deallocated item into free list.
                 //
 
-                FreeItem* link = GetPoolFreeItem(descriptor, item);
-                link->NextFreeItem = descriptor.NextFreeItem;
+                FreeItem* link          = GetPoolFreeItem(descriptor, item);
+                link->NextFreeItem      = descriptor.NextFreeItem;
                 descriptor.NextFreeItem = item;
             }
             else
@@ -567,9 +552,7 @@ namespace Graphyte
                 //
 
                 GX_ASSERT(
-                    m_FreePoolDescriptor == PoolIndex::Invalid ||
-                    m_PoolDescriptors[static_cast<size_t>(m_FreePoolDescriptor)].NextFreeItem != ItemIndex::Invalid
-                );
+                    m_FreePoolDescriptor == PoolIndex::Invalid || m_PoolDescriptors[static_cast<size_t>(m_FreePoolDescriptor)].NextFreeItem != ItemIndex::Invalid);
             }
 
             //
@@ -697,7 +680,7 @@ namespace Graphyte
                 //
 
                 return (static_cast<size_t>(pool) < m_PoolDescriptors.size())
-                    && (m_PoolDescriptors[static_cast<size_t>(pool)].IsAllocated(item));
+                       && (m_PoolDescriptors[static_cast<size_t>(pool)].IsAllocated(item));
             }
 
             return false;
@@ -726,7 +709,6 @@ namespace Graphyte
         {
             return m_PoolDescriptors.size() * ElementCount;
         }
-
     };
 
     /**

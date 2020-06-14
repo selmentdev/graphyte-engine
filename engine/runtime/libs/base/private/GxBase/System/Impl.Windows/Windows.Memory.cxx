@@ -21,8 +21,7 @@ namespace Graphyte::System
         GetProcessMemoryInfo(
             GetCurrentProcess(),
             &pmc,
-            sizeof(pmc)
-        );
+            sizeof(pmc));
 
         MemoryUsage result{
             .AvailableVirtual  = static_cast<uint64_t>(msex.ullAvailVirtual),
@@ -45,30 +44,26 @@ namespace Graphyte::System
 namespace Graphyte::System
 {
     BASE_API void* OsMalloc(
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return malloc(size);
     }
 
     BASE_API void* OsRealloc(
         void* memory,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return realloc(memory, size);
     }
 
     BASE_API void OsFree(
-        void* memory
-    ) noexcept
+        void* memory) noexcept
     {
         free(memory);
     }
 
     BASE_API void* OsVirtualAlloc(
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         //Platform::MemoryTracker::Track(Platform::MemoryPoolTag::Virtual, size);
         return VirtualAlloc(nullptr, size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
@@ -76,8 +71,7 @@ namespace Graphyte::System
 
     BASE_API void OsVirtualFree(
         void* memory,
-        [[maybe_unused]] size_t size
-    ) noexcept
+        [[maybe_unused]] size_t size) noexcept
     {
         //Platform::MemoryTracker::Untrack(Platform::MemoryPoolTag::Virtual, size);
         if (VirtualFree(memory, 0, MEM_RELEASE) == FALSE)
@@ -90,10 +84,8 @@ namespace Graphyte::System
         void* memory,
         size_t size,
         bool canRead,
-        bool canWrite
-    ) noexcept
+        bool canWrite) noexcept
     {
-        [[maybe_unused]] DWORD dwOldProtect = 0;
         DWORD dwNewProtect = 0;
 
         if (canRead && canWrite)
@@ -112,6 +104,8 @@ namespace Graphyte::System
         {
             dwNewProtect = PAGE_NOACCESS;
         }
+
+        [[maybe_unused]] DWORD dwOldProtect = 0;
 
         return VirtualProtect(memory, size, dwNewProtect, &dwOldProtect) != 0;
     }

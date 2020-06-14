@@ -14,19 +14,19 @@ namespace notstd
     public:
         using value_type = Value;
 
-        using size_type = std::size_t;
+        using size_type       = std::size_t;
         using difference_type = std::ptrdiff_t;
 
-        using pointer = Value*;
+        using pointer       = Value*;
         using const_pointer = const Value*;
 
-        using reference = Value&;
+        using reference       = Value&;
         using const_reference = const Value&;
 
-        using iterator = Value*;
+        using iterator       = Value*;
         using const_iterator = const Value*;
 
-        using reverse_iterator = std::reverse_iterator<iterator>;
+        using reverse_iterator       = std::reverse_iterator<iterator>;
         using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
         using storage_type = std::aligned_storage_t<sizeof(value_type) * Count, Alignment>;
@@ -85,7 +85,7 @@ namespace notstd
             other.clear();
         }
 
-        constexpr fixed_vector& operator= (fixed_vector&& other)
+        constexpr fixed_vector& operator=(fixed_vector&& other)
         {
             this->clear();
 
@@ -97,7 +97,7 @@ namespace notstd
             other.clear();
         }
 
-        constexpr fixed_vector& operator= (const fixed_vector& other)
+        constexpr fixed_vector& operator=(const fixed_vector& other)
         {
             this->clear();
 
@@ -115,7 +115,7 @@ namespace notstd
         }
 
         template <std::size_t N>
-        constexpr fixed_vector(const value_type(&array)[N])
+        constexpr fixed_vector(const value_type (&array)[N])
             : m_Data{}
             , m_Size{ N }
         {
@@ -124,8 +124,7 @@ namespace notstd
             std::copy(
                 std::addressof(array[0]),
                 std::addressof(array[N]),
-                this->data()
-            );
+                this->data());
         }
 
         constexpr fixed_vector(std::initializer_list<value_type> initializer)
@@ -135,8 +134,7 @@ namespace notstd
             std::copy(
                 initializer.begin(),
                 initializer.begin() + this->size(),
-                this->data()
-            );
+                this->data());
         }
 
         template <typename TIterator>
@@ -275,12 +273,12 @@ namespace notstd
             return this->ref_at(index);
         }
 
-        [[nodiscard]] reference operator[] (size_type index) noexcept
+        [[nodiscard]] reference operator[](size_type index) noexcept
         {
             return this->ref_at(index);
         }
 
-        [[nodiscard]] const_reference operator[] (size_type index) const noexcept
+        [[nodiscard]] const_reference operator[](size_type index) const noexcept
         {
             return this->ref_at(index);
         }
@@ -379,55 +377,49 @@ namespace notstd
     };
 
     template <typename Value, std::size_t Count, std::size_t Alignment = std::alignment_of_v<Value>>
-    [[nodiscard]] bool operator == (
+    [[nodiscard]] bool operator==(
         const fixed_vector<Value, Count, Alignment>& lhs,
-        const fixed_vector<Value, Count, Alignment>& rhs
-    ) noexcept
+        const fixed_vector<Value, Count, Alignment>& rhs) noexcept
     {
         return (lhs.size() == rhs.size()) && std::equal(lhs.begin(), lhs.end(), rhs.begin());
     }
 
     template <typename Value, std::size_t Count, std::size_t Alignment = std::alignment_of_v<Value>>
-    [[nodiscard]] bool operator != (
+    [[nodiscard]] bool operator!=(
         const fixed_vector<Value, Count, Alignment>& lhs,
-        const fixed_vector<Value, Count, Alignment>& rhs
-    ) noexcept
+        const fixed_vector<Value, Count, Alignment>& rhs) noexcept
     {
         return !(lhs == rhs);
     }
 
     template <typename Value, std::size_t Count, std::size_t Alignment = std::alignment_of_v<Value>>
-    [[nodiscard]] bool operator < (
+    [[nodiscard]] bool operator<(
         const fixed_vector<Value, Count, Alignment>& lhs,
-        const fixed_vector<Value, Count, Alignment>& rhs
-    ) noexcept
+        const fixed_vector<Value, Count, Alignment>& rhs) noexcept
     {
         return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
     }
 
     template <typename Value, std::size_t Count, std::size_t Alignment = std::alignment_of_v<Value>>
-    [[nodiscard]] bool operator > (
+    [[nodiscard]] bool operator>(
         const fixed_vector<Value, Count, Alignment>& lhs,
-        const fixed_vector<Value, Count, Alignment>& rhs
-    ) noexcept
+        const fixed_vector<Value, Count, Alignment>& rhs) noexcept
     {
         return (rhs < lhs);
     }
 
     template <typename Value, std::size_t Count, std::size_t Alignment = std::alignment_of_v<Value>>
-    [[nodiscard]] bool operator <= (
+    [[nodiscard]] bool operator<=(
         const fixed_vector<Value, Count, Alignment>& lhs,
-        const fixed_vector<Value, Count, Alignment>& rhs
-    ) noexcept
+        const fixed_vector<Value, Count, Alignment>& rhs) noexcept
     {
         return !(rhs < lhs);
     }
 
     template <typename Value, std::size_t Count, std::size_t Alignment = std::alignment_of_v<Value>>
-    [[nodiscard]] bool operator >= (
+    [[nodiscard]] bool operator>=(
         const fixed_vector<Value, Count, Alignment>& lhs,
-        const fixed_vector<Value, Count, Alignment>& rhs
-    ) noexcept
+        const fixed_vector<Value, Count, Alignment>& rhs) noexcept
     {
         return !(lhs < rhs);
     }

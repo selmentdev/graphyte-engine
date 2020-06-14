@@ -8,8 +8,7 @@ namespace Graphyte::Graphics
         uint32_t stride,
         uint32_t size,
         GpuBufferUsage usage,
-        const GpuSubresourceData* subresource
-    ) noexcept
+        const GpuSubresourceData* subresource) noexcept
     {
         GX_ASSERT(size != 0);
 
@@ -17,14 +16,14 @@ namespace Graphyte::Graphics
             .ByteWidth = size,
 
             .Usage = Flags::Any(usage, GpuBufferUsage::AnyDynamic)
-                ? D3D11_USAGE_DYNAMIC
-                : D3D11_USAGE_DEFAULT,
+                         ? D3D11_USAGE_DYNAMIC
+                         : D3D11_USAGE_DEFAULT,
 
             .BindFlags = D3D11_BIND_INDEX_BUFFER,
 
             .CPUAccessFlags = Flags::Any(usage, GpuBufferUsage::AnyDynamic)
-                ? D3D11_CPU_ACCESS_WRITE
-                : UINT{},
+                                  ? D3D11_CPU_ACCESS_WRITE
+                                  : UINT{},
 
             .MiscFlags = 0,
         };
@@ -51,8 +50,8 @@ namespace Graphyte::Graphics
         {
             GX_ASSERT(size == subresource->Pitch);
             init_data = {
-                .pSysMem = subresource->Memory,
-                .SysMemPitch = size,
+                .pSysMem          = subresource->Memory,
+                .SysMemPitch      = size,
                 .SysMemSlicePitch = 0,
             };
 
@@ -64,20 +63,19 @@ namespace Graphyte::Graphics
         GPU_DX_VALIDATE(m_Device->CreateBuffer(
             &desc,
             ptr_init_data,
-            &buffer
-        ));
+            &buffer));
 
         auto result = new D3D11GpuIndexBuffer();
+
         result->m_Resource = buffer;
-        result->m_Size = size;
-        result->m_Usage = usage;
-        result->m_Stride = stride;
+        result->m_Size     = size;
+        result->m_Usage    = usage;
+        result->m_Stride   = stride;
         return result;
     }
 
     void D3D11GpuDevice::DestroyIndexBuffer(
-        GpuIndexBufferHandle handle
-    ) noexcept
+        GpuIndexBufferHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuIndexBuffer*>(handle);
@@ -90,8 +88,7 @@ namespace Graphyte::Graphics
         GpuIndexBufferHandle handle,
         uint32_t offset,
         uint32_t size,
-        GpuResourceLockMode lock_mode
-    ) noexcept
+        GpuResourceLockMode lock_mode) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuIndexBuffer*>(handle);
@@ -116,11 +113,10 @@ namespace Graphyte::Graphics
                 0,
                 D3D11_MAP_WRITE_DISCARD,
                 0,
-                &mapped
-            ));
+                &mapped));
 
             data.SetData(mapped.pData);
-            data.Pitch = mapped.RowPitch;
+            data.Pitch      = mapped.RowPitch;
             data.DepthPitch = mapped.DepthPitch;
         }
         else
@@ -128,19 +124,18 @@ namespace Graphyte::Graphics
             if (lock_mode == GpuResourceLockMode::ReadOnly)
             {
                 D3D11_BUFFER_DESC staging_desc{
-                    .ByteWidth = size,
-                    .Usage = D3D11_USAGE_STAGING,
-                    .BindFlags = 0,
+                    .ByteWidth      = size,
+                    .Usage          = D3D11_USAGE_STAGING,
+                    .BindFlags      = 0,
                     .CPUAccessFlags = D3D11_CPU_ACCESS_READ,
-                    .MiscFlags = 0,
+                    .MiscFlags      = 0,
                 };
 
                 Microsoft::WRL::ComPtr<ID3D11Buffer> staging_buffer{};
                 GPU_DX_VALIDATE(m_Device->CreateBuffer(
                     &staging_desc,
                     nullptr,
-                    staging_buffer.GetAddressOf()
-                ));
+                    staging_buffer.GetAddressOf()));
 
                 data.StagingResource = staging_buffer;
 
@@ -152,17 +147,16 @@ namespace Graphyte::Graphics
                     0,
                     D3D11_MAP_READ,
                     0,
-                    &mapped
-                ));
+                    &mapped));
 
                 data.SetData(mapped.pData);
-                data.Pitch = mapped.RowPitch;
+                data.Pitch      = mapped.RowPitch;
                 data.DepthPitch = mapped.DepthPitch;
             }
             else
             {
                 data.Allocate(desc.ByteWidth);
-                data.Pitch = desc.ByteWidth;
+                data.Pitch      = desc.ByteWidth;
                 data.DepthPitch = 0;
             }
         }
@@ -174,8 +168,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::UnlockIndexBuffer(
-        GpuIndexBufferHandle handle
-    ) noexcept
+        GpuIndexBufferHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuIndexBuffer*>(handle);
@@ -210,8 +203,7 @@ namespace Graphyte::Graphics
                     nullptr,
                     staging.GetData(),
                     staging.Pitch,
-                    0
-                );
+                    0);
 
                 staging.DeallocateData();
             }
@@ -222,10 +214,9 @@ namespace Graphyte::Graphics
 
     void D3D11GpuDevice::CopyIndexBuffer(
         GpuIndexBufferHandle source,
-        GpuIndexBufferHandle destination
-    ) noexcept
+        GpuIndexBufferHandle destination) noexcept
     {
-        auto native_source = static_cast<D3D11GpuIndexBuffer*>(source);
+        auto native_source      = static_cast<D3D11GpuIndexBuffer*>(source);
         auto native_destination = static_cast<D3D11GpuIndexBuffer*>(destination);
 
 #if ENABLE_GPU_API_DEBUG
@@ -240,7 +231,6 @@ namespace Graphyte::Graphics
 
         m_Context->CopyResource(
             native_destination->m_Resource,
-            native_source->m_Resource
-        );
+            native_source->m_Resource);
     }
 }

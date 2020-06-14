@@ -6,8 +6,7 @@ namespace Graphyte
     BASE_API void ReplaceAll(
         std::string& string,
         std::string_view from,
-        std::string_view to
-    ) noexcept
+        std::string_view to) noexcept
     {
         if (!string.empty())
         {
@@ -24,8 +23,7 @@ namespace Graphyte
     BASE_API std::vector<std::string_view> Split(
         std::string_view value,
         std::string_view separator,
-        bool removeEmpty
-    ) noexcept
+        bool removeEmpty) noexcept
     {
         std::vector<std::string_view> result{};
 
@@ -41,7 +39,7 @@ namespace Graphyte
             }
 
             start = pos + 1;
-            pos = value.find_first_of(separator, start);
+            pos   = value.find_first_of(separator, start);
         }
 
         // `<=` is used check whether empty element is added too.
@@ -56,8 +54,7 @@ namespace Graphyte
     BASE_API std::vector<std::string_view> Split(
         std::string_view value,
         char separator,
-        bool removeEmpty
-    ) noexcept
+        bool removeEmpty) noexcept
     {
         std::vector<std::string_view> result{};
 
@@ -73,7 +70,7 @@ namespace Graphyte
             }
 
             start = pos + 1;
-            pos = value.find_first_of(separator, start);
+            pos   = value.find_first_of(separator, start);
         }
 
         // `<=` is used check whether empty element is added too.
@@ -89,11 +86,10 @@ namespace Graphyte
         std::string_view::const_iterator pattern_first,
         std::string_view::const_iterator pattern_last,
         std::string_view::const_iterator value_first,
-        std::string_view::const_iterator value_last
-    ) noexcept
+        std::string_view::const_iterator value_last) noexcept
     {
         std::string_view::const_iterator stored_pattern = pattern_first;
-        std::string_view::const_iterator stored_value = value_first;
+        std::string_view::const_iterator stored_value   = value_first;
 
         bool restartable = false;
 
@@ -116,7 +112,7 @@ namespace Graphyte
                 //
 
                 stored_pattern = pattern_first;
-                stored_value = value_first + 1;
+                stored_value   = value_first + 1;
 
 
                 //
@@ -159,7 +155,7 @@ namespace Graphyte
                 //
 
                 pattern_first = stored_pattern;
-                value_first = stored_value++;
+                value_first   = stored_value++;
             }
         }
 
@@ -181,8 +177,7 @@ namespace Graphyte
 
     BASE_API bool HexStringToByteStream(
         std::vector<std::byte>& output,
-        std::string_view input
-    ) noexcept
+        std::string_view input) noexcept
     {
         if ((input.size() % 2) == 0)
         {
@@ -211,8 +206,7 @@ namespace Graphyte
 
     BASE_API bool HexStringFromByteStream(
         std::string& output,
-        notstd::span<const std::byte> input
-    ) noexcept
+        notstd::span<const std::byte> input) noexcept
     {
         std::array<char, 2> buffer{};
 
@@ -223,7 +217,7 @@ namespace Graphyte
             uint8_t const value = static_cast<uint8_t>(input[i]);
 
             auto const result = std::to_chars(buffer.data(), buffer.data() + 2, value, 16);
-            
+
             if (result.ec != std::errc{})
             {
                 return false;

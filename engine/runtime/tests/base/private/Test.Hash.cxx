@@ -106,11 +106,13 @@ TEST_CASE("Hashing functions")
         {
             std::array<std::byte, 20> expected{
                 {
+                    // clang-format off
                     std::byte{ 0xda }, std::byte{ 0x39 }, std::byte{ 0xa3 }, std::byte{ 0xee },
                     std::byte{ 0x5e }, std::byte{ 0x6b }, std::byte{ 0x4b }, std::byte{ 0x0d },
                     std::byte{ 0x32 }, std::byte{ 0x55 }, std::byte{ 0xbf }, std::byte{ 0xef },
                     std::byte{ 0x95 }, std::byte{ 0x60 }, std::byte{ 0x18 }, std::byte{ 0x90 },
                     std::byte{ 0xaf }, std::byte{ 0xd8 }, std::byte{ 0x07 }, std::byte{ 0x09 },
+                    // clang-format on
                 }
             };
 
@@ -121,26 +123,26 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA1,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{sv})
-            ));
+                notstd::as_bytes(notstd::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
                 std::end(hash),
                 std::begin(expected),
-                std::end(expected)
-            ));
+                std::end(expected)));
         }
 
         SECTION("String 1")
         {
             std::array<std::byte, 20> expected{
                 {
+                    // clang-format off
                     std::byte{ 0x6b }, std::byte{ 0xa9 }, std::byte{ 0xd7 }, std::byte{ 0x79 },
                     std::byte{ 0xdd }, std::byte{ 0xe6 }, std::byte{ 0x04 }, std::byte{ 0xa3 },
                     std::byte{ 0x1c }, std::byte{ 0xa0 }, std::byte{ 0xed }, std::byte{ 0x2b },
                     std::byte{ 0x70 }, std::byte{ 0x41 }, std::byte{ 0x8a }, std::byte{ 0xe6 },
                     std::byte{ 0x3f }, std::byte{ 0x19 }, std::byte{ 0xf2 }, std::byte{ 0xea },
+                    // clang-format on
                 }
             };
 
@@ -151,26 +153,26 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA1,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{sv})
-            ));
+                notstd::as_bytes(notstd::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
                 std::end(hash),
                 std::begin(expected),
-                std::end(expected)
-            ));
+                std::end(expected)));
         }
 
         SECTION("String 2")
         {
             std::array<std::byte, 20> expected{
                 {
+                    // clang-format off
                     std::byte{ 0xa4 }, std::byte{ 0x9b }, std::byte{ 0x24 }, std::byte{ 0x46 },
                     std::byte{ 0xa0 }, std::byte{ 0x2c }, std::byte{ 0x64 }, std::byte{ 0x5b },
                     std::byte{ 0xf4 }, std::byte{ 0x19 }, std::byte{ 0xf9 }, std::byte{ 0x95 },
                     std::byte{ 0xb6 }, std::byte{ 0x70 }, std::byte{ 0x91 }, std::byte{ 0x25 },
                     std::byte{ 0x3a }, std::byte{ 0x04 }, std::byte{ 0xa2 }, std::byte{ 0x59 },
+                    // clang-format on
                 }
             };
 
@@ -184,15 +186,13 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA1,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{sv})
-            ));
+                notstd::as_bytes(notstd::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
                 std::end(hash),
                 std::begin(expected),
-                std::end(expected)
-            ));
+                std::end(expected)));
         }
     }
 
@@ -202,6 +202,7 @@ TEST_CASE("Hashing functions")
         {
             std::array<std::byte, 32> expected{
                 {
+                    // clang-format off
                     std::byte{ 0xe3 }, std::byte{ 0xb0 }, std::byte{ 0xc4 }, std::byte{ 0x42 },
                     std::byte{ 0x98 }, std::byte{ 0xfc }, std::byte{ 0x1c }, std::byte{ 0x14 },
                     std::byte{ 0x9a }, std::byte{ 0xfb }, std::byte{ 0xf4 }, std::byte{ 0xc8 },
@@ -210,6 +211,7 @@ TEST_CASE("Hashing functions")
                     std::byte{ 0x64 }, std::byte{ 0x9b }, std::byte{ 0x93 }, std::byte{ 0x4c },
                     std::byte{ 0xa4 }, std::byte{ 0x95 }, std::byte{ 0x99 }, std::byte{ 0x1b },
                     std::byte{ 0x78 }, std::byte{ 0x52 }, std::byte{ 0xb8 }, std::byte{ 0x55 },
+                    // clang-format on
                 }
             };
 
@@ -220,21 +222,20 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA256,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{sv})
-            ));
+                notstd::as_bytes(notstd::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
                 std::end(hash),
                 std::begin(expected),
-                std::end(expected)
-            ));
+                std::end(expected)));
         }
 
         SECTION("String 1")
         {
             std::array<std::byte, 32> expected{
                 {
+                    // clang-format off
                     std::byte{ 0x55 }, std::byte{ 0x8b }, std::byte{ 0xf1 }, std::byte{ 0x1d },
                     std::byte{ 0x65 }, std::byte{ 0xb0 }, std::byte{ 0x09 }, std::byte{ 0x79 },
                     std::byte{ 0x14 }, std::byte{ 0xa4 }, std::byte{ 0xa1 }, std::byte{ 0x6e },
@@ -243,6 +244,7 @@ TEST_CASE("Hashing functions")
                     std::byte{ 0xad }, std::byte{ 0x4a }, std::byte{ 0x8c }, std::byte{ 0xc7 },
                     std::byte{ 0x29 }, std::byte{ 0xce }, std::byte{ 0x13 }, std::byte{ 0x36 },
                     std::byte{ 0xea }, std::byte{ 0xe5 }, std::byte{ 0xc7 }, std::byte{ 0x66 },
+                    // clang-format on
                 }
             };
 
@@ -253,21 +255,20 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA256,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{sv})
-            ));
+                notstd::as_bytes(notstd::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
                 std::end(hash),
                 std::begin(expected),
-                std::end(expected)
-            ));
+                std::end(expected)));
         }
 
         SECTION("String 2")
         {
             std::array<std::byte, 32> expected{
                 {
+                    // clang-format off
                     std::byte{ 0xcf }, std::byte{ 0x5b }, std::byte{ 0x16 }, std::byte{ 0xa7 },
                     std::byte{ 0x78 }, std::byte{ 0xaf }, std::byte{ 0x83 }, std::byte{ 0x80 },
                     std::byte{ 0x03 }, std::byte{ 0x6c }, std::byte{ 0xe5 }, std::byte{ 0x9e },
@@ -276,6 +277,7 @@ TEST_CASE("Hashing functions")
                     std::byte{ 0xe8 }, std::byte{ 0xf0 }, std::byte{ 0x7a }, std::byte{ 0x51 },
                     std::byte{ 0xaf }, std::byte{ 0xac }, std::byte{ 0x45 }, std::byte{ 0x03 },
                     std::byte{ 0x7a }, std::byte{ 0xfe }, std::byte{ 0xe9 }, std::byte{ 0xd1 },
+                    // clang-format on
                 }
             };
 
@@ -290,21 +292,18 @@ TEST_CASE("Hashing functions")
                 REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                     Graphyte::Crypto::HashType::SHA256,
                     hash,
-                    notstd::as_bytes(notstd::span<const char>{sv})
-                ));
+                    notstd::as_bytes(notstd::span<const char>{ sv })));
 
                 REQUIRE(std::equal(
                     std::begin(hash),
                     std::end(hash),
                     std::begin(expected),
-                    std::end(expected)
-                ));
+                    std::end(expected)));
             }
 
             {
                 auto algorithm = Graphyte::Crypto::HashAlgorithm::Create(
-                    Graphyte::Crypto::HashType::SHA256
-                );
+                    Graphyte::Crypto::HashType::SHA256);
 
                 REQUIRE(algorithm != nullptr);
 
@@ -324,8 +323,7 @@ TEST_CASE("Hashing functions")
                     std::begin(hash),
                     std::end(hash),
                     std::begin(expected),
-                    std::end(expected)
-                ));
+                    std::end(expected)));
             }
         }
     }
@@ -336,6 +334,7 @@ TEST_CASE("Hashing functions")
         {
             std::array<std::byte, 64> expected{
                 {
+                    // clang-format off
                     std::byte{ 0xcf }, std::byte{ 0x83 }, std::byte{ 0xe1 }, std::byte{ 0x35 },
                     std::byte{ 0x7e }, std::byte{ 0xef }, std::byte{ 0xb8 }, std::byte{ 0xbd },
                     std::byte{ 0xf1 }, std::byte{ 0x54 }, std::byte{ 0x28 }, std::byte{ 0x50 },
@@ -352,6 +351,7 @@ TEST_CASE("Hashing functions")
                     std::byte{ 0x47 }, std::byte{ 0x41 }, std::byte{ 0x7a }, std::byte{ 0x81 },
                     std::byte{ 0xa5 }, std::byte{ 0x38 }, std::byte{ 0x32 }, std::byte{ 0x7a },
                     std::byte{ 0xf9 }, std::byte{ 0x27 }, std::byte{ 0xda }, std::byte{ 0x3e },
+                    // clang-format on
                 }
             };
 
@@ -362,21 +362,20 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA512,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{sv})
-            ));
+                notstd::as_bytes(notstd::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
                 std::end(hash),
                 std::begin(expected),
-                std::end(expected)
-            ));
+                std::end(expected)));
         }
 
         SECTION("String 1")
         {
             std::array<std::byte, 64> expected{
                 {
+                    // clang-format off
                     std::byte{ 0x27 }, std::byte{ 0x91 }, std::byte{ 0x06 }, std::byte{ 0x4d },
                     std::byte{ 0x2e }, std::byte{ 0x64 }, std::byte{ 0x60 }, std::byte{ 0x9b },
                     std::byte{ 0xe1 }, std::byte{ 0x1b }, std::byte{ 0x6b }, std::byte{ 0x0f },
@@ -393,6 +392,7 @@ TEST_CASE("Hashing functions")
                     std::byte{ 0x86 }, std::byte{ 0x81 }, std::byte{ 0x63 }, std::byte{ 0xf9 },
                     std::byte{ 0x59 }, std::byte{ 0x09 }, std::byte{ 0x34 }, std::byte{ 0x04 },
                     std::byte{ 0xcd }, std::byte{ 0x1e }, std::byte{ 0x98 }, std::byte{ 0x3a },
+                    // clang-format on
                 }
             };
 
@@ -403,21 +403,20 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA512,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{sv})
-            ));
+                notstd::as_bytes(notstd::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
                 std::end(hash),
                 std::begin(expected),
-                std::end(expected)
-            ));
+                std::end(expected)));
         }
 
         SECTION("String 2")
         {
             std::array<std::byte, 64> expected{
                 {
+                    // clang-format off
                     std::byte{ 0x8e }, std::byte{ 0x95 }, std::byte{ 0x9b }, std::byte{ 0x75 },
                     std::byte{ 0xda }, std::byte{ 0xe3 }, std::byte{ 0x13 }, std::byte{ 0xda },
                     std::byte{ 0x8c }, std::byte{ 0xf4 }, std::byte{ 0xf7 }, std::byte{ 0x28 },
@@ -434,6 +433,7 @@ TEST_CASE("Hashing functions")
                     std::byte{ 0xb6 }, std::byte{ 0xdd }, std::byte{ 0x26 }, std::byte{ 0x54 },
                     std::byte{ 0x5e }, std::byte{ 0x96 }, std::byte{ 0xe5 }, std::byte{ 0x5b },
                     std::byte{ 0x87 }, std::byte{ 0x4b }, std::byte{ 0xe9 }, std::byte{ 0x09 },
+                    // clang-format on
                 }
             };
 
@@ -447,15 +447,13 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA512,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{sv})
-            ));
+                notstd::as_bytes(notstd::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
                 std::end(hash),
                 std::begin(expected),
-                std::end(expected)
-            ));
+                std::end(expected)));
         }
     }
 }

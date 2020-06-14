@@ -18,35 +18,35 @@ namespace Graphyte::Graphics
 
     enum struct ImageAlphaMode
     {
-        Unknown = 0,
-        Straight = 1,
+        Unknown       = 0,
+        Straight      = 1,
         Premultiplied = 2,
-        Opaque = 3,
-        Custom = 4,
+        Opaque        = 3,
+        Custom        = 4,
     };
 
     enum struct ImageDimension
     {
-        Unknown = 0,
-        Texture1D = 1,
-        Texture1DArray = 2,
-        Texture2D = 3,
-        Texture2DArray = 4,
-        TextureCube = 5,
+        Unknown          = 0,
+        Texture1D        = 1,
+        Texture1DArray   = 2,
+        Texture2D        = 3,
+        Texture2DArray   = 4,
+        TextureCube      = 5,
         TextureCubeArray = 6,
-        Texture3D = 7,
+        Texture3D        = 7,
     };
 
     inline bool IsArray(ImageDimension dimension) noexcept
     {
         switch (dimension)
         {
-        case ImageDimension::Texture1DArray:
-        case ImageDimension::Texture2DArray:
-        case ImageDimension::TextureCubeArray:
-            return true;
-        default:
-            break;
+            case ImageDimension::Texture1DArray:
+            case ImageDimension::Texture2DArray:
+            case ImageDimension::TextureCubeArray:
+                return true;
+            default:
+                break;
         }
 
         return false;
@@ -56,11 +56,11 @@ namespace Graphyte::Graphics
     {
         switch (dimension)
         {
-        case ImageDimension::TextureCube:
-        case ImageDimension::TextureCubeArray:
-            return true;
-        default:
-            break;
+            case ImageDimension::TextureCube:
+            case ImageDimension::TextureCubeArray:
+                return true;
+            default:
+                break;
         }
 
         return false;
@@ -80,8 +80,7 @@ namespace Graphyte::Graphics
         template <typename TPixel>
         notstd::span<TPixel> GetPixels(
             size_t line,
-            size_t slice = 0
-        ) noexcept
+            size_t slice = 0) noexcept
         {
             std::byte* typed_buffer = reinterpret_cast<std::byte*>(Buffer);
 
@@ -91,8 +90,7 @@ namespace Graphyte::Graphics
         template <typename TPixel>
         notstd::span<TPixel const> GetPixels(
             size_t line,
-            size_t slice = 0
-        ) const noexcept
+            size_t slice = 0) const noexcept
         {
             std::byte const* typed_buffer = reinterpret_cast<std::byte const*>(Buffer);
 
@@ -102,8 +100,7 @@ namespace Graphyte::Graphics
         template <typename TPixel>
         TPixel* GetScanline(
             size_t line,
-            size_t slice = 0
-        ) noexcept
+            size_t slice = 0) noexcept
         {
             std::byte* typed_buffer = reinterpret_cast<std::byte*>(Buffer);
 
@@ -113,8 +110,7 @@ namespace Graphyte::Graphics
         template <typename TPixel>
         const TPixel* GetScanline(
             size_t line,
-            size_t slice = 0
-        ) const noexcept
+            size_t slice = 0) const noexcept
         {
             std::byte const* typed_buffer = reinterpret_cast<std::byte const*>(Buffer);
 
@@ -147,12 +143,13 @@ namespace Graphyte::Graphics
             uint32_t array_count,
             PixelFormat format,
             ImageDimension image_dimension,
-            ImageAlphaMode alpha_mode
-        ) noexcept;
+            ImageAlphaMode alpha_mode) noexcept;
 
         Image() = delete;
+
         Image(const Image&) = delete;
-        Image& operator = (const Image&) = delete;
+
+        Image& operator=(const Image&) = delete;
 
         ~Image() noexcept;
 
@@ -160,43 +157,38 @@ namespace Graphyte::Graphics
         static std::unique_ptr<Image> Create1D(
             PixelFormat format,
             uint32_t width,
-            uint32_t mipmap_count = 1,
-            uint32_t array_count = 1,
-            ImageAlphaMode alpha_mode = ImageAlphaMode::Unknown
-        ) noexcept;
+            uint32_t mipmap_count     = 1,
+            uint32_t array_count      = 1,
+            ImageAlphaMode alpha_mode = ImageAlphaMode::Unknown) noexcept;
 
         static std::unique_ptr<Image> Create2D(
             PixelFormat format,
             uint32_t width,
             uint32_t height,
-            uint32_t mipmap_count = 1,
-            uint32_t array_count = 1,
-            ImageAlphaMode alpha_mode = ImageAlphaMode::Unknown
-        ) noexcept;
+            uint32_t mipmap_count     = 1,
+            uint32_t array_count      = 1,
+            ImageAlphaMode alpha_mode = ImageAlphaMode::Unknown) noexcept;
 
         static std::unique_ptr<Image> Create3D(
             PixelFormat format,
             uint32_t width,
             uint32_t height,
             uint32_t depth,
-            uint32_t mipmap_count = 1,
-            ImageAlphaMode alpha_mode = ImageAlphaMode::Unknown
-        ) noexcept;
+            uint32_t mipmap_count     = 1,
+            ImageAlphaMode alpha_mode = ImageAlphaMode::Unknown) noexcept;
 
         static std::unique_ptr<Image> CreateCube(
             PixelFormat format,
             uint32_t size,
-            uint32_t mipmap_count = 1,
-            uint32_t array_count = 1,
-            ImageAlphaMode alpha_mode = ImageAlphaMode::Unknown
-        ) noexcept;
+            uint32_t mipmap_count     = 1,
+            uint32_t array_count      = 1,
+            ImageAlphaMode alpha_mode = ImageAlphaMode::Unknown) noexcept;
 
     public:
         static uint32_t CalcSubresource(
             uint32_t mip_slice,
             uint32_t array_slice,
-            uint32_t mip_count
-        ) noexcept
+            uint32_t mip_count) noexcept
         {
             return (array_slice * mip_count) + mip_slice;
         }
@@ -213,8 +205,7 @@ namespace Graphyte::Graphics
         }
 
         const ImagePixels* GetSubresource(
-            size_t index
-        ) const noexcept
+            size_t index) const noexcept
         {
             if (index < m_SubresourcesCount)
             {
@@ -225,8 +216,7 @@ namespace Graphyte::Graphics
         }
 
         ImagePixels* GetSubresource(
-            size_t index
-        ) noexcept
+            size_t index) noexcept
         {
             if (index < m_SubresourcesCount)
             {
@@ -235,40 +225,37 @@ namespace Graphyte::Graphics
 
             return nullptr;
         }
-        
+
         bool GetDimensions(
             uint32_t mipmap_level,
             uint32_t& width,
             uint32_t& height,
-            uint32_t& depth
-        ) const noexcept
+            uint32_t& depth) const noexcept
         {
             if (mipmap_level < m_MipmapCount)
             {
-                width = PixelFormatProperties::GetImageWidth(m_Width, mipmap_level, m_PixelFormat);
+                width  = PixelFormatProperties::GetImageWidth(m_Width, mipmap_level, m_PixelFormat);
                 height = PixelFormatProperties::GetImageHeight(m_Height, mipmap_level, m_PixelFormat);
-                depth = PixelFormatProperties::GetImageDepth(m_Depth, mipmap_level, m_PixelFormat);
+                depth  = PixelFormatProperties::GetImageDepth(m_Depth, mipmap_level, m_PixelFormat);
 
                 return true;
             }
 
-            width = {};
+            width  = {};
             height = {};
-            depth = {};
+            depth  = {};
 
             return false;
         }
 
         ImagePixels* GetPixels(
             uint32_t array_index,
-            uint32_t mipmap_index = 0
-        ) noexcept;
+            uint32_t mipmap_index = 0) noexcept;
 
         ImagePixels* GetPixels(
             CubeFace cube_face,
             uint32_t array_index,
-            uint32_t mipmap_index = 0
-        ) noexcept;
+            uint32_t mipmap_index = 0) noexcept;
 
     public:
         uint32_t GetWidth() const noexcept

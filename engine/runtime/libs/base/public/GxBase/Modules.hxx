@@ -11,9 +11,9 @@ namespace Graphyte
      */
     enum struct ModuleType : uint32_t
     {
-        Engine,         //!< Engine module.
-        Game,           //!< Game module.
-        DeveloperTool,  //!< Developer tool module. Not shipped with game.
+        Engine,        //!< Engine module.
+        Game,          //!< Game module.
+        DeveloperTool, //!< Developer tool module. Not shipped with game.
     };
 
     /*!
@@ -21,9 +21,9 @@ namespace Graphyte
      */
     enum struct ModuleFeatures : uint32_t
     {
-        None                = 0,            //!< No features specified.
-        DynamicReloading    = 1 << 0,       //!< Module may be reloaded at runtime.
-        AutomaticShutdown   = 1 << 1,       //!< Module can be safely unloaded at shutdown.
+        None              = 0,      //!< No features specified.
+        DynamicReloading  = 1 << 0, //!< Module may be reloaded at runtime.
+        AutomaticShutdown = 1 << 1, //!< Module can be safely unloaded at shutdown.
     };
 
     /*!
@@ -90,11 +90,11 @@ namespace Graphyte
      */
     struct ModuleDescriptor final
     {
-        std::string Name;                   //!< Name of module.
-        std::string Path;                   //!< Path to loaded module.
-        System::Library ModuleLibrary;      //!< System handle of loaded library.
-        std::unique_ptr<IModule> Instance;  //!< Instance of IModule created by this library.
-        int32_t LoadOrder;                  //!< Load order index.
+        std::string Name;                  //!< Name of module.
+        std::string Path;                  //!< Path to loaded module.
+        System::Library ModuleLibrary;     //!< System handle of loaded library.
+        std::unique_ptr<IModule> Instance; //!< Instance of IModule created by this library.
+        int32_t LoadOrder;                 //!< Load order index.
     };
 
     /*!
@@ -102,8 +102,8 @@ namespace Graphyte
      */
     struct ModuleStatus final
     {
-        std::string Name;   //!< Name of module.
-        std::string Path;   //!< Path to loaded module.
+        std::string Name; //!< Name of module.
+        std::string Path; //!< Path to loaded module.
         bool IsLoaded;
     };
 
@@ -140,8 +140,7 @@ namespace Graphyte
          */
         BASE_API static IModule* Load(
             std::string_view name,
-            Status* status = nullptr
-        ) noexcept;
+            Status* status = nullptr) noexcept;
 
         /*!
          * \brief   Loads specified module
@@ -154,8 +153,7 @@ namespace Graphyte
          *  \return The instance of loaded module.
          */
         BASE_API static IModule& LoadChecked(
-            std::string_view name
-        ) noexcept;
+            std::string_view name) noexcept;
 
         /*!
          * \brief   Unloads specified module.
@@ -165,8 +163,7 @@ namespace Graphyte
          * \return  The status of unload operation.
          */
         BASE_API static Status Unload(
-            std::string_view name
-        ) noexcept;
+            std::string_view name) noexcept;
 
         /*!
          * \brief   Gets value indicating whether specified module is loaded.
@@ -176,8 +173,7 @@ namespace Graphyte
          * \return  \c true when module is loaded, \c false otherwise.
          */
         BASE_API static bool IsLoaded(
-            std::string_view name
-        ) noexcept;
+            std::string_view name) noexcept;
 
         /*!
          * \brief   Queries status of module by name.
@@ -188,8 +184,7 @@ namespace Graphyte
          * \return  \c true when successful, \c false otherwise.
          */
         BASE_API static bool Query(
-            ModuleStatus& result, std::string_view name
-        ) noexcept;
+            ModuleStatus& result, std::string_view name) noexcept;
 
         /*!
          * \brief   Queries status of all modules.
@@ -199,8 +194,7 @@ namespace Graphyte
          * \return  \c true when successful, \c false otherwise.
          */
         BASE_API static bool Query(
-            std::vector<ModuleStatus>& modules
-        ) noexcept;
+            std::vector<ModuleStatus>& modules) noexcept;
 
         /*!
          * \brief   Queries status of all modules with names matching specified pattern.
@@ -210,8 +204,7 @@ namespace Graphyte
          */
         BASE_API static bool Query(
             std::vector<ModuleStatus>& modules,
-            std::string_view pattern
-        ) noexcept;
+            std::string_view pattern) noexcept;
 
         /*!
          * \brief   Gets module instance by name.
@@ -221,8 +214,7 @@ namespace Graphyte
          * \return  The instance of module when successful, \c nullptr otherwise.
          */
         BASE_API static IModule* Get(
-            std::string_view name
-        ) noexcept;
+            std::string_view name) noexcept;
 
         /*!
          * \brief   Gets module instance by name.
@@ -234,8 +226,7 @@ namespace Graphyte
          * \return  The instance of module.
          */
         BASE_API static IModule& GetChecked(
-            std::string_view name
-        ) noexcept;
+            std::string_view name) noexcept;
 
         /*!
          * \brief   Gets number of loaded modules.
@@ -254,8 +245,7 @@ namespace Graphyte
          */
         BASE_API static Status RegisterStaticModule(
             std::string_view name,
-            IModule* instance
-        ) noexcept;
+            IModule* instance) noexcept;
 
         /*!
          * \brief   Unregisters static module instance.
@@ -267,8 +257,7 @@ namespace Graphyte
          */
         BASE_API static Status UnregisterStaticModule(
             std::string_view name,
-            IModule* instance
-        ) noexcept;
+            IModule* instance) noexcept;
 
     public:
         /*!
@@ -284,8 +273,7 @@ namespace Graphyte
         template <typename TModule>
         static TModule* Load(
             std::string_view name,
-            Status* status = nullptr
-        ) noexcept
+            Status* status = nullptr) noexcept
         {
             static_assert(std::is_base_of_v<IModule, TModule>, "TModule must implement IModule interface!");
             return static_cast<TModule*>(ModuleManager::Load(name, status));
@@ -302,8 +290,7 @@ namespace Graphyte
          */
         template <typename TModule>
         static TModule& LoadChecked(
-            std::string_view name
-        ) noexcept
+            std::string_view name) noexcept
         {
             static_assert(std::is_base_of_v<IModule, TModule>, "TModule must implement IModule interface!");
             return static_cast<TModule&>(ModuleManager::LoadChecked(name));
@@ -320,8 +307,7 @@ namespace Graphyte
          */
         template <typename TModule>
         static TModule* Get(
-            std::string_view name
-        ) noexcept
+            std::string_view name) noexcept
         {
             static_assert(std::is_base_of_v<IModule, TModule>, "TModule must implement IModule interface!");
             return static_cast<TModule*>(ModuleManager::Get(name));
@@ -338,8 +324,7 @@ namespace Graphyte
          */
         template <typename TModule>
         static TModule& GetChecked(
-            std::string_view name
-        ) noexcept
+            std::string_view name) noexcept
         {
             static_assert(std::is_base_of_v<IModule, TModule>, "TModule must implement IModule interface!");
             return static_cast<TModule&>(ModuleManager::GetChecked(name));
@@ -352,8 +337,7 @@ namespace Graphyte
 
     private:
         static std::string MakeModulePath(
-            std::string_view name
-        ) noexcept;
+            std::string_view name) noexcept;
     };
 }
 

@@ -4,13 +4,12 @@ namespace Graphyte::Storage
 {
     ArchiveMemoryWriter::ArchiveMemoryWriter(
         std::vector<std::byte>& buffer,
-        bool persistent
-    ) noexcept
+        bool persistent) noexcept
         : Archive{}
         , m_Offset{ 0 }
         , m_Buffer{ buffer }
     {
-        m_IsSaving = true;
+        m_IsSaving   = true;
         m_Persistent = persistent;
     }
 
@@ -20,8 +19,7 @@ namespace Graphyte::Storage
 
     void ArchiveMemoryWriter::Serialize(
         void* buffer,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         const int64_t required = m_Offset + static_cast<int64_t>(size) - GetSize();
         if (required > 0)

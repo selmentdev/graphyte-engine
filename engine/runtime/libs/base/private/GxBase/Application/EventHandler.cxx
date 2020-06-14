@@ -5,16 +5,14 @@ namespace Graphyte::Application
     EventHandler::~EventHandler() noexcept = default;
 
     bool EventHandler::CanHandleInput(
-        [[maybe_unused]] Window& window
-    ) noexcept
+        [[maybe_unused]] Window& window) noexcept
     {
         return false;
     }
 
     bool EventHandler::OnKeyChar(
         [[maybe_unused]] char32_t character,
-        [[maybe_unused]] bool repeat
-    ) noexcept
+        [[maybe_unused]] bool repeat) noexcept
     {
         return false;
     }
@@ -22,8 +20,7 @@ namespace Graphyte::Application
     bool EventHandler::OnKeyDown(
         [[maybe_unused]] Input::KeyCode key,
         [[maybe_unused]] char32_t character,
-        [[maybe_unused]] bool repeat
-    ) noexcept
+        [[maybe_unused]] bool repeat) noexcept
     {
         return false;
     }
@@ -31,8 +28,7 @@ namespace Graphyte::Application
     bool EventHandler::OnKeyUp(
         [[maybe_unused]] Input::KeyCode key,
         [[maybe_unused]] char32_t character,
-        [[maybe_unused]] bool repeat
-    ) noexcept
+        [[maybe_unused]] bool repeat) noexcept
     {
         return false;
     }
@@ -40,8 +36,7 @@ namespace Graphyte::Application
     bool EventHandler::OnMouseDown(
         [[maybe_unused]] Window& window,
         [[maybe_unused]] Input::MouseButton button,
-        [[maybe_unused]] Float2 position
-    ) noexcept
+        [[maybe_unused]] Float2 position) noexcept
     {
         return false;
     }
@@ -49,8 +44,7 @@ namespace Graphyte::Application
     bool EventHandler::OnMouseUp(
         [[maybe_unused]] Window& window,
         [[maybe_unused]] Input::MouseButton button,
-        [[maybe_unused]] Float2 position
-    ) noexcept
+        [[maybe_unused]] Float2 position) noexcept
     {
         return false;
     }
@@ -58,16 +52,14 @@ namespace Graphyte::Application
     bool EventHandler::OnMouseDoubleClick(
         [[maybe_unused]] Window& window,
         [[maybe_unused]] Input::MouseButton button,
-        [[maybe_unused]] Float2 position
-    ) noexcept
+        [[maybe_unused]] Float2 position) noexcept
     {
         return false;
     }
 
     bool EventHandler::OnMouseWheel(
         [[maybe_unused]] float delta,
-        [[maybe_unused]] Float2 position
-    ) noexcept
+        [[maybe_unused]] Float2 position) noexcept
     {
         return false;
     }
@@ -78,8 +70,7 @@ namespace Graphyte::Application
     }
 
     bool EventHandler::OnMouseMove(
-        [[maybe_unused]] Float2 position
-    ) noexcept
+        [[maybe_unused]] Float2 position) noexcept
     {
         return false;
     }
@@ -87,8 +78,7 @@ namespace Graphyte::Application
     bool EventHandler::OnControllerAnalog(
         [[maybe_unused]] Input::GamepadKey key,
         [[maybe_unused]] uint32_t controller,
-        [[maybe_unused]] float value
-    ) noexcept
+        [[maybe_unused]] float value) noexcept
     {
         return false;
     }
@@ -96,8 +86,7 @@ namespace Graphyte::Application
     bool EventHandler::OnControllerButtonPressed(
         [[maybe_unused]] Input::GamepadKey key,
         [[maybe_unused]] uint32_t controller,
-        [[maybe_unused]] bool repeat
-    ) noexcept
+        [[maybe_unused]] bool repeat) noexcept
     {
         return false;
     }
@@ -105,8 +94,7 @@ namespace Graphyte::Application
     bool EventHandler::OnControllerButtonReleased(
         [[maybe_unused]] Input::GamepadKey key,
         [[maybe_unused]] uint32_t controller,
-        [[maybe_unused]] bool repeat
-    ) noexcept
+        [[maybe_unused]] bool repeat) noexcept
     {
         return false;
     }
@@ -119,8 +107,7 @@ namespace Graphyte::Application
         [[maybe_unused]] Input::GestureType gesture,
         [[maybe_unused]] Float2 delta,
         [[maybe_unused]] float wheel_delta,
-        [[maybe_unused]] bool inverted
-    ) noexcept
+        [[maybe_unused]] bool inverted) noexcept
     {
         return false;
     }
@@ -133,8 +120,7 @@ namespace Graphyte::Application
         [[maybe_unused]] Window& window,
         [[maybe_unused]] Float2 position,
         [[maybe_unused]] Input::TouchIndex touch_index,
-        [[maybe_unused]] uint32_t controller
-    ) noexcept
+        [[maybe_unused]] uint32_t controller) noexcept
     {
         return false;
     }
@@ -142,8 +128,7 @@ namespace Graphyte::Application
     bool EventHandler::OnTouchMoved(
         [[maybe_unused]] Float2 location,
         [[maybe_unused]] Input::TouchIndex touch_index,
-        [[maybe_unused]] uint32_t controller
-    ) noexcept
+        [[maybe_unused]] uint32_t controller) noexcept
     {
         return false;
     }
@@ -151,8 +136,7 @@ namespace Graphyte::Application
     bool EventHandler::OnTouchEnded(
         [[maybe_unused]] Float2 location,
         [[maybe_unused]] Input::TouchIndex touch_index,
-        [[maybe_unused]] uint32_t controller
-    ) noexcept
+        [[maybe_unused]] uint32_t controller) noexcept
     {
         return false;
     }
@@ -162,8 +146,7 @@ namespace Graphyte::Application
         [[maybe_unused]] Float3 rotation_rate,
         [[maybe_unused]] Float3 gravity,
         [[maybe_unused]] Float3 acceleration,
-        [[maybe_unused]] uint32_t controller
-    ) noexcept
+        [[maybe_unused]] uint32_t controller) noexcept
     {
         return false;
     }
@@ -171,83 +154,71 @@ namespace Graphyte::Application
     bool EventHandler::OnWindowSizeChanged(
         [[maybe_unused]] Window& window,
         [[maybe_unused]] Float2 size,
-        [[maybe_unused]] bool was_minimized
-    ) noexcept
+        [[maybe_unused]] bool was_minimized) noexcept
     {
         return false;
     }
 
     void EventHandler::OnWindowPaint(
-        [[maybe_unused]] Window& window
-    ) noexcept
+        [[maybe_unused]] Window& window) noexcept
     {
     }
 
 
     WindowLimits EventHandler::GetSizeLimits(
-        [[maybe_unused]] Window& window
-    ) noexcept
+        [[maybe_unused]] Window& window) noexcept
     {
         return {};
     }
 
     void EventHandler::OnWindowSizing(
-        [[maybe_unused]] Window& window
-    ) noexcept
+        [[maybe_unused]] Window& window) noexcept
     {
     }
 
     bool EventHandler::OnWindowSizingBegin(
-        [[maybe_unused]] Window& window
-    ) noexcept
+        [[maybe_unused]] Window& window) noexcept
     {
         return false;
     }
 
     void EventHandler::OnWindowSizingEnd(
-        [[maybe_unused]] Window& window
-    ) noexcept
+        [[maybe_unused]] Window& window) noexcept
     {
     }
 
     void EventHandler::OnDPIScaleChanged(
-        [[maybe_unused]] Window& window
-    ) noexcept
+        [[maybe_unused]] Window& window) noexcept
     {
     }
 
     void EventHandler::OnWindowMoved(
         [[maybe_unused]] Window& window,
-        [[maybe_unused]] Float2 position
-    ) noexcept
+        [[maybe_unused]] Float2 position) noexcept
     {
     }
 
     void EventHandler::OnWindowClose(
-        [[maybe_unused]] Window& window
-    ) noexcept
+        [[maybe_unused]] Window& window) noexcept
     {
     }
 
     bool EventHandler::OnWindowActivated(
         [[maybe_unused]] Window& window,
-        [[maybe_unused]] WindowActivation activation
-    ) noexcept
+        [[maybe_unused]] WindowActivation activation) noexcept
     {
         return false;
     }
 
     bool EventHandler::OnApplicationActivated(
-        [[maybe_unused]] bool active
-    ) noexcept
+        [[maybe_unused]] bool active) noexcept
     {
         return false;
     }
 
     bool EventHandler::OnWindowAction(
         [[maybe_unused]] Window& window,
-        [[maybe_unused]] WindowAction action
-    ) noexcept
+        [[maybe_unused]] WindowAction action) noexcept
     {
         return true;
     }
@@ -261,8 +232,7 @@ namespace Graphyte::Application
     }
 
     void EventHandler::OnApplicationShutdown(
-        [[maybe_unused]] ShutdownReason reason
-    ) noexcept
+        [[maybe_unused]] ShutdownReason reason) noexcept
     {
     }
 }

@@ -5,23 +5,19 @@
 namespace Graphyte::Graphics
 {
     PixelFormat OpenGLGpuGetPixelFormat(
-        GLenum internal_format
-    ) noexcept;
+        GLenum internal_format) noexcept;
 
     PixelFormat OpenGLGpuGetPixelFormat(
         GLenum format,
-        GLenum type
-    ) noexcept;
+        GLenum type) noexcept;
 
     bool OpenGLGpuGetPixelFormat(
         PixelFormat pixel_format,
         GLenum& internal_format,
-        GLboolean& compressed
-    ) noexcept;
+        GLboolean& compressed) noexcept;
 
     bool OpenGLGpuGetPixelFormat(
         PixelFormat pixel_format,
         GLenum& format,
-        GLenum& type
-    ) noexcept;
+        GLenum& type) noexcept;
 }

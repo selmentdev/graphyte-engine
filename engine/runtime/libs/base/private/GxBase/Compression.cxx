@@ -20,16 +20,14 @@ namespace Graphyte::Compression::Impl
         static void* Alloc(
             [[maybe_unused]] void* context,
             unsigned int size,
-            unsigned int count
-        ) noexcept
+            unsigned int count) noexcept
         {
             return malloc(static_cast<size_t>(size) * static_cast<size_t>(count));
         }
 
         static void Free(
             [[maybe_unused]] void* context,
-            void* pointer
-        ) noexcept
+            void* pointer) noexcept
         {
             return free(pointer);
         }
@@ -39,21 +37,21 @@ namespace Graphyte::Compression::Impl
             size_t& compressed_size,
             const void* decompressed_buffer,
             size_t decompressed_size,
-            size_t bit_window
-        ) noexcept
+            size_t bit_window) noexcept
         {
             auto z_compressed_size   = static_cast<uLongf>(compressed_size);
             auto z_decompressed_size = static_cast<uLongf>(decompressed_size);
+
             bool result = false;
 
             if (bit_window == ZlibHelper::DEFAULT_BIT_WINDOW)
             {
                 result = compress(
-                    reinterpret_cast<Bytef*>(compressed_buffer),
-                    &z_compressed_size,
-                    reinterpret_cast<const Bytef*>(decompressed_buffer),
-                    z_decompressed_size
-                ) == Z_OK;
+                             reinterpret_cast<Bytef*>(compressed_buffer),
+                             &z_compressed_size,
+                             reinterpret_cast<const Bytef*>(decompressed_buffer),
+                             z_decompressed_size)
+                         == Z_OK;
             }
             else
             {
@@ -75,8 +73,7 @@ namespace Graphyte::Compression::Impl
                     MAX_MEM_LEVEL,
                     Z_DEFAULT_STRATEGY,
                     ZLIB_VERSION,
-                    static_cast<int>(sizeof(z_stream))
-                );
+                    static_cast<int>(sizeof(z_stream)));
 
                 if (status == Z_OK)
                 {
@@ -118,8 +115,7 @@ namespace Graphyte::Compression::Impl
             size_t decompressed_size,
             const void* compressed_buffer,
             size_t compressed_size,
-            size_t bit_window
-        ) noexcept
+            size_t bit_window) noexcept
         {
             auto z_compressed_size   = static_cast<uLongf>(compressed_size);
             auto z_decompressed_size = static_cast<uLongf>(decompressed_size);
@@ -138,8 +134,7 @@ namespace Graphyte::Compression::Impl
                 &stream,
                 static_cast<int>(bit_window),
                 ZLIB_VERSION,
-                static_cast<int>(sizeof(z_stream))
-            );
+                static_cast<int>(sizeof(z_stream)));
 
             if (result != Z_OK)
             {
@@ -178,13 +173,12 @@ namespace Graphyte::Compression
 
     size_t MemoryBound(
         CompressionMethod method,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         switch (method)
         {
-        case CompressionMethod::LZ4:
-        case CompressionMethod::LZ4HC:
+            case CompressionMethod::LZ4:
+            case CompressionMethod::LZ4HC:
             {
                 if (size <= static_cast<size_t>(LZ4_MAX_INPUT_SIZE))
                 {
@@ -194,7 +188,7 @@ namespace Graphyte::Compression
                 break;
             }
 #if GRAPHYTE_SDKS_WITH_ZLIB
-        case CompressionMethod::Zlib:
+            case CompressionMethod::Zlib:
             {
                 if constexpr (BitWindow == ZlibHelper::DEFAULT_BIT_WINDOW)
                 {
@@ -206,7 +200,7 @@ namespace Graphyte::Compression
                 }
             }
 #endif
-        default:
+            default:
             {
                 GX_LOG(LogPlatform, Error, "Unknown compression method: {}\n", static_cast<int32_t>(method));
                 break;
@@ -221,13 +215,12 @@ namespace Graphyte::Compression
         void* output_buffer,
         size_t& output_size,
         const void* input_buffer,
-        size_t input_size
-    ) noexcept
+        size_t input_size) noexcept
     {
         switch (method)
         {
-        case CompressionMethod::LZ4HC:
-        case CompressionMethod::LZ4:
+            case CompressionMethod::LZ4HC:
+            case CompressionMethod::LZ4:
             {
                 if (output_size > static_cast<size_t>(LZ4_MAX_INPUT_SIZE) || input_size > static_cast<size_t>(LZ4_MAX_INPUT_SIZE))
                 {
@@ -243,8 +236,7 @@ namespace Graphyte::Compression
                         static_cast<char*>(output_buffer),
                         static_cast<int>(input_size),
                         static_cast<int>(output_size),
-                        LZ4HC_CLEVEL_OPT_MIN
-                    );
+                        LZ4HC_CLEVEL_OPT_MIN);
                 }
                 else
                 {
@@ -252,8 +244,7 @@ namespace Graphyte::Compression
                         static_cast<const char*>(input_buffer),
                         static_cast<char*>(output_buffer),
                         static_cast<int>(input_size),
-                        static_cast<int>(output_size)
-                    );
+                        static_cast<int>(output_size));
                 }
 
                 if (result > 0)
@@ -265,18 +256,17 @@ namespace Graphyte::Compression
                 break;
             }
 #if GRAPHYTE_SDKS_WITH_ZLIB
-        case CompressionMethod::Zlib:
+            case CompressionMethod::Zlib:
             {
                 return ZlibHelper::CompressMemory(
                     output_buffer,
                     output_size,
                     input_buffer,
                     input_size,
-                    BitWindow
-                );
+                    BitWindow);
             }
 #endif
-        default:
+            default:
             {
                 GX_LOG(LogPlatform, Error, "Unknown compression method: {}\n", static_cast<int32_t>(method));
                 break;
@@ -292,13 +282,12 @@ namespace Graphyte::Compression
         void* output_buffer,
         size_t output_size,
         const void* input_buffer,
-        size_t input_size
-    ) noexcept
+        size_t input_size) noexcept
     {
         switch (method)
         {
-        case CompressionMethod::LZ4HC:
-        case CompressionMethod::LZ4:
+            case CompressionMethod::LZ4HC:
+            case CompressionMethod::LZ4:
             {
                 if (output_size > static_cast<size_t>(LZ4_MAX_INPUT_SIZE) || input_size > static_cast<size_t>(LZ4_MAX_INPUT_SIZE))
                 {
@@ -309,8 +298,7 @@ namespace Graphyte::Compression
                     static_cast<const char*>(input_buffer),
                     static_cast<char*>(output_buffer),
                     static_cast<int>(input_size),
-                    static_cast<int>(output_size)
-                );
+                    static_cast<int>(output_size));
 
                 if (result > 0 && static_cast<size_t>(static_cast<unsigned int>(result)) == output_size)
                 {
@@ -320,18 +308,17 @@ namespace Graphyte::Compression
                 break;
             }
 #if GRAPHYTE_SDKS_WITH_ZLIB
-        case CompressionMethod::Zlib:
+            case CompressionMethod::Zlib:
             {
                 return ZlibHelper::DecompressMemory(
                     output_buffer,
                     output_size,
                     input_buffer,
                     input_size,
-                    BitWindow
-                );
+                    BitWindow);
             }
 #endif
-        default:
+            default:
             {
                 GX_LOG(LogPlatform, Error, "Unknown compression method: {}\n", static_cast<int32_t>(method));
                 break;
@@ -344,8 +331,7 @@ namespace Graphyte::Compression
     bool CompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        notstd::span<const std::byte> input
-    ) noexcept
+        notstd::span<const std::byte> input) noexcept
     {
         if (input.empty())
         {
@@ -360,8 +346,7 @@ namespace Graphyte::Compression
             std::data(output),
             required,
             std::data(input),
-            std::size(input)
-        );
+            std::size(input));
 
         if (result)
         {
@@ -380,8 +365,7 @@ namespace Graphyte::Compression
     bool DecompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        notstd::span<const std::byte> input
-    ) noexcept
+        notstd::span<const std::byte> input) noexcept
     {
         if (input.empty())
         {
@@ -393,15 +377,13 @@ namespace Graphyte::Compression
             std::data(output),
             std::size(output),
             std::data(input),
-            std::size(input)
-        );
+            std::size(input));
     }
 
     bool CompressString(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        std::string_view input
-    ) noexcept
+        std::string_view input) noexcept
     {
         size_t size = MemoryBound(method, input.size());
         output.resize(size);
@@ -411,8 +393,7 @@ namespace Graphyte::Compression
             std::data(output),
             size,
             std::data(input),
-            std::size(input)
-        );
+            std::size(input));
 
         if (result)
         {
@@ -429,8 +410,7 @@ namespace Graphyte::Compression
     bool DecompressString(
         CompressionMethod method,
         std::string& output,
-        const std::vector<std::byte>& input
-    ) noexcept
+        const std::vector<std::byte>& input) noexcept
     {
         if (input.empty())
         {
@@ -442,7 +422,6 @@ namespace Graphyte::Compression
             std::data(output),
             std::size(output),
             std::data(input),
-            std::size(input)
-        );
+            std::size(input));
     }
 }

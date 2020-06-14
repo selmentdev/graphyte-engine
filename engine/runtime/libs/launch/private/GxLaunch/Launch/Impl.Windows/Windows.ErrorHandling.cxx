@@ -24,21 +24,18 @@ namespace Graphyte::Launch::Impl::Windows
         const wchar_t* function,
         const wchar_t* file,
         unsigned int line,
-        [[maybe_unused]] uintptr_t reserved
-    ) noexcept
+        [[maybe_unused]] uintptr_t reserved) noexcept
     {
         Diagnostics::OnAbort(
             System::Impl::NarrowString(expression),
             System::Impl::NarrowString(function),
             System::Impl::NarrowString(file),
             line,
-            "Invalid parameter detected in CRT function"
-        );
+            "Invalid parameter detected in CRT function");
     }
 
     static LONG CALLBACK OnUnhandledException(
-        EXCEPTION_POINTERS* exception_pointers
-    ) noexcept
+        EXCEPTION_POINTERS* exception_pointers) noexcept
     {
         if (exception_pointers != nullptr)
         {
@@ -49,8 +46,7 @@ namespace Graphyte::Launch::Impl::Windows
     }
 
     static BOOL WINAPI OnConsoleCtrlC(
-        [[maybe_unused]] DWORD ctrl_type
-    ) noexcept
+        [[maybe_unused]] DWORD ctrl_type) noexcept
     {
         if (Graphyte::Application::IsRequestingExit() == false)
         {

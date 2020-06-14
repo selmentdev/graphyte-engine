@@ -5,8 +5,7 @@ namespace Graphyte::Graphics
 {
     GpuComputePipelineStateHandle OpenGLGpuDevice::CreateComputePipelineState(
         const GpuComputePipelineStateCreateArgs& args,
-        const GpuResourceSetDesc& layout
-    ) noexcept
+        const GpuResourceSetDesc& layout) noexcept
     {
         (void)args;
         (void)layout;
@@ -14,8 +13,7 @@ namespace Graphyte::Graphics
     }
 
     void OpenGLGpuDevice::DestroyComputePipelineState(
-        GpuComputePipelineStateHandle handle
-    ) noexcept
+        GpuComputePipelineStateHandle handle) noexcept
     {
         (void)handle;
     }

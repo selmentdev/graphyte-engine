@@ -65,7 +65,7 @@ namespace Graphyte::Maths::Noises::Impl
         Vec2 const t2 = MulAdd(t, t1, Make<Vec2>(10.0F));
         Vec2 const t3 = Mul(t, t);
         Vec2 const t4 = Mul(t, t2);
-        Vec2 const r = Mul(t3, t4);
+        Vec2 const r  = Mul(t3, t4);
         return r;
     }
 
@@ -75,7 +75,7 @@ namespace Graphyte::Maths::Noises::Impl
         Vec3 const t2 = MulAdd(t, t1, Make<Vec3>(10.0F));
         Vec3 const t3 = Mul(t, t);
         Vec3 const t4 = Mul(t, t2);
-        Vec3 const r = Mul(t3, t4);
+        Vec3 const r  = Mul(t3, t4);
         return r;
     }
 
@@ -85,22 +85,22 @@ namespace Graphyte::Maths::Noises::Impl
         Vec4 const t2 = MulAdd(t, t1, Make<Vec4>(10.0F));
         Vec4 const t3 = Mul(t, t);
         Vec4 const t4 = Mul(t, t2);
-        Vec4 const r = Mul(t3, t4);
+        Vec4 const r  = Mul(t3, t4);
         return r;
     }
 
     mathinline Vec4 mathcall Grad4(float j, Vec4 ip) noexcept
     {
-        Vec4 const ones = Make<Vec4>(1.0F, 1.0F, 1.0F, -1.0F);
-        Vec3 const fjip = Floor(Mul(Frac(Mul(Make<Vec3>(j), ToVec3(ip))), 7.0F));
-        Vec3 const pxyz = MulSub(fjip, ToVec3(SplatZ(ip)), One<Vec3>());
-        Vec4 const pw = Sub(Make<Vec4>(1.5F), Dot(Abs(pxyz), ToVec3(ones)));
-        Vec4 const p = Maths::Permute<0, 1, 2, 4>(ToVec4(pxyz), pw);
+        Vec4 const ones    = Make<Vec4>(1.0F, 1.0F, 1.0F, -1.0F);
+        Vec3 const fjip    = Floor(Mul(Frac(Mul(Make<Vec3>(j), ToVec3(ip))), 7.0F));
+        Vec3 const pxyz    = MulSub(fjip, ToVec3(SplatZ(ip)), One<Vec3>());
+        Vec4 const pw      = Sub(Make<Vec4>(1.5F), Dot(Abs(pxyz), ToVec3(ones)));
+        Vec4 const p       = Maths::Permute<0, 1, 2, 4>(ToVec4(pxyz), pw);
         Bool4 const cmpneg = Maths::CmpLt(p, Zero<Vec4>());
-        Vec4 const s = Select(Zero<Vec4>(), One<Vec4>(), cmpneg);
-        Vec4 const sxyz = MulSub(s, Make<Vec4>(2.0F), Make<Vec4>(1.0F));
-        Vec4 const rs = MulAdd(p, sxyz, SplatW(s));
-        Vec4 const r = Select(p, rs, { Maths::Impl::VEC4_MASK_COMPONENTS_3.V });
+        Vec4 const s       = Select(Zero<Vec4>(), One<Vec4>(), cmpneg);
+        Vec4 const sxyz    = MulSub(s, Make<Vec4>(2.0F), Make<Vec4>(1.0F));
+        Vec4 const rs      = MulAdd(p, sxyz, SplatW(s));
+        Vec4 const r       = Select(p, rs, { Maths::Impl::VEC4_MASK_COMPONENTS_3.V });
         return r;
     }
 
@@ -130,16 +130,16 @@ namespace Graphyte::Maths::Noises
     mathinline float mathcall snoise(Vec2 v) noexcept
     {
         Maths::Impl::Vec4F32 s_C{
-            0.211324865405187f, // (3.0-math.sqrt(3.0))/6.0
-            0.366025403784439f, // 0.5*(math.sqrt(3.0)-1.0)
+            0.211324865405187f,  // (3.0-math.sqrt(3.0))/6.0
+            0.366025403784439f,  // 0.5*(math.sqrt(3.0)-1.0)
             -0.577350269189626f, // -1.0 + 2.0 * C.x
-            0.024390243902439f, // 1.0 / 41.0
+            0.024390243902439f,  // 1.0 / 41.0
         };
 
         Vec4 const c{ s_C.V };
 
         // First corner
-        Vec2 i = Floor(Add(v, ToVec2(Dot(v, ToVec2(SplatY(c))))));
+        Vec2 i  = Floor(Add(v, ToVec2(Dot(v, ToVec2(SplatY(c))))));
         Vec2 x0 = Sub(v, Add(i, ToVec2(Dot(i, ToVec2(SplatX(c))))));
 
         Vec2 i1 = GetX(x0) > GetY(x0) ? UnitX<Vec2>() : UnitY<Vec2>();
@@ -155,24 +155,20 @@ namespace Graphyte::Maths::Noises
             Add(
                 Add(
                     Impl::Permute(
-                        Add(ToVec3(SplatY(ToVec4(i))), Make<Vec3>(0.0F, GetY(i1), 1.0F))
-                    ),
-                    ToVec3(SplatX(ToVec4(i)))
-                ),
-                Make<Vec3>(0.0F, GetX(i1), 1.0F)
-            )
-        );
+                        Add(ToVec3(SplatY(ToVec4(i))), Make<Vec3>(0.0F, GetY(i1), 1.0F))),
+                    ToVec3(SplatX(ToVec4(i)))),
+                Make<Vec3>(0.0F, GetX(i1), 1.0F)));
 
         Vec3 m = Max(Sub(Make<Vec3>(0.5F), Make<Vec3>(
-            GetX(Dot(x0, x0)),
-            GetX(Dot(ToVec2(Swizzle<SwizzleMask::XYXY>(x12)), ToVec2(Swizzle<SwizzleMask::XYXY>(x12)))),
-            GetX(Dot(ToVec2(Swizzle<SwizzleMask::ZWZW>(x12)), ToVec2(Swizzle<SwizzleMask::ZWZW>(x12))))
-            )), Zero<Vec3>());
-        m = Mul(m, m);
-        m = Mul(m, m);
+                                               GetX(Dot(x0, x0)),
+                                               GetX(Dot(ToVec2(Swizzle<SwizzleMask::XYXY>(x12)), ToVec2(Swizzle<SwizzleMask::XYXY>(x12)))),
+                                               GetX(Dot(ToVec2(Swizzle<SwizzleMask::ZWZW>(x12)), ToVec2(Swizzle<SwizzleMask::ZWZW>(x12)))))),
+            Zero<Vec3>());
+        m      = Mul(m, m);
+        m      = Mul(m, m);
 
-        Vec3 x = MulSub(Make<Vec3>(2.0F), Frac(Mul(p, ToVec3(SplatW(c)))), One<Vec3>());
-        Vec3 h = Sub(Abs(x), Make<Vec3>(0.5F));
+        Vec3 x  = MulSub(Make<Vec3>(2.0F), Frac(Mul(p, ToVec3(SplatW(c)))), One<Vec3>());
+        Vec3 h  = Sub(Abs(x), Make<Vec3>(0.5F));
         Vec3 ox = Floor(Add(x, Make<Vec3>(0.5F)));
         Vec3 a0 = Sub(x, ox);
 
@@ -183,18 +179,13 @@ namespace Graphyte::Maths::Noises
             Add(
                 Mul(
                     Swizzle<SwizzleMask::YZYZ>(ToVec4(a0)),
-                    Swizzle<SwizzleMask::XZXZ>(x12)
-                ),
+                    Swizzle<SwizzleMask::XZXZ>(x12)),
                 Mul(
                     Swizzle<SwizzleMask::YZYZ>(ToVec4(h)),
-                    Swizzle<SwizzleMask::YWYW>(x12)
-                )
-            )
-        );
+                    Swizzle<SwizzleMask::YWYW>(x12))));
 
         Vec3 g = Make<Vec3>(gx, GetX(gyz), GetY(gyz));
 
         return 130.0F * GetX(Dot(m, g));
-
     }
 }

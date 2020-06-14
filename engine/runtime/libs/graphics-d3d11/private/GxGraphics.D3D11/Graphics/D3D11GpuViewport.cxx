@@ -7,53 +7,52 @@ namespace Graphyte::Graphics
     namespace Impl
     {
         DXGI_SAMPLE_DESC ExtractMsaaQuality(
-            GpuMsaaQuality msaa
-        ) noexcept
+            GpuMsaaQuality msaa) noexcept
         {
             DXGI_SAMPLE_DESC result{};
 
             switch (msaa)
             {
-            case GpuMsaaQuality::Disabled:
+                case GpuMsaaQuality::Disabled:
                 {
                     result = {
-                        .Count = 1,
+                        .Count   = 1,
                         .Quality = 0,
                     };
 
                     break;
                 }
-            case GpuMsaaQuality::X2:
+                case GpuMsaaQuality::X2:
                 {
                     result = {
-                        .Count = 2,
+                        .Count   = 2,
                         .Quality = 0,
                     };
 
                     break;
                 }
-            case GpuMsaaQuality::X4:
+                case GpuMsaaQuality::X4:
                 {
                     result = {
-                        .Count = 4,
+                        .Count   = 4,
                         .Quality = 0,
                     };
 
                     break;
                 }
-            case GpuMsaaQuality::X8:
+                case GpuMsaaQuality::X8:
                 {
                     result = {
-                        .Count = 8,
+                        .Count   = 8,
                         .Quality = 0,
                     };
 
                     break;
                 }
-            case GpuMsaaQuality::X16:
+                case GpuMsaaQuality::X16:
                 {
                     result = {
-                        .Count = 16,
+                        .Count   = 16,
                         .Quality = 0,
                     };
 
@@ -70,19 +69,18 @@ namespace Graphyte::Graphics
         Microsoft::WRL::ComPtr<IDXGIOutput> output{};
 
         GPU_DX_VALIDATE(m_SwapChain->GetContainingOutput(
-            output.GetAddressOf()
-        ));
+            output.GetAddressOf()));
 
         DXGI_MODE_DESC mode{
-            .Width = m_Width,
-            .Height = m_Height,
+            .Width       = m_Width,
+            .Height      = m_Height,
             .RefreshRate = {
-                .Numerator = 0,
+                .Numerator   = 0,
                 .Denominator = 0,
             },
-            .Format = D3D11GpuGetRenderTargetFormat(m_ColorFormat),
+            .Format           = D3D11GpuGetRenderTargetFormat(m_ColorFormat),
             .ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED,
-            .Scaling = DXGI_MODE_SCALING_UNSPECIFIED,
+            .Scaling          = DXGI_MODE_SCALING_UNSPECIFIED,
         };
 
         DXGI_MODE_DESC result;
@@ -90,8 +88,7 @@ namespace Graphyte::Graphics
         HRESULT hr = output->FindClosestMatchingMode(
             &mode,
             &result,
-            nullptr
-        );
+            nullptr);
 
         if (hr == DXGI_ERROR_NOT_CURRENTLY_AVAILABLE)
         {
@@ -106,25 +103,22 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuViewport::Reset(
-        bool force
-    ) noexcept
+        bool force) noexcept
     {
         if (!m_Valid)
         {
 #if GRAPHYTE_PLATFORM_WINDOWS
-            HWND focused = GetFocus();
-            bool const is_focused = (focused == m_Handle);
+            HWND focused            = GetFocus();
+            bool const is_focused   = (focused == m_Handle);
             bool const is_minimized = !!IsIconic(m_Handle);
 #else
-            bool const is_focused = true;
+            bool const is_focused   = true;
             bool const is_minimized = false;
 #endif
 
             if (force || (is_focused && !is_minimized))
             {
-                bool const use_forced_display =
-                    m_Fullscreen &&
-                    (m_ColorFormat == PixelFormat::R32G32B32A32_FLOAT || m_FullscreenOutput != nullptr);
+                bool const use_forced_display = m_Fullscreen && (m_ColorFormat == PixelFormat::R32G32B32A32_FLOAT || m_FullscreenOutput != nullptr);
 
                 HRESULT result = m_SwapChain->SetFullscreenState(
                     m_Fullscreen
@@ -132,8 +126,7 @@ namespace Graphyte::Graphics
                         : FALSE,
                     use_forced_display
                         ? m_FullscreenOutput
-                        : nullptr
-                );
+                        : nullptr);
 
                 GX_LOG(LogD3D11Render, Info, "SetFullscreenState: {:08x}({})\n", result, m_Fullscreen);
 
@@ -145,7 +138,6 @@ namespace Graphyte::Graphics
                 {
                     GX_LOG(LogD3D11Render, Info, "DXGISwapChain::SetFullscreenState ({:08x}). Retrying next frame.\n", result);
                 }
-
             }
         }
     }
@@ -157,47 +149,45 @@ namespace Graphyte::Graphics
         bool fullscreen,
         PixelFormat color_format,
         PixelFormat depth_format,
-        GpuMsaaQuality msaa
-    ) noexcept
+        GpuMsaaQuality msaa) noexcept
     {
         HWND window_handle = static_cast<HWND>(native_handle);
 
         DXGI_SWAP_CHAIN_DESC sd{
             .BufferDesc = {
-                .Width = width,
-                .Height = height,
+                .Width       = width,
+                .Height      = height,
                 .RefreshRate = {
-                    .Numerator = 0,
+                    .Numerator   = 0,
                     .Denominator = 0,
                 },
-                .Format = D3D11GpuGetRenderTargetFormat(color_format),
+                .Format           = D3D11GpuGetRenderTargetFormat(color_format),
                 .ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED,
-                .Scaling = DXGI_MODE_SCALING_UNSPECIFIED,
+                .Scaling          = DXGI_MODE_SCALING_UNSPECIFIED,
             },
-            .SampleDesc = Impl::ExtractMsaaQuality(msaa),
-            .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
-            .BufferCount = 1,
+            .SampleDesc   = Impl::ExtractMsaaQuality(msaa),
+            .BufferUsage  = DXGI_USAGE_RENDER_TARGET_OUTPUT,
+            .BufferCount  = 1,
             .OutputWindow = window_handle,
-            .Windowed = fullscreen ? FALSE : TRUE,
-            .SwapEffect = DXGI_SWAP_EFFECT_DISCARD,
-            .Flags = 0,
+            .Windowed     = fullscreen ? FALSE : TRUE,
+            .SwapEffect   = DXGI_SWAP_EFFECT_DISCARD,
+            .Flags        = 0,
         };
 
         {
             UINT max_quality{ 0 };
 
             if (FAILED(m_Device->CheckMultisampleQualityLevels(
-                sd.BufferDesc.Format,
-                sd.SampleDesc.Count,
-                &max_quality
-            )))
+                    sd.BufferDesc.Format,
+                    sd.SampleDesc.Count,
+                    &max_quality)))
             {
                 //
                 // Default sample quality if not supported.
                 //
 
                 sd.SampleDesc = {
-                    .Count = 1,
+                    .Count   = 1,
                     .Quality = 0,
                 };
             }
@@ -205,8 +195,7 @@ namespace Graphyte::Graphics
             {
                 sd.SampleDesc.Quality = std::min(
                     sd.SampleDesc.Quality,
-                    max_quality - 1
-                );
+                    max_quality - 1);
             }
         }
 
@@ -216,30 +205,27 @@ namespace Graphyte::Graphics
         GPU_DX_VALIDATE(m_Factory->CreateSwapChain(
             m_Device.Get(),
             &sd,
-            &swap_chain
-        ));
+            &swap_chain));
 
         GPU_DX_VALIDATE(swap_chain->QueryInterface(
-            &swap_chain1
-        ));
+            &swap_chain1));
 
         GX_LOG(LogD3D11Render, Trace, "Create viewport\n");
 
         GPU_DX_VALIDATE(m_Factory->MakeWindowAssociation(
             window_handle,
-            DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER
-        ));
+            DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER));
 
-        auto result = new D3D11GpuViewport();
+        auto result         = new D3D11GpuViewport();
         result->m_SwapChain = swap_chain1;
 
-        result->m_Handle = window_handle;
-        result->m_Width = width;
-        result->m_Height = height;
+        result->m_Handle      = window_handle;
+        result->m_Width       = width;
+        result->m_Height      = height;
         result->m_ColorFormat = color_format;
         result->m_DepthFormat = depth_format;
-        result->m_Fullscreen = fullscreen;
-        result->m_Valid = true;
+        result->m_Fullscreen  = fullscreen;
+        result->m_Valid       = true;
         result->m_MsaaQuality = msaa;
 
         this->ResizeViewport(
@@ -247,15 +233,13 @@ namespace Graphyte::Graphics
             width,
             height,
             fullscreen,
-            result->m_ColorFormat
-        );
+            result->m_ColorFormat);
 
         return result;
     }
 
     void D3D11GpuDevice::DestroyViewport(
-        GpuViewportHandle handle
-    ) noexcept
+        GpuViewportHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
 
@@ -264,8 +248,7 @@ namespace Graphyte::Graphics
 
         GPU_DX_VALIDATE(native->m_SwapChain->SetFullscreenState(
             FALSE,
-            nullptr
-        ));
+            nullptr));
 
         if (native->m_DepthStencilView != nullptr)
         {
@@ -298,8 +281,7 @@ namespace Graphyte::Graphics
         uint32_t width,
         uint32_t height,
         bool fullscreen,
-        PixelFormat format
-    ) noexcept
+        PixelFormat format) noexcept
     {
 
         (void)format;
@@ -313,13 +295,12 @@ namespace Graphyte::Graphics
         BOOL current_fullscreen{};
         GPU_DX_VALIDATE(native->m_SwapChain->GetFullscreenState(
             &current_fullscreen,
-            nullptr
-        ));
+            nullptr));
 
-        native->m_Width = width;
-        native->m_Height = height;
+        native->m_Width      = width;
+        native->m_Height     = height;
         native->m_Fullscreen = fullscreen;
-        native->m_Valid = false;
+        native->m_Valid      = false;
 
         GX_LOG(LogD3D11Render, Trace, "DXGI: begin resize\n");
 
@@ -335,8 +316,7 @@ namespace Graphyte::Graphics
         {
             GPU_DX_VALIDATE(native->m_SwapChain->SetFullscreenState(
                 TRUE,
-                nullptr
-            ));
+                nullptr));
         }
 
         //
@@ -353,23 +333,20 @@ namespace Graphyte::Graphics
         m_Context->Flush();
 
         GPU_DX_VALIDATE(native->m_SwapChain->ResizeTarget(
-            &closest
-        ));
+            &closest));
 
         GPU_DX_VALIDATE(native->m_SwapChain->ResizeBuffers(
             0,
             0,
             0,
             DXGI_FORMAT_UNKNOWN,
-            DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH
-        ));
+            DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH));
 
         Microsoft::WRL::ComPtr<ID3D11Texture2D> back_buffer{};
 
         GPU_DX_VALIDATE(native->m_SwapChain->GetBuffer(
             0,
-            IID_PPV_ARGS(back_buffer.GetAddressOf())
-        ));
+            IID_PPV_ARGS(back_buffer.GetAddressOf())));
 
 #if false
         {
@@ -386,18 +363,17 @@ namespace Graphyte::Graphics
         {
             GPU_DX_VALIDATE(native->m_SwapChain->SetFullscreenState(
                 FALSE,
-                nullptr
-            ));
+                nullptr));
         }
 
         //
         // Create render target view.
         //
         D3D11_RENDER_TARGET_VIEW_DESC rtv{
-            .Format = DXGI_FORMAT_UNKNOWN,
+            .Format        = DXGI_FORMAT_UNKNOWN,
             .ViewDimension = (native->m_MsaaQuality == GpuMsaaQuality::Disabled)
-                ? D3D11_RTV_DIMENSION_TEXTURE2D
-                : D3D11_RTV_DIMENSION_TEXTURE2DMS,
+                                 ? D3D11_RTV_DIMENSION_TEXTURE2D
+                                 : D3D11_RTV_DIMENSION_TEXTURE2DMS,
             .Texture2D = {
                 .MipSlice = 0,
             },
@@ -406,8 +382,7 @@ namespace Graphyte::Graphics
         GPU_DX_VALIDATE(m_Device->CreateRenderTargetView(
             back_buffer.Get(),
             &rtv,
-            &native->m_RenderTargetView
-        ));
+            &native->m_RenderTargetView));
 
         //back_buffer.Reset();
 
@@ -432,37 +407,34 @@ namespace Graphyte::Graphics
             // Create depth stencil attachment.
             //
             D3D11_TEXTURE2D_DESC desc{
-                .Width = width,
-                .Height = height,
-                .MipLevels = 1,
-                .ArraySize = 1,
-                .Format = D3D11GpuGetPixelFormat(native->m_DepthFormat),
-                .SampleDesc = Impl::ExtractMsaaQuality(native->m_MsaaQuality),
-                .Usage = D3D11_USAGE_DEFAULT,
-                .BindFlags = D3D11_BIND_DEPTH_STENCIL,
+                .Width          = width,
+                .Height         = height,
+                .MipLevels      = 1,
+                .ArraySize      = 1,
+                .Format         = D3D11GpuGetPixelFormat(native->m_DepthFormat),
+                .SampleDesc     = Impl::ExtractMsaaQuality(native->m_MsaaQuality),
+                .Usage          = D3D11_USAGE_DEFAULT,
+                .BindFlags      = D3D11_BIND_DEPTH_STENCIL,
                 .CPUAccessFlags = 0,
-                .MiscFlags = 0,
+                .MiscFlags      = 0,
             };
 
             GPU_DX_VALIDATE(m_Device->CreateTexture2D(
                 &desc,
                 nullptr,
-                &native->m_DepthStencil
-            ));
+                &native->m_DepthStencil));
 
             GPU_DX_VALIDATE(m_Device->CreateDepthStencilView(
                 native->m_DepthStencil,
                 nullptr,
-                &native->m_DepthStencilView
-            ));
+                &native->m_DepthStencilView));
         }
 
         GX_LOG(LogD3D11Render, Trace, "DXGI: end resize\n");
     }
 
     void D3D11GpuDevice::BeginDrawViewport(
-        GpuViewportHandle handle
-    ) noexcept
+        GpuViewportHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
 
@@ -471,43 +443,38 @@ namespace Graphyte::Graphics
         D3D11_VIEWPORT desc{
             .TopLeftX = 0.0F,
             .TopLeftY = 0.0F,
-            .Width = static_cast<float>(native->m_Width),
-            .Height = static_cast<float>(native->m_Height),
+            .Width    = static_cast<float>(native->m_Width),
+            .Height   = static_cast<float>(native->m_Height),
             .MinDepth = 0.0F,
             .MaxDepth = 1.0F,
         };
 
         m_Context->RSSetViewports(
             1,
-            &desc
-        );
+            &desc);
 
         m_Context->OMSetRenderTargets(
             1,
             &native->m_RenderTargetView,
-            native->m_DepthStencilView
-        );
+            native->m_DepthStencilView);
 
         float color[]{ 0.0F, 0.0F, 0.0F, 0.0F };
 
         m_Context->ClearRenderTargetView(
             native->m_RenderTargetView,
-            color
-        );
+            color);
 
         m_Context->ClearDepthStencilView(
             native->m_DepthStencilView,
             D3D11_CLEAR_DEPTH,
             1.0F,
-            0
-        );
+            0);
     }
 
     void D3D11GpuDevice::EndDrawViewport(
         GpuViewportHandle handle,
         bool present,
-        int interval
-    ) noexcept
+        int interval) noexcept
     {
         (void)interval;
         GX_ASSERT(handle != nullptr);
@@ -518,10 +485,7 @@ namespace Graphyte::Graphics
 
         if (present)
         {
-            GPU_DX_VALIDATE_DEVICE(this->m_Device.Get(), native->m_SwapChain->Present(
-                static_cast<UINT>(interval),
-                0
-            ));
+            GPU_DX_VALIDATE_DEVICE(this->m_Device.Get(), native->m_SwapChain->Present(static_cast<UINT>(interval), 0));
         }
 
         FlushLogs();

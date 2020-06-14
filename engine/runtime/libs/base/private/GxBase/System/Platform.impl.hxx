@@ -7,21 +7,18 @@ namespace Graphyte::System::Impl
     template <typename T, size_t TBits>
     struct FeatureSet final
     {
-        static constexpr size_t Bits = TBits;
+        static constexpr size_t Bits        = TBits;
         static constexpr size_t BitsPerItem = sizeof(uint64_t) * CHAR_BIT;
-        static constexpr size_t Elements = Bits / BitsPerItem;
+        static constexpr size_t Elements    = Bits / BitsPerItem;
 
         std::array<uint64_t, Elements> Data{};
 
-        void Set(
-            T feature,
-            bool value
-        ) noexcept
+        void Set(T feature, bool value) noexcept
         {
             size_t const bit = static_cast<size_t>(feature);
             GX_ASSERT(bit < Bits);
 
-            size_t const index = bit / BitsPerItem;
+            size_t const index  = bit / BitsPerItem;
             size_t const offset = bit % BitsPerItem;
             uint64_t const mask = uint64_t{ 1 } << offset;
 
@@ -35,14 +32,12 @@ namespace Graphyte::System::Impl
             }
         }
 
-        bool Has(
-            T feature
-        ) const noexcept
+        bool Has(T feature) const noexcept
         {
             size_t const bit = static_cast<size_t>(feature);
             GX_ASSERT(bit < Bits);
 
-            size_t const index = bit / BitsPerItem;
+            size_t const index  = bit / BitsPerItem;
             size_t const offset = bit % BitsPerItem;
             uint64_t const mask = uint64_t{ 1 } << offset;
 
@@ -50,7 +45,7 @@ namespace Graphyte::System::Impl
         }
     };
 
-    using PlatformFeatureSet = FeatureSet<PlatformFeature, 128>;
+    using PlatformFeatureSet  = FeatureSet<PlatformFeature, 128>;
     using ProcessorFeatureSet = FeatureSet<ProcessorFeature, 128>;
 }
 

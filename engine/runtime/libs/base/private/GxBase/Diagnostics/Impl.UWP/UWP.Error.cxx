@@ -35,18 +35,17 @@
 
 #pragma warning(pop)
 
-#define XAUDIO2_E_INVALID_CALL          0x88960001
-#define XAUDIO2_E_XMA_DECODER_ERROR     0x88960002
-#define XAUDIO2_E_XAPO_CREATION_FAILED  0x88960003
-#define XAUDIO2_E_DEVICE_INVALIDATED    0x88960004
+#define XAUDIO2_E_INVALID_CALL         0x88960001
+#define XAUDIO2_E_XMA_DECODER_ERROR    0x88960002
+#define XAUDIO2_E_XAPO_CREATION_FAILED 0x88960003
+#define XAUDIO2_E_DEVICE_INVALIDATED   0x88960004
 
 #define XAPO_E_FORMAT_UNSUPPORTED MAKE_HRESULT(SEVERITY_ERROR, 0x897, 0x01)
 
 namespace Graphyte::Diagnostics
 {
     BASE_API Status GetStatusFromSystemError(
-        DWORD error
-    ) noexcept
+        DWORD error) noexcept
     {
         switch (error)
         {
@@ -110,8 +109,7 @@ namespace Graphyte::Diagnostics
             default:
                 GX_LOG(LogPlatform, Error, "Unmapped WinAPI GetLastError: {} -> {}\n",
                     error,
-                    GetMessageFromSystemError(error)
-                );
+                    GetMessageFromSystemError(error));
                 break;
         }
 
@@ -124,50 +122,71 @@ namespace Graphyte::Diagnostics
     }
 
     BASE_API std::string_view GeMessageFromtExceptionCode(
-        DWORD code
-    ) noexcept
+        DWORD code) noexcept
     {
         switch (code)
         {
-            case STATUS_PENDING:                    return "STATUS_PENDING";
-            case STATUS_ACCESS_VIOLATION:           return "STATUS_ACCESS_VIOLATION";
-            case STATUS_DATATYPE_MISALIGNMENT:      return "STATUS_DATATYPE_MISALIGNMEN";
-            case STATUS_BREAKPOINT:                 return "STATUS_BREAKPOINT";
-            case STATUS_SINGLE_STEP:                return "STATUS_SINGLE_STEP";
-            case STATUS_ARRAY_BOUNDS_EXCEEDED:      return "STATUS_ARRAY_BOUNDS_EXCEEDED";
-            case STATUS_FLOAT_DENORMAL_OPERAND:     return "STATUS_FLOAT_DENORMAL_OPERAND";
-            case STATUS_FLOAT_DIVIDE_BY_ZERO:       return "STATUS_FLOAT_DIVIDE_BY_ZERO";
-            case STATUS_FLOAT_INEXACT_RESULT:       return "STATUS_FLOAT_INEXACT_RESULT";
-            case STATUS_FLOAT_INVALID_OPERATION:    return "STATUS_FLOAT_INVALID_OPERATION";
-            case STATUS_FLOAT_OVERFLOW:             return "STATUS_FLOAT_OVERFLOW";
-            case STATUS_FLOAT_STACK_CHECK:          return "STATUS_FLOAT_STACK_CHECK";
-            case STATUS_FLOAT_UNDERFLOW:            return "STATUS_FLOAT_UNDERFLOW";
-            case STATUS_INTEGER_DIVIDE_BY_ZERO:     return "STATUS_INTEGER_DIVIDE_BY_ZERO";
-            case STATUS_INTEGER_OVERFLOW:           return "STATUS_INTEGER_OVERFLOW";
-            case STATUS_PRIVILEGED_INSTRUCTION:     return "STATUS_PRIVILEGED_INSTRUCTION";
-            case STATUS_IN_PAGE_ERROR:              return "STATUS_IN_PAGE_ERROR";
-            case STATUS_ILLEGAL_INSTRUCTION:        return "STATUS_ILLEGAL_INSTRUCTION";
-            case STATUS_NONCONTINUABLE_EXCEPTION:   return "STATUS_NONCONTINUABLE_EXCEPTION";
-            case STATUS_STACK_OVERFLOW:             return "STATUS_STACK_OVERFLOW";
-            case STATUS_INVALID_DISPOSITION:        return "STATUS_INVALID_DISPOSITION";
-            case STATUS_GUARD_PAGE_VIOLATION:       return "STATUS_GUARD_PAGE_VIOLATION";
-            case STATUS_INVALID_HANDLE:             return "STATUS_INVALID_HANDLE";
-            case 0xC0000194:                        return "STATUS_POSSIBLE_DEADLOCK";
-            case STATUS_CONTROL_C_EXIT:             return "STATUS_CONTROL_C_EXIT";
-            default:                                return "(unknown)";
+            case STATUS_PENDING:
+                return "STATUS_PENDING";
+            case STATUS_ACCESS_VIOLATION:
+                return "STATUS_ACCESS_VIOLATION";
+            case STATUS_DATATYPE_MISALIGNMENT:
+                return "STATUS_DATATYPE_MISALIGNMEN";
+            case STATUS_BREAKPOINT:
+                return "STATUS_BREAKPOINT";
+            case STATUS_SINGLE_STEP:
+                return "STATUS_SINGLE_STEP";
+            case STATUS_ARRAY_BOUNDS_EXCEEDED:
+                return "STATUS_ARRAY_BOUNDS_EXCEEDED";
+            case STATUS_FLOAT_DENORMAL_OPERAND:
+                return "STATUS_FLOAT_DENORMAL_OPERAND";
+            case STATUS_FLOAT_DIVIDE_BY_ZERO:
+                return "STATUS_FLOAT_DIVIDE_BY_ZERO";
+            case STATUS_FLOAT_INEXACT_RESULT:
+                return "STATUS_FLOAT_INEXACT_RESULT";
+            case STATUS_FLOAT_INVALID_OPERATION:
+                return "STATUS_FLOAT_INVALID_OPERATION";
+            case STATUS_FLOAT_OVERFLOW:
+                return "STATUS_FLOAT_OVERFLOW";
+            case STATUS_FLOAT_STACK_CHECK:
+                return "STATUS_FLOAT_STACK_CHECK";
+            case STATUS_FLOAT_UNDERFLOW:
+                return "STATUS_FLOAT_UNDERFLOW";
+            case STATUS_INTEGER_DIVIDE_BY_ZERO:
+                return "STATUS_INTEGER_DIVIDE_BY_ZERO";
+            case STATUS_INTEGER_OVERFLOW:
+                return "STATUS_INTEGER_OVERFLOW";
+            case STATUS_PRIVILEGED_INSTRUCTION:
+                return "STATUS_PRIVILEGED_INSTRUCTION";
+            case STATUS_IN_PAGE_ERROR:
+                return "STATUS_IN_PAGE_ERROR";
+            case STATUS_ILLEGAL_INSTRUCTION:
+                return "STATUS_ILLEGAL_INSTRUCTION";
+            case STATUS_NONCONTINUABLE_EXCEPTION:
+                return "STATUS_NONCONTINUABLE_EXCEPTION";
+            case STATUS_STACK_OVERFLOW:
+                return "STATUS_STACK_OVERFLOW";
+            case STATUS_INVALID_DISPOSITION:
+                return "STATUS_INVALID_DISPOSITION";
+            case STATUS_GUARD_PAGE_VIOLATION:
+                return "STATUS_GUARD_PAGE_VIOLATION";
+            case STATUS_INVALID_HANDLE:
+                return "STATUS_INVALID_HANDLE";
+            case 0xC0000194:
+                return "STATUS_POSSIBLE_DEADLOCK";
+            case STATUS_CONTROL_C_EXIT:
+                return "STATUS_CONTROL_C_EXIT";
+            default:
+                return "(unknown)";
         }
     }
 
     BASE_API std::string GetMessageFromSystemError(
-        DWORD error
-    ) noexcept
+        DWORD error) noexcept
     {
         std::string result{};
 
-        static constexpr const DWORD dwFlags =
-            FORMAT_MESSAGE_ALLOCATE_BUFFER |
-            FORMAT_MESSAGE_FROM_SYSTEM |
-            FORMAT_MESSAGE_IGNORE_INSERTS;
+        static constexpr const DWORD dwFlags = FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS;
 
         LPWSTR buffer{};
 
@@ -178,8 +197,7 @@ namespace Graphyte::Diagnostics
             MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL),
             reinterpret_cast<LPWSTR>(&buffer),
             32,
-            nullptr
-        );
+            nullptr);
 
         if (buffer != nullptr)
         {
@@ -196,21 +214,20 @@ namespace Graphyte::Diagnostics
     }
 
     BASE_API std::string_view GetMessageFromHRESULT(
-        HRESULT hr
-    ) noexcept
+        HRESULT hr) noexcept
     {
 #define CHECK_HRESULT(x) \
-        case x: \
-            return #x
+    case x: \
+        return #x
 
 #define CHECK_WIN32(x) \
-        case HRESULT_FROM_WIN32(x): \
-            return #x
+    case HRESULT_FROM_WIN32(x): \
+        return #x
 
 #define CHECK_WIN32_HRESULT(x) \
-        case HRESULT_FROM_WIN32(x): \
-        case x: \
-            return #x
+    case HRESULT_FROM_WIN32(x): \
+    case x: \
+        return #x
 
 
         switch (hr)

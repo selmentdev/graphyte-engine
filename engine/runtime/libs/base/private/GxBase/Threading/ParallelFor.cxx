@@ -25,8 +25,7 @@ namespace Graphyte::Threading
             uint32_t count,
             uint32_t threads,
             bool last_block_for_master,
-            std::function<void(uint32_t)> code
-        ) noexcept
+            std::function<void(uint32_t)> code) noexcept
             : Code{ code }
             , Sync{ false, Threading::EventType::ManualReset }
             , Index{}
@@ -69,8 +68,7 @@ namespace Graphyte::Threading
         bool Process(
             uint32_t tasks_to_spawn,
             const std::shared_ptr<ParallelForData>& data,
-            bool master
-        ) noexcept;
+            bool master) noexcept;
     };
 
     struct ParallelForTask final
@@ -82,8 +80,7 @@ namespace Graphyte::Threading
     public:
         ParallelForTask(
             const std::shared_ptr<ParallelForData>& data,
-            uint32_t tasks_to_spawn = 0
-        ) noexcept
+            uint32_t tasks_to_spawn = 0) noexcept
             : Data{ data }
             , TasksToSpawn{ tasks_to_spawn }
         {
@@ -104,8 +101,7 @@ namespace Graphyte::Threading
     bool ParallelForData::Process(
         uint32_t tasks_to_spawn,
         const std::shared_ptr<ParallelForData>& data,
-        bool master
-    ) noexcept
+        bool master) noexcept
     {
         GX_PROFILE_REGION("parallel-for-process");
 
@@ -118,8 +114,8 @@ namespace Graphyte::Threading
             Task<ParallelForTask>::CreateTask().Dispatch(data, tasks_to_spawn - 1);
         }
 
-        uint32_t local_block_size = BlockSize;
-        uint32_t local_count = Count;
+        uint32_t local_block_size        = BlockSize;
+        uint32_t local_count             = Count;
         bool local_last_block_for_master = LastBlockForMaster;
 
         std::function<void(uint32_t)> local_code{ Code };
@@ -180,8 +176,7 @@ namespace Graphyte::Threading
     void ParallelFor(
         uint32_t count,
         std::function<void(uint32_t)> code,
-        bool singlethreaded
-    ) noexcept
+        bool singlethreaded) noexcept
     {
         GX_PROFILE_REGION("parallel-for");
 
@@ -191,8 +186,7 @@ namespace Graphyte::Threading
         {
             threads = std::min<uint32_t>(
                 static_cast<uint32_t>(System::GetWorkerThreads()),
-                count - 1
-            );
+                count - 1);
         }
 
         if (threads == 0)
@@ -229,8 +223,7 @@ namespace Graphyte::Threading
         uint32_t count,
         std::function<void(uint32_t)> code,
         std::function<void(void)> preprocess,
-        bool singlethreaded
-    ) noexcept
+        bool singlethreaded) noexcept
     {
         GX_PROFILE_REGION("parallel-for");
 

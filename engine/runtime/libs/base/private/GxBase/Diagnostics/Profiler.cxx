@@ -16,8 +16,7 @@ namespace Graphyte::Diagnostics
     }
 
     void Profiler::ThreadName(
-        [[maybe_unused]] const char* name
-    ) noexcept
+        [[maybe_unused]] const char* name) noexcept
     {
 #if defined(ENABLE_NSIGHT_PROFILER)
         nvtxNameOsThreadA(GetCurrentThreadId(), name);
@@ -25,8 +24,7 @@ namespace Graphyte::Diagnostics
     }
 
     void Profiler::PushRange(
-        [[maybe_unused]] const char* name
-    ) noexcept
+        [[maybe_unused]] const char* name) noexcept
     {
 #if defined(ENABLE_NSIGHT_PROFILER)
         nvtxRangePushA(name);
@@ -35,16 +33,15 @@ namespace Graphyte::Diagnostics
 
     void Profiler::PushRange(
         [[maybe_unused]] const char* name,
-        [[maybe_unused]] uint32_t color
-    ) noexcept
+        [[maybe_unused]] uint32_t color) noexcept
     {
 #if defined(ENABLE_NSIGHT_PROFILER)
         nvtxEventAttributes_t event_attr{
-            .version = NVTX_VERSION,
-            .size = NVTX_EVENT_ATTRIB_STRUCT_SIZE,
-            .colorType = NVTX_COLOR_ARGB,
-            .color = color,
-            .messageType = NVTX_MESSAGE_TYPE_ASCII,
+            .version       = NVTX_VERSION,
+            .size          = NVTX_EVENT_ATTRIB_STRUCT_SIZE,
+            .colorType     = NVTX_COLOR_ARGB,
+            .color         = color,
+            .messageType   = NVTX_MESSAGE_TYPE_ASCII,
             .message.ascii = name,
         };
 
@@ -60,8 +57,7 @@ namespace Graphyte::Diagnostics
     }
 
     void Profiler::MarkEvent(
-        [[maybe_unused]] const char* name
-    ) noexcept
+        [[maybe_unused]] const char* name) noexcept
     {
 #if defined(ENABLE_NSIGHT_PROFILER)
         nvtxMarkA(name);
@@ -70,16 +66,15 @@ namespace Graphyte::Diagnostics
 
     void Profiler::MarkEvent(
         [[maybe_unused]] const char* name,
-        [[maybe_unused]] uint32_t color
-    ) noexcept
+        [[maybe_unused]] uint32_t color) noexcept
     {
 #if defined(ENABLE_NSIGHT_PROFILER)
         nvtxEventAttributes_t event_attr{
-            .version = NVTX_VERSION,
-            .size = NVTX_EVENT_ATTRIB_STRUCT_SIZE,
-            .colorType = NVTX_COLOR_ARGB,
-            .color = color,
-            .messageType = NVTX_MESSAGE_TYPE_ASCII,
+            .version       = NVTX_VERSION,
+            .size          = NVTX_EVENT_ATTRIB_STRUCT_SIZE,
+            .colorType     = NVTX_COLOR_ARGB,
+            .color         = color,
+            .messageType   = NVTX_MESSAGE_TYPE_ASCII,
             .message.ascii = name,
         };
 
@@ -87,4 +82,3 @@ namespace Graphyte::Diagnostics
 #endif
     }
 }
-

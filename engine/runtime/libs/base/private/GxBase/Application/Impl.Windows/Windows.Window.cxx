@@ -30,14 +30,13 @@ namespace Graphyte::Application::Impl
     }
 
     void WindowsWindow::Create(
-        const WindowDescriptor& descriptor
-    ) noexcept
+        const WindowDescriptor& descriptor) noexcept
     {
         m_Descriptor = descriptor;
 
         std::wstring wtitle = System::Impl::WidenString(descriptor.Title);
 
-        DWORD dw_style = 0;
+        DWORD dw_style    = 0;
         DWORD dw_style_ex = 0;
 
         int32_t client_x = m_Descriptor.Position.Left;
@@ -54,7 +53,7 @@ namespace Graphyte::Application::Impl
         if (m_Descriptor.SystemBorder)
         {
             dw_style_ex = WS_EX_APPWINDOW;
-            dw_style = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION;
+            dw_style    = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION;
 
             if (m_Descriptor.Regular)
             {
@@ -87,8 +86,7 @@ namespace Graphyte::Application::Impl
                 &rc_border,
                 dw_style,
                 FALSE,
-                dw_style_ex
-            );
+                dw_style_ex);
 
             window_x += rc_border.left;
             window_y += rc_border.top;
@@ -134,24 +132,21 @@ namespace Graphyte::Application::Impl
             nullptr,
             nullptr,
             System::Impl::GInstanceHandle,
-            reinterpret_cast<LPVOID>(this)
-        );
+            reinterpret_cast<LPVOID>(this));
 
         GX_ASSERTF(m_Handle != nullptr, "Cannot create window: {}", GetLastError());
 
         GX_ASSERTF(RegisterTouchWindow(m_Handle, 0) != FALSE, "Cannot register touch window: {}", GetLastError());
 
-        m_ClientWidth = client_w;
+        m_ClientWidth  = client_w;
         m_ClientHeight = client_h;
 
+        // FIXME: Styling
         SetPlacement(
-            {
-                .Left   = client_x,
+            { .Left     = client_x,
                 .Top    = client_y,
                 .Width  = client_w,
-                .Height = client_h
-            }
-        );
+                .Height = client_h });
 
         if (!m_Descriptor.SystemBorder)
         {
@@ -211,8 +206,7 @@ namespace Graphyte::Application::Impl
                 0,
                 0,
                 0,
-                swp_flags
-            );
+                swp_flags);
         }
         else if (m_Descriptor.SystemBorder)
         {
@@ -221,11 +215,9 @@ namespace Graphyte::Application::Impl
                 EnableMenuItem(
                     GetSystemMenu(
                         m_Handle,
-                        FALSE
-                    ),
+                        FALSE),
                     SC_CLOSE,
-                    MF_GRAYED
-                );
+                    MF_GRAYED);
             }
         }
 
@@ -243,12 +235,11 @@ namespace Graphyte::Application::Impl
     }
 
     void WindowsWindow::Move(
-        System::Point location
-    ) noexcept
+        System::Point location) noexcept
     {
         if (m_Descriptor.SystemBorder)
         {
-            DWORD style = static_cast<DWORD>(GetWindowLongW(m_Handle, GWL_STYLE));
+            DWORD style  = static_cast<DWORD>(GetWindowLongW(m_Handle, GWL_STYLE));
             DWORD stylex = static_cast<DWORD>(GetWindowLongW(m_Handle, GWL_EXSTYLE));
 
             RECT rc{};
@@ -256,8 +247,7 @@ namespace Graphyte::Application::Impl
                 &rc,
                 style,
                 FALSE,
-                stylex
-            );
+                stylex);
 
             location.Left += rc.left;
             location.Top += rc.top;
@@ -270,13 +260,11 @@ namespace Graphyte::Application::Impl
             location.Top,
             0,
             0,
-            SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER
-        );
+            SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
     }
 
     void WindowsWindow::Resize(
-        [[maybe_unused]] System::Size size
-    ) noexcept
+        [[maybe_unused]] System::Size size) noexcept
     {
     }
 
@@ -285,14 +273,12 @@ namespace Graphyte::Application::Impl
         if (GetFocus() != m_Handle)
         {
             SetFocus(
-                m_Handle
-            );
+                m_Handle);
         }
     }
 
     void WindowsWindow::BringToFront(
-        bool force
-    ) noexcept
+        bool force) noexcept
     {
         if (m_Descriptor.Regular)
         {
@@ -300,20 +286,18 @@ namespace Graphyte::Application::Impl
             {
                 ShowWindow(
                     m_Handle,
-                    SW_RESTORE
-                );
+                    SW_RESTORE);
             }
             else
             {
                 SetActiveWindow(
-                    m_Handle
-                );
+                    m_Handle);
             }
         }
         else
         {
             HWND insert_after = HWND_TOP;
-            UINT flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER;
+            UINT flags        = SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER;
 
             if (!force)
             {
@@ -332,23 +316,20 @@ namespace Graphyte::Application::Impl
                 0,
                 0,
                 0,
-                flags
-            );
+                flags);
         }
 
 
         if (force)
         {
             BringWindowToTop(
-                m_Handle
-            );
+                m_Handle);
         }
         else
         {
             ShowWindow(
                 m_Handle,
-                SW_SHOW
-            );
+                SW_SHOW);
         }
     }
 
@@ -358,8 +339,7 @@ namespace Graphyte::Application::Impl
         {
             ShowWindow(
                 m_Handle,
-                SW_MINIMIZE
-            );
+                SW_MINIMIZE);
         }
         else
         {
@@ -374,8 +354,7 @@ namespace Graphyte::Application::Impl
         {
             ShowWindow(
                 m_Handle,
-                SW_MAXIMIZE
-            );
+                SW_MAXIMIZE);
         }
         else
         {
@@ -390,8 +369,7 @@ namespace Graphyte::Application::Impl
         {
             ShowWindow(
                 m_Handle,
-                SW_RESTORE
-            );
+                SW_RESTORE);
         }
         else
         {
@@ -419,8 +397,8 @@ namespace Graphyte::Application::Impl
             }
 
             int show_command = should_activate
-                ? SW_SHOW
-                : SW_SHOWNOACTIVATE;
+                                   ? SW_SHOW
+                                   : SW_SHOWNOACTIVATE;
 
             if (m_IsFirstTimeVisible)
             {
@@ -429,8 +407,8 @@ namespace Graphyte::Application::Impl
                 if (m_IsInitMinimized)
                 {
                     show_command = should_activate
-                        ? SW_MINIMIZE
-                        : SW_SHOWMINNOACTIVE;
+                                       ? SW_MINIMIZE
+                                       : SW_SHOWMINNOACTIVE;
                 }
                 else if (m_IsInitMaximized)
                 {
@@ -442,8 +420,7 @@ namespace Graphyte::Application::Impl
 
             ShowWindow(
                 m_Handle,
-                show_command
-            );
+                show_command);
         }
     }
 
@@ -455,8 +432,7 @@ namespace Graphyte::Application::Impl
 
             ShowWindow(
                 m_Handle,
-                SW_HIDE
-            );
+                SW_HIDE);
         }
     }
 
@@ -464,30 +440,27 @@ namespace Graphyte::Application::Impl
     {
         EnableWindow(
             m_Handle,
-            TRUE
-        );
+            TRUE);
     }
 
     void WindowsWindow::Disable() noexcept
     {
         EnableWindow(
             m_Handle,
-            FALSE
-        );
+            FALSE);
     }
 
     void WindowsWindow::SetWindowMode(
-        WindowMode value
-    ) noexcept
+        WindowMode value) noexcept
     {
         if (m_WindowMode != value)
         {
             auto const previous_mode = m_WindowMode;
-            m_WindowMode = value;
+            m_WindowMode             = value;
 
             bool const is_true_fullscreen = (value == WindowMode::Fullscreen);
 
-            DWORD dw_style = static_cast<DWORD>(GetWindowLongW(m_Handle, GWL_STYLE));
+            DWORD dw_style            = static_cast<DWORD>(GetWindowLongW(m_Handle, GWL_STYLE));
             DWORD dw_fullscreen_style = WS_POPUP;
 
             DWORD dw_windowed_style = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION;
@@ -532,8 +505,7 @@ namespace Graphyte::Application::Impl
                 SetWindowLongW(
                     m_Handle,
                     GWL_STYLE,
-                    static_cast<LONG>(dw_style)
-                );
+                    static_cast<LONG>(dw_style));
 
                 SetWindowPos(
                     m_Handle,
@@ -542,8 +514,7 @@ namespace Graphyte::Application::Impl
                     0,
                     0,
                     0,
-                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED
-                );
+                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
                 if (!is_true_fullscreen)
                 {
@@ -554,19 +525,16 @@ namespace Graphyte::Application::Impl
 
                 GetClientRect(
                     m_Handle,
-                    &rc_client
-                );
+                    &rc_client);
 
                 DWORD target_monitor = static_cast<DWORD>(
                     is_true_fullscreen
                         ? MONITOR_DEFAULTTOPRIMARY
-                        : MONITOR_DEFAULTTONEAREST
-                );
+                        : MONITOR_DEFAULTTONEAREST);
 
                 HMONITOR monitor = MonitorFromWindow(
                     m_Handle,
-                    target_monitor
-                );
+                    target_monitor);
 
                 MONITORINFO mi{
                     .cbSize = sizeof(mi),
@@ -574,23 +542,22 @@ namespace Graphyte::Application::Impl
 
                 GetMonitorInfoW(monitor, &mi);
 
-                LONG monitor_width = (mi.rcMonitor.right - mi.rcMonitor.left);
+                LONG monitor_width  = (mi.rcMonitor.right - mi.rcMonitor.left);
                 LONG monitor_height = (mi.rcMonitor.bottom - mi.rcMonitor.top);
 
                 LONG target_width = is_true_fullscreen
-                    ? std::min(monitor_width, rc_client.right - rc_client.left)
-                    : monitor_width;
+                                        ? std::min(monitor_width, rc_client.right - rc_client.left)
+                                        : monitor_width;
 
                 LONG target_height = is_true_fullscreen
-                    ? std::min(monitor_height, rc_client.bottom - rc_client.top)
-                    : monitor_height;
+                                         ? std::min(monitor_height, rc_client.bottom - rc_client.top)
+                                         : monitor_height;
 
-                SetPlacement({
-                    .Left = mi.rcMonitor.left,
-                    .Top = mi.rcMonitor.top,
-                    .Width = target_width,
-                    .Height = target_height
-                });
+                // FIXME: Styling
+                SetPlacement({ .Left = mi.rcMonitor.left,
+                    .Top             = mi.rcMonitor.top,
+                    .Width           = target_width,
+                    .Height          = target_height });
             }
             else
             {
@@ -600,8 +567,7 @@ namespace Graphyte::Application::Impl
                 SetWindowLongW(
                     m_Handle,
                     GWL_STYLE,
-                    static_cast<LONG>(dw_style)
-                );
+                    static_cast<LONG>(dw_style));
 
                 SetWindowPos(
                     m_Handle,
@@ -610,15 +576,13 @@ namespace Graphyte::Application::Impl
                     0,
                     0,
                     0,
-                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED
-                );
+                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 
                 if (m_PreFullscreenPlacement.length != 0)
                 {
                     SetWindowPlacement(
                         m_Handle,
-                        &m_PreFullscreenPlacement
-                    );
+                        &m_PreFullscreenPlacement);
                 }
             }
         }
@@ -630,8 +594,7 @@ namespace Graphyte::Application::Impl
     }
 
     void WindowsWindow::SetCaption(
-        const char* text
-    ) noexcept
+        const char* text) noexcept
     {
         SetWindowTextA(m_Handle, text);
     }
@@ -644,8 +607,7 @@ namespace Graphyte::Application::Impl
 
         GetWindowInfo(
             m_Handle,
-            &wi
-        );
+            &wi);
 
         m_AspectRatio = static_cast<float>(placement.Width) / static_cast<float>(placement.Height);
 
@@ -657,8 +619,7 @@ namespace Graphyte::Application::Impl
                 &rc_border,
                 wi.dwStyle,
                 FALSE,
-                wi.dwExStyle
-            );
+                wi.dwExStyle);
 
             placement.Left += rc_border.left;
             placement.Top += rc_border.top;
@@ -667,38 +628,34 @@ namespace Graphyte::Application::Impl
             placement.Height += rc_border.bottom - rc_border.top;
         }
 
-        m_ClientWidth = placement.Width;
+        m_ClientWidth  = placement.Width;
         m_ClientHeight = placement.Height;
 
         if (m_Descriptor.DelayResize)
         {
-            auto const rc_prev = wi.rcWindow;
-            int32_t const prev_width = rc_prev.right - rc_prev.left;
+            auto const rc_prev        = wi.rcWindow;
+            int32_t const prev_width  = rc_prev.right - rc_prev.left;
             int32_t const prev_height = rc_prev.bottom - rc_prev.top;
 
             int32_t const min_width = (m_Descriptor.ExpectedMaxSize.Width != 0)
-                ? m_Descriptor.ExpectedMaxSize.Width
-                : prev_width;
+                                          ? m_Descriptor.ExpectedMaxSize.Width
+                                          : prev_width;
 
             int32_t const min_height = (m_Descriptor.ExpectedMaxSize.Height != 0)
-                ? m_Descriptor.ExpectedMaxSize.Height
-                : prev_height;
+                                           ? m_Descriptor.ExpectedMaxSize.Height
+                                           : prev_height;
 
             placement.Width = std::max(
                 placement.Width,
                 std::min(
                     prev_width,
-                    min_width
-                )
-            );
+                    min_width));
 
             placement.Height = std::max(
                 placement.Height,
                 std::min(
                     prev_height,
-                    min_height
-                )
-            );
+                    min_height));
         }
 
         if (IsMaximized())
@@ -720,15 +677,13 @@ namespace Graphyte::Application::Impl
             placement.Top,
             placement.Width,
             placement.Height,
-            flags
-        );
+            flags);
     }
 
     bool WindowsWindow::IsMaximized() noexcept
     {
         bool const is_minimized = !!IsZoomed(
-            m_Handle
-        );
+            m_Handle);
 
         return is_minimized;
     }
@@ -736,11 +691,9 @@ namespace Graphyte::Application::Impl
     bool WindowsWindow::IsMinimized() noexcept
     {
         bool const is_maximized = !!IsIconic(
-            m_Handle
-        );
+            m_Handle);
 
         return is_maximized;
-
     }
 
     bool WindowsWindow::IsVisible() noexcept
@@ -751,8 +704,7 @@ namespace Graphyte::Application::Impl
     bool WindowsWindow::IsEnabled() noexcept
     {
         bool const is_enabled = !!IsWindowEnabled(
-            m_Handle
-        );
+            m_Handle);
 
         return is_enabled;
     }
@@ -781,15 +733,13 @@ namespace Graphyte::Application::Impl
 
         GetWindowInfo(
             m_Handle,
-            &wi
-        );
+            &wi);
 
         return static_cast<int32_t>(wi.cxWindowBorders);
     }
 
     bool WindowsWindow::GetRestoredPlacement(
-        System::Rect& placement
-    ) noexcept
+        System::Rect& placement) noexcept
     {
         WINDOWPLACEMENT wp{
             .length = sizeof(WINDOWPLACEMENT),
@@ -799,9 +749,9 @@ namespace Graphyte::Application::Impl
         {
             RECT const restored = wp.rcNormalPosition;
 
-            placement.Left = restored.left;
-            placement.Top = restored.top;
-            placement.Width = restored.right - restored.left;
+            placement.Left   = restored.left;
+            placement.Top    = restored.top;
+            placement.Width  = restored.right - restored.left;
             placement.Height = restored.bottom - restored.top;
 
             DWORD const dw_style_ex = GetWindowLongW(m_Handle, GWL_STYLE);
@@ -813,13 +763,11 @@ namespace Graphyte::Application::Impl
                 DWORD target_monitor = static_cast<DWORD>(
                     is_true_fullscreen
                         ? MONITOR_DEFAULTTOPRIMARY
-                        : MONITOR_DEFAULTTONEAREST
-                );
+                        : MONITOR_DEFAULTTONEAREST);
 
                 HMONITOR monitor = MonitorFromWindow(
                     m_Handle,
-                    target_monitor
-                );
+                    target_monitor);
 
                 MONITORINFO mi{
                     .cbSize = sizeof(mi),
@@ -827,8 +775,7 @@ namespace Graphyte::Application::Impl
 
                 GetMonitorInfoW(
                     monitor,
-                    &mi
-                );
+                    &mi);
 
                 placement.Left += (mi.rcWork.left - mi.rcMonitor.left);
                 placement.Top += (mi.rcWork.top - mi.rcMonitor.top);
@@ -841,8 +788,7 @@ namespace Graphyte::Application::Impl
     }
 
     bool WindowsWindow::GetFullscreenInfo(
-        System::Rect& screen_rect
-    ) noexcept
+        System::Rect& screen_rect) noexcept
     {
         bool const is_fullscreen = (m_WindowMode == WindowMode::Fullscreen);
 
@@ -851,22 +797,19 @@ namespace Graphyte::Application::Impl
             static_cast<DWORD>(
                 is_fullscreen
                     ? MONITOR_DEFAULTTOPRIMARY
-                    : MONITOR_DEFAULTTONEAREST
-            )
-        );
+                    : MONITOR_DEFAULTTONEAREST));
 
         MONITORINFO mi{
             .cbSize = sizeof(mi),
         };
-    
+
         GetMonitorInfoW(
             monitor,
-            &mi
-        );
+            &mi);
 
-        screen_rect.Left = mi.rcMonitor.left;
-        screen_rect.Top = mi.rcMonitor.top;
-        screen_rect.Width = mi.rcMonitor.right - mi.rcMonitor.left;
+        screen_rect.Left   = mi.rcMonitor.left;
+        screen_rect.Top    = mi.rcMonitor.top;
+        screen_rect.Width  = mi.rcMonitor.right - mi.rcMonitor.left;
         screen_rect.Height = mi.rcMonitor.bottom - mi.rcMonitor.top;
 
         return true;
@@ -878,10 +821,9 @@ namespace Graphyte::Application::Impl
 
         GetClientRect(
             m_Handle,
-            &rc
-        );
+            &rc);
 
-        return{
+        return {
             rc.right - rc.left,
             rc.bottom - rc.top,
         };
@@ -891,36 +833,30 @@ namespace Graphyte::Application::Impl
     {
         GetWindowPlacement(
             m_Handle,
-            &m_PreParentMinimizedPlacement
-        );
+            &m_PreParentMinimizedPlacement);
     }
 
     void WindowsWindow::OnParentWindowRestored() noexcept
     {
         SetWindowPlacement(
             m_Handle,
-            &m_PreParentMinimizedPlacement
-        );
+            &m_PreParentMinimizedPlacement);
     }
 
     bool WindowsWindow::IsPointInside(
-        System::Point value
-    ) noexcept
+        System::Point value) noexcept
     {
         RECT rc_window{};
 
         GetWindowRect(
             m_Handle,
-            &rc_window
-        );
+            &rc_window);
 
         bool const result = !!PtInRect(
             &rc_window,
             POINT{
                 value.Left,
-                value.Top
-            }
-        );
+                value.Top });
 
         return result;
     }

@@ -26,13 +26,13 @@ namespace Graphyte::Network
     public:
         using SocketDescriptor = uint64_t;
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
-        using SocketHandle = SOCKET;
+        using SocketHandle                                = SOCKET;
         static constexpr const SocketHandle InvalidHandle = INVALID_SOCKET;
-        static constexpr const int SocketErrorValue = SOCKET_ERROR;
+        static constexpr const int SocketErrorValue       = SOCKET_ERROR;
 #else
-        using SocketHandle = int;
+        using SocketHandle                                = int;
         static constexpr const SocketHandle InvalidHandle = -1;
-        static constexpr const int SocketErrorValue = -1;
+        static constexpr const int SocketErrorValue       = -1;
 #endif
     private:
         SocketHandle m_Handle;
@@ -42,7 +42,7 @@ namespace Graphyte::Network
         Socket() noexcept;
         ~Socket() noexcept;
         Socket(const Socket&) = delete;
-        Socket& operator = (const Socket&) = delete;
+        Socket& operator=(const Socket&) = delete;
 
     public:
         SocketError GetError() const noexcept;

@@ -6,8 +6,7 @@ namespace Graphyte::Storage
     LinuxFileStream::LinuxFileStream(
         int32_t handle,
         const char* name,
-        bool writing
-    ) noexcept
+        bool writing) noexcept
         : m_FileName{ name }
         , m_Offset{ 0 }
         , m_Size{ 0 }
@@ -19,7 +18,9 @@ namespace Graphyte::Storage
 
         if (!m_Writing)
         {
+            // clang-format off
             struct stat fileinfo{};
+            // clang-format on
             fstat(m_Handle, &fileinfo);
             m_Size = fileinfo.st_size;
         }
@@ -46,8 +47,7 @@ namespace Graphyte::Storage
 
     Status LinuxFileStream::Read(
         notstd::span<std::byte> buffer,
-        size_t& processed
-    ) noexcept
+        size_t& processed) noexcept
     {
         GX_ASSERT(IsValid());
 
@@ -93,8 +93,7 @@ namespace Graphyte::Storage
 
     Status LinuxFileStream::Write(
         notstd::span<const std::byte> buffer,
-        size_t& processed
-    ) noexcept
+        size_t& processed) noexcept
     {
         GX_ASSERT(IsValid());
         GX_ASSERT(m_Writing);
@@ -128,7 +127,9 @@ namespace Graphyte::Storage
 
         if (m_Writing)
         {
+            // clang-format off
             struct stat fileinfo{};
+            // clang-format on
             fstat(m_Handle, &fileinfo);
             return fileinfo.st_size;
         }
@@ -153,8 +154,7 @@ namespace Graphyte::Storage
     }
 
     Status LinuxFileStream::SetPosition(
-        int64_t value
-    ) noexcept
+        int64_t value) noexcept
     {
         GX_ASSERT(IsValid());
         GX_ASSERT(value >= 0);
@@ -176,8 +176,7 @@ namespace Graphyte::Storage
 
     Status LinuxFileStream::SetPosition(
         int64_t value,
-        SeekOrigin origin
-    ) noexcept
+        SeekOrigin origin) noexcept
     {
         GX_ASSERT(IsValid());
 

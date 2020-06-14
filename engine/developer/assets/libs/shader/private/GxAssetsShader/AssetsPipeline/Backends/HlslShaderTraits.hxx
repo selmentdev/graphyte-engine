@@ -16,20 +16,20 @@ namespace Graphyte::AssetsPipeline
         {
             switch (stage)
             {
-            case Graphics::GpuShaderStage::Pixel:
-                return "ps";
-            case Graphics::GpuShaderStage::Vertex:
-                return "vs";
-            case Graphics::GpuShaderStage::Geometry:
-                return "gs";
-            case Graphics::GpuShaderStage::Hull:
-                return "hs";
-            case Graphics::GpuShaderStage::Domain:
-                return "ds";
-            case Graphics::GpuShaderStage::Compute:
-                return "cs";
-            default:
-                break;
+                case Graphics::GpuShaderStage::Pixel:
+                    return "ps";
+                case Graphics::GpuShaderStage::Vertex:
+                    return "vs";
+                case Graphics::GpuShaderStage::Geometry:
+                    return "gs";
+                case Graphics::GpuShaderStage::Hull:
+                    return "hs";
+                case Graphics::GpuShaderStage::Domain:
+                    return "ds";
+                case Graphics::GpuShaderStage::Compute:
+                    return "cs";
+                default:
+                    break;
             }
 
             return nullptr;
@@ -39,16 +39,16 @@ namespace Graphyte::AssetsPipeline
         {
             switch (profile)
             {
-            case Graphics::GpuShaderProfile::D3DSM_5_0:
-                return "5_0";
-            case Graphics::GpuShaderProfile::D3DSM_5_1:
-                return "5_1";
-            case Graphics::GpuShaderProfile::D3DSM_6_0:
-                return "6_0";
-            case Graphics::GpuShaderProfile::D3DSM_6_1:
-                return "6_1";
-            default:
-                break;
+                case Graphics::GpuShaderProfile::D3DSM_5_0:
+                    return "5_0";
+                case Graphics::GpuShaderProfile::D3DSM_5_1:
+                    return "5_1";
+                case Graphics::GpuShaderProfile::D3DSM_6_0:
+                    return "6_0";
+                case Graphics::GpuShaderProfile::D3DSM_6_1:
+                    return "6_1";
+                default:
+                    break;
             }
 
             return nullptr;
@@ -117,9 +117,7 @@ namespace Graphyte::AssetsPipeline
                 result.push_back(
                     std::make_pair(
                         System::Impl::WidenString(item.first),
-                        System::Impl::WidenString(item.second)
-                   )
-               );
+                        System::Impl::WidenString(item.second)));
             }
 
             return result;
@@ -134,9 +132,7 @@ namespace Graphyte::AssetsPipeline
                 result.push_back(
                     std::make_pair(
                         item.first,
-                        item.second
-                    )
-                );
+                        item.second));
             }
 
             return result;

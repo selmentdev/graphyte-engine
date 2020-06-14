@@ -9,8 +9,7 @@ GX_DEFINE_LOG_CATEGORY(LogAssetsCompiler);
 
 #include <GxLaunch/Launch/Main.hxx>
 
-Graphyte::Application::ApplicationDescriptor GraphyteApp
-{
+Graphyte::Application::ApplicationDescriptor GraphyteApp{
     "Graphyte Assets Compiler",
     "assets.compiler",
     "Graphyte",
@@ -27,8 +26,14 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
 {
     std::vector<std::string> paths{};
     std::vector<Graphyte::System::FileDialogFilter> filters{
-        { "Text Files", "*.txt", },
-        { "All Files", "*.*", },
+        {
+            "Text Files",
+            "*.txt",
+        },
+        {
+            "All Files",
+            "*.*",
+        },
     };
 
     auto v = Graphyte::Maths::Make<Graphyte::Vector4>(1.0f, 2.0f, (float)argc, 4.0f);
@@ -74,8 +79,7 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
             sc.X,
             sc.Y,
             sc.Z,
-            Graphyte::Maths::GetX(Graphyte::Maths::Length(sp))
-        );
+            Graphyte::Maths::GetX(Graphyte::Maths::Length(sp)));
     }
 
     return 0;

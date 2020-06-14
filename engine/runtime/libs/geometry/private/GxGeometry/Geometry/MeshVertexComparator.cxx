@@ -6,8 +6,7 @@ namespace Graphyte::Geometry
         [[maybe_unused]] const Mesh& mesh,
         [[maybe_unused]] uint32_t lhs_index,
         [[maybe_unused]] uint32_t rhs_index,
-        [[maybe_unused]] float tolerance
-    ) const noexcept
+        [[maybe_unused]] float tolerance) const noexcept
     {
 #if false
         Maths::Vector4 const vtolerance = Maths::Vector4::Make(tolerance);

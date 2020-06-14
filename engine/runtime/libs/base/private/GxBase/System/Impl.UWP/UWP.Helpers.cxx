@@ -7,8 +7,7 @@ namespace Graphyte::System::Impl
 
     BASE_API bool IsSystemVersion(
         [[maybe_unused]] uint32_t major,
-        [[maybe_unused]] uint32_t minor
-    ) noexcept
+        [[maybe_unused]] uint32_t minor) noexcept
     {
         return false;
     }
@@ -17,15 +16,13 @@ namespace Graphyte::System::Impl
         [[maybe_unused]] HKEY key,
         [[maybe_unused]] const wchar_t* subkey,
         [[maybe_unused]] const wchar_t* name,
-        [[maybe_unused]] std::string& result
-    ) noexcept
+        [[maybe_unused]] std::string& result) noexcept
     {
         return false;
     }
 
     BASE_API std::string NarrowString(
-        std::wstring_view value
-    ) noexcept
+        std::wstring_view value) noexcept
     {
         std::string result{};
 
@@ -46,8 +43,7 @@ namespace Graphyte::System::Impl
     }
 
     BASE_API std::wstring WidenString(
-        std::string_view value
-    ) noexcept
+        std::string_view value) noexcept
     {
         std::wstring result{};
 
@@ -70,8 +66,7 @@ namespace Graphyte::System::Impl
     BASE_API size_t NarrowString(
         char* buffer,
         size_t buffer_size,
-        std::wstring_view value
-    ) noexcept
+        std::wstring_view value) noexcept
     {
         size_t const result = static_cast<size_t>(WideCharToMultiByte(
             CP_UTF8,
@@ -81,8 +76,7 @@ namespace Graphyte::System::Impl
             buffer,
             static_cast<int>(buffer_size),
             nullptr,
-            nullptr
-        ));
+            nullptr));
 
         return result;
     }
@@ -90,8 +84,7 @@ namespace Graphyte::System::Impl
     BASE_API size_t WidenString(
         wchar_t* buffer,
         size_t buffer_size,
-        std::string_view value
-    ) noexcept
+        std::string_view value) noexcept
     {
         size_t const result = static_cast<size_t>(MultiByteToWideChar(
             CP_UTF8,
@@ -99,16 +92,14 @@ namespace Graphyte::System::Impl
             value.data(),
             static_cast<int>(value.length()),
             buffer,
-            static_cast<int>(buffer_size)
-        ));
+            static_cast<int>(buffer_size)));
 
         return result;
     }
 
     BASE_API bool WidenStringPath(
         WindowsPath& result,
-        std::string_view value
-    ) noexcept
+        std::string_view value) noexcept
     {
         int const length = static_cast<int>(value.length()); // XXX: Check for overflow
 

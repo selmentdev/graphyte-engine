@@ -40,63 +40,52 @@ namespace Graphyte::Storage
     extern BASE_API Status OpenRead(
         std::unique_ptr<IStream>& result,
         const std::string& path,
-        bool share = false
-    ) noexcept;
+        bool share = false) noexcept;
 
     extern BASE_API Status OpenWrite(
         std::unique_ptr<IStream>& result,
         const std::string& path,
         bool append = false,
-        bool share = false
-    ) noexcept;
+        bool share  = false) noexcept;
 
     extern BASE_API Status CreateReader(
         std::unique_ptr<Archive>& archive,
         const std::string& path,
-        bool share = false
-    ) noexcept;
+        bool share = false) noexcept;
 
     extern BASE_API Status CreateWriter(
         std::unique_ptr<Archive>& archive,
         const std::string& path,
         bool append = false,
-        bool share = false
-    ) noexcept;
+        bool share  = false) noexcept;
 
     extern BASE_API Status ReadText(
         std::string& content,
-        const std::string& path
-    ) noexcept;
+        const std::string& path) noexcept;
 
     extern BASE_API Status WriteText(
         std::string_view content,
-        const std::string& path
-    ) noexcept;
+        const std::string& path) noexcept;
 
     extern BASE_API Status ReadBinary(
         std::vector<std::byte>& content,
-        const std::string& path
-    ) noexcept;
+        const std::string& path) noexcept;
 
     extern BASE_API Status WriteBinary(
         const std::vector<std::byte>& content,
-        const std::string& path
-    ) noexcept;
+        const std::string& path) noexcept;
 
     extern BASE_API Status ReadBinary(
         std::unique_ptr<std::byte[]>& contents,
         size_t& size,
-        const std::string& path
-    ) noexcept;
+        const std::string& path) noexcept;
 
     extern BASE_API Status WriteBinary(
         const std::unique_ptr<std::byte[]>& contents,
         size_t size,
-        const std::string& path
-    ) noexcept;
+        const std::string& path) noexcept;
 
     extern BASE_API Status WriteBinary(
         notstd::span<const std::byte> content,
-        const std::string& path
-    ) noexcept;
+        const std::string& path) noexcept;
 }

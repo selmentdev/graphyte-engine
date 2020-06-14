@@ -2,17 +2,17 @@
 #include <GxBase/CommandLine.hxx>
 
 #if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
-#   include "Impl/ProcessorFeatures.x86.hxx"
+#include "Impl/ProcessorFeatures.x86.hxx"
 #elif GRAPHYTE_CPU_ARM_32 || GRAPHYTE_CPU_ARM_64
-#   if GRAPHYTE_PLATFORM_LINUX
-#       include "Impl.Linux/ProcessorFeatures.arm.hxx"
-#   elif GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
-#       include "Impl.Windows/ProcessorFeatures.arm.hxx"
-#   else
-#       error "Not implemented"
-#   endif
+#if GRAPHYTE_PLATFORM_LINUX
+#include "Impl.Linux/ProcessorFeatures.arm.hxx"
+#elif GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#include "Impl.Windows/ProcessorFeatures.arm.hxx"
 #else
-#   error "Not implemented"
+#error "Not implemented"
+#endif
+#else
+#error "Not implemented"
 #endif
 
 namespace Graphyte::System::Impl

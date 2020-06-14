@@ -14,11 +14,10 @@ namespace Graphyte::Graphics
             D3D11_USAGE& usage,
             UINT& bind,
             UINT& cpu_access,
-            UINT& misc_flags
-        ) noexcept
+            UINT& misc_flags) noexcept
         {
-            usage = D3D11_USAGE_DEFAULT;
-            bind = D3D11_BIND_SHADER_RESOURCE;
+            usage      = D3D11_USAGE_DEFAULT;
+            bind       = D3D11_BIND_SHADER_RESOURCE;
             cpu_access = 0;
             misc_flags = 0;
 
@@ -54,32 +53,51 @@ namespace Graphyte::Graphics
     namespace Impl
     {
         inline DXGI_FORMAT EnsureNotTypeless(
-            DXGI_FORMAT fmt
-        )
+            DXGI_FORMAT fmt)
         {
             // Assumes UNORM or FLOAT; doesn't use UINT or SINT
             switch (fmt)
             {
-            case DXGI_FORMAT_R32G32B32A32_TYPELESS: return DXGI_FORMAT_R32G32B32A32_FLOAT;
-            case DXGI_FORMAT_R32G32B32_TYPELESS:    return DXGI_FORMAT_R32G32B32_FLOAT;
-            case DXGI_FORMAT_R16G16B16A16_TYPELESS: return DXGI_FORMAT_R16G16B16A16_UNORM;
-            case DXGI_FORMAT_R32G32_TYPELESS:       return DXGI_FORMAT_R32G32_FLOAT;
-            case DXGI_FORMAT_R10G10B10A2_TYPELESS:  return DXGI_FORMAT_R10G10B10A2_UNORM;
-            case DXGI_FORMAT_R8G8B8A8_TYPELESS:     return DXGI_FORMAT_R8G8B8A8_UNORM;
-            case DXGI_FORMAT_R16G16_TYPELESS:       return DXGI_FORMAT_R16G16_UNORM;
-            case DXGI_FORMAT_R32_TYPELESS:          return DXGI_FORMAT_R32_FLOAT;
-            case DXGI_FORMAT_R8G8_TYPELESS:         return DXGI_FORMAT_R8G8_UNORM;
-            case DXGI_FORMAT_R16_TYPELESS:          return DXGI_FORMAT_R16_UNORM;
-            case DXGI_FORMAT_R8_TYPELESS:           return DXGI_FORMAT_R8_UNORM;
-            case DXGI_FORMAT_BC1_TYPELESS:          return DXGI_FORMAT_BC1_UNORM;
-            case DXGI_FORMAT_BC2_TYPELESS:          return DXGI_FORMAT_BC2_UNORM;
-            case DXGI_FORMAT_BC3_TYPELESS:          return DXGI_FORMAT_BC3_UNORM;
-            case DXGI_FORMAT_BC4_TYPELESS:          return DXGI_FORMAT_BC4_UNORM;
-            case DXGI_FORMAT_BC5_TYPELESS:          return DXGI_FORMAT_BC5_UNORM;
-            case DXGI_FORMAT_B8G8R8A8_TYPELESS:     return DXGI_FORMAT_B8G8R8A8_UNORM;
-            case DXGI_FORMAT_B8G8R8X8_TYPELESS:     return DXGI_FORMAT_B8G8R8X8_UNORM;
-            case DXGI_FORMAT_BC7_TYPELESS:          return DXGI_FORMAT_BC7_UNORM;
-            default:                                return fmt;
+                case DXGI_FORMAT_R32G32B32A32_TYPELESS:
+                    return DXGI_FORMAT_R32G32B32A32_FLOAT;
+                case DXGI_FORMAT_R32G32B32_TYPELESS:
+                    return DXGI_FORMAT_R32G32B32_FLOAT;
+                case DXGI_FORMAT_R16G16B16A16_TYPELESS:
+                    return DXGI_FORMAT_R16G16B16A16_UNORM;
+                case DXGI_FORMAT_R32G32_TYPELESS:
+                    return DXGI_FORMAT_R32G32_FLOAT;
+                case DXGI_FORMAT_R10G10B10A2_TYPELESS:
+                    return DXGI_FORMAT_R10G10B10A2_UNORM;
+                case DXGI_FORMAT_R8G8B8A8_TYPELESS:
+                    return DXGI_FORMAT_R8G8B8A8_UNORM;
+                case DXGI_FORMAT_R16G16_TYPELESS:
+                    return DXGI_FORMAT_R16G16_UNORM;
+                case DXGI_FORMAT_R32_TYPELESS:
+                    return DXGI_FORMAT_R32_FLOAT;
+                case DXGI_FORMAT_R8G8_TYPELESS:
+                    return DXGI_FORMAT_R8G8_UNORM;
+                case DXGI_FORMAT_R16_TYPELESS:
+                    return DXGI_FORMAT_R16_UNORM;
+                case DXGI_FORMAT_R8_TYPELESS:
+                    return DXGI_FORMAT_R8_UNORM;
+                case DXGI_FORMAT_BC1_TYPELESS:
+                    return DXGI_FORMAT_BC1_UNORM;
+                case DXGI_FORMAT_BC2_TYPELESS:
+                    return DXGI_FORMAT_BC2_UNORM;
+                case DXGI_FORMAT_BC3_TYPELESS:
+                    return DXGI_FORMAT_BC3_UNORM;
+                case DXGI_FORMAT_BC4_TYPELESS:
+                    return DXGI_FORMAT_BC4_UNORM;
+                case DXGI_FORMAT_BC5_TYPELESS:
+                    return DXGI_FORMAT_BC5_UNORM;
+                case DXGI_FORMAT_B8G8R8A8_TYPELESS:
+                    return DXGI_FORMAT_B8G8R8A8_UNORM;
+                case DXGI_FORMAT_B8G8R8X8_TYPELESS:
+                    return DXGI_FORMAT_B8G8R8X8_UNORM;
+                case DXGI_FORMAT_BC7_TYPELESS:
+                    return DXGI_FORMAT_BC7_UNORM;
+                default:
+                    return fmt;
             }
         }
 
@@ -87,8 +105,7 @@ namespace Graphyte::Graphics
             ID3D11DeviceContext* pContext,
             ID3D11Resource* pSource,
             D3D11_TEXTURE2D_DESC& desc,
-            Microsoft::WRL::ComPtr<ID3D11Texture2D>& pStaging
-        )
+            Microsoft::WRL::ComPtr<ID3D11Texture2D>& pStaging)
         {
             if (!pContext || !pSource)
             {
@@ -121,7 +138,7 @@ namespace Graphyte::Graphics
             if (desc.SampleDesc.Count > 1)
             {
                 // MSAA content must be resolved before being copied to a staging texture
-                desc.SampleDesc.Count = 1;
+                desc.SampleDesc.Count   = 1;
                 desc.SampleDesc.Quality = 0;
 
                 Microsoft::WRL::ComPtr<ID3D11Texture2D> pTemp;
@@ -137,7 +154,7 @@ namespace Graphyte::Graphics
                 DXGI_FORMAT fmt = EnsureNotTypeless(desc.Format);
 
                 UINT support = 0;
-                hr = d3dDevice->CheckFormatSupport(fmt, &support);
+                hr           = d3dDevice->CheckFormatSupport(fmt, &support);
 
                 if (FAILED(hr))
                 {
@@ -161,7 +178,7 @@ namespace Graphyte::Graphics
                 desc.BindFlags = 0;
                 desc.MiscFlags &= D3D11_RESOURCE_MISC_TEXTURECUBE;
                 desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-                desc.Usage = D3D11_USAGE_STAGING;
+                desc.Usage          = D3D11_USAGE_STAGING;
 
                 hr = d3dDevice->CreateTexture2D(&desc, nullptr, pStaging.ReleaseAndGetAddressOf());
                 if (FAILED(hr))
@@ -184,7 +201,7 @@ namespace Graphyte::Graphics
                 desc.BindFlags = 0;
                 desc.MiscFlags &= D3D11_RESOURCE_MISC_TEXTURECUBE;
                 desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-                desc.Usage = D3D11_USAGE_STAGING;
+                desc.Usage          = D3D11_USAGE_STAGING;
 
                 hr = d3dDevice->CreateTexture2D(&desc, nullptr, pStaging.ReleaseAndGetAddressOf());
 
@@ -236,8 +253,7 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     GpuTexture2DHandle D3D11GpuDevice::CreateTexture2D(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         bool const has_uav = Flags::Has(args.Flags, GpuTextureFlags::UnorderedAccess);
 
@@ -247,13 +263,13 @@ namespace Graphyte::Graphics
         // Create resource.
         //
         D3D11_TEXTURE2D_DESC desc{
-            .Width = args.Width,
-            .Height = args.Height,
-            .MipLevels = args.MipCount,
-            .ArraySize = 1,
-            .Format = D3D11GpuGetCreateResourcePixelFormat(args.DataFormat),
+            .Width      = args.Width,
+            .Height     = args.Height,
+            .MipLevels  = args.MipCount,
+            .ArraySize  = 1,
+            .Format     = D3D11GpuGetCreateResourcePixelFormat(args.DataFormat),
             .SampleDesc = {
-                .Count = 1,
+                .Count   = 1,
                 .Quality = 0,
             },
         };
@@ -263,46 +279,43 @@ namespace Graphyte::Graphics
             desc.Usage,
             desc.BindFlags,
             desc.CPUAccessFlags,
-            desc.MiscFlags
-        );
+            desc.MiscFlags);
 
 
         GPU_DX_VALIDATE(m_Device->CreateTexture2D(
             &desc,
             reinterpret_cast<const D3D11_SUBRESOURCE_DATA*>(args.Data),
-            &result->m_Texture2D
-        ));
+            &result->m_Texture2D));
 
         //
         // Get back actual texture desc.
         //
         result->m_Texture2D->GetDesc(&desc);
 
-        result->m_Dimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-        result->m_MipLevels = desc.MipLevels;
+        result->m_Dimension  = D3D11_SRV_DIMENSION_TEXTURE2D;
+        result->m_MipLevels  = desc.MipLevels;
         result->m_ArrayCount = 1;
-        result->m_MiscFlags = desc.MiscFlags;
-        result->m_Usage = desc.Usage;
-        result->m_Format = args.DataFormat;
+        result->m_MiscFlags  = desc.MiscFlags;
+        result->m_Usage      = desc.Usage;
+        result->m_Format     = args.DataFormat;
 
 
         //
         // Create shader view.
         //
         D3D11_SHADER_RESOURCE_VIEW_DESC view_desc{
-            .Format = D3D11GpuGetReadViewPixelFormat(args.ViewFormat),
+            .Format        = D3D11GpuGetReadViewPixelFormat(args.ViewFormat),
             .ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D,
-            .Texture2D = {
+            .Texture2D     = {
                 .MostDetailedMip = 0,
-                .MipLevels = args.MipCount,
+                .MipLevels       = args.MipCount,
             },
         };
 
         GPU_DX_VALIDATE(m_Device->CreateShaderResourceView(
             result->m_Texture2D,
             &view_desc,
-            &result->m_ShaderResourceView
-        ));
+            &result->m_ShaderResourceView));
 
 
         //
@@ -311,9 +324,9 @@ namespace Graphyte::Graphics
         if (has_uav)
         {
             D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc{
-                .Format = D3D11GpuGetWriteViewPixelFormat(args.ViewFormat),
+                .Format        = D3D11GpuGetWriteViewPixelFormat(args.ViewFormat),
                 .ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D,
-                .Texture2D = {
+                .Texture2D     = {
                     .MipSlice = 0,
                 },
             };
@@ -323,8 +336,7 @@ namespace Graphyte::Graphics
                 GPU_DX_VALIDATE(m_Device->CreateUnorderedAccessView(
                     result->m_Texture2D,
                     &uav_desc,
-                    &result->m_UnorderedAccessView
-                ));
+                    &result->m_UnorderedAccessView));
             }
         }
 
@@ -340,8 +352,7 @@ namespace Graphyte::Graphics
             D3D11SetDebugObjectName(
                 result->m_Texture2D,
                 args.DebugName,
-                std::strlen(args.DebugName)
-            );
+                std::strlen(args.DebugName));
         }
 
 #endif
@@ -350,8 +361,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::DestroyTexture2D(
-        GpuTexture2DHandle handle
-    ) noexcept
+        GpuTexture2DHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuTexture*>(handle);
@@ -370,8 +380,7 @@ namespace Graphyte::Graphics
         uint32_t mip_level,
         const GpuRect* rect,
         const void* data,
-        uint32_t pitch
-    ) noexcept
+        uint32_t pitch) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuTexture*>(handle);
@@ -379,7 +388,7 @@ namespace Graphyte::Graphics
         GX_ASSERT(native->m_Dimension == D3D11_SRV_DIMENSION_TEXTURE2D);
 
         UINT subresource = D3D11CalcSubresource(mip_level, 0, native->m_MipLevels);
-        
+
         if (Flags::Has(native->m_Usage, D3D11_USAGE_DYNAMIC))
         {
             D3D11_MAPPED_SUBRESOURCE resource;
@@ -389,8 +398,7 @@ namespace Graphyte::Graphics
                 subresource,
                 D3D11_MAP_WRITE_DISCARD,
                 0,
-                &resource
-            );
+                &resource);
 
             if (SUCCEEDED(hr))
             {
@@ -403,8 +411,7 @@ namespace Graphyte::Graphics
 
                 m_Context->Unmap(
                     native->m_Texture2D,
-                    subresource
-                );
+                    subresource);
             }
             else
             {
@@ -417,12 +424,12 @@ namespace Graphyte::Graphics
             if (rect != nullptr)
             {
                 box = {
-                    .left = rect->Left,
-                    .top = rect->Top,
-                    .front = 0,
-                    .right = rect->Right,
+                    .left   = rect->Left,
+                    .top    = rect->Top,
+                    .front  = 0,
+                    .right  = rect->Right,
                     .bottom = rect->Bottom,
-                    .back = 1,
+                    .back   = 1,
                 };
             }
 
@@ -431,14 +438,12 @@ namespace Graphyte::Graphics
                 subresource,
                 (rect != nullptr) ? &box : nullptr,
                 data,
-                pitch, 0
-            );
+                pitch, 0);
         }
     }
 
     void D3D11GpuDevice::GenerateMipmapsTexture2D(
-        GpuTexture2DHandle handle
-    ) noexcept
+        GpuTexture2DHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuTexture*>(handle);
@@ -450,20 +455,18 @@ namespace Graphyte::Graphics
         if ((native->m_MiscFlags & D3D11_RESOURCE_MISC_GENERATE_MIPS) != 0)
         {
             m_Context->GenerateMips(
-                native->m_ShaderResourceView
-            );
+                native->m_ShaderResourceView);
         }
     }
 
     std::unique_ptr<Image> D3D11GpuDevice::SaveTexture2D(
-        GpuTexture2DHandle handle
-    ) noexcept
+        GpuTexture2DHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuTexture*>(handle);
 
         GX_ASSERT(native->m_Dimension == D3D11_SRV_DIMENSION_TEXTURE2D);
-        
+
         //
         // Create staging texture.
         //
@@ -476,8 +479,7 @@ namespace Graphyte::Graphics
             m_Context.Get(),
             native->m_Texture2D,
             desc,
-            pStaging
-        );
+            pStaging);
 
         if (FAILED(hr))
         {
@@ -487,8 +489,7 @@ namespace Graphyte::Graphics
         auto result = Image::Create2D(
             D3D11GpuGetPixelFormat(desc.Format),
             desc.Width,
-            desc.Height
-        );
+            desc.Height);
 
         D3D11_MAPPED_SUBRESOURCE mapped{};
         GPU_DX_VALIDATE(m_Context->Map(pStaging.Get(), 0, D3D11_MAP_READ, 0, &mapped));
@@ -501,7 +502,7 @@ namespace Graphyte::Graphics
 
         auto source_scanline = reinterpret_cast<const std::byte*>(mapped.pData);
 
-        auto pixels = result->GetSubresource(0);
+        auto pixels    = result->GetSubresource(0);
         auto row_pitch = std::min<size_t>(pixels->LinePitch, mapped.RowPitch);
 
         for (uint32_t row = 0; row < pixels->Height; ++row)
@@ -522,8 +523,7 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     GpuTexture2DArrayHandle D3D11GpuDevice::CreateTexture2DArray(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         bool const has_uav = Flags::Has(args.Flags, GpuTextureFlags::UnorderedAccess);
 
@@ -533,13 +533,13 @@ namespace Graphyte::Graphics
         // Create resource.
         //
         D3D11_TEXTURE2D_DESC desc{
-            .Width = args.Width,
-            .Height = args.Height,
-            .MipLevels = args.MipCount,
-            .ArraySize = args.Depth,
-            .Format = D3D11GpuGetCreateResourcePixelFormat(args.DataFormat),
+            .Width      = args.Width,
+            .Height     = args.Height,
+            .MipLevels  = args.MipCount,
+            .ArraySize  = args.Depth,
+            .Format     = D3D11GpuGetCreateResourcePixelFormat(args.DataFormat),
             .SampleDesc = {
-                .Count = 1,
+                .Count   = 1,
                 .Quality = 0,
             },
         };
@@ -549,14 +549,12 @@ namespace Graphyte::Graphics
             desc.Usage,
             desc.BindFlags,
             desc.CPUAccessFlags,
-            desc.MiscFlags
-        );
+            desc.MiscFlags);
 
         GPU_DX_VALIDATE(m_Device->CreateTexture2D(
             &desc,
             reinterpret_cast<const D3D11_SUBRESOURCE_DATA*>(args.Data),
-            &result->m_Texture2D
-        ));
+            &result->m_Texture2D));
 
 
         //
@@ -564,34 +562,33 @@ namespace Graphyte::Graphics
         //
         result->m_Texture2D->GetDesc(&desc);
 
-        result->m_Dimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-        result->m_MipLevels = desc.MipLevels;
+        result->m_Dimension  = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+        result->m_MipLevels  = desc.MipLevels;
         result->m_ArrayCount = 1;
-        result->m_MiscFlags = desc.MiscFlags;
-        result->m_Usage = desc.Usage;
-        result->m_Format = args.DataFormat;
+        result->m_MiscFlags  = desc.MiscFlags;
+        result->m_Usage      = desc.Usage;
+        result->m_Format     = args.DataFormat;
 
-        
+
         //
         // Create shader view.
         //
         D3D11_SHADER_RESOURCE_VIEW_DESC view_desc{
-            .Format = D3D11GpuGetReadViewPixelFormat(args.ViewFormat),
+            .Format        = D3D11GpuGetReadViewPixelFormat(args.ViewFormat),
             .ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY,
         };
 
         view_desc.Texture2DArray = {
             .MostDetailedMip = 0,
-            .MipLevels = args.MipCount,
+            .MipLevels       = args.MipCount,
             .FirstArraySlice = 0,
-            .ArraySize = args.Depth,
+            .ArraySize       = args.Depth,
         };
 
         GPU_DX_VALIDATE(m_Device->CreateShaderResourceView(
             result->m_Texture2D,
             &view_desc,
-            &result->m_ShaderResourceView
-        ));
+            &result->m_ShaderResourceView));
 
 
         //
@@ -600,12 +597,12 @@ namespace Graphyte::Graphics
         if (has_uav)
         {
             D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc{
-                .Format = D3D11GpuGetWriteViewPixelFormat(args.ViewFormat),
-                .ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY,
+                .Format         = D3D11GpuGetWriteViewPixelFormat(args.ViewFormat),
+                .ViewDimension  = D3D11_UAV_DIMENSION_TEXTURE2DARRAY,
                 .Texture2DArray = {
-                    .MipSlice = 0,
+                    .MipSlice        = 0,
                     .FirstArraySlice = 0,
-                    .ArraySize = args.Depth,
+                    .ArraySize       = args.Depth,
                 },
             };
 
@@ -614,8 +611,7 @@ namespace Graphyte::Graphics
                 GPU_DX_VALIDATE(m_Device->CreateUnorderedAccessView(
                     result->m_Texture2D,
                     &uav_desc,
-                    &result->m_UnorderedAccessView
-                ));
+                    &result->m_UnorderedAccessView));
             }
         }
 
@@ -631,8 +627,7 @@ namespace Graphyte::Graphics
             D3D11SetDebugObjectName(
                 result->m_Texture2D,
                 args.DebugName,
-                std::strlen(args.DebugName)
-            );
+                std::strlen(args.DebugName));
         }
 
 #endif
@@ -641,8 +636,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::DestroyTexture2DArray(
-        GpuTexture2DArrayHandle handle
-    ) noexcept
+        GpuTexture2DArrayHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuTexture*>(handle);
@@ -660,8 +654,7 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     GpuTexture3DHandle D3D11GpuDevice::CreateTexture3D(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         bool const has_uav = Flags::Has(args.Flags, GpuTextureFlags::UnorderedAccess);
 
@@ -672,26 +665,24 @@ namespace Graphyte::Graphics
         // Create resource.
         //
         D3D11_TEXTURE3D_DESC desc{
-            .Width = args.Width,
-            .Height = args.Height,
-            .Depth = args.Depth,
+            .Width     = args.Width,
+            .Height    = args.Height,
+            .Depth     = args.Depth,
             .MipLevels = args.MipCount,
-            .Format = D3D11GpuGetCreateResourcePixelFormat(args.DataFormat),
+            .Format    = D3D11GpuGetCreateResourcePixelFormat(args.DataFormat),
         };
-        
+
         Impl::ExpandTextureFlags(
             args.Flags,
             desc.Usage,
             desc.BindFlags,
             desc.CPUAccessFlags,
-            desc.MiscFlags
-        );
+            desc.MiscFlags);
 
         GPU_DX_VALIDATE(m_Device->CreateTexture3D(
             &desc,
             reinterpret_cast<const D3D11_SUBRESOURCE_DATA*>(args.Data),
-            &result->m_Texture3D
-        ));
+            &result->m_Texture3D));
 
 
         //
@@ -699,31 +690,30 @@ namespace Graphyte::Graphics
         //
         result->m_Texture3D->GetDesc(&desc);
 
-        result->m_Dimension = D3D11_SRV_DIMENSION_TEXTURE3D;
-        result->m_MipLevels = desc.MipLevels;
+        result->m_Dimension  = D3D11_SRV_DIMENSION_TEXTURE3D;
+        result->m_MipLevels  = desc.MipLevels;
         result->m_ArrayCount = 1;
-        result->m_MiscFlags = desc.MiscFlags;
-        result->m_Usage = desc.Usage;
-        result->m_Format = args.DataFormat;
-        
+        result->m_MiscFlags  = desc.MiscFlags;
+        result->m_Usage      = desc.Usage;
+        result->m_Format     = args.DataFormat;
+
 
         //
         // Create shader view.
         //
         D3D11_SHADER_RESOURCE_VIEW_DESC view_desc{
-            .Format = D3D11GpuGetReadViewPixelFormat(args.ViewFormat),
+            .Format        = D3D11GpuGetReadViewPixelFormat(args.ViewFormat),
             .ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D,
-            .Texture3D = {
+            .Texture3D     = {
                 .MostDetailedMip = 0,
-                .MipLevels = args.MipCount,
+                .MipLevels       = args.MipCount,
             },
         };
 
         GPU_DX_VALIDATE(m_Device->CreateShaderResourceView(
             result->m_Texture3D,
             &view_desc,
-            &result->m_ShaderResourceView
-        ));
+            &result->m_ShaderResourceView));
 
 
         //
@@ -733,12 +723,12 @@ namespace Graphyte::Graphics
         if (has_uav)
         {
             D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc{
-                .Format = D3D11GpuGetWriteViewPixelFormat(args.ViewFormat),
+                .Format        = D3D11GpuGetWriteViewPixelFormat(args.ViewFormat),
                 .ViewDimension = D3D11_UAV_DIMENSION_TEXTURE3D,
-                .Texture3D = {
-                    .MipSlice = 0,
+                .Texture3D     = {
+                    .MipSlice    = 0,
                     .FirstWSlice = 0,
-                    .WSize = args.Depth,
+                    .WSize       = args.Depth,
                 },
             };
 
@@ -747,8 +737,7 @@ namespace Graphyte::Graphics
                 GPU_DX_VALIDATE(m_Device->CreateUnorderedAccessView(
                     result->m_Texture3D,
                     &uav_desc,
-                    &result->m_UnorderedAccessView
-                ));
+                    &result->m_UnorderedAccessView));
             }
         }
 
@@ -764,8 +753,7 @@ namespace Graphyte::Graphics
             D3D11SetDebugObjectName(
                 result->m_Texture2D,
                 args.DebugName,
-                std::strlen(args.DebugName)
-            );
+                std::strlen(args.DebugName));
         }
 
 #endif
@@ -774,8 +762,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::DestroyTexture3D(
-        GpuTexture3DHandle handle
-    ) noexcept
+        GpuTexture3DHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuTexture*>(handle);
@@ -793,8 +780,7 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     GpuTextureCubeHandle D3D11GpuDevice::CreateTextureCube(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         bool const has_uav = Flags::Has(args.Flags, GpuTextureFlags::UnorderedAccess);
 
@@ -805,30 +791,28 @@ namespace Graphyte::Graphics
         // Create resource.
         //
         D3D11_TEXTURE2D_DESC desc{
-            .Width = args.Width,
-            .Height = args.Height,
-            .MipLevels = args.MipCount,
-            .ArraySize = 6,
-            .Format = D3D11GpuGetCreateResourcePixelFormat(args.DataFormat),
+            .Width      = args.Width,
+            .Height     = args.Height,
+            .MipLevels  = args.MipCount,
+            .ArraySize  = 6,
+            .Format     = D3D11GpuGetCreateResourcePixelFormat(args.DataFormat),
             .SampleDesc = {
-                .Count = 1,
+                .Count   = 1,
                 .Quality = 0,
             },
         };
-        
+
         Impl::ExpandTextureFlags(
             args.Flags,
             desc.Usage,
             desc.BindFlags,
             desc.CPUAccessFlags,
-            desc.MiscFlags
-        );
+            desc.MiscFlags);
 
         GPU_DX_VALIDATE(m_Device->CreateTexture2D(
             &desc,
             reinterpret_cast<const D3D11_SUBRESOURCE_DATA*>(args.Data),
-            &result->m_Texture2D
-        ));
+            &result->m_Texture2D));
 
 
         //
@@ -836,31 +820,29 @@ namespace Graphyte::Graphics
         //
         result->m_Texture2D->GetDesc(&desc);
 
-        result->m_Dimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-        result->m_MipLevels = desc.MipLevels;
+        result->m_Dimension  = D3D11_SRV_DIMENSION_TEXTURECUBE;
+        result->m_MipLevels  = desc.MipLevels;
         result->m_ArrayCount = 1;
-        result->m_MiscFlags = desc.MiscFlags;
-        result->m_Usage = desc.Usage;
-        result->m_Format = args.DataFormat;
+        result->m_MiscFlags  = desc.MiscFlags;
+        result->m_Usage      = desc.Usage;
+        result->m_Format     = args.DataFormat;
 
-        
+
         //
         // Create shader view.
         //
         D3D11_SHADER_RESOURCE_VIEW_DESC view_desc{
-            .Format = D3D11GpuGetReadViewPixelFormat(args.ViewFormat),
+            .Format        = D3D11GpuGetReadViewPixelFormat(args.ViewFormat),
             .ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE,
-            .TextureCube = {
+            .TextureCube   = {
                 .MostDetailedMip = 0,
-                .MipLevels = args.MipCount
-            },
+                .MipLevels       = args.MipCount },
         };
 
         GPU_DX_VALIDATE(m_Device->CreateShaderResourceView(
             result->m_Texture2D,
             &view_desc,
-            &result->m_ShaderResourceView
-        ));
+            &result->m_ShaderResourceView));
 
 
         //
@@ -869,12 +851,12 @@ namespace Graphyte::Graphics
         if (has_uav)
         {
             D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc{
-                .Format = D3D11GpuGetWriteViewPixelFormat(args.ViewFormat),
-                .ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY,
+                .Format         = D3D11GpuGetWriteViewPixelFormat(args.ViewFormat),
+                .ViewDimension  = D3D11_UAV_DIMENSION_TEXTURE2DARRAY,
                 .Texture2DArray = {
-                    .MipSlice = 0,
+                    .MipSlice        = 0,
                     .FirstArraySlice = 0,
-                    .ArraySize = 6,
+                    .ArraySize       = 6,
                 },
             };
         }
@@ -883,8 +865,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::DestroyTextureCube(
-        GpuTextureCubeHandle handle
-    ) noexcept
+        GpuTextureCubeHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuTexture*>(handle);

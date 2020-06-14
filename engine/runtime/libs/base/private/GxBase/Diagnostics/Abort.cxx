@@ -6,7 +6,7 @@
 #include "Diagnostics.Impl.hxx"
 
 #if GRAPHYTE_PLATFORM_LINUX
-#   include <syslog.h>
+#include <syslog.h>
 #endif
 
 namespace Graphyte::Diagnostics::Impl
@@ -20,15 +20,14 @@ namespace Graphyte::Diagnostics
     {
         return Impl::GIsAborting;
     }
-    
+
     BASE_API bool OnAbortArgs(
         std::string_view condition,
         std::string_view function,
         std::string_view file,
         std::uint_least32_t line,
         std::string_view format,
-        fmt::format_args args
-    ) noexcept
+        fmt::format_args args) noexcept
     {
         //
         // Acquire global diagnostics reporting lock.
@@ -106,13 +105,12 @@ namespace Graphyte::Diagnostics
             "Application aborted:\n{}"
             "Stack Trace:\n{}",
             content,
-            stacktrace
-        );
+            stacktrace);
 
         if (Diagnostics::Impl::ReportAbort(
-            "Graphyte Engine",
-            content,
-            stacktrace))
+                "Graphyte Engine",
+                content,
+                stacktrace))
         {
             Impl::GIsAborting = false;
             return true;
@@ -142,8 +140,7 @@ namespace Graphyte::Diagnostics
                 1,
                 0,
                 &pszStrings,
-                nullptr
-            );
+                nullptr);
         }
 
 #elif GRAPHYTE_PLATFORM_POSIX

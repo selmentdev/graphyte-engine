@@ -46,19 +46,16 @@ namespace Graphyte::Graphics
     GX_DECLARE_LOG_CATEGORY(LogVkRender, Trace, Trace);
 
     std::string_view VulkanVkResultToString(
-        VkResult result
-    ) noexcept;
+        VkResult result) noexcept;
 
     template <typename T>
     __forceinline T VKGetFunction(
         VkInstance instance,
-        const char* name
-    ) noexcept
+        const char* name) noexcept
     {
         return reinterpret_cast<T>(reinterpret_cast<void*>(vkGetInstanceProcAddr(
             instance,
-            name
-        )));
+            name)));
     }
 }
 

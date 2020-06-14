@@ -18,20 +18,17 @@ namespace Graphyte::Rendering::Impl
 
     public:
         virtual void Update(
-            [[maybe_unused]] float deltaTime
-        ) noexcept override
+            [[maybe_unused]] float deltaTime) noexcept override
         {
         }
 
         virtual void Enable(
-            [[maybe_unused]] bool value
-        ) noexcept override
+            [[maybe_unused]] bool value) noexcept override
         {
         }
 
         virtual void Render(
-            [[maybe_unused]] Graphics::GpuCommandListHandle commandList
-        ) noexcept override
+            [[maybe_unused]] Graphics::GpuCommandListHandle commandList) noexcept override
         {
             (void)m_Device;
         }
@@ -43,8 +40,7 @@ namespace Graphyte::Rendering::Impl
             [[maybe_unused]] Maths::Color color,
             [[maybe_unused]] float width,
             [[maybe_unused]] bool ztest,
-            [[maybe_unused]] float timeout
-        ) noexcept override
+            [[maybe_unused]] float timeout) noexcept override
         {
         }
     };
@@ -53,8 +49,7 @@ namespace Graphyte::Rendering::Impl
 namespace Graphyte::Rendering
 {
     RENDERING_API std::unique_ptr<IDebugRenderer> CreateDebugRender(
-        [[maybe_unused]] Graphics::GpuDeviceHandle device
-    ) noexcept
+        [[maybe_unused]] Graphics::GpuDeviceHandle device) noexcept
     {
         if (Rendering::IsDebugRenderEnabled)
         {

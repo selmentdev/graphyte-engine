@@ -91,7 +91,6 @@ namespace GraphyteX::Threading
             }
             m_QueueCV.Notify();
         }
-
     }
 
     ThreadpoolWorker::ThreadpoolWorker(Threadpool* threadpool) noexcept
@@ -145,10 +144,10 @@ TEST_CASE("Threadpool", "[.][performance]")
 {
     SECTION("Spawn workerz")
     {
-#define DELAY 200
+#define DELAY   200
 #define THREADS 8
-#define COUNT 8
-#define TASKS 128
+#define COUNT   8
+#define TASKS   128
 
         struct tazg : public Graphyte::Threading::IRunnable
         {
@@ -181,8 +180,8 @@ TEST_CASE("Threadpool", "[.][performance]")
             watch.Stop();
 
             [[maybe_unused]] double const sequential = static_cast<double>(TASKS * DELAY * COUNT) * 0.001;
-            [[maybe_unused]] double const parallel = watch.GetElapsedTime();
-            [[maybe_unused]] double const speedup = sequential / parallel;
+            [[maybe_unused]] double const parallel   = watch.GetElapsedTime();
+            [[maybe_unused]] double const speedup    = sequential / parallel;
 
             //GX_DEBUGF("Expected duration: {}\n", sequential);
             //GX_DEBUGF("Total duration:    {}\n", parallel);

@@ -9,8 +9,7 @@
 namespace Graphyte::System
 {
     BASE_API Status GetDisplayMetrics(
-        DisplayMetrics& result
-    ) noexcept
+        DisplayMetrics& result) noexcept
     {
 
         int32_t displays_count = SDL_GetNumVideoDisplays();
@@ -33,8 +32,8 @@ namespace Graphyte::System
                 SDL_GetDisplayUsableBounds(index, &usable_bounds);
 
                 DisplayInfo display{};
-                display.Name = SDL_GetDisplayName(index);
-                display.Id = fmt::format("display{}", index);
+                display.Name        = SDL_GetDisplayName(index);
+                display.Id          = fmt::format("display{}", index);
                 display.DisplayRect = {
                     display_bounds.x,
                     display_bounds.y,
@@ -54,7 +53,7 @@ namespace Graphyte::System
                 if (display.Primary)
                 {
                     result.PrimaryDisplayWorkArea = display.WorkAreaRect;
-                    result.PrimaryDisplaySize = {
+                    result.PrimaryDisplaySize     = {
                         display_bounds.w,
                         display_bounds.h,
                     };
@@ -84,9 +83,9 @@ namespace Graphyte::System
         }
         else
         {
-            result.PrimaryDisplaySize = {};
+            result.PrimaryDisplaySize     = {};
             result.PrimaryDisplayWorkArea = {};
-            result.VirtualDisplayRect = {};
+            result.VirtualDisplayRect     = {};
 
             return Status::Failure;
         }
@@ -99,8 +98,7 @@ namespace Graphyte::System
 
     BASE_API ColorF GetScreenPixel(
         Point position,
-        float gamma
-    ) noexcept
+        float gamma) noexcept
     {
         (void)position;
         (void)gamma;
@@ -108,8 +106,7 @@ namespace Graphyte::System
     }
 
     BASE_API Status ControlScreensaver(
-        bool enable
-    ) noexcept
+        bool enable) noexcept
     {
         (void)enable;
         return Status::Success;

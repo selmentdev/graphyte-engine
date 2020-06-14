@@ -41,12 +41,12 @@ namespace GraphyteAssets
         std::string Name;
         std::string Type;
     };
-    
+
     struct ShaderInputDeclaration final
     {
         std::vector<ShaderDeclarationField> Fields;
     };
-    
+
     struct ShaderOutputDeclaration final
     {
         std::vector<ShaderDeclarationField> Fields;
@@ -64,6 +64,5 @@ namespace GraphyteAssets
 
     class ASSETS_MATERIAL_API MaterialFormat
     {
-
     };
 }

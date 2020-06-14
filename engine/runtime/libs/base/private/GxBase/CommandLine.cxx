@@ -6,8 +6,7 @@ namespace Graphyte::CommandLine::Impl
     static notstd::span<const char*> GCommandLineArgs;
 
     auto SplitCommandLineNameValue(
-        std::string_view value
-    ) noexcept->std::pair<std::string_view, std::optional<std::string_view>>
+        std::string_view value) noexcept -> std::pair<std::string_view, std::optional<std::string_view>>
     {
         std::size_t const separator = value.find_first_not_of('=');
         std::string_view const name = value.substr(0, separator);

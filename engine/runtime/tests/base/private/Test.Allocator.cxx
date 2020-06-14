@@ -5,8 +5,8 @@ namespace
     class SampleClass
     {
     public:
-        uint64_t m_Value1 = 1337;
-        float m_Value2 = 21.37F;
+        uint64_t m_Value1    = 1337;
+        float m_Value2       = 21.37F;
         std::string m_Value3 = "Hello World!";
     };
 }

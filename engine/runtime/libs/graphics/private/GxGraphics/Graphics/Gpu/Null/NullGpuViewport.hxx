@@ -5,6 +5,8 @@
 
 namespace Graphyte::Graphics
 {
-    class NullGpuViewport : public GpuViewport { };
+    class NullGpuViewport : public GpuViewport
+    {
+    };
     static_assert(!std::is_polymorphic_v<NullGpuViewport>);
 }

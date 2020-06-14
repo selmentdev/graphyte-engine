@@ -5,7 +5,7 @@ TEST_CASE("notstd::flat_set")
 {
     REQUIRE(notstd::flat_set<int>{}.empty());
 
-    std::array<int, 5> src_items{{ 1, 2, 3, 4, 5 }};
+    std::array<int, 5> src_items{ { 1, 2, 3, 4, 5 } };
     notstd::flat_set<int> items(src_items.begin(), src_items.end());
 
     REQUIRE_FALSE(items.empty());

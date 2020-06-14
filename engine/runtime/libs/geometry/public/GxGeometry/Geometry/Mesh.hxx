@@ -154,5 +154,5 @@ namespace Graphyte::Geometry
         }
     };
 
-    GEOMETRY_API Storage::Archive& operator<< (Storage::Archive& archive, Mesh& mesh) noexcept;
+    GEOMETRY_API Storage::Archive& operator<<(Storage::Archive& archive, Mesh& mesh) noexcept;
 }

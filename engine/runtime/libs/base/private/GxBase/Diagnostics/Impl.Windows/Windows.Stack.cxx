@@ -32,8 +32,7 @@ namespace Graphyte::Diagnostics::Impl
     }
 
     static STACKFRAME64 GetStackFrameFromContext(
-        const CONTEXT& context
-    ) noexcept
+        const CONTEXT& context) noexcept
     {
         STACKFRAME64 frame = {
             .AddrPC = {
@@ -42,33 +41,31 @@ namespace Graphyte::Diagnostics::Impl
             .AddrFrame = {
                 .Mode = AddrModeFlat,
             },
-            .AddrStack = {
-                .Mode = AddrModeFlat
-            }
+            .AddrStack = { .Mode = AddrModeFlat }
         };
 
 
 #if GRAPHYTE_CPU_X86_64
 
-        frame.AddrPC.Offset = context.Rip;
+        frame.AddrPC.Offset    = context.Rip;
         frame.AddrFrame.Offset = context.Rbp;
         frame.AddrStack.Offset = context.Rsp;
 
 #elif GRAPHYTE_CPU_X86_32
 
-        frame.AddrPC.Offset = context.Eip;
+        frame.AddrPC.Offset    = context.Eip;
         frame.AddrFrame.Offset = context.Ebp;
         frame.AddrStack.Offset = context.Esp;
 
 #elif GRAPHYTE_CPU_ARM_64
 
-        frame.AddrPC.Offset = context.Pc;
+        frame.AddrPC.Offset    = context.Pc;
         frame.AddrFrame.Offset = context.Fp;
         frame.AddrStack.Offset = context.Sp;
 
 #elif GRAPHYTE_CPU_ARM_32
 
-        frame.AddrPC.Offset = context.Pc;
+        frame.AddrPC.Offset    = context.Pc;
         frame.AddrFrame.Offset = context.R11;
         frame.AddrStack.Offset = context.Sp;
 
@@ -82,8 +79,7 @@ namespace Graphyte::Diagnostics::Impl
     void FillSymbolMetadataForAddress(
         StackFrame& frame,
         DWORD64 address,
-        HANDLE process
-    ) noexcept
+        HANDLE process) noexcept
     {
         frame.Address = address;
 
@@ -104,8 +100,7 @@ namespace Graphyte::Diagnostics::Impl
                 DWORD length = GetModuleFileNameA(
                     handle,
                     name,
-                    MAX_PATH
-                );
+                    MAX_PATH);
 
                 frame.Module = std::string_view{ name, length };
             }
@@ -128,7 +123,7 @@ namespace Graphyte::Diagnostics::Impl
             SymbolInfo symbol = {
                 .Header = {
                     .SizeOfStruct = sizeof(symbol.Header),
-                    .MaxNameLen = sizeof(symbol) - sizeof(symbol.Header),
+                    .MaxNameLen   = sizeof(symbol) - sizeof(symbol.Header),
                 },
             };
 
@@ -155,7 +150,6 @@ namespace Graphyte::Diagnostics::Impl
                 frame.File = line.FileName;
                 frame.Line = line.LineNumber;
             }
-
         }
 #endif
     }
@@ -166,8 +160,7 @@ namespace Graphyte::Diagnostics::Impl
 namespace Graphyte::Diagnostics
 {
     BASE_API Status GetStackTrace(
-        std::vector<StackFrame>& frames
-    ) noexcept
+        std::vector<StackFrame>& frames) noexcept
     {
 #if GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
 
@@ -181,8 +174,7 @@ namespace Graphyte::Diagnostics
                 0,
                 MaxFramesCount,
                 backtrace,
-                nullptr
-            );
+                nullptr);
 
             HANDLE process = GetCurrentProcess();
 
@@ -194,8 +186,7 @@ namespace Graphyte::Diagnostics
                 Impl::FillSymbolMetadataForAddress(
                     frame,
                     static_cast<DWORD64>(reinterpret_cast<UINT_PTR>(backtrace[i])),
-                    process
-                );
+                    process);
             }
 
             return Status::Success;
@@ -219,8 +210,7 @@ namespace Graphyte::Diagnostics
 
     BASE_API Status GetStackTrace(
         std::vector<StackFrame>& frames,
-        [[maybe_unused]] const CONTEXT& context
-    ) noexcept
+        [[maybe_unused]] const CONTEXT& context) noexcept
     {
 #if GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
 
@@ -228,7 +218,7 @@ namespace Graphyte::Diagnostics
 
         HANDLE thread = GetCurrentThread();
 
-        DWORD machine = Impl::GetMachineType();
+        DWORD machine           = Impl::GetMachineType();
         STACKFRAME64 base_frame = Impl::GetStackFrameFromContext(context);
 
         bool success = true;
@@ -247,8 +237,7 @@ namespace Graphyte::Diagnostics
                 nullptr,
                 SymFunctionTableAccess64,
                 SymGetModuleBase64,
-                nullptr
-            );
+                nullptr);
 
             if (success)
             {
@@ -256,8 +245,7 @@ namespace Graphyte::Diagnostics
                 Impl::FillSymbolMetadataForAddress(
                     frame,
                     base_frame.AddrPC.Offset,
-                    process
-                );
+                    process);
             }
             else
             {
@@ -274,6 +262,5 @@ namespace Graphyte::Diagnostics
         return Status::NotSupported;
 
 #endif
-
     }
 }

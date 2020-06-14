@@ -7,18 +7,17 @@ namespace Graphyte::System::Impl
 
     BASE_API bool IsSystemVersion(
         uint32_t major,
-        uint32_t minor
-    ) noexcept
+        uint32_t minor) noexcept
     {
         OSVERSIONINFOEXW osie{
             .dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXW),
-            .dwMajorVersion = static_cast<DWORD>(major),
-            .dwMinorVersion = static_cast<DWORD>(minor),
+            .dwMajorVersion      = static_cast<DWORD>(major),
+            .dwMinorVersion      = static_cast<DWORD>(minor),
         };
 
         ULONGLONG conditionMask = 0;
-        conditionMask = VerSetConditionMask(conditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
-        conditionMask = VerSetConditionMask(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
+        conditionMask           = VerSetConditionMask(conditionMask, VER_MAJORVERSION, VER_GREATER_EQUAL);
+        conditionMask           = VerSetConditionMask(conditionMask, VER_MINORVERSION, VER_GREATER_EQUAL);
 
         return VerifyVersionInfoW(&osie, VER_MAJORVERSION | VER_MINORVERSION, conditionMask) != FALSE;
     }
@@ -27,8 +26,7 @@ namespace Graphyte::System::Impl
         HKEY key,
         const wchar_t* subkey,
         const wchar_t* name,
-        std::string& result
-    ) noexcept
+        std::string& result) noexcept
     {
         GX_ASSERT(subkey != nullptr);
         GX_ASSERT(name != nullptr);
@@ -66,7 +64,7 @@ namespace Graphyte::System::Impl
 
                         if (RegQueryValueExW(current, name, nullptr, nullptr, reinterpret_cast<LPBYTE>(data.data()), &dw_size) == ERROR_SUCCESS)
                         {
-                            result = Impl::NarrowString(data);
+                            result    = Impl::NarrowString(data);
                             succeeded = true;
                         }
                     }
@@ -80,8 +78,7 @@ namespace Graphyte::System::Impl
     }
 
     BASE_API std::string NarrowString(
-        std::wstring_view value
-    ) noexcept
+        std::wstring_view value) noexcept
     {
         std::string result{};
 
@@ -102,8 +99,7 @@ namespace Graphyte::System::Impl
     }
 
     BASE_API std::wstring WidenString(
-        std::string_view value
-    ) noexcept
+        std::string_view value) noexcept
     {
         std::wstring result{};
 
@@ -126,8 +122,7 @@ namespace Graphyte::System::Impl
     BASE_API size_t NarrowString(
         char* buffer,
         size_t buffer_size,
-        std::wstring_view value
-    ) noexcept
+        std::wstring_view value) noexcept
     {
         size_t const result = static_cast<size_t>(WideCharToMultiByte(
             CP_UTF8,
@@ -137,8 +132,7 @@ namespace Graphyte::System::Impl
             buffer,
             static_cast<int>(buffer_size),
             nullptr,
-            nullptr
-        ));
+            nullptr));
 
         return result;
     }
@@ -146,8 +140,7 @@ namespace Graphyte::System::Impl
     BASE_API size_t WidenString(
         wchar_t* buffer,
         size_t buffer_size,
-        std::string_view value
-    ) noexcept
+        std::string_view value) noexcept
     {
         size_t const result = static_cast<size_t>(MultiByteToWideChar(
             CP_UTF8,
@@ -155,16 +148,14 @@ namespace Graphyte::System::Impl
             value.data(),
             static_cast<int>(value.length()),
             buffer,
-            static_cast<int>(buffer_size)
-        ));
+            static_cast<int>(buffer_size)));
 
         return result;
     }
 
     BASE_API bool WidenStringPath(
         WindowsPath& result,
-        std::string_view value
-    ) noexcept
+        std::string_view value) noexcept
     {
         int const length = static_cast<int>(value.length()); // XXX: Check for overflow
 

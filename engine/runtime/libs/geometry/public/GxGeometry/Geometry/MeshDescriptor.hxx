@@ -25,17 +25,17 @@ namespace Graphyte::Geometry::EditableMesh
             return m_Value;
         }
 
-        constexpr bool operator == (const ElementId& other) const noexcept
+        constexpr bool operator==(const ElementId& other) const noexcept
         {
             return m_Value == other.m_Value;
         }
 
-        constexpr bool operator != (const ElementId& other) const noexcept
+        constexpr bool operator!=(const ElementId& other) const noexcept
         {
             return m_Value != other.m_Value;
         }
 
-        friend inline Storage::Archive& operator<< (Storage::Archive& archive, ElementId& element) noexcept
+        friend inline Storage::Archive& operator<<(Storage::Archive& archive, ElementId& element) noexcept
         {
             return archive << element.m_Value;
         }

@@ -5,6 +5,5 @@ namespace Graphyte::Geometry
 {
     class GEOMETRY_API ProceduralMesh
     {
-
     };
 }

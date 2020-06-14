@@ -14,13 +14,13 @@ namespace Graphyte::Launch::Impl::Posix
     static struct sigaction GPreviousSIGINT;
     static struct sigaction GPreviousSIGQUIT;
 
-    using SignalFunction = void (*)(int, siginfo_t *, void *);
+    using SignalFunction = void (*)(int, siginfo_t*, void*);
 
     static void SetSignal(int id, SignalFunction function, struct sigaction* previous, int flags = 0, bool skip = false) noexcept
     {
         struct sigaction ac;
-        ac.sa_flags = SA_SIGINFO | SA_RESTART | flags;
-        ac.sa_handler = nullptr;
+        ac.sa_flags     = SA_SIGINFO | SA_RESTART | flags;
+        ac.sa_handler   = nullptr;
         ac.sa_sigaction = function;
         sigemptyset(&ac.sa_mask);
 
@@ -50,8 +50,7 @@ namespace Graphyte::Launch::Impl::Posix
     static void HandleSignalKill(
         int signal_number,
         siginfo_t* signal_info,
-        void* context
-    ) noexcept
+        void* context) noexcept
     {
         (void)signal_number;
         Diagnostics::OnCrash(reinterpret_cast<ucontext_t*>(context), signal_info);
@@ -60,8 +59,7 @@ namespace Graphyte::Launch::Impl::Posix
     static void HandleSignalTrap(
         int signal_number,
         siginfo_t* signal_info,
-        void* context
-    ) noexcept
+        void* context) noexcept
     {
         (void)signal_number;
         Diagnostics::OnCrash(reinterpret_cast<ucontext_t*>(context), signal_info);
@@ -70,8 +68,7 @@ namespace Graphyte::Launch::Impl::Posix
     static void HandleSignalFpe(
         int signal_number,
         siginfo_t* signal_info,
-        void* context
-    ) noexcept
+        void* context) noexcept
     {
         (void)signal_number;
         Diagnostics::OnCrash(reinterpret_cast<ucontext_t*>(context), signal_info);
@@ -80,8 +77,7 @@ namespace Graphyte::Launch::Impl::Posix
     static void HandleSignalBus(
         int signal_number,
         siginfo_t* signal_info,
-        void* context
-    ) noexcept
+        void* context) noexcept
     {
         (void)signal_number;
         Diagnostics::OnCrash(reinterpret_cast<ucontext_t*>(context), signal_info);
@@ -90,8 +86,7 @@ namespace Graphyte::Launch::Impl::Posix
     static void HandleSignalSegv(
         int signal_number,
         siginfo_t* signal_info,
-        void* context
-    ) noexcept
+        void* context) noexcept
     {
         (void)signal_number;
         Diagnostics::OnCrash(reinterpret_cast<ucontext_t*>(context), signal_info);
@@ -100,8 +95,7 @@ namespace Graphyte::Launch::Impl::Posix
     static void HandleSignalInt(
         int signal_number,
         siginfo_t* signal_info,
-        void* context
-    ) noexcept
+        void* context) noexcept
     {
         (void)signal_number;
         Diagnostics::OnCrash(reinterpret_cast<ucontext_t*>(context), signal_info);
@@ -110,8 +104,7 @@ namespace Graphyte::Launch::Impl::Posix
     static void HandleSignalQuit(
         int signal_number,
         siginfo_t* signal_info,
-        void* context
-    ) noexcept
+        void* context) noexcept
     {
         (void)signal_number;
         Diagnostics::OnCrash(reinterpret_cast<ucontext_t*>(context), signal_info);
@@ -119,7 +112,10 @@ namespace Graphyte::Launch::Impl::Posix
 
     static bool SetResourceLimit(int resource, rlim_t value, bool increase) noexcept
     {
+        // clang-format off
         struct rlimit limit{};
+        // clang-format on
+
         if (getrlimit(resource, &limit) != 0)
         {
             return false;
@@ -141,12 +137,12 @@ namespace Graphyte::Launch::Impl::Posix
 
     static void SetupSignalHandlers() noexcept
     {
-        SetSignal(SIGILL,  HandleSignalKill, &GPreviousSIGILL);
+        SetSignal(SIGILL, HandleSignalKill, &GPreviousSIGILL);
         SetSignal(SIGTRAP, HandleSignalTrap, &GPreviousSIGTRAP);
-        SetSignal(SIGFPE,  HandleSignalFpe, &GPreviousSIGFPE);
-        SetSignal(SIGBUS,  HandleSignalBus, &GPreviousSIGBUS);
+        SetSignal(SIGFPE, HandleSignalFpe, &GPreviousSIGFPE);
+        SetSignal(SIGBUS, HandleSignalBus, &GPreviousSIGBUS);
         SetSignal(SIGSEGV, HandleSignalSegv, &GPreviousSIGSEGV, SA_ONSTACK);
-        SetSignal(SIGINT,  HandleSignalInt, &GPreviousSIGINT, 0, true);
+        SetSignal(SIGINT, HandleSignalInt, &GPreviousSIGINT, 0, true);
         SetSignal(SIGQUIT, HandleSignalQuit, &GPreviousSIGQUIT, 0, true);
     }
 }
@@ -157,7 +153,7 @@ namespace Graphyte::Launch
     {
         std::set_terminate(Impl::Posix::TerminateHandler);
         Impl::Posix::SetupSignalHandlers();
-        
+
         Impl::Posix::SetResourceLimit(RLIMIT_NOFILE, 8192, true);
         Impl::Posix::SetResourceLimit(RLIMIT_CORE, 0, false);
     }

@@ -8,6 +8,7 @@ namespace Graphyte::Network
     class BASE_API IpAddress final
     {
         friend class IpEndPoint;
+
     private:
         union AddressStorage
         {
@@ -27,20 +28,30 @@ namespace Graphyte::Network
 
     public:
         IpAddress() noexcept;
+
         IpAddress(const IpAddress& address) noexcept = default;
+
         IpAddress(IpAddress&& address) noexcept = default;
+
         IpAddress& operator=(const IpAddress&) noexcept = default;
+
         IpAddress& operator=(IpAddress&&) noexcept = default;
-        
+
         explicit IpAddress(AddressFamily family) noexcept;
+
         explicit IpAddress(const struct in_addr& address) noexcept;
+
         explicit IpAddress(const struct in6_addr& address, uint32_t scope_id = 0) noexcept;
 
     public:
         static IpAddress MakeAddress(const void* address, socklen_t length) noexcept;
+
         static IpAddress MakeAddress(const void* address, socklen_t length, uint32_t scope_id) noexcept;
+
         static IpAddress MakeAddress(const struct sockaddr& address) noexcept;
+
         static IpAddress MakeAddress(const struct sockaddr_in& address) noexcept;
+
         static IpAddress MakeAddress(const struct sockaddr_in6& address) noexcept;
 
     public:

@@ -119,8 +119,8 @@ namespace Graphyte::Random
     uint32_t NextUInt32(RandomState& state) noexcept
     {
         uint64_t const sample = NextUInt64(state);
-        uint32_t const hi = static_cast<uint32_t>(sample >> 32u);
-        uint32_t const lo = static_cast<uint32_t>(sample);
+        uint32_t const hi     = static_cast<uint32_t>(sample >> 32u);
+        uint32_t const lo     = static_cast<uint32_t>(sample);
         uint32_t const result = hi ^ lo;
         return result;
     }
@@ -133,7 +133,7 @@ namespace Graphyte::Random
 
     uint32_t NextUInt32(RandomState& state, uint32_t min, uint32_t max) noexcept
     {
-        uint32_t const range = (max - min);
+        uint32_t const range                = (max - min);
         static constexpr uint32_t max_value = std::numeric_limits<uint32_t>::max();
 
         if (range == max_value)
@@ -142,7 +142,7 @@ namespace Graphyte::Random
         }
         else
         {
-            uint32_t const span = range + 1;
+            uint32_t const span  = range + 1;
             uint32_t const limit = max_value - (max_value % span);
 
             uint32_t result;
@@ -217,6 +217,7 @@ namespace Graphyte::Random
     uint64_t NextUInt64(RandomState& state, uint64_t min, uint64_t max) noexcept
     {
         uint64_t const range = (max - min);
+
         static constexpr uint64_t max_value = std::numeric_limits<uint64_t>::max();
 
         if (range == max_value)
@@ -225,7 +226,7 @@ namespace Graphyte::Random
         }
         else
         {
-            uint64_t const span = range + 1;
+            uint64_t const span  = range + 1;
             uint64_t const limit = max_value - (max_value % span);
 
             uint64_t result;
@@ -255,7 +256,7 @@ namespace Graphyte::Random
     float NextFloat(RandomState& state, float min, float max) noexcept
     {
         float const sample = NextFloat(state);
-        float const scale = (max - min);
+        float const scale  = (max - min);
         float const result = (sample * scale) + min;
         return result;
     }
@@ -276,7 +277,7 @@ namespace Graphyte::Random
     double NextDouble(RandomState& state, double min, double max) noexcept
     {
         double const sample = NextDouble(state);
-        double const scale = (max - min);
+        double const scale  = (max - min);
         double const result = (sample * scale) + min;
         return result;
     }
@@ -286,16 +287,16 @@ namespace Graphyte::Random
         float const sample = NextFloat(state);
 
         return (sample < 0.5f)
-            ? (mean + scale * std::log2(2.0f * sample))
-            : (mean - scale * std::log2(2.0f * (1.0f - sample)));
+                   ? (mean + scale * std::log2(2.0f * sample))
+                   : (mean - scale * std::log2(2.0f * (1.0f - sample)));
     }
 
     float NextNormal(RandomState& state) noexcept
     {
         Float2 const sample = NextFloat2(state);
 
-        float const r = Maths::Sqrt(-2.0f * Maths::Log(sample.X));
-        float const theta = sample.Y * Maths::Pi2<float>();
+        float const r      = Maths::Sqrt(-2.0f * Maths::Log(sample.X));
+        float const theta  = sample.Y * Maths::Pi2<float>();
         float const result = r * Maths::Sin(theta);
         return result;
     }
@@ -308,18 +309,17 @@ namespace Graphyte::Random
     Vector3 InsideUnitSphere(RandomState& state) noexcept
     {
         float const theta = NextFloat(state, Maths::Pi2<float>());
-        float const v = NextFloat(state);
-        float const phi = Maths::Acos((2.0f * v) - 1.0f);
-        float const r = Maths::Power(NextFloat(state), 1.0f / 3.0f);
+        float const v     = NextFloat(state);
+        float const phi   = Maths::Acos((2.0f * v) - 1.0f);
+        float const r     = Maths::Power(NextFloat(state), 1.0f / 3.0f);
 
-        auto [sin_phi, cos_phi] = Maths::SinCos(phi);
+        auto [sin_phi, cos_phi]     = Maths::SinCos(phi);
         auto [sin_theta, cos_theta] = Maths::SinCos(theta);
 
         return Maths::Make<Vector3>(
             r * sin_phi * cos_theta,
             r * sin_phi * sin_theta,
-            r * cos_phi
-        );
+            r * cos_phi);
     }
 
     Vector3 OnUnitSphere(RandomState& state) noexcept
@@ -334,7 +334,7 @@ namespace Graphyte::Random
 
     Vector2 OnUnitCircle(RandomState& state) noexcept
     {
-        float const theta = NextFloat(state, Maths::Pi2<float>());
+        float const theta   = NextFloat(state, Maths::Pi2<float>());
         Float2 const coords = Maths::SinCos(theta);
         return Maths::Load<Vector2>(&coords);
     }
@@ -395,10 +395,12 @@ namespace Graphyte::Random
 namespace Graphyte::Random::Impl
 {
     static constexpr const char GBase32Chars[32] = {
+        // clang-format off
         '0', '1', '2', '3', '4', '5', '6', '7',
         '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
         'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
         'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+        // clang-format on
     };
 }
 
@@ -413,8 +415,6 @@ namespace Graphyte::Random
                 std::uint8_t bytes[8];
                 std::uint64_t value;
             } random;
-
-
 
             //
             // Generate 8 random characters at once.

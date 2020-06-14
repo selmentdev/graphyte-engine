@@ -5,11 +5,9 @@ namespace Graphyte::Graphics
 {
     GRAPHICS_API Status DecodeImage_DDS(
         std::unique_ptr<Image>& result,
-        Storage::Archive& archive
-    ) noexcept;
+        Storage::Archive& archive) noexcept;
 
     GRAPHICS_API Status EncodeImage_DDS(
         Storage::Archive& archive,
-        Image const& image
-    ) noexcept;
+        Image const& image) noexcept;
 }

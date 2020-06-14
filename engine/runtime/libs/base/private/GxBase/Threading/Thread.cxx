@@ -16,20 +16,20 @@ namespace Graphyte::Threading::Impl
     {
         switch (value)
         {
-        case ThreadPriority::TimeCritical:
-            return THREAD_PRIORITY_TIME_CRITICAL;
-        case ThreadPriority::Highest:
-            return THREAD_PRIORITY_HIGHEST;
-        case ThreadPriority::AboveNormal:
-            return THREAD_PRIORITY_ABOVE_NORMAL;
-        case ThreadPriority::Normal:
-            return THREAD_PRIORITY_NORMAL;
-        case ThreadPriority::BelowNormal:
-            return THREAD_PRIORITY_BELOW_NORMAL;
-        case ThreadPriority::Lower:
-            return THREAD_PRIORITY_NORMAL - 1;
-        case ThreadPriority::Lowest:
-            return THREAD_PRIORITY_LOWEST;
+            case ThreadPriority::TimeCritical:
+                return THREAD_PRIORITY_TIME_CRITICAL;
+            case ThreadPriority::Highest:
+                return THREAD_PRIORITY_HIGHEST;
+            case ThreadPriority::AboveNormal:
+                return THREAD_PRIORITY_ABOVE_NORMAL;
+            case ThreadPriority::Normal:
+                return THREAD_PRIORITY_NORMAL;
+            case ThreadPriority::BelowNormal:
+                return THREAD_PRIORITY_BELOW_NORMAL;
+            case ThreadPriority::Lower:
+                return THREAD_PRIORITY_NORMAL - 1;
+            case ThreadPriority::Lowest:
+                return THREAD_PRIORITY_LOWEST;
         }
 
         return THREAD_PRIORITY_NORMAL;
@@ -46,23 +46,23 @@ namespace Graphyte::Threading::Impl
 
     typedef struct alignas(8) tagTHREADNAME_INFO
     {
-        DWORD dwType; // Must be 0x1000.
-        LPCSTR szName; // Pointer to name (in user addr space).
+        DWORD dwType;     // Must be 0x1000.
+        LPCSTR szName;    // Pointer to name (in user addr space).
         DWORD dwThreadID; // Thread ID (-1=caller thread).
-        DWORD dwFlags; // Reserved for future use, must be zero.
+        DWORD dwFlags;    // Reserved for future use, must be zero.
     } THREADNAME_INFO;
 
     static void Win32SetThreadName(DWORD dwThreadID, LPCSTR szThreadName)
     {
         THREADNAME_INFO info{
-            .dwType = 0x1000,
-            .szName = szThreadName,
+            .dwType     = 0x1000,
+            .szName     = szThreadName,
             .dwThreadID = dwThreadID,
-            .dwFlags = 0,
+            .dwFlags    = 0,
         };
 
 #pragma warning(push)
-#pragma warning(disable: 6320 6322)
+#pragma warning(disable : 6320 6322)
         __try
         {
             RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
@@ -112,20 +112,20 @@ namespace Graphyte::Threading::Impl
     {
         switch (priority)
         {
-        case ThreadPriority::TimeCritical:
-        case ThreadPriority::Highest:
-            return 30;
-        case ThreadPriority::AboveNormal:
-            return 25;
-        case ThreadPriority::Normal:
-            return 15;
-        case ThreadPriority::BelowNormal:
-            return 5;
-        case ThreadPriority::Lower:
-            return 14;
-        case ThreadPriority::Lowest:
-            return 1;
-            }
+            case ThreadPriority::TimeCritical:
+            case ThreadPriority::Highest:
+                return 30;
+            case ThreadPriority::AboveNormal:
+                return 25;
+            case ThreadPriority::Normal:
+                return 15;
+            case ThreadPriority::BelowNormal:
+                return 5;
+            case ThreadPriority::Lower:
+                return 14;
+            case ThreadPriority::Lowest:
+                return 1;
+        }
 
         GX_ASSERT(false);
         return 5;
@@ -156,8 +156,7 @@ namespace Graphyte::Threading::Impl
     static void SetThreadName(
         [[maybe_unused]] ThreadHandle handle,
         [[maybe_unused]] ThreadId id,
-        [[maybe_unused]] std::string_view name
-    ) noexcept
+        [[maybe_unused]] std::string_view name) noexcept
     {
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #if WDK_NTDDI_VERSION < NTDDI_WIN10_RS1
@@ -174,8 +173,7 @@ namespace Graphyte::Threading::Impl
         GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to set thread {} name to `{}`, because `{}`",
             id.Value,
             name,
-            Diagnostics::GetMessageFromHRESULT(hr)
-        );
+            Diagnostics::GetMessageFromHRESULT(hr));
 #endif
 #elif GRAPHYTE_PLATFORM_POSIX
         std::string sname{ name };
@@ -207,8 +205,8 @@ namespace Graphyte::Threading
 
     Thread& Thread::operator=(Thread&& other) noexcept
     {
-        m_Handle = std::exchange(other.m_Handle, {});
-        m_Id = std::exchange(other.m_Id, {});
+        m_Handle   = std::exchange(other.m_Handle, {});
+        m_Id       = std::exchange(other.m_Id, {});
         m_Runnable = std::exchange(other.m_Runnable, {});
 
         return (*this);
@@ -219,8 +217,7 @@ namespace Graphyte::Threading
         std::string_view name,
         [[maybe_unused]] size_t stacksize,
         ThreadPriority priority,
-        ThreadAffinity affinity
-    ) noexcept
+        ThreadAffinity affinity) noexcept
     {
         GX_ABORT_UNLESS(!m_Handle.IsValid(), "Thread already created");
 
@@ -236,8 +233,7 @@ namespace Graphyte::Threading
             &Impl::ThreadEntryPoint,
             m_Runnable,
             STACK_SIZE_PARAM_IS_A_RESERVATION | CREATE_SUSPENDED,
-            reinterpret_cast<unsigned int*>(&m_Id.Value)
-        ));
+            reinterpret_cast<unsigned int*>(&m_Id.Value)));
 
         bool const success = m_Handle.IsValid();
 
@@ -302,7 +298,7 @@ namespace Graphyte::Threading
         CloseHandle(m_Handle.Value);
         m_Handle.Value = nullptr;
 #elif GRAPHYTE_PLATFORM_POSIX
-        m_Handle.Value = 0;
+        m_Handle.Value     = 0;
 #endif
 
 
@@ -366,4 +362,3 @@ namespace Graphyte::Threading
 #endif
     }
 }
-

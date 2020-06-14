@@ -14,7 +14,9 @@ namespace Graphyte::Threading
     class ScopedLock final
     {
         ScopedLock(const ScopedLock&) = delete;
-        ScopedLock& operator= (const ScopedLock&) = delete;
+
+        ScopedLock& operator=(const ScopedLock&) = delete;
+
     private:
         TLock& m_Lock;
 
@@ -34,7 +36,9 @@ namespace Graphyte::Threading
     class ScopedReaderLock final
     {
         ScopedReaderLock(const ScopedReaderLock&) = delete;
-        ScopedReaderLock& operator= (const ScopedReaderLock&) = delete;
+
+        ScopedReaderLock& operator=(const ScopedReaderLock&) = delete;
+
     private:
         TLock& m_Lock;
 
@@ -54,7 +58,9 @@ namespace Graphyte::Threading
     class ScopedWriterLock final
     {
         ScopedWriterLock(const ScopedWriterLock&) = delete;
-        ScopedWriterLock& operator= (const ScopedWriterLock&) = delete;
+
+        ScopedWriterLock& operator=(const ScopedWriterLock&) = delete;
+
     private:
         TLock& m_Lock;
 

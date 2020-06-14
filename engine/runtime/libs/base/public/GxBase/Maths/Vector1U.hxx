@@ -14,16 +14,18 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                x, 0, 0, 0,
-            } } };
+            x,
+            0,
+            0,
+            0,
+        } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128i const result = _mm_set_epi32(
             static_cast<int>(0),
             static_cast<int>(0),
             static_cast<int>(0),
-            static_cast<int>(x)
-        );
+            static_cast<int>(x));
         return { result };
 #elif GRAPHYTE_HW_NEON
 #error Not implemented
@@ -37,11 +39,11 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                value,
-                value,
-                value,
-                value,
-            } } };
+            value,
+            value,
+            value,
+            value,
+        } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128i const result = _mm_set1_epi32(static_cast<int>(value));

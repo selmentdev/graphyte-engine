@@ -71,11 +71,11 @@ namespace Graphyte::Rendering
         }
 
         Graphics::GpuSubresourceData subresource{};
-        subresource.Memory = std::data(vertices);
-        subresource.Pitch = static_cast<uint32_t>(sizeof(Graphics::GpuVertexComplex) * std::size(vertices));
+        subresource.Memory     = std::data(vertices);
+        subresource.Pitch      = static_cast<uint32_t>(sizeof(Graphics::GpuVertexComplex) * std::size(vertices));
         subresource.SlicePitch = 0;
 
-        m_VertexCount = static_cast<uint32_t>(vertices.size());
+        m_VertexCount  = static_cast<uint32_t>(vertices.size());
         m_VertexBuffer = GRenderDevice->CreateVertexBuffer(subresource.Pitch, Graphics::GpuBufferUsage::Static, &subresource);
     }
 

@@ -5,25 +5,22 @@
 namespace Graphyte::Graphics
 {
     GpuSamplerHandle OpenGLGpuDevice::CreateSampler(
-        const GpuSamplerCreateArgs& args
-    ) noexcept
+        const GpuSamplerCreateArgs& args) noexcept
     {
         auto native = new OpenGLGpuSampler();
 
         GPU_GL_VALIDATE(glCreateSamplers(
             1,
-            &native->m_Resource
-        ));
+            &native->m_Resource));
 
 #if ENABLE_GPU_API_DEBUG
         GPU_GL_VALIDATE(glObjectLabel(
             GL_SAMPLER,
             native->m_Resource,
             static_cast<GLsizei>(strlen("Sampler")),
-            "Sampler"
-        ));
+            "Sampler"));
 #endif
-        
+
         //
         // Min + mip filter.
         //
@@ -58,8 +55,7 @@ namespace Graphyte::Graphics
             GPU_GL_VALIDATE(glSamplerParameteri(
                 native->m_Resource,
                 GL_TEXTURE_MIN_FILTER,
-                filter_value
-            ));
+                filter_value));
         }
 
         //
@@ -72,28 +68,27 @@ namespace Graphyte::Graphics
 
             switch (mag_filter)
             {
-            case GpuFilterType::Linear:
+                case GpuFilterType::Linear:
                 {
                     filter_value = GL_LINEAR;
                     break;
                 }
-            case GpuFilterType::Point:
+                case GpuFilterType::Point:
                 {
                     filter_value = GL_NEAREST;
                     break;
                 }
-            default:
+                default:
                 {
                     filter_value = GL_NEAREST;
                     break;
                 }
             }
-        
+
             GPU_GL_VALIDATE(glSamplerParameteri(
                 native->m_Resource,
                 GL_TEXTURE_MAG_FILTER,
-                filter_value
-            ));
+                filter_value));
         }
 
         //
@@ -107,14 +102,12 @@ namespace Graphyte::Graphics
                 GPU_GL_VALIDATE(glSamplerParameteri(
                     native->m_Resource,
                     GL_TEXTURE_COMPARE_MODE,
-                    GL_COMPARE_REF_TO_TEXTURE
-                ));
+                    GL_COMPARE_REF_TO_TEXTURE));
 
                 GPU_GL_VALIDATE(glSamplerParameteri(
                     native->m_Resource,
                     GL_TEXTURE_COMPARE_FUNC,
-                    static_cast<GLint>(OpenGLGpuTypeMapping::ComparizonFunction(args.CompareOp))
-                ));
+                    static_cast<GLint>(OpenGLGpuTypeMapping::ComparizonFunction(args.CompareOp))));
             }
         }
 
@@ -125,20 +118,17 @@ namespace Graphyte::Graphics
             GPU_GL_VALIDATE(glSamplerParameterf(
                 native->m_Resource,
                 GL_TEXTURE_MIN_LOD,
-                args.MinLod
-            ));
+                args.MinLod));
 
             GPU_GL_VALIDATE(glSamplerParameterf(
                 native->m_Resource,
                 GL_TEXTURE_MAX_LOD,
-                args.MaxLod
-            ));
+                args.MaxLod));
 
             GPU_GL_VALIDATE(glSamplerParameterf(
                 native->m_Resource,
                 GL_TEXTURE_LOD_BIAS,
-                args.MipLodBias
-            ));
+                args.MipLodBias));
         }
 
         //
@@ -148,36 +138,31 @@ namespace Graphyte::Graphics
             GPU_GL_VALIDATE(glSamplerParameteri(
                 native->m_Resource,
                 GL_TEXTURE_WRAP_S,
-                static_cast<GLint>(OpenGLGpuTypeMapping::TextureAddressMode(args.AddressU))
-            ));
+                static_cast<GLint>(OpenGLGpuTypeMapping::TextureAddressMode(args.AddressU))));
 
             GPU_GL_VALIDATE(glSamplerParameteri(
                 native->m_Resource,
                 GL_TEXTURE_WRAP_T,
-                static_cast<GLint>(OpenGLGpuTypeMapping::TextureAddressMode(args.AddressV))
-            ));
+                static_cast<GLint>(OpenGLGpuTypeMapping::TextureAddressMode(args.AddressV))));
 
             GPU_GL_VALIDATE(glSamplerParameteri(
                 native->m_Resource,
                 GL_TEXTURE_WRAP_R,
-                static_cast<GLint>(OpenGLGpuTypeMapping::TextureAddressMode(args.AddressW))
-            ));
+                static_cast<GLint>(OpenGLGpuTypeMapping::TextureAddressMode(args.AddressW))));
         }
 
         return native;
     }
 
     void OpenGLGpuDevice::DestroySampler(
-        GpuSamplerHandle handle
-    ) noexcept
+        GpuSamplerHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<OpenGLGpuSampler*>(handle);
 
         GPU_GL_VALIDATE(glDeleteSamplers(
             1,
-            &native->m_Resource
-        ));
+            &native->m_Resource));
 
         delete native;
     }

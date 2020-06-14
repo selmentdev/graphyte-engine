@@ -9,8 +9,7 @@ namespace Graphyte::System::Impl
         HMONITOR monitor,
         HDC monitor_dc [[maybe_unused]],
         LPRECT rect [[maybe_unused]],
-        LPARAM context
-    ) noexcept
+        LPARAM context) noexcept
     {
         MONITORINFOEXW miex{
             {
@@ -48,8 +47,7 @@ namespace Graphyte::System::Impl
 namespace Graphyte::System
 {
     BASE_API Status GetDisplayMetrics(
-        DisplayMetrics& result
-    ) noexcept
+        DisplayMetrics& result) noexcept
     {
         //
         // Get primary display size.
@@ -115,8 +113,8 @@ namespace Graphyte::System
                     {
                         DisplayInfo display_info{};
 
-                        display_info.Name = Impl::NarrowString(device.DeviceName);
-                        display_info.Id = Impl::NarrowString(monitor.DeviceID);
+                        display_info.Name    = Impl::NarrowString(device.DeviceName);
+                        display_info.Id      = Impl::NarrowString(monitor.DeviceID);
                         display_info.Primary = (device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) != 0;
 
                         EnumDisplayMonitors(nullptr, nullptr, Impl::AcquireMonitorInfo, reinterpret_cast<LPARAM>(&display_info));
@@ -137,16 +135,14 @@ namespace Graphyte::System
 
     BASE_API ColorF GetScreenPixel(
         Point position,
-        float gamma
-    ) noexcept
+        float gamma) noexcept
     {
         COLORREF const pixel = GetPixel(
             GetDC(HWND_DESKTOP),
             position.Left,
-            position.Top
-        );
+            position.Top);
 
-        float const divisor = 1.0F / 255.0F;
+        float const divisor   = 1.0F / 255.0F;
         float const channel_r = divisor * static_cast<float>(static_cast<uint8_t>(pixel));
         float const channel_g = divisor * static_cast<float>(static_cast<uint8_t>(pixel >> 8));
         float const channel_b = divisor * static_cast<float>(static_cast<uint8_t>(pixel >> 16));
@@ -162,8 +158,7 @@ namespace Graphyte::System
     }
 
     BASE_API Status ControlScreensaver(
-        bool enable
-    ) noexcept
+        bool enable) noexcept
     {
         (void)enable;
         return Status::Success;
@@ -173,12 +168,12 @@ namespace Graphyte::System
     {
         INPUT input{
             .type = INPUT_MOUSE,
-            .mi = {
-                .dx = 0,
-                .dy = 0,
-                .mouseData = 0,
-                .dwFlags = MOUSEEVENTF_MOVE,
-                .time = 0,
+            .mi   = {
+                .dx          = 0,
+                .dy          = 0,
+                .mouseData   = 0,
+                .dwFlags     = MOUSEEVENTF_MOVE,
+                .time        = 0,
                 .dwExtraInfo = 0,
             }
         };
@@ -186,7 +181,6 @@ namespace Graphyte::System
         SendInput(
             1,
             &input,
-            sizeof(input)
-        );
+            sizeof(input));
     }
 }

@@ -23,14 +23,12 @@ namespace Graphyte::Graphics
     }
 
     void NullGpuDevice::DestroyCommandList(
-        [[maybe_unused]] GpuCommandListHandle handle
-    ) noexcept
+        [[maybe_unused]] GpuCommandListHandle handle) noexcept
     {
     }
 
     void NullGpuDevice::PlayCommandList(
-        [[maybe_unused]] GpuCommandListHandle handle
-    ) const noexcept
+        [[maybe_unused]] GpuCommandListHandle handle) const noexcept
     {
     }
 }
@@ -38,14 +36,12 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     void NullGpuCommandList::BindRenderTarget(
-        [[maybe_unused]] GpuRenderTargetHandle handle
-    ) noexcept
+        [[maybe_unused]] GpuRenderTargetHandle handle) noexcept
     {
     }
 
     void NullGpuCommandList::BindGraphicsPipelineState(
-        [[maybe_unused]] GpuGraphicsPipelineStateHandle handle
-    ) noexcept
+        [[maybe_unused]] GpuGraphicsPipelineStateHandle handle) noexcept
     {
     }
 
@@ -53,31 +49,27 @@ namespace Graphyte::Graphics
         [[maybe_unused]] GpuVertexBufferHandle handle,
         [[maybe_unused]] uint32_t slot,
         [[maybe_unused]] uint32_t stride,
-        [[maybe_unused]] uint32_t offset
-    ) noexcept
+        [[maybe_unused]] uint32_t offset) noexcept
     {
     }
 
     void NullGpuCommandList::BindIndexBuffer(
         [[maybe_unused]] GpuIndexBufferHandle handle,
         [[maybe_unused]] uint32_t offset,
-        [[maybe_unused]] bool short_indices
-    ) noexcept
+        [[maybe_unused]] bool short_indices) noexcept
     {
     }
 
     void NullGpuCommandList::Draw(
         [[maybe_unused]] uint32_t vertex_count,
-        [[maybe_unused]] uint32_t start_vertex_location
-    ) noexcept
+        [[maybe_unused]] uint32_t start_vertex_location) noexcept
     {
     }
-    
+
     void NullGpuCommandList::DrawIndexed(
         [[maybe_unused]] uint32_t index_count,
         [[maybe_unused]] uint32_t start_index_location,
-        [[maybe_unused]] int32_t base_vertex_location
-    ) noexcept
+        [[maybe_unused]] int32_t base_vertex_location) noexcept
     {
     }
 
@@ -85,8 +77,7 @@ namespace Graphyte::Graphics
         [[maybe_unused]] uint32_t vertex_count_per_instance,
         [[maybe_unused]] uint32_t instance_count,
         [[maybe_unused]] uint32_t start_vertex_location,
-        [[maybe_unused]] uint32_t start_instance_location
-    ) noexcept
+        [[maybe_unused]] uint32_t start_instance_location) noexcept
     {
     }
 
@@ -95,16 +86,14 @@ namespace Graphyte::Graphics
         [[maybe_unused]] uint32_t instance_count,
         [[maybe_unused]] uint32_t start_index_location,
         [[maybe_unused]] int32_t base_vertex_location,
-        [[maybe_unused]] uint32_t start_instance_location
-    ) noexcept
+        [[maybe_unused]] uint32_t start_instance_location) noexcept
     {
     }
 
     void NullGpuCommandList::DispatchCompute(
         [[maybe_unused]] uint32_t threadGroupCountX,
         [[maybe_unused]] uint32_t threadGroupCountY,
-        [[maybe_unused]] uint32_t threadGroupCountZ
-    ) noexcept
+        [[maybe_unused]] uint32_t threadGroupCountZ) noexcept
     {
     }
 }

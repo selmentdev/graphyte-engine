@@ -9,8 +9,7 @@ namespace Graphyte::Diagnostics::Impl
     bool ReportAbort(
         std::string_view title,
         std::string_view content,
-        std::string_view stacktrace
-    ) noexcept
+        std::string_view stacktrace) noexcept
     {
         (void)title;
         (void)content;

@@ -4,8 +4,7 @@
 namespace Graphyte::Hash
 {
     XXHash64::XXHash64(
-        uint64_t seed
-    ) noexcept
+        uint64_t seed) noexcept
         : m_State{}
         , m_Buffer{}
         , m_BufferSize{}
@@ -19,8 +18,7 @@ namespace Graphyte::Hash
 
     bool XXHash64::Update(
         const void* input,
-        size_t input_size
-    ) noexcept
+        size_t input_size) noexcept
     {
         if (input == nullptr || input_size == 0)
         {
@@ -41,7 +39,7 @@ namespace Graphyte::Hash
             return true;
         }
 
-        uint8_t const* stop = data + input_size;
+        uint8_t const* stop       = data + input_size;
         uint8_t const* stop_block = stop - MaxBufferSize;
 
         if (m_BufferSize > 0)
@@ -88,9 +86,9 @@ namespace Graphyte::Hash
         {
             result
                 = BitRotateLeft<uint64_t>(m_State[0], 1)
-                + BitRotateLeft<uint64_t>(m_State[1], 7)
-                + BitRotateLeft<uint64_t>(m_State[2], 12)
-                + BitRotateLeft<uint64_t>(m_State[3], 18);
+                  + BitRotateLeft<uint64_t>(m_State[1], 7)
+                  + BitRotateLeft<uint64_t>(m_State[2], 12)
+                  + BitRotateLeft<uint64_t>(m_State[3], 18);
 
             result = (result ^ ProcessSingle(0, m_State[0])) * Prime1 + Prime4;
             result = (result ^ ProcessSingle(0, m_State[1])) * Prime1 + Prime4;
@@ -135,8 +133,7 @@ namespace Graphyte::Hash
     uint64_t XXHash64::Hash(
         const void* buffer,
         size_t buffer_size,
-        uint64_t seed
-    ) noexcept
+        uint64_t seed) noexcept
     {
         XXHash64 hash{ seed };
         hash.Update(buffer, buffer_size);
@@ -145,8 +142,7 @@ namespace Graphyte::Hash
 
     uint64_t XXHash64::ProcessSingle(
         uint64_t previous,
-        uint64_t input
-    ) noexcept
+        uint64_t input) noexcept
     {
         return BitRotateLeft<uint64_t>(previous + input * Prime2, 31) * Prime1;
     }
@@ -156,13 +152,12 @@ namespace Graphyte::Hash
         uint64_t& state0,
         uint64_t& state1,
         uint64_t& state2,
-        uint64_t& state3
-    ) noexcept
+        uint64_t& state3) noexcept
     {
         auto as_uint64 = reinterpret_cast<const uint64_t*>(block);
-        state0 = ProcessSingle(state0, as_uint64[0]);
-        state1 = ProcessSingle(state1, as_uint64[1]);
-        state2 = ProcessSingle(state2, as_uint64[2]);
-        state3 = ProcessSingle(state3, as_uint64[3]);
+        state0         = ProcessSingle(state0, as_uint64[0]);
+        state1         = ProcessSingle(state1, as_uint64[1]);
+        state2         = ProcessSingle(state2, as_uint64[2]);
+        state3         = ProcessSingle(state3, as_uint64[3]);
     }
 }

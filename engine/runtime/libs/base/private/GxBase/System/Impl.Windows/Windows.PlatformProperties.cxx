@@ -66,12 +66,12 @@ namespace Graphyte::System::Impl
 
             Impl::GLogicalCores = si.dwNumberOfProcessors;
 
-            Impl::GMemoryProperties.TotalPhysical = msex.ullTotalPhys;
-            Impl::GMemoryProperties.TotalVirtual = msex.ullTotalVirtual;
-            Impl::GMemoryProperties.TotalPagefile = msex.ullTotalPageFile;
+            Impl::GMemoryProperties.TotalPhysical               = msex.ullTotalPhys;
+            Impl::GMemoryProperties.TotalVirtual                = msex.ullTotalVirtual;
+            Impl::GMemoryProperties.TotalPagefile               = msex.ullTotalPageFile;
             Impl::GMemoryProperties.SystemAllocationGranularity = si.dwAllocationGranularity;
-            Impl::GMemoryProperties.PageSize = si.dwPageSize;
-            Impl::GMemoryProperties.AddressLimit = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(si.lpMaximumApplicationAddress));
+            Impl::GMemoryProperties.PageSize                    = si.dwPageSize;
+            Impl::GMemoryProperties.AddressLimit                = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(si.lpMaximumApplicationAddress));
         }
 
 

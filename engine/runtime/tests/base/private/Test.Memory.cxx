@@ -8,6 +8,7 @@
 TEST_CASE("Page memory allocator")
 {
     const size_t ElementsCount = 1024;
+
     const size_t BlockSize = ElementsCount * sizeof(uint64_t);
 
     uint64_t* block = static_cast<uint64_t*>(Graphyte::System::OsVirtualAlloc(BlockSize));
@@ -119,7 +120,8 @@ TEST_CASE("Object pool")
             while (!allocations.empty())
             {
                 std::uniform_int_distribution<ptrdiff_t> sample{ 0, static_cast<ptrdiff_t>(allocations.size() - 1) };
-                auto it = allocations.begin();
+
+                auto it       = allocations.begin();
                 auto distance = sample(random);
 
                 std::advance(it, distance);
@@ -163,7 +165,8 @@ TEST_CASE("Object pool")
             for (size_t i = 0; i < (5 * AllocsCount); ++i)
             {
                 std::uniform_int_distribution<ptrdiff_t> sample{ 0, static_cast<ptrdiff_t>(allocations.size() - 1) };
-                auto it = allocations.begin();
+
+                auto it       = allocations.begin();
                 auto distance = sample(random);
 
                 std::advance(it, distance);

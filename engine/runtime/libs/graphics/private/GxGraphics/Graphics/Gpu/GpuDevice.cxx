@@ -13,9 +13,7 @@ namespace Graphyte::Graphics
 
     GpuDevice::~GpuDevice() noexcept = default;
 
-    void GpuDevice::Tick(
-        [[maybe_unused]] float time
-    ) noexcept
+    void GpuDevice::Tick([[maybe_unused]] float time) noexcept
     {
     }
 }

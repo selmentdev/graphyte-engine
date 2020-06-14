@@ -21,10 +21,9 @@ namespace Graphyte::Graphics
         bool fullscreen,
         PixelFormat color_format,
         PixelFormat depth_format,
-        GpuMsaaQuality msaa
-    ) noexcept
+        GpuMsaaQuality msaa) noexcept
     {
-    #if GRAPHYTE_PLATFORM_LINUX
+#if GRAPHYTE_PLATFORM_LINUX
 
         auto* sdl_window = reinterpret_cast<SDL_Window*>(native_handle);
 
@@ -33,12 +32,12 @@ namespace Graphyte::Graphics
         SDL_VERSION(&window_info.version);
 
         GX_ENSURE(SDL_GetWindowWMInfo(
-            sdl_window,
-            &window_info
-        ) == SDL_TRUE);
+                      sdl_window,
+                      &window_info)
+                  == SDL_TRUE);
 
         VkXcbSurfaceCreateInfoKHR create_info{};
-        create_info.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
+        create_info.sType      = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
         create_info.connection = XGetXCBConnection(window_info.info.x11.display);
 
         // Does this static_cast is required?
@@ -46,8 +45,7 @@ namespace Graphyte::Graphics
 
         auto create_surface_khr = VKGetFunction<PFN_vkCreateXcbSurfaceKHR>(
             m_Instance,
-            "vkCreateXcbSurfaceKHR"
-        );
+            "vkCreateXcbSurfaceKHR");
 
         GX_ASSERT(create_surface_khr != nullptr);
 
@@ -57,20 +55,18 @@ namespace Graphyte::Graphics
             m_Instance,
             &create_info,
             nullptr,
-            &surface
-        ));
+            &surface));
 
-    #elif GRAPHYTE_PLATFORM_WINDOWS
+#elif GRAPHYTE_PLATFORM_WINDOWS
 
         VkWin32SurfaceCreateInfoKHR create_info{};
-        create_info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+        create_info.sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
         create_info.hinstance = System::Impl::GInstanceHandle;
-        create_info.hwnd = reinterpret_cast<HWND>(native_handle);
+        create_info.hwnd      = reinterpret_cast<HWND>(native_handle);
 
         auto create_surface_khr = VKGetFunction<PFN_vkCreateWin32SurfaceKHR>(
             m_Instance,
-            "vkCreateWin32SurfaceKHR"
-        );
+            "vkCreateWin32SurfaceKHR");
 
         GX_ASSERT(create_surface_khr != nullptr);
 
@@ -79,10 +75,9 @@ namespace Graphyte::Graphics
             m_Instance,
             &create_info,
             nullptr,
-            &surface
-        ));
+            &surface));
 
-    #endif
+#endif
         (void)native_handle;
         (void)width;
         (void)height;
@@ -97,17 +92,15 @@ namespace Graphyte::Graphics
         createInfo.surface = surface;
 #endif
 
-        auto native = new VulkanGpuViewport();
+        auto native     = new VulkanGpuViewport();
         native->Surface = surface;
         //native->
 
         return native;
-
     }
 
     void VulkanGpuDevice::DestroyViewport(
-        GpuViewportHandle handle
-    ) noexcept
+        GpuViewportHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<VulkanGpuViewport*>(handle);
@@ -115,8 +108,7 @@ namespace Graphyte::Graphics
         vkDestroySurfaceKHR(
             m_Instance,
             native->Surface,
-            nullptr
-        );
+            nullptr);
     }
 
     void VulkanGpuDevice::ResizeViewport(
@@ -124,8 +116,7 @@ namespace Graphyte::Graphics
         uint32_t width,
         uint32_t height,
         bool fullscreen,
-        PixelFormat format
-    ) noexcept
+        PixelFormat format) noexcept
     {
         (void)handle;
         (void)width;
@@ -135,8 +126,7 @@ namespace Graphyte::Graphics
     }
 
     void VulkanGpuDevice::BeginDrawViewport(
-        GpuViewportHandle handle
-    ) noexcept
+        GpuViewportHandle handle) noexcept
     {
         (void)handle;
     }
@@ -144,8 +134,7 @@ namespace Graphyte::Graphics
     void VulkanGpuDevice::EndDrawViewport(
         GpuViewportHandle handle,
         bool present,
-        int interval
-    ) noexcept
+        int interval) noexcept
     {
         (void)handle;
         (void)present;

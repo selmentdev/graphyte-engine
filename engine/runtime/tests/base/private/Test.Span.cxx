@@ -36,11 +36,11 @@ TEST_CASE("Span type")
     REQUIRE(bytez[11] == std::byte{ 0 });
 
     auto subytez = as_writable_bytes(data.subspan(1, 2));
-    subytez[0] = std::byte{ 0x42 };
-    subytez[1] = std::byte{ 0x42 };
-    subytez[2] = std::byte{ 0x42 };
-    subytez[3] = std::byte{ 0x42 };
-    subytez[7] = std::byte{ 0xcc };
+    subytez[0]   = std::byte{ 0x42 };
+    subytez[1]   = std::byte{ 0x42 };
+    subytez[2]   = std::byte{ 0x42 };
+    subytez[3]   = std::byte{ 0x42 };
+    subytez[7]   = std::byte{ 0xcc };
 
     REQUIRE(subytez.size() == 8);
 

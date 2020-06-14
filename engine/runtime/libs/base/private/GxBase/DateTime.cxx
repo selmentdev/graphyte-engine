@@ -5,10 +5,14 @@
 namespace Graphyte::Impl
 {
     static constexpr const std::int32_t GDaysToMonth365[13] = {
+        // clang-format off
         0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365,
+        // clang-format on
     };
     static constexpr const std::int32_t GDaysToMonth366[13] = {
+        // clang-format off
         0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366,
+        // clang-format on
     };
 
     static constexpr bool IsLeapYear(std::int32_t year) noexcept
@@ -19,6 +23,7 @@ namespace Graphyte::Impl
     static constexpr std::int32_t DaysInMonth(std::int32_t year, std::int32_t month) noexcept
     {
         bool const leap_year = IsLeapYear(year);
+
         auto const& days_to_month = leap_year ? GDaysToMonth366 : GDaysToMonth365;
 
         return days_to_month[month] - days_to_month[month - 1];
@@ -28,8 +33,7 @@ namespace Graphyte::Impl
         std::int32_t year,
         std::int32_t month,
         std::int32_t day,
-        Status& status
-    ) noexcept
+        Status& status) noexcept
     {
         if (year < 1 || year > 9999 || month < 1 || month > 12 || day < 1)
         {
@@ -55,17 +59,15 @@ namespace Graphyte::Impl
         std::int32_t hour,
         std::int32_t minute,
         std::int32_t second,
-        Status& status
-    ) noexcept
+        Status& status) noexcept
     {
-        std::int64_t const total
-            = static_cast<std::int64_t>(hour) * 3600
-            + static_cast<std::int64_t>(minute) * 60
-            + static_cast<std::int64_t>(second);
+        std::int64_t const total = static_cast<std::int64_t>(hour) * 3600
+                                   + static_cast<std::int64_t>(minute) * 60
+                                   + static_cast<std::int64_t>(second);
 
         status = (total > GMaxSeconds || total < GMinSeconds)
-            ? Status::Failure
-            : Status::Success;
+                     ? Status::Failure
+                     : Status::Success;
 
         return total * GTicksInSecond;
     }
@@ -76,8 +78,7 @@ namespace Graphyte::Impl
         std::int32_t& month,
         std::int32_t& day,
         std::int32_t& year_day,
-        std::int32_t& week_day
-    ) noexcept
+        std::int32_t& week_day) noexcept
     {
         int32_t n = static_cast<int32_t>(ticks / GTicksInDay);
 
@@ -122,7 +123,7 @@ namespace Graphyte::Impl
         }
 
         month = m;
-        day = n - days[m - 1] + 1;
+        day   = n - days[m - 1] + 1;
     }
 
     static constexpr void GetTimePart(
@@ -130,19 +131,18 @@ namespace Graphyte::Impl
         std::int32_t& hour,
         std::int32_t& minute,
         std::int32_t& second,
-        std::int32_t& millisecond
-    ) noexcept
+        std::int32_t& millisecond) noexcept
     {
         std::int64_t n = ticks / Impl::GTicksInMillisecond;
 
         millisecond = static_cast<std::int32_t>(n % 1000);
-        n = n / 1000;
+        n           = n / 1000;
 
         second = static_cast<std::int32_t>(n % 60);
-        n = n / 60;
+        n      = n / 60;
 
         minute = static_cast<std::int32_t>(n % 60);
-        n = n / 60;
+        n      = n / 60;
 
         hour = static_cast<std::int32_t>(n % 24);
     }
@@ -168,15 +168,15 @@ namespace Graphyte
     BASE_API bool CalendarTime::IsValid() const noexcept
     {
         return (this->Year >= 1)
-            && (this->Year <= 9999)
-            && (this->Month >= 1)
-            && (this->Month <= 12)
-            && (this->Day >= 1)
-            && (this->Day <= Impl::DaysInMonth(this->Year, this->Month))
-            && (this->Hour <= 23)
-            && (this->Minute <= 59)
-            && (this->Second <= 59)
-            && (this->Millisecond <= 999);
+               && (this->Year <= 9999)
+               && (this->Month >= 1)
+               && (this->Month <= 12)
+               && (this->Day >= 1)
+               && (this->Day <= Impl::DaysInMonth(this->Year, this->Month))
+               && (this->Hour <= 23)
+               && (this->Minute <= 59)
+               && (this->Second <= 59)
+               && (this->Millisecond <= 999);
     }
 }
 
@@ -185,8 +185,7 @@ namespace Graphyte
     BASE_API DateTime DateTime::Create(
         std::int32_t year,
         std::int32_t month,
-        std::int32_t day
-    ) noexcept
+        std::int32_t day) noexcept
     {
         Status status = Status::Success;
 
@@ -202,8 +201,7 @@ namespace Graphyte
         std::int32_t day,
         std::int32_t hour,
         std::int32_t minute,
-        std::int32_t second
-    ) noexcept
+        std::int32_t second) noexcept
     {
         Status status = Status::Success;
 
@@ -223,8 +221,7 @@ namespace Graphyte
         std::int32_t hour,
         std::int32_t minute,
         std::int32_t second,
-        std::int32_t millisecond
-    ) noexcept
+        std::int32_t millisecond) noexcept
     {
         Status status = Status::Success;
 
@@ -284,16 +281,14 @@ namespace Graphyte
 
     BASE_API TimeSpan DateTime::GetTimeOfDay() const noexcept
     {
-        return TimeSpan
-        {
+        return TimeSpan{
             this->Value % Impl::GTicksInDay
         };
     }
 
     BASE_API DateTime DateTime::GetDate() const noexcept
     {
-        return DateTime
-        {
+        return DateTime{
             this->Value - (this->Value % Impl::GTicksInDay)
         };
     }
@@ -307,8 +302,7 @@ namespace Graphyte
             value.Hour,
             value.Minute,
             value.Second,
-            value.Millisecond
-        );
+            value.Millisecond);
     }
 
     BASE_API bool DateTime::ToCalendar(CalendarTime& result) noexcept
@@ -319,16 +313,14 @@ namespace Graphyte
             result.Month,
             result.Day,
             result.DayOfYear,
-            result.DayOfWeek
-        );
+            result.DayOfWeek);
 
         Impl::GetTimePart(
             this->Value,
             result.Hour,
             result.Minute,
             result.Second,
-            result.Millisecond
-        );
+            result.Millisecond);
 
         return true;
     }
@@ -340,29 +332,27 @@ namespace Graphyte
 
         switch (format)
         {
-        case DateTimeFormat::Date:
+            case DateTimeFormat::Date:
             {
                 result = fmt::format(
                     "{:04d}-{:02d}-{:02d}",
                     time.Year,
                     time.Month,
-                    time.Day
-                );
+                    time.Day);
                 break;
             }
 
-        case DateTimeFormat::Time:
+            case DateTimeFormat::Time:
             {
                 result = fmt::format(
                     "{:02d}:{:02d}:{:02d}",
                     time.Hour,
                     time.Minute,
-                    time.Second
-                );
+                    time.Second);
                 break;
             }
 
-        case DateTimeFormat::FileSafe:
+            case DateTimeFormat::FileSafe:
             {
                 result = fmt::format(
                     "{:04d}.{:02d}.{:02d}-{:02d}.{:02d}.{:02d}",
@@ -371,12 +361,11 @@ namespace Graphyte
                     time.Day,
                     time.Hour,
                     time.Minute,
-                    time.Second
-                );
+                    time.Second);
                 break;
             }
 
-        case DateTimeFormat::DateTime:
+            case DateTimeFormat::DateTime:
             {
                 result = fmt::format(
                     "{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}",
@@ -385,12 +374,11 @@ namespace Graphyte
                     time.Day,
                     time.Hour,
                     time.Minute,
-                    time.Second
-                );
+                    time.Second);
                 break;
             }
 
-        case DateTimeFormat::TimeStamp:
+            case DateTimeFormat::TimeStamp:
             {
                 result = fmt::format(
                     "{:04d}.{:02d}.{:02d}-{:02d}.{:02d}.{:02d}.{:03d}",
@@ -400,12 +388,11 @@ namespace Graphyte
                     time.Hour,
                     time.Minute,
                     time.Second,
-                    time.Millisecond
-                );
+                    time.Millisecond);
                 break;
             }
 
-        default:
+            default:
             {
                 GX_ASSERTF(false, "Unknown date time format `{}`", static_cast<uint32_t>(format));
                 break;
@@ -458,69 +445,69 @@ namespace Graphyte
 
                 switch (ch)
                 {
-                case 'a':
+                    case 'a':
                     {
                         const char* ampm = isMorning ? "am" : "pm";
                         buffer.append(ampm, ampm + 2);
                         break;
                     }
-                case 'A':
+                    case 'A':
                     {
                         const char* ampm = isMorning ? "AM" : "PM";
                         buffer.append(ampm, ampm + 2);
                         break;
                     }
-                case 'd':
+                    case 'd':
                     {
                         fmt::format_to(buffer, "{:02}", time.Day);
                         break;
                     }
-                case 'D':
+                    case 'D':
                     {
                         fmt::format_to(buffer, "{:03}", time.DayOfYear);
                         break;
                     }
-                case 'm':
+                    case 'm':
                     {
                         fmt::format_to(buffer, "{:02}", time.Month);
                         break;
                     }
-                case 'y':
+                    case 'y':
                     {
                         fmt::format_to(buffer, "{:02}", time.Year % 100);
                         break;
                     }
-                case 'Y':
+                    case 'Y':
                     {
                         fmt::format_to(buffer, "{}", time.Year);
                         break;
                     }
-                case 'h':
+                    case 'h':
                     {
                         fmt::format_to(buffer, "{:02}", time.Hour % 12);
                         break;
                     }
-                case 'H':
+                    case 'H':
                     {
                         fmt::format_to(buffer, "{:02}", time.Hour);
                         break;
                     }
-                case 'M':
+                    case 'M':
                     {
                         fmt::format_to(buffer, "{:02}", time.Minute);
                         break;
                     }
-                case 'S':
+                    case 'S':
                     {
                         fmt::format_to(buffer, "{:02}", time.Second);
                         break;
                     }
-                case 's':
+                    case 's':
                     {
                         fmt::format_to(buffer, "{:03}", time.Millisecond);
                         break;
                     }
-                default:
+                    default:
                     {
                         GX_ASSERTF(false, "Unknown format specifier: {:c}", ch);
                         buffer.push_back(ch);
@@ -541,8 +528,7 @@ namespace Graphyte
 
         result.assign(
             std::data(buffer),
-            std::size(buffer)
-        );
+            std::size(buffer));
 
         return true;
     }
@@ -557,7 +543,7 @@ namespace Graphyte
         int32_t timezone_sign = 0;
 
         auto* ptr_begin = std::data(format);
-        auto* ptr_end = std::data(format) + std::size(format);
+        auto* ptr_end   = std::data(format) + std::size(format);
 
         // Parse year.
         auto [sep1, ecc1] = std::from_chars(ptr_begin, ptr_end, time.Year, 10);
@@ -687,13 +673,12 @@ namespace Graphyte::Impl
         std::int32_t hours,
         std::int32_t minutes,
         std::int32_t seconds,
-        std::int32_t milliseconds
-    ) noexcept
+        std::int32_t milliseconds) noexcept
     {
-        std::int64_t const hours_as_seconds = static_cast<std::int64_t>(hours) * 3600;
+        std::int64_t const hours_as_seconds   = static_cast<std::int64_t>(hours) * 3600;
         std::int64_t const minutes_as_seconds = static_cast<std::int64_t>(minutes) * 60;
-        std::int64_t const as_seconds = hours_as_seconds + minutes_as_seconds + seconds;
-        std::int64_t const as_milliseconds = as_seconds * std::int64_t{ 1000 };
+        std::int64_t const as_seconds         = hours_as_seconds + minutes_as_seconds + seconds;
+        std::int64_t const as_milliseconds    = as_seconds * std::int64_t{ 1000 };
         std::int64_t const total_milliseconds = as_milliseconds + static_cast<std::int64_t>(milliseconds);
 
         std::int64_t const ticks = total_milliseconds * Impl::GTicksInMillisecond;
@@ -701,7 +686,7 @@ namespace Graphyte::Impl
         bool overflow = false;
 
         std::int64_t const ticks_per_day = Impl::GTicksInDay * days;
-        std::int64_t const biased_ticks = ticks + ticks_per_day;
+        std::int64_t const biased_ticks  = ticks + ticks_per_day;
 
         if (days > 0)
         {
@@ -741,8 +726,7 @@ namespace Graphyte
     BASE_API TimeSpan TimeSpan::Create(
         std::int32_t hours,
         std::int32_t minutes,
-        std::int32_t seconds
-    ) noexcept
+        std::int32_t seconds) noexcept
     {
         std::int64_t ticks{};
         Impl::ComputeTimeSpanTicks(ticks, 0, hours, minutes, seconds, 0);
@@ -753,8 +737,7 @@ namespace Graphyte
         std::int32_t days,
         std::int32_t hours,
         std::int32_t minutes,
-        std::int32_t seconds
-    ) noexcept
+        std::int32_t seconds) noexcept
     {
         std::int64_t ticks{};
         Impl::ComputeTimeSpanTicks(ticks, days, hours, minutes, seconds, 0);
@@ -766,8 +749,7 @@ namespace Graphyte
         std::int32_t hours,
         std::int32_t minutes,
         std::int32_t seconds,
-        std::int32_t milliseconds
-    ) noexcept
+        std::int32_t milliseconds) noexcept
     {
         std::int64_t ticks{};
         Impl::ComputeTimeSpanTicks(ticks, days, hours, minutes, seconds, milliseconds);
@@ -796,8 +778,8 @@ namespace Graphyte
     BASE_API bool ToString(std::string& result, TimeSpan value) noexcept
     {
         const char* format = (value.Value < Impl::GTicksInDay)
-            ? "%n%h:%m:%s.%f"
-            : "%n%d.%h:%m:%s.%f";
+                                 ? "%n%h:%m:%s.%f"
+                                 : "%n%d.%h:%m:%s.%f";
 
         return ToString(result, value, format);
     }
@@ -823,7 +805,7 @@ namespace Graphyte
             {
                 switch (ch)
                 {
-                case 'n':
+                    case 'n':
                     {
                         if (value.Value < 0)
                         {
@@ -831,62 +813,62 @@ namespace Graphyte
                         }
                         break;
                     }
-                case 'N':
+                    case 'N':
                     {
                         buffer.push_back((value.Value < 0) ? '-' : '+');
                         break;
                     }
-                case 'd':
+                    case 'd':
                     {
                         fmt::format_to(buffer, "{}", std::abs(members.Days));
                         break;
                     }
-                case 'h':
+                    case 'h':
                     {
                         fmt::format_to(buffer, "{:02d}", std::abs(members.Hours));
                         break;
                     }
-                case 'm':
+                    case 'm':
                     {
                         fmt::format_to(buffer, "{:02d}", std::abs(members.Minutes));
                         break;
                     }
-                case 's':
+                    case 's':
                     {
                         fmt::format_to(buffer, "{:02d}", std::abs(members.Seconds));
                         break;
                     }
-                case 'f':
+                    case 'f':
                     {
                         fmt::format_to(buffer, "{:03d}", std::abs(members.Milliseconds));
                         break;
                     }
-                case 'D':
+                    case 'D':
                     {
                         fmt::format_to(buffer, "{}", std::abs(value.GetTotalDays()));
                         break;
                     }
-                case 'H':
+                    case 'H':
                     {
                         fmt::format_to(buffer, "{:02d}", std::abs(value.GetTotalHours()));
                         break;
                     }
-                case 'M':
+                    case 'M':
                     {
                         fmt::format_to(buffer, "{:02d}", std::abs(value.GetTotalMinutes()));
                         break;
                     }
-                case 'S':
+                    case 'S':
                     {
                         fmt::format_to(buffer, "{:02d}", std::abs(value.GetTotalSeconds()));
                         break;
                     }
-                case 'F':
+                    case 'F':
                     {
                         fmt::format_to(buffer, "{:03d}", std::abs(value.GetTotalMilliseconds()));
                         break;
                     }
-                default:
+                    default:
                     {
                         buffer.push_back(ch);
                         break;

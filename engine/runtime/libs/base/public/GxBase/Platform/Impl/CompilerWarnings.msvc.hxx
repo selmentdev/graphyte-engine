@@ -1,4 +1,5 @@
 #ifdef _MSC_VER
+// clang-format off
 
 //
 // Turning all warnings and errors
@@ -162,3 +163,5 @@
 #pragma warning(error   : 5046) // 'function' : Symbol involving type with internal linkage not defined
 #pragma warning(error   : 5105) // macro expansion producing 'defined' has undefined behavior
 #endif
+
+// clang-format on

@@ -25,8 +25,7 @@ namespace Graphyte::Storage
     public:
         virtual void Serialize(
             void* buffer,
-            size_t size
-        ) noexcept = 0;
+            size_t size) noexcept = 0;
 
         virtual int64_t GetPosition() noexcept
         {
@@ -39,8 +38,7 @@ namespace Graphyte::Storage
         }
 
         virtual void SetPosition(
-            [[maybe_unused]] int64_t position
-        ) noexcept
+            [[maybe_unused]] int64_t position) noexcept
         {
         }
 
@@ -70,10 +68,9 @@ namespace Graphyte::Storage
         }
 
     public:
-        __forceinline friend Archive& operator << (
+        __forceinline friend Archive& operator<<(
             Archive& archive,
-            std::string& value
-        ) noexcept
+            std::string& value) noexcept
         {
             GX_ASSERT(value.length() <= static_cast<size_t>(std::numeric_limits<int32_t>::max()));
 
@@ -93,157 +90,157 @@ namespace Graphyte::Storage
 
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, bool& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, bool& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, char& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, char& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, char8_t& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, char8_t& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, char16_t& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, char16_t& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, char32_t& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, char32_t& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, wchar_t& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, wchar_t& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, signed char& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, signed char& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, signed short& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, signed short& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, signed int& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, signed int& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, signed long& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, signed long& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, signed long long& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, signed long long& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, unsigned char& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, unsigned char& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, unsigned short& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, unsigned short& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, unsigned int& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, unsigned int& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, unsigned long& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, unsigned long& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, unsigned long long& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, unsigned long long& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, float& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, float& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, double& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, double& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, long double& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, long double& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Float2A& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float2A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Float3A& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float3A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Float4A& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float4A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Float3x3A& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float3x3A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Float4x3A& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float4x3A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator << (Archive& archive, Float4x4A& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float4x4A& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Float2& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float2& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Float3& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float3& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Float4& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float4& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Float3x3& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float3x3& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Float4x3& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float4x3& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
         }
-        __forceinline friend Archive& operator<< (Archive& archive, Float4x4& value) noexcept
+        __forceinline friend Archive& operator<<(Archive& archive, Float4x4& value) noexcept
         {
             archive.Serialize(&value, sizeof(value));
             return archive;
@@ -251,16 +248,16 @@ namespace Graphyte::Storage
     };
 
     template <typename TEnumType>
-    __forceinline Archive& operator<< (Archive& archive, TEnumType& value) noexcept
-        requires (std::is_enum_v<TEnumType>)
+    __forceinline Archive& operator<<(Archive& archive, TEnumType& value) noexcept
+        requires(std::is_enum_v<TEnumType>)
     {
         archive.Serialize(&value, sizeof(value));
         return archive;
     }
 
     template <typename T>
-    __forceinline Archive& operator<< (Archive& archive, std::vector<T>& value) noexcept
-        requires (!std::is_polymorphic_v<T>)
+    __forceinline Archive& operator<<(Archive& archive, std::vector<T>& value) noexcept
+        requires(!std::is_polymorphic_v<T>)
     {
         if (archive.IsLoading())
         {
@@ -281,12 +278,12 @@ namespace Graphyte::Storage
         return archive;
     }
 
-    __forceinline Archive& operator<< (Archive& archive, Uuid& value) noexcept
+    __forceinline Archive& operator<<(Archive& archive, Uuid& value) noexcept
     {
         return archive << value.Low << value.High;
     }
 
-    __forceinline Archive& operator<< (Archive& archive, DateTime& value) noexcept
+    __forceinline Archive& operator<<(Archive& archive, DateTime& value) noexcept
     {
         return archive << value.Value;
     }

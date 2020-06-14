@@ -21,7 +21,7 @@ namespace Graphyte
             return (this->Low | this->High) == 0;
         }
 
-        constexpr auto operator <=> (Uuid const& rhs) const noexcept = default;
+        constexpr auto operator<=>(Uuid const& rhs) const noexcept = default;
     };
 
     static_assert(sizeof(Uuid) == 16);

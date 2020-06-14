@@ -13,8 +13,7 @@ namespace Graphyte
         unsigned short,
         unsigned int,
         unsigned long,
-        unsigned long long
-    >;
+        unsigned long long>;
 
     template <typename T>
     inline constexpr bool AlwaysFalse = false;

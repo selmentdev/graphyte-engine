@@ -6,8 +6,7 @@ namespace GraphyteAssets
 {
     ASSETS_MATERIAL_API void InitializeAssetsMaterialLibrary() noexcept
     {
-        CompilerFactory::Get().Register("compile-material", []() -> std::unique_ptr<ICompiler>
-        {
+        CompilerFactory::Get().Register("compile-material", []() -> std::unique_ptr<ICompiler> {
             return std::make_unique<MaterialCompiler>();
         });
     }

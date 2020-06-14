@@ -14,8 +14,8 @@ namespace Graphyte::Graphics::Impl
 
         bool force_glcore = CommandLine::Get("--force-glcore").has_value();
         bool force_vulkan = CommandLine::Get("--force-vulkan").has_value();
-        bool force_d3d11 = CommandLine::Get("--force-d3d11").has_value();
-        bool force_d3d12 = CommandLine::Get("--force-d3d12").has_value();
+        bool force_d3d11  = CommandLine::Get("--force-d3d11").has_value();
+        bool force_d3d12  = CommandLine::Get("--force-d3d12").has_value();
 
         if (!force_glcore && !force_vulkan && !force_d3d11 && !force_d3d12)
         {

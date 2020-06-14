@@ -137,8 +137,8 @@ namespace Graphyte::Maths::Random
         float variable = NextFloat32(generator);
 
         return (variable < 0.5F)
-            ? (mean + scale * Log2(2.0F * variable))
-            : (mean - scale * Log2(2.0F * (1.0F - variable)));
+                   ? (mean + scale * Log2(2.0F * variable))
+                   : (mean - scale * Log2(2.0F * (1.0F - variable)));
     }
 
     template <typename TGenerator>
@@ -147,7 +147,7 @@ namespace Graphyte::Maths::Random
         float u1 = NextFloat32(generator);
         float u2 = NextFloat32(generator);
 
-        float r = Sqrt(-2.0F * Log(u1));
+        float r     = Sqrt(-2.0F * Log(u1));
         float theta = PI2<float> * u2;
         return r * Sin(theta);
     }

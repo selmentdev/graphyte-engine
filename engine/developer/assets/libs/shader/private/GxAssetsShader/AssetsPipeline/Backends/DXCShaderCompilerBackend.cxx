@@ -51,16 +51,14 @@ namespace Graphyte::AssetsPipeline
                 hr = create_instance(
                     CLSID_DxcLibrary,
                     __uuidof(IDxcLibrary),
-                    reinterpret_cast<void**>(m_DxcLibrary.GetAddressOf())
-                );
+                    reinterpret_cast<void**>(m_DxcLibrary.GetAddressOf()));
 
                 GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to create DXC Library");
 
                 hr = create_instance(
                     CLSID_DxcCompiler,
                     __uuidof(IDxcCompiler),
-                    reinterpret_cast<void**>(m_DxcCompiler.GetAddressOf())
-                );
+                    reinterpret_cast<void**>(m_DxcCompiler.GetAddressOf()));
 
                 GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to create DXC Compiler");
 
@@ -72,7 +70,7 @@ namespace Graphyte::AssetsPipeline
 
     DXCShaderCompilerBackend::~DXCShaderCompilerBackend() noexcept
     {
-        m_DxcLibrary = nullptr;
+        m_DxcLibrary  = nullptr;
         m_DxcCompiler = nullptr;
 
         if (m_LibDxCompiler != nullptr)
@@ -93,28 +91,28 @@ namespace Graphyte::AssetsPipeline
 
             switch (input.Platform)
             {
-            case System::PlatformType::Windows:
-                break;
-            default:
-                return false;
+                case System::PlatformType::Windows:
+                    break;
+                default:
+                    return false;
             }
 
             switch (input.RenderAPI)
             {
-            case Graphics::GpuRenderAPI::D3D12:
-                break;
-            default:
-                return false;
+                case Graphics::GpuRenderAPI::D3D12:
+                    break;
+                default:
+                    return false;
             }
 
             switch (input.Profile)
             {
-            case Graphics::GpuShaderProfile::D3DSM_6_0:
-            case Graphics::GpuShaderProfile::D3DSM_6_1:
-            case Graphics::GpuShaderProfile::D3DSM_6_2:
-                break;
-            default:
-                return false;
+                case Graphics::GpuShaderProfile::D3DSM_6_0:
+                case Graphics::GpuShaderProfile::D3DSM_6_1:
+                case Graphics::GpuShaderProfile::D3DSM_6_2:
+                    break;
+                default:
+                    return false;
             }
 
             return true;
@@ -169,8 +167,7 @@ namespace Graphyte::AssetsPipeline
             std::data(dxc_defines),
             static_cast<UINT32>(std::size(dxc_defines)),
             nullptr,
-            compile_result.ReleaseAndGetAddressOf()
-        );
+            compile_result.ReleaseAndGetAddressOf());
 
         if (FAILED(hr_compile))
         {
@@ -195,8 +192,7 @@ namespace Graphyte::AssetsPipeline
 
             output.Bytecode.assign(
                 reinterpret_cast<std::byte*>(bytecode->GetBufferPointer()),
-                reinterpret_cast<std::byte*>(bytecode->GetBufferPointer()) + bytecode->GetBufferSize()
-            );
+                reinterpret_cast<std::byte*>(bytecode->GetBufferPointer()) + bytecode->GetBufferSize());
         }
 
         Microsoft::WRL::ComPtr<IDxcBlobEncoding> errors{};

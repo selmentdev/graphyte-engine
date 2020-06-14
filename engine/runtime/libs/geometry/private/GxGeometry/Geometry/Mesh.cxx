@@ -8,7 +8,7 @@ namespace Graphyte::Geometry
         __forceinline bool IsValidCollection(const TCollection& collection, uint32_t expected_size) noexcept
         {
             return collection.size() == 0
-                || collection.size() == static_cast<size_t>(expected_size);
+                   || collection.size() == static_cast<size_t>(expected_size);
         }
     }
 
@@ -33,20 +33,11 @@ namespace Graphyte::Geometry
     bool Mesh::IsValid() const noexcept
     {
         uint32_t vertices_count = GetVerticesCount();
-        uint32_t wedges_count = GetWedgesCount();
-        uint32_t faces_count = GetFacesCount();
+        uint32_t wedges_count   = GetWedgesCount();
+        uint32_t faces_count    = GetFacesCount();
 
-        bool valid =
-            (vertices_count != 0) &&
-            (faces_count != 0) &&
-            ((faces_count * FacePrimitiveCornersCount) == wedges_count) &&
-            Impl::IsValidCollection(FaceMaterialIndices, faces_count) &&
-            Impl::IsValidCollection(FaceSmoothingMasks, faces_count) &&
-            Impl::IsValidCollection(WedgeTangentX, wedges_count) &&
-            Impl::IsValidCollection(WedgeTangentY, wedges_count) &&
-            Impl::IsValidCollection(WedgeTangentZ, wedges_count) &&
-            Impl::IsValidCollection(WedgeColors, wedges_count) &&
-            (WedgeTextureCoords[0].size() == static_cast<size_t>(wedges_count));
+        // FIXME: Reformat
+        bool valid = (vertices_count != 0) && (faces_count != 0) && ((faces_count * FacePrimitiveCornersCount) == wedges_count) && Impl::IsValidCollection(FaceMaterialIndices, faces_count) && Impl::IsValidCollection(FaceSmoothingMasks, faces_count) && Impl::IsValidCollection(WedgeTangentX, wedges_count) && Impl::IsValidCollection(WedgeTangentY, wedges_count) && Impl::IsValidCollection(WedgeTangentZ, wedges_count) && Impl::IsValidCollection(WedgeColors, wedges_count) && (WedgeTextureCoords[0].size() == static_cast<size_t>(wedges_count));
 
         for (auto& texcoords : WedgeTextureCoords)
         {
@@ -61,7 +52,7 @@ namespace Graphyte::Geometry
         return valid;
     }
 
-    GEOMETRY_API Storage::Archive& operator<< (Storage::Archive& archive, Mesh& mesh) noexcept
+    GEOMETRY_API Storage::Archive& operator<<(Storage::Archive& archive, Mesh& mesh) noexcept
     {
         archive << mesh.FaceMaterialIndices;
         archive << mesh.FaceSmoothingMasks;

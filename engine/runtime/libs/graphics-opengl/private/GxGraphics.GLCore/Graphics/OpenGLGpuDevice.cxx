@@ -16,8 +16,7 @@ namespace Graphyte::Graphics
         GLenum severity,
         GLsizei length,
         const GLchar* message,
-        const void* context
-    ) noexcept
+        const void* context) noexcept
     {
         GX_LOG(LogOpenGLRender, Trace,
             "{} {} {} {} {} {} {}\n",
@@ -27,8 +26,7 @@ namespace Graphyte::Graphics
             severity,
             length,
             reinterpret_cast<const char*>(message),
-            context
-        );
+            context);
     }
 
     OpenGLGpuDevice::OpenGLGpuDevice() noexcept
@@ -36,11 +34,11 @@ namespace Graphyte::Graphics
 #if GRAPHYTE_PLATFORM_WINDOWS
 
         WNDCLASSW wc{};
-        wc.lpfnWndProc = DefWindowProcW;
-        wc.hInstance = GetModuleHandleW(nullptr);
+        wc.lpfnWndProc   = DefWindowProcW;
+        wc.hInstance     = GetModuleHandleW(nullptr);
         wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND);
         wc.lpszClassName = L"oglversionchecksample";
-        wc.style = CS_OWNDC;
+        wc.style         = CS_OWNDC;
 
         if (RegisterClassW(&wc) == 0)
         {
@@ -59,27 +57,35 @@ namespace Graphyte::Graphics
             nullptr,
             nullptr,
             wc.hInstance,
-            nullptr
-        );
+            nullptr);
 
-        PIXELFORMATDESCRIPTOR pfd =
-        {
-            sizeof(PIXELFORMATDESCRIPTOR),
-            1,
-            PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    //Flags
-            PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
-            32,                   // Colordepth of the framebuffer.
-            0, 0, 0, 0, 0, 0,
-            0,
-            0,
-            0,
-            0, 0, 0, 0,
-            24,                   // Number of bits for the depthbuffer
-            8,                    // Number of bits for the stencilbuffer
-            0,                    // Number of Aux buffers in the framebuffer.
-            PFD_MAIN_PLANE,
-            0,
-            0, 0, 0
+        PIXELFORMATDESCRIPTOR pfd = {
+            .nSize           = sizeof(PIXELFORMATDESCRIPTOR),
+            .nVersion        = 1,
+            .dwFlags         = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
+            .iPixelType      = PFD_TYPE_RGBA,
+            .cColorBits      = 32,
+            .cRedBits        = 0,
+            .cRedShift       = 0,
+            .cGreenBits      = 0,
+            .cGreenShift     = 0,
+            .cBlueBits       = 0,
+            .cBlueShift      = 0,
+            .cAlphaBits      = 0,
+            .cAlphaShift     = 0,
+            .cAccumBits      = 0,
+            .cAccumRedBits   = 0,
+            .cAccumGreenBits = 0,
+            .cAccumBlueBits  = 0,
+            .cAccumAlphaBits = 0,
+            .cDepthBits      = 24,
+            .cStencilBits    = 8,
+            .cAuxBuffers     = 0,
+            .iLayerType      = PFD_MAIN_PLANE,
+            .bReserved       = 0,
+            .dwLayerMask     = 0,
+            .dwVisibleMask   = 0,
+            .dwDamageMask    = 0,
         };
 
         HDC hdc = GetDC(m_InitialWindow);
@@ -109,21 +115,18 @@ namespace Graphyte::Graphics
             0,
             0,
             0,
-            SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN
-        );
+            SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
 
         auto temp_context = SDL_GL_CreateContext(
-            temp_window
-        );
+            temp_window);
 
         SDL_GL_MakeCurrent(
             temp_window,
-            temp_context
-        );
+            temp_context);
 
         if (SDL_GL_LoadLibrary(nullptr) != 0)
         {
-            GX_ASSERTF(false, "Failed to initialize default OpenGL");\
+            GX_ASSERTF(false, "Failed to initialize default OpenGL");
         }
 
         //GX_VERIFYF(gladLoadGL() == 1, "Failed to initialize OpenGL");
@@ -162,8 +165,8 @@ namespace Graphyte::Graphics
 #endif
 
 #define LOG_GLAD_EXTENSION(extension) \
-        GX_LOG(LogOpenGLRender, Trace, "{}: {}\n", #extension, extension) \
-        GX_ASSERTF(extension != 0, "Extension: `{}` is not supported", #extension)
+    GX_LOG(LogOpenGLRender, Trace, "{}: {}\n", #extension, extension) \
+    GX_ASSERTF(extension != 0, "Extension: `{}` is not supported", #extension)
 
         LOG_GLAD_EXTENSION(GLAD_GL_VERSION_4_5);
         LOG_GLAD_EXTENSION(GLAD_GL_VERSION_4_6);
@@ -199,8 +202,7 @@ namespace Graphyte::Graphics
     }
 
     void OpenGLGpuDevice::Tick(
-        float time
-    ) noexcept
+        float time) noexcept
     {
         (void)time;
     }

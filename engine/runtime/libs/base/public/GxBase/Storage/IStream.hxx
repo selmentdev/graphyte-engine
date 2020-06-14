@@ -10,9 +10,9 @@ namespace Graphyte::Storage
      */
     enum struct SeekOrigin : uint32_t
     {
-        Begin,      //!< Set position relative to beginning of stream.
-        Current,    //!< Set position relative to current position of stream.
-        End,        //!< Set position relative to end of stream.
+        Begin,   //!< Set position relative to beginning of stream.
+        Current, //!< Set position relative to current position of stream.
+        End,     //!< Set position relative to end of stream.
     };
 
     /*!
@@ -39,8 +39,7 @@ namespace Graphyte::Storage
          */
         virtual Status Read(
             notstd::span<std::byte> buffer,
-            size_t& processed
-        ) noexcept = 0;
+            size_t& processed) noexcept = 0;
 
         /*!
          * \brief   Writes data from buffer.
@@ -52,14 +51,13 @@ namespace Graphyte::Storage
          */
         virtual Status Write(
             notstd::span<const std::byte> buffer,
-            size_t& processed
-        ) noexcept = 0;
+            size_t& processed) noexcept = 0;
 
         /*!
          * \brief   Gets size of stream.
          */
         virtual int64_t GetSize() noexcept = 0;
-        
+
         /*!
          * \brief   Gets current position.
          */
@@ -75,8 +73,7 @@ namespace Graphyte::Storage
          */
         virtual Status SetPosition(
             int64_t value,
-            SeekOrigin origin
-        ) noexcept = 0;
+            SeekOrigin origin) noexcept = 0;
 
         /*!
          * \brief   Sets absolute position in stream.
@@ -84,7 +81,6 @@ namespace Graphyte::Storage
          * \param   value       Provides new absolute position.
          */
         virtual Status SetPosition(
-            int64_t value
-        ) noexcept = 0;
+            int64_t value) noexcept = 0;
     };
 }

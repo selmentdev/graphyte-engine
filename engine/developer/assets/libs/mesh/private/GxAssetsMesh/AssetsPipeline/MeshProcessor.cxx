@@ -30,7 +30,7 @@ namespace Graphyte::AssetsPipeline
         Graphyte::Storage::AppendPath(path, "models/201e.e3d");
 
         std::vector<std::byte> content{};
-        
+
         if (Graphyte::Storage::ReadBinary(content, path) == Status::Success)
         {
             Graphyte::Storage::ArchiveMemoryReader reader{ content };

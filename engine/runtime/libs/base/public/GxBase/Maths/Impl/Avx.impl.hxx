@@ -10,8 +10,7 @@ namespace Graphyte::Maths::Impl
     mathinline __m128 mathcall avx_fmadd_f32x4(
         __m128 a,
         __m128 b,
-        __m128 c
-    ) noexcept
+        __m128 c) noexcept
     {
 #if GRAPHYTE_HW_FMA4
         return _mm_macc_ps(a, b, c);
@@ -29,8 +28,7 @@ namespace Graphyte::Maths::Impl
     mathinline __m128 mathcall avx_fmsub_f32x4(
         __m128 a,
         __m128 b,
-        __m128 c
-    ) noexcept
+        __m128 c) noexcept
     {
 #if GRAPHYTE_HW_FMA4
         return _mm_msub_ps(a, b, c);
@@ -48,8 +46,7 @@ namespace Graphyte::Maths::Impl
     mathinline __m128 mathcall avx_fnmadd_f32x4(
         __m128 a,
         __m128 b,
-        __m128 c
-    ) noexcept
+        __m128 c) noexcept
     {
 #if GRAPHYTE_HW_FMA4
         return _mm_nmacc_ps(a, b, c);
@@ -67,8 +64,7 @@ namespace Graphyte::Maths::Impl
     mathinline __m128 mathcall avx_fnmsub_f32x4(
         __m128 a,
         __m128 b,
-        __m128 c
-    ) noexcept
+        __m128 c) noexcept
     {
 #if GRAPHYTE_HW_FMA4
         return _mm_nmsub_ps(a, b, c);
@@ -76,7 +72,7 @@ namespace Graphyte::Maths::Impl
         return _mm_fnmsub_ps(a, b, c);
 #else
         // (a * b)
-        __m128 const ab = _mm_mul_ps(a, b);
+        __m128 const ab   = _mm_mul_ps(a, b);
         __m128 const zero = _mm_setzero_ps();
         // -(a * b)
         __m128 const neg_ab = _mm_sub_ps(zero, ab);
@@ -245,19 +241,19 @@ namespace Graphyte::Maths::Impl
             // General case.
             //
 
-            alignas(__m128) static constexpr uint32_t const select_mask[4] {
-                    x_up ? 0xFFFFFFFFu : 0x00000000u,
-                    y_up ? 0xFFFFFFFFu : 0x00000000u,
-                    z_up ? 0xFFFFFFFFu : 0x00000000u,
-                    w_up ? 0xFFFFFFFFu : 0x00000000u,
-                };
+            alignas(__m128) static constexpr uint32_t const select_mask[4]{
+                x_up ? 0xFFFFFFFFu : 0x00000000u,
+                y_up ? 0xFFFFFFFFu : 0x00000000u,
+                z_up ? 0xFFFFFFFFu : 0x00000000u,
+                w_up ? 0xFFFFFFFFu : 0x00000000u,
+            };
 
-            __m128 const mask = _mm_load_ps(reinterpret_cast<float const*>(&select_mask[0]));
+            __m128 const mask        = _mm_load_ps(reinterpret_cast<float const*>(&select_mask[0]));
             __m128 const shuffled_v1 = _mm_permute_ps(a, shuffle);
             __m128 const shuffled_v2 = _mm_permute_ps(b, shuffle);
-            __m128 const masked_v1 = _mm_andnot_ps(mask, shuffled_v1);
-            __m128 const masked_v2 = _mm_and_ps(mask, shuffled_v2);
-            __m128 const result = _mm_or_ps(masked_v1, masked_v2);
+            __m128 const masked_v1   = _mm_andnot_ps(mask, shuffled_v1);
+            __m128 const masked_v2   = _mm_and_ps(mask, shuffled_v2);
+            __m128 const result      = _mm_or_ps(masked_v1, masked_v2);
 
             return result;
         }
@@ -308,7 +304,7 @@ namespace Graphyte::Maths::Impl
             // General case.
             //
 
-            return _mm_permute_ps(v, _MM_SHUFFLE(W,Z,Y,X));
+            return _mm_permute_ps(v, _MM_SHUFFLE(W, Z, Y, X));
         }
     }
 }

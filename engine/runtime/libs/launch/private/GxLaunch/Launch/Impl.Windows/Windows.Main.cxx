@@ -38,8 +38,7 @@ namespace Graphyte::Launch::Impl::Windows
         GSingleInstanceMutex = CreateMutexW(
             nullptr,
             TRUE,
-            System::Impl::WidenString(name).c_str()
-        );
+            System::Impl::WidenString(name).c_str());
 
         if (GSingleInstanceMutex != nullptr)
         {
@@ -75,7 +74,7 @@ namespace Graphyte::Launch::Impl::Windows
     {
         if (GSingleInstanceMutex != nullptr)
         {
-           ReleaseMutex(GSingleInstanceMutex);
+            ReleaseMutex(GSingleInstanceMutex);
         }
     }
 }
@@ -93,6 +92,7 @@ namespace Graphyte::Launch
     int Main(int argc, char** argv) noexcept
     {
         System::Impl::GInstanceHandle = GetModuleHandleW(nullptr);
+
         Graphyte::Application::Impl::GApplicationDescriptor = GraphyteApp;
 
         SetProcessDPIAware();
@@ -114,7 +114,7 @@ namespace Graphyte::Launch
             {
                 result = MainWrapper(argc, argv);
             }
-            __except(Diagnostics::OnCrash(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
+            __except (Diagnostics::OnCrash(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
             {
                 Graphyte::Application::RequestExit(true);
             }

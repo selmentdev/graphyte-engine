@@ -69,35 +69,30 @@ namespace Graphyte::Crypto
             int const status_setup = mbedtls_md_setup(
                 &m_Context,
                 m_Info,
-                0
-            );
+                0);
 
             int const status_starts = mbedtls_md_starts(
-                &m_Context
-            );
+                &m_Context);
 
             return status_setup == 0
-                && status_starts == 0;
+                   && status_starts == 0;
         }
 
         virtual bool Update(
-            notstd::span<const std::byte> data
-        ) noexcept override
+            notstd::span<const std::byte> data) noexcept override
         {
             GX_ASSERT(m_Info != nullptr);
 
             int const status = mbedtls_md_update(
                 &m_Context,
                 reinterpret_cast<const unsigned char*>(std::data(data)),
-                std::size(data)
-            );
+                std::size(data));
 
             return status == 0;
         }
 
         virtual bool Finish(
-            std::vector<std::byte>& output
-        ) noexcept override
+            std::vector<std::byte>& output) noexcept override
         {
             GX_ASSERT(m_Info != nullptr);
 
@@ -105,8 +100,7 @@ namespace Graphyte::Crypto
 
             int const status = mbedtls_md_finish(
                 &m_Context,
-                reinterpret_cast<unsigned char*>(std::data(hash))
-            );
+                reinterpret_cast<unsigned char*>(std::data(hash)));
 
             if (status == 0)
             {
@@ -114,8 +108,7 @@ namespace Graphyte::Crypto
 
                 output.assign(
                     std::data(hash),
-                    std::data(hash) + hashSize
-                );
+                    std::data(hash) + hashSize);
             }
 
             mbedtls_md_free(&m_Context);
@@ -137,11 +130,10 @@ namespace Graphyte::Crypto
 namespace Graphyte::Crypto
 {
     std::unique_ptr<HashAlgorithm> HashAlgorithm::Create(
-        [[maybe_unused]] HashType hashType
-    ) noexcept
+        [[maybe_unused]] HashType hashType) noexcept
     {
 #if !GRAPHYTE_PLATFORM_UWP
-        mbedtls_md_type_t const type = MbedtlsHelpers::Impl::GetType(hashType);
+        mbedtls_md_type_t const type        = MbedtlsHelpers::Impl::GetType(hashType);
         const mbedtls_md_info_t* const info = mbedtls_md_info_from_type(type);
 
         if (info == nullptr)
@@ -158,32 +150,31 @@ namespace Graphyte::Crypto
     bool HashAlgorithm::ComputeHash(
         [[maybe_unused]] HashType hashType,
         [[maybe_unused]] std::vector<std::byte>& output,
-        [[maybe_unused]] notstd::span<const std::byte> input
-    ) noexcept
+        [[maybe_unused]] notstd::span<const std::byte> input) noexcept
     {
 #if GRAPHYTE_PLATFORM_UWP
 
+        using winrt::Windows::Security::Cryptography::CryptographicBuffer;
         using winrt::Windows::Security::Cryptography::Core::HashAlgorithmNames;
         using winrt::Windows::Security::Cryptography::Core::HashAlgorithmProvider;
-        using winrt::Windows::Security::Cryptography::CryptographicBuffer;
         using winrt::Windows::Storage::Streams::IBuffer;
 
         winrt::hstring algorithm_name{};
 
         switch (hashType)
         {
-        case HashType::MD5:
-            algorithm_name = HashAlgorithmNames::Md5();
-            break;
-        case HashType::SHA1:
-            algorithm_name = HashAlgorithmNames::Sha1();
-            break;
-        case HashType::SHA256:
-            algorithm_name = HashAlgorithmNames::Sha256();
-            break;
-        case HashType::SHA512:
-            algorithm_name = HashAlgorithmNames::Sha512();
-            break;
+            case HashType::MD5:
+                algorithm_name = HashAlgorithmNames::Md5();
+                break;
+            case HashType::SHA1:
+                algorithm_name = HashAlgorithmNames::Sha1();
+                break;
+            case HashType::SHA256:
+                algorithm_name = HashAlgorithmNames::Sha256();
+                break;
+            case HashType::SHA512:
+                algorithm_name = HashAlgorithmNames::Sha512();
+                break;
         }
 
 
@@ -200,24 +191,22 @@ namespace Graphyte::Crypto
 
         output.assign(
             reinterpret_cast<std::byte*>(hash_buffer.data()),
-            reinterpret_cast<std::byte*>(hash_buffer.data() + hash_buffer.Length())
-        );
+            reinterpret_cast<std::byte*>(hash_buffer.data() + hash_buffer.Length()));
 
         return true;
 #else
-        mbedtls_md_type_t const type = MbedtlsHelpers::Impl::GetType(hashType);
+        mbedtls_md_type_t const type        = MbedtlsHelpers::Impl::GetType(hashType);
         const mbedtls_md_info_t* const info = mbedtls_md_info_from_type(type);
 
         if (info != nullptr)
         {
             std::array<std::byte, MBEDTLS_MD_MAX_SIZE> hash{};
-            
+
             int const status = mbedtls_md(
                 info,
                 reinterpret_cast<const unsigned char*>(std::data(input)),
                 std::size(input),
-                reinterpret_cast<unsigned char*>(std::data(hash))
-            );
+                reinterpret_cast<unsigned char*>(std::data(hash)));
 
             if (status == 0)
             {
@@ -225,8 +214,7 @@ namespace Graphyte::Crypto
 
                 output.assign(
                     std::data(hash),
-                    std::data(hash) + size
-                );
+                    std::data(hash) + size);
 
                 return true;
             }

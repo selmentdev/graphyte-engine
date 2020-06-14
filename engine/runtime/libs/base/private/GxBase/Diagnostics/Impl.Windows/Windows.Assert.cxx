@@ -11,8 +11,7 @@ namespace Graphyte::Diagnostics::Impl
     AssertResult ReportAssertion(
         std::string_view title,
         std::string_view content,
-        std::string_view stacktrace
-    ) noexcept
+        std::string_view stacktrace) noexcept
     {
         if (GetErrorReporting() != ErrorReporting::Interactive)
         {
@@ -22,26 +21,26 @@ namespace Graphyte::Diagnostics::Impl
         std::array<TASKDIALOG_BUTTON, 4> buttons{
             {
                 {
-                    .nButtonID = static_cast<int>(AssertResult::Abort),
+                    .nButtonID     = static_cast<int>(AssertResult::Abort),
                     .pszButtonText = L"&Abort",
                 },
                 {
-                    .nButtonID = static_cast<int>(AssertResult::Retry),
+                    .nButtonID     = static_cast<int>(AssertResult::Retry),
                     .pszButtonText = L"&Retry",
                 },
                 {
-                    .nButtonID = static_cast<int>(AssertResult::Ignore),
+                    .nButtonID     = static_cast<int>(AssertResult::Ignore),
                     .pszButtonText = L"&Ignore",
                 },
                 {
-                    .nButtonID = static_cast<int>(AssertResult::IgnoreAlways),
+                    .nButtonID     = static_cast<int>(AssertResult::IgnoreAlways),
                     .pszButtonText = L"I&gnore Always",
                 },
             }
         };
 
-        std::wstring wtitle = System::Impl::WidenString(title);
-        std::wstring wcontent = System::Impl::WidenString(content);
+        std::wstring wtitle      = System::Impl::WidenString(title);
+        std::wstring wcontent    = System::Impl::WidenString(content);
         std::wstring wstacktrace = System::Impl::WidenString(stacktrace);
 
         TASKDIALOGCONFIG config{

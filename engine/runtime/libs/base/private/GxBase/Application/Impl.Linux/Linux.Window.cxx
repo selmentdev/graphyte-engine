@@ -16,12 +16,10 @@ namespace Graphyte::Application::Impl
     LinuxWindow::~LinuxWindow() noexcept
     {
         GX_ASSERTF(m_Handle == nullptr, "Application::DestroyWindow was not called on this instance!");
-        
     }
 
     void LinuxWindow::Create(
-        const WindowDescriptor& descriptor
-    ) noexcept
+        const WindowDescriptor& descriptor) noexcept
     {
         m_Descriptor = descriptor;
 
@@ -29,27 +27,27 @@ namespace Graphyte::Application::Impl
 
         switch (descriptor.Type)
         {
-        case WindowType::GameWindow:
+            case WindowType::GameWindow:
             {
                 //flags |= SDL_WINDOW_BORDERLESS;
                 break;
             }
-        case WindowType::Menu:
+            case WindowType::Menu:
             {
                 flags |= SDL_WINDOW_POPUP_MENU;
                 break;
             }
-        case WindowType::Normal:
+            case WindowType::Normal:
             {
                 flags |= SDL_WINDOW_RESIZABLE;
                 break;
             }
-        case WindowType::Notification:
+            case WindowType::Notification:
             {
                 flags |= SDL_WINDOW_POPUP_MENU;
                 break;
             }
-        case WindowType::Tooltip:
+            case WindowType::Tooltip:
             {
                 flags |= SDL_WINDOW_TOOLTIP;
                 break;
@@ -77,18 +75,12 @@ namespace Graphyte::Application::Impl
             client_y,
             client_w,
             client_h,
-            flags
-        );
+            flags);
 
-        m_ClientWidth = client_w;
+        m_ClientWidth  = client_w;
         m_ClientHeight = client_h;
 
-        SetPlacement({
-            client_x,
-            client_y,
-            client_w,
-            client_h
-        });
+        SetPlacement({ client_x, client_y, client_w, client_h });
 
         GX_ASSERTF(m_Handle != nullptr, "Failed to create window: `{}`", SDL_GetError());
     }
@@ -100,25 +92,21 @@ namespace Graphyte::Application::Impl
     }
 
     void LinuxWindow::Move(
-        System::Point location
-    ) noexcept
+        System::Point location) noexcept
     {
         SDL_SetWindowPosition(
             m_Handle,
             location.Left,
-            location.Top
-        );
+            location.Top);
     }
 
     void LinuxWindow::Resize(
-        System::Size size
-    ) noexcept
+        System::Size size) noexcept
     {
         SDL_SetWindowSize(
             m_Handle,
             size.Width,
-            size.Height
-        );
+            size.Height);
     }
 
     void LinuxWindow::Focus() noexcept
@@ -127,8 +115,7 @@ namespace Graphyte::Application::Impl
     }
 
     void LinuxWindow::BringToFront(
-        bool force
-    ) noexcept
+        bool force) noexcept
     {
         if (force)
         {
@@ -184,15 +171,14 @@ namespace Graphyte::Application::Impl
     }
 
     void LinuxWindow::SetWindowMode(
-        WindowMode value
-    ) noexcept
+        WindowMode value) noexcept
     {
         if (value != m_WindowMode)
         {
             switch (value)
             {
-            case WindowMode::Fullscreen:
-            case WindowMode::WindowedFullscreen:
+                case WindowMode::Fullscreen:
+                case WindowMode::WindowedFullscreen:
                 {
                     if (m_WasFullscreen == false)
                     {
@@ -204,9 +190,9 @@ namespace Graphyte::Application::Impl
 
                     break;
                 }
-            case WindowMode::Windowed:
+                case WindowMode::Windowed:
                 {
-                    auto width = std::max<int>(100, m_ClientWidth - 100);
+                    auto width  = std::max<int>(100, m_ClientWidth - 100);
                     auto height = std::max<int>(100, m_ClientHeight - 100);
 
                     SDL_SetWindowSize(m_Handle, width, height);
@@ -232,8 +218,7 @@ namespace Graphyte::Application::Impl
     }
 
     void LinuxWindow::SetCaption(
-        const char* text
-    ) noexcept
+        const char* text) noexcept
     {
         SDL_SetWindowTitle(m_Handle, text);
     }
@@ -242,8 +227,8 @@ namespace Graphyte::Application::Impl
     {
         switch (GetWindowMode())
         {
-        case WindowMode::Fullscreen:
-        case WindowMode::WindowedFullscreen:
+            case WindowMode::Fullscreen:
+            case WindowMode::WindowedFullscreen:
             {
                 SDL_SetWindowFullscreen(m_Handle, 0);
                 SDL_SetWindowSize(m_Handle, placement.Width, placement.Height);
@@ -252,7 +237,7 @@ namespace Graphyte::Application::Impl
                 break;
             }
 
-        case WindowMode::Windowed:
+            case WindowMode::Windowed:
             {
                 SDL_SetWindowPosition(m_Handle, placement.Left, placement.Top);
                 SDL_SetWindowSize(m_Handle, placement.Width, placement.Height);
@@ -264,7 +249,7 @@ namespace Graphyte::Application::Impl
         //SDL_SetWindowPosition(m_Handle, placement.Left, placement.Top);
         //SDL_SetWindowSize(m_Handle, placement.Width, placement.Height);
 
-        m_ClientWidth = placement.Width;
+        m_ClientWidth  = placement.Width;
         m_ClientHeight = placement.Height;
     }
 
@@ -295,8 +280,8 @@ namespace Graphyte::Application::Impl
     {
         const uint32_t required_flags
             = SDL_WINDOW_INPUT_GRABBED
-            | SDL_WINDOW_INPUT_FOCUS
-            | SDL_WINDOW_MOUSE_FOCUS;
+              | SDL_WINDOW_INPUT_FOCUS
+              | SDL_WINDOW_MOUSE_FOCUS;
 
         uint32_t flags = SDL_GetWindowFlags(m_Handle);
 
@@ -314,8 +299,7 @@ namespace Graphyte::Application::Impl
     }
 
     bool LinuxWindow::GetRestoredPlacement(
-        System::Rect& placement
-    ) noexcept
+        System::Rect& placement) noexcept
     {
         SDL_GetWindowPosition(m_Handle, &placement.Left, &placement.Top);
         SDL_GetWindowSize(m_Handle, &placement.Width, &placement.Height);
@@ -324,8 +308,7 @@ namespace Graphyte::Application::Impl
     }
 
     bool LinuxWindow::GetFullscreenInfo(
-        System::Rect& placement
-    ) noexcept
+        System::Rect& placement) noexcept
     {
         SDL_Rect rc{};
 
@@ -333,9 +316,9 @@ namespace Graphyte::Application::Impl
 
         if (display >= 0 && SDL_GetDisplayBounds(display, &rc) == 0)
         {
-            placement.Left = rc.x;
-            placement.Top = rc.y;
-            placement.Width = rc.w;
+            placement.Left   = rc.x;
+            placement.Top    = rc.y;
+            placement.Width  = rc.w;
             placement.Height = rc.h;
 
             return true;
@@ -362,8 +345,7 @@ namespace Graphyte::Application::Impl
     }
 
     bool LinuxWindow::IsPointInside(
-        System::Point location
-    ) noexcept
+        System::Point location) noexcept
     {
         SDL_Point point{ location.Left, location.Top };
 

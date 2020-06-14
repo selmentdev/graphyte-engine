@@ -16,8 +16,7 @@ namespace Graphyte::Storage
 {
     void AppendPath(
         std::string& path,
-        std::string_view subpath
-    ) noexcept
+        std::string_view subpath) noexcept
     {
         if (!subpath.empty())
         {
@@ -32,8 +31,7 @@ namespace Graphyte::Storage
 
     std::string CombinePath(
         std::string_view path1,
-        std::string_view path2
-    ) noexcept
+        std::string_view path2) noexcept
     {
         std::string result{ path1 };
 
@@ -45,8 +43,7 @@ namespace Graphyte::Storage
     std::string CombinePath(
         std::string_view path1,
         std::string_view path2,
-        std::string_view path3
-    ) noexcept
+        std::string_view path3) noexcept
     {
         std::string result{ path1 };
 
@@ -60,8 +57,7 @@ namespace Graphyte::Storage
         std::string_view path1,
         std::string_view path2,
         std::string_view path3,
-        std::string_view path4
-    ) noexcept
+        std::string_view path4) noexcept
     {
         std::string result{ path1 };
 
@@ -77,8 +73,7 @@ namespace Graphyte::Storage
         std::string_view path2,
         std::string_view path3,
         std::string_view path4,
-        std::string_view path5
-    ) noexcept
+        std::string_view path5) noexcept
     {
         std::string result{ path1 };
 
@@ -96,8 +91,7 @@ namespace Graphyte::Storage
         std::string_view path3,
         std::string_view path4,
         std::string_view path5,
-        std::string_view path6
-    ) noexcept
+        std::string_view path6) noexcept
     {
         std::string result{ path1 };
 
@@ -111,8 +105,7 @@ namespace Graphyte::Storage
     }
 
     void AddDirectorySeparator(
-        std::string& path
-    ) noexcept
+        std::string& path) noexcept
     {
         if (!path.empty())
         {
@@ -124,8 +117,7 @@ namespace Graphyte::Storage
     }
 
     void RemoveDirectorySeparator(
-        std::string& path
-    ) noexcept
+        std::string& path) noexcept
     {
         if (!path.empty())
         {
@@ -138,8 +130,7 @@ namespace Graphyte::Storage
 
     void ChangeExtension(
         std::string& path,
-        std::string_view extension
-    ) noexcept
+        std::string_view extension) noexcept
     {
         std::size_t const separator_position = path.find_last_of(Storage::ExtensionSeparator);
 
@@ -161,8 +152,7 @@ namespace Graphyte::Storage
 
     void ChangeFilename(
         std::string& path,
-        std::string_view filename
-    ) noexcept
+        std::string_view filename) noexcept
     {
         std::size_t const separator_position = path.find_last_of(Impl::GFolderSeparators);
 
@@ -184,8 +174,7 @@ namespace Graphyte::Storage
 
     std::string_view GetExtension(
         std::string_view path,
-        bool include_separator
-    ) noexcept
+        bool include_separator) noexcept
     {
         std::string_view result{};
 
@@ -205,8 +194,7 @@ namespace Graphyte::Storage
     }
 
     std::string_view GetFilename(
-        std::string_view path
-    ) noexcept
+        std::string_view path) noexcept
     {
         std::string_view result{};
 
@@ -226,8 +214,7 @@ namespace Graphyte::Storage
     }
 
     std::string_view GetBaseFilename(
-        std::string_view path
-    ) noexcept
+        std::string_view path) noexcept
     {
         std::string_view result{ Storage::GetFilename(path) };
 
@@ -242,8 +229,7 @@ namespace Graphyte::Storage
     }
 
     std::string_view GetPath(
-        std::string_view path
-    ) noexcept
+        std::string_view path) noexcept
     {
         std::string_view result{};
 
@@ -259,8 +245,7 @@ namespace Graphyte::Storage
     }
 
     extern BASE_API std::string_view GetScheme(
-        std::string_view path
-    ) noexcept
+        std::string_view path) noexcept
     {
         std::string_view result{};
 
@@ -278,17 +263,15 @@ namespace Graphyte::Storage
         std::string_view path,
         std::string_view& path_part,
         std::string_view& filename_part,
-        std::string_view& extension_part
-    ) noexcept
+        std::string_view& extension_part) noexcept
     {
-        path_part = Storage::GetPath(path);
-        filename_part = Storage::GetBaseFilename(path);
+        path_part      = Storage::GetPath(path);
+        filename_part  = Storage::GetBaseFilename(path);
         extension_part = Storage::GetExtension(path, false);
     }
 
     void NormalizePath(
-        std::string& path
-    ) noexcept
+        std::string& path) noexcept
     {
         for (char& c : path)
         {
@@ -300,8 +283,7 @@ namespace Graphyte::Storage
     }
 
     std::string NormalizedPath(
-        std::string_view path
-    ) noexcept
+        std::string_view path) noexcept
     {
         std::string result{ path };
 
@@ -311,8 +293,7 @@ namespace Graphyte::Storage
     }
 
     bool CanonicalizePath(
-        std::string& path
-    ) noexcept
+        std::string& path) noexcept
     {
         static std::string_view parent{ "/.." };
 
@@ -375,8 +356,7 @@ namespace Graphyte::Storage
     bool RelativePath(
         std::string& result,
         std::string_view source,
-        std::string_view target
-    ) noexcept
+        std::string_view target) noexcept
     {
         std::string normalized_source = Storage::NormalizedPath(source);
         std::string normalized_target = Storage::NormalizedPath(target);
@@ -436,16 +416,15 @@ namespace Graphyte::Storage
     std::string CreateTemporaryFilePath(
         std::string_view path,
         std::string_view prefix,
-        std::string_view suffix
-    ) noexcept
+        std::string_view suffix) noexcept
     {
         std::string result{};
 
         do
         {
-            Uuid const unique = Uuid::Create();
+            Uuid const unique    = Uuid::Create();
             std::string filename = fmt::format("{}{}{}", prefix, unique, suffix);
-            result = Storage::CombinePath(path, filename);
+            result               = Storage::CombinePath(path, filename);
         } while (Storage::IFileSystem::GetPlatformNative().Exists(result) == Status::Success);
 
         return result;
@@ -455,8 +434,7 @@ namespace Graphyte::Storage
         Random::RandomState& state,
         std::string_view path,
         std::string_view prefix,
-        std::string_view suffix
-    ) noexcept
+        std::string_view suffix) noexcept
     {
         //
         // Generate string with random characters.
@@ -477,8 +455,7 @@ namespace Graphyte::Storage
         fmt::format_to(filename, "{}{}{}",
             prefix,
             std::string_view{ random_chars.data(), random_chars.size() },
-            suffix
-        );
+            suffix);
 
 
         //
@@ -487,16 +464,13 @@ namespace Graphyte::Storage
 
         return Storage::CombinePath(
             path,
-            std::string_view{ filename.data(), filename.size() }
-        );
+            std::string_view{ filename.data(), filename.size() });
     }
 
-    [[nodiscard]]
-    extern BASE_API std::string CreateRandomFilename(
+    [[nodiscard]] extern BASE_API std::string CreateRandomFilename(
         Random::RandomState& state,
         std::string_view prefix,
-        std::string_view suffix
-    ) noexcept
+        std::string_view suffix) noexcept
     {
         static constexpr const size_t random_count = 16;
         std::array<char, random_count> random_chars;
@@ -505,7 +479,6 @@ namespace Graphyte::Storage
         return fmt::format("{}{}{}",
             prefix,
             std::string_view{ random_chars.data(), random_chars.size() },
-            suffix
-        );
+            suffix);
     }
 }

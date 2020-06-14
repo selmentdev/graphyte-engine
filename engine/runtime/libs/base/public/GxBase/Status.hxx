@@ -22,8 +22,7 @@ namespace Graphyte
      *          - failure (cannot create new file),
      *          - success (file already exists).
      */
-    enum struct [[nodiscard]] Status : uint32_t
-    {
+    enum class [[nodiscard]] Status : uint32_t{
         Success = 0,
         Failure,
         InvalidArgument,

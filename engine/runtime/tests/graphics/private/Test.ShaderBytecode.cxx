@@ -42,11 +42,11 @@ struct INPUT_GPU_VERTEX_COMPLEX
         reinterpret_cast<const std::byte*>(std::data(code)),
         reinterpret_cast<const std::byte*>(std::data(code) + code.length()));
 
-    original.Platform = Graphyte::System::PlatformType::Windows;
+    original.Platform  = Graphyte::System::PlatformType::Windows;
     original.RenderAPI = Graphyte::Graphics::GpuRenderAPI::D3D11;
-    original.Profile = Graphyte::Graphics::GpuShaderProfile::D3DSM_5_0;
-    original.Stage = Graphyte::Graphics::GpuShaderStage::Pixel;
-    original.Flags = ShaderBytecodeFlags::Debug;
+    original.Profile   = Graphyte::Graphics::GpuShaderProfile::D3DSM_5_0;
+    original.Stage     = Graphyte::Graphics::GpuShaderStage::Pixel;
+    original.Flags     = ShaderBytecodeFlags::Debug;
 
     std::vector<std::byte> buffer{};
     {

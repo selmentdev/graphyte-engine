@@ -13,11 +13,11 @@ namespace Graphyte::MathsX
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                value,
-                value,
-                value,
-                value,
-            } } };
+            value,
+            value,
+            value,
+            value,
+        } } };
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
@@ -33,11 +33,11 @@ namespace Graphyte::MathsX
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float const value = (*source);
         Impl::ConstFloat32x4 const result{ { {
-                value,
-                value,
-                value,
-                value,
-            } } };
+            value,
+            value,
+            value,
+            value,
+        } } };
 #elif GRAPHYTE_HW_AVX2
         return { _mm_broadcast_ss(source) };
 #elif GRAPHYTE_HW_AVX
@@ -52,19 +52,18 @@ namespace Graphyte::MathsX
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                x,
-                0.0F,
-                0.0F,
-                0.0F,
-            } } };
+            x,
+            0.0F,
+            0.0F,
+            0.0F,
+        } } };
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_set_ps(0.0F, 0.0F, 0.0F, x) };
 #elif GRAPHYTE_HW_NEON
         float32x2_t const xn = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x))
-        );
+            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)));
 
         float32x2_t const zero = vdup_n_f32(0.0F);
 
@@ -77,19 +76,18 @@ namespace Graphyte::MathsX
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                x,
-                y,
-                0.0F,
-                0.0F,
-            } } };
+            x,
+            y,
+            0.0F,
+            0.0F,
+        } } };
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_set_ps(0.0F, 0.0F, y, x) };
 #elif GRAPHYTE_HW_NEON
         float32x2_t const xy = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&y)) << 32)
-        );
+            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&y)) << 32));
 
         float32x2_t const zero = vdup_n_f32(0.0F);
 
@@ -102,23 +100,21 @@ namespace Graphyte::MathsX
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                x,
-                y,
-                z,
-                0.0F,
-            } } };
+            x,
+            y,
+            z,
+            0.0F,
+        } } };
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_set_ps(0.0F, z, y, x) };
 #elif GRAPHYTE_HW_NEON
         float32x2_t const xy = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&y)) << 32)
-        );
+            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&y)) << 32));
 
         float32x2_t const zn = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&z))
-        );
+            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&z)));
 
         return { vcombine_f32(xy, zn) };
 #endif
@@ -129,23 +125,21 @@ namespace Graphyte::MathsX
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                x,
-                y,
-                z,
-                w,
-            } } };
+            x,
+            y,
+            z,
+            w,
+        } } };
 
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_set_ps(w, z, y, x) };
 #elif GRAPHYTE_HW_NEON
         float32x2_t const xy = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&y)) << 32)
-        );
+            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&y)) << 32));
 
         float32x2_t const zw = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&z)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&w)) << 32)
-        );
+            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&z)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&w)) << 32));
 
         return { vcombine_f32(xy, zw) };
 #endif

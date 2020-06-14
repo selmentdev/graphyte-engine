@@ -6,8 +6,7 @@
 namespace Graphyte::Graphics
 {
     VkBufferUsageFlags VulkanMapGpuBufferUsage(
-        GpuBufferUsage usage
-    ) noexcept
+        GpuBufferUsage usage) noexcept
     {
         VkBufferUsageFlags result{};
 
@@ -32,15 +31,14 @@ namespace Graphyte::Graphics
     GpuVertexBufferHandle VulkanGpuDevice::CreateVertexBuffer(
         uint32_t size,
         [[maybe_unused]] GpuBufferUsage usage,
-        const GpuSubresourceData* subresource
-    ) noexcept
+        const GpuSubresourceData* subresource) noexcept
     {
         auto native = new VulkanGpuVertexBuffer{};
 
         VkBufferCreateInfo ci{};
-        ci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        ci.size = size;
-        ci.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+        ci.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        ci.size        = size;
+        ci.usage       = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         ci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
         VmaAllocationCreateInfo vma_ci{};
@@ -57,19 +55,17 @@ namespace Graphyte::Graphics
             &vma_ci,
             &staging,
             &staging_alloc,
-            &staging_info
-        ));
+            &staging_info));
 
         if (subresource != nullptr && staging_info.pMappedData != nullptr)
         {
             std::memcpy(
                 staging_info.pMappedData,
                 subresource->Memory,
-                subresource->Pitch
-            );
+                subresource->Pitch);
         }
 
-        ci.usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+        ci.usage     = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
         vma_ci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
         vma_ci.flags = 0;
 
@@ -79,15 +75,13 @@ namespace Graphyte::Graphics
             &vma_ci,
             &native->m_Resource,
             &native->m_Allocation,
-            nullptr
-        ));
+            nullptr));
 
         return native;
     }
 
     void VulkanGpuDevice::DestroyVertexBuffer(
-        GpuVertexBufferHandle handle
-    ) noexcept
+        GpuVertexBufferHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<VulkanGpuVertexBuffer*>(handle);
@@ -95,8 +89,7 @@ namespace Graphyte::Graphics
         vmaDestroyBuffer(
             m_Allocator,
             native->m_Resource,
-            native->m_Allocation
-        );
+            native->m_Allocation);
 
         delete handle;
     }
@@ -105,8 +98,7 @@ namespace Graphyte::Graphics
         GpuVertexBufferHandle handle,
         uint32_t offset,
         [[maybe_unused]] uint32_t size,
-        [[maybe_unused]] GpuResourceLockMode lock_mode
-    ) noexcept
+        [[maybe_unused]] GpuResourceLockMode lock_mode) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<VulkanGpuVertexBuffer*>(handle);
@@ -116,30 +108,26 @@ namespace Graphyte::Graphics
         GPU_VK_VALIDATE(vmaMapMemory(
             m_Allocator,
             native->m_Allocation,
-            &result
-        ));
+            &result));
 
         result = AdvancePointer(result, offset);
         return result;
     }
 
     void VulkanGpuDevice::UnlockVertexBuffer(
-        GpuVertexBufferHandle handle
-    ) noexcept
+        GpuVertexBufferHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<VulkanGpuVertexBuffer*>(handle);
 
         vmaUnmapMemory(
             m_Allocator,
-            native->m_Allocation
-        );
+            native->m_Allocation);
     }
 
     void VulkanGpuDevice::CopyVertexBuffer(
         [[maybe_unused]] GpuVertexBufferHandle source,
-        [[maybe_unused]] GpuVertexBufferHandle destination
-    ) noexcept
+        [[maybe_unused]] GpuVertexBufferHandle destination) noexcept
     {
     }
 }

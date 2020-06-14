@@ -16,8 +16,7 @@ namespace Graphyte::AssetsPipeline
     {
         m_CompilerPath = Storage::CombinePath(
             PlatformToolchain::PlatformToolchain::GetVulkanSdkBinary(),
-            "glslc"
-        );
+            "glslc");
         m_CompilerPath += System::GetExecutableExtension();
 
         m_IsValid = Storage::IFileSystem::GetPlatformNative().Exists(m_CompilerPath) == Status::Success;
@@ -31,20 +30,20 @@ namespace Graphyte::AssetsPipeline
     {
         switch (stage)
         {
-        case Graphics::GpuShaderStage::Pixel:
-            return "frag";
-        case Graphics::GpuShaderStage::Vertex:
-            return "vert";
-        case Graphics::GpuShaderStage::Geometry:
-            return "geom";
-        case Graphics::GpuShaderStage::Hull:
-            return "tesc";
-        case Graphics::GpuShaderStage::Domain:
-            return "tese";
-        case Graphics::GpuShaderStage::Compute:
-            return "comp";
-        default:
-            break;
+            case Graphics::GpuShaderStage::Pixel:
+                return "frag";
+            case Graphics::GpuShaderStage::Vertex:
+                return "vert";
+            case Graphics::GpuShaderStage::Geometry:
+                return "geom";
+            case Graphics::GpuShaderStage::Hull:
+                return "tesc";
+            case Graphics::GpuShaderStage::Domain:
+                return "tese";
+            case Graphics::GpuShaderStage::Compute:
+                return "comp";
+            default:
+                break;
         }
 
         return nullptr;
@@ -54,21 +53,21 @@ namespace Graphyte::AssetsPipeline
     {
         switch (input.RenderAPI)
         {
-        case Graphics::GpuRenderAPI::OpenGL:
-        case Graphics::GpuRenderAPI::Vulkan:
-            break;
-        default:
-            return false;
+            case Graphics::GpuRenderAPI::OpenGL:
+            case Graphics::GpuRenderAPI::Vulkan:
+                break;
+            default:
+                return false;
         }
 
         switch (input.Profile)
         {
-        case Graphics::GpuShaderProfile::SPIRV_1_0:
-        case Graphics::GpuShaderProfile::SPIRV_1_1:
-        case Graphics::GpuShaderProfile::SPIRV_1_2:
-            break;
-        default:
-            return false;
+            case Graphics::GpuShaderProfile::SPIRV_1_0:
+            case Graphics::GpuShaderProfile::SPIRV_1_1:
+            case Graphics::GpuShaderProfile::SPIRV_1_2:
+                break;
+            default:
+                return false;
         }
 
         return m_IsValid;
@@ -94,14 +93,12 @@ namespace Graphyte::AssetsPipeline
         auto source_temp = fmt::format(
             "{}{:x}.tmp.shader.input",
             temp_directory,
-            input.GetHash()
-        );
+            input.GetHash());
 
         auto target_temp = fmt::format(
             "{}{:x}.tmp.shader.output",
             temp_directory,
-            input.GetHash()
-        );
+            input.GetHash());
 
         if (Storage::WriteText(input.Source, source_temp) != Status::Success)
         {
@@ -123,8 +120,7 @@ namespace Graphyte::AssetsPipeline
             commandline.c_str(),
             nullptr,
             &std_output,
-            &std_error
-        );
+            &std_error);
 
         if (bool success = called.StatusCode == Status::Success and called.ExitCode == 0; success)
         {

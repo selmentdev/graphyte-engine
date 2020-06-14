@@ -31,13 +31,11 @@ namespace Graphyte::Graphics
             VkInstance instance,
             const VkDebugUtilsMessengerCreateInfoEXT* createInfo,
             const VkAllocationCallbacks* allocator,
-            VkDebugUtilsMessengerEXT* callback
-        ) noexcept
+            VkDebugUtilsMessengerEXT* callback) noexcept
         {
             auto fn = VKGetFunction<PFN_vkCreateDebugUtilsMessengerEXT>(
                 instance,
-                "vkCreateDebugUtilsMessengerEXT"
-            );
+                "vkCreateDebugUtilsMessengerEXT");
 
             if (fn != nullptr)
             {
@@ -45,8 +43,7 @@ namespace Graphyte::Graphics
                     instance,
                     createInfo,
                     allocator,
-                    callback
-                );
+                    callback);
             }
             else
             {
@@ -57,21 +54,18 @@ namespace Graphyte::Graphics
         static void DestroyDebugUtilsMessenger(
             VkInstance instance,
             VkDebugUtilsMessengerEXT callback,
-            const VkAllocationCallbacks* allocator
-        ) noexcept
+            const VkAllocationCallbacks* allocator) noexcept
         {
             auto fn = VKGetFunction<PFN_vkDestroyDebugUtilsMessengerEXT>(
                 instance,
-                "vkDestroyDebugUtilsMessengerEXT"
-            );
+                "vkDestroyDebugUtilsMessengerEXT");
 
             if (fn != nullptr)
             {
                 fn(
                     instance,
                     callback,
-                    allocator
-                );
+                    allocator);
             }
         }
 
@@ -79,13 +73,11 @@ namespace Graphyte::Graphics
             VkInstance instance,
             const VkDebugReportCallbackCreateInfoEXT* createInfo,
             const VkAllocationCallbacks* allocator,
-            VkDebugReportCallbackEXT* callback
-        ) noexcept
+            VkDebugReportCallbackEXT* callback) noexcept
         {
             auto fn = VKGetFunction<PFN_vkCreateDebugReportCallbackEXT>(
                 instance,
-                "vkCreateDebugReportCallbackEXT"
-            );
+                "vkCreateDebugReportCallbackEXT");
 
             if (fn != nullptr)
             {
@@ -93,8 +85,7 @@ namespace Graphyte::Graphics
                     instance,
                     createInfo,
                     allocator,
-                    callback
-                );
+                    callback);
             }
             else
             {
@@ -105,21 +96,18 @@ namespace Graphyte::Graphics
         static void DestroyDebugReportCallback(
             VkInstance instance,
             VkDebugReportCallbackEXT callback,
-            const VkAllocationCallbacks* allocator
-        ) noexcept
+            const VkAllocationCallbacks* allocator) noexcept
         {
             auto fn = VKGetFunction<PFN_vkDestroyDebugReportCallbackEXT>(
                 instance,
-                "vkDestroyDebugReportCallbackEXT"
-            );
+                "vkDestroyDebugReportCallbackEXT");
 
             if (fn != nullptr)
             {
                 fn(
                     instance,
                     callback,
-                    allocator
-                );
+                    allocator);
             }
         }
 
@@ -135,8 +123,7 @@ namespace Graphyte::Graphics
         };
 
         static QueueFamilyIndices GetQueueFamilies(
-            VkPhysicalDevice device
-        ) noexcept
+            VkPhysicalDevice device) noexcept
         {
             QueueFamilyIndices result{};
 
@@ -144,15 +131,13 @@ namespace Graphyte::Graphics
             vkGetPhysicalDeviceQueueFamilyProperties(
                 device,
                 &count,
-                nullptr
-            );
+                nullptr);
 
             std::vector<VkQueueFamilyProperties> properties(count);
             vkGetPhysicalDeviceQueueFamilyProperties(
                 device,
                 &count,
-                std::data(properties)
-            );
+                std::data(properties));
 
             for (uint32_t i = 0; i < static_cast<uint32_t>(properties.size()); ++i)
             {
@@ -186,30 +171,25 @@ namespace Graphyte::Graphics
 
         static SwapChainSupportDetails GetSwapChainSupportDetails(
             VkPhysicalDevice device,
-            VkSurfaceKHR surface
-        ) noexcept
+            VkSurfaceKHR surface) noexcept
         {
             SwapChainSupportDetails result{};
 
             GPU_VK_VALIDATE(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
                 device,
                 surface,
-                &result.Capabilities
-            ));
+                &result.Capabilities));
 
             uint32_t formatCount{};
             GPU_VK_VALIDATE(vkGetPhysicalDeviceSurfaceFormatsKHR(
                 device,
                 surface,
                 &formatCount,
-                nullptr
-            ));
+                nullptr));
 
             return result;
         }
     };
-
-
 
 
     VKAPI_ATTR VkBool32 VKAPI_CALL VulkanGpuDevice::DebugCallback(
@@ -220,8 +200,7 @@ namespace Graphyte::Graphics
         int32_t code,
         const char* layerPrefix,
         const char* msg,
-        void* userData
-    ) noexcept
+        void* userData) noexcept
     {
         (void)flags;
         (void)objType;
@@ -248,8 +227,7 @@ namespace Graphyte::Graphics
     };
 
     static QueueFamilyIndices FindQueueFamilies(
-        VkPhysicalDevice device
-    )
+        VkPhysicalDevice device)
     {
         QueueFamilyIndices indices{};
 
@@ -257,15 +235,13 @@ namespace Graphyte::Graphics
         vkGetPhysicalDeviceQueueFamilyProperties(
             device,
             &queueFamilyCount,
-            nullptr
-        );
+            nullptr);
 
         std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
         vkGetPhysicalDeviceQueueFamilyProperties(
             device,
             &queueFamilyCount,
-            queueFamilies.data()
-        );
+            queueFamilies.data());
 
         uint32_t i = 0;
         for (const auto& queueFamily : queueFamilies)
@@ -300,21 +276,21 @@ namespace Graphyte::Graphics
         GPU_VK_VALIDATE(vkEnumerateInstanceExtensionProperties(
             nullptr,
             &extension_count,
-            nullptr
-        ));
+            nullptr));
 
         //
         // Extensions.
         //
-        const char* extensions[] {
+        const char* extensions[]
+        {
             VK_KHR_SURFACE_EXTENSION_NAME,
 #if GRAPHYTE_PLATFORM_WINDOWS
-            VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+                VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
 #endif
 #if GRAPHYTE_PLATFORM_LINUX
-            VK_KHR_XCB_SURFACE_EXTENSION_NAME,
+                VK_KHR_XCB_SURFACE_EXTENSION_NAME,
 #endif
-            VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
+                VK_EXT_DEBUG_REPORT_EXTENSION_NAME,
             //VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME,
             //VK_KHR_DEDICATED_ALLOCATION_EXTENSION_NAME,
         };
@@ -329,14 +305,12 @@ namespace Graphyte::Graphics
         uint32_t layer_count{};
         GPU_VK_VALIDATE(vkEnumerateInstanceLayerProperties(
             &layer_count,
-            nullptr
-        ));
+            nullptr));
 
         std::vector<VkLayerProperties> available_layers(layer_count);
         GPU_VK_VALIDATE(vkEnumerateInstanceLayerProperties(
             &layer_count,
-            std::data(available_layers)
-        ));
+            std::data(available_layers)));
 
         for (auto const& layer : validation_layers)
         {
@@ -359,12 +333,12 @@ namespace Graphyte::Graphics
         //
 
         VkApplicationInfo application_info{
-            .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-            .pApplicationName = "Graphyte Engine",
+            .sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+            .pApplicationName   = "Graphyte Engine",
             .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
-            .pEngineName = "Graphyte Engine",
-            .engineVersion = VK_MAKE_VERSION(1, 0, 0),
-            .apiVersion = VK_API_VERSION_1_1,
+            .pEngineName        = "Graphyte Engine",
+            .engineVersion      = VK_MAKE_VERSION(1, 0, 0),
+            .apiVersion         = VK_API_VERSION_1_1,
         };
 
 
@@ -373,11 +347,11 @@ namespace Graphyte::Graphics
         //
 
         VkInstanceCreateInfo create_info{
-            .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-            .pApplicationInfo = &application_info,
-            .enabledLayerCount = static_cast<uint32_t>(std::size(validation_layers)),
-            .ppEnabledLayerNames = std::data(validation_layers),
-            .enabledExtensionCount = static_cast<uint32_t>(std::size(extensions)),
+            .sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+            .pApplicationInfo        = &application_info,
+            .enabledLayerCount       = static_cast<uint32_t>(std::size(validation_layers)),
+            .ppEnabledLayerNames     = std::data(validation_layers),
+            .enabledExtensionCount   = static_cast<uint32_t>(std::size(extensions)),
             .ppEnabledExtensionNames = std::data(extensions),
         };
 
@@ -394,31 +368,28 @@ namespace Graphyte::Graphics
         GPU_VK_VALIDATE(vkCreateInstance(
             &create_info,
             nullptr,
-            &m_Instance
-        ));
+            &m_Instance));
 
         VkDebugReportCallbackCreateInfoEXT debug_callback_report{
             .sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
             .flags = VK_DEBUG_REPORT_INFORMATION_BIT_EXT
-                | VK_DEBUG_REPORT_WARNING_BIT_EXT
-                | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT
-                | VK_DEBUG_REPORT_ERROR_BIT_EXT
-                | VK_DEBUG_REPORT_DEBUG_BIT_EXT,
+                     | VK_DEBUG_REPORT_WARNING_BIT_EXT
+                     | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT
+                     | VK_DEBUG_REPORT_ERROR_BIT_EXT
+                     | VK_DEBUG_REPORT_DEBUG_BIT_EXT,
             .pfnCallback = &VulkanGpuDevice::DebugCallback,
         };
 
         {
             auto callback = VKGetFunction<PFN_vkCreateDebugReportCallbackEXT>(
                 m_Instance,
-                "vkCreateDebugReportCallbackEXT"
-            );
+                "vkCreateDebugReportCallbackEXT");
 
             GPU_VK_VALIDATE(callback(
                 m_Instance,
                 &debug_callback_report,
                 nullptr,
-                &m_DebugCallback
-            ));
+                &m_DebugCallback));
         }
 
         //
@@ -429,15 +400,13 @@ namespace Graphyte::Graphics
         GPU_VK_VALIDATE(vkEnumeratePhysicalDevices(
             m_Instance,
             &device_count,
-            nullptr
-        ));
+            nullptr));
 
         std::vector<VkPhysicalDevice> devices{ device_count };
         GPU_VK_VALIDATE(vkEnumeratePhysicalDevices(
             m_Instance,
             &device_count,
-            std::data(devices)
-        ));
+            std::data(devices)));
 
         for (auto const& device : devices)
         {
@@ -445,21 +414,18 @@ namespace Graphyte::Graphics
 
             vkGetPhysicalDeviceProperties(
                 device,
-                &device_properties
-            );
+                &device_properties);
             VkPhysicalDeviceFeatures device_features;
             vkGetPhysicalDeviceFeatures(
                 device,
-                &device_features
-            );
+                &device_features);
 
             GX_LOG(LogVkRender, Trace,
                 "Device: ({:04x} {:04x} {}) - {}\n",
                 static_cast<uint32_t>(device_properties.vendorID),
                 static_cast<uint32_t>(device_properties.deviceID),
                 static_cast<uint32_t>(device_properties.deviceType),
-                device_properties.deviceName
-            );
+                device_properties.deviceName);
 
             if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && device_features.geometryShader)
             {
@@ -472,23 +438,22 @@ namespace Graphyte::Graphics
         GX_ABORT_UNLESS(m_PhysicalDevice != nullptr, "Failed to determine Vulkan physical device");
 
         auto const& indices = FindQueueFamilies(
-            m_PhysicalDevice
-        );
+            m_PhysicalDevice);
 
         VkDeviceQueueCreateInfo queueCreateInfo = {};
-        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = indices.GraphicsFamily.value();
-        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex        = indices.GraphicsFamily.value();
+        queueCreateInfo.queueCount              = 1;
 
-        float queuePriority = 1.0F;
+        float queuePriority              = 1.0F;
         queueCreateInfo.pQueuePriorities = &queuePriority;
 
         VkPhysicalDeviceFeatures deviceFeatures = {};
 
         VkDeviceCreateInfo createInfo = {};
-        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        createInfo.sType              = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-        createInfo.pQueueCreateInfos = &queueCreateInfo;
+        createInfo.pQueueCreateInfos    = &queueCreateInfo;
         createInfo.queueCreateInfoCount = 1;
 
         createInfo.pEnabledFeatures = &deviceFeatures;
@@ -497,7 +462,7 @@ namespace Graphyte::Graphics
 
         //if (enableValidationLayers)
         {
-            createInfo.enabledLayerCount = static_cast<uint32_t>(std::size(validation_layers));
+            createInfo.enabledLayerCount   = static_cast<uint32_t>(std::size(validation_layers));
             createInfo.ppEnabledLayerNames = std::data(validation_layers);
         }
         //else
@@ -509,31 +474,28 @@ namespace Graphyte::Graphics
             m_PhysicalDevice,
             &createInfo,
             nullptr,
-            &m_Device
-        ));
+            &m_Device));
 
         vkGetDeviceQueue(
             m_Device,
             indices.GraphicsFamily.value(),
             0,
-            &m_GraphicsQueue
-        );
+            &m_GraphicsQueue);
 
         VmaAllocatorCreateInfo allocatorInfo{};
-        allocatorInfo.flags = 0;// VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
-        allocatorInfo.physicalDevice = m_PhysicalDevice;
-        allocatorInfo.device = m_Device;
+        allocatorInfo.flags                       = 0; // VMA_ALLOCATOR_CREATE_KHR_DEDICATED_ALLOCATION_BIT;
+        allocatorInfo.physicalDevice              = m_PhysicalDevice;
+        allocatorInfo.device                      = m_Device;
         allocatorInfo.preferredLargeHeapBlockSize = 0;
-        allocatorInfo.pAllocationCallbacks = nullptr;
-        allocatorInfo.pDeviceMemoryCallbacks = nullptr;
-        allocatorInfo.frameInUseCount = 0;
-        allocatorInfo.pHeapSizeLimit = nullptr;
-        allocatorInfo.pVulkanFunctions = nullptr;
+        allocatorInfo.pAllocationCallbacks        = nullptr;
+        allocatorInfo.pDeviceMemoryCallbacks      = nullptr;
+        allocatorInfo.frameInUseCount             = 0;
+        allocatorInfo.pHeapSizeLimit              = nullptr;
+        allocatorInfo.pVulkanFunctions            = nullptr;
 
         GPU_VK_VALIDATE(vmaCreateAllocator(
             &allocatorInfo,
-            &m_Allocator
-        ));
+            &m_Allocator));
 
         m_CommandList = new VulkanGpuCommandList();
 
@@ -541,15 +503,13 @@ namespace Graphyte::Graphics
             m_Device,
             indices.GraphicsFamily.value(),
             0,
-            &m_GraphicsQueue
-        );
+            &m_GraphicsQueue);
 
         vkGetDeviceQueue(
             m_Device,
             indices.ComputeFamily.value(),
             0,
-            &m_ComputeQueue
-        );
+            &m_ComputeQueue);
     }
 
     VulkanGpuDevice::~VulkanGpuDevice() noexcept
@@ -557,36 +517,30 @@ namespace Graphyte::Graphics
         delete m_CommandList;
 
         vmaDestroyAllocator(
-            m_Allocator
-        );
+            m_Allocator);
 
         vkDestroyDevice(
             m_Device,
-            nullptr
-        );
+            nullptr);
 
         {
             auto callback = VKGetFunction<PFN_vkDestroyDebugReportCallbackEXT>(
                 m_Instance,
-                "vkDestroyDebugReportCallbackEXT"
-            );
+                "vkDestroyDebugReportCallbackEXT");
 
             callback(
                 m_Instance,
                 m_DebugCallback,
-                nullptr
-            );
+                nullptr);
         }
 
         vkDestroyInstance(
             m_Instance,
-            nullptr
-        );
+            nullptr);
     }
 
     void VulkanGpuDevice::Tick(
-        float time
-    ) noexcept
+        float time) noexcept
     {
         (void)time;
     }

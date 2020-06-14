@@ -3,15 +3,14 @@
 
 TEST_CASE("Compression")
 {
-    constexpr const size_t Count = 2048;
-    constexpr const size_t Iterations = 10240;
+    constexpr const size_t Count          = 2048;
+    constexpr const size_t Iterations     = 10240;
     constexpr const uint32_t GeneratorMax = ((1U << 31) - 1);
 
     std::vector<std::byte> data{};
 
     uint32_t seed = 1337;
-    auto generate = [&]() -> uint32_t
-    {
+    auto generate = [&]() -> uint32_t {
         return seed = (seed * 1103515245 + 12345) & GeneratorMax;
     };
 
@@ -53,5 +52,4 @@ TEST_CASE("Compression")
         CHECK(output.size() < data.size());
     }
 #endif
-
 }

@@ -10,16 +10,15 @@ namespace Graphyte::Diagnostics::Impl
     bool ReportAbort(
         std::string_view title,
         std::string_view content,
-        std::string_view stacktrace
-    ) noexcept
+        std::string_view stacktrace) noexcept
     {
         if (GetErrorReporting() != ErrorReporting::Interactive)
         {
             return false;
         }
 
-        std::wstring wtitle = System::Impl::WidenString(title);
-        std::wstring wcontent = System::Impl::WidenString(content);
+        std::wstring wtitle      = System::Impl::WidenString(title);
+        std::wstring wcontent    = System::Impl::WidenString(content);
         std::wstring wstacktrace = System::Impl::WidenString(stacktrace);
 
         TASKDIALOGCONFIG config{

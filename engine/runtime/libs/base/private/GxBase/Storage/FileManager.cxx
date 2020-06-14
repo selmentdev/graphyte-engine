@@ -57,7 +57,7 @@ namespace Graphyte::Storage
         //}
         //else
         //{
-            return GetEngineDirectory();
+        return GetEngineDirectory();
         //}
     }
 
@@ -107,7 +107,7 @@ namespace Graphyte::Storage
         //}
         //else
         //{
-            return GetProjectDirectory();
+        return GetProjectDirectory();
         //}
     }
 
@@ -183,44 +183,38 @@ namespace Graphyte::Storage
     Status OpenRead(
         std::unique_ptr<IStream>& result,
         const std::string& path,
-        bool share
-    ) noexcept
+        bool share) noexcept
     {
         return IFileSystem::GetPlatformNative().OpenRead(
             result,
             path,
-            share
-        );
+            share);
     }
-    
+
     Status OpenWrite(
         std::unique_ptr<IStream>& result,
         const std::string& path,
         bool append,
-        bool share
-    ) noexcept
+        bool share) noexcept
     {
         return IFileSystem::GetPlatformNative().OpenWrite(
             result,
             path,
             append,
-            share
-        );
+            share);
     }
 
     Status CreateReader(
         std::unique_ptr<Archive>& archive,
         const std::string& path,
-        bool share
-    ) noexcept
+        bool share) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
         auto const status = IFileSystem::GetPlatformNative().OpenRead(
             handle,
             path,
-            share
-        );
+            share);
 
         if (status == Status::Success && handle != nullptr)
         {
@@ -235,8 +229,7 @@ namespace Graphyte::Storage
         std::unique_ptr<Archive>& archive,
         const std::string& path,
         bool append,
-        bool share
-    ) noexcept
+        bool share) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
@@ -244,8 +237,7 @@ namespace Graphyte::Storage
             handle,
             path,
             append,
-            share
-        );
+            share);
 
         if (status == Status::Success && handle != nullptr)
         {
@@ -258,15 +250,13 @@ namespace Graphyte::Storage
 
     Status ReadText(
         std::string& content,
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
         Status status = IFileSystem::GetPlatformNative().OpenRead(
             handle,
-            path
-        );
+            path);
 
         if (status == Status::Success && handle != nullptr)
         {
@@ -293,15 +283,13 @@ namespace Graphyte::Storage
 
     Status WriteText(
         std::string_view content,
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
         Status status = IFileSystem::GetPlatformNative().OpenWrite(
             handle,
-            path
-        );
+            path);
 
         if (status == Status::Success && handle != nullptr)
         {
@@ -314,15 +302,13 @@ namespace Graphyte::Storage
 
     Status ReadBinary(
         std::vector<std::byte>& content,
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
         Status status = IFileSystem::GetPlatformNative().OpenRead(
             handle,
-            path
-        );
+            path);
 
         if (status == Status::Success && handle != nullptr)
         {
@@ -350,15 +336,13 @@ namespace Graphyte::Storage
 
     Status WriteBinary(
         const std::vector<std::byte>& content,
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
         Status status = IFileSystem::GetPlatformNative().OpenWrite(
             handle,
-            path
-        );
+            path);
 
         if (status == Status::Success && handle != nullptr)
         {
@@ -373,16 +357,14 @@ namespace Graphyte::Storage
     Status ReadBinary(
         std::unique_ptr<std::byte[]>& contents,
         size_t& size,
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
         size = 0;
         std::unique_ptr<IStream> handle{};
 
         Status status = IFileSystem::GetPlatformNative().OpenRead(
             handle,
-            path
-        );
+            path);
 
         if (status == Status::Success && handle != nullptr)
         {
@@ -413,15 +395,13 @@ namespace Graphyte::Storage
     Status WriteBinary(
         const std::unique_ptr<std::byte[]>& contents,
         size_t size,
-        const std::string& path
-    ) noexcept
+        const std::string& path) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
         Status status = IFileSystem::GetPlatformNative().OpenWrite(
             handle,
-            path
-        );
+            path);
 
         if (status == Status::Success && handle != nullptr)
         {

@@ -14,16 +14,12 @@ namespace Graphyte
         char part2[16];
         char part3[16];
 
-        auto[end0, ecc0] = std::to_chars(std::begin(part0), std::end(part0), value.Major, 10);
-        auto[end1, ecc1] = std::to_chars(std::begin(part1), std::end(part1), value.Minor, 10);
-        auto[end2, ecc2] = std::to_chars(std::begin(part2), std::end(part2), value.Patch, 10);
-        auto[end3, ecc3] = std::to_chars(std::begin(part3), std::end(part3), value.Build, 10);
+        auto [end0, ecc0] = std::to_chars(std::begin(part0), std::end(part0), value.Major, 10);
+        auto [end1, ecc1] = std::to_chars(std::begin(part1), std::end(part1), value.Minor, 10);
+        auto [end2, ecc2] = std::to_chars(std::begin(part2), std::end(part2), value.Patch, 10);
+        auto [end3, ecc3] = std::to_chars(std::begin(part3), std::end(part3), value.Build, 10);
 
-        bool const valid =
-            (ecc0 == std::errc{}) &&
-            (ecc1 == std::errc{}) &&
-            (ecc2 == std::errc{}) &&
-            (ecc3 == std::errc{});
+        bool const valid = (ecc0 == std::errc{}) && (ecc1 == std::errc{}) && (ecc2 == std::errc{}) && (ecc3 == std::errc{});
 
         if (valid)
         {
@@ -48,7 +44,7 @@ namespace Graphyte
         if (!value.empty())
         {
             auto* ptr_begin = std::data(value);
-            auto* ptr_end = std::data(value) + std::size(value);
+            auto* ptr_end   = std::data(value) + std::size(value);
 
             uint32_t major{};
 

@@ -5,8 +5,7 @@ namespace Graphyte::System
 {
     bool Pipe::Create(
         PipeHandle& read,
-        PipeHandle& write
-    ) noexcept
+        PipeHandle& write) noexcept
     {
         int native_handles[2];
 
@@ -17,16 +16,15 @@ namespace Graphyte::System
             return false;
         }
 
-        read.Descriptor = native_handles[0];
+        read.Descriptor  = native_handles[0];
         write.Descriptor = native_handles[1];
 
         return true;
     }
-        
+
     void Pipe::Close(
         PipeHandle& read,
-        PipeHandle& write
-    ) noexcept
+        PipeHandle& write) noexcept
     {
         if (read.Descriptor != 0)
         {
@@ -38,15 +36,14 @@ namespace Graphyte::System
             close(write.Descriptor);
         }
     }
-        
+
     std::string Pipe::ReadString(
-        PipeHandle& handle
-    ) noexcept
+        PipeHandle& handle) noexcept
     {
         std::string result{};
 
         int n_available{};
-    
+
         if (ioctl(handle.Descriptor, FIONREAD, &n_available) == 0)
         {
             if (n_available > 0)
@@ -56,8 +53,7 @@ namespace Graphyte::System
                 [[maybe_unused]] ssize_t processed = read(
                     handle.Descriptor,
                     std::data(result),
-                    std::size(result)
-                );
+                    std::size(result));
             }
         }
         else
@@ -67,10 +63,9 @@ namespace Graphyte::System
 
         return result;
     }
-        
+
     std::vector<uint8_t> Pipe::ReadBytes(
-        PipeHandle& handle
-    ) noexcept
+        PipeHandle& handle) noexcept
     {
         std::vector<uint8_t> result{};
 
@@ -84,8 +79,7 @@ namespace Graphyte::System
                 [[maybe_unused]] ssize_t processed = read(
                     handle.Descriptor,
                     std::data(result),
-                    std::size(result)
-                );
+                    std::size(result));
             }
         }
         else
@@ -95,11 +89,10 @@ namespace Graphyte::System
 
         return result;
     }
-        
+
     bool Pipe::WriteString(
         PipeHandle& handle,
-        std::string_view value
-    ) noexcept
+        std::string_view value) noexcept
     {
         if (handle.Descriptor == 0 || value.length() == 0)
         {
@@ -112,18 +105,16 @@ namespace Graphyte::System
         ssize_t written = write(
             handle.Descriptor,
             buffer.data(),
-            buffer.size()
-        );
+            buffer.size());
 
         return static_cast<size_t>(written) == buffer.size();
     }
-        
+
     bool Pipe::WriteBytes(
         PipeHandle& handle,
         const void* buffer,
         size_t buffer_size,
-        size_t* processed
-    ) noexcept
+        size_t* processed) noexcept
     {
         if (handle.Descriptor == 0 || buffer_size == 0)
         {
@@ -139,12 +130,11 @@ namespace Graphyte::System
 
         return static_cast<size_t>(written) == buffer_size;
     }
-        
+
     void Pipe::Read(
         std::string* strings[],
         PipeHandle pipes[],
-        size_t count
-    ) noexcept
+        size_t count) noexcept
     {
         for (size_t i = 0; i < count; ++i)
         {

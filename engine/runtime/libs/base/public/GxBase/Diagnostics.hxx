@@ -44,19 +44,18 @@ namespace Graphyte::Diagnostics
     //! Exits from current process with provided exit code.
     //!
     //! \param exitCode Provides exit code.
-    [[noreturn]]
-    BASE_API void Exit(int32_t exitCode) noexcept;
+    [[noreturn]] BASE_API void Exit(int32_t exitCode) noexcept;
 
     /*!
      * \brief   Performs fast fail exit from current process.
      */
-    [[noreturn]]
-    BASE_API void FailFast() noexcept;
+    [[noreturn]] BASE_API void FailFast() noexcept;
 
     /*!
      * \brief   Represents possible error reporting modes.
      */
-    enum struct ErrorReporting {
+    enum struct ErrorReporting
+    {
         Interactive,
         Unattended,
     };
@@ -72,8 +71,7 @@ namespace Graphyte::Diagnostics
      * \param   value   Provides new reporting mode.
      */
     BASE_API void SetErrorReporting(
-        ErrorReporting value
-    ) noexcept;
+        ErrorReporting value) noexcept;
 }
 
 
@@ -108,8 +106,7 @@ namespace Graphyte::Diagnostics
         std::string_view file,
         std::uint_least32_t line,
         std::string_view format,
-        fmt::format_args args
-    ) noexcept;
+        fmt::format_args args) noexcept;
 
     /*!
      * \brief   Handles assertion request.
@@ -133,8 +130,7 @@ namespace Graphyte::Diagnostics
         std::string_view file,
         std::uint_least32_t line,
         std::string_view format,
-        const TArgs&... args
-    ) noexcept
+        const TArgs&... args) noexcept
     {
         return Diagnostics::OnAssertArgs(
             always_ignore,
@@ -143,50 +139,49 @@ namespace Graphyte::Diagnostics
             file,
             line,
             format,
-            fmt::make_format_args(args...)
-        );
+            fmt::make_format_args(args...));
     }
 }
 
 #if GRAPHYTE_CONFIG_DO_ASSERT
 
 #define GX_ASSERT(condition) \
-{ \
-    if (!(condition)) \
     { \
-        static bool GX_UNIQUE_NAME(_gx_always_ignore_this_assert) = false; \
-        if (::Graphyte::Diagnostics::OnAssert(GX_UNIQUE_NAME(_gx_always_ignore_this_assert), #condition, __FUNCTION__, __FILE__, __LINE__, {})) \
+        if (!(condition)) \
         { \
-            GX_DEBUG_BREAK(); \
+            static bool GX_UNIQUE_NAME(_gx_always_ignore_this_assert) = false; \
+            if (::Graphyte::Diagnostics::OnAssert(GX_UNIQUE_NAME(_gx_always_ignore_this_assert), #condition, __FUNCTION__, __FILE__, __LINE__, {})) \
+            { \
+                GX_DEBUG_BREAK(); \
+            } \
         } \
-    } \
-}
+    }
 
 #define GX_ASSERTF(condition, format, ...) \
-{ \
-    if (!(condition)) \
     { \
-        static bool GX_UNIQUE_NAME(_gx_always_ignore_this_assert) = false; \
-        if (::Graphyte::Diagnostics::OnAssert(GX_UNIQUE_NAME(_gx_always_ignore_this_assert), #condition, __FUNCTION__, __FILE__, __LINE__, format, ## __VA_ARGS__)) \
+        if (!(condition)) \
         { \
-            GX_DEBUG_BREAK(); \
+            static bool GX_UNIQUE_NAME(_gx_always_ignore_this_assert) = false; \
+            if (::Graphyte::Diagnostics::OnAssert(GX_UNIQUE_NAME(_gx_always_ignore_this_assert), #condition, __FUNCTION__, __FILE__, __LINE__, format, ##__VA_ARGS__)) \
+            { \
+                GX_DEBUG_BREAK(); \
+            } \
         } \
-    } \
-}
+    }
 
 #else
 
 #define GX_ASSERT(condition) \
-{ \
-    ((void)0); \
-    GX_COMPILER_ASSUME(condition); \
-}
+    { \
+        ((void)0); \
+        GX_COMPILER_ASSUME(condition); \
+    }
 
 #define GX_ASSERTF(condition, format, ...) \
-{ \
-    ((void)0); \
-    GX_COMPILER_ASSUME(condition); \
-}
+    { \
+        ((void)0); \
+        GX_COMPILER_ASSUME(condition); \
+    }
 
 #endif
 
@@ -219,8 +214,7 @@ namespace Graphyte::Diagnostics
         std::string_view file,
         std::uint_least32_t line,
         std::string_view format,
-        fmt::format_args args
-    ) noexcept;
+        fmt::format_args args) noexcept;
 
     /*!
      * \brief   Handles abort request.
@@ -243,8 +237,7 @@ namespace Graphyte::Diagnostics
         std::string_view file,
         std::uint_least32_t line,
         std::string_view format,
-        const TArgs&... args
-    ) noexcept
+        const TArgs&... args) noexcept
     {
         return Diagnostics::OnAbortArgs(
             condition,
@@ -252,8 +245,7 @@ namespace Graphyte::Diagnostics
             file,
             line,
             format,
-            fmt::make_format_args(args...)
-        );
+            fmt::make_format_args(args...));
     }
 }
 
@@ -265,7 +257,7 @@ namespace Graphyte::Diagnostics
  * \param   ...         Provides format arguments.
  */
 #define GX_ABORT(format, ...) \
-    if (::Graphyte::Diagnostics::OnAbort({}, __FUNCTION__, __FILE__, __LINE__, format, ## __VA_ARGS__)) \
+    if (::Graphyte::Diagnostics::OnAbort({}, __FUNCTION__, __FILE__, __LINE__, format, ##__VA_ARGS__)) \
     { \
         GX_DEBUG_BREAK(); \
     }
@@ -280,7 +272,7 @@ namespace Graphyte::Diagnostics
 #define GX_ABORT_UNLESS(condition, format, ...) \
     if (!(condition)) \
     { \
-        if (::Graphyte::Diagnostics::OnAbort(#condition, __FUNCTION__, __FILE__, __LINE__, format, ## __VA_ARGS__)) \
+        if (::Graphyte::Diagnostics::OnAbort(#condition, __FUNCTION__, __FILE__, __LINE__, format, ##__VA_ARGS__)) \
         { \
             GX_DEBUG_BREAK(); \
         } \
@@ -305,8 +297,7 @@ namespace Graphyte::Diagnostics
      */
     //[[noreturn]]
     BASE_API void OnCrash(
-        EXCEPTION_POINTERS* exception
-    ) noexcept;
+        EXCEPTION_POINTERS* exception) noexcept;
 
 #endif
 
@@ -322,8 +313,7 @@ namespace Graphyte::Diagnostics
     //[[noreturn]]
     BASE_API void OnCrash(
         ucontext_t* context,
-        siginfo_t* signal_info
-    ) noexcept;
+        siginfo_t* signal_info) noexcept;
 
 #endif
 }
@@ -354,12 +344,12 @@ namespace Graphyte::Diagnostics
 {
     enum struct StackFrameFormat
     {
-        Function    = 1 << 0,
-        Address     = 1 << 1,
-        Module      = 1 << 2,
-        Location    = 1 << 3,
-        Standard    = Function | Address,
-        Extended    = Function | Address | Module | Location,
+        Function = 1 << 0,
+        Address  = 1 << 1,
+        Module   = 1 << 2,
+        Location = 1 << 3,
+        Standard = Function | Address,
+        Extended = Function | Address | Module | Location,
     };
 
     GX_ENUM_CLASS_FLAGS(StackFrameFormat);
@@ -383,8 +373,7 @@ namespace Graphyte::Diagnostics
      */
     BASE_API std::string ToString(
         const StackFrame& frame,
-        StackFrameFormat format = StackFrameFormat::Standard
-    ) noexcept;
+        StackFrameFormat format = StackFrameFormat::Standard) noexcept;
 
     /*!
      * \brief   Converts stack trace to string.
@@ -396,8 +385,7 @@ namespace Graphyte::Diagnostics
      */
     BASE_API std::string ToString(
         notstd::span<const StackFrame> frames,
-        StackFrameFormat format = StackFrameFormat::Standard
-    ) noexcept;
+        StackFrameFormat format = StackFrameFormat::Standard) noexcept;
 
 
     /*!
@@ -406,8 +394,7 @@ namespace Graphyte::Diagnostics
      * \param   frames  Returns captured stack trace frames.
      */
     BASE_API Status GetStackTrace(
-        std::vector<StackFrame>& frames
-    ) noexcept;
+        std::vector<StackFrame>& frames) noexcept;
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
@@ -420,8 +407,7 @@ namespace Graphyte::Diagnostics
      */
     BASE_API Status GetStackTrace(
         std::vector<StackFrame>& frames,
-        const CONTEXT& context
-    ) noexcept;
+        const CONTEXT& context) noexcept;
 
 #endif
 
@@ -436,8 +422,7 @@ namespace Graphyte::Diagnostics
      */
     BASE_API Status GetStackTrace(
         std::vector<StackFrame>& frames,
-        ucontext_t* context
-    ) noexcept;
+        ucontext_t* context) noexcept;
 
 #endif
 }
@@ -452,12 +437,12 @@ namespace Graphyte::Diagnostics
 {
     enum struct LogLevel
     {
-        None = 0,   // Logging Disabled.
-        Fatal,      // fatals in retail build; not compiled out
-        Error,      // errors in retail build; not compiled out
-        Warn,       // warnings in retail build; not compiled out
-        Info,       // additional info, compiled in, may be compiled out
-        Trace,      // debug trace; removed from compilation on retail build
+        None = 0, // Logging Disabled.
+        Fatal,    // fatals in retail build; not compiled out
+        Error,    // errors in retail build; not compiled out
+        Warn,     // warnings in retail build; not compiled out
+        Info,     // additional info, compiled in, may be compiled out
+        Trace,    // debug trace; removed from compilation on retail build
     };
 
     namespace Impl
@@ -468,14 +453,14 @@ namespace Graphyte::Diagnostics
         {
             switch (level)
             {
-            case LogLevel::None:
-            case LogLevel::Trace:
-            case LogLevel::Info:
-                return false;
-            case LogLevel::Warn:
-            case LogLevel::Error:
-            case LogLevel::Fatal:
-                return true;
+                case LogLevel::None:
+                case LogLevel::Trace:
+                case LogLevel::Info:
+                    return false;
+                case LogLevel::Warn:
+                case LogLevel::Error:
+                case LogLevel::Fatal:
+                    return true;
             }
         }
     }
@@ -494,8 +479,7 @@ namespace Graphyte::Diagnostics
         LogLevel level,
         std::string_view category,
         std::string_view format,
-        fmt::format_args args
-    ) noexcept;
+        fmt::format_args args) noexcept;
 
     /*!
      * \brief   Logs message to logger.
@@ -512,15 +496,13 @@ namespace Graphyte::Diagnostics
         LogLevel level,
         std::string_view category,
         std::string_view format,
-        const TArgs& ... args
-    ) noexcept
+        const TArgs&... args) noexcept
     {
         return Diagnostics::LogDispatchArgs(
             level,
             category,
             format,
-            fmt::make_format_args(args...)
-        );
+            fmt::make_format_args(args...));
     }
 }
 
@@ -546,8 +528,14 @@ namespace Graphyte::Diagnostics
     template <LogLevel RuntimeValue, LogLevel CompileValue>
     struct LogCategory : public LogCategoryBase
     {
-        enum { RuntimeLevel = static_cast<int>(RuntimeValue) };
-        enum { CompileLevel = static_cast<int>(CompileValue) };
+        enum
+        {
+            RuntimeLevel = static_cast<int>(RuntimeValue)
+        };
+        enum
+        {
+            CompileLevel = static_cast<int>(CompileValue)
+        };
 
         constexpr LogCategory(const char* name) noexcept
             : LogCategoryBase(name, RuntimeValue)
@@ -559,17 +547,18 @@ namespace Graphyte::Diagnostics
 
 #define GX_DECLARE_LOG_CATEGORY(name, runtime, compile) \
     struct LogCategory##name : public Graphyte::Diagnostics::LogCategory< \
-        Graphyte::Diagnostics::LogLevel::runtime, \
-        Graphyte::Diagnostics::LogLevel::compile> \
+                                   Graphyte::Diagnostics::LogLevel::runtime, \
+                                   Graphyte::Diagnostics::LogLevel::compile> \
     { \
         inline LogCategory##name() noexcept \
             : LogCategory(#name) \
         { \
         } \
-    }; extern LogCategory##name name;
+    }; \
+    extern LogCategory##name name;
 
 #define GX_DEFINE_LOG_CATEGORY(name) \
-    LogCategory##name name{}
+    LogCategory##name name { }
 
 
 //! Outputs formatted log message.
@@ -581,7 +570,7 @@ namespace Graphyte::Diagnostics
     { \
         if constexpr (::Graphyte::Diagnostics::LogLevel::level == ::Graphyte::Diagnostics::LogLevel::Fatal) \
         { \
-            if (::Graphyte::Diagnostics::OnAbort("", __func__, __FILE__, __LINE__, format, ## __VA_ARGS__)) \
+            if (::Graphyte::Diagnostics::OnAbort("", __func__, __FILE__, __LINE__, format, ##__VA_ARGS__)) \
             { \
                 GX_DEBUG_BREAK(); \
             } \
@@ -592,7 +581,7 @@ namespace Graphyte::Diagnostics
             { \
                 if (category.CanDispatch(::Graphyte::Diagnostics::LogLevel::level)) \
                 { \
-                    ::Graphyte::Diagnostics::LogDispatch(::Graphyte::Diagnostics::LogLevel::level, category.Name, format, ## __VA_ARGS__); \
+                    ::Graphyte::Diagnostics::LogDispatch(::Graphyte::Diagnostics::LogLevel::level, category.Name, format, ##__VA_ARGS__); \
                 } \
             } \
         } \
@@ -614,8 +603,7 @@ namespace Graphyte::Diagnostics
      * \return  The matching status code.
      */
     BASE_API Status GetStatusFromErrno(
-        int error
-    ) noexcept;
+        int error) noexcept;
 
     /*!
      * \brief   Gets message from errno.
@@ -625,8 +613,7 @@ namespace Graphyte::Diagnostics
      * \return  The matching error message.
      */
     BASE_API std::string GetMessageFromErrno(
-        int error
-    ) noexcept;
+        int error) noexcept;
 
     /*!
      * \brief   Gets message from status code.
@@ -636,8 +623,7 @@ namespace Graphyte::Diagnostics
      * \return  The matching message.
      */
     BASE_API std::string_view GetMessageFromStatus(
-        Status status
-    ) noexcept;
+        Status status) noexcept;
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
@@ -649,8 +635,7 @@ namespace Graphyte::Diagnostics
      * \return  The matching status code.
      */
     BASE_API Status GetStatusFromSystemError(
-        DWORD error
-    ) noexcept;
+        DWORD error) noexcept;
 
     /*!
      * \brief   Gets status from last WinAPI error code.
@@ -667,8 +652,7 @@ namespace Graphyte::Diagnostics
      * \return  The matching message.
      */
     BASE_API std::string_view GeMessageFromtExceptionCode(
-        DWORD code
-    ) noexcept;
+        DWORD code) noexcept;
 
     /*!
      * \brief   Gets messge from WinAPI Error Code.
@@ -678,8 +662,7 @@ namespace Graphyte::Diagnostics
      * \return  The matching message.
      */
     BASE_API std::string GetMessageFromSystemError(
-        DWORD error
-    ) noexcept;
+        DWORD error) noexcept;
 
     /*!
      * \brief   Gets message from last WinAPI error code.
@@ -696,20 +679,17 @@ namespace Graphyte::Diagnostics
      * \return  The matching message.
      */
     BASE_API std::string_view GetMessageFromHRESULT(
-        HRESULT hr
-    ) noexcept;
+        HRESULT hr) noexcept;
 
 #endif
 
 #if GRAPHYTE_PLATFORM_POSIX
 
     BASE_API std::string_view GetSignalName(
-        const siginfo_t* signal_info
-    ) noexcept;
+        const siginfo_t* signal_info) noexcept;
 
     BASE_API Status GetStatusFromSiginfo(
-        const siginfo_t* signal_info
-    ) noexcept;
+        const siginfo_t* signal_info) noexcept;
 
 #endif
 
@@ -730,8 +710,10 @@ namespace Graphyte::Diagnostics
 
     public:
         RecursionWatcher() = delete;
+
         RecursionWatcher(const RecursionWatcher&) = delete;
-        RecursionWatcher& operator= (const RecursionWatcher&) = delete;
+
+        RecursionWatcher& operator=(const RecursionWatcher&) = delete;
 
     public:
         RecursionWatcher(size_t& counter) noexcept
@@ -753,17 +735,17 @@ namespace Graphyte::Diagnostics
 #define GX_RECURSION() \
     static size_t GX_UNIQUE_NAME(gx_recursion_watch_count){}; \
     GX_ASSERTF(GX_UNIQUE_NAME(gx_recursion_watch_count) == 0, "Recursion detected"); \
-    const ::Graphyte::Diagnostics::RecursionWatcher GX_UNIQUE_NAME(gx_recursion_watch){ GX_UNIQUE_NAME(gx_recursion_watch_count) }
+    const ::Graphyte::Diagnostics::RecursionWatcher GX_UNIQUE_NAME(gx_recursion_watch) { GX_UNIQUE_NAME(gx_recursion_watch_count) }
 
 #define GX_RECURSIONF(format, ...) \
     static size_t GX_UNIQUE_NAME(gx_recursion_watch_count){}; \
     GX_ASSERTF(GX_UNIQUE_NAME(gx_recursion_watch_count) == 0, format, __VA_ARGS__); \
-    const ::Graphyte::Diagnostics::RecursionWatcher GX_UNIQUE_NAME(gx_recursion_watch){ GX_UNIQUE_NAME(gx_recursion_watch_count) }
+    const ::Graphyte::Diagnostics::RecursionWatcher GX_UNIQUE_NAME(gx_recursion_watch) { GX_UNIQUE_NAME(gx_recursion_watch_count) }
 
 #else
 
-#define GX_RECURSION()          ((void)0)
-#define GX_RECURSIONF(...)      ((void)0)
+#define GX_RECURSION()     ((void)0)
+#define GX_RECURSIONF(...) ((void)0)
 
 #endif
 
@@ -773,7 +755,7 @@ namespace Graphyte::Diagnostics
 // Unimplemented functionality reporting.
 //
 
-#define GX_ASSERT_NOT_IMPLEMENTED()         GX_ASSERTF(false, "Not Implemented: {}", __FUNCTION__)
+#define GX_ASSERT_NOT_IMPLEMENTED() GX_ASSERTF(false, "Not Implemented: {}", __FUNCTION__)
 
 
 // =================================================================================================
@@ -783,14 +765,15 @@ namespace Graphyte::Diagnostics
 
 #if GRAPHYTE_CONFIG_DO_ASSERT
 
-#define GX_ASSERT_SINGLE_CALL_MSG(message, ...) { \
+#define GX_ASSERT_SINGLE_CALL_MSG(message, ...) \
+    { \
         static bool GX_UNIQUE_NAME(gx_single_call_scope_mark) = false; \
-        GX_ASSERTF(GX_UNIQUE_NAME(gx_single_call_scope_mark) == false, message, ## __VA_ARGS__); \
+        GX_ASSERTF(GX_UNIQUE_NAME(gx_single_call_scope_mark) == false, message, ##__VA_ARGS__); \
         (void)GX_UNIQUE_NAME(gx_single_call_scope_mark); \
         GX_UNIQUE_NAME(gx_single_call_scope_mark) = true; \
     }
 
-#define GX_ASSERT_SINGLE_CALL()             GX_ASSERT_SINGLE_CALL_MSG(" called more than once")
+#define GX_ASSERT_SINGLE_CALL() GX_ASSERT_SINGLE_CALL_MSG(" called more than once")
 
 #else
 

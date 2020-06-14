@@ -16,8 +16,8 @@ namespace Graphyte
 {
     enum struct ConsoleObjectFlags : uint32_t
     {
-        None = 0,
-        Cheat = 1 << 0,
+        None     = 0,
+        Cheat    = 1 << 0,
         ReadOnly = 1 << 1,
     };
     GX_ENUM_CLASS_FLAGS(ConsoleObjectFlags);
@@ -58,8 +58,7 @@ namespace Graphyte
          * \return  @c true when succeeded, @c false otherwise.
          */
         virtual bool FromString(
-            std::string_view value
-        ) noexcept = 0;
+            std::string_view value) noexcept = 0;
 
         /*!
          * \brief   Gets value of this variable as string.
@@ -69,8 +68,7 @@ namespace Graphyte
         virtual std::string ToString() const noexcept = 0;
     };
 
-    enum struct [[nodiscard]] ConsoleCommandResult : uint32_t
-    {
+    enum struct [[nodiscard]] ConsoleCommandResult : uint32_t{
         Success,
         Failed,
         InvalidArgument,
@@ -84,8 +82,7 @@ namespace Graphyte
         IntrusiveListNode<IConsoleCommand> ListEntry;
 
         virtual ConsoleCommandResult Execute(
-            notstd::span<std::string_view> params
-        ) noexcept = 0;
+            notstd::span<std::string_view> params) noexcept = 0;
     };
 }
 
@@ -111,13 +108,13 @@ namespace Graphyte
             ConsoleObjectFlags flags,
             std::string_view name,
             std::string_view help,
-            std::string_view store
-        ) noexcept;
+            std::string_view store) noexcept;
 
         virtual ~ConsoleVariableBase() noexcept;
 
         ConsoleVariableBase(const ConsoleVariableBase&) = delete;
-        ConsoleVariableBase& operator= (const ConsoleVariableBase&) = delete;
+
+        ConsoleVariableBase& operator=(const ConsoleVariableBase&) = delete;
 
     public:
         virtual std::string_view GetHelp() const noexcept final override
@@ -152,9 +149,8 @@ namespace Graphyte
         ConsoleVariable(
             ConsoleObjectFlags flags,
             std::string_view name,
-            std::string_view help = {},
-            std::string_view store = {}
-        ) noexcept
+            std::string_view help  = {},
+            std::string_view store = {}) noexcept
             : ConsoleVariableBase(flags, name, help, store)
             , Value{}
         {
@@ -164,9 +160,8 @@ namespace Graphyte
             const T& value,
             ConsoleObjectFlags flags,
             std::string_view name,
-            std::string_view help = {},
-            std::string_view store = {}
-        ) noexcept
+            std::string_view help  = {},
+            std::string_view store = {}) noexcept
             : ConsoleVariableBase(flags, name, help, store)
             , Value{ value }
         {
@@ -174,8 +169,7 @@ namespace Graphyte
 
     public:
         virtual bool FromString(
-            std::string_view value
-        ) noexcept final override
+            std::string_view value) noexcept final override
         {
             if constexpr (std::is_same_v<std::string, T>)
             {
@@ -218,8 +212,7 @@ namespace Graphyte
      * \return  The command execution status.
      */
     using ConsoleCommandDelegate = std::function<ConsoleCommandResult(
-        notstd::span<std::string_view> params
-    )>;
+        notstd::span<std::string_view> params)>;
 
     class BASE_API ConsoleCommand final : public IConsoleCommand
     {
@@ -234,13 +227,13 @@ namespace Graphyte
             ConsoleObjectFlags flags,
             std::string_view name,
             ConsoleCommandDelegate action,
-            std::string_view help = {}
-        ) noexcept;
+            std::string_view help = {}) noexcept;
 
         virtual ~ConsoleCommand() noexcept;
 
         ConsoleCommand(const ConsoleCommand&) = delete;
-        ConsoleCommand& operator= (const ConsoleCommand&) = delete;
+
+        ConsoleCommand& operator=(const ConsoleCommand&) = delete;
 
     public:
         virtual std::string_view GetHelp() const noexcept final override
@@ -259,8 +252,7 @@ namespace Graphyte
         }
 
         virtual ConsoleCommandResult Execute(
-            notstd::span<std::string_view> params
-        ) noexcept final override;
+            notstd::span<std::string_view> params) noexcept final override;
     };
 }
 
@@ -280,43 +272,35 @@ namespace Graphyte
 
     public:
         BASE_API static void Register(
-            ConsoleVariableBase* variable
-        ) noexcept;
+            ConsoleVariableBase* variable) noexcept;
 
         BASE_API static void Unregister(
-            ConsoleVariableBase* variable
-        ) noexcept;
+            ConsoleVariableBase* variable) noexcept;
 
     public:
         BASE_API static void Register(
-            ConsoleCommand* command
-        ) noexcept;
+            ConsoleCommand* command) noexcept;
 
         BASE_API static void Unregister(
-            ConsoleCommand* command
-        ) noexcept;
+            ConsoleCommand* command) noexcept;
 
     public:
         BASE_API static bool SetValue(
             std::string_view name,
-            std::string_view value
-        ) noexcept;
+            std::string_view value) noexcept;
 
         BASE_API static bool GetValue(
             std::string& out_result,
-            std::string_view name
-        ) noexcept;
+            std::string_view name) noexcept;
 
     public:
         BASE_API static ConsoleCommandResult Execute(
             std::string_view command,
-            std::string_view params
-        ) noexcept;
+            std::string_view params) noexcept;
 
         BASE_API static ConsoleCommandResult Execute(
             std::string_view command,
-            notstd::span<std::string_view> params
-        ) noexcept;
+            notstd::span<std::string_view> params) noexcept;
 
     public:
         /*!
@@ -328,8 +312,7 @@ namespace Graphyte
          *          unloaded.
          */
         BASE_API static void EnumerateVariables(
-            std::vector<std::string_view>& variables
-        ) noexcept;
+            std::vector<std::string_view>& variables) noexcept;
 
         /*!
          * \brief   Enumerates all registered commands.
@@ -340,17 +323,14 @@ namespace Graphyte
          *          unloaded.
          */
         BASE_API static void EnumerateCommands(
-            std::vector<std::string_view>& commands
-        ) noexcept;
+            std::vector<std::string_view>& commands) noexcept;
 
     private:
         BASE_API static IConsoleVariable* FindVariable(
-            std::string_view name
-        ) noexcept;
+            std::string_view name) noexcept;
 
         BASE_API static IConsoleCommand* FindCommand(
-            std::string_view name
-        ) noexcept;
+            std::string_view name) noexcept;
     };
 }
 

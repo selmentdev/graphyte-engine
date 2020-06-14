@@ -11,35 +11,35 @@
 #define NOCOMM 1
 //#define NOCTLMGR 1
 #define NODEFERWINDOWPOS 1
-#define NODRAWTEXT 1
+#define NODRAWTEXT       1
 //#define NOGDI 1
 #define NOGDICAPMASKS 1
-#define NOHELP 1
+#define NOHELP        1
 //#define NOICONS 1
-#define NOIMAGE 1
-#define NOKANJI 1
+#define NOIMAGE  1
+#define NOKANJI  1
 #define NOKERNEL 1
 //#define NOKEYSTATES 1
 //#define NOMB 1
-#define NOMCX 1
+#define NOMCX    1
 #define NOMEMMGR 1
 //#define NOMENUS 1
 #define NOMETAFILE 1
-#define NOMINMAX 1
+#define NOMINMAX   1
 //#define NOMSG 1
 //#define NONLS 1
-#define NOOPENFILE 1
-#define NOPROFILER 1
+#define NOOPENFILE  1
+#define NOPROFILER  1
 #define NOPROXYSTUB 1
 #define NORASTEROPS 1
-#define NORPC 1
-#define NOSCROLL 1
-#define NOSERVICE 1
+#define NORPC       1
+#define NOSCROLL    1
+#define NOSERVICE   1
 //define NOSHOWWINDOW 1
 #define NOSOUND 1
 //#define NOSYSCOMMANDS 1
 //#define NOSYSMETRICS 1
-#define NOTAPE 1
+#define NOTAPE       1
 #define NOTEXTMETRIC 1
 //#define NOUSER 1
 //#define NOVIRTUALKEYCODES 1
@@ -50,9 +50,8 @@
 #define OEMRESOURCE 1
 
 
-
 #define WIN32_LEAN_AND_MEAN 1
-#define NOMINMAX 1
+#define NOMINMAX            1
 
 #ifndef STRICT
 #define STRICT 1
@@ -61,7 +60,7 @@
 #if false
 #define _CRTDBG_MAP_ALLOC
 #ifdef _DEBUG
-#define DEBUG_NEW new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#define DEBUG_NEW new (_NORMAL_BLOCK, __FILE__, __LINE__)
 #define new DEBUG_NEW
 #endif
 #endif
@@ -90,8 +89,8 @@
 #endif
 
 #if defined(_MSC_VER) && defined(NDEBUG)
-#   define _SECURE_SCL 0
-#   define _SECURE_SCL_THROWS 0
+#define _SECURE_SCL        0
+#define _SECURE_SCL_THROWS 0
 #endif
 
 //
@@ -185,22 +184,22 @@
 //
 #if defined(_MSC_VER) && !defined(NDEBUG)
 // Include runtime debug headers
-#   include <crtdbg.h>
+#include <crtdbg.h>
 #endif
 
 //
 // Additional intrinsics.
 //
 #if defined(_MSC_VER)
-#   pragma intrinsic(_lrotl, _lrotr, _rotl, _rotr, _strset, abs, fabs, labs, memcmp, memcpy, memset, strcat, strcmp, strcpy, strlen)
-#   pragma intrinsic(acos, cosh, pow, tanh, asin, fmod, sinh)
-#   pragma intrinsic(atan, exp, log10, sqrt, atan2, log, sin, tan, cos)
-#   pragma intrinsic(_rotr8, _rotr16, _rotr, _rotr64)
-#   pragma intrinsic(_rotl8, _rotl16, _rotl, _rotl64)
+#pragma intrinsic(_lrotl, _lrotr, _rotl, _rotr, _strset, abs, fabs, labs, memcmp, memcpy, memset, strcat, strcmp, strcpy, strlen)
+#pragma intrinsic(acos, cosh, pow, tanh, asin, fmod, sinh)
+#pragma intrinsic(atan, exp, log10, sqrt, atan2, log, sin, tan, cos)
+#pragma intrinsic(_rotr8, _rotr16, _rotr, _rotr64)
+#pragma intrinsic(_rotl8, _rotl16, _rotl, _rotl64)
 
-#   if defined(_M_X86) || defined(_M_X64)
-#       pragma intrinsic(__rdtsc)
-#   endif
+#if defined(_M_X86) || defined(_M_X64)
+#pragma intrinsic(__rdtsc)
+#endif
 #endif
 
 //

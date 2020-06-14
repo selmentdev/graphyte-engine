@@ -12,8 +12,7 @@ namespace Graphyte::System::Impl
         // Initialize SDL.
         //
 
-        if (Application::GetDescriptor().Type != Application::ApplicationType::ConsoleTool &&
-            Application::GetDescriptor().Type != Application::ApplicationType::UnitTest)
+        if (Application::GetDescriptor().Type != Application::ApplicationType::ConsoleTool && Application::GetDescriptor().Type != Application::ApplicationType::UnitTest)
         {
             if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
             {
@@ -32,23 +31,20 @@ namespace Graphyte::System::Impl
         SDL_GetVersion(&linked_version);
 
         GX_LOG(LogPlatform, Info, "SDL Version linked: {}.{}.{}\n",
-            linked_version.major, linked_version.minor, linked_version.patch
-        );
+            linked_version.major, linked_version.minor, linked_version.patch);
 
         SDL_version compiled_version{};
         SDL_VERSION(&compiled_version);
 
         GX_LOG(LogPlatform, Info, "SDL Version compiled: {}.{}.{}\n",
-            compiled_version.major, compiled_version.minor, compiled_version.patch
-        );
+            compiled_version.major, compiled_version.minor, compiled_version.patch);
     }
 
     void FinalizePlatform() noexcept
     {
         GX_ASSERT_SINGLE_CALL();
 
-        if (Application::GetDescriptor().Type != Application::ApplicationType::ConsoleTool &&
-            Application::GetDescriptor().Type != Application::ApplicationType::UnitTest)
+        if (Application::GetDescriptor().Type != Application::ApplicationType::ConsoleTool && Application::GetDescriptor().Type != Application::ApplicationType::UnitTest)
         {
             SDL_Quit();
         }

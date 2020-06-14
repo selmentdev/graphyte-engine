@@ -10,45 +10,39 @@
 namespace Graphyte::Graphics
 {
     void D3D11GpuCommandList::BindResourceSet(
-        GpuResourceSetHandle handle
-    ) noexcept
+        GpuResourceSetHandle handle) noexcept
     {
         auto native = static_cast<D3D11GpuResourceSet*>(handle);
 
-        auto bind_texture = [&](
-            GpuShaderType shader,
-            UINT slot,
-            ID3D11ShaderResourceView* view
-        ) noexcept -> void
-        {
+        auto bind_texture = [&](GpuShaderType shader, UINT slot, ID3D11ShaderResourceView* view) noexcept -> void {
             switch (shader)
             {
-            case GpuShaderType::Pixel:
+                case GpuShaderType::Pixel:
                 {
                     m_Context->PSSetShaderResources(slot, 1, &view);
                     break;
                 }
-            case GpuShaderType::Vertex:
+                case GpuShaderType::Vertex:
                 {
                     m_Context->VSSetShaderResources(slot, 1, &view);
                     break;
                 }
-            case GpuShaderType::Geometry:
+                case GpuShaderType::Geometry:
                 {
                     m_Context->GSSetShaderResources(slot, 1, &view);
                     break;
                 }
-            case GpuShaderType::Hull:
+                case GpuShaderType::Hull:
                 {
                     m_Context->HSSetShaderResources(slot, 1, &view);
                     break;
                 }
-            case GpuShaderType::Domain:
+                case GpuShaderType::Domain:
                 {
                     m_Context->DSSetShaderResources(slot, 1, &view);
                     break;
                 }
-            case GpuShaderType::Compute:
+                case GpuShaderType::Compute:
                 {
                     m_Context->CSSetShaderResources(slot, 1, &view);
                     break;
@@ -56,40 +50,35 @@ namespace Graphyte::Graphics
             }
         };
 
-        auto bind_sampler = [&](
-            GpuShaderType shader,
-            UINT slot,
-            ID3D11SamplerState* sampler
-        ) noexcept -> void
-        {
+        auto bind_sampler = [&](GpuShaderType shader, UINT slot, ID3D11SamplerState* sampler) noexcept -> void {
             switch (shader)
             {
-            case GpuShaderType::Pixel:
+                case GpuShaderType::Pixel:
                 {
                     m_Context->PSSetSamplers(slot, 1, &sampler);
                     break;
                 }
-            case GpuShaderType::Vertex:
+                case GpuShaderType::Vertex:
                 {
                     m_Context->VSSetSamplers(slot, 1, &sampler);
                     break;
                 }
-            case GpuShaderType::Geometry:
+                case GpuShaderType::Geometry:
                 {
                     m_Context->GSSetSamplers(slot, 1, &sampler);
                     break;
                 }
-            case GpuShaderType::Hull:
+                case GpuShaderType::Hull:
                 {
                     m_Context->HSSetSamplers(slot, 1, &sampler);
                     break;
                 }
-            case GpuShaderType::Domain:
+                case GpuShaderType::Domain:
                 {
                     m_Context->DSSetSamplers(slot, 1, &sampler);
                     break;
                 }
-            case GpuShaderType::Compute:
+                case GpuShaderType::Compute:
                 {
                     m_Context->CSSetSamplers(slot, 1, &sampler);
                     break;
@@ -97,40 +86,35 @@ namespace Graphyte::Graphics
             }
         };
 
-        auto bind_uniform_buffer = [&](
-            GpuShaderType shader,
-            UINT slot,
-            ID3D11Buffer* buffer
-        ) noexcept -> void
-        {
+        auto bind_uniform_buffer = [&](GpuShaderType shader, UINT slot, ID3D11Buffer* buffer) noexcept -> void {
             switch (shader)
             {
-            case GpuShaderType::Pixel:
+                case GpuShaderType::Pixel:
                 {
                     m_Context->PSSetConstantBuffers(slot, 1, &buffer);
                     break;
                 }
-            case GpuShaderType::Vertex:
+                case GpuShaderType::Vertex:
                 {
                     m_Context->VSSetConstantBuffers(slot, 1, &buffer);
                     break;
                 }
-            case GpuShaderType::Geometry:
+                case GpuShaderType::Geometry:
                 {
                     m_Context->GSSetConstantBuffers(slot, 1, &buffer);
                     break;
                 }
-            case GpuShaderType::Hull:
+                case GpuShaderType::Hull:
                 {
                     m_Context->HSSetConstantBuffers(slot, 1, &buffer);
                     break;
                 }
-            case GpuShaderType::Domain:
+                case GpuShaderType::Domain:
                 {
                     m_Context->DSSetConstantBuffers(slot, 1, &buffer);
                     break;
                 }
-            case GpuShaderType::Compute:
+                case GpuShaderType::Compute:
                 {
                     m_Context->CSSetConstantBuffers(slot, 1, &buffer);
                     break;
@@ -175,19 +159,18 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     GpuResourceSetHandle D3D11GpuDevice::CreateResourceSet(
-        const GpuResourceSetDesc& desc
-    ) noexcept
+        const GpuResourceSetDesc& desc) noexcept
     {
         auto result = new D3D11GpuResourceSet();
-        
+
         for (auto& binding : desc.m_Bindings)
         {
-            auto& slot = binding.Key.ShaderRegister;
+            auto& slot       = binding.Key.ShaderRegister;
             auto& visibility = binding.Key.ShaderVisibility;
 
             switch (binding.Key.ResourceType)
             {
-            case GpuResourceType::UniformBuffer:
+                case GpuResourceType::UniformBuffer:
                 {
                     auto native = static_cast<D3D11GpuUniformBuffer*>(binding.Resource.UniformBuffer);
                     GX_ASSERT(native != nullptr);
@@ -224,7 +207,7 @@ namespace Graphyte::Graphics
 
                     break;
                 }
-            case GpuResourceType::Sampler:
+                case GpuResourceType::Sampler:
                 {
                     auto native = static_cast<D3D11GpuSampler*>(binding.Resource.Sampler);
                     GX_ASSERT(native != nullptr);
@@ -261,7 +244,7 @@ namespace Graphyte::Graphics
 
                     break;
                 }
-            case GpuResourceType::Texture:
+                case GpuResourceType::Texture:
                 {
                     auto native = static_cast<D3D11GpuTexture*>(binding.Resource.Texture);
                     GX_ASSERT(native != nullptr);
@@ -298,7 +281,7 @@ namespace Graphyte::Graphics
 
                     break;
                 }
-            case GpuResourceType::StructuredBuffer:
+                case GpuResourceType::StructuredBuffer:
                 {
                     // not supported right now.
                     break;
@@ -310,8 +293,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::DestroyResourceSet(
-        GpuResourceSetHandle handle
-    ) noexcept
+        GpuResourceSetHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuResourceSet*>(handle);
@@ -321,8 +303,7 @@ namespace Graphyte::Graphics
 
     void D3D11GpuDevice::UpdateResourceSet(
         GpuResourceSetHandle handle,
-        const GpuResourceSetDesc& desc
-    ) noexcept
+        const GpuResourceSetDesc& desc) noexcept
     {
         (void)handle;
         (void)desc;

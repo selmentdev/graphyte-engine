@@ -4,16 +4,14 @@
 namespace Graphyte::Graphics
 {
     GpuSamplerHandle NullGpuDevice::CreateSampler(
-        const GpuSamplerCreateArgs& args
-    ) noexcept
+        const GpuSamplerCreateArgs& args) noexcept
     {
         (void)args;
         return nullptr;
     }
 
     void NullGpuDevice::DestroySampler(
-        GpuSamplerHandle handle
-    ) noexcept
+        GpuSamplerHandle handle) noexcept
     {
         (void)handle;
     }

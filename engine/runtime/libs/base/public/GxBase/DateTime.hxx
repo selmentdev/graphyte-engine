@@ -55,33 +55,33 @@ namespace Graphyte
 
     enum struct Month
     {
-        First = 1,
-        January = 1,
-        February = 2,
-        March = 3,
-        April = 4,
-        May = 5,
-        June = 6,
-        July = 7,
-        August = 8,
+        First     = 1,
+        January   = 1,
+        February  = 2,
+        March     = 3,
+        April     = 4,
+        May       = 5,
+        June      = 6,
+        July      = 7,
+        August    = 8,
         September = 9,
-        October = 10,
-        November = 11,
-        December = 12,
-        Count = 12,
-        Last = 12
+        October   = 10,
+        November  = 11,
+        December  = 12,
+        Count     = 12,
+        Last      = 12
     };
 
     enum struct WeekDay
     {
-        Sunday = 0,
-        Monday = 1,
-        Tuesday = 2,
+        Sunday    = 0,
+        Monday    = 1,
+        Tuesday   = 2,
         Wednesday = 3,
-        Thursday = 4,
-        Friday = 5,
-        Saturday = 6,
-        Count = 7
+        Thursday  = 4,
+        Friday    = 5,
+        Saturday  = 6,
+        Count     = 7
     };
 
     enum struct DateTimeFormat
@@ -91,7 +91,7 @@ namespace Graphyte
         DateTime,
         FileSafe,
         TimeStamp,
-        DateIso8601 = Date,
+        DateIso8601     = Date,
         DateTimeIso8601 = DateTime,
     };
 
@@ -133,8 +133,7 @@ namespace Graphyte
         BASE_API static DateTime Create(
             std::int32_t year,
             std::int32_t month,
-            std::int32_t day
-        ) noexcept;
+            std::int32_t day) noexcept;
 
         BASE_API static DateTime Create(
             std::int32_t year,
@@ -142,8 +141,7 @@ namespace Graphyte
             std::int32_t day,
             std::int32_t hour,
             std::int32_t minute,
-            std::int32_t second
-        ) noexcept;
+            std::int32_t second) noexcept;
 
         BASE_API static DateTime Create(
             std::int32_t year,
@@ -152,8 +150,7 @@ namespace Graphyte
             std::int32_t hour,
             std::int32_t minute,
             std::int32_t second,
-            std::int32_t millisecond
-        ) noexcept;
+            std::int32_t millisecond) noexcept;
 
         BASE_API static DateTime Now() noexcept;
         BASE_API static DateTime Now(DateTimeKind kind) noexcept;
@@ -172,7 +169,7 @@ namespace Graphyte
         BASE_API TimeSpan GetTimeOfDay() const noexcept;
         BASE_API DateTime GetDate() const noexcept;
 
-        constexpr auto operator <=> (DateTime const& rhs) const noexcept = default;
+        constexpr auto operator<=>(DateTime const& rhs) const noexcept = default;
     };
 
     static_assert(sizeof(DateTime) == sizeof(std::int64_t));
@@ -180,19 +177,16 @@ namespace Graphyte
     BASE_API bool ToString(
         std::string& result,
         DateTime value,
-        DateTimeFormat format = DateTimeFormat::DateTime
-    ) noexcept;
+        DateTimeFormat format = DateTimeFormat::DateTime) noexcept;
 
     BASE_API bool ToString(
         std::string& result,
         DateTime value,
-        std::string_view format
-    ) noexcept;
+        std::string_view format) noexcept;
 
     BASE_API bool FromString(
         DateTime& result,
-        std::string_view value
-    ) noexcept;
+        std::string_view value) noexcept;
 }
 
 namespace Graphyte
@@ -204,23 +198,20 @@ namespace Graphyte
         BASE_API static TimeSpan Create(
             std::int32_t hours,
             std::int32_t minutes,
-            std::int32_t seconds
-        ) noexcept;
+            std::int32_t seconds) noexcept;
 
         BASE_API static TimeSpan Create(
             std::int32_t days,
             std::int32_t hours,
             std::int32_t minutes,
-            std::int32_t seconds
-        ) noexcept;
+            std::int32_t seconds) noexcept;
 
         BASE_API static TimeSpan Create(
             std::int32_t days,
             std::int32_t hours,
             std::int32_t minutes,
             std::int32_t seconds,
-            std::int32_t milliseconds
-        ) noexcept;
+            std::int32_t milliseconds) noexcept;
 
         constexpr static TimeSpan FromSeconds(std::int64_t seconds) noexcept
         {
@@ -233,12 +224,10 @@ namespace Graphyte
         }
 
         BASE_API void ToMembers(
-            TimeSpanMembers& result
-        ) noexcept;
+            TimeSpanMembers& result) noexcept;
 
         BASE_API static TimeSpan FromMembers(
-            TimeSpanMembers const& value
-        ) noexcept;
+            TimeSpanMembers const& value) noexcept;
 
         TimeSpan GetDuration() const noexcept
         {
@@ -270,7 +259,7 @@ namespace Graphyte
             return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInMillisecond);
         }
 
-        constexpr auto operator <=> (TimeSpan const& rhs) const noexcept = default;
+        constexpr auto operator<=>(TimeSpan const& rhs) const noexcept = default;
     };
 
     static_assert(sizeof(TimeSpan) == sizeof(std::int64_t));
@@ -278,14 +267,12 @@ namespace Graphyte
 
     BASE_API bool ToString(
         std::string& result,
-        TimeSpan value
-    ) noexcept;
+        TimeSpan value) noexcept;
 
     BASE_API bool ToString(
         std::string& result,
         TimeSpan value,
-        std::string_view format
-    ) noexcept;
+        std::string_view format) noexcept;
 }
 
 namespace Graphyte
@@ -314,7 +301,7 @@ namespace Graphyte
     constexpr DateTime& operator-=(DateTime& lhs, TimeSpan rhs) noexcept
     {
         lhs.Value -= rhs.Value;
-        return lhs; 
+        return lhs;
     }
 }
 

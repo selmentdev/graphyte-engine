@@ -10,8 +10,7 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     GpuTexture2DHandle OpenGLGpuDevice::CreateTexture2D(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         auto native = new OpenGLGpuTexture();
 
@@ -23,20 +22,17 @@ namespace Graphyte::Graphics
         OpenGLGpuGetPixelFormat(
             args.DataFormat,
             internalFormat,
-            compressed
-        );
+            compressed);
 
         OpenGLGpuGetPixelFormat(
             args.DataFormat,
             storageFormat,
-            storageType
-        );
+            storageType);
 
         GPU_GL_VALIDATE(glCreateTextures(
             GL_TEXTURE_2D,
             1,
-            &native->m_Resource
-        ));
+            &native->m_Resource));
 
         native->m_Target = GL_TEXTURE_2D;
 
@@ -45,8 +41,7 @@ namespace Graphyte::Graphics
             static_cast<GLsizei>(args.MipCount),
             internalFormat,
             static_cast<GLsizei>(args.Width),
-            static_cast<GLsizei>(args.Height)
-        ));
+            static_cast<GLsizei>(args.Height)));
 
         if (args.Data != nullptr)
         {
@@ -66,8 +61,7 @@ namespace Graphyte::Graphics
                         static_cast<GLsizei>(h),
                         internalFormat,
                         static_cast<GLsizei>(args.Data[mip_slice].SlicePitch),
-                        args.Data[mip_slice].Memory
-                    ));
+                        args.Data[mip_slice].Memory));
                 }
                 else
                 {
@@ -80,8 +74,7 @@ namespace Graphyte::Graphics
                         static_cast<GLsizei>(h),
                         storageFormat,
                         storageType,
-                        args.Data[mip_slice].Memory
-                    ));
+                        args.Data[mip_slice].Memory));
                 }
 
                 w = std::max<uint32_t>(1U, w >> 1U);
@@ -93,8 +86,7 @@ namespace Graphyte::Graphics
     }
 
     void OpenGLGpuDevice::DestroyTexture2D(
-        GpuTexture2DHandle handle
-    ) noexcept
+        GpuTexture2DHandle handle) noexcept
     {
         GX_ASSERT(handle)
         auto native = static_cast<OpenGLGpuTexture*>(handle);
@@ -103,8 +95,7 @@ namespace Graphyte::Graphics
 
         GPU_GL_VALIDATE(glDeleteTextures(
             1,
-            &native->m_Resource
-        ));
+            &native->m_Resource));
 
         delete native;
     }
@@ -114,8 +105,7 @@ namespace Graphyte::Graphics
         uint32_t mip_level,
         const GpuRect* rect,
         const void* data,
-        uint32_t pitch
-    ) noexcept
+        uint32_t pitch) noexcept
     {
         (void)handle;
         (void)mip_level;
@@ -125,15 +115,13 @@ namespace Graphyte::Graphics
     }
 
     void OpenGLGpuDevice::GenerateMipmapsTexture2D(
-        GpuTexture2DHandle handle
-    ) noexcept
+        GpuTexture2DHandle handle) noexcept
     {
         (void)handle;
     }
 
     std::unique_ptr<Image> OpenGLGpuDevice::SaveTexture2D(
-        GpuTexture2DHandle handle
-    ) noexcept
+        GpuTexture2DHandle handle) noexcept
     {
         (void)handle;
         return nullptr;
@@ -143,8 +131,7 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     GpuTexture2DArrayHandle OpenGLGpuDevice::CreateTexture2DArray(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         auto native = new OpenGLGpuTexture();
 
@@ -156,20 +143,17 @@ namespace Graphyte::Graphics
         OpenGLGpuGetPixelFormat(
             args.DataFormat,
             internalFormat,
-            compressed
-        );
+            compressed);
 
         OpenGLGpuGetPixelFormat(
             args.DataFormat,
             storageFormat,
-            storageType
-        );
+            storageType);
 
         GPU_GL_VALIDATE(glCreateTextures(
             GL_TEXTURE_2D_ARRAY,
             1,
-            &native->m_Resource
-        ));
+            &native->m_Resource));
 
         native->m_Target = GL_TEXTURE_2D_ARRAY;
 
@@ -179,8 +163,7 @@ namespace Graphyte::Graphics
             internalFormat,
             static_cast<GLsizei>(args.Width),
             static_cast<GLsizei>(args.Height),
-            static_cast<GLsizei>(args.Depth)
-        ));
+            static_cast<GLsizei>(args.Depth)));
 
         if (args.Data != nullptr)
         {
@@ -194,8 +177,7 @@ namespace Graphyte::Graphics
                     size_t slice = Image::CalcSubresource(
                         mip_slice,
                         array_slice,
-                        args.MipCount
-                    );
+                        args.MipCount);
 
                     GPU_GL_VALIDATE(glTextureSubImage3D(
                         native->m_Resource,
@@ -208,8 +190,7 @@ namespace Graphyte::Graphics
                         1,
                         storageFormat,
                         storageType,
-                        args.Data[slice].Memory
-                    ));
+                        args.Data[slice].Memory));
 
                     w = std::max<uint32_t>(1U, w >> 1U);
                     h = std::max<uint32_t>(1U, h >> 1U);
@@ -221,8 +202,7 @@ namespace Graphyte::Graphics
     }
 
     void OpenGLGpuDevice::OpenGLGpuDevice::DestroyTexture2DArray(
-        GpuTexture2DArrayHandle handle
-    ) noexcept
+        GpuTexture2DArrayHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
 
@@ -232,8 +212,7 @@ namespace Graphyte::Graphics
 
         GPU_GL_VALIDATE(glDeleteTextures(
             1,
-            &native->m_Resource
-        ));
+            &native->m_Resource));
 
         delete native;
     }
@@ -242,8 +221,7 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     GpuTexture3DHandle OpenGLGpuDevice::CreateTexture3D(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         auto native = new OpenGLGpuTexture();
 
@@ -255,20 +233,17 @@ namespace Graphyte::Graphics
         OpenGLGpuGetPixelFormat(
             args.DataFormat,
             internalFormat,
-            compressed
-        );
+            compressed);
 
         OpenGLGpuGetPixelFormat(
             args.DataFormat,
             storageFormat,
-            storageType
-        );
+            storageType);
 
         GPU_GL_VALIDATE(glCreateTextures(
             GL_TEXTURE_3D,
             1,
-            &native->m_Resource
-        ));
+            &native->m_Resource));
 
         native->m_Target = GL_TEXTURE_3D;
 
@@ -278,8 +253,7 @@ namespace Graphyte::Graphics
             internalFormat,
             static_cast<GLsizei>(args.Width),
             static_cast<GLsizei>(args.Height),
-            static_cast<GLsizei>(args.Depth)
-        ));
+            static_cast<GLsizei>(args.Depth)));
 
         if (args.Data != nullptr)
         {
@@ -300,8 +274,7 @@ namespace Graphyte::Graphics
                     static_cast<GLsizei>(d),
                     storageFormat,
                     storageType,
-                    args.Data[mip_slice].Memory
-                ));
+                    args.Data[mip_slice].Memory));
 
                 w = std::max<uint32_t>(1U, w >> 1U);
                 h = std::max<uint32_t>(1U, h >> 1U);
@@ -313,8 +286,7 @@ namespace Graphyte::Graphics
     }
 
     void OpenGLGpuDevice::DestroyTexture3D(
-        GpuTexture3DHandle handle
-    ) noexcept
+        GpuTexture3DHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
 
@@ -324,8 +296,7 @@ namespace Graphyte::Graphics
 
         GPU_GL_VALIDATE(glDeleteTextures(
             1,
-            &native->m_Resource
-        ));
+            &native->m_Resource));
 
         delete native;
     }
@@ -334,8 +305,7 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     GpuTextureCubeHandle OpenGLGpuDevice::CreateTextureCube(
-        const GpuTextureCreateArgs& args
-    ) noexcept
+        const GpuTextureCreateArgs& args) noexcept
     {
         auto native = new OpenGLGpuTexture();
 
@@ -347,22 +317,19 @@ namespace Graphyte::Graphics
         OpenGLGpuGetPixelFormat(
             args.DataFormat,
             internalFormat,
-            compressed
-        );
+            compressed);
 
         OpenGLGpuGetPixelFormat(
             args.DataFormat,
             storageFormat,
-            storageType
-        );
+            storageType);
 
         GX_ASSERTF(args.Depth == 6, "Cube map texture requires exactly 6 faces");
 
         GPU_GL_VALIDATE(glCreateTextures(
             GL_TEXTURE_CUBE_MAP,
             1,
-            &native->m_Resource
-        ));
+            &native->m_Resource));
 
         native->m_Target = GL_TEXTURE_CUBE_MAP;
 
@@ -372,8 +339,7 @@ namespace Graphyte::Graphics
             internalFormat,
             static_cast<GLsizei>(args.Width),
             static_cast<GLsizei>(args.Height),
-            6
-        ));
+            6));
 
         if (args.Data != nullptr)
         {
@@ -387,8 +353,7 @@ namespace Graphyte::Graphics
                     uint32_t slice = Image::CalcSubresource(
                         mip_slice,
                         cube_slice,
-                        args.MipCount
-                    );
+                        args.MipCount);
 
                     GPU_GL_VALIDATE(glTextureSubImage3D(
                         native->m_Resource,
@@ -401,8 +366,7 @@ namespace Graphyte::Graphics
                         1,
                         storageFormat,
                         storageType,
-                        args.Data[slice].Memory
-                    ));
+                        args.Data[slice].Memory));
 
                     /*glCompressedTextureSubImage3D(
                         native->m_Resource,
@@ -427,8 +391,7 @@ namespace Graphyte::Graphics
     }
 
     void OpenGLGpuDevice::DestroyTextureCube(
-        GpuTextureCubeHandle handle
-    ) noexcept
+        GpuTextureCubeHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
 
@@ -438,8 +401,7 @@ namespace Graphyte::Graphics
 
         GPU_GL_VALIDATE(glDeleteTextures(
             1,
-            &native->m_Resource
-        ));
+            &native->m_Resource));
 
         delete native;
     }

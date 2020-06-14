@@ -18,8 +18,7 @@ namespace Graphyte::System
             CSIDL_PROFILE,
             nullptr,
             SHGFP_TYPE_CURRENT,
-            wszPath.data()
-        );
+            wszPath.data());
 
         if (SUCCEEDED(hr))
         {
@@ -43,8 +42,7 @@ namespace Graphyte::System
             CSIDL_PERSONAL,
             nullptr,
             SHGFP_TYPE_CURRENT,
-            wszPath.data()
-        );
+            wszPath.data());
 
         if (SUCCEEDED(hr))
         {
@@ -73,8 +71,7 @@ namespace Graphyte::System
 
         DWORD dwLength = GetTempPathW(
             static_cast<DWORD>(wszPath.size()),
-            wszPath.data()
-        );
+            wszPath.data());
 
 
         //
@@ -86,8 +83,7 @@ namespace Graphyte::System
         dwLength = GetLongPathNameW(
             wszPath.data(),
             wszFullPath.data(),
-            static_cast<DWORD>(wszFullPath.size())
-        );
+            static_cast<DWORD>(wszFullPath.size()));
 
         if (dwLength != 0)
         {
@@ -99,7 +95,6 @@ namespace Graphyte::System
 
             Storage::NormalizePath(result);
             Storage::AddDirectorySeparator(result);
-
         }
 
         return result;
@@ -116,8 +111,7 @@ namespace Graphyte::System
             CSIDL_LOCAL_APPDATA,
             nullptr,
             SHGFP_TYPE_CURRENT,
-            wszPath.data()
-        );
+            wszPath.data());
 
         if (SUCCEEDED(hr))
         {
@@ -141,8 +135,7 @@ namespace Graphyte::System
             CSIDL_COMMON_APPDATA,
             nullptr,
             SHGFP_TYPE_CURRENT,
-            wszPath.data()
-        );
+            wszPath.data());
 
         if (SUCCEEDED(hr))
         {
@@ -210,8 +203,7 @@ namespace Graphyte::System
 
                 DWORD dwSize = GetFileVersionInfoSizeW(
                     wszPath.data(),
-                    0
-                );
+                    0);
 
                 if (dwSize != 0)
                 {
@@ -223,11 +215,11 @@ namespace Graphyte::System
                     //
 
                     if (GetFileVersionInfoW(
-                        wszPath.data(),
-                        0,
-                        dwSize,
-                        vsVersionInfo.get()
-                    ) != FALSE)
+                            wszPath.data(),
+                            0,
+                            dwSize,
+                            vsVersionInfo.get())
+                        != FALSE)
                     {
                         VS_FIXEDFILEINFO* vsFileVersion{};
                         UINT vsLength{};
@@ -237,11 +229,11 @@ namespace Graphyte::System
                         //
 
                         if (VerQueryValueW(
-                            vsVersionInfo.get(),
-                            L"",
-                            reinterpret_cast<LPVOID*>(&vsFileVersion),
-                            &vsLength
-                        ) != FALSE)
+                                vsVersionInfo.get(),
+                                L"",
+                                reinterpret_cast<LPVOID*>(&vsFileVersion),
+                                &vsLength)
+                            != FALSE)
                         {
                             //
                             // Compose final version info.
@@ -251,8 +243,7 @@ namespace Graphyte::System
                                 HIWORD(vsFileVersion->dwProductVersionMS),
                                 LOWORD(vsFileVersion->dwProductVersionMS),
                                 HIWORD(vsFileVersion->dwProductVersionLS),
-                                LOWORD(vsFileVersion->dwProductVersionLS)
-                            );
+                                LOWORD(vsFileVersion->dwProductVersionLS));
                         }
                     }
                 }
@@ -282,8 +273,7 @@ namespace Graphyte::System
             HKEY_LOCAL_MACHINE,
             L"Software\\Microsoft\\Cryptography",
             L"MachineGuid",
-            result
-        );
+            result);
 
         return result;
     }
@@ -311,8 +301,7 @@ namespace Graphyte::System
                 MUI_LANGUAGE_NAME,
                 &languages_count,
                 nullptr,
-                &buffer_size
-            );
+                &buffer_size);
 
             if (result != FALSE)
             {
@@ -322,8 +311,7 @@ namespace Graphyte::System
                     MUI_LANGUAGE_NAME,
                     &languages_count,
                     &wbuffer[0],
-                    &buffer_size
-                );
+                    &buffer_size);
 
                 if (result != FALSE)
                 {
@@ -357,16 +345,15 @@ namespace Graphyte::System
 #else
         using LPFN_ISWOW64PROCESS = BOOL(WINAPI*)(HANDLE, PBOOL);
 
-#pragma warning( push )
-#pragma warning( disable: 4191 )	// unsafe conversion from 'type of expression' to 'type required'
+#pragma warning(push)
+#pragma warning(disable : 4191) // unsafe conversion from 'type of expression' to 'type required'
 
         HMODULE const handle = GetModuleHandleW(L"Kernel32.dll");
-        
+
         LPFN_ISWOW64PROCESS const fn_iswow64 = reinterpret_cast<LPFN_ISWOW64PROCESS>(
-            GetProcAddress(handle, "IsWow64Process")
-        );
-        
-#pragma warning( pop )
+            GetProcAddress(handle, "IsWow64Process"));
+
+#pragma warning(pop)
 
         static BOOL is_wow64 = FALSE;
 
@@ -380,7 +367,6 @@ namespace Graphyte::System
 
         return is_wow64 != FALSE;
 #endif
-
     }
 
     BASE_API bool Is64BitProcess() noexcept

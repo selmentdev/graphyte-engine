@@ -35,10 +35,11 @@ namespace GraphyteAssets
         std::vector<ShaderFunction> Functions;
     };
 
-    template<typename T>
+    template <typename T>
     struct SerializerHelper
     {
         static bool Load(T& result, const Graphyte::Serialization::Reader::Value& serializer) = delete;
+
         static bool Save(Graphyte::Serialization::Writer::Value& serializer, const T& value) = delete;
     };
 
@@ -74,17 +75,17 @@ namespace GraphyteAssets
 
             switch (value)
             {
-            case ShaderParamDirection::In:
-                s = "in";
-                break;
-            case ShaderParamDirection::Out:
-                s = "out";
-                break;
-            case ShaderParamDirection::Ref:
-                s = "ref";
-                break;
-            default:
-                break;
+                case ShaderParamDirection::In:
+                    s = "in";
+                    break;
+                case ShaderParamDirection::Out:
+                    s = "out";
+                    break;
+                case ShaderParamDirection::Ref:
+                    s = "ref";
+                    break;
+                default:
+                    break;
             }
 
             if (!s.empty())
@@ -121,8 +122,8 @@ namespace GraphyteAssets
         {
             auto document_content = document.StartObject();
             {
-                document_content .Key("module");
-                auto m = document_content .StartObject();
+                document_content.Key("module");
+                auto m = document_content.StartObject();
                 {
                     m.KeyValue("description", "this is module description\nthis module contains some shader functions\nit defines shader functions for shader compiler", false, true);
                     m.Key("functions");
@@ -169,7 +170,7 @@ namespace GraphyteAssets
                 }
                 m.End();
             }
-            document_content .End();
+            document_content.End();
         }
         document.End();
 

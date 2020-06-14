@@ -11,11 +11,11 @@ namespace Graphyte::Geometry
      */
     enum class ModelPartType : uint32_t
     {
-        None,       //!< Works as non-bone xform for other model parts.
-        Mesh,       //!< Renderable mesh geometry.
-        Hull,       //!< Physics hull / occlusion query proxy mesh.
-        Bone,       //!< Bone xform.
-        Helper,     //!< Helper mesh - for editor purposes only.
+        None,   //!< Works as non-bone xform for other model parts.
+        Mesh,   //!< Renderable mesh geometry.
+        Hull,   //!< Physics hull / occlusion query proxy mesh.
+        Bone,   //!< Bone xform.
+        Helper, //!< Helper mesh - for editor purposes only.
     };
 
     /**
@@ -23,9 +23,9 @@ namespace Graphyte::Geometry
      */
     enum class ModelHelperType : uint32_t
     {
-        None,       //!< Model is not a helper.
-        Point,      //!< Point rendered in editor.
-        Mesh,       //!< Helper mesh geometry
+        None,  //!< Model is not a helper.
+        Point, //!< Point rendered in editor.
+        Mesh,  //!< Helper mesh geometry
     };
 
     /**
@@ -46,17 +46,17 @@ namespace Graphyte::Geometry
     class GEOMETRY_API ModelPart final
     {
     public:
-        ModelPart*      Parent;             //!< Pointer to parent model part.
-        ModelPartType   Type;               //!< Model part type.
-        ModelPartFlags  Flags;              //!< Additional flags.
-        uint32_t        LodCount;           //!< Number of LOD levels. Serialized sequentially.
-        uint32_t        ChildrenCount;      //!< Number of children model parts.
-        Mesh*           MeshData;           //!< Pointer to actual mesh data.
-        ModelHelperType HelperType;         //!< Model helper type.
-        Float3   HelperSize;                //!< Model helper size.
-        std::string     Name;               //!< Name of model part.
-        Float4x3 LocalTransform;            //!< Local transform matrix.
-        Float4x3 BoneTransform;             //!< Bone transform matrix.
+        ModelPart* Parent;          //!< Pointer to parent model part.
+        ModelPartType Type;         //!< Model part type.
+        ModelPartFlags Flags;       //!< Additional flags.
+        uint32_t LodCount;          //!< Number of LOD levels. Serialized sequentially.
+        uint32_t ChildrenCount;     //!< Number of children model parts.
+        Mesh* MeshData;             //!< Pointer to actual mesh data.
+        ModelHelperType HelperType; //!< Model helper type.
+        Float3 HelperSize;          //!< Model helper size.
+        std::string Name;           //!< Name of model part.
+        Float4x3 LocalTransform;    //!< Local transform matrix.
+        Float4x3 BoneTransform;     //!< Bone transform matrix.
     };
 
     /**
@@ -78,5 +78,5 @@ namespace Graphyte::Geometry
         ~Model() noexcept;
     };
 
-    GEOMETRY_API Storage::Archive& operator<< (Storage::Archive& archive, Model& model) noexcept;
+    GEOMETRY_API Storage::Archive& operator<<(Storage::Archive& archive, Model& model) noexcept;
 }

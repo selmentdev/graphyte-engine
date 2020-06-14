@@ -9,8 +9,7 @@
 namespace Graphyte::System
 {
     BASE_API Status GetClipboardContent(
-        std::string& content
-    ) noexcept
+        std::string& content) noexcept
     {
         auto* text = SDL_GetClipboardText();
 
@@ -38,8 +37,7 @@ namespace Graphyte::System
     }
 
     BASE_API Status SetClipboardContent(
-        std::string_view content
-    ) noexcept
+        std::string_view content) noexcept
     {
         std::string str{ content };
 
@@ -56,12 +54,11 @@ namespace Graphyte::System
 
     BASE_API Status GetEnvironmentVariable(
         std::string& result,
-        const char* name
-    ) noexcept
+        const char* name) noexcept
     {
         GX_ASSERT(name != nullptr);
 
-        auto const* variable = secure_getenv(name);
+        auto const* variable    = secure_getenv(name);
         auto const has_variable = (variable != nullptr);
 
         if (has_variable)
@@ -75,8 +72,7 @@ namespace Graphyte::System
 
     BASE_API Status SetEnvironmentVariable(
         const char* name,
-        const char* value
-    ) noexcept
+        const char* value) noexcept
     {
         GX_ASSERT(name != nullptr);
 
@@ -92,26 +88,24 @@ namespace Graphyte::System
         }
 
         return result
-            ? Status::Success
-            : Status::Failure;
+                   ? Status::Success
+                   : Status::Failure;
     }
 
     BASE_API Status RemoveEnvironmentVariable(
-        const char* name
-    ) noexcept
+        const char* name) noexcept
     {
         GX_ASSERT(name != nullptr);
 
         bool result = unsetenv(name) == 0;
 
         return result
-            ? Status::Success
-            : Status::Failure;
+                   ? Status::Success
+                   : Status::Failure;
     }
 
     BASE_API Status SetCurrentDirectory(
-        [[maybe_unused]] const std::string& value
-    ) noexcept
+        [[maybe_unused]] const std::string& value) noexcept
     {
         if (chdir(value.c_str()) == 0)
         {
@@ -122,14 +116,13 @@ namespace Graphyte::System
     }
 
     BASE_API Status GetCurrentDirectory(
-        std::string& result
-    ) noexcept
+        std::string& result) noexcept
     {
         std::array<char, PATH_MAX> path{};
         auto cwd = getcwd(path.data(), path.size());
-        
+
         GX_ASSERT(cwd != nullptr);
-        
+
         if (cwd != nullptr)
         {
             result.assign(cwd);
@@ -187,8 +180,7 @@ namespace Graphyte::System
     BASE_API Status Execute(
         const char* type,
         const char* command,
-        const char* params
-    ) noexcept
+        const char* params) noexcept
     {
         (void)type;
         (void)command;
@@ -197,8 +189,7 @@ namespace Graphyte::System
     }
 
     BASE_API Status Explore(
-        const char* path
-    ) noexcept
+        const char* path) noexcept
     {
         (void)path;
         return Status::NotImplemented;

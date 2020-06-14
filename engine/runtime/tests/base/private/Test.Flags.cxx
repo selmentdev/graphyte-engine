@@ -3,5 +3,4 @@
 
 TEST_CASE("Flags")
 {
-
 }

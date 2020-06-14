@@ -4,8 +4,7 @@
 namespace Graphyte::Storage
 {
     ArchiveFileReader::ArchiveFileReader(
-        std::unique_ptr<IStream> stream
-    ) noexcept
+        std::unique_ptr<IStream> stream) noexcept
         : Archive()
         , m_Stream{ std::move(stream) }
         , m_Position{ 0 }
@@ -26,8 +25,7 @@ namespace Graphyte::Storage
 
     void ArchiveFileReader::Serialize(
         void* buffer,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         if ((m_Position + static_cast<int64_t>(size)) > m_Size)
         {
@@ -39,14 +37,13 @@ namespace Graphyte::Storage
         {
             int64_t copy = std::min<int64_t>(
                 static_cast<int64_t>(size),
-                m_BufferBase + static_cast<int64_t>(m_BufferCount) - m_Position
-            );
+                m_BufferBase + static_cast<int64_t>(m_BufferCount) - m_Position);
 
             if (copy <= 0)
             {
                 if (size >= m_Buffer.size())
                 {
-                    size_t count = 0;
+                    size_t count     = 0;
                     size_t processed = 0;
                     if (m_Stream->Read({ reinterpret_cast<std::byte*>(buffer), size }, processed) == Status::Success)
                     {
@@ -72,8 +69,7 @@ namespace Graphyte::Storage
 
                 copy = std::min<int64_t>(
                     static_cast<int64_t>(size),
-                    m_BufferBase + static_cast<int64_t>(m_BufferCount) - m_Position
-                );
+                    m_BufferBase + static_cast<int64_t>(m_BufferCount) - m_Position);
 
                 if (copy <= 0)
                 {
@@ -90,8 +86,7 @@ namespace Graphyte::Storage
             std::memcpy(
                 buffer,
                 m_Buffer.data() + m_Position - m_BufferBase,
-                static_cast<size_t>(copy)
-            );
+                static_cast<size_t>(copy));
 
             m_Position += copy;
             size -= static_cast<size_t>(copy);
@@ -110,8 +105,7 @@ namespace Graphyte::Storage
     }
 
     void ArchiveFileReader::SetPosition(
-        int64_t position
-    ) noexcept
+        int64_t position) noexcept
     {
         [[maybe_unused]] auto status = m_Stream->SetPosition(position);
     }
@@ -123,22 +117,18 @@ namespace Graphyte::Storage
 
     bool ArchiveFileReader::PrecacheImpl(
         int64_t offset,
-        int64_t size
-    ) noexcept
+        int64_t size) noexcept
     {
         if (m_Position == offset && (m_BufferBase == 0 || m_BufferCount == 0 || m_BufferBase != m_Position))
         {
             m_BufferBase = m_Position;
 
-            int64_t buffer_count = std::min<int64_t>({
-                size,
+            int64_t buffer_count = std::min<int64_t>({ size,
                 m_Size - m_Position,
                 static_cast<int64_t>(
-                    static_cast<uint64_t>(m_Buffer.size()) - (static_cast<uint64_t>(m_Position) & static_cast<uint64_t>(m_Buffer.size() - 1))
-                )
-            });
+                    static_cast<uint64_t>(m_Buffer.size()) - (static_cast<uint64_t>(m_Position) & static_cast<uint64_t>(m_Buffer.size() - 1))) });
 
-            buffer_count = std::max<int64_t>(buffer_count, 0);
+            buffer_count  = std::max<int64_t>(buffer_count, 0);
             m_BufferCount = static_cast<size_t>(buffer_count);
 
             int64_t count = 0;

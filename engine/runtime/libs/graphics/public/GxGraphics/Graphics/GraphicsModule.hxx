@@ -11,6 +11,7 @@ namespace Graphyte
 
     public:
         virtual bool IsSupported() noexcept = 0;
+
         virtual std::unique_ptr<Graphics::GpuDevice> CreateDevice() noexcept = 0;
     };
 }

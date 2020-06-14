@@ -47,8 +47,7 @@ namespace Graphyte::System::Impl
             {
                 GX_ABORT("Could not initialize WinSock: invalid version {}.{}",
                     LOBYTE(wsadata.wVersion),
-                    HIBYTE(wsadata.wVersion)
-                );
+                    HIBYTE(wsadata.wVersion));
             }
         }
         else

@@ -9,7 +9,7 @@ TEST_CASE("Maths / Quaternion / q mul conj(q) = identity")
 
     Vector3 const axis = Make<Vector3>(1.0f, 2.0f, -3.0f);
 
-    Quaternion const q = CreateFromAxisAngle<Quaternion>(axis, DegreesToRadians(30.0f));
+    Quaternion const q  = CreateFromAxisAngle<Quaternion>(axis, DegreesToRadians(30.0f));
     Quaternion const qc = Conjugate(q);
 
     Quaternion const r = Multiply(q, qc);
@@ -210,17 +210,16 @@ TEST_CASE("Maths / Transforms")
     {
         SECTION("2D")
         {
-            Vector2 const scaling = Make<Vector2>(1.3f, -3.4f);
+            Vector2 const scaling         = Make<Vector2>(1.3f, -3.4f);
             Vector2 const rotation_origin = Make<Vector2>(3.4f, 1.7f);
-            float const rotation = DegreesToRadians(-60.0f);
-            Vector2 const translation = Make<Vector2>(-2.3f, 3.3f);
+            float const rotation          = DegreesToRadians(-60.0f);
+            Vector2 const translation     = Make<Vector2>(-2.3f, 3.3f);
 
             Matrix const m = CreateAffineTransform2D(
                 scaling,
                 rotation_origin,
                 rotation,
-                translation
-            );
+                translation);
 
             CHECK(GetX(GetBaseX(m)) == Approx{ 0.649999917f });
             CHECK(GetY(GetBaseX(m)) == Approx{ -1.12583303f });
@@ -245,17 +244,16 @@ TEST_CASE("Maths / Transforms")
 
         SECTION("3D")
         {
-            Vector3 const scaling = Make<Vector3>(1.1f, 1.1f, 1.1f);
+            Vector3 const scaling         = Make<Vector3>(1.1f, 1.1f, 1.1f);
             Vector3 const rotation_origin = Make<Vector3>(3.4f, 1.7f, -2.3f);
-            Quaternion const rotation = CreateFromAxisAngle<Quaternion>(Make<Vector3>(2.1f, 1.1f, -3.3f), DegreesToRadians(-60.0f));
-            Vector3 const translation = Make<Vector3>(3.3f, -1.3f, 2.1f);
+            Quaternion const rotation     = CreateFromAxisAngle<Quaternion>(Make<Vector3>(2.1f, 1.1f, -3.3f), DegreesToRadians(-60.0f));
+            Vector3 const translation     = Make<Vector3>(3.3f, -1.3f, 2.1f);
 
             Matrix const m = CreateAffineTransform(
                 scaling,
                 rotation_origin,
                 rotation,
-                translation
-            );
+                translation);
 
             CHECK(GetX(GetBaseX(m)) == Approx{ 0.696910977f });
             CHECK(GetY(GetBaseX(m)) == Approx{ 0.850637615f });
@@ -283,12 +281,12 @@ TEST_CASE("Maths / Transforms")
     {
         SECTION("2D")
         {
-            Vector2 const scaling_origin = Make<Vector2>(-2.1f, 1.3f);
+            Vector2 const scaling_origin    = Make<Vector2>(-2.1f, 1.3f);
             float const scaling_orientation = DegreesToRadians(45.0f);
-            Vector2 const scaling = Make<Vector2>(1.1f, 1.1f);
-            Vector2 const rotation_origin = Make<Vector2>(3.4f, 1.7f);
-            float const rotation = DegreesToRadians(-60.0f);
-            Vector2 const translation = Make<Vector2>(3.3f, -1.3f);
+            Vector2 const scaling           = Make<Vector2>(1.1f, 1.1f);
+            Vector2 const rotation_origin   = Make<Vector2>(3.4f, 1.7f);
+            float const rotation            = DegreesToRadians(-60.0f);
+            Vector2 const translation       = Make<Vector2>(3.3f, -1.3f);
 
             Matrix const m = CreateTransform2D(
                 scaling_origin,
@@ -296,8 +294,7 @@ TEST_CASE("Maths / Transforms")
                 scaling,
                 rotation_origin,
                 rotation,
-                translation
-            );
+                translation);
 
             CHECK(GetX(GetBaseX(m)) == Approx{ 0.549999893f });
             CHECK(GetY(GetBaseX(m)) == Approx{ -0.952627897f });
@@ -322,12 +319,12 @@ TEST_CASE("Maths / Transforms")
 
         SECTION("3D")
         {
-            Vector3 const scaling_origin = Make<Vector3>(-2.1f, 1.3f, -3.4f);
+            Vector3 const scaling_origin         = Make<Vector3>(-2.1f, 1.3f, -3.4f);
             Quaternion const scaling_orientation = CreateFromAxisAngle<Quaternion>(Make<Vector3>(-2.1f, 1.1f, 2.3f), DegreesToRadians(45.0f));
-            Vector3 const scaling = Make<Vector3>(1.1f, 1.1f, 1.1f);
-            Vector3 const rotation_origin = Make<Vector3>(3.4f, 1.7f, -2.3f);
-            Quaternion const rotation = CreateFromAxisAngle<Quaternion>(Make<Vector3>(2.1f, 1.1f, -3.3f), DegreesToRadians(-60.0f));
-            Vector3 const translation = Make<Vector3>(3.3f, -1.3f, 2.1f);
+            Vector3 const scaling                = Make<Vector3>(1.1f, 1.1f, 1.1f);
+            Vector3 const rotation_origin        = Make<Vector3>(3.4f, 1.7f, -2.3f);
+            Quaternion const rotation            = CreateFromAxisAngle<Quaternion>(Make<Vector3>(2.1f, 1.1f, -3.3f), DegreesToRadians(-60.0f));
+            Vector3 const translation            = Make<Vector3>(3.3f, -1.3f, 2.1f);
 
             Matrix const m = CreateTransform(
                 scaling_origin,
@@ -335,8 +332,7 @@ TEST_CASE("Maths / Transforms")
                 scaling,
                 rotation_origin,
                 rotation,
-                translation
-            );
+                translation);
 
             CHECK(GetX(GetBaseX(m)) == Approx{ 0.696911037f });
             CHECK(GetY(GetBaseX(m)) == Approx{ 0.850637555f });
@@ -406,7 +402,7 @@ TEST_CASE("Maths / Rotations / Matrix rotations around arbitrary axis")
 
         CHECK(GetX(GetBaseY(m)) == Approx{ 0.517092228f });
         CHECK(GetY(GetBaseY(m)) == Approx{ 0.736842036f });
-        CHECK(GetZ(GetBaseY(m)) == Approx{ -0.43552199f});
+        CHECK(GetZ(GetBaseY(m)) == Approx{ -0.43552199f });
         CHECK(GetW(GetBaseY(m)) == Approx{ 0.0f });
 
         CHECK(GetX(GetBaseZ(m)) == Approx{ 0.674986959f });
@@ -437,8 +433,8 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
         for (float angle = -360.0f; angle <= 360.0f; angle += angle_step)
         {
             float const radians = DegreesToRadians(angle);
-            Matrix const m = CreateRotationX(radians);
-            Quaternion const q = CreateFromNormalAngle<Quaternion>(axis, radians);
+            Matrix const m      = CreateRotationX(radians);
+            Quaternion const q  = CreateFromNormalAngle<Quaternion>(axis, radians);
 
             //
             // Check if quaternion rotates vector as well as matrix.
@@ -457,13 +453,13 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
             //
 
             Quaternion const mq = CreateFromMatrix(m);
-            Vector3 const vmq = Rotate(v, mq);
+            Vector3 const vmq   = Rotate(v, mq);
 
             CHECK(GetX(vmq) == Approx{ GetX(vq) });
             CHECK(GetY(vmq) == Approx{ GetY(vq) }.margin(0.00001f));
             CHECK(GetZ(vmq) == Approx{ GetZ(vq) });
 
-            Matrix const qm = CreateFromQuaternion(q);
+            Matrix const qm   = CreateFromQuaternion(q);
             Vector3 const vqm = Transform(v, qm);
 
             CHECK(GetX(vqm) == Approx{ GetX(vq) });
@@ -479,8 +475,8 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
         for (float angle = -360.0f; angle <= 360.0f; angle += angle_step)
         {
             float const radians = DegreesToRadians(angle);
-            Matrix const m = CreateRotationY(radians);
-            Quaternion const q = CreateFromNormalAngle<Quaternion>(axis, radians);
+            Matrix const m      = CreateRotationY(radians);
+            Quaternion const q  = CreateFromNormalAngle<Quaternion>(axis, radians);
 
             //
             // Check if quaternion rotates vector as well as matrix.
@@ -499,13 +495,13 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
             //
 
             Quaternion const mq = CreateFromMatrix(m);
-            Vector3 const vmq = Rotate(v, mq);
+            Vector3 const vmq   = Rotate(v, mq);
 
             CHECK(GetX(vmq) == Approx{ GetX(vq) });
             CHECK(GetY(vmq) == Approx{ GetY(vq) });
             CHECK(GetZ(vmq) == Approx{ GetZ(vq) });
 
-            Matrix const qm = CreateFromQuaternion(q);
+            Matrix const qm   = CreateFromQuaternion(q);
             Vector3 const vqm = Transform(v, qm);
 
             CHECK(GetX(vqm) == Approx{ GetX(vq) });
@@ -521,8 +517,8 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
         for (float angle = -360.0f; angle <= 360.0f; angle += angle_step)
         {
             float const radians = DegreesToRadians(angle);
-            Matrix const m = CreateRotationZ(radians);
-            Quaternion const q = CreateFromNormalAngle<Quaternion>(axis, radians);
+            Matrix const m      = CreateRotationZ(radians);
+            Quaternion const q  = CreateFromNormalAngle<Quaternion>(axis, radians);
 
             //
             // Check if quaternion rotates vector as well as matrix.
@@ -541,13 +537,13 @@ TEST_CASE("Maths / Rotations / Matrix <-> Quaternion")
             //
 
             Quaternion const mq = CreateFromMatrix(m);
-            Vector3 const vmq = Rotate(v, mq);
+            Vector3 const vmq   = Rotate(v, mq);
 
             CHECK(GetX(vmq) == Approx{ GetX(vq) });
             CHECK(GetY(vmq) == Approx{ GetY(vq) });
             CHECK(GetZ(vmq) == Approx{ GetZ(vq) });
 
-            Matrix const qm = CreateFromQuaternion(q);
+            Matrix const qm   = CreateFromQuaternion(q);
             Vector3 const vqm = Transform(v, qm);
 
             CHECK(GetX(vqm) == Approx{ GetX(vq) });
@@ -1224,7 +1220,7 @@ TEST_CASE("Maths / Matrix / Rotations")
         {
             Matrix const m = CreateRotationZ(DegreesToRadians(135.0f));
 
-            CHECK(GetX(GetBaseX(m)) == Approx{ -0.7071067f});
+            CHECK(GetX(GetBaseX(m)) == Approx{ -0.7071067f });
             CHECK(GetY(GetBaseX(m)) == Approx{ 0.7071067f });
             CHECK(GetZ(GetBaseX(m)) == Approx{ 0.0f });
             CHECK(GetW(GetBaseX(m)) == Approx{ 0.0f });
@@ -1343,8 +1339,7 @@ TEST_CASE("Maths / Matrix Invertability")
     using namespace Graphyte;
     using namespace Graphyte::Maths;
 
-    auto test = [](Float4x4A const& src, Vector4 cdet1, Vector4 cdet2, Vector4 epsilon)
-    {
+    auto test = [](Float4x4A const& src, Vector4 cdet1, Vector4 cdet2, Vector4 epsilon) {
         Vector4 det1{};
         Vector4 det2{};
 
@@ -1370,40 +1365,42 @@ TEST_CASE("Maths / Matrix Invertability")
 
     test(
         Float4x4A{ { {
+            // clang-format off
             2.0F, 0.0F, 0.0F, 0.0F,
             0.0F, 1.0F, 0.0F, 0.0F,
             0.0F, 0.0F, 1.0F, 0.0F,
             0.0F, 0.0F, 0.0F, 1.0F,
+            // clang-format on
         } } },
         Replicate<Vector4>(2.0F),
         Replicate<Vector4>(0.5F),
-        Epsilon<Vector4>()
-    );
+        Epsilon<Vector4>());
 
     test(
         Float4x4A{ { {
+            // clang-format off
             1.0F, 3.0F, 1.0F, 4.0F,
             3.0F, 9.0F, 5.0F, 15.0F,
             0.0F, 2.0F, 1.0F, 1.0F,
             0.0F, 4.0F, 2.0F, 3.0F,
+            // clang-format on
         } } },
         Replicate<Vector4>(-4.0F),
         Replicate<Vector4>(-0.25F),
-        Epsilon<Vector4>()
-    );
+        Epsilon<Vector4>());
 
     test(
         Float4x4A{ { {
+            // clang-format off
             5.0F, -7.0F, 2.0F, 2.0F,
             0.0F, 3.0F, 0.0F, -4.0F,
             -5.0F, -8.0F, 0.0F, 3.0F,
             0.0F, 5.0F, 0.0F, -6.0F,
+            // clang-format on
         } } },
         Replicate<Vector4>(20.0F),
         Replicate<Vector4>(0.05F),
-        Replicate<Vector4>(0.01F)
-    );
-
+        Replicate<Vector4>(0.01F));
 }
 
 TEST_CASE("Maths / Fresnel Term")
@@ -1418,10 +1415,8 @@ TEST_CASE("Maths / Fresnel Term")
                 DegreesToRadians(0.0F),
                 DegreesToRadians(30.0F),
                 DegreesToRadians(45.0F),
-                DegreesToRadians(60.0F)
-                )),
-            Replicate<Vector4>(0.5F)
-        );
+                DegreesToRadians(60.0F))),
+            Replicate<Vector4>(0.5F));
 
         CHECK(GetX(r0a) == Approx{ 0.111111112F }.margin(0.001F));
         CHECK(GetY(r0a) == Approx{ 1.0F }.margin(0.01F));
@@ -1433,10 +1428,8 @@ TEST_CASE("Maths / Fresnel Term")
                 DegreesToRadians(90.0F),
                 DegreesToRadians(135.0F),
                 DegreesToRadians(180.0F),
-                DegreesToRadians(225.0F)
-                )),
-            Replicate<Vector4>(0.5F)
-        );
+                DegreesToRadians(225.0F))),
+            Replicate<Vector4>(0.5F));
 
         CHECK(GetX(r0b) == Approx{ 1.0F }.margin(0.001F));
         CHECK(GetY(r0b) == Approx{ 1.0F }.margin(0.001F));
@@ -1448,10 +1441,8 @@ TEST_CASE("Maths / Fresnel Term")
                 DegreesToRadians(-30.0F),
                 DegreesToRadians(-45.0F),
                 DegreesToRadians(-60.0F),
-                DegreesToRadians(-90.0F)
-                )),
-            Replicate<Vector4>(0.5F)
-        );
+                DegreesToRadians(-90.0F))),
+            Replicate<Vector4>(0.5F));
 
         CHECK(GetX(r0c) == Approx{ 1.0F }.margin(0.01F));
         CHECK(GetY(r0c) == Approx{ 0.0151518816F }.margin(0.001F));
@@ -1463,13 +1454,11 @@ TEST_CASE("Maths / Fresnel Term")
     {
         Vector4 const r0a = FresnelTerm(
             Cos(Make<Vector4>(
-                DegreesToRadians( 0.0F),
+                DegreesToRadians(0.0F),
                 DegreesToRadians(30.0F),
                 DegreesToRadians(45.0F),
-                DegreesToRadians(60.0F)
-                )),
-            Replicate<Vector4>(1.0F)
-        );
+                DegreesToRadians(60.0F))),
+            Replicate<Vector4>(1.0F));
 
         CHECK(GetX(r0a) == Approx{ 0.0F }.margin(0.001F));
         CHECK(GetY(r0a) == Approx{ 0.0F }.margin(0.001F));
@@ -1478,13 +1467,11 @@ TEST_CASE("Maths / Fresnel Term")
 
         Vector4 const r0b = FresnelTerm(
             Cos(Make<Vector4>(
-                DegreesToRadians( 90.0F),
+                DegreesToRadians(90.0F),
                 DegreesToRadians(135.0F),
                 DegreesToRadians(180.0F),
-                DegreesToRadians(225.0F)
-                )),
-            Replicate<Vector4>(1.0F)
-        );
+                DegreesToRadians(225.0F))),
+            Replicate<Vector4>(1.0F));
 
         CHECK(GetX(r0b) == Approx{ 1.0F }.margin(0.001F));
         CHECK(GetY(r0b) == Approx{ 1.0F }.margin(0.001F));
@@ -1496,10 +1483,8 @@ TEST_CASE("Maths / Fresnel Term")
                 DegreesToRadians(-30.0F),
                 DegreesToRadians(-45.0F),
                 DegreesToRadians(-60.0F),
-                DegreesToRadians(-90.0F)
-                )),
-            Replicate<Vector4>(1.0F)
-        );
+                DegreesToRadians(-90.0F))),
+            Replicate<Vector4>(1.0F));
 
         CHECK(GetX(r0c) == Approx{ 0.0F }.margin(0.001F));
         CHECK(GetY(r0c) == Approx{ 0.0F }.margin(0.001F));
@@ -1511,13 +1496,11 @@ TEST_CASE("Maths / Fresnel Term")
     {
         Vector4 const r0a = FresnelTerm(
             Cos(Make<Vector4>(
-                DegreesToRadians( 0.0F),
+                DegreesToRadians(0.0F),
                 DegreesToRadians(30.0F),
                 DegreesToRadians(45.0F),
-                DegreesToRadians(60.0F)
-                )),
-            Replicate<Vector4>(1.5F)
-        );
+                DegreesToRadians(60.0F))),
+            Replicate<Vector4>(1.5F));
 
         CHECK(GetX(r0a) == Approx{ 0.0399999991F }.margin(0.001F));
         CHECK(GetY(r0a) == Approx{ 0.0415226296F }.margin(0.01F));
@@ -1526,13 +1509,11 @@ TEST_CASE("Maths / Fresnel Term")
 
         Vector4 const r0b = FresnelTerm(
             Cos(Make<Vector4>(
-                DegreesToRadians( 90.0F),
+                DegreesToRadians(90.0F),
                 DegreesToRadians(135.0F),
                 DegreesToRadians(180.0F),
-                DegreesToRadians(225.0F)
-                )),
-            Replicate<Vector4>(1.5F)
-        );
+                DegreesToRadians(225.0F))),
+            Replicate<Vector4>(1.5F));
 
         CHECK(GetX(r0b) == Approx{ 1.0F }.margin(0.001F));
         CHECK(GetY(r0b) == Approx{ 1.0F }.margin(0.001F));
@@ -1544,10 +1525,8 @@ TEST_CASE("Maths / Fresnel Term")
                 DegreesToRadians(-30.0F),
                 DegreesToRadians(-45.0F),
                 DegreesToRadians(-60.0F),
-                DegreesToRadians(-90.0F)
-                )),
-            Replicate<Vector4>(1.5F)
-        );
+                DegreesToRadians(-90.0F))),
+            Replicate<Vector4>(1.5F));
 
         CHECK(GetX(r0c) == Approx{ 0.0415226296F }.margin(0.01F));
         CHECK(GetY(r0c) == Approx{ 0.0502399169F }.margin(0.001F));
@@ -1796,7 +1775,7 @@ TEST_CASE("Maths / Vector / Plane Intersection")
 
     SECTION("+X -> point")
     {
-        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitX<Vector3>());
+        Plane const p   = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitX<Vector3>());
         Vector3 const a = Make<Vector3>(-5.0F, 1.0F, 1.0F);
         Vector3 const b = Make<Vector3>(5.0F, 1.0F, 1.0F);
 
@@ -1809,7 +1788,7 @@ TEST_CASE("Maths / Vector / Plane Intersection")
 
     SECTION("+X -> nan")
     {
-        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitX<Vector3>());
+        Plane const p   = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitX<Vector3>());
         Vector3 const a = Make<Vector3>(1.0F, -5.0F, 1.0F);
         Vector3 const b = Make<Vector3>(1.0F, 5.0F, 1.0F);
 
@@ -1822,7 +1801,7 @@ TEST_CASE("Maths / Vector / Plane Intersection")
 
     SECTION("+Y -> point")
     {
-        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitY<Vector3>());
+        Plane const p   = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitY<Vector3>());
         Vector3 const a = Make<Vector3>(1.0F, -5.0F, 1.0F);
         Vector3 const b = Make<Vector3>(1.0F, 5.0F, 1.0F);
 
@@ -1835,7 +1814,7 @@ TEST_CASE("Maths / Vector / Plane Intersection")
 
     SECTION("+Y -> nan")
     {
-        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitY<Vector3>());
+        Plane const p   = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitY<Vector3>());
         Vector3 const a = Make<Vector3>(-5.0F, 1.0F, 1.0F);
         Vector3 const b = Make<Vector3>(5.0F, 1.0F, 1.0F);
 
@@ -1848,7 +1827,7 @@ TEST_CASE("Maths / Vector / Plane Intersection")
 
     SECTION("+Z -> point")
     {
-        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitZ<Vector3>());
+        Plane const p   = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitZ<Vector3>());
         Vector3 const a = Make<Vector3>(1.0F, 1.0F, -5.0F);
         Vector3 const b = Make<Vector3>(1.0F, 1.0F, 5.0F);
 
@@ -1861,7 +1840,7 @@ TEST_CASE("Maths / Vector / Plane Intersection")
 
     SECTION("+Z -> nan")
     {
-        Plane const p = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitZ<Vector3>());
+        Plane const p   = CreateFromPointNormal(Make<Vector3>(1.0F, 1.0F, 1.0F), UnitZ<Vector3>());
         Vector3 const a = Make<Vector3>(1.0F, -5.0F, 1.0F);
         Vector3 const b = Make<Vector3>(1.0F, 5.0F, 1.0F);
 
@@ -1987,7 +1966,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
         SECTION("Around X")
         {
             Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitX<Vector3>(), DegreesToRadians(90.0F));
-            Vector3 const x1 = Rotate(x0, q);
+            Vector3 const x1   = Rotate(x0, q);
 
             CHECK(GetX(x0) == Approx{ GetX(x1) }.margin(0.001F));
             CHECK(GetY(x0) == Approx{ GetY(x1) }.margin(0.001F));
@@ -2015,7 +1994,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
         SECTION("Around Y")
         {
             Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitY<Vector3>(), DegreesToRadians(90.0F));
-            Vector3 const x1 = Rotate(x0, q);
+            Vector3 const x1   = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
             CHECK(GetY(x1) == Approx{ 0.0F }.margin(0.001F));
@@ -2043,7 +2022,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
         SECTION("Around Z")
         {
             Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitZ<Vector3>(), DegreesToRadians(90.0F));
-            Vector3 const x1 = Rotate(x0, q);
+            Vector3 const x1   = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
             CHECK(GetY(x1) == Approx{ 1.0F }.margin(0.001F));
@@ -2076,7 +2055,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
         SECTION("Around X")
         {
             Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitX<Vector3>(), DegreesToRadians(90.0F));
-            Vector3 const x1 = Rotate(x0, q);
+            Vector3 const x1   = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
             CHECK(GetY(x1) == Approx{ 0.0F }.margin(0.001F));
@@ -2104,7 +2083,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
         SECTION("Around Y")
         {
             Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitY<Vector3>(), DegreesToRadians(90.0F));
-            Vector3 const x1 = Rotate(x0, q);
+            Vector3 const x1   = Rotate(x0, q);
 
             CHECK(GetX(x0) == Approx{ GetX(x1) }.margin(0.001F));
             CHECK(GetY(x0) == Approx{ GetY(x1) }.margin(0.001F));
@@ -2132,7 +2111,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
         SECTION("Around Z")
         {
             Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitZ<Vector3>(), DegreesToRadians(90.0F));
-            Vector3 const x1 = Rotate(x0, q);
+            Vector3 const x1   = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ -1.0F }.margin(0.001F));
             CHECK(GetY(x1) == Approx{ 0.0F }.margin(0.001F));
@@ -2165,7 +2144,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
         SECTION("Around X")
         {
             Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitX<Vector3>(), DegreesToRadians(90.0F));
-            Vector3 const x1 = Rotate(x0, q);
+            Vector3 const x1   = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ 0.0F }.margin(0.001F));
             CHECK(GetY(x1) == Approx{ -1.0F }.margin(0.001F));
@@ -2193,7 +2172,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
         SECTION("Around Y")
         {
             Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitY<Vector3>(), DegreesToRadians(90.0F));
-            Vector3 const x1 = Rotate(x0, q);
+            Vector3 const x1   = Rotate(x0, q);
 
             CHECK(GetX(x1) == Approx{ 1.0F }.margin(0.001F));
             CHECK(GetY(x1) == Approx{ 0.0F }.margin(0.001F));
@@ -2221,7 +2200,7 @@ TEST_CASE("Maths / Quaternion / Rotate vector by quaternion")
         SECTION("Around Z")
         {
             Quaternion const q = CreateFromAxisAngle<Quaternion>(UnitZ<Vector3>(), DegreesToRadians(90.0F));
-            Vector3 const x1 = Rotate(x0, q);
+            Vector3 const x1   = Rotate(x0, q);
 
             CHECK(GetX(x0) == Approx{ GetX(x1) }.margin(0.001F));
             CHECK(GetY(x0) == Approx{ GetY(x1) }.margin(0.001F));
@@ -2664,8 +2643,7 @@ TEST_CASE("Maths / Plane / Normalized")
     Plane const p = CreateFromPoints(
         Add(UnitX<Vector3>(), UnitY<Vector3>()),
         Add(Zero<Vector3>(), UnitY<Vector3>()),
-        Add(UnitZ<Vector3>(), UnitY<Vector3>())
-    );
+        Add(UnitZ<Vector3>(), UnitY<Vector3>()));
 
     CHECK(GetX(p) == Approx{ 0.0F });
     CHECK(GetY(p) == Approx{ 1.0F });
@@ -3116,8 +3094,7 @@ TEST_CASE("Maths / Vector / Permute")
                         static_cast<float>(x + 1),
                         static_cast<float>(y + 1),
                         static_cast<float>(z + 1),
-                        static_cast<float>(w + 1)
-                    );
+                        static_cast<float>(w + 1));
 
                     Vector4 const permuted = Permute(a, b, x, y, z, w);
 
@@ -3150,8 +3127,7 @@ TEST_CASE("Maths / Vector / Swizzle")
                         static_cast<float>(x + 1),
                         static_cast<float>(y + 1),
                         static_cast<float>(z + 1),
-                        static_cast<float>(w + 1)
-                    );
+                        static_cast<float>(w + 1));
 
                     Vector4 const swizzled = Swizzle(a, x, y, z, w);
 
@@ -3192,7 +3168,6 @@ TEST_CASE("Maths / Vector / Compiled swizzles")
     {
         CHECK(IsEqual(Swizzle<0, 0, 0, 0>(a), Make<Vector4>(1.0F, 1.0F, 1.0F, 1.0F)));
     }
-
 }
 
 
@@ -3265,13 +3240,15 @@ TEST_CASE("Maths / Matrix / Transpose")
     using namespace Graphyte::Maths;
 
     Float4x4A const values{ { {
+        // clang-format off
         0.0F, 1.0F, 2.0F, 3.0F,
         4.0F, 5.0F, 6.0F, 7.0F,
         8.0F, 9.0F, 10.0F, 11.0F,
         12.0F, 13.0F, 14.0F, 15.0F,
+        // clang-format on
     } } };
 
-    Matrix const original = Load<Matrix>(&values);
+    Matrix const original   = Load<Matrix>(&values);
     Matrix const transposed = Transpose(original);
 
     Float4x4A stored{};
@@ -3304,10 +3281,12 @@ TEST_CASE("Maths / Matrix / Load-Store")
     using namespace Graphyte::Maths;
 
     Float4x4A const mm{ { {
+        // clang-format off
         1.0F, 2.0F, 3.0F, 4.0F,
         1.5F, 2.5F, 3.5F, 4.5F,
         2.1F, 3.1F, 4.1F, 5.1F,
         3.2F, 4.3F, 5.4F, 6.5F,
+        // clang-format on
     } } };
 
     Matrix const m = Load<Matrix>(&mm);

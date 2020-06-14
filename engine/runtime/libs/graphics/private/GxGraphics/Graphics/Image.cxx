@@ -10,8 +10,7 @@ namespace Graphyte::Graphics
         uint32_t array_count,
         PixelFormat format,
         ImageDimension image_dimension,
-        ImageAlphaMode alpha_mode
-    ) noexcept
+        ImageAlphaMode alpha_mode) noexcept
         : m_Width{ width }
         , m_Height{ height }
         , m_Depth{ depth }
@@ -36,12 +35,11 @@ namespace Graphyte::Graphics
         uint32_t width,
         uint32_t mipmap_count,
         uint32_t array_count,
-        ImageAlphaMode alpha_mode
-    ) noexcept
+        ImageAlphaMode alpha_mode) noexcept
     {
         ImageDimension const image_dimension = (array_count > 1)
-            ? ImageDimension::Texture1DArray
-            : ImageDimension::Texture1D;
+                                                   ? ImageDimension::Texture1DArray
+                                                   : ImageDimension::Texture1D;
 
         return std::make_unique<Image>(
             width,
@@ -51,8 +49,7 @@ namespace Graphyte::Graphics
             array_count,
             format,
             image_dimension,
-            alpha_mode
-        );
+            alpha_mode);
     }
 
     std::unique_ptr<Image> Image::Create2D(
@@ -61,12 +58,11 @@ namespace Graphyte::Graphics
         uint32_t height,
         uint32_t mipmap_count,
         uint32_t array_count,
-        ImageAlphaMode alpha_mode
-    ) noexcept
+        ImageAlphaMode alpha_mode) noexcept
     {
         ImageDimension const image_dimension = (array_count > 1)
-            ? ImageDimension::Texture2DArray
-            : ImageDimension::Texture2D;
+                                                   ? ImageDimension::Texture2DArray
+                                                   : ImageDimension::Texture2D;
 
         return std::make_unique<Image>(
             width,
@@ -76,8 +72,7 @@ namespace Graphyte::Graphics
             array_count,
             format,
             image_dimension,
-            alpha_mode
-        );
+            alpha_mode);
     }
 
     std::unique_ptr<Image> Image::Create3D(
@@ -86,8 +81,7 @@ namespace Graphyte::Graphics
         uint32_t height,
         uint32_t depth,
         uint32_t mipmap_count,
-        ImageAlphaMode alpha_mode
-    ) noexcept
+        ImageAlphaMode alpha_mode) noexcept
     {
         ImageDimension const image_dimension = ImageDimension::Texture3D;
 
@@ -99,8 +93,7 @@ namespace Graphyte::Graphics
             1,
             format,
             image_dimension,
-            alpha_mode
-        );
+            alpha_mode);
     }
 
     std::unique_ptr<Image> Image::CreateCube(
@@ -108,12 +101,11 @@ namespace Graphyte::Graphics
         uint32_t size,
         uint32_t mipmap_count,
         uint32_t array_count,
-        ImageAlphaMode alpha_mode
-    ) noexcept
+        ImageAlphaMode alpha_mode) noexcept
     {
         ImageDimension const image_dimension = (array_count > 1)
-            ? ImageDimension::TextureCubeArray
-            : ImageDimension::TextureCube;
+                                                   ? ImageDimension::TextureCubeArray
+                                                   : ImageDimension::TextureCube;
 
         return std::make_unique<Image>(
             size,
@@ -123,14 +115,12 @@ namespace Graphyte::Graphics
             array_count,
             format,
             image_dimension,
-            alpha_mode
-        );
+            alpha_mode);
     }
 
     ImagePixels* Image::GetPixels(
         uint32_t array_index,
-        uint32_t mipmap_index
-    ) noexcept
+        uint32_t mipmap_index) noexcept
     {
         if (array_index >= m_ArrayCount || mipmap_index >= m_MipmapCount)
         {
@@ -160,8 +150,7 @@ namespace Graphyte::Graphics
     ImagePixels* Image::GetPixels(
         CubeFace cube_face,
         uint32_t array_index,
-        uint32_t mipmap_index
-    ) noexcept
+        uint32_t mipmap_index) noexcept
     {
         if (!IsCube(m_Dimension))
         {
@@ -200,9 +189,9 @@ namespace Graphyte::Graphics
         GX_ASSERT(m_MipmapCount >= 1);
 
         // Fixup surface dimensions based on pixel format.
-        m_Width = PixelFormatProperties::GetImageWidth(m_Width, 0, m_PixelFormat);
+        m_Width  = PixelFormatProperties::GetImageWidth(m_Width, 0, m_PixelFormat);
         m_Height = PixelFormatProperties::GetImageHeight(m_Height, 0, m_PixelFormat);
-        m_Depth = PixelFormatProperties::GetImageDepth(m_Depth, 0, m_PixelFormat);
+        m_Depth  = PixelFormatProperties::GetImageDepth(m_Depth, 0, m_PixelFormat);
 
         size_t faces_count = static_cast<size_t>((m_Dimension == ImageDimension::TextureCube || m_Dimension == ImageDimension::TextureCubeArray) ? 6 : 1);
 
@@ -237,27 +226,25 @@ namespace Graphyte::Graphics
                         h,
                         num_bytes,
                         row_bytes,
-                        row_count
-                    );
+                        row_count);
 
                     GX_ASSERT(index < (m_SubresourcesCount));
 
-                    m_Subresources[index].LinePitch = row_bytes;
+                    m_Subresources[index].LinePitch  = row_bytes;
                     m_Subresources[index].SlicePitch = num_bytes;
-                    m_Subresources[index].Buffer = nullptr;
-                    m_Subresources[index].Size = num_bytes * d;
-                    m_Subresources[index].MipLevel = i;
-                    m_Subresources[index].Width = w;
-                    m_Subresources[index].Height = h;
-                    m_Subresources[index].Depth = d;
+                    m_Subresources[index].Buffer     = nullptr;
+                    m_Subresources[index].Size       = num_bytes * d;
+                    m_Subresources[index].MipLevel   = i;
+                    m_Subresources[index].Width      = w;
+                    m_Subresources[index].Height     = h;
+                    m_Subresources[index].Depth      = d;
 
                     [[maybe_unused]] size_t const subsize = PixelFormatProperties::GetStorageSize(
                         m_PixelFormat,
                         w,
                         h,
                         d,
-                        0
-                    );
+                        0);
 
                     GX_ASSERT(subsize == m_Subresources[index].Size);
 
@@ -281,7 +268,7 @@ namespace Graphyte::Graphics
         GX_ASSERT(total_size != 0);
 
         m_BufferSize = total_size;
-        m_Buffer = std::make_unique<uint8_t[]>(m_BufferSize);
+        m_Buffer     = std::make_unique<uint8_t[]>(m_BufferSize);
 
         uint8_t* buffer = m_Buffer.get();
 

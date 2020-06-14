@@ -23,15 +23,13 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::DestroyCommandList(
-        GpuCommandListHandle handle
-    ) noexcept
+        GpuCommandListHandle handle) noexcept
     {
         (void)handle;
     }
 
     void D3D11GpuDevice::PlayCommandList(
-        GpuCommandListHandle handle
-    ) const noexcept
+        GpuCommandListHandle handle) const noexcept
     {
         (void)handle;
     }
@@ -40,8 +38,7 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     void D3D11GpuCommandList::BindRenderTarget(
-        GpuRenderTargetHandle handle
-    ) noexcept
+        GpuRenderTargetHandle handle) noexcept
     {
         m_CurrentRenderTarget = handle;
 
@@ -50,21 +47,19 @@ namespace Graphyte::Graphics
         m_Context->OMSetRenderTargets(
             native->m_Colors,
             native->m_Color,
-            native->m_Depth
-        );
+            native->m_Depth);
 
         m_Context->ClearDepthStencilView(
             native->m_Depth,
             D3D11_CLEAR_DEPTH,
             1.0F,
-            0
-        );
+            0);
 
         D3D11_VIEWPORT viewport{
             .TopLeftX = 0.0F,
             .TopLeftY = 0.0F,
-            .Width = static_cast<float>(native->m_Width),
-            .Height = static_cast<float>(native->m_Height),
+            .Width    = static_cast<float>(native->m_Width),
+            .Height   = static_cast<float>(native->m_Height),
             .MinDepth = 0.0F,
             .MaxDepth = 1.0F,
         };
@@ -74,8 +69,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuCommandList::BindGraphicsPipelineState(
-        GpuGraphicsPipelineStateHandle handle
-    ) noexcept
+        GpuGraphicsPipelineStateHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuGraphicsPipelineState*>(handle);
@@ -85,8 +79,7 @@ namespace Graphyte::Graphics
         m_Context->OMSetBlendState(
             native->m_BlendState,
             reinterpret_cast<const float*>(&native->m_BlendState_BlendFactors),
-            native->m_BlendState_SampleMask
-        );
+            native->m_BlendState_SampleMask);
 
         m_Context->OMSetDepthStencilState(native->m_DepthStencilState, 0);
         m_Context->IASetInputLayout(native->m_InputLayout);
@@ -104,8 +97,7 @@ namespace Graphyte::Graphics
         GpuVertexBufferHandle handle,
         uint32_t slot,
         uint32_t stride,
-        uint32_t offset
-    ) noexcept
+        uint32_t offset) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuVertexBuffer*>(handle);
@@ -118,67 +110,58 @@ namespace Graphyte::Graphics
             1,
             &native->m_Resource,
             strides,
-            offsets
-        );
+            offsets);
     }
 
     void D3D11GpuCommandList::BindIndexBuffer(
         GpuIndexBufferHandle handle,
         uint32_t offset,
-        bool short_indices
-    ) noexcept
+        bool short_indices) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuIndexBuffer*>(handle);
 
         DXGI_FORMAT format = short_indices
-            ? DXGI_FORMAT_R16_UINT
-            : DXGI_FORMAT_R32_UINT;
+                                 ? DXGI_FORMAT_R16_UINT
+                                 : DXGI_FORMAT_R32_UINT;
 
         m_Context->IASetIndexBuffer(
             native->m_Resource,
             format,
-            offset
-        );
+            offset);
     }
 
     void D3D11GpuCommandList::Draw(
         uint32_t vertex_count,
-        uint32_t start_vertex_location
-    ) noexcept
+        uint32_t start_vertex_location) noexcept
     {
         m_Context->Draw(
             vertex_count,
-            start_vertex_location
-        );
+            start_vertex_location);
     }
-    
+
     void D3D11GpuCommandList::DrawIndexed(
         uint32_t index_count,
         uint32_t start_index_location,
-        int32_t base_vertex_location
-    ) noexcept
+        int32_t base_vertex_location) noexcept
     {
         m_Context->DrawIndexed(
             index_count,
             start_index_location,
-            base_vertex_location
-        );
+            base_vertex_location);
     }
 
     void D3D11GpuCommandList::DrawInstanced(
         uint32_t vertex_count_per_instance,
         uint32_t instance_count,
         uint32_t start_vertex_location,
-        uint32_t start_instance_location
-    ) noexcept
+        uint32_t start_instance_location) noexcept
     {
         m_Context->DrawInstanced(
             vertex_count_per_instance,
             instance_count,
             start_vertex_location,
-            start_instance_location
-        );
+            start_instance_location);
     }
 
     void D3D11GpuCommandList::DrawIndexedInstanced(
@@ -186,28 +169,24 @@ namespace Graphyte::Graphics
         uint32_t instance_count,
         uint32_t start_index_location,
         int32_t base_vertex_location,
-        uint32_t start_instance_location
-    ) noexcept
+        uint32_t start_instance_location) noexcept
     {
         m_Context->DrawIndexedInstanced(
             index_count_per_instance,
             instance_count,
             start_index_location,
             base_vertex_location,
-            start_instance_location
-        );
+            start_instance_location);
     }
 
     void D3D11GpuCommandList::DispatchCompute(
         uint32_t threadGroupCountX,
         uint32_t threadGroupCountY,
-        uint32_t threadGroupCountZ
-    ) noexcept
+        uint32_t threadGroupCountZ) noexcept
     {
         m_Context->Dispatch(
             threadGroupCountX,
             threadGroupCountY,
-            threadGroupCountZ
-        );
+            threadGroupCountZ);
     }
 }

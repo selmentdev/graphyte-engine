@@ -7,8 +7,7 @@ namespace Graphyte::Storage
 {
     ArchiveFileWriter::ArchiveFileWriter(
         std::unique_ptr<IStream> stream,
-        int64_t position
-    ) noexcept
+        int64_t position) noexcept
         : Archive()
         , m_Stream{ std::move(stream) }
         , m_Position{ position }
@@ -26,8 +25,7 @@ namespace Graphyte::Storage
 
     void ArchiveFileWriter::Serialize(
         void* buffer,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         m_Position += size;
 
@@ -80,8 +78,7 @@ namespace Graphyte::Storage
     }
 
     void ArchiveFileWriter::SetPosition(
-        int64_t value
-    ) noexcept
+        int64_t value) noexcept
     {
         Flush();
         if (m_Stream->SetPosition(value) != Status::Success)

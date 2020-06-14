@@ -130,33 +130,27 @@ namespace Graphyte::System
 namespace Graphyte::System
 {
     extern BASE_API void* OsMalloc(
-        size_t size
-    ) noexcept;
+        size_t size) noexcept;
 
     extern BASE_API void* OsRealloc(
         void* memory,
-        size_t size
-    ) noexcept;
+        size_t size) noexcept;
 
     extern BASE_API void OsFree(
-        void* memory
-    ) noexcept;
+        void* memory) noexcept;
 
     extern BASE_API void* OsVirtualAlloc(
-        size_t size
-    ) noexcept;
+        size_t size) noexcept;
 
     extern BASE_API void OsVirtualFree(
         void* memory,
-        size_t size
-    ) noexcept;
+        size_t size) noexcept;
 
     extern BASE_API bool OsVirtualProtect(
         void* memory,
         size_t size,
         bool canRead,
-        bool canWrite
-    ) noexcept;
+        bool canWrite) noexcept;
 }
 
 
@@ -169,8 +163,7 @@ namespace Graphyte::System
 {
     inline void Prefetch(
         [[maybe_unused]] const void* memory,
-        [[maybe_unused]] ptrdiff_t offset
-    ) noexcept
+        [[maybe_unused]] ptrdiff_t offset) noexcept
     {
 #if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
         _mm_prefetch(reinterpret_cast<const char*>(memory) + offset, _MM_HINT_T0);
@@ -183,12 +176,11 @@ namespace Graphyte::System
 
     inline void PrefetchBlock(
         [[maybe_unused]] const void* memory,
-        [[maybe_unused]] size_t size
-    ) noexcept
+        [[maybe_unused]] size_t size) noexcept
     {
 #if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
         size_t const cacheline_size = GRAPHYTE_CACHELINE_SIZE;
-        std::byte const* it = reinterpret_cast<std::byte const*>(memory);
+        std::byte const* it         = reinterpret_cast<std::byte const*>(memory);
 
         for (size_t lines = (size + cacheline_size - 1) / cacheline_size; lines != 0; --lines)
         {
@@ -213,8 +205,7 @@ namespace Graphyte::System
 {
     inline void SecureMemoryZero(
         void* destination,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         volatile char* it = reinterpret_cast<volatile char*>(destination);
         for (; size != 0; --size, ++it)
@@ -230,8 +221,7 @@ namespace Graphyte::System
     inline void* MemoryMove(
         void* destination,
         const void* source,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return memmove(destination, source, size);
     }
@@ -239,8 +229,7 @@ namespace Graphyte::System
     inline void* MemoryCopy(
         void* destination,
         const void* source,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return memcpy(destination, source, size);
     }
@@ -248,8 +237,7 @@ namespace Graphyte::System
     inline void* MemoryCopyBlock(
         void* destination,
         const void* source,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return memcpy(destination, source, size);
     }
@@ -257,8 +245,7 @@ namespace Graphyte::System
     inline void* MemoryCopyStreaming(
         void* destination,
         const void* source,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return memcpy(destination, source, size);
     }
@@ -266,8 +253,7 @@ namespace Graphyte::System
     inline int MemoryCompare(
         const void* buffer1,
         const void* buffer2,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return memcmp(buffer1, buffer2, size);
     }
@@ -275,16 +261,14 @@ namespace Graphyte::System
     inline void* MemorySet(
         void* destination,
         uint8_t value,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return memset(destination, value, size);
     }
 
     inline void* MemoryZero(
         void* destination,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return memset(destination, 0, size);
     }
@@ -427,6 +411,7 @@ namespace Graphyte::System
      */
     extern BASE_API BuildKind GetBuildKind() noexcept;
 
+    // clang-format off
 #if GX_CONFIG_RELEASE
     inline constexpr const BuildKind CurrentBuildKind = BuildKind::Release;
 #elif GX_CONFIG_PROFILE
@@ -436,6 +421,7 @@ namespace Graphyte::System
 #elif GX_CONFIG_CHECKED
     inline constexpr const BuildKind CurrentBuildKind = BuildKind::Checked;
 #endif
+    // clang-format on
 
     enum struct BuildType : uint32_t
     {
@@ -444,6 +430,7 @@ namespace Graphyte::System
         Retail,
     };
 
+    // clang-format off
 #if GX_BUILD_TYPE_DEVELOPER
     inline constexpr const BuildType CurrentBuildType = BuildType::Developer;
 #elif GX_BUILD_TYPE_TESTING
@@ -451,6 +438,7 @@ namespace Graphyte::System
 #elif GX_BUILD_TYPE_RETAIL
     inline constexpr const BuildType CurrentBuildType = BuildType::Retail;
 #endif
+    // clang-format on
 
     /*!
      * \brief   Gets build type.
@@ -519,6 +507,7 @@ namespace Graphyte::System
         Hybrid,
     };
 
+    // clang-format off
 #if GRAPHYTE_PLATFORM_TYPE_MOBILE
     inline constexpr const PlatformKind CurrentPlatformKind = PlatformKind::Mobile;
 #elif GRAPHYTE_PLATFORM_TYPE_DESKTOP
@@ -528,6 +517,7 @@ namespace Graphyte::System
 #elif GRAPHYTE_PLATFORM_TYPE_CONSOLE
     inline constexpr const PlatformKind CurrentPlatformKind = PlatformKind::Console;
 #endif
+    // clang-format on
 
     /*!
      * \brief   Gets platform kind.
@@ -551,6 +541,7 @@ namespace Graphyte::System
         XBoxOne,
     };
 
+    // clang-format off
 #if GRAPHYTE_PLATFORM_ANDROID
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::Android;
 #elif GRAPHYTE_PLATFORM_BSD
@@ -578,6 +569,7 @@ namespace Graphyte::System
 #elif GRAPHYTE_PLATFORM_XBOXONE
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::XBoxOne;
 #endif
+    // clang-format on
 
 
     /*!
@@ -627,8 +619,7 @@ namespace Graphyte::System
      * \brief   Checks whether specific platform feature is supported.
      */
     extern BASE_API bool HasPlatformFeature(
-        PlatformFeature feature
-    ) noexcept;
+        PlatformFeature feature) noexcept;
 
     /*!
      * \brief   Gets name of file manager.
@@ -665,8 +656,7 @@ namespace Graphyte::System
     //!
     //! \return The status code.
     extern BASE_API Status GetClipboardContent(
-        std::string& content
-    ) noexcept;
+        std::string& content) noexcept;
 
 
     //! Sets content of clipboard.
@@ -675,8 +665,7 @@ namespace Graphyte::System
     //!
     //! \return The status code.
     extern BASE_API Status SetClipboardContent(
-        std::string_view content
-    ) noexcept;
+        std::string_view content) noexcept;
 
     /*!
      * \brief   Gets content of environment variable.
@@ -688,8 +677,7 @@ namespace Graphyte::System
      */
     extern BASE_API Status GetEnvironmentVariable(
         std::string& result,
-        const char* name
-    ) noexcept;
+        const char* name) noexcept;
 
     /*!
      * \brief   Sets content of environment variable.
@@ -701,8 +689,7 @@ namespace Graphyte::System
      */
     extern BASE_API Status SetEnvironmentVariable(
         const char* name,
-        const char* value
-    ) noexcept;
+        const char* value) noexcept;
 
     /*!
      * \brief   Removes environment variable.
@@ -712,8 +699,7 @@ namespace Graphyte::System
      * \return  The status code.
      */
     extern BASE_API Status RemoveEnvironmentVariable(
-        const char* name
-    ) noexcept;
+        const char* name) noexcept;
 
     /*!
      * \brief   Sets current thread current directory.
@@ -723,8 +709,7 @@ namespace Graphyte::System
      * \return  The status code.
      */
     extern BASE_API Status SetCurrentDirectory(
-        const std::string& value
-    ) noexcept;
+        const std::string& value) noexcept;
 
     /*!
      * \brief   Gets current thread current directory.
@@ -734,8 +719,7 @@ namespace Graphyte::System
      * \return  The status code.
      */
     extern BASE_API Status GetCurrentDirectory(
-        std::string& result
-    ) noexcept;
+        std::string& result) noexcept;
 
     //!
     //! \brief  Gets full path to currently running application executable.
@@ -761,12 +745,10 @@ namespace Graphyte::System
      *
      * \return  The status code.
      */
-    [[deprecated("this API is not portable")]]
-    extern BASE_API Status Execute(
+    [[deprecated("this API is not portable")]] extern BASE_API Status Execute(
         const char* type,
         const char* command,
-        const char* params
-    ) noexcept;
+        const char* params) noexcept;
 
     /*!
      * \brief   Opens system specific file manager.
@@ -776,8 +758,7 @@ namespace Graphyte::System
      * \return  The status code.
      */
     extern BASE_API Status Explore(
-        const char* path
-    ) noexcept;
+        const char* path) noexcept;
 }
 
 
@@ -816,8 +797,7 @@ namespace Graphyte::System
     extern BASE_API Status GetBatteryState(
         BatteryState& state,
         int& level,
-        int& lifetime
-    ) noexcept;
+        int& lifetime) noexcept;
 }
 
 
@@ -925,7 +905,7 @@ namespace Graphyte::System
 #elif GRAPHYTE_CPU_ARM_32
 
         AES,
-        ARMv7,          // this maybe required
+        ARMv7, // this maybe required
         CRC32,
         IDIV_ARM,
         IDIV_THUMB2,
@@ -970,8 +950,7 @@ namespace Graphyte::System
      * \return  The value indicating whether feature is supported.
      */
     extern BASE_API bool HasProcessorFeature(
-        ProcessorFeature feature
-    ) noexcept;
+        ProcessorFeature feature) noexcept;
 
     /*!
      * \brief   Gets number of available I/O worker threads.
@@ -1044,16 +1023,15 @@ namespace Graphyte::System
      * \return  The status code.
      */
     extern BASE_API Status GetDisplayMetrics(
-        DisplayMetrics& result
-    ) noexcept;
+        DisplayMetrics& result) noexcept;
 
     enum class DeviceScreenOrientation
     {
-        None,               //!< Cannot determine current screen orientation.
-        Landscape,          //!< Landscape.
-        LandscapeFlipped,   //!< Landscape turned 180 degrees.
-        Portrait,           //!< Portrait.
-        PortraitFlipped,    //!< Portrait turned 180 degrees.
+        None,             //!< Cannot determine current screen orientation.
+        Landscape,        //!< Landscape.
+        LandscapeFlipped, //!< Landscape turned 180 degrees.
+        Portrait,         //!< Portrait.
+        PortraitFlipped,  //!< Portrait turned 180 degrees.
     };
 
     /*!
@@ -1069,8 +1047,7 @@ namespace Graphyte::System
     //! \return The color on screen. Returns (0, 0, 0) for invalid position / when not supported.
     extern BASE_API ColorF GetScreenPixel(
         Point position,
-        float gamma
-    ) noexcept;
+        float gamma) noexcept;
 
     /*!
      * \brief   Enables or disables screen saver.
@@ -1080,8 +1057,7 @@ namespace Graphyte::System
      * \return  The status code.
      */
     extern BASE_API Status ControlScreensaver(
-        bool enable
-    ) noexcept;
+        bool enable) noexcept;
 
     /*!
      * \brief   Prevents screen saver.
@@ -1111,8 +1087,7 @@ namespace Graphyte::System
      * @param   time    Returns system time.
      */
     extern BASE_API void GetSystemTime(
-        CalendarTime& time
-    ) noexcept;
+        CalendarTime& time) noexcept;
 
     /*!
      * @brief   Gets local time as calendar time.
@@ -1120,8 +1095,7 @@ namespace Graphyte::System
      * @param   time    Returns local time.
      */
     extern BASE_API void GetLocalTime(
-        CalendarTime& time
-    ) noexcept;
+        CalendarTime& time) noexcept;
 
     extern BASE_API uint64_t GetSystemTime() noexcept;
 
@@ -1197,7 +1171,6 @@ namespace Graphyte::System
     BASE_API MessageDialogResult ShowMessageDialog(
         std::string_view title,
         std::string_view message,
-        MessageDialogType type = MessageDialogType::Ok,
-        MessageDialogImage image = MessageDialogImage::None
-    ) noexcept;
+        MessageDialogType type   = MessageDialogType::Ok,
+        MessageDialogImage image = MessageDialogImage::None) noexcept;
 }

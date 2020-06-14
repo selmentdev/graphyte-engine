@@ -79,30 +79,26 @@ namespace Graphyte::System
 namespace Graphyte::System
 {
     BASE_API void* OsMalloc(
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return malloc(size);
     }
 
     BASE_API void* OsRealloc(
         void* memory,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         return realloc(memory, size);
     }
 
     BASE_API void OsFree(
-        void* memory
-    ) noexcept
+        void* memory) noexcept
     {
         free(memory);
     }
 
     BASE_API void* OsVirtualAlloc(
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         auto memory = mmap(
             nullptr,
@@ -110,16 +106,14 @@ namespace Graphyte::System
             PROT_READ | PROT_WRITE,
             MAP_PRIVATE | MAP_ANONYMOUS,
             -1,
-            0
-        );
+            0);
 
         return memory;
     }
 
     BASE_API void OsVirtualFree(
         void* memory,
-        size_t size
-    ) noexcept
+        size_t size) noexcept
     {
         if (memory != nullptr && munmap(memory, size) != 0)
         {
@@ -130,8 +124,7 @@ namespace Graphyte::System
                 memory,
                 size,
                 error,
-                strerror(error)
-            );
+                strerror(error));
         }
     }
 
@@ -139,8 +132,7 @@ namespace Graphyte::System
         void* memory,
         size_t size,
         bool canRead,
-        bool canWrite
-    ) noexcept
+        bool canWrite) noexcept
     {
         int protectMode = PROT_NONE;
 

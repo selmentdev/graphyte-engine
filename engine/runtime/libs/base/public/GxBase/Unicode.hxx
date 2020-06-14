@@ -47,8 +47,7 @@ namespace Graphyte::Text
         const char8_t* source_end,
         char16_t** target_start,
         char16_t* target_end,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 
     /*!
      * \brief
@@ -71,8 +70,7 @@ namespace Graphyte::Text
         const char8_t* source_end,
         char32_t** target_start,
         char32_t* target_end,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 
     /*!
      * \brief
@@ -100,113 +98,95 @@ namespace Graphyte::Text
         const char8_t* source_end,
         char32_t** target_start,
         char32_t* target_end,
-        ConversionType type
-    ) noexcept;
-    
+        ConversionType type) noexcept;
+
     BASE_API ConversionResult ConvertUTF16ToUTF8(
         const char16_t** source_start,
         const char16_t* source_end,
         char8_t** target_start,
         char8_t* target_end,
-        ConversionType type
-    ) noexcept;
-    
+        ConversionType type) noexcept;
+
     BASE_API ConversionResult ConvertUTF32ToUTF8(
         const char32_t** source_start,
         const char32_t* source_end,
         char8_t** target_start,
         char8_t* target_end,
-        ConversionType type
-    ) noexcept;
-    
+        ConversionType type) noexcept;
+
     BASE_API ConversionResult ConvertUTF16ToUTF32(
         const char16_t** source_start,
         const char16_t* source_end,
         char32_t** target_start,
         char32_t* target_end,
-        ConversionType type
-    ) noexcept;
-    
+        ConversionType type) noexcept;
+
     BASE_API ConversionResult ConvertUTF32ToUTF16(
         const char32_t** source_start,
         const char32_t* source_end,
         char16_t** target_start,
-        char16_t* target_end, ConversionType type
-    ) noexcept;
-    
+        char16_t* target_end, ConversionType type) noexcept;
+
     BASE_API bool IsLegalUTF8Sequence(
         const char8_t* source_start,
-        const char8_t* source_end
-    ) noexcept;
-    
+        const char8_t* source_end) noexcept;
+
     BASE_API bool IsLegalUTF8String(
         const char8_t** source_start,
-        const char8_t* source_end
-    ) noexcept;
-    
+        const char8_t* source_end) noexcept;
+
     BASE_API size_t GetBytesCountForUTF8(
-        char8_t leading_byte
-    ) noexcept;
+        char8_t leading_byte) noexcept;
 
     BASE_API ConversionResult ConvertUTF8Sequence(
         const char8_t** source_start,
         const char8_t* source_end,
         char32_t* target,
-        ConversionType type
-    ) noexcept;
-    
+        ConversionType type) noexcept;
+
     BASE_API ConversionResult ConvertUTF8Sequence(
         char32_t character,
         char8_t** target_start,
         char8_t* target_end,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 
     BASE_API ConversionResult ConvertString(
         std::string_view source,
         std::wstring& result,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 
     BASE_API ConversionResult ConvertString(
         std::wstring_view source,
         std::string& result,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 
     BASE_API ConversionResult ConvertString(
         std::string_view source,
         std::u16string& result,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 
     BASE_API ConversionResult ConvertString(
         std::string_view source,
         std::u32string& result,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 
     BASE_API ConversionResult ConvertString(
         std::u16string_view source,
         std::string& result,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 
     BASE_API ConversionResult ConvertString(
         std::u32string_view source,
         std::string& result,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 
     BASE_API ConversionResult ConvertString(
         std::u16string_view source,
         std::u32string& result,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 
     BASE_API ConversionResult ConvertString(
         std::u32string_view source,
         std::u16string& result,
-        ConversionType type
-    ) noexcept;
+        ConversionType type) noexcept;
 }

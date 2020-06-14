@@ -60,8 +60,7 @@ namespace Graphyte::Application
      *                  just continue looping.
      */
     extern BASE_API void RequestExit(
-        bool force
-    ) noexcept;
+        bool force) noexcept;
 
     /*!
      * \brief   Gets value indicating whether current application is in foreground.
@@ -207,32 +206,30 @@ namespace Graphyte::Application
 
     public:
         Window() noexcept = default;
+
         virtual ~Window() noexcept = default;
 
         Window(const Window&) = delete;
-        Window& operator= (const Window&) = delete;
+
+        Window& operator=(const Window&) = delete;
 
     public:
         virtual void Create(
-            const WindowDescriptor& descriptor
-        ) noexcept = 0;
+            const WindowDescriptor& descriptor) noexcept = 0;
 
         virtual void Destroy() noexcept = 0;
 
     public:
         virtual void Move(
-            System::Point location
-        ) noexcept = 0;
+            System::Point location) noexcept = 0;
 
         virtual void Resize(
-            System::Size size
-        ) noexcept = 0;
+            System::Size size) noexcept = 0;
 
         virtual void Focus() noexcept = 0;
 
         virtual void BringToFront(
-            bool force
-        ) noexcept = 0;
+            bool force) noexcept = 0;
 
         virtual void Minimize() noexcept = 0;
 
@@ -249,18 +246,15 @@ namespace Graphyte::Application
         virtual void Disable() noexcept = 0;
 
         virtual void SetWindowMode(
-            WindowMode value
-        ) noexcept = 0;
+            WindowMode value) noexcept = 0;
 
         virtual WindowMode GetWindowMode() noexcept = 0;
 
         virtual void SetCaption(
-            const char* text
-        ) noexcept = 0;
+            const char* text) noexcept = 0;
 
         virtual void SetPlacement(
-            System::Rect placement
-        ) noexcept = 0;
+            System::Rect placement) noexcept = 0;
 
         //virtual void GetPlacement(System::Rect& placement) noexcept = 0;
 
@@ -279,18 +273,15 @@ namespace Graphyte::Application
         virtual int32_t GetBorderSize() noexcept = 0;
 
         virtual bool GetRestoredPlacement(
-            System::Rect& placement
-        ) noexcept = 0;
+            System::Rect& placement) noexcept = 0;
 
         virtual bool GetFullscreenInfo(
-            System::Rect& screen_rect
-        ) noexcept = 0;
+            System::Rect& screen_rect) noexcept = 0;
 
         virtual System::Size GetViewportSize() noexcept = 0;
 
         virtual bool IsPointInside(
-            System::Point value
-        ) noexcept = 0;
+            System::Point value) noexcept = 0;
 
         virtual void OnParentWindowMinimized() noexcept = 0;
 
@@ -313,8 +304,7 @@ namespace Graphyte::Application
         }
 
         void SetDPIScale(
-            float value
-        ) noexcept
+            float value) noexcept
         {
             m_DPIScale = value;
         }
@@ -328,8 +318,7 @@ namespace Graphyte::Application
      * \return  The instance of new window.
      */
     extern BASE_API Window* CreateWindow(
-        const WindowDescriptor& descriptor
-    ) noexcept;
+        const WindowDescriptor& descriptor) noexcept;
 
     /*!
      * \brief   Destroys instance of window.
@@ -337,8 +326,7 @@ namespace Graphyte::Application
      * \param   window      Provides instance of window to destroy.
      */
     extern BASE_API void DestroyWindow(
-        Window* window
-    ) noexcept;
+        Window* window) noexcept;
 }
 
 
@@ -356,72 +344,60 @@ namespace Graphyte::Application
 
     public:
         virtual bool CanHandleInput(
-            Window& window
-        ) noexcept;
+            Window& window) noexcept;
 
         virtual bool OnKeyChar(
             char32_t character,
-            bool repeat
-        ) noexcept;
+            bool repeat) noexcept;
 
         virtual bool OnKeyDown(
             Input::KeyCode key,
             char32_t character,
-            bool repeat
-        ) noexcept;
+            bool repeat) noexcept;
 
         virtual bool OnKeyUp(
             Input::KeyCode key,
             char32_t character,
-            bool repeat
-        ) noexcept;
+            bool repeat) noexcept;
 
         virtual bool OnMouseDown(
             Window& window,
             Input::MouseButton button,
-            Float2 position
-        ) noexcept;
+            Float2 position) noexcept;
 
         virtual bool OnMouseUp(
             Window& window,
             Input::MouseButton button,
-            Float2 position
-        ) noexcept;
+            Float2 position) noexcept;
 
         virtual bool OnMouseDoubleClick(
             Window& window,
             Input::MouseButton button,
-            Float2 position
-        ) noexcept;
+            Float2 position) noexcept;
 
         virtual bool OnMouseWheel(
             float delta,
-            Float2 position
-        ) noexcept;
+            Float2 position) noexcept;
 
         virtual bool OnMouseMove() noexcept;
 
         virtual bool OnMouseMove(
-            Float2 position
-        ) noexcept;
+            Float2 position) noexcept;
 
         virtual bool OnControllerAnalog(
             Input::GamepadKey key,
             uint32_t controller,
-            float value
-        ) noexcept;
+            float value) noexcept;
 
         virtual bool OnControllerButtonPressed(
             Input::GamepadKey key,
             uint32_t controller,
-            bool repeat
-        ) noexcept;
+            bool repeat) noexcept;
 
         virtual bool OnControllerButtonReleased(
             Input::GamepadKey key,
             uint32_t controller,
-            bool repeat
-        ) noexcept;
+            bool repeat) noexcept;
 
         virtual void OnGestureStart() noexcept;
 
@@ -429,8 +405,7 @@ namespace Graphyte::Application
             Input::GestureType gesture,
             Float2 delta,
             float wheel_delta,
-            bool inverted
-        ) noexcept;
+            bool inverted) noexcept;
 
         virtual void OnGestureEnd() noexcept;
 
@@ -438,90 +413,73 @@ namespace Graphyte::Application
             Window& window,
             Float2 position,
             Input::TouchIndex touch_index,
-            uint32_t controller
-        ) noexcept;
+            uint32_t controller) noexcept;
 
         virtual bool OnTouchMoved(
             Float2 location,
             Input::TouchIndex touch_index,
-            uint32_t controller
-        ) noexcept;
+            uint32_t controller) noexcept;
 
         virtual bool OnTouchEnded(
             Float2 location,
             Input::TouchIndex touch_index,
-            uint32_t controller
-        ) noexcept;
+            uint32_t controller) noexcept;
 
         virtual bool OnMotion(
             Float3 tilt,
             Float3 rotation_rate,
             Float3 gravity,
             Float3 acceleration,
-            uint32_t controller
-        ) noexcept;
+            uint32_t controller) noexcept;
 
     public:
         virtual bool OnWindowSizeChanged(
             Window& window,
             Float2 size,
-            bool was_minimized
-        ) noexcept;
+            bool was_minimized) noexcept;
 
         virtual void OnWindowPaint(
-            Window& window
-        ) noexcept;
+            Window& window) noexcept;
 
         virtual WindowLimits GetSizeLimits(
-            Window& window
-        ) noexcept;
+            Window& window) noexcept;
 
         virtual void OnWindowSizing(
-            Window& window
-        ) noexcept;
+            Window& window) noexcept;
 
         virtual bool OnWindowSizingBegin(
-            Window& window
-        ) noexcept;
+            Window& window) noexcept;
 
         virtual void OnWindowSizingEnd(
-            Window& window
-        ) noexcept;
+            Window& window) noexcept;
 
         virtual void OnDPIScaleChanged(
-            Window& window
-        ) noexcept;
+            Window& window) noexcept;
 
         virtual void OnWindowMoved(
             Window& window,
-            Float2 position
-        ) noexcept;
+            Float2 position) noexcept;
 
         virtual void OnWindowClose(
-            Window& window
-        ) noexcept;
+            Window& window) noexcept;
 
         virtual bool OnWindowActivated(
             Window& window,
-            WindowActivation activation
-        ) noexcept;
+            WindowActivation activation) noexcept;
 
         virtual bool OnApplicationActivated(
-            bool active
-        ) noexcept;
+            bool active) noexcept;
 
         virtual bool OnWindowAction(
             Window& window,
-            WindowAction action
-        ) noexcept;
+            WindowAction action) noexcept;
 
         virtual void OnPowerSuspend() noexcept;
 
         virtual void OnPowerResume() noexcept;
 
         virtual void OnApplicationShutdown(
-            ShutdownReason reason
-        ) noexcept;
+            ShutdownReason reason) noexcept;
     };
 
     /*!
@@ -530,8 +488,7 @@ namespace Graphyte::Application
      * \param   handler     Provides new event handler
      */
     extern BASE_API void SetEventHandler(
-        EventHandler* handler
-    ) noexcept;
+        EventHandler* handler) noexcept;
 
     /*!
      * \brief   Gets current application event handler.

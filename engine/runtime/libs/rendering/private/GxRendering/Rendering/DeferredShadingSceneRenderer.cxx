@@ -26,25 +26,25 @@ namespace Graphyte::Rendering
         {
             Graphics::GpuTextureCreateArgs args{};
             args.DataFormat = args.ViewFormat = Graphics::PixelFormat::D24_UNORM_S8_UINT;
-            args.Width = m_Width;
-            args.Height = m_Height;
-            args.Depth = 1;
-            args.MipCount = 1;
-            args.DebugName = "DepthStencil";
-            args.Flags = Graphics::GpuTextureFlags::DepthStencil;
-            
+            args.Width                        = m_Width;
+            args.Height                       = m_Height;
+            args.Depth                        = 1;
+            args.MipCount                     = 1;
+            args.DebugName                    = "DepthStencil";
+            args.Flags                        = Graphics::GpuTextureFlags::DepthStencil;
+
             m_Depth = GRenderDevice->CreateTexture2D(args);
         }
         {
             Graphics::GpuTextureCreateArgs args{};
             args.DataFormat = args.ViewFormat = Graphics::PixelFormat::B8G8R8A8_UNORM;
-            args.Width = width;
-            args.Height = height;
-            args.Depth = 1;
-            args.MipCount = 1;
-            args.DebugName = "Color";
-            args.Flags = Graphics::GpuTextureFlags::RenderTarget;
-            m_Color = GRenderDevice->CreateTexture2D(args);
+            args.Width                        = width;
+            args.Height                       = height;
+            args.Depth                        = 1;
+            args.MipCount                     = 1;
+            args.DebugName                    = "Color";
+            args.Flags                        = Graphics::GpuTextureFlags::RenderTarget;
+            m_Color                           = GRenderDevice->CreateTexture2D(args);
         }
 
         // Create render target.
@@ -71,13 +71,13 @@ namespace Graphyte::Rendering
         ///////////////////////////////////////
         {
             Graphics::GpuSamplerCreateArgs desc{};
-            desc.Filter = Graphics::GpuFilter::MIN_MAG_MIP_LINEAR;
-            desc.AddressU = Graphics::GpuSamplerAddressMode::Wrap;
-            desc.AddressV = Graphics::GpuSamplerAddressMode::Wrap;
-            desc.AddressW = Graphics::GpuSamplerAddressMode::Wrap;
+            desc.Filter    = Graphics::GpuFilter::MIN_MAG_MIP_LINEAR;
+            desc.AddressU  = Graphics::GpuSamplerAddressMode::Wrap;
+            desc.AddressV  = Graphics::GpuSamplerAddressMode::Wrap;
+            desc.AddressW  = Graphics::GpuSamplerAddressMode::Wrap;
             desc.CompareOp = Graphics::GpuCompareOperation::Less;
-            desc.MinLod = 0.0F;
-            desc.MaxLod = 10.0F;
+            desc.MinLod    = 0.0F;
+            desc.MaxLod    = 10.0F;
 
             m_Sampler = GRenderDevice->CreateSampler(desc);
         }
@@ -109,21 +109,21 @@ namespace Graphyte::Rendering
             for (size_t i = 0; i < image->GetSubresourcesCount(); ++i)
             {
                 Graphics::ImagePixels* data = image->GetSubresource(i);
-                pixels[i].Memory = data->Buffer;
-                pixels[i].Pitch = static_cast<uint32_t>(data->LinePitch);
-                pixels[i].SlicePitch = static_cast<uint32_t>(data->SlicePitch);
+                pixels[i].Memory            = data->Buffer;
+                pixels[i].Pitch             = static_cast<uint32_t>(data->LinePitch);
+                pixels[i].SlicePitch        = static_cast<uint32_t>(data->SlicePitch);
             }
 
             Graphics::GpuTextureCreateArgs args{};
-            args.Type = Graphics::GpuTextureType::Texture2D;
-            args.Width = image->GetWidth();
-            args.Height = image->GetHeight();
-            args.Depth = 1;
-            args.MipCount = image->GetMipmapCount();
+            args.Type       = Graphics::GpuTextureType::Texture2D;
+            args.Width      = image->GetWidth();
+            args.Height     = image->GetHeight();
+            args.Depth      = 1;
+            args.MipCount   = image->GetMipmapCount();
             args.DataFormat = image->GetPixelFormat();
             args.ViewFormat = image->GetPixelFormat();
-            args.Data = pixels.data();
-            m_Texture = GRenderDevice->CreateTexture2D(args);
+            args.Data       = pixels.data();
+            m_Texture       = GRenderDevice->CreateTexture2D(args);
         }
 
         {
@@ -145,14 +145,12 @@ namespace Graphyte::Rendering
             if (CommandLine::Has("--force-glcore") || CommandLine::Has("--force-vulkan"))
             {
                 status = Graphyte::Storage::FileManager::ReadBinary(vs_data, vs_size,
-                    Graphyte::Storage::FileManager::GetProjectContentDirectory() + "shaders/basic.vs.spirv"
-                );
+                    Graphyte::Storage::FileManager::GetProjectContentDirectory() + "shaders/basic.vs.spirv");
             }
             else
             {
                 status = Graphyte::Storage::FileManager::ReadBinary(vs_data, vs_size,
-                    Graphyte::Storage::FileManager::GetProjectContentDirectory() + "shaders/basic.vso"
-                );
+                    Graphyte::Storage::FileManager::GetProjectContentDirectory() + "shaders/basic.vso");
             }
 
             GX_ASSERT(status == Status::Success);
@@ -163,14 +161,12 @@ namespace Graphyte::Rendering
             if (CommandLine::Has("--force-glcore") || CommandLine::Has("--force-vulkan"))
             {
                 status = Graphyte::Storage::FileManager::ReadBinary(ps_data, ps_size,
-                    Graphyte::Storage::FileManager::GetProjectContentDirectory() + "shaders/basic.ps.spirv"
-                );
+                    Graphyte::Storage::FileManager::GetProjectContentDirectory() + "shaders/basic.ps.spirv");
             }
             else
             {
                 status = Graphyte::Storage::FileManager::ReadBinary(ps_data, ps_size,
-                    Graphyte::Storage::FileManager::GetProjectContentDirectory() + "shaders/basic.pso"
-                );
+                    Graphyte::Storage::FileManager::GetProjectContentDirectory() + "shaders/basic.pso");
             }
             GX_ASSERT(status == Status::Success);
 
@@ -178,58 +174,58 @@ namespace Graphyte::Rendering
             m_ShaderVS = GRenderDevice->CreateShader(Graphics::GpuShaderStage::Vertex, { vs_data.get(), vs_size }, Graphics::GpuInputLayout::Complex);
 
             state.VertexShader = m_ShaderVS;
-            state.PixelShader = m_ShaderPS;
+            state.PixelShader  = m_ShaderPS;
 
-            state.Sample.Count = 1;
+            state.Sample.Count   = 1;
             state.Sample.Quality = 0;
 
-            state.Topology = Graphics::GpuPrimitiveTopology::Triangle;
-            state.RenderTargetCount = 1;
+            state.Topology              = Graphics::GpuPrimitiveTopology::Triangle;
+            state.RenderTargetCount     = 1;
             state.RenderTargetFormat[0] = Graphyte::Graphics::PixelFormat::B8G8R8A8_UNORM;
-            state.DepthStencilFormat = Graphyte::Graphics::PixelFormat::D32_FLOAT;
-            state.IndexBufferStripCut = Graphics::GpuIndexBufferStripCut::UInt16; // 16 bit indices
+            state.DepthStencilFormat    = Graphyte::Graphics::PixelFormat::D32_FLOAT;
+            state.IndexBufferStripCut   = Graphics::GpuIndexBufferStripCut::UInt16; // 16 bit indices
 
-            state.BlendState.AlphaToCoverage = true;
-            state.BlendState.IndependentBlend = false;
-            state.BlendState.RenderTarget[0].BlendEnable = true;
-            state.BlendState.RenderTarget[0].SourceBlendColor = Graphics::GpuBlendType::One;
+            state.BlendState.AlphaToCoverage                       = true;
+            state.BlendState.IndependentBlend                      = false;
+            state.BlendState.RenderTarget[0].BlendEnable           = true;
+            state.BlendState.RenderTarget[0].SourceBlendColor      = Graphics::GpuBlendType::One;
             state.BlendState.RenderTarget[0].DestinationBlendColor = Graphics::GpuBlendType::Zero;
-            state.BlendState.RenderTarget[0].BlendOperationColor = Graphics::GpuBlendOperation::Add;
-            state.BlendState.RenderTarget[0].SourceBlendAlpha = Graphics::GpuBlendType::SourceAlpha;
+            state.BlendState.RenderTarget[0].BlendOperationColor   = Graphics::GpuBlendOperation::Add;
+            state.BlendState.RenderTarget[0].SourceBlendAlpha      = Graphics::GpuBlendType::SourceAlpha;
             state.BlendState.RenderTarget[0].DestinationBlendAlpha = Graphics::GpuBlendType::InvSourceAlpha;
-            state.BlendState.RenderTarget[0].BlendOperationAlpha = Graphics::GpuBlendOperation::Add;
+            state.BlendState.RenderTarget[0].BlendOperationAlpha   = Graphics::GpuBlendOperation::Add;
             state.BlendState.RenderTarget[0].RenderTargetWriteMask = Graphics::GpuColorWriteEnable::All;
-            state.BlendState.SampleMask = 0xffffffff;
-            state.BlendState.BlendFactors = Graphyte::Maths::Float4{ 1.0F, 1.0F, 1.0F, 1.0F };
+            state.BlendState.SampleMask                            = 0xffffffff;
+            state.BlendState.BlendFactors                          = Graphyte::Maths::Float4{ 1.0F, 1.0F, 1.0F, 1.0F };
 
-            state.RasterizerState.FillMode = Graphics::GpuFillMode::Solid;
-            state.RasterizerState.CullMode = Graphics::GpuCullMode::Back;
-            state.RasterizerState.DepthBias = 0;
-            state.RasterizerState.DepthBiasClamp = 0.0F;
-            state.RasterizerState.SlopeScaledDepthBias = 0.0F;
-            state.RasterizerState.DepthClipEnable = false;
-            state.RasterizerState.MultisampleEnable = false;
-            state.RasterizerState.AntialiasedLineEnable = false;
-            state.RasterizerState.FrontCounterClockwise = false;
-            state.RasterizerState.ForcedSampleCount = 0;
+            state.RasterizerState.FillMode                      = Graphics::GpuFillMode::Solid;
+            state.RasterizerState.CullMode                      = Graphics::GpuCullMode::Back;
+            state.RasterizerState.DepthBias                     = 0;
+            state.RasterizerState.DepthBiasClamp                = 0.0F;
+            state.RasterizerState.SlopeScaledDepthBias          = 0.0F;
+            state.RasterizerState.DepthClipEnable               = false;
+            state.RasterizerState.MultisampleEnable             = false;
+            state.RasterizerState.AntialiasedLineEnable         = false;
+            state.RasterizerState.FrontCounterClockwise         = false;
+            state.RasterizerState.ForcedSampleCount             = 0;
             state.RasterizerState.ConservativeRasterizationMode = false;
 
-            state.DepthStencilState.DepthWriteMask = Graphics::GpuDepthWriteMask::All;
-            state.DepthStencilState.DepthCompare = Graphics::GpuCompareOperation::LessEqual;
-            state.DepthStencilState.StencilEnable = false;
-            state.DepthStencilState.StencilReadMask = 0xff;
-            state.DepthStencilState.StencilWriteMask = 0xff;
-            state.DepthStencilState.DepthEnable = true;
-            state.DepthStencilState.FrontFace.Pass = Graphics::GpuStencilOperation::Keep;
-            state.DepthStencilState.FrontFace.Fail = Graphics::GpuStencilOperation::Keep;
-            state.DepthStencilState.FrontFace.DepthFail = Graphics::GpuStencilOperation::Keep;
-            state.DepthStencilState.FrontFace.Compare = Graphics::GpuCompareOperation::Always;
-            state.DepthStencilState.BackFace.Pass = Graphics::GpuStencilOperation::Keep;
-            state.DepthStencilState.BackFace.Fail = Graphics::GpuStencilOperation::Keep;
-            state.DepthStencilState.BackFace.DepthFail = Graphics::GpuStencilOperation::Keep;
-            state.DepthStencilState.BackFace.Compare = Graphics::GpuCompareOperation::Always;
+            state.DepthStencilState.DepthWriteMask        = Graphics::GpuDepthWriteMask::All;
+            state.DepthStencilState.DepthCompare          = Graphics::GpuCompareOperation::LessEqual;
+            state.DepthStencilState.StencilEnable         = false;
+            state.DepthStencilState.StencilReadMask       = 0xff;
+            state.DepthStencilState.StencilWriteMask      = 0xff;
+            state.DepthStencilState.DepthEnable           = true;
+            state.DepthStencilState.FrontFace.Pass        = Graphics::GpuStencilOperation::Keep;
+            state.DepthStencilState.FrontFace.Fail        = Graphics::GpuStencilOperation::Keep;
+            state.DepthStencilState.FrontFace.DepthFail   = Graphics::GpuStencilOperation::Keep;
+            state.DepthStencilState.FrontFace.Compare     = Graphics::GpuCompareOperation::Always;
+            state.DepthStencilState.BackFace.Pass         = Graphics::GpuStencilOperation::Keep;
+            state.DepthStencilState.BackFace.Fail         = Graphics::GpuStencilOperation::Keep;
+            state.DepthStencilState.BackFace.DepthFail    = Graphics::GpuStencilOperation::Keep;
+            state.DepthStencilState.BackFace.Compare      = Graphics::GpuCompareOperation::Always;
             state.DepthStencilState.DepthBoundsTestEnable = false;
-            m_PipelineState = GRenderDevice->CreateGraphicsPipelineState(state, layout);
+            m_PipelineState                               = GRenderDevice->CreateGraphicsPipelineState(state, layout);
         }
 
         std::string destination = Graphyte::Storage::FileManager::GetProjectContentDirectory();
@@ -270,8 +266,7 @@ namespace Graphyte::Rendering
 
     void DeferredShadingSceneRenderer::SetupView(
         [[maybe_unused]] Maths::Matrix view,
-        [[maybe_unused]] Maths::Matrix projection
-    ) noexcept
+        [[maybe_unused]] Maths::Matrix projection) noexcept
     {
         CameraParamsBuffer params{};
         //Maths::Matrix::Store(&params.View, view);
@@ -340,4 +335,3 @@ namespace Graphyte::Rendering
     {
     }
 }
-

@@ -15,7 +15,7 @@ namespace Graphyte
 
 // =================================================================================================
 //
-// Common types support. 
+// Common types support.
 //
 
 namespace Graphyte
@@ -60,8 +60,7 @@ namespace Graphyte
             auto [end, ec] = std::to_chars(
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
-                value
-            );
+                value);
 
             return { buffer, end };
 
@@ -79,11 +78,10 @@ namespace Graphyte
             auto [end, ec] = std::from_chars(
                 std::data(value),
                 std::data(value) + std::size(value),
-                result
-            );
+                result);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
 
 #else
 
@@ -112,8 +110,7 @@ namespace Graphyte
             auto [end, ec] = std::to_chars(
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
-                value
-            );
+                value);
 
             return { buffer, end };
 
@@ -129,11 +126,10 @@ namespace Graphyte
             auto [end, ec] = std::from_chars(
                 std::data(value),
                 std::data(value) + std::size(value),
-                result
-            );
+                result);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
 
 #else
             std::string buffer{ value };
@@ -158,8 +154,7 @@ namespace Graphyte
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
                 value,
-                radix
-            );
+                radix);
 
             return { buffer, end };
         }
@@ -170,11 +165,10 @@ namespace Graphyte
                 std::data(value),
                 std::data(value) + std::size(value),
                 result,
-                radix
-            );
+                radix);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
         }
     };
 
@@ -188,8 +182,7 @@ namespace Graphyte
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
                 value,
-                radix
-            );
+                radix);
 
             return { buffer, end };
         }
@@ -200,11 +193,10 @@ namespace Graphyte
                 std::data(value),
                 std::data(value) + std::size(value),
                 result,
-                radix
-            );
+                radix);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
         }
     };
 }
@@ -221,8 +213,7 @@ namespace Graphyte
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
                 value,
-                radix
-            );
+                radix);
 
             return { buffer, end };
         }
@@ -233,11 +224,10 @@ namespace Graphyte
                 std::data(value),
                 std::data(value) + std::size(value),
                 result,
-                radix
-            );
+                radix);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
         }
     };
 
@@ -251,8 +241,7 @@ namespace Graphyte
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
                 value,
-                radix
-            );
+                radix);
 
             return { buffer, end };
         }
@@ -263,11 +252,10 @@ namespace Graphyte
                 std::data(value),
                 std::data(value) + std::size(value),
                 result,
-                radix
-            );
+                radix);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
         }
     };
 }
@@ -284,8 +272,7 @@ namespace Graphyte
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
                 value,
-                radix
-            );
+                radix);
 
             return { buffer, end };
         }
@@ -296,11 +283,10 @@ namespace Graphyte
                 std::data(value),
                 std::data(value) + std::size(value),
                 result,
-                radix
-            );
+                radix);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
         }
     };
 
@@ -314,8 +300,7 @@ namespace Graphyte
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
                 value,
-                radix
-            );
+                radix);
 
             return { buffer, end };
         }
@@ -326,11 +311,10 @@ namespace Graphyte
                 std::data(value),
                 std::data(value) + std::size(value),
                 result,
-                radix
-            );
+                radix);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
         }
     };
 }
@@ -347,8 +331,7 @@ namespace Graphyte
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
                 value,
-                radix
-            );
+                radix);
 
             return { buffer, end };
         }
@@ -359,11 +342,10 @@ namespace Graphyte
                 std::data(value),
                 std::data(value) + std::size(value),
                 result,
-                radix
-            );
+                radix);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
         }
     };
 
@@ -377,8 +359,7 @@ namespace Graphyte
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
                 value,
-                radix
-            );
+                radix);
 
             return { buffer, end };
         }
@@ -389,11 +370,10 @@ namespace Graphyte
                 std::data(value),
                 std::data(value) + std::size(value),
                 result,
-                radix
-            );
+                radix);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
         }
     };
 }
@@ -410,8 +390,7 @@ namespace Graphyte
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
                 value,
-                radix
-            );
+                radix);
 
             return { buffer, end };
         }
@@ -422,11 +401,10 @@ namespace Graphyte
                 std::data(value),
                 std::data(value) + std::size(value),
                 result,
-                radix
-            );
+                radix);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
         }
     };
 
@@ -440,8 +418,7 @@ namespace Graphyte
                 std::data(buffer),
                 std::data(buffer) + std::size(buffer),
                 value,
-                radix
-            );
+                radix);
 
             return { buffer, end };
         }
@@ -452,11 +429,10 @@ namespace Graphyte
                 std::data(value),
                 std::data(value) + std::size(value),
                 result,
-                radix
-            );
+                radix);
 
             return (ec == std::errc{})
-                && (end == (std::data(value) + std::size(value)));
+                   && (end == (std::data(value) + std::size(value)));
         }
     };
 }

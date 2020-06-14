@@ -20,8 +20,7 @@ namespace Graphyte::Diagnostics
 
         HANDLE snapshot = CreateToolhelp32Snapshot(
             TH32CS_SNAPMODULE,
-            0
-        );
+            0);
 
         if (snapshot != INVALID_HANDLE_VALUE)
         {

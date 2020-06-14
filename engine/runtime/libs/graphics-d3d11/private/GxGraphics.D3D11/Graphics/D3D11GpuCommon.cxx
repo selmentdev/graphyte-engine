@@ -7,16 +7,14 @@ namespace Graphyte::Graphics
     GX_DEFINE_LOG_CATEGORY(LogD3D11Render);
 
     __forceinline std::string D3D11GetErrorMessage(
-        HRESULT hr
-    ) noexcept
+        HRESULT hr) noexcept
     {
         return fmt::format("{}: HRESULT = {:08x}", Diagnostics::GetMessageFromHRESULT(hr), hr);
     }
 
     void D3D11CheckDeviceRemoved(
         HRESULT hr,
-        ID3D11Device* device
-    ) noexcept
+        ID3D11Device* device) noexcept
     {
         GX_ASSERT(hr == DXGI_ERROR_DEVICE_REMOVED);
         (void)hr;
@@ -24,13 +22,11 @@ namespace Graphyte::Graphics
 
         GX_ABORT("Device removed: {} {}\n",
             Diagnostics::GetMessageFromHRESULT(hr),
-            Diagnostics::GetMessageFromHRESULT(device->GetDeviceRemovedReason())
-        );
+            Diagnostics::GetMessageFromHRESULT(device->GetDeviceRemovedReason()));
     }
 
     void D3D11CheckDeviceOutOfMemory(
-        HRESULT hr
-    ) noexcept
+        HRESULT hr) noexcept
     {
         GX_ASSERT(hr == E_OUTOFMEMORY);
 
@@ -42,8 +38,7 @@ namespace Graphyte::Graphics
         const char* expression,
         const char* file,
         unsigned int line,
-        ID3D11Device* device
-    ) noexcept
+        ID3D11Device* device) noexcept
     {
         GX_ASSERT(FAILED(result));
 

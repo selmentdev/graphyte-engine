@@ -16,24 +16,21 @@ namespace Graphyte::Storage
     public:
         ArchiveFileWriter(
             std::unique_ptr<IStream> stream,
-            int64_t position = 0
-        ) noexcept;
+            int64_t position = 0) noexcept;
 
         virtual ~ArchiveFileWriter() noexcept;
 
     public:
         virtual void Serialize(
             void* buffer,
-            size_t size
-        ) noexcept override;
+            size_t size) noexcept override;
 
         virtual int64_t GetPosition() noexcept override;
 
         virtual int64_t GetSize() noexcept override;
 
         virtual void SetPosition(
-            int64_t position
-        ) noexcept override;
+            int64_t position) noexcept override;
 
         virtual void Flush() noexcept override;
     };

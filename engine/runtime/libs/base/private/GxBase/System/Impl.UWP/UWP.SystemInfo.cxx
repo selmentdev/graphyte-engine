@@ -37,8 +37,7 @@ namespace Graphyte::System
 
         DWORD dwLength = GetTempPathW(
             static_cast<DWORD>(wszPath.size()),
-            wszPath.data()
-        );
+            wszPath.data());
 
 
         //
@@ -50,8 +49,7 @@ namespace Graphyte::System
         dwLength = GetLongPathNameW(
             wszPath.data(),
             wszFullPath.data(),
-            static_cast<DWORD>(wszFullPath.size())
-        );
+            static_cast<DWORD>(wszFullPath.size()));
 
         if (dwLength != 0)
         {
@@ -63,7 +61,6 @@ namespace Graphyte::System
 
             Storage::NormalizePath(result);
             Storage::AddDirectorySeparator(result);
-
         }
 
         return result;
@@ -98,6 +95,7 @@ namespace Graphyte::System
     BASE_API std::string GetSystemVersion() noexcept
     {
         winrt::Windows::System::Profile::AnalyticsVersionInfo version_info = winrt::Windows::System::Profile::AnalyticsInfo::VersionInfo();
+
         winrt::hstring device_form = winrt::Windows::System::Profile::AnalyticsInfo::DeviceForm();
 
 
@@ -154,16 +152,15 @@ namespace Graphyte::System
 #else
         using LPFN_ISWOW64PROCESS = BOOL(WINAPI*)(HANDLE, PBOOL);
 
-#pragma warning( push )
-#pragma warning( disable: 4191 )	// unsafe conversion from 'type of expression' to 'type required'
+#pragma warning(push)
+#pragma warning(disable : 4191) // unsafe conversion from 'type of expression' to 'type required'
 
         HMODULE const handle = GetModuleHandleW(L"Kernel32.dll");
-        
+
         LPFN_ISWOW64PROCESS const fn_iswow64 = reinterpret_cast<LPFN_ISWOW64PROCESS>(
-            GetProcAddress(handle, "IsWow64Process")
-        );
-        
-#pragma warning( pop )
+            GetProcAddress(handle, "IsWow64Process"));
+
+#pragma warning(pop)
 
         static BOOL is_wow64 = FALSE;
 
@@ -177,7 +174,6 @@ namespace Graphyte::System
 
         return is_wow64 != FALSE;
 #endif
-
     }
 
     BASE_API bool Is64BitProcess() noexcept

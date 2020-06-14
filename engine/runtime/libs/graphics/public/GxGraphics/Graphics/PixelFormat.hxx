@@ -73,79 +73,64 @@ namespace Graphyte::Graphics
     struct GRAPHICS_API PixelFormatProperties final
     {
         static size_t GetBlockSize(
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static size_t GetPixelBits(
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static size_t GetColorBits(
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static size_t GetAlphaBits(
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static bool IsCompressed(
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static size_t GetDepthBits(
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static size_t GetStencilBits(
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static size_t GetChannelsCount(
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static uint32_t GetImageWidth(
             uint32_t value,
             uint32_t mipmap,
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static uint32_t GetImageHeight(
             uint32_t value,
             uint32_t mipmap,
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static uint32_t GetImageDepth(
             uint32_t value,
             uint32_t mipmap,
-            PixelFormat format
-        ) noexcept;
+            PixelFormat format) noexcept;
 
         static size_t SlicePitchBytes(
             PixelFormat format,
             uint32_t width,
             uint32_t height,
-            uint32_t depth = 1
-        ) noexcept;
+            uint32_t depth = 1) noexcept;
 
         static size_t GetStorageSize(
             PixelFormat format,
             uint32_t width,
             uint32_t height,
             uint32_t depth,
-            uint32_t mipmaps
-        ) noexcept;
+            uint32_t mipmaps) noexcept;
 
         static size_t LinePitchBytes(
             PixelFormat format,
-            uint32_t width
-        ) noexcept;
+            uint32_t width) noexcept;
 
         static size_t RowPitchBytes(
             PixelFormat format,
-            uint32_t width
-        ) noexcept;
+            uint32_t width) noexcept;
 
         static void GetSurfaceInfo(
             PixelFormat format,
@@ -153,21 +138,18 @@ namespace Graphyte::Graphics
             uint32_t height,
             size_t& out_bytes,
             size_t& out_row_bytes,
-            size_t& out_rows
-        ) noexcept;
+            size_t& out_rows) noexcept;
 
         static uint32_t ComputeMipMapLevels(
             PixelFormat format,
             uint32_t width,
             uint32_t height,
-            uint32_t depth = 1
-        ) noexcept;
-        
+            uint32_t depth = 1) noexcept;
+
         static uint32_t CalcSubresource(
             uint32_t mip_slice,
             uint32_t array_slice,
-            uint32_t mip_levels
-        ) noexcept
+            uint32_t mip_levels) noexcept
         {
             return mip_slice + (array_slice * mip_levels);
         }

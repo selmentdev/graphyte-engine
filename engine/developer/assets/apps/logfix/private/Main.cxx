@@ -10,8 +10,7 @@ GX_DEFINE_LOG_CATEGORY(LogFixTool);
 
 #include <Graphyte/Developer/Elf.hxx>
 
-Graphyte::Application::ApplicationDescriptor GraphyteApp
-{
+Graphyte::Application::ApplicationDescriptor GraphyteApp{
     "Graphyte Assets Compiler",
     "assets.compiler",
     "Graphyte",
@@ -30,7 +29,6 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
         nullptr,
         nullptr,
         &out,
-        &err
-    );
+        &err);
     return 0;
 }

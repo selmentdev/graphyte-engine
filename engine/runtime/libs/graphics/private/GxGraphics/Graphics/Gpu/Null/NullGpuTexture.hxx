@@ -4,6 +4,8 @@
 
 namespace Graphyte::Graphics
 {
-    class NullGpuTexture : public GpuTexture { };
+    class NullGpuTexture : public GpuTexture
+    {
+    };
     static_assert(!std::is_polymorphic_v<NullGpuTexture>);
 }

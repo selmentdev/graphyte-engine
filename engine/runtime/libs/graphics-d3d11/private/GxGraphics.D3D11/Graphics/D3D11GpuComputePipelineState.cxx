@@ -5,8 +5,7 @@ namespace Graphyte::Graphics
 {
     GpuComputePipelineStateHandle D3D11GpuDevice::CreateComputePipelineState(
         const GpuComputePipelineStateCreateArgs& args,
-        const GpuResourceSetDesc& layout
-    ) noexcept
+        const GpuResourceSetDesc& layout) noexcept
     {
         (void)args;
         (void)layout;
@@ -14,8 +13,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::DestroyComputePipelineState(
-        GpuComputePipelineStateHandle handle
-    ) noexcept
+        GpuComputePipelineStateHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuComputePipelineState*>(handle);

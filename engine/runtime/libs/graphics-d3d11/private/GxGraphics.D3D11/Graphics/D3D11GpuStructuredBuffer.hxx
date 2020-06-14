@@ -7,7 +7,7 @@ namespace Graphyte::Graphics
     class D3D11GpuStructuredBuffer : public GpuStructuredBuffer
     {
     public:
-        ID3D11Buffer * m_Resource;
+        ID3D11Buffer* m_Resource;
     };
     static_assert(!std::is_polymorphic_v<D3D11GpuStructuredBuffer>);
 }

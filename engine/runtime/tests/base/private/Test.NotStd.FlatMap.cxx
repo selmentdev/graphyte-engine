@@ -5,13 +5,13 @@ TEST_CASE("notstd::flat_map")
 {
     REQUIRE(notstd::flat_map<int, int>{}.empty());
 
-    notstd::flat_map<int, int> items{
-        {
-            {1, 2},
-            {3, 4},
-            {5, 6}
-        }
-    };
+    notstd::flat_map<int, int> items{ {
+        // clang-format off
+        { 1, 2 },
+        { 3, 4 },
+        { 5, 6 },
+        // clang-format o
+    } };
 
     REQUIRE_FALSE(items.empty());
     REQUIRE(items.size() == 3);
@@ -62,12 +62,12 @@ TEST_CASE("notstd::flat_map")
     items.clear();
     items.reserve(20);
 
-    int total_keys = 0;
+    int total_keys   = 0;
     int total_values = 0;
 
     for (int i = 0; i < 20; ++i)
     {
-        const auto current_key = i * 2 + 0;
+        const auto current_key   = i * 2 + 0;
         const auto current_value = i * 2 + 1;
 
         total_keys += current_key;
@@ -78,7 +78,7 @@ TEST_CASE("notstd::flat_map")
 
     REQUIRE(items.size() == items.capacity());
 
-    int accum_keys = 0;
+    int accum_keys   = 0;
     int accum_values = 0;
 
     for (auto [k, v] : items)

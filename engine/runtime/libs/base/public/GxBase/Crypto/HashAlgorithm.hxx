@@ -19,8 +19,10 @@ namespace Graphyte::Crypto
     {
     protected:
         HashAlgorithm() noexcept = default;
+
         HashAlgorithm(const HashAlgorithm&) = delete;
-        HashAlgorithm& operator= (const HashAlgorithm&) = delete;
+
+        HashAlgorithm& operator=(const HashAlgorithm&) = delete;
 
     public:
         virtual ~HashAlgorithm() noexcept = default;
@@ -34,8 +36,7 @@ namespace Graphyte::Crypto
         //! \return The instance of hash algorithm.
         //!
         BASE_API static std::unique_ptr<HashAlgorithm> Create(
-            HashType hashType
-        ) noexcept;
+            HashType hashType) noexcept;
 
         //!
         //! \brief  Computes hash of specified data.
@@ -49,8 +50,7 @@ namespace Graphyte::Crypto
         BASE_API static bool ComputeHash(
             HashType hashType,
             std::vector<std::byte>& output,
-            notstd::span<const std::byte> input
-        ) noexcept;
+            notstd::span<const std::byte> input) noexcept;
 
     public:
         //!
@@ -68,8 +68,7 @@ namespace Graphyte::Crypto
         //! \return \c true when successful, \c false otherwise.
         //!
         virtual bool Update(
-            notstd::span<const std::byte> data
-        ) noexcept = 0;
+            notstd::span<const std::byte> data) noexcept = 0;
 
         //!
         //! \brief  Finishes hashing and returns hash.
@@ -79,8 +78,7 @@ namespace Graphyte::Crypto
         //! \return \c true when successful, \c false otherwise.
         //!
         virtual bool Finish(
-            std::vector<std::byte>& output
-        ) noexcept = 0;
+            std::vector<std::byte>& output) noexcept = 0;
 
         virtual size_t GetHashSize() const noexcept = 0;
     };

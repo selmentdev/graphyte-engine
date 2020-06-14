@@ -7,8 +7,8 @@ namespace Graphyte::Application::Impl
     {
     public:
         static const size_t MaxControllers = 4;
-        static const size_t MaxButtons = 24;
-        
+        static const size_t MaxButtons     = 24;
+
     private:
         struct ControllerState final
         {
@@ -41,8 +41,7 @@ namespace Graphyte::Application::Impl
 
     public:
         void SetEventHandler(
-            EventHandler* eventHandler
-        ) noexcept
+            EventHandler* eventHandler) noexcept
         {
             m_Handler = eventHandler;
         }
@@ -54,12 +53,10 @@ namespace Graphyte::Application::Impl
             int16_t value,
             float normalized,
             int16_t& previous_value,
-            int32_t deadzone
-        ) noexcept;
+            int32_t deadzone) noexcept;
 
     public:
         void Poll(
-            float delta_time
-        ) noexcept;
+            float delta_time) noexcept;
     };
 }

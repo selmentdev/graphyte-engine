@@ -53,15 +53,13 @@ namespace Graphyte
             buffer_low.data(),
             buffer_low.data() + buffer_low.size(),
             value.Low,
-            16
-        );
+            16);
 
         auto [ptr1, ecc1] = std::to_chars(
             buffer_high.data(),
             buffer_high.data() + buffer_high.size(),
             value.High,
-            16
-        );
+            16);
 
 
         if (ecc0 == std::errc{} && ecc1 == std::errc{})
@@ -82,7 +80,7 @@ namespace Graphyte
     BASE_API bool Converter<Uuid>::FromString(Uuid& result, std::string_view value) noexcept
     {
         static constexpr const size_t NumberOfCharsInUInt64 = 16;
-        static constexpr const size_t NumberOfCharsInUuid = 32;
+        static constexpr const size_t NumberOfCharsInUuid   = 32;
 
         if (value.size() == NumberOfCharsInUuid)
         {

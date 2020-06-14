@@ -41,10 +41,10 @@ namespace Graphyte::System
 
     enum class CreateProcessFlags
     {
-        None = 0,
-        Detached = 1 << 0,
+        None      = 0,
+        Detached  = 1 << 0,
         Minimized = 1 << 1,
-        Hidden = 1 << 2,
+        Hidden    = 1 << 2,
     };
 
     class BASE_API Process final
@@ -66,18 +66,16 @@ namespace Graphyte::System
          */
         static ProcessHandle Create(
             const char* path,
-            const char* params = nullptr,
+            const char* params            = nullptr,
             const char* working_directory = nullptr,
-            CreateProcessFlags flags = CreateProcessFlags::None,
-            ProcessId* id = nullptr,
-            PipeHandle* pipe_stdin = nullptr,
-            PipeHandle* pipe_stdout = nullptr,
-            PipeHandle* pipe_stderr = nullptr
-        ) noexcept;
+            CreateProcessFlags flags      = CreateProcessFlags::None,
+            ProcessId* id                 = nullptr,
+            PipeHandle* pipe_stdin        = nullptr,
+            PipeHandle* pipe_stdout       = nullptr,
+            PipeHandle* pipe_stderr       = nullptr) noexcept;
 
         static void Close(
-            ProcessHandle& handle
-        ) noexcept;
+            ProcessHandle& handle) noexcept;
 
         /*!
          * @brief   Checks whether specified process is still running.
@@ -89,8 +87,7 @@ namespace Graphyte::System
          */
         static bool IsRunning(
             ProcessHandle& handle,
-            int32_t& exit_code
-        ) noexcept;
+            int32_t& exit_code) noexcept;
 
         /*!
          * @brief   Waits for specified process to exit.
@@ -102,8 +99,7 @@ namespace Graphyte::System
          */
         static bool Wait(
             ProcessHandle& handle,
-            int32_t& exit_code
-        ) noexcept;
+            int32_t& exit_code) noexcept;
 
         /*!
          * @brief   Terminates process.
@@ -114,9 +110,8 @@ namespace Graphyte::System
          */
         static void Terminate(
             ProcessHandle& handle,
-            bool tree
-        ) noexcept;
-            
+            bool tree) noexcept;
+
         /*!
          * @brief   Execute process.
          *
@@ -131,11 +126,10 @@ namespace Graphyte::System
          */
         static ProcessResult Execute(
             const char* path,
-            const char* params = nullptr,
+            const char* params            = nullptr,
             const char* working_directory = nullptr,
-            std::string* out_stdout = nullptr,
-            std::string* out_stderr = nullptr
-        ) noexcept;
+            std::string* out_stdout       = nullptr,
+            std::string* out_stderr       = nullptr) noexcept;
 
 
         /*!
@@ -155,8 +149,7 @@ struct fmt::formatter<Graphyte::System::ProcessId>
 {
     template <typename ParseContext>
     constexpr auto parse(
-        ParseContext& context
-    )
+        ParseContext& context)
     {
         return context.begin();
     }
@@ -164,13 +157,11 @@ struct fmt::formatter<Graphyte::System::ProcessId>
     template <typename FormatContext>
     auto format(
         Graphyte::System::ProcessId value,
-        FormatContext& context
-    )
+        FormatContext& context)
     {
         return format_to(
             context.out(),
             "{:d}",
-            value.Value
-        );
+            value.Value);
     }
 };

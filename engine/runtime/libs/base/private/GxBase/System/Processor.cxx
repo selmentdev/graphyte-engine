@@ -7,9 +7,7 @@ namespace Graphyte::System
         return System::CurrentArchitecture;
     }
 
-    BASE_API bool HasProcessorFeature(
-        ProcessorFeature feature
-    ) noexcept
+    BASE_API bool HasProcessorFeature(ProcessorFeature feature) noexcept
     {
         return Impl::GProcessorFeatureSet.Has(feature);
     }

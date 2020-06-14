@@ -4,20 +4,20 @@ namespace Graphyte::System
 {
     bool Pipe::Create(
         PipeHandle& read,
-        PipeHandle& write
-    ) noexcept
+        PipeHandle& write) noexcept
     {
         SECURITY_ATTRIBUTES security_attributes{
-            .nLength = sizeof(SECURITY_ATTRIBUTES),
+            .nLength              = sizeof(SECURITY_ATTRIBUTES),
             .lpSecurityDescriptor = nullptr,
-            .bInheritHandle = TRUE,
+            .bInheritHandle       = TRUE,
         };
 
         if (CreatePipe(
-            &read.Handle,
-            &write.Handle,
-            &security_attributes,
-            0) == FALSE)
+                &read.Handle,
+                &write.Handle,
+                &security_attributes,
+                0)
+            == FALSE)
         {
             return false;
         }
@@ -32,8 +32,7 @@ namespace Graphyte::System
 
     void Pipe::Close(
         PipeHandle& read,
-        PipeHandle& write
-    ) noexcept
+        PipeHandle& write) noexcept
     {
         if (read.Handle != nullptr && read.Handle != INVALID_HANDLE_VALUE)
         {
@@ -47,8 +46,7 @@ namespace Graphyte::System
     }
 
     std::string Pipe::ReadString(
-        PipeHandle& handle
-    ) noexcept
+        PipeHandle& handle) noexcept
     {
         std::string output{};
 
@@ -77,8 +75,7 @@ namespace Graphyte::System
     }
 
     std::vector<uint8_t> Pipe::ReadBytes(
-        PipeHandle& handle
-    ) noexcept
+        PipeHandle& handle) noexcept
     {
         DWORD dw_available{ 0 };
 
@@ -110,8 +107,7 @@ namespace Graphyte::System
 
     bool Pipe::WriteString(
         PipeHandle& handle,
-        std::string_view value
-    ) noexcept
+        std::string_view value) noexcept
     {
         if (handle.Handle == nullptr || value.length() == 0)
         {
@@ -120,7 +116,7 @@ namespace Graphyte::System
 
         std::string buffer{ value };
         buffer.append(1, '\n');
-        
+
         size_t processed{};
         bool result = Pipe::WriteBytes(handle, std::data(buffer), std::size(buffer), &processed);
 
@@ -131,8 +127,7 @@ namespace Graphyte::System
         PipeHandle& handle,
         const void* buffer,
         size_t buffer_size,
-        size_t* processed
-    ) noexcept
+        size_t* processed) noexcept
     {
         if (handle.Handle == nullptr || buffer_size == 0)
         {
@@ -154,8 +149,7 @@ namespace Graphyte::System
     void Pipe::Read(
         std::string* strings[],
         PipeHandle pipes[],
-        size_t count
-    ) noexcept
+        size_t count) noexcept
     {
         for (size_t i = 0; i < count; ++i)
         {

@@ -35,12 +35,15 @@ namespace Graphyte::Graphics
         , m_RasterizerState{}
         , m_DepthStencilState{}
         , m_BlendState{}
+        // clang-format off
+        // FIXME reformat it to constexpr
         , m_ImmediateCommandList{}
 #if ENABLE_GPU_API_DEBUG
         , m_DebugDevice{ true }
 #else
         , m_DebugDevice{ false }
 #endif
+    // clang-format on
     {
         UINT create_flags{};
 
@@ -48,8 +51,7 @@ namespace Graphyte::Graphics
         create_flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-        const D3D_FEATURE_LEVEL feature_levels[]
-        {
+        const D3D_FEATURE_LEVEL feature_levels[]{
             D3D_FEATURE_LEVEL_12_1,
             D3D_FEATURE_LEVEL_12_0,
             D3D_FEATURE_LEVEL_11_1,
@@ -72,8 +74,7 @@ namespace Graphyte::Graphics
             D3D11_SDK_VERSION,
             device.GetAddressOf(),
             &m_FeatureLevel,
-            context.GetAddressOf()
-        ));
+            context.GetAddressOf()));
 
         //
         // Try to get D3D11.1 pointers.
@@ -90,8 +91,7 @@ namespace Graphyte::Graphics
             INT gpu_thread_priority{};
 
             dxgi_device->GetGPUThreadPriority(
-                &gpu_thread_priority
-            );
+                &gpu_thread_priority);
 
             GX_LOG(LogD3D11Render, Trace, "GPU Thread priority: {}\n", gpu_thread_priority);
         }
@@ -110,8 +110,7 @@ namespace Graphyte::Graphics
             GX_LOG(LogD3D11Render, Info, "Adapter: (device: {:04x}, vendor: {:04x}, subsys: {:04x})\n",
                 desc.DeviceId,
                 desc.VendorId,
-                desc.SubSysId
-            );
+                desc.SubSysId);
 
 
             std::string description = System::Impl::NarrowString(desc.Description);
@@ -121,8 +120,7 @@ namespace Graphyte::Graphics
             GX_LOG(LogD3D11Render, Info, "Adapter: SystemMemory: {}, VideoMemory: {}, SharedMemory: {}\n",
                 static_cast<uint64_t>(desc.DedicatedSystemMemory) >> 20,
                 static_cast<uint64_t>(desc.DedicatedVideoMemory) >> 20,
-                static_cast<uint64_t>(desc.SharedSystemMemory) >> 20
-            );
+                static_cast<uint64_t>(desc.SharedSystemMemory) >> 20);
         }
 
         //
@@ -307,15 +305,14 @@ namespace Graphyte::Graphics
                 GPU_DX_VALIDATE(info_queue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, TRUE));
                 GPU_DX_VALIDATE(info_queue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_WARNING, TRUE));
 #endif
-                D3D11_MESSAGE_ID hide[] =
-                {
+                D3D11_MESSAGE_ID hide[] = {
                     D3D11_MESSAGE_ID_SETPRIVATEDATA_CHANGINGPARAMS,
                 };
 
                 D3D11_INFO_QUEUE_FILTER filter = {
                     .AllowList = {},
-                    .DenyList = {
-                        .NumIDs = static_cast<UINT>(std::size(hide)),
+                    .DenyList  = {
+                        .NumIDs  = static_cast<UINT>(std::size(hide)),
                         .pIDList = hide,
                     }
                 };
@@ -326,8 +323,9 @@ namespace Graphyte::Graphics
 
 
         m_ImmediateCommandList = new D3D11GpuCommandList();
+
         m_ImmediateCommandList->m_Context = m_Context.Get();
-        m_ImmediateCommandList->m_Device = m_Device.Get();
+        m_ImmediateCommandList->m_Device  = m_Device.Get();
     }
 
     D3D11GpuDevice::~D3D11GpuDevice() noexcept
@@ -403,19 +401,17 @@ namespace Graphyte::Graphics
 
 #if ENABLE_GPU_API_DEBUG
         {
-            typedef HRESULT(__stdcall *fPtrDXGIGetDebugInterface)(const IID&, void**);
+            typedef HRESULT(__stdcall * fPtrDXGIGetDebugInterface)(const IID&, void**);
             HMODULE hMod = GetModuleHandleW(L"Dxgidebug.dll");
             fPtrDXGIGetDebugInterface ffDXGIGetDebugInterface
                 = (fPtrDXGIGetDebugInterface)(void*)GetProcAddress(
                     hMod,
-                    "DXGIGetDebugInterface"
-                );
+                    "DXGIGetDebugInterface");
 
             Microsoft::WRL::ComPtr<IDXGIDebug> debug{};
             if (SUCCEEDED(ffDXGIGetDebugInterface(
-                __uuidof(IDXGIDebug),
-                (void**)debug.GetAddressOf()))
-            )
+                    __uuidof(IDXGIDebug),
+                    (void**)debug.GetAddressOf())))
             {
                 debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
             }
@@ -424,8 +420,7 @@ namespace Graphyte::Graphics
     }
 
     void D3D11GpuDevice::Tick(
-        float time
-    ) noexcept
+        float time) noexcept
     {
         (void)time;
         this->ReleaseDeferredResources();

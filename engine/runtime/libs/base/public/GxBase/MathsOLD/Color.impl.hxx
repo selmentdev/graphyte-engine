@@ -144,7 +144,7 @@ namespace Graphyte::Maths
         auto v_b = Vector4::SplatZ({ c.V });
 
         auto v_min = Vector4::Min(v_r, Vector4::Min(v_g, v_b));
-        auto v_v = Vector4::Max(v_r, Vector4::Max(v_g, v_b));
+        auto v_v   = Vector4::Max(v_r, Vector4::Max(v_g, v_b));
 
         auto v_d = Vector4::Subtract(v_v, v_min);
 
@@ -152,7 +152,7 @@ namespace Graphyte::Maths
 
         if (Vector3::IsLess({ v_d.V }, { Detail::VEC4_EPSILON.V }))
         {
-            auto v_hv = Vector4::Select(v_v, { Detail::VEC4_ZERO_4.V }, { Detail::VEC4_MASK_SELECT_1000.V });
+            auto v_hv  = Vector4::Select(v_v, { Detail::VEC4_ZERO_4.V }, { Detail::VEC4_MASK_SELECT_1000.V });
             auto v_hva = Vector4::Select({ c.V }, v_hv, { Detail::VEC4_MASK_SELECT_1110.V });
             return { Vector4::Select(v_s, v_hva, { Detail::VEC4_MASK_SELECT_1011.V }).V };
         }
@@ -182,7 +182,7 @@ namespace Graphyte::Maths
 
             v_h = Vector4::Divide(v_h, { Detail::VEC4_SIX_4.V });
 
-            auto v_hv = Vector4::Select(v_v, v_h, { Detail::VEC4_MASK_SELECT_1000.V });
+            auto v_hv  = Vector4::Select(v_v, v_h, { Detail::VEC4_MASK_SELECT_1000.V });
             auto v_hva = Vector4::Select({ c.V }, v_hv, { Detail::VEC4_MASK_SELECT_1110.V });
             return { Vector4::Select(v_s, v_hva, { Detail::VEC4_MASK_SELECT_1011.V }).V };
         }
@@ -210,40 +210,40 @@ namespace Graphyte::Maths
 
         switch (ii)
         {
-        case 0:
+            case 0:
             {
                 auto v_vt = Vector4::Select(v_t, v_v, { Detail::VEC4_MASK_SELECT_1000.V });
-                v_rgb = Vector4::Select(v_p, v_vt, { Detail::VEC4_MASK_SELECT_1100.V });
+                v_rgb     = Vector4::Select(v_p, v_vt, { Detail::VEC4_MASK_SELECT_1100.V });
                 break;
             }
-        case 1:
+            case 1:
             {
                 auto v_qv = Vector4::Select(v_v, v_q, { Detail::VEC4_MASK_SELECT_1000.V });
-                v_rgb = Vector4::Select(v_p, v_qv, { Detail::VEC4_MASK_SELECT_1100.V });
+                v_rgb     = Vector4::Select(v_p, v_qv, { Detail::VEC4_MASK_SELECT_1100.V });
                 break;
             }
-        case 2:
+            case 2:
             {
                 auto v_pv = Vector4::Select(v_v, v_p, { Detail::VEC4_MASK_SELECT_1000.V });
-                v_rgb = Vector4::Select(v_t, v_pv, { Detail::VEC4_MASK_SELECT_1100.V });
+                v_rgb     = Vector4::Select(v_t, v_pv, { Detail::VEC4_MASK_SELECT_1100.V });
                 break;
             }
-        case 3:
+            case 3:
             {
                 auto v_pq = Vector4::Select(v_q, v_p, { Detail::VEC4_MASK_SELECT_1000.V });
-                v_rgb = Vector4::Select(v_v, v_pq, { Detail::VEC4_MASK_SELECT_1100.V });
+                v_rgb     = Vector4::Select(v_v, v_pq, { Detail::VEC4_MASK_SELECT_1100.V });
                 break;
             }
-        case 4:
+            case 4:
             {
                 auto v_tp = Vector4::Select(v_p, v_t, { Detail::VEC4_MASK_SELECT_1000.V });
-                v_rgb = Vector4::Select(v_v, v_tp, { Detail::VEC4_MASK_SELECT_1100.V });
+                v_rgb     = Vector4::Select(v_v, v_tp, { Detail::VEC4_MASK_SELECT_1100.V });
                 break;
             }
-        default:
+            default:
             {
                 auto v_vp = Vector4::Select(v_p, v_v, { Detail::VEC4_MASK_SELECT_1000.V });
-                v_rgb = Vector4::Select(v_q, v_vp, { Detail::VEC4_MASK_SELECT_1100.V });
+                v_rgb     = Vector4::Select(v_q, v_vp, { Detail::VEC4_MASK_SELECT_1100.V });
             }
             break;
         }
@@ -305,7 +305,7 @@ namespace Graphyte::Maths
     {
         static const Detail::Vector4F32 scale1 = { { { 0.0F, -0.2153F, 2.1324F, 0.0F } } };
         static const Detail::Vector4F32 scale2 = { { { 1.2803F, -0.3806F, 0.0F, 0.0F } } };
-        
+
         Matrix m;
         m.M.R[0] = Detail::VEC4_ONE_4.V;
         m.M.R[1] = scale1.V;
@@ -322,7 +322,7 @@ namespace Graphyte::Maths
         static const Detail::Vector4F32 scale0 = { { { 0.4887180F, 0.1762044F, 0.0000000F, 0.0F } } };
         static const Detail::Vector4F32 scale1 = { { { 0.3106803F, 0.8129847F, 0.0102048F, 0.0F } } };
         static const Detail::Vector4F32 scale2 = { { { 0.2006017F, 0.0108109F, 0.9897952F, 0.0F } } };
-        static const Detail::Vector4F32 scale = { { { 1.0F / 0.17697F, 1.0F / 0.17697F, 1.0F / 0.17697F, 0.0F } } };
+        static const Detail::Vector4F32 scale  = { { { 1.0F / 0.17697F, 1.0F / 0.17697F, 1.0F / 0.17697F, 0.0F } } };
 
         Matrix m;
         m.M.R[0] = scale0.V;
@@ -340,7 +340,7 @@ namespace Graphyte::Maths
         static const Detail::Vector4F32 scale0 = { { { 2.3706743f, -0.5138850f, 0.0052982f, 0.0f } } };
         static const Detail::Vector4F32 scale1 = { { { -0.9000405f, 1.4253036f, -0.0146949f, 0.0f } } };
         static const Detail::Vector4F32 scale2 = { { { -0.4706338f, 0.0885814f, 1.0093968f, 0.0f } } };
-        static const Detail::Vector4F32 scale = { { { 0.17697f, 0.17697f, 0.17697f, 0.0f } } };
+        static const Detail::Vector4F32 scale  = { { { 0.17697f, 0.17697f, 0.17697f, 0.0f } } };
 
         Matrix m;
         m.M.R[0] = scale0.V;
@@ -359,7 +359,7 @@ namespace Graphyte::Maths
         static const Detail::Vector4F32 scale1 = { { { -1.5372F, 1.8758F, -0.2040F, 0.0F } } };
         static const Detail::Vector4F32 scale2 = { { { -0.4986F, 0.0415F, 1.0570F, 0.0F } } };
         static const Detail::Vector4F32 cutoff = { { { 0.0031308F, 0.0031308F, 0.0031308F, 0.0F } } };
-        static const Detail::Vector4F32 exp = { { { 1.0F / 2.4F, 1.0F / 2.4F, 1.0F / 2.4F, 1.0F } } };
+        static const Detail::Vector4F32 exp    = { { { 1.0F / 2.4F, 1.0F / 2.4F, 1.0F / 2.4F, 1.0F } } };
 
         Matrix m;
         m.M.R[0] = scale0.V;
@@ -369,7 +369,7 @@ namespace Graphyte::Maths
 
         Vector4 v_lclr{ Vector3::Transform({ c.V }, m).V };
 
-        auto v_sel = Vector4::CompareGreater(v_lclr, { cutoff.V });
+        auto v_sel     = Vector4::CompareGreater(v_lclr, { cutoff.V });
         auto v_small_c = Vector4::Multiply(v_lclr, { Detail::VEC4_MSRGB_SCALE.V });
         auto v_large_c = Vector4::Subtract(Vector4::Multiply({ Detail::VEC4_MSRGB_A1.V }, Vector4::Pow(v_lclr, { exp.V })), { Detail::VEC4_MSRGB_A.V });
 
@@ -384,12 +384,12 @@ namespace Graphyte::Maths
         static const Detail::Vector4F32 scale1 = { { { 0.3576f, 0.7152f, 0.1192f, 0.0f } } };
         static const Detail::Vector4F32 scale2 = { { { 0.1805f, 0.0722f, 0.9505f, 0.0f } } };
         static const Detail::Vector4F32 cutoff = { { { 0.04045f, 0.04045f, 0.04045f, 0.0f } } };
-        static const Detail::Vector4F32 exp = { { { 2.4f, 2.4f, 2.4f, 1.0f } } };
+        static const Detail::Vector4F32 exp    = { { { 2.4f, 2.4f, 2.4f, 1.0f } } };
 
-        auto v_sel = Vector4::CompareGreater({ c.V }, { cutoff.V });
+        auto v_sel     = Vector4::CompareGreater({ c.V }, { cutoff.V });
         auto v_small_c = Vector4::Divide({ c.V }, { Detail::VEC4_MSRGB_SCALE.V });
         auto v_large_c = Vector4::Pow(Vector4::Divide(Vector4::Add({ c.V }, { Detail::VEC4_MSRGB_A.V }), { Detail::VEC4_MSRGB_A1.V }), { exp.V });
-        auto v_lclr = Vector4::Select(v_small_c, v_large_c, v_sel);
+        auto v_lclr    = Vector4::Select(v_small_c, v_large_c, v_sel);
 
         Matrix m;
         m.M.R[0] = scale0.V;
@@ -404,17 +404,17 @@ namespace Graphyte::Maths
 
     mathinline Color mathcall Color::RGBToSRGB(Color c) noexcept
     {
-        static const Detail::Vector4F32 cutoff = { { { 0.0031308F, 0.0031308F, 0.0031308F, 1.0F } } };
-        static const Detail::Vector4F32 linear = { { { 12.92F, 12.92F, 12.92F, 1.0F } } };
-        static const Detail::Vector4F32 scale = { { { 1.055F, 1.055F, 1.055F, 1.0F } } };
-        static const Detail::Vector4F32 bias = { { { 0.055F, 0.055F, 0.055F, 0.0F } } };
+        static const Detail::Vector4F32 cutoff    = { { { 0.0031308F, 0.0031308F, 0.0031308F, 1.0F } } };
+        static const Detail::Vector4F32 linear    = { { { 12.92F, 12.92F, 12.92F, 1.0F } } };
+        static const Detail::Vector4F32 scale     = { { { 1.055F, 1.055F, 1.055F, 1.0F } } };
+        static const Detail::Vector4F32 bias      = { { { 0.055F, 0.055F, 0.055F, 0.0F } } };
         static const Detail::Vector4F32 inv_gamma = { { { 1.0F / 2.4F, 1.0F / 2.4F, 1.0F / 2.4F, 1.0F } } };
 
-        auto v_v = Vector4::Saturate({ c.V });
-        auto v_v0 = Vector4::Multiply(v_v, { linear.V });
-        auto v_v1 = Vector4::Subtract(Vector4::Multiply({ scale.V }, Vector4::Pow(v_v, { inv_gamma.V })), { bias.V });
+        auto v_v      = Vector4::Saturate({ c.V });
+        auto v_v0     = Vector4::Multiply(v_v, { linear.V });
+        auto v_v1     = Vector4::Subtract(Vector4::Multiply({ scale.V }, Vector4::Pow(v_v, { inv_gamma.V })), { bias.V });
         auto v_select = Vector4::CompareLess(v_v, { cutoff.V });
-        v_v = Vector4::Select(v_v1, v_v0, v_select);
+        v_v           = Vector4::Select(v_v1, v_v0, v_select);
         return { Vector4::Select({ c.V }, v_v, { Detail::VEC4_MASK_SELECT_1110.V }).V };
     }
 
@@ -426,12 +426,12 @@ namespace Graphyte::Maths
         static const Detail::Vector4F32 bias   = { { { 0.055F, 0.055F, 0.055F, 0.0F } } };
         static const Detail::Vector4F32 gamma  = { { { 2.4F, 2.4F, 2.4F, 1.0F } } };
 
-        auto v = Vector4::Saturate({ c.V });
-        auto v_v0 = Vector4::Multiply(v, { linear.V });
-        auto v_v1 = Vector4::Pow(Vector4::Multiply(Vector4::Add(v, { bias.V }), { scale.V }), { gamma.V });
+        auto v        = Vector4::Saturate({ c.V });
+        auto v_v0     = Vector4::Multiply(v, { linear.V });
+        auto v_v1     = Vector4::Pow(Vector4::Multiply(Vector4::Add(v, { bias.V }), { scale.V }), { gamma.V });
         auto v_select = Vector4::CompareGreater(v, { cutoff.V });
-        v = Vector4::Select(v_v0, v_v1, v_select);
-        v = Vector4::Select({ c.V }, v, { Detail::VEC4_MASK_SELECT_1110.V });
+        v             = Vector4::Select(v_v0, v_v1, v_select);
+        v             = Vector4::Select({ c.V }, v, { Detail::VEC4_MASK_SELECT_1110.V });
         return { v.V };
     }
 }

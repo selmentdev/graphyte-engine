@@ -8,8 +8,7 @@ namespace Graphyte::System
         [[maybe_unused]] std::string_view title,
         [[maybe_unused]] std::string_view message,
         [[maybe_unused]] MessageDialogType type,
-        [[maybe_unused]] MessageDialogImage image
-    ) noexcept
+        [[maybe_unused]] MessageDialogImage image) noexcept
     {
         return MessageDialogResult::None;
     }

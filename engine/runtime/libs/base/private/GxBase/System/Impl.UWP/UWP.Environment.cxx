@@ -8,24 +8,21 @@
 namespace Graphyte::System
 {
     BASE_API Status GetClipboardContent(
-        std::string& content
-    ) noexcept
+        std::string& content) noexcept
     {
         content = {};
         return Status::NotImplemented;
     }
 
     BASE_API Status SetClipboardContent(
-        [[maybe_unused]] std::string_view content
-    ) noexcept
+        [[maybe_unused]] std::string_view content) noexcept
     {
         return Status::NotImplemented;
     }
 
     BASE_API Status GetEnvironmentVariable(
         std::string& result,
-        const char* name
-    ) noexcept
+        const char* name) noexcept
     {
         GX_ASSERT(name != nullptr);
 
@@ -59,19 +56,17 @@ namespace Graphyte::System
 
     BASE_API Status SetEnvironmentVariable(
         const char* name,
-        const char* value
-    ) noexcept
+        const char* value) noexcept
     {
         GX_ASSERT(name != nullptr);
         GX_ASSERT(value != nullptr);
 
-        std::wstring const wname = Impl::WidenString(name);
+        std::wstring const wname  = Impl::WidenString(name);
         std::wstring const wvalue = Impl::WidenString(value);
 
         BOOL bResult = SetEnvironmentVariableW(
             wname.c_str(),
-            wvalue.c_str()
-        );
+            wvalue.c_str());
 
         if (bResult != FALSE)
         {
@@ -82,8 +77,7 @@ namespace Graphyte::System
     }
 
     BASE_API Status RemoveEnvironmentVariable(
-        const char* name
-    ) noexcept
+        const char* name) noexcept
     {
         GX_ASSERT(name != nullptr);
 
@@ -91,8 +85,7 @@ namespace Graphyte::System
 
         BOOL bResult = SetEnvironmentVariableW(
             wname.c_str(),
-            nullptr
-        );
+            nullptr);
 
         if (bResult != FALSE)
         {
@@ -103,8 +96,7 @@ namespace Graphyte::System
     }
 
     BASE_API Status SetCurrentDirectory(
-        const std::string& value
-    ) noexcept
+        const std::string& value) noexcept
     {
         std::wstring const wpath = System::Impl::WidenString(value);
 
@@ -119,8 +111,7 @@ namespace Graphyte::System
     }
 
     BASE_API Status GetCurrentDirectory(
-        std::string& result
-    ) noexcept
+        std::string& result) noexcept
     {
         std::wstring wszPath{};
 
@@ -157,17 +148,14 @@ namespace Graphyte::System
         DWORD dwLength = GetModuleFileNameW(
             System::Impl::GInstanceHandle,
             std::data(wpath),
-            static_cast<DWORD>(std::size(wpath))
-        );
+            static_cast<DWORD>(std::size(wpath)));
 
         if (dwLength != 0)
         {
             result = System::Impl::NarrowString(
                 std::wstring_view{
                     std::data(wpath),
-                    dwLength
-                }
-            );
+                    dwLength });
 
             Storage::NormalizePath(result);
             Storage::CanonicalizePath(result);
@@ -200,15 +188,13 @@ namespace Graphyte::System
     BASE_API Status Execute(
         [[maybe_unused]] const char* type,
         [[maybe_unused]] const char* command,
-        [[maybe_unused]] const char* params
-    ) noexcept
+        [[maybe_unused]] const char* params) noexcept
     {
         return Status::NotImplemented;
     }
 
     BASE_API Status Explore(
-        [[maybe_unused]] const char* path
-    ) noexcept
+        [[maybe_unused]] const char* path) noexcept
     {
         return Status::NotImplemented;
     }

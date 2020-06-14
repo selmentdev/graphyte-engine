@@ -12,40 +12,33 @@ namespace Graphyte::Graphics
         using GpuHash = Hash::HashFnv1A64;
 
         __forceinline uint64_t Hash(
-            const GpuBlendStateDesc& state
-        ) noexcept
+            const GpuBlendStateDesc& state) noexcept
         {
             return GpuHash::FromBuffer(
                 reinterpret_cast<const std::byte*>(&state),
-                sizeof(state)
-            );
+                sizeof(state));
         }
 
         __forceinline uint64_t Hash(
-            const GpuRasterizerStateDesc& state
-        ) noexcept
+            const GpuRasterizerStateDesc& state) noexcept
         {
             return GpuHash::FromBuffer(
                 reinterpret_cast<const std::byte*>(&state),
-                sizeof(state)
-            );
+                sizeof(state));
         }
 
         __forceinline uint64_t Hash(
-            const GpuDepthStencilStateDesc& state
-        ) noexcept
+            const GpuDepthStencilStateDesc& state) noexcept
         {
             return GpuHash::FromBuffer(
                 reinterpret_cast<const std::byte*>(&state),
-                sizeof(state)
-            );
+                sizeof(state));
         }
     }
 
     GpuGraphicsPipelineStateHandle D3D11GpuDevice::CreateGraphicsPipelineState(
         const GpuGraphicsPipelineStateCreateArgs& args,
-        const GpuResourceSetDesc& layout
-    ) noexcept
+        const GpuResourceSetDesc& layout) noexcept
     {
         auto result = new D3D11GpuGraphicsPipelineState{};
 
@@ -109,27 +102,22 @@ namespace Graphyte::Graphics
             else
             {
                 D3D11_DEPTH_STENCIL_DESC desc{
-                    .DepthEnable = args.DepthStencilState.DepthEnable ? TRUE : FALSE,
+                    .DepthEnable    = args.DepthStencilState.DepthEnable ? TRUE : FALSE,
                     .DepthWriteMask = D3D11GpuTypeMapping::DepthWriteMask(args.DepthStencilState.DepthWriteMask),
-                    .DepthFunc = D3D11GpuTypeMapping::ComparizonFunction(args.DepthStencilState.DepthCompare),
+                    .DepthFunc      = D3D11GpuTypeMapping::ComparizonFunction(args.DepthStencilState.DepthCompare),
 
-                    .StencilEnable = args.DepthStencilState.StencilEnable ? TRUE : FALSE,
-                    .StencilReadMask = args.DepthStencilState.StencilReadMask,
+                    .StencilEnable    = args.DepthStencilState.StencilEnable ? TRUE : FALSE,
+                    .StencilReadMask  = args.DepthStencilState.StencilReadMask,
                     .StencilWriteMask = args.DepthStencilState.StencilWriteMask,
 
                     .FrontFace = {
-                        .StencilFailOp = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.FrontFace.Fail),
+                        .StencilFailOp      = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.FrontFace.Fail),
                         .StencilDepthFailOp = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.FrontFace.DepthFail),
-                        .StencilPassOp = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.FrontFace.Pass),
-                        .StencilFunc = D3D11GpuTypeMapping::ComparizonFunction(args.DepthStencilState.FrontFace.Compare),
+                        .StencilPassOp      = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.FrontFace.Pass),
+                        .StencilFunc        = D3D11GpuTypeMapping::ComparizonFunction(args.DepthStencilState.FrontFace.Compare),
                     },
 
-                    .BackFace = {
-                        .StencilFailOp = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.BackFace.Fail),
-                        .StencilDepthFailOp = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.BackFace.DepthFail),
-                        .StencilPassOp = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.BackFace.Pass),
-                        .StencilFunc = D3D11GpuTypeMapping::ComparizonFunction(args.DepthStencilState.BackFace.Compare)
-                    },
+                    .BackFace = { .StencilFailOp = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.BackFace.Fail), .StencilDepthFailOp = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.BackFace.DepthFail), .StencilPassOp = D3D11GpuTypeMapping::StencilOp(args.DepthStencilState.BackFace.Pass), .StencilFunc = D3D11GpuTypeMapping::ComparizonFunction(args.DepthStencilState.BackFace.Compare) },
                 };
 
                 GPU_DX_VALIDATE(m_Device->CreateDepthStencilState(&desc, &depth_stencil));
@@ -160,7 +148,7 @@ namespace Graphyte::Graphics
             else
             {
                 D3D11_BLEND_DESC desc{
-                    .AlphaToCoverageEnable = args.BlendState.AlphaToCoverage ? TRUE : FALSE,
+                    .AlphaToCoverageEnable  = args.BlendState.AlphaToCoverage ? TRUE : FALSE,
                     .IndependentBlendEnable = args.BlendState.IndependentBlend ? TRUE : FALSE,
                 };
 
@@ -177,13 +165,13 @@ namespace Graphyte::Graphics
                         desc.RenderTarget[i] = {
                             .BlendEnable = TRUE,
 
-                            .SrcBlend = D3D11GpuTypeMapping::BlendType(args.BlendState.RenderTarget[i].SourceBlendColor),
+                            .SrcBlend  = D3D11GpuTypeMapping::BlendType(args.BlendState.RenderTarget[i].SourceBlendColor),
                             .DestBlend = D3D11GpuTypeMapping::BlendType(args.BlendState.RenderTarget[i].DestinationBlendColor),
-                            .BlendOp = D3D11GpuTypeMapping::BlendOperation(args.BlendState.RenderTarget[i].BlendOperationColor),
+                            .BlendOp   = D3D11GpuTypeMapping::BlendOperation(args.BlendState.RenderTarget[i].BlendOperationColor),
 
-                            .SrcBlendAlpha = D3D11GpuTypeMapping::BlendType(args.BlendState.RenderTarget[i].SourceBlendAlpha),
+                            .SrcBlendAlpha  = D3D11GpuTypeMapping::BlendType(args.BlendState.RenderTarget[i].SourceBlendAlpha),
                             .DestBlendAlpha = D3D11GpuTypeMapping::BlendType(args.BlendState.RenderTarget[i].DestinationBlendAlpha),
-                            .BlendOpAlpha = D3D11GpuTypeMapping::BlendOperation(args.BlendState.RenderTarget[i].BlendOperationAlpha),
+                            .BlendOpAlpha   = D3D11GpuTypeMapping::BlendOperation(args.BlendState.RenderTarget[i].BlendOperationAlpha),
 
                             .RenderTargetWriteMask = static_cast<UINT8>(args.BlendState.RenderTarget[i].RenderTargetWriteMask),
                         };
@@ -191,13 +179,13 @@ namespace Graphyte::Graphics
                     else
                     {
                         desc.RenderTarget[i] = {
-                            .BlendEnable = FALSE,
-                            .SrcBlend = D3D11_BLEND_ONE,
-                            .DestBlend = D3D11_BLEND_ZERO,
-                            .BlendOp = D3D11_BLEND_OP_ADD,
-                            .SrcBlendAlpha = D3D11_BLEND_ONE,
-                            .DestBlendAlpha = D3D11_BLEND_ZERO,
-                            .BlendOpAlpha = D3D11_BLEND_OP_ADD,
+                            .BlendEnable           = FALSE,
+                            .SrcBlend              = D3D11_BLEND_ONE,
+                            .DestBlend             = D3D11_BLEND_ZERO,
+                            .BlendOp               = D3D11_BLEND_OP_ADD,
+                            .SrcBlendAlpha         = D3D11_BLEND_ONE,
+                            .DestBlendAlpha        = D3D11_BLEND_ZERO,
+                            .BlendOpAlpha          = D3D11_BLEND_OP_ADD,
                             .RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL,
                         };
                     }
@@ -232,15 +220,15 @@ namespace Graphyte::Graphics
             else
             {
                 D3D11_RASTERIZER_DESC desc{
-                    .FillMode = D3D11GpuTypeMapping::FillMode(args.RasterizerState.FillMode),
-                    .CullMode = D3D11GpuTypeMapping::CullMode(args.RasterizerState.CullMode),
+                    .FillMode              = D3D11GpuTypeMapping::FillMode(args.RasterizerState.FillMode),
+                    .CullMode              = D3D11GpuTypeMapping::CullMode(args.RasterizerState.CullMode),
                     .FrontCounterClockwise = args.RasterizerState.FrontCounterClockwise ? TRUE : FALSE,
-                    .DepthBias = args.RasterizerState.DepthBias,
-                    .DepthBiasClamp = args.RasterizerState.DepthBiasClamp,
-                    .SlopeScaledDepthBias = args.RasterizerState.SlopeScaledDepthBias,
-                    .DepthClipEnable = args.RasterizerState.DepthClipEnable ? TRUE : FALSE,
-                    .ScissorEnable = args.RasterizerState.ScissorEnable ? TRUE : FALSE,
-                    .MultisampleEnable = args.RasterizerState.MultisampleEnable ? TRUE : FALSE,
+                    .DepthBias             = args.RasterizerState.DepthBias,
+                    .DepthBiasClamp        = args.RasterizerState.DepthBiasClamp,
+                    .SlopeScaledDepthBias  = args.RasterizerState.SlopeScaledDepthBias,
+                    .DepthClipEnable       = args.RasterizerState.DepthClipEnable ? TRUE : FALSE,
+                    .ScissorEnable         = args.RasterizerState.ScissorEnable ? TRUE : FALSE,
+                    .MultisampleEnable     = args.RasterizerState.MultisampleEnable ? TRUE : FALSE,
                     .AntialiasedLineEnable = args.RasterizerState.AntialiasedLineEnable ? TRUE : FALSE,
                 };
 
@@ -263,16 +251,15 @@ namespace Graphyte::Graphics
         //
         // Non-state params.
         //
-        result->m_BlendState_SampleMask = args.BlendState.SampleMask;
+        result->m_BlendState_SampleMask   = args.BlendState.SampleMask;
         result->m_BlendState_BlendFactors = args.BlendState.BlendFactors;
-        result->m_PrimitiveTopology = D3D11GpuTypeMapping::PrimitiveTopology(args.Topology);
+        result->m_PrimitiveTopology       = D3D11GpuTypeMapping::PrimitiveTopology(args.Topology);
 
         return result;
     }
 
     void D3D11GpuDevice::DestroyGraphicsPipelineState(
-        GpuGraphicsPipelineStateHandle handle
-    ) noexcept
+        GpuGraphicsPipelineStateHandle handle) noexcept
     {
         GX_ASSERT(handle != nullptr);
         auto native = static_cast<D3D11GpuGraphicsPipelineState*>(handle);

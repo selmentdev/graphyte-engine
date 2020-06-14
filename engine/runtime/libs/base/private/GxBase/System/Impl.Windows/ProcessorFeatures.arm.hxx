@@ -68,7 +68,7 @@ namespace Graphyte::System::Impl
         }
 
 #else
-#   error "Not supported"
+#error "Not supported"
 #endif
     }
 }

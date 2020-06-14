@@ -9,10 +9,10 @@ namespace Graphyte::Threading
     {
     private:
         TaskDispatcher& m_TaskManager;
+
     public:
         TaskWorkerThread(
-            TaskDispatcher& task_manager
-        ) noexcept
+            TaskDispatcher& task_manager) noexcept
             : m_TaskManager{ task_manager }
         {
         }
@@ -64,8 +64,7 @@ namespace Graphyte::Threading
     void TaskDispatcher::Initialize() noexcept
     {
         TaskDispatcher::GetInstance().Start(
-            static_cast<size_t>(System::GetLogicalCores())
-        );
+            static_cast<size_t>(System::GetLogicalCores()));
     }
 
     void TaskDispatcher::Finalize() noexcept
@@ -74,8 +73,7 @@ namespace Graphyte::Threading
     }
 
     void TaskDispatcher::Start(
-        size_t threads
-    ) noexcept
+        size_t threads) noexcept
     {
         Stop();
         m_Stop = false;
@@ -105,8 +103,7 @@ namespace Graphyte::Threading
     }
 
     void TaskDispatcher::Dispatch(
-        std::unique_ptr<BaseTask> task
-    ) noexcept
+        std::unique_ptr<BaseTask> task) noexcept
     {
         {
             ScopedLock<CriticalSection> lock{ m_CS };

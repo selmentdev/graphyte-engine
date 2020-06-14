@@ -4,6 +4,8 @@
 
 namespace Graphyte::Graphics
 {
-    class NullGpuStructuredBuffer : public GpuStructuredBuffer { };
+    class NullGpuStructuredBuffer : public GpuStructuredBuffer
+    {
+    };
     static_assert(!std::is_polymorphic_v<NullGpuStructuredBuffer>);
 }

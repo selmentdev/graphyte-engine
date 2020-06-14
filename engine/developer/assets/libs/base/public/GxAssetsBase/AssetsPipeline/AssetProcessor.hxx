@@ -17,11 +17,12 @@ namespace Graphyte::AssetsPipeline
         bool Success;
     };
 
-    struct IAssetProcessor// : Serialization::ISerializable
+    struct IAssetProcessor // : Serialization::ISerializable
     {
         virtual ~IAssetProcessor() = default;
 
         virtual bool Process(const AssetProcessorRequest& request, AssetProcessorResponse& response) noexcept = 0;
+
         virtual bool Process() noexcept = 0;
     };
 }

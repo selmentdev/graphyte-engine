@@ -47,8 +47,7 @@ namespace Graphyte::Application
     }
 
     BASE_API void RequestExit(
-        bool force
-    ) noexcept
+        bool force) noexcept
     {
         (void)force;
     }
@@ -59,27 +58,23 @@ namespace Graphyte::Application
     }
 
     BASE_API void PollInputDevices(
-        [[maybe_unused]] float deltaTime
-    ) noexcept
+        [[maybe_unused]] float deltaTime) noexcept
     {
     }
 
     BASE_API void PumpMessages(
-        [[maybe_unused]] float deltaTime
-    ) noexcept
+        [[maybe_unused]] float deltaTime) noexcept
     {
         (void)deltaTime;
     }
 
     BASE_API void Tick(
-        [[maybe_unused]] float deltaTime
-    ) noexcept
+        [[maybe_unused]] float deltaTime) noexcept
     {
     }
 
     BASE_API void SetEventHandler(
-        [[maybe_unused]] EventHandler* handler
-    ) noexcept
+        [[maybe_unused]] EventHandler* handler) noexcept
     {
     }
 
@@ -89,15 +84,13 @@ namespace Graphyte::Application
     }
 
     BASE_API Window* CreateWindow(
-        [[maybe_unused]] const WindowDescriptor& descriptor
-    ) noexcept
+        [[maybe_unused]] const WindowDescriptor& descriptor) noexcept
     {
         return nullptr;
     }
 
     BASE_API void DestroyWindow(
-        [[maybe_unused]] Window* window
-    ) noexcept
+        [[maybe_unused]] Window* window) noexcept
     {
     }
 }

@@ -12,8 +12,7 @@ namespace Graphyte
         {
             using underlying_type = std::underlying_type_t<TEnumType>;
             return TEnumType(
-                underlying_type(value) | underlying_type(mask)
-            );
+                underlying_type(value) | underlying_type(mask));
         }
 
         template <typename TEnumType>
@@ -21,8 +20,7 @@ namespace Graphyte
         {
             using underlying_type = std::underlying_type_t<TEnumType>;
             return TEnumType(
-                underlying_type(value) & ~underlying_type(mask)
-            );
+                underlying_type(value) & ~underlying_type(mask));
         }
 
         template <typename TEnumType>
@@ -30,8 +28,7 @@ namespace Graphyte
         {
             using underlying_type = std::underlying_type_t<TEnumType>;
             return TEnumType(
-                underlying_type(value) ^ underlying_type(mask)
-            );
+                underlying_type(value) ^ underlying_type(mask));
         }
 
         template <typename TEnumType>
@@ -39,8 +36,7 @@ namespace Graphyte
         {
             using underlying_type = std::underlying_type_t<TEnumType>;
             return TEnumType(
-                underlying_type(value) & underlying_type(mask)
-            );
+                underlying_type(value) & underlying_type(mask));
         }
 
         template <typename TEnumType>
@@ -48,8 +44,7 @@ namespace Graphyte
         {
             using underlying_type = std::underlying_type_t<TEnumType>;
             return TEnumType(
-                (underlying_type(value) & underlying_type(clear)) | underlying_type(set)
-            );
+                (underlying_type(value) & underlying_type(clear)) | underlying_type(set));
         }
 
         template <typename TEnumType>

@@ -20,10 +20,14 @@ namespace Graphyte
 
     public:
         IntrusiveList() noexcept = default;
+
         IntrusiveList(const IntrusiveList&) noexcept = delete;
-        IntrusiveList& operator= (const IntrusiveList&) noexcept = delete;
+
+        IntrusiveList& operator=(const IntrusiveList&) noexcept = delete;
+
         IntrusiveList(IntrusiveList&&) noexcept = default;
-        IntrusiveList& operator= (IntrusiveList&&) noexcept = default;
+
+        IntrusiveList& operator=(IntrusiveList&&) noexcept = default;
 
     public:
         void InsertHead(T* element) noexcept
@@ -41,7 +45,7 @@ namespace Graphyte
             if (this->Head != nullptr)
             {
                 IntrusiveListNode<T>* lastHead = &(this->Head->*Node);
-                lastHead->Prev = element;
+                lastHead->Prev                 = element;
             }
 
             this->Head = element;
@@ -62,16 +66,16 @@ namespace Graphyte
             }
             else
             {
-                IntrusiveListNode<T>* tailNode = &(this->Tail->*Node);
+                IntrusiveListNode<T>* tailNode    = &(this->Tail->*Node);
                 IntrusiveListNode<T>* elementNode = &(element->*Node);
 
                 GX_ASSERT(elementNode->Next == nullptr);
                 GX_ASSERT(elementNode->Prev == nullptr);
 
-                tailNode->Next = element;
+                tailNode->Next    = element;
                 elementNode->Prev = this->Tail;
                 elementNode->Next = nullptr;
-                this->Tail = element;
+                this->Tail        = element;
             }
         }
 
@@ -80,17 +84,17 @@ namespace Graphyte
             GX_ASSERT(element != nullptr);
             GX_ASSERT(relative != nullptr);
 
-            IntrusiveListNode<T>* elementNode = &(element->*Node);
+            IntrusiveListNode<T>* elementNode  = &(element->*Node);
             IntrusiveListNode<T>* relativeNode = &(relative->*Node);
 
             if (relativeNode->Next != nullptr)
             {
                 IntrusiveListNode<T>* nextNode = &(relativeNode->Next->*Node);
-                nextNode->Prev = element;
+                nextNode->Prev                 = element;
             }
 
-            elementNode->Next = relativeNode->Next;
-            elementNode->Prev = relative;
+            elementNode->Next  = relativeNode->Next;
+            elementNode->Prev  = relative;
             relativeNode->Next = element;
 
             if (relative == this->Tail)
@@ -104,17 +108,17 @@ namespace Graphyte
             GX_ASSERT(element != nullptr);
             GX_ASSERT(relative != nullptr);
 
-            IntrusiveListNode<T>* elementNode = &(element->*Node);
+            IntrusiveListNode<T>* elementNode  = &(element->*Node);
             IntrusiveListNode<T>* relativeNode = &(relative->*Node);
 
             if (relativeNode->Prev != nullptr)
             {
                 IntrusiveListNode<T>* prevNode = &(relativeNode->Prev->*Node);
-                prevNode->Next = element;
+                prevNode->Next                 = element;
             }
 
-            elementNode->Next = relative;
-            elementNode->Prev = relativeNode->Prev;
+            elementNode->Next  = relative;
+            elementNode->Prev  = relativeNode->Prev;
             relativeNode->Prev = element;
 
             if (relative == this->Head)

@@ -126,25 +126,26 @@ namespace Graphyte::System
     {
         __forceinline static void Convert(CalendarTime& result, const SYSTEMTIME& value) noexcept
         {
-            result.Year = value.wYear;
-            result.Month = value.wMonth;
-            result.DayOfWeek = value.wDayOfWeek;
-            result.Day = value.wDay;
-            result.Hour = value.wHour;
-            result.Minute = value.wMinute;
-            result.Second = value.wSecond;
+            result.Year        = value.wYear;
+            result.Month       = value.wMonth;
+            result.DayOfWeek   = value.wDayOfWeek;
+            result.Day         = value.wDay;
+            result.Hour        = value.wHour;
+            result.Minute      = value.wMinute;
+            result.Second      = value.wSecond;
             result.Millisecond = value.wMilliseconds;
-            result.DayOfYear = 0;
+            result.DayOfYear   = 0;
         }
+
         __forceinline static void Convert(SYSTEMTIME& result, const CalendarTime& value) noexcept
         {
-            result.wYear = static_cast<WORD>(value.Year);
-            result.wMonth = static_cast<WORD>(value.Month);
-            result.wDayOfWeek = static_cast<WORD>(value.DayOfWeek);
-            result.wDay = static_cast<WORD>(value.Day);
-            result.wHour = static_cast<WORD>(value.Hour);
-            result.wMinute = static_cast<WORD>(value.Minute);
-            result.wSecond = static_cast<WORD>(value.Second);
+            result.wYear         = static_cast<WORD>(value.Year);
+            result.wMonth        = static_cast<WORD>(value.Month);
+            result.wDayOfWeek    = static_cast<WORD>(value.DayOfWeek);
+            result.wDay          = static_cast<WORD>(value.Day);
+            result.wHour         = static_cast<WORD>(value.Hour);
+            result.wMinute       = static_cast<WORD>(value.Minute);
+            result.wSecond       = static_cast<WORD>(value.Second);
             result.wMilliseconds = static_cast<WORD>(value.Millisecond);
         }
     };
@@ -155,7 +156,7 @@ namespace Graphyte::System
         __forceinline static uint64_t ConvertUInt64(FILETIME value) noexcept
         {
             LARGE_INTEGER li{};
-            li.LowPart = static_cast<decltype(li.LowPart)>(value.dwLowDateTime);
+            li.LowPart  = static_cast<decltype(li.LowPart)>(value.dwLowDateTime);
             li.HighPart = static_cast<decltype(li.HighPart)>(value.dwHighDateTime);
             return static_cast<uint64_t>(li.QuadPart);
         }
@@ -165,7 +166,7 @@ namespace Graphyte::System
             li.QuadPart = static_cast<decltype(li.QuadPart)>(value);
 
             FILETIME result{};
-            result.dwLowDateTime = static_cast<decltype(result.dwLowDateTime)>(li.LowPart);
+            result.dwLowDateTime  = static_cast<decltype(result.dwLowDateTime)>(li.LowPart);
             result.dwHighDateTime = static_cast<decltype(result.dwHighDateTime)>(li.HighPart);
             return result;
         }
@@ -179,8 +180,7 @@ namespace Graphyte::System
         }
         __forceinline static DateTime ConvertDateTime(FILETIME value) noexcept
         {
-            return DateTime
-            {
+            return DateTime{
                 ConvertInt64(value) + Graphyte::Impl::GDateAdjustOffset
             };
         }

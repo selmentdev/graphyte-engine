@@ -21,13 +21,13 @@ namespace Graphyte::Storage
         __forceinline bool IsValidHandle() const noexcept
         {
             return this->m_Handle != nullptr
-                && this->m_Handle != INVALID_HANDLE_VALUE;
+                   && this->m_Handle != INVALID_HANDLE_VALUE;
         }
 
         __forceinline void UpdatePosition() noexcept
         {
-            auto position = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(this->m_Position);
-            this->m_Async.Offset = position.LowPart;
+            auto position            = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(this->m_Position);
+            this->m_Async.Offset     = position.LowPart;
             this->m_Async.OffsetHigh = position.HighPart;
         }
 
@@ -40,8 +40,7 @@ namespace Graphyte::Storage
 
     public:
         WindowsFileStream(
-            HANDLE handle
-        ) noexcept
+            HANDLE handle) noexcept
             : m_Handle{ handle }
             , m_Async{}
             , m_Position{}
@@ -77,8 +76,7 @@ namespace Graphyte::Storage
 
         virtual Status Read(
             notstd::span<std::byte> buffer,
-            size_t& processed
-        ) noexcept final override
+            size_t& processed) noexcept final override
         {
             GX_ASSERT(this->IsValidHandle());
 
@@ -128,8 +126,7 @@ namespace Graphyte::Storage
 
         virtual Status Write(
             notstd::span<const std::byte> buffer,
-            size_t& processed
-        ) noexcept final override
+            size_t& processed) noexcept final override
         {
             GX_ASSERT(this->IsValidHandle());
 
@@ -187,8 +184,7 @@ namespace Graphyte::Storage
 
         virtual Status SetPosition(
             int64_t value,
-            SeekOrigin origin
-        ) noexcept final override
+            SeekOrigin origin) noexcept final override
         {
             GX_ASSERT(this->IsValidHandle());
 
@@ -196,7 +192,7 @@ namespace Graphyte::Storage
 
             switch (origin)
             {
-            case SeekOrigin::Begin:
+                case SeekOrigin::Begin:
                 {
                     GX_ASSERT(value >= 0);
 
@@ -204,19 +200,19 @@ namespace Graphyte::Storage
                     break;
                 }
 
-            case SeekOrigin::Current:
+                case SeekOrigin::Current:
                 {
                     current += value;
                     break;
                 }
 
-            case SeekOrigin::End:
+                case SeekOrigin::End:
                 {
                     current = this->m_Size - value;
                     break;
                 }
 
-            default:
+                default:
                 {
                     GX_ASSERT(false);
                     return Status::InvalidArgument;
@@ -234,8 +230,7 @@ namespace Graphyte::Storage
         }
 
         virtual Status SetPosition(
-            int64_t value
-        ) noexcept final override
+            int64_t value) noexcept final override
         {
             GX_ASSERT(this->IsValidHandle());
             GX_ASSERT(value >= 0);

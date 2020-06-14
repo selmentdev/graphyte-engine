@@ -10,8 +10,7 @@ namespace Graphyte::Network
     BASE_API void Finalize() noexcept;
 
     BASE_API Status HasInternetConnection(
-        bool& status
-    ) noexcept;
+        bool& status) noexcept;
 
 #if false
     BASE_API Status Download(

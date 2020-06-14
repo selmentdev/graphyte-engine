@@ -26,7 +26,7 @@ namespace Graphyte::AssetsPipeline::Meshes
 
             switch (chunkHeader.Id)
             {
-            case Chunks::SUB0:
+                case Chunks::SUB0:
                 {
                     GX_LOG(LogMeshProcessor, Info, "Submodel: {:c}{:c}{:c}{:c} {}\n",
                         chunkHeader.FourCC[0],
@@ -37,7 +37,7 @@ namespace Graphyte::AssetsPipeline::Meshes
 
                     Submodel submodel{};
                     int64_t payloadSize = chunkHeader.Size - sizeof(chunkHeader);
-                    size_t count = static_cast<size_t>(payloadSize) / sizeof(submodel);
+                    size_t count        = static_cast<size_t>(payloadSize) / sizeof(submodel);
                     GX_ASSERT((static_cast<size_t>(payloadSize) % sizeof(submodel)) == 0);
 
 
@@ -57,7 +57,7 @@ namespace Graphyte::AssetsPipeline::Meshes
 
                     break;
                 }
-            case Chunks::TRA0:
+                case Chunks::TRA0:
                 {
                     GX_LOG(LogMeshProcessor, Info, "Transform Matrices: Float4x4A\n");
                     size_t count = static_cast<size_t>((chunkHeader.Size - sizeof(chunkHeader)) / sizeof(Float4x4));
@@ -70,12 +70,12 @@ namespace Graphyte::AssetsPipeline::Meshes
                     }
                     break;
                 }
-            case Chunks::TRA1:
+                case Chunks::TRA1:
                 {
                     GX_LOG(LogMeshProcessor, Info, "Transform Matrices: double4x4\n");
                     break;
                 }
-            case Chunks::TEX0:
+                case Chunks::TEX0:
                 {
                     GX_LOG(LogMeshProcessor, Info, "Materials\n");
                     std::string buffer{};
@@ -105,7 +105,7 @@ namespace Graphyte::AssetsPipeline::Meshes
 
                     break;
                 }
-            case Chunks::NAM0:
+                case Chunks::NAM0:
                 {
                     GX_LOG(LogMeshProcessor, Info, "Submodel names\n");
                     std::string buffer{};
@@ -135,11 +135,11 @@ namespace Graphyte::AssetsPipeline::Meshes
 
                     break;
                 }
-            case Chunks::VNT0:
+                case Chunks::VNT0:
                 {
                     GX_LOG(LogMeshProcessor, Info, "Vertices\n");
                     int64_t payloadSize = chunkHeader.Size - sizeof(chunkHeader);
-                    size_t count = static_cast<size_t>(payloadSize) / sizeof(Vertex);
+                    size_t count        = static_cast<size_t>(payloadSize) / sizeof(Vertex);
                     GX_ASSERT((static_cast<size_t>(payloadSize) % sizeof(Vertex)) == 0);
 
                     Vertex vertex{};
@@ -150,9 +150,9 @@ namespace Graphyte::AssetsPipeline::Meshes
                     }
                     break;
                 }
-            case Chunks::SUB1:
-            default:
-            case Chunks::E3D0:
+                case Chunks::SUB1:
+                default:
+                case Chunks::E3D0:
                 {
                     GX_LOG(LogMeshProcessor, Error, "Unknown chunk: {:c}{:c}{:c}{:c} {}\n",
                         chunkHeader.FourCC[0],
@@ -179,7 +179,7 @@ namespace Graphyte::AssetsPipeline::Meshes
 
         for (auto& submesh : submodels)
         {
-            auto* part = new Geometry::ModelPart{};
+            auto* part     = new Geometry::ModelPart{};
             part->MeshData = new Geometry::Mesh{};
             {
                 if (submesh.ViewMatrixIndex >= 0)
@@ -200,12 +200,12 @@ namespace Graphyte::AssetsPipeline::Meshes
 
                 if (submesh.Type == SubmodelType::Triangles)
                 {
-                    part->Type = Geometry::ModelPartType::Mesh;
+                    part->Type       = Geometry::ModelPartType::Mesh;
                     part->HelperSize = {};
                     part->HelperType = Geometry::ModelHelperType::None;
-                    
+
                     size_t base_index = static_cast<size_t>(submesh.FirstVertexIndex);
-                    size_t count = static_cast<size_t>(submesh.VerticesCount);
+                    size_t count      = static_cast<size_t>(submesh.VerticesCount);
 
                     part->MeshData->VertexPositions.reserve(count);
                     part->MeshData->WedgeIndices.reserve(count);

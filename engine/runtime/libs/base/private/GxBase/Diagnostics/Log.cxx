@@ -5,7 +5,7 @@
 #include "Diagnostics.Impl.hxx"
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
-#   include <io.h>
+#include <io.h>
 #endif
 
 namespace Graphyte::Diagnostics::Impl
@@ -29,8 +29,7 @@ namespace Graphyte::Diagnostics
         LogLevel level,
         std::string_view category,
         std::string_view format,
-        fmt::format_args args
-    ) noexcept
+        fmt::format_args args) noexcept
     {
         fmt::memory_buffer buffer{};
 
@@ -55,7 +54,7 @@ namespace Graphyte::Diagnostics
                 // Forward log to terminal. Only on desktop platform.
                 //
 
-                bool const is_error = (level == LogLevel::Error || level == LogLevel::Fatal);
+                bool const is_error    = (level == LogLevel::Error || level == LogLevel::Fatal);
                 bool const is_terminal = Application::GetDescriptor().Type == Application::ApplicationType::ConsoleTool;
 
                 if (Impl::GLogOutputTerminal && is_error && is_terminal)
@@ -77,8 +76,7 @@ namespace Graphyte::Diagnostics
 
                 auto const status = Impl::GLogOutputFile->Write(
                     { reinterpret_cast<const std::byte*>(buffer.data()), buffer.size() },
-                    processed
-                );
+                    processed);
 
                 GX_ABORT_UNLESS(status == Status::Success, "Failed to write to log file");
             }

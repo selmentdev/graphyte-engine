@@ -5,7 +5,7 @@
 
 namespace Graphyte::AssetsPipeline
 {
-    class ASSETS_BASE_API AssetMetadata final// : public Serialization::ISerializable
+    class ASSETS_BASE_API AssetMetadata final // : public Serialization::ISerializable
     {
     public:
         std::string m_License{};

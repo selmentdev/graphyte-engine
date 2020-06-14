@@ -7,7 +7,8 @@ namespace Graphyte::Threading
     class Barrier final
     {
         Barrier(const Barrier&) = delete;
-        Barrier& operator= (const Barrier&) = delete;
+
+        Barrier& operator=(const Barrier&) = delete;
 
     private:
         mutable HANDLE m_Event;
@@ -18,11 +19,12 @@ namespace Graphyte::Threading
     public:
         Barrier(uint32_t count) noexcept
         {
-            m_Event = CreateEventW(nullptr, FALSE, FALSE, nullptr);
-            m_EventSync = CreateEventW(nullptr, TRUE, FALSE, nullptr);
-            m_Count = static_cast<DWORD>(count);
+            m_Event        = CreateEventW(nullptr, FALSE, FALSE, nullptr);
+            m_EventSync    = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+            m_Count        = static_cast<DWORD>(count);
             m_InitialCount = static_cast<LONG>(count);
         }
+
         ~Barrier() noexcept
         {
             CloseHandle(m_Event);
@@ -61,8 +63,10 @@ namespace Graphyte::Threading
     class CriticalSection final
     {
         friend class ConditionVariable;
+
         CriticalSection(const CriticalSection&) = delete;
-        CriticalSection& operator= (const CriticalSection&) = delete;
+
+        CriticalSection& operator=(const CriticalSection&) = delete;
 
     private:
         CRITICAL_SECTION m_CriticalSection;
@@ -98,7 +102,9 @@ namespace Graphyte::Threading
     class ConditionVariable final
     {
         ConditionVariable(const ConditionVariable&) = delete;
-        ConditionVariable& operator= (const ConditionVariable&) = delete;
+
+        ConditionVariable& operator=(const ConditionVariable&) = delete;
+
     private:
         CONDITION_VARIABLE m_ConditionVariable;
 
@@ -137,7 +143,9 @@ namespace Graphyte::Threading
     class Semaphore final
     {
         Semaphore(const Semaphore&) = delete;
-        Semaphore& operator= (const Semaphore&) = delete;
+
+        Semaphore& operator=(const Semaphore&) = delete;
+
     private:
         HANDLE m_Handle;
 
@@ -184,7 +192,9 @@ namespace Graphyte::Threading
     class ReaderWriterLock final
     {
         ReaderWriterLock(const ReaderWriterLock&) = delete;
-        ReaderWriterLock& operator= (const ReaderWriterLock&) = delete;
+
+        ReaderWriterLock& operator=(const ReaderWriterLock&) = delete;
+
     private:
         SRWLOCK m_Lock;
 
@@ -219,8 +229,7 @@ namespace Graphyte::Threading
             return TryAcquireSRWLockShared(&m_Lock) != FALSE;
         }
 
-        _Requires_lock_held_(&this->m_Lock)
-        void LeaveWriter() noexcept
+        _Requires_lock_held_(&this->m_Lock) void LeaveWriter() noexcept
         {
             ReleaseSRWLockExclusive(&m_Lock);
         }
@@ -234,7 +243,9 @@ namespace Graphyte::Threading
     class Event final
     {
         Event(const Event&) = delete;
-        Event& operator= (const Event&) = delete;
+
+        Event& operator=(const Event&) = delete;
+
     private:
         HANDLE m_Handle;
 
@@ -246,8 +257,7 @@ namespace Graphyte::Threading
                 nullptr,
                 (event_type == EventType::ManualReset) ? TRUE : FALSE,
                 state ? TRUE : FALSE,
-                nullptr
-            );
+                nullptr);
         }
 
         ~Event() noexcept

@@ -6,8 +6,7 @@ namespace Graphyte::Diagnostics
 {
     BASE_API std::string ToString(
         const StackFrame& frame,
-        StackFrameFormat format
-    ) noexcept
+        StackFrameFormat format) noexcept
     {
         std::string result{};
 
@@ -34,8 +33,7 @@ namespace Graphyte::Diagnostics
 
     BASE_API std::string ToString(
         notstd::span<const StackFrame> frames,
-        StackFrameFormat format
-    ) noexcept
+        StackFrameFormat format) noexcept
     {
         std::string result{};
 

@@ -12,8 +12,7 @@ namespace Graphyte::Crypto
                 nullptr,
                 reinterpret_cast<UCHAR*>(buffer.data()),
                 static_cast<ULONG>(buffer.size()),
-                BCRYPT_USE_SYSTEM_PREFERRED_RNG
-            );
+                BCRYPT_USE_SYSTEM_PREFERRED_RNG);
 
             if (BCRYPT_SUCCESS(status))
             {

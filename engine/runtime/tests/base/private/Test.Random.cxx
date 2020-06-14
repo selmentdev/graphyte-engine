@@ -20,9 +20,9 @@ TEST_CASE("Float Traits")
 
         SECTION("Range12FromHighBits")
         {
-            float const one = Trait::Range12FromHighBits(0u);
+            float const one        = Trait::Range12FromHighBits(0u);
             float const almost_two = Trait::Range12FromHighBits(0xFFFFFFFFu);
-            float const exact_two = std::nexttowardf(almost_two, 10.0f);
+            float const exact_two  = std::nexttowardf(almost_two, 10.0f);
 
             CHECK(one == 1.0f);
             CHECK(almost_two < 2.0f);
@@ -42,9 +42,9 @@ TEST_CASE("Float Traits")
 
         SECTION("Range01FromHighBits")
         {
-            double const one = Trait::Range12FromHighBits(0u);
+            double const one        = Trait::Range12FromHighBits(0u);
             double const almost_two = Trait::Range12FromHighBits(0xFFFFFFFF'FFFFFFFFu);
-            double const exact_two = std::nexttoward(almost_two, 10.0);
+            double const exact_two  = std::nexttoward(almost_two, 10.0);
 
             CHECK(one == 1.0);
             CHECK(almost_two < 2.0);
@@ -239,7 +239,7 @@ TEST_CASE("Random Generator")
 
         std::array<uint64_t, 8> buffer{};
 
-        Generate(state, notstd::as_writable_bytes(notstd::span<uint64_t>{ buffer } ));
+        Generate(state, notstd::as_writable_bytes(notstd::span<uint64_t>{ buffer }));
 
         CHECK(buffer[0] == 0x99EC5F36CB75F2B4u);
         CHECK(buffer[1] == 0xBF6E1F784956452Au);
@@ -273,7 +273,7 @@ TEST_CASE("Random temporary path")
     RandomState state;
     Initialize(state, 0x1337);
 
-    std::string_view const path = "/home/user";
+    std::string_view const path   = "/home/user";
     std::string_view const prefix = "prefix_";
     std::string_view const suffix = ".extension";
 

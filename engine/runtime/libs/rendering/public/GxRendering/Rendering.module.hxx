@@ -5,8 +5,8 @@
 #define RENDERING_API
 #else
 #if defined(module_rendering_EXPORTS)
-#define RENDERING_API       GX_LIB_EXPORT
+#define RENDERING_API GX_LIB_EXPORT
 #else
-#define RENDERING_API       GX_LIB_IMPORT
+#define RENDERING_API GX_LIB_IMPORT
 #endif
 #endif

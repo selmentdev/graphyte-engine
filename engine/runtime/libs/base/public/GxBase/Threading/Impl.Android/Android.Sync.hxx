@@ -8,7 +8,9 @@ namespace Graphyte::Threading
     class AndroidBarrier final
     {
         AndroidBarrier(const AndroidBarrier&) = delete;
-        AndroidBarrier& operator= (const AndroidBarrier&) = delete;
+
+        AndroidBarrier& operator=(const AndroidBarrier&) = delete;
+
     private:
         uint32_t m_Needed;
         uint32_t m_Called;
@@ -59,7 +61,8 @@ namespace Graphyte::Threading
         friend class AndroidConditionVariable;
 
         AndroidCriticalSection(const AndroidCriticalSection&) = delete;
-        AndroidCriticalSection& operator= (const AndroidCriticalSection&) = delete;
+
+        AndroidCriticalSection& operator=(const AndroidCriticalSection&) = delete;
 
     private:
         pthread_mutex_t m_CriticalSection;
@@ -99,7 +102,9 @@ namespace Graphyte::Threading
     class AndroidConditionVariable final
     {
         AndroidConditionVariable(const AndroidConditionVariable&) = delete;
-        AndroidConditionVariable& operator= (const AndroidConditionVariable&) = delete;
+
+        AndroidConditionVariable& operator=(const AndroidConditionVariable&) = delete;
+
     private:
         pthread_cond_t m_ConditionVariable;
 
@@ -141,7 +146,9 @@ namespace Graphyte::Threading
     class AndroidSemaphore final
     {
         AndroidSemaphore(const AndroidSemaphore&) = delete;
-        AndroidSemaphore& operator= (const AndroidSemaphore&) = delete;
+
+        AndroidSemaphore& operator=(const AndroidSemaphore&) = delete;
+
     private:
         sem_t m_Handle;
 
@@ -195,7 +202,9 @@ namespace Graphyte::Threading
     class AndroidReaderWriterLock final
     {
         AndroidReaderWriterLock(const AndroidReaderWriterLock&) = delete;
-        AndroidReaderWriterLock& operator= (const AndroidReaderWriterLock&) = delte;
+
+        AndroidReaderWriterLock& operator=(const AndroidReaderWriterLock&) = delte;
+
     private:
         pthread_rwlock_t m_Lock;
 
@@ -244,7 +253,9 @@ namespace Graphyte::Threading
     class AndroidEvent final
     {
         AndroidEvent(const AndroidEvent&) = delete;
-        AndroidEvent& operator= (const AndroidEvent&) = delete;
+
+        AndroidEvent& operator=(const AndroidEvent&) = delete;
+
     private:
         AndroidCriticalSection m_CriticalSection;
         AndroidConditionVariable m_ConditionVariable;
@@ -345,10 +356,10 @@ namespace Graphyte::Threading
 
 namespace Graphyte::Threading
 {
-    using Barrier = AndroidBarrier;
-    using CriticalSection = AndroidCriticalSection;
+    using Barrier           = AndroidBarrier;
+    using CriticalSection   = AndroidCriticalSection;
     using ConditionVariable = AndroidConditionVariable;
-    using Semaphore = AndroidSemaphore;
-    using ReaderWriterLock = AndroidReaderWriterLock;
-    using Event = AndroidEvent;
+    using Semaphore         = AndroidSemaphore;
+    using ReaderWriterLock  = AndroidReaderWriterLock;
+    using Event             = AndroidEvent;
 }

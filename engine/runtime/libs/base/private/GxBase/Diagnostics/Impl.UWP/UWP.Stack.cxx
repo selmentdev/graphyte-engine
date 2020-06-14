@@ -6,8 +6,7 @@
 namespace Graphyte::Diagnostics
 {
     BASE_API Status GetStackTrace(
-        std::vector<StackFrame>& frames
-    ) noexcept
+        std::vector<StackFrame>& frames) noexcept
     {
         (void)frames;
         return Status::NotImplemented;
@@ -15,8 +14,7 @@ namespace Graphyte::Diagnostics
 
     BASE_API Status GetStackTrace(
         std::vector<StackFrame>& frames,
-        [[maybe_unused]] const CONTEXT& context
-    ) noexcept
+        [[maybe_unused]] const CONTEXT& context) noexcept
     {
         (void)frames;
         (void)context;

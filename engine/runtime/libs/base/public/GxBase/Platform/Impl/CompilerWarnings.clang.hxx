@@ -29,7 +29,7 @@
 #pragma clang diagnostic ignored "-Wswitch-enum"
 #pragma clang diagnostic ignored "-Wreserved-id-macro"
 #pragma clang diagnostic ignored "-Wunused-const-variable"
-#pragma clang diagnostic ignored "-Wundefined-reinterpret-cast"                     // We DO know what is going on
+#pragma clang diagnostic ignored "-Wundefined-reinterpret-cast" // We DO know what is going on
 #pragma clang diagnostic ignored "-Wdocumentation"
 #pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
 #pragma clang diagnostic ignored "-Wdouble-promotion"

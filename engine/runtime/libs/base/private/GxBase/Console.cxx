@@ -12,8 +12,7 @@ namespace Graphyte
         ConsoleObjectFlags flags,
         std::string_view name,
         std::string_view help,
-        std::string_view store
-    ) noexcept
+        std::string_view store) noexcept
         : m_Flags{ flags }
         , m_Name{ name }
         , m_Help{ help }
@@ -40,8 +39,7 @@ namespace Graphyte
         ConsoleObjectFlags flags,
         std::string_view name,
         ConsoleCommandDelegate action,
-        std::string_view help
-    ) noexcept
+        std::string_view help) noexcept
         : m_Flags{ flags }
         , m_Name{ name }
         , m_Help{ help }
@@ -56,8 +54,7 @@ namespace Graphyte
     }
 
     ConsoleCommandResult ConsoleCommand::Execute(
-        notstd::span<std::string_view> params
-    ) noexcept
+        notstd::span<std::string_view> params) noexcept
     {
         return this->m_Action(params);
     }
@@ -79,7 +76,6 @@ namespace Graphyte
 
     void Console::Initialize() noexcept
     {
-
     }
 
     void Console::Finalize() noexcept
@@ -87,37 +83,32 @@ namespace Graphyte
     }
 
     void Console::Register(
-        ConsoleVariableBase* variable
-    ) noexcept
+        ConsoleVariableBase* variable) noexcept
     {
         g_ConsoleDetail.Variables.InsertTail(variable);
     }
 
     void Console::Unregister(
-        ConsoleVariableBase* variable
-    ) noexcept
+        ConsoleVariableBase* variable) noexcept
     {
         g_ConsoleDetail.Variables.Remove(variable);
     }
 
     void Console::Register(
-        ConsoleCommand* command
-    ) noexcept
+        ConsoleCommand* command) noexcept
     {
         g_ConsoleDetail.Commands.InsertTail(command);
     }
 
     void Console::Unregister(
-        ConsoleCommand* command
-    ) noexcept
+        ConsoleCommand* command) noexcept
     {
         g_ConsoleDetail.Commands.Remove(command);
     }
 
     bool Console::SetValue(
         std::string_view name,
-        std::string_view value
-    ) noexcept
+        std::string_view value) noexcept
     {
         if (auto* variable = FindVariable(name); variable != nullptr)
         {
@@ -129,8 +120,7 @@ namespace Graphyte
 
     bool Console::GetValue(
         std::string& out_result,
-        std::string_view name
-    ) noexcept
+        std::string_view name) noexcept
     {
         if (auto* variable = FindVariable(name); variable != nullptr)
         {
@@ -143,8 +133,7 @@ namespace Graphyte
 
     ConsoleCommandResult Console::Execute(
         std::string_view command,
-        std::string_view params
-    ) noexcept
+        std::string_view params) noexcept
     {
         notstd::span<std::string_view> params_view{ &params, 1 };
 
@@ -153,8 +142,7 @@ namespace Graphyte
 
     ConsoleCommandResult Console::Execute(
         std::string_view command,
-        notstd::span<std::string_view> params
-    ) noexcept
+        notstd::span<std::string_view> params) noexcept
     {
         if (auto item = FindCommand(command); item != nullptr)
         {
@@ -165,8 +153,7 @@ namespace Graphyte
     }
 
     BASE_API void Console::EnumerateVariables(
-        std::vector<std::string_view>& variables
-    ) noexcept
+        std::vector<std::string_view>& variables) noexcept
     {
         variables.clear();
 
@@ -179,8 +166,7 @@ namespace Graphyte
     }
 
     BASE_API void Console::EnumerateCommands(
-        std::vector<std::string_view>& commands
-    ) noexcept
+        std::vector<std::string_view>& commands) noexcept
     {
         commands.clear();
 
@@ -193,8 +179,7 @@ namespace Graphyte
     }
 
     IConsoleVariable* Console::FindVariable(
-        std::string_view name
-    ) noexcept
+        std::string_view name) noexcept
     {
         auto& list = g_ConsoleDetail.Variables;
 
@@ -210,8 +195,7 @@ namespace Graphyte
     }
 
     IConsoleCommand* Console::FindCommand(
-        std::string_view name
-    ) noexcept
+        std::string_view name) noexcept
     {
         auto& list = g_ConsoleDetail.Commands;
 
@@ -239,11 +223,16 @@ namespace Graphyte
     {
         switch (value)
         {
-            case ConsoleCommandResult::Success:            return "Success";
-            case ConsoleCommandResult::Failed:             return "Failed";
-            case ConsoleCommandResult::InvalidArgument:    return "InvalidArgument";
-            case ConsoleCommandResult::NotEnoughArguments: return "NotEnoughArguments";
-            case ConsoleCommandResult::NotFound:           return "NotFound";
+            case ConsoleCommandResult::Success:
+                return "Success";
+            case ConsoleCommandResult::Failed:
+                return "Failed";
+            case ConsoleCommandResult::InvalidArgument:
+                return "InvalidArgument";
+            case ConsoleCommandResult::NotEnoughArguments:
+                return "NotEnoughArguments";
+            case ConsoleCommandResult::NotFound:
+                return "NotFound";
         }
 
         return {};

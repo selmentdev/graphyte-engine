@@ -22,7 +22,7 @@ namespace Graphyte
             return (this->Major | this->Minor | this->Patch | this->Build) == 0;
         }
 
-        constexpr auto operator <=> (Version const& rhs) const noexcept = default;
+        constexpr auto operator<=>(Version const& rhs) const noexcept = default;
     };
 }
 
@@ -32,7 +32,7 @@ namespace Graphyte
 // Converter specialization.
 //
 
-template<>
+template <>
 struct Graphyte::Converter<Graphyte::Version> final
 {
     BASE_API static bool ToString(std::string& result, Graphyte::Version const& value) noexcept;
@@ -45,7 +45,7 @@ struct Graphyte::Converter<Graphyte::Version> final
 // std::format specialization.
 //
 
-template<>
+template <>
 struct fmt::formatter<Graphyte::Version>
 {
     template <typename ParseContext>
@@ -61,7 +61,6 @@ struct fmt::formatter<Graphyte::Version>
             value.Major,
             value.Minor,
             value.Patch,
-            value.Build
-        );
+            value.Build);
     }
 };

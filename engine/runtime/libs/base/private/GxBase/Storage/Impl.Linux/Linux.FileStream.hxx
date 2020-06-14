@@ -28,28 +28,24 @@ namespace Graphyte::Storage
 
     public:
         virtual Status Flush() noexcept override;
-        
+
         virtual Status Read(
             notstd::span<std::byte> buffer,
-            size_t& processed
-        ) noexcept override;
-        
+            size_t& processed) noexcept override;
+
         virtual Status Write(
             notstd::span<const std::byte> buffer,
-            size_t& processed
-        ) noexcept override;
-        
+            size_t& processed) noexcept override;
+
         virtual int64_t GetSize() noexcept override;
-        
+
         virtual int64_t GetPosition() noexcept override;
-        
+
         virtual Status SetPosition(
             int64_t value,
-            SeekOrigin origin
-        ) noexcept override;
-        
+            SeekOrigin origin) noexcept override;
+
         virtual Status SetPosition(
-            int64_t value
-        ) noexcept override;
+            int64_t value) noexcept override;
     };
 }

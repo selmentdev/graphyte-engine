@@ -6,8 +6,7 @@
 namespace Graphyte::System
 {
     BASE_API Status GetDisplayMetrics(
-        DisplayMetrics& result
-    ) noexcept
+        DisplayMetrics& result) noexcept
     {
         result = {};
         return Status::NotImplemented;
@@ -20,15 +19,13 @@ namespace Graphyte::System
 
     BASE_API ColorF GetScreenPixel(
         [[maybe_unused]] Point position,
-        [[maybe_unused]] float gamma
-    ) noexcept
+        [[maybe_unused]] float gamma) noexcept
     {
         return {};
     }
 
     BASE_API Status ControlScreensaver(
-        bool enable
-    ) noexcept
+        bool enable) noexcept
     {
         (void)enable;
         return Status::Success;

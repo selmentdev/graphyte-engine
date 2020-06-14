@@ -54,7 +54,8 @@ namespace Graphyte::AssetsPipeline
         memcpy(raw, std::data(content), std::size(content));
 
         (*data) = static_cast<LPCVOID>(raw);
-        (*size) = static_cast<UINT>(content.size());;
+        (*size) = static_cast<UINT>(content.size());
+
         return S_OK;
     }
 
@@ -95,7 +96,7 @@ namespace Graphyte::AssetsPipeline
 
     D3DShaderCompilerBackend::D3DShaderCompilerBackend() noexcept
         : m_LibD3DCompiler{}
-        ,  m_D3DCompile{}
+        , m_D3DCompile{}
     {
         auto sdk_path = PlatformToolchain::GetWindowsSdkBinary();
 
@@ -128,27 +129,27 @@ namespace Graphyte::AssetsPipeline
 
         switch (input.Platform)
         {
-        case System::PlatformType::Windows:
-            break;
-        default:
-            return false;
+            case System::PlatformType::Windows:
+                break;
+            default:
+                return false;
         }
 
         switch (input.RenderAPI)
         {
-        case Graphics::GpuRenderAPI::D3D11:
-            break;
-        default:
-            return false;
+            case Graphics::GpuRenderAPI::D3D11:
+                break;
+            default:
+                return false;
         }
 
         switch (input.Profile)
         {
-        case Graphics::GpuShaderProfile::D3DSM_5_0:
-        case Graphics::GpuShaderProfile::D3DSM_5_1:
-            break;
-        default:
-            return false;
+            case Graphics::GpuShaderProfile::D3DSM_5_0:
+            case Graphics::GpuShaderProfile::D3DSM_5_1:
+                break;
+            default:
+                return false;
         }
 
         return true;
@@ -156,7 +157,7 @@ namespace Graphyte::AssetsPipeline
 
     bool D3DShaderCompilerBackend::Compile(ShaderCompilerInput& input, ShaderCompilerOutput& output) const noexcept
     {
-        auto macros = HlslShaderTraits::SanitizeMacros(input);
+        auto macros        = HlslShaderTraits::SanitizeMacros(input);
         auto shader_macros = GetMacros(macros);
 
         std::string entry_point = input.EntryName;
@@ -232,20 +233,20 @@ namespace Graphyte::AssetsPipeline
 
         switch (input.OptimizationLevel)
         {
-        case ShaderOptimizationLevel::Level0:
-            flags |= D3DCOMPILE_OPTIMIZATION_LEVEL0;
-            break;
-        case ShaderOptimizationLevel::Level1:
-            flags |= D3DCOMPILE_OPTIMIZATION_LEVEL1;
-            break;
-        case ShaderOptimizationLevel::Level2:
-            flags |= D3DCOMPILE_OPTIMIZATION_LEVEL2;
-            break;
-        default:
-        case ShaderOptimizationLevel::Level3:
-        case ShaderOptimizationLevel::Level4:
-            flags |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
-            break;
+            case ShaderOptimizationLevel::Level0:
+                flags |= D3DCOMPILE_OPTIMIZATION_LEVEL0;
+                break;
+            case ShaderOptimizationLevel::Level1:
+                flags |= D3DCOMPILE_OPTIMIZATION_LEVEL1;
+                break;
+            case ShaderOptimizationLevel::Level2:
+                flags |= D3DCOMPILE_OPTIMIZATION_LEVEL2;
+                break;
+            default:
+            case ShaderOptimizationLevel::Level3:
+            case ShaderOptimizationLevel::Level4:
+                flags |= D3DCOMPILE_OPTIMIZATION_LEVEL3;
+                break;
         }
 
         Microsoft::WRL::ComPtr<ID3DBlob> bytecode{};
@@ -264,8 +265,7 @@ namespace Graphyte::AssetsPipeline
             flags,
             0,
             bytecode.GetAddressOf(),
-            errors.GetAddressOf()
-        );
+            errors.GetAddressOf());
 
         bool is_success = SUCCEEDED(hr_compile);
 
@@ -275,8 +275,7 @@ namespace Graphyte::AssetsPipeline
         {
             output.Bytecode.assign(
                 reinterpret_cast<const std::byte*>(bytecode->GetBufferPointer()),
-                reinterpret_cast<const std::byte*>(bytecode->GetBufferPointer()) + bytecode->GetBufferSize()
-            );
+                reinterpret_cast<const std::byte*>(bytecode->GetBufferPointer()) + bytecode->GetBufferSize());
         }
 
         if (errors != nullptr && errors->GetBufferSize() != 0)

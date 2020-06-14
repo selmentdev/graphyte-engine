@@ -4,6 +4,8 @@
 
 namespace Graphyte::Graphics
 {
-    class NullGpuResourceSet : public GpuResourceSet { };
+    class NullGpuResourceSet : public GpuResourceSet
+    {
+    };
     static_assert(!std::is_polymorphic_v<NullGpuResourceSet>);
 }

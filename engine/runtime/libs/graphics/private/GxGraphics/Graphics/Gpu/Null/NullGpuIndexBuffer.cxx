@@ -7,15 +7,13 @@ namespace Graphyte::Graphics
         [[maybe_unused]] uint32_t stride,
         [[maybe_unused]] uint32_t size,
         [[maybe_unused]] GpuBufferUsage usage,
-        [[maybe_unused]] const GpuSubresourceData* subresource
-    ) noexcept
+        [[maybe_unused]] const GpuSubresourceData* subresource) noexcept
     {
         return nullptr;
     }
 
     void NullGpuDevice::DestroyIndexBuffer(
-        [[maybe_unused]] GpuIndexBufferHandle handle
-    ) noexcept
+        [[maybe_unused]] GpuIndexBufferHandle handle) noexcept
     {
         (void)handle;
     }
@@ -24,22 +22,19 @@ namespace Graphyte::Graphics
         [[maybe_unused]] GpuIndexBufferHandle handle,
         [[maybe_unused]] uint32_t offset,
         [[maybe_unused]] uint32_t size,
-        [[maybe_unused]] GpuResourceLockMode lock_mode
-    ) noexcept
+        [[maybe_unused]] GpuResourceLockMode lock_mode) noexcept
     {
         return nullptr;
     }
 
     void NullGpuDevice::UnlockIndexBuffer(
-        [[maybe_unused]] GpuIndexBufferHandle handle
-    ) noexcept
+        [[maybe_unused]] GpuIndexBufferHandle handle) noexcept
     {
     }
 
     void NullGpuDevice::CopyIndexBuffer(
         [[maybe_unused]] GpuIndexBufferHandle source,
-        [[maybe_unused]] GpuIndexBufferHandle destination
-    ) noexcept
+        [[maybe_unused]] GpuIndexBufferHandle destination) noexcept
     {
     }
 }

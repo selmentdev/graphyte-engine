@@ -8,8 +8,7 @@ namespace Graphyte::System
     BASE_API Status GetBatteryState(
         BatteryState& state,
         int& level,
-        int& lifetime
-    ) noexcept
+        int& lifetime) noexcept
     {
         Status result = Status::Success;
 

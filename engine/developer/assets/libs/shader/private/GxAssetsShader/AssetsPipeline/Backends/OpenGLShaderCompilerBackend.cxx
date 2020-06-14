@@ -16,8 +16,7 @@ namespace Graphyte::AssetsPipeline
     {
         m_Glslc = Storage::CombinePath(
             PlatformToolchain::PlatformToolchain::GetVulkanSdkBinary(),
-            "glslc"
-        );
+            "glslc");
 
         m_Glslc += System::GetExecutableExtension();
 
@@ -34,18 +33,18 @@ namespace Graphyte::AssetsPipeline
         {
             switch (input.Profile)
             {
-            case Graphics::GpuShaderProfile::ESSL_2_00:
-            case Graphics::GpuShaderProfile::ESSL_3_00:
-            case Graphics::GpuShaderProfile::ESSL_3_10:
-            case Graphics::GpuShaderProfile::ESSL_3_20:
-            case Graphics::GpuShaderProfile::ESSL_3_30:
-            case Graphics::GpuShaderProfile::GLSL_4_50:
-            case Graphics::GpuShaderProfile::GLSL_4_60:
-                break;
-            default:
-                return false;;
+                case Graphics::GpuShaderProfile::ESSL_2_00:
+                case Graphics::GpuShaderProfile::ESSL_3_00:
+                case Graphics::GpuShaderProfile::ESSL_3_10:
+                case Graphics::GpuShaderProfile::ESSL_3_20:
+                case Graphics::GpuShaderProfile::ESSL_3_30:
+                case Graphics::GpuShaderProfile::GLSL_4_50:
+                case Graphics::GpuShaderProfile::GLSL_4_60:
+                    break;
+                default:
+                    return false;
+                    ;
             }
-
         }
 
         return m_IsValid;
@@ -95,8 +94,7 @@ namespace Graphyte::AssetsPipeline
 
         auto source_temp = fmt::format("{}{:x}.tmp.shader",
             temp_directory,
-            input.GetHash()
-        );
+            input.GetHash());
 
         if (Storage::WriteText(input.Source, source_temp) != Status::Success)
         {
@@ -119,8 +117,7 @@ namespace Graphyte::AssetsPipeline
             commandline.c_str(),
             nullptr,
             &std_output,
-            &std_error
-        );
+            &std_error);
 
         if (bool success = called.StatusCode == Status::Success and called.ExitCode == 0; success)
         {
@@ -136,9 +133,8 @@ namespace Graphyte::AssetsPipeline
             {
                 output.Bytecode.assign(
                     reinterpret_cast<const std::byte*>(std::data(std_output)),
-                    reinterpret_cast<const std::byte*>(std::data(std_output)) + std::size(std_output)
-                );
-                
+                    reinterpret_cast<const std::byte*>(std::data(std_output)) + std::size(std_output));
+
                 for (auto&& line : Split(std_output, '\n'))
                 {
                     GX_LOG(LogShaderCompilerFrontend, Error, "{}\n", line);

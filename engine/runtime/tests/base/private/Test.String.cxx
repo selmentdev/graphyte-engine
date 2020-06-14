@@ -223,15 +223,13 @@ TEST_CASE("String join")
     SECTION("Initializer list")
     {
         CHECK(Graphyte::Join({ "some", "parts", "of", "path" }, "/") == "some/parts/of/path");
-        CHECK(Graphyte::Join({ }, "/") == "");
+        CHECK(Graphyte::Join({}, "/") == "");
     }
 
     SECTION("Vector")
     {
         std::vector<std::string_view> values{
-            {
-                "some", "parts", "of", "path"
-            }
+            { "some", "parts", "of", "path" }
         };
 
         CHECK(Graphyte::Join(values, "/") == "some/parts/of/path");
@@ -243,9 +241,7 @@ TEST_CASE("String join")
     SECTION("List")
     {
         std::list<std::string_view> values{
-            {
-                "some", "parts", "of", "path"
-            }
+            { "some", "parts", "of", "path" }
         };
 
         CHECK(Graphyte::Join(values, "/") == "some/parts/of/path");

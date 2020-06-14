@@ -29,10 +29,10 @@
 #define mathconst extern const __declspec(selectany)
 #elif GRAPHYTE_COMPILER_CLANG
 #define mathinline inline __attribute__((__always_inline__))
-#define mathconst constexpr const
+#define mathconst  constexpr const
 #else
 #define mathinline inline __attribute__((__artificial__, __always_inline__))
-#define mathconst constexpr const
+#define mathconst  constexpr const
 #endif
 
 
@@ -61,13 +61,13 @@ namespace Graphyte::Maths::Impl
             uint32_t U[4];
             int32_t I[4];
         };
-};
+    };
 #elif GRAPHYTE_HW_NEON
     using NativeFloat32x4 = float32x4_t;
-    using NativeUInt32x4 = uint32x4_t;
+    using NativeUInt32x4  = uint32x4_t;
 #elif GRAPHYTE_HW_AVX
     using NativeFloat32x4 = __m128;
-    using NativeUInt32x4 = __m128i;
+    using NativeUInt32x4  = __m128i;
 #else
 #error Unknown architecture
 #endif
@@ -78,7 +78,6 @@ namespace Graphyte::Maths::Impl
     static_assert(alignof(NativeUInt32x4) == 16);
     static_assert(sizeof(NativeUInt32x4) == 16);
 }
-
 
 
 // =================================================================================================
@@ -191,47 +190,81 @@ namespace Graphyte::Maths::Impl
 
 namespace Graphyte::Maths::Impl
 {
-    template <typename T> inline constexpr const T ConstE = static_cast<T>(2.71828182845904523536028747135266249775724709369996);
-    template <typename T> inline constexpr const T ConstLog2E = static_cast<T>(1.44269504088896340735992468100189213742664595415299);
-    template <typename T> inline constexpr const T ConstLog10E = static_cast<T>(0.43429448190325182765112891891660508229439700580367);
-    template <typename T> inline constexpr const T ConstLn2 = static_cast<T>(0.69314718055994530941723212145817656807550013436026);
-    template <typename T> inline constexpr const T ConstLn10 = static_cast<T>(2.30258509299404568401799145468436420760110148862877);
-    template <typename T> inline constexpr const T ConstPi = static_cast<T>(3.14159265358979323846264338327950288419716939937510);
-    template <typename T> inline constexpr const T ConstPi2 = static_cast<T>(6.28318530717958647692528676655900576839433879875021);
-    template <typename T> inline constexpr const T ConstInvPi = static_cast<T>(0.31830988618379067153776752674502872406891929148091);
-    template <typename T> inline constexpr const T ConstInvPi2 = static_cast<T>(0.15915494309189533576888376337251436203445964574045);
-    template <typename T> inline constexpr const T ConstInvSqrtPi = static_cast<T>(0.56418958354775628694807945156077258584405062932899);
-    template <typename T> inline constexpr const T ConstSqrt2 = static_cast<T>(1.41421356237309504880168872420969807856967187537695);
-    template <typename T> inline constexpr const T ConstSqrt3 = static_cast<T>(1.73205080756887729352744634150587236694280525381038);
-    template <typename T> inline constexpr const T ConstSqrt5 = static_cast<T>(2.23606797749978969640917366873127623544061835961153);
-    template <typename T> inline constexpr const T ConstInvSqrt2 = static_cast<T>(0.70710678118654752440084436210484903928483593768847);
-    template <typename T> inline constexpr const T ConstInvSqrt3 = static_cast<T>(0.57735026918962576450914878050195745564760175127013);
-    template <typename T> inline constexpr const T ConstInvSqrt5 = static_cast<T>(0.44721359549995793928183473374625524708812367192231);
-    template <typename T> inline constexpr const T ConstPhi = static_cast<T>(1.61803398874989484820458683436563811772030917980576);
-    template <typename T> inline constexpr const T ConstGamma = static_cast<T>(0.57721566490153286060651209008240243104215933593992);
-    template <typename T> inline constexpr const T ConstPiDiv2 = static_cast<T>(1.57079632679489661923132169163975144209858469968755);
-    template <typename T> inline constexpr const T ConstPiDiv3 = static_cast<T>(1.04719755119659774615421446109316762806572313312504);
-    template <typename T> inline constexpr const T ConstPiDiv4 = static_cast<T>(0.78539816339744830961566084581987572104929234984378);
-    template <typename T> inline constexpr const T ConstPiDiv6 = static_cast<T>(0.52359877559829887307710723054658381403286156656252);
-    template <typename T> inline constexpr const T ConstPiDiv8 = static_cast<T>(0.39269908169872415480783042290993786052464617492189);
+    template <typename T>
+    inline constexpr const T ConstE = static_cast<T>(2.71828182845904523536028747135266249775724709369996);
+    template <typename T>
+    inline constexpr const T ConstLog2E = static_cast<T>(1.44269504088896340735992468100189213742664595415299);
+    template <typename T>
+    inline constexpr const T ConstLog10E = static_cast<T>(0.43429448190325182765112891891660508229439700580367);
+    template <typename T>
+    inline constexpr const T ConstLn2 = static_cast<T>(0.69314718055994530941723212145817656807550013436026);
+    template <typename T>
+    inline constexpr const T ConstLn10 = static_cast<T>(2.30258509299404568401799145468436420760110148862877);
+    template <typename T>
+    inline constexpr const T ConstPi = static_cast<T>(3.14159265358979323846264338327950288419716939937510);
+    template <typename T>
+    inline constexpr const T ConstPi2 = static_cast<T>(6.28318530717958647692528676655900576839433879875021);
+    template <typename T>
+    inline constexpr const T ConstInvPi = static_cast<T>(0.31830988618379067153776752674502872406891929148091);
+    template <typename T>
+    inline constexpr const T ConstInvPi2 = static_cast<T>(0.15915494309189533576888376337251436203445964574045);
+    template <typename T>
+    inline constexpr const T ConstInvSqrtPi = static_cast<T>(0.56418958354775628694807945156077258584405062932899);
+    template <typename T>
+    inline constexpr const T ConstSqrt2 = static_cast<T>(1.41421356237309504880168872420969807856967187537695);
+    template <typename T>
+    inline constexpr const T ConstSqrt3 = static_cast<T>(1.73205080756887729352744634150587236694280525381038);
+    template <typename T>
+    inline constexpr const T ConstSqrt5 = static_cast<T>(2.23606797749978969640917366873127623544061835961153);
+    template <typename T>
+    inline constexpr const T ConstInvSqrt2 = static_cast<T>(0.70710678118654752440084436210484903928483593768847);
+    template <typename T>
+    inline constexpr const T ConstInvSqrt3 = static_cast<T>(0.57735026918962576450914878050195745564760175127013);
+    template <typename T>
+    inline constexpr const T ConstInvSqrt5 = static_cast<T>(0.44721359549995793928183473374625524708812367192231);
+    template <typename T>
+    inline constexpr const T ConstPhi = static_cast<T>(1.61803398874989484820458683436563811772030917980576);
+    template <typename T>
+    inline constexpr const T ConstGamma = static_cast<T>(0.57721566490153286060651209008240243104215933593992);
+    template <typename T>
+    inline constexpr const T ConstPiDiv2 = static_cast<T>(1.57079632679489661923132169163975144209858469968755);
+    template <typename T>
+    inline constexpr const T ConstPiDiv3 = static_cast<T>(1.04719755119659774615421446109316762806572313312504);
+    template <typename T>
+    inline constexpr const T ConstPiDiv4 = static_cast<T>(0.78539816339744830961566084581987572104929234984378);
+    template <typename T>
+    inline constexpr const T ConstPiDiv6 = static_cast<T>(0.52359877559829887307710723054658381403286156656252);
+    template <typename T>
+    inline constexpr const T ConstPiDiv8 = static_cast<T>(0.39269908169872415480783042290993786052464617492189);
 
-    template <typename T> inline constexpr const T ConstEpsilonAngular = static_cast<T>(0.001);
-    template <typename T> inline constexpr const T ConstEpsilonLow = static_cast<T>(0.0002);
-    template <typename T> inline constexpr const T ConstEpsilon = static_cast<T>(0.000035);
-    template <typename T> inline constexpr const T ConstEpsilonHigh = static_cast<T>(0.0000005);
+    template <typename T>
+    inline constexpr const T ConstEpsilonAngular = static_cast<T>(0.001);
+    template <typename T>
+    inline constexpr const T ConstEpsilonLow = static_cast<T>(0.0002);
+    template <typename T>
+    inline constexpr const T ConstEpsilon = static_cast<T>(0.000035);
+    template <typename T>
+    inline constexpr const T ConstEpsilonHigh = static_cast<T>(0.0000005);
 
-    inline constexpr const uint32_t SELECT_0 = 0x00000000u;
-    inline constexpr const uint32_t SELECT_1 = 0xFFFFFFFFu;
+    inline constexpr const uint32_t SELECT_0      = 0x00000000u;
+    inline constexpr const uint32_t SELECT_1      = 0xFFFFFFFFu;
     inline constexpr const size_t CACHE_LINE_SIZE = 64;
 
-    template <typename T> inline constexpr const T RoundingError = Graphyte::InvalidType<T>{};
+    template <typename T>
+    inline constexpr const T RoundingError = Graphyte::InvalidType<T>{};
 
-    template <> inline constexpr const int32_t RoundingError<int32_t> = 0;
-    template <> inline constexpr const int64_t RoundingError<int64_t> = 0;
-    template <> inline constexpr const uint32_t RoundingError<uint32_t> = 0;
-    template <> inline constexpr const uint64_t RoundingError<uint64_t> = 0;
-    template <> inline constexpr const float RoundingError<float> = 0.000001f;
-    template <> inline constexpr const double RoundingError<double> = 0.00000001;
+    template <>
+    inline constexpr const int32_t RoundingError<int32_t> = 0;
+    template <>
+    inline constexpr const int64_t RoundingError<int64_t> = 0;
+    template <>
+    inline constexpr const uint32_t RoundingError<uint32_t> = 0;
+    template <>
+    inline constexpr const uint64_t RoundingError<uint64_t> = 0;
+    template <>
+    inline constexpr const float RoundingError<float> = 0.000001f;
+    template <>
+    inline constexpr const double RoundingError<double> = 0.00000001;
 }
 
 #if false
@@ -270,6 +303,7 @@ namespace Graphyte::Maths::Impl
 
 namespace Graphyte::Maths::Impl
 {
+    // clang-format off
     mathconst ConstFloat32x4 VEC4_POSITIVE_UNIT_X = { { { 1.0f, 0.0f, 0.0f, 0.0f, } } };
     mathconst ConstFloat32x4 VEC4_POSITIVE_UNIT_Y = { { { 0.0f, 1.0f, 0.0f, 0.0f, } } };
     mathconst ConstFloat32x4 VEC4_POSITIVE_UNIT_Z = { { { 0.0f, 0.0f, 1.0f, 0.0f, } } };
@@ -414,6 +448,7 @@ namespace Graphyte::Maths::Impl
     mathconst ConstFloat32x4 VEC4_SHORT_MIN = { { { -32767.0f, -32767.0f, -32767.0f, -32767.0f, } } };
     mathconst ConstFloat32x4 VEC4_SHORT_MAX = { { { 32767.0f, 32767.0f, 32767.0f, 32767.0f, } } };
     mathconst ConstFloat32x4 VEC4_USHORT_MAX = { { { 65535.0f, 65535.0f, 65535.0f, 65535.0f, } } };
+    // clang-format on
 }
 
 
@@ -432,135 +467,179 @@ namespace Graphyte::Maths::Impl
 
 namespace Graphyte::Maths
 {
-    template <typename R> R E() noexcept = delete;
-    template <typename R> R Log2E() noexcept = delete;
-    template <typename R> R Log10E() noexcept = delete;
-    template <typename R> R Ln2() noexcept = delete;
-    template <typename R> R Ln10() noexcept = delete;
-    template <typename R> R Pi() noexcept = delete;
-    template <typename R> R Pi2() noexcept = delete;
-    template <typename R> R InvPi() noexcept = delete;
-    template <typename R> R InvSqrtPi() noexcept = delete;
-    template <typename R> R Sqrt2() noexcept = delete;
-    template <typename R> R Sqrt3() noexcept = delete;
-    template <typename R> R Sqrt5() noexcept = delete;
-    template <typename R> R InvSqrt2() noexcept = delete;
-    template <typename R> R InvSqrt3() noexcept = delete;
-    template <typename R> R InvSqrt5() noexcept = delete;
-    template <typename R> R Phi() noexcept = delete;
-    template <typename R> R Gamma() noexcept = delete;
-    template <typename R> R PiDiv2() noexcept = delete;
-    template <typename R> R PiDiv3() noexcept = delete;
-    template <typename R> R PiDiv4() noexcept = delete;
-    template <typename R> R PiDiv6() noexcept = delete;
-    template <typename R> R PiDiv8() noexcept = delete;
+    template <typename R>
+    R E() noexcept = delete;
+    template <typename R>
+    R Log2E() noexcept = delete;
+    template <typename R>
+    R Log10E() noexcept = delete;
+    template <typename R>
+    R Ln2() noexcept = delete;
+    template <typename R>
+    R Ln10() noexcept = delete;
+    template <typename R>
+    R Pi() noexcept = delete;
+    template <typename R>
+    R Pi2() noexcept = delete;
+    template <typename R>
+    R InvPi() noexcept = delete;
+    template <typename R>
+    R InvSqrtPi() noexcept = delete;
+    template <typename R>
+    R Sqrt2() noexcept = delete;
+    template <typename R>
+    R Sqrt3() noexcept = delete;
+    template <typename R>
+    R Sqrt5() noexcept = delete;
+    template <typename R>
+    R InvSqrt2() noexcept = delete;
+    template <typename R>
+    R InvSqrt3() noexcept = delete;
+    template <typename R>
+    R InvSqrt5() noexcept = delete;
+    template <typename R>
+    R Phi() noexcept = delete;
+    template <typename R>
+    R Gamma() noexcept = delete;
+    template <typename R>
+    R PiDiv2() noexcept = delete;
+    template <typename R>
+    R PiDiv3() noexcept = delete;
+    template <typename R>
+    R PiDiv4() noexcept = delete;
+    template <typename R>
+    R PiDiv6() noexcept = delete;
+    template <typename R>
+    R PiDiv8() noexcept = delete;
 
     // Scalar float constants
-    template <> mathinline float mathcall E<float>() noexcept
+    template <>
+    mathinline float mathcall E<float>() noexcept
     {
         return Impl::ConstE<float>;
     }
 
-    template <> mathinline float mathcall Log2E<float>() noexcept
+    template <>
+    mathinline float mathcall Log2E<float>() noexcept
     {
         return Impl::ConstLog2E<float>;
     }
 
-    template <> mathinline float mathcall Log10E<float>() noexcept
+    template <>
+    mathinline float mathcall Log10E<float>() noexcept
     {
         return Impl::ConstLog10E<float>;
     }
 
-    template <> mathinline float mathcall Ln2<float>() noexcept
+    template <>
+    mathinline float mathcall Ln2<float>() noexcept
     {
         return Impl::ConstLn2<float>;
     }
 
-    template <> mathinline float mathcall Ln10<float>() noexcept
+    template <>
+    mathinline float mathcall Ln10<float>() noexcept
     {
         return Impl::ConstLn10<float>;
     }
 
-    template <> mathinline float mathcall Pi<float>() noexcept
+    template <>
+    mathinline float mathcall Pi<float>() noexcept
     {
         return Impl::ConstPi<float>;
     }
 
-    template <> mathinline float mathcall Pi2<float>() noexcept
+    template <>
+    mathinline float mathcall Pi2<float>() noexcept
     {
         return Impl::ConstPi2<float>;
     }
 
-    template <> mathinline float mathcall InvPi<float>() noexcept
+    template <>
+    mathinline float mathcall InvPi<float>() noexcept
     {
         return Impl::ConstInvPi<float>;
     }
 
-    template <> mathinline float mathcall InvSqrtPi<float>() noexcept
+    template <>
+    mathinline float mathcall InvSqrtPi<float>() noexcept
     {
         return Impl::ConstInvSqrtPi<float>;
     }
 
-    template <> mathinline float mathcall Sqrt2<float>() noexcept
+    template <>
+    mathinline float mathcall Sqrt2<float>() noexcept
     {
         return Impl::ConstSqrt2<float>;
     }
 
-    template <> mathinline float mathcall Sqrt3<float>() noexcept
+    template <>
+    mathinline float mathcall Sqrt3<float>() noexcept
     {
         return Impl::ConstSqrt3<float>;
     }
 
-    template <> mathinline float mathcall Sqrt5<float>() noexcept
+    template <>
+    mathinline float mathcall Sqrt5<float>() noexcept
     {
         return Impl::ConstSqrt5<float>;
     }
 
-    template <> mathinline float mathcall InvSqrt2<float>() noexcept
+    template <>
+    mathinline float mathcall InvSqrt2<float>() noexcept
     {
         return Impl::ConstInvSqrt2<float>;
     }
 
-    template <> mathinline float mathcall InvSqrt3<float>() noexcept
+    template <>
+    mathinline float mathcall InvSqrt3<float>() noexcept
     {
         return Impl::ConstInvSqrt3<float>;
     }
 
-    template <> mathinline float mathcall InvSqrt5<float>() noexcept
+    template <>
+    mathinline float mathcall InvSqrt5<float>() noexcept
     {
         return Impl::ConstInvSqrt5<float>;
     }
 
-    template <> mathinline float mathcall Phi<float>() noexcept
+    template <>
+    mathinline float mathcall Phi<float>() noexcept
     {
         return Impl::ConstPhi<float>;
     }
 
-    template <> mathinline float mathcall Gamma<float>() noexcept
+    template <>
+    mathinline float mathcall Gamma<float>() noexcept
     {
         return Impl::ConstGamma<float>;
     }
 
-    template <> mathinline float mathcall PiDiv2<float>() noexcept
+    template <>
+    mathinline float mathcall PiDiv2<float>() noexcept
     {
         return Impl::ConstPiDiv2<float>;
     }
 
-    template <> mathinline float mathcall PiDiv3<float>() noexcept
+    template <>
+    mathinline float mathcall PiDiv3<float>() noexcept
     {
         return Impl::ConstPiDiv3<float>;
     }
 
-    template <> mathinline float mathcall PiDiv4<float>() noexcept
+    template <>
+    mathinline float mathcall PiDiv4<float>() noexcept
     {
         return Impl::ConstPiDiv4<float>;
     }
 
-    template <> mathinline float mathcall PiDiv6<float>() noexcept
+    template <>
+    mathinline float mathcall PiDiv6<float>() noexcept
     {
         return Impl::ConstPiDiv6<float>;
     }
-    template <> mathinline float mathcall PiDiv8<float>() noexcept
+    template <>
+    mathinline float mathcall PiDiv8<float>() noexcept
     {
         return Impl::ConstPiDiv8<float>;
     }

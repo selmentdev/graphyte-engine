@@ -8,9 +8,9 @@ TEST_CASE("Pixel format tests")
 
     SECTION("Getting surface information")
     {
-        size_t bytes = 0;
+        size_t bytes     = 0;
         size_t row_bytes = 0;
-        size_t rows = 0;
+        size_t rows      = 0;
 
         PixelFormatProperties::GetSurfaceInfo(PixelFormat::R8G8B8A8_UNORM, 128, 128, bytes, row_bytes, rows);
         CHECK(bytes == (128 * 128 * 4));
@@ -77,7 +77,7 @@ TEST_CASE("Pixel format tests")
     {
         SECTION("Regular R8_G8_B8_A8")
         {
-            auto const format = PixelFormat::R8G8B8A8_UNORM;
+            auto const format    = PixelFormat::R8G8B8A8_UNORM;
             auto const dimension = 64;
             CHECK(PixelFormatProperties::GetImageWidth(dimension, 0, format) == 64);
             CHECK(PixelFormatProperties::GetImageWidth(dimension, 1, format) == 32);
@@ -112,7 +112,7 @@ TEST_CASE("Pixel format tests")
 
         SECTION("Regular R8_G8_B8_A8 - non-power-of-2")
         {
-            auto const format = PixelFormat::R8G8B8A8_UNORM;
+            auto const format    = PixelFormat::R8G8B8A8_UNORM;
             auto const dimension = 96;
             CHECK(PixelFormatProperties::GetImageWidth(dimension, 0, format) == 96);
             CHECK(PixelFormatProperties::GetImageWidth(dimension, 1, format) == 48);
@@ -147,7 +147,7 @@ TEST_CASE("Pixel format tests")
 
         SECTION("Compressed BC1")
         {
-            auto const format = PixelFormat::BC1_UNORM;
+            auto const format    = PixelFormat::BC1_UNORM;
             auto const dimension = 64;
             CHECK(PixelFormatProperties::GetImageWidth(dimension, 0, format) == 64);
             CHECK(PixelFormatProperties::GetImageWidth(dimension, 1, format) == 32);
@@ -182,7 +182,7 @@ TEST_CASE("Pixel format tests")
 
         SECTION("Compressed BC1 - non-power-of-2")
         {
-            auto const format = PixelFormat::BC1_UNORM;
+            auto const format    = PixelFormat::BC1_UNORM;
             auto const dimension = 96;
             CHECK(PixelFormatProperties::GetImageWidth(dimension, 0, format) == 96);
             CHECK(PixelFormatProperties::GetImageWidth(dimension, 1, format) == 48);
@@ -218,16 +218,15 @@ TEST_CASE("Pixel format tests")
 
     SECTION("Estimating size of DDS images")
     {
-        constexpr const size_t dds_signature_size = 4;
-        constexpr const size_t dds_header_size = 124;
+        constexpr const size_t dds_signature_size    = 4;
+        constexpr const size_t dds_header_size       = 124;
         constexpr const size_t dds_dxt10_header_size = 20;
 
         constexpr const size_t dds_standard_size = dds_signature_size + dds_header_size;
         constexpr const size_t dds_extended_size = dds_signature_size + dds_header_size + dds_dxt10_header_size;
 
 
-        auto estimate_dds_pixel_buffer_size = [](uint32_t width, uint32_t height, uint32_t depth, uint32_t mips, uint32_t array_size, PixelFormat format) noexcept -> size_t
-        {
+        auto estimate_dds_pixel_buffer_size = [](uint32_t width, uint32_t height, uint32_t depth, uint32_t mips, uint32_t array_size, PixelFormat format) noexcept -> size_t {
             size_t size = 0;
 
             for (uint32_t array_index = 0; array_index < array_size; ++array_index)
@@ -333,7 +332,7 @@ TEST_CASE("Pixel format tests")
         //    pixel size = 36 (KB)
         CHECK(estimate_dds_pixel_buffer_size(64, 64, 18, 1, 1, PixelFormat::BC1_UNORM) == (37012 - dds_extended_size));
 
-        
+
         // ASCII.dds
         //         width = 16
         //        height = 16

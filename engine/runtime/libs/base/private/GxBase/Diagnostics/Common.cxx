@@ -8,16 +8,16 @@
 #include "Diagnostics.Impl.hxx"
 
 #if GRAPHYTE_PLATFORM_POSIX
-#   include <syslog.h>
+#include <syslog.h>
 #endif
 
 #if GRAPHYTE_PLATFORM_LINUX
-#   include <sys/types.h>
-#   include <signal.h>
+#include <sys/types.h>
+#include <signal.h>
 #endif
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
-#   include <io.h>
+#include <io.h>
 #endif
 
 #if (GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP) && GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
@@ -80,7 +80,6 @@ namespace Graphyte::Diagnostics
         //
 
         Impl::GLogOutputDebugger = Diagnostics::IsDebuggerAttached();
-
 
 
         //
@@ -199,8 +198,7 @@ namespace Graphyte::Diagnostics
                     Impl::GLogOutputFile,
                     log_path,
                     false,
-                    true
-                );
+                    true);
 
                 GX_ABORT_UNLESS(status == Status::Success, "Failed to initialize output log {}", log_path);
             }
@@ -281,14 +279,13 @@ namespace Graphyte::Diagnostics
         return false;
 
 #else
-    // https://developer.apple.com/library/archive/qa/qa1361/_index.html
-#   error "Unimplemented"
+        // https://developer.apple.com/library/archive/qa/qa1361/_index.html
+#error "Unimplemented"
 
 #endif
     }
 
-    [[noreturn]]
-    BASE_API void Exit(int32_t exitCode) noexcept
+    [[noreturn]] BASE_API void Exit(int32_t exitCode) noexcept
     {
         //
         // Exiting from application in unusual but expected way.
@@ -312,12 +309,11 @@ namespace Graphyte::Diagnostics
         exit(exitCode);
 
 #else
-#   error "Not implemented"
+#error "Not implemented"
 #endif
     }
 
-    [[noreturn]]
-    BASE_API void FailFast() noexcept
+    [[noreturn]] BASE_API void FailFast() noexcept
     {
         //
         // Exiting from application due to fast-fail is unexpected.
@@ -357,7 +353,7 @@ namespace Graphyte::Diagnostics
         }
 
 #else
-#   error "Not implemented"
+#error "Not implemented"
 #endif
     }
 
@@ -367,8 +363,7 @@ namespace Graphyte::Diagnostics
     }
 
     BASE_API void SetErrorReporting(
-        ErrorReporting value
-    ) noexcept
+        ErrorReporting value) noexcept
     {
         Impl::GErrorReporting = value;
     }

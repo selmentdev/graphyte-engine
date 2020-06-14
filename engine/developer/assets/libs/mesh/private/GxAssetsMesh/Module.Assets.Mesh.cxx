@@ -12,8 +12,7 @@ namespace Graphyte::AssetsPipeline
 
         virtual void OnInitialize() noexcept override
         {
-            AssetProcessorFactory::Get().Register("compile-mesh", []() -> std::unique_ptr<IAssetProcessor>
-            {
+            AssetProcessorFactory::Get().Register("compile-mesh", []() -> std::unique_ptr<IAssetProcessor> {
                 return std::make_unique<MeshProcessor>();
             });
         }

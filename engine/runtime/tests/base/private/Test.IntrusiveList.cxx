@@ -25,7 +25,7 @@ TEST_CASE("Intrusive lists")
 
     for (uint64_t i = 1; i <= 100; ++i)
     {
-        auto* item = new Item();
+        auto* item  = new Item();
         item->Index = i;
 
         expectedGlobalCount += i;

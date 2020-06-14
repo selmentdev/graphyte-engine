@@ -46,7 +46,7 @@ namespace Graphyte::System
         if (result.empty())
         {
             FILE* file = popen("xdg-user-dir DOCUMENTS", "r");
-            
+
             if (file != nullptr)
             {
                 std::array<char, PATH_MAX> path{};
@@ -117,7 +117,9 @@ namespace Graphyte::System
 
     BASE_API std::string GetUserDomain() noexcept
     {
-        struct utsname name {};
+        // clang-format off
+        struct utsname name{};
+        // clang-format on
 
         std::string result{};
 
@@ -161,6 +163,7 @@ namespace Graphyte::System
         else
         {
             uid_t uid = geteuid();
+
             struct passwd* pw = getpwuid(uid);
 
             if (pw != nullptr)
@@ -175,10 +178,13 @@ namespace Graphyte::System
     BASE_API std::string GetSystemVersion() noexcept
     {
         // TODO: add parsing `/etc/lsb-release` if available
-        
+
         std::string result{};
 
-        struct utsname utsname {};
+        // clang-format off
+        struct utsname utsname{};
+        // clang-format on
+
         if (uname(&utsname) != -1)
         {
             result = fmt::format("{}-{}-{}", utsname.sysname, utsname.release, utsname.version);

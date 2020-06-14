@@ -13,18 +13,17 @@ namespace Graphyte::Maths::Impl
         size_t x,
         size_t y,
         size_t z,
-        size_t w
-    ) noexcept
+        size_t w) noexcept
     {
-        static uint32_t const indices[8] {
-                0x03020100u, // XA
-                0x07060504u, // YA
-                0x0B0A0908u, // ZA
-                0x0F0E0D0Cu, // WA
-                0x13121110u, // XB
-                0x17161514u, // YB
-                0x1B1A1918u, // ZB
-                0x1F1E1D1Cu, // WB
+        static uint32_t const indices[8]{
+            0x03020100u, // XA
+            0x07060504u, // YA
+            0x0B0A0908u, // ZA
+            0x0F0E0D0Cu, // WA
+            0x13121110u, // XB
+            0x17161514u, // YB
+            0x1B1A1918u, // ZB
+            0x1F1E1D1Cu, // WB
         };
 
         uint8x8x4_t lookup;
@@ -34,20 +33,17 @@ namespace Graphyte::Maths::Impl
         lookup.val[3] = vreinterpretq_u8_f32(vget_high_f32(b));
 
         uint32x2_t const index_lo = vcreate_u32(
-            static_cast<uint64_t>(indices[x]) | (static_cast<uint64_t>(indices[y]) << 32)
-        );
+            static_cast<uint64_t>(indices[x]) | (static_cast<uint64_t>(indices[y]) << 32));
 
         uint32x2_t const index_hi = vcreate_u32(
-            static_cast<uint64_t>(indices[z]) | (static_cast<uint64_t>(indices[w]) << 32)
-        );
+            static_cast<uint64_t>(indices[z]) | (static_cast<uint64_t>(indices[w]) << 32));
 
         uint8x8_t const result_lo = vtbl4_u8(lookup, vreinterpret_u8_u32(index_lo));
         uint8x8_t const result_hi = vtbl4_u8(lookup, vreinterpret_u8_u32(index_hi));
 
         float32x4_t const result = vcombine_f32(
             vreinterpret_f32_u8(result_lo),
-            vreinterpret_f32_u8(result_hi)
-        );
+            vreinterpret_f32_u8(result_hi));
 
         return result;
     }
@@ -267,10 +263,9 @@ namespace Graphyte::Maths::Impl
         size_t x,
         size_t y,
         size_t z,
-        size_t w
-    ) noexcept
+        size_t w) noexcept
     {
-        static uint32_t const indices[4] {
+        static uint32_t const indices[4]{
             0x03020100, // X
             0x07060504, // Y
             0x0B0A0908, // Z
@@ -322,19 +317,23 @@ namespace Graphyte::Maths::Impl
         }
         else if constexpr (X == 0 and Y == 1 and Z == 0 and W == 1)
         {
-            float32x2_t vt = vget_low_f32(v); return vcombine_f32(vt, vt);
+            float32x2_t vt = vget_low_f32(v);
+            return vcombine_f32(vt, vt);
         }
         else if constexpr (X == 2 and Y == 3 and Z == 2 and W == 3)
         {
-            float32x2_t vt = vget_high_f32(v); return vcombine_f32(vt, vt);
+            float32x2_t vt = vget_high_f32(v);
+            return vcombine_f32(vt, vt);
         }
         else if constexpr (X == 1 and Y == 0 and Z == 1 and W == 0)
         {
-            float32x2_t vt = vrev64_f32(vget_low_f32(v)); return vcombine_f32(vt, vt);
+            float32x2_t vt = vrev64_f32(vget_low_f32(v));
+            return vcombine_f32(vt, vt);
         }
         else if constexpr (X == 3 and Y == 2 and Z == 3 and W == 2)
         {
-            float32x2_t vt = vrev64_f32(vget_high_f32(v)); return vcombine_f32(vt, vt);
+            float32x2_t vt = vrev64_f32(vget_high_f32(v));
+            return vcombine_f32(vt, vt);
         }
         else if constexpr (X == 0 and Y == 1 and Z == 3 and W == 2)
         {
@@ -405,8 +404,7 @@ namespace Graphyte::Maths::Impl
     mathinline float32x4_t mathcall neon_fmadd_f32x4(
         float32x4_t a,
         float32x4_t b,
-        float32x4_t c
-    ) noexcept
+        float32x4_t c) noexcept
     {
         return vfmaq_f32(c, a, b);
     }
@@ -415,8 +413,7 @@ namespace Graphyte::Maths::Impl
     mathinline float32x4_t mathcall neon_fmsub_f32x4(
         float32x4_t a,
         float32x4_t b,
-        float32x4_t c
-    ) noexcept
+        float32x4_t c) noexcept
     {
         float32x4_t const ab = vmulq_f32(a, b);
         return vsubq_f32(ab, c);
@@ -426,8 +423,7 @@ namespace Graphyte::Maths::Impl
     mathinline float32x4_t mathcall neon_fnmadd_f32x4(
         float32x4_t a,
         float32x4_t b,
-        float32x4_t c
-    ) noexcept
+        float32x4_t c) noexcept
     {
         return vfmsq_f32(c, a, b);
     }
@@ -436,8 +432,7 @@ namespace Graphyte::Maths::Impl
     mathinline float32x4_t mathcall neon_fnmsub_f32x4(
         float32x4_t a,
         float32x4_t b,
-        float32x4_t c
-    ) noexcept
+        float32x4_t c) noexcept
     {
         float32x4_t const ab = vmulq_f32(a, b);
         return vsubq_f32(vnegq_f32(ab), c);

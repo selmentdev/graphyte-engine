@@ -250,7 +250,7 @@ TEST_CASE("DateTime")
 
         TimeSpan dts1 = ts1 + ts2;
         TimeSpan dts2 = ts2 + ts3;
-        TimeSpan tts = ts1 + ts2 + ts3;
+        TimeSpan tts  = ts1 + ts2 + ts3;
 
         std::string as_string{};
         CHECK(ToString(as_string, ts1));

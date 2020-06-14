@@ -6,14 +6,14 @@
 
 namespace Graphyte::Graphics
 {
-    GRAPHICS_API Storage::Archive& operator << (Storage::Archive& archive, ShaderBytecode& bytecode) noexcept
+    GRAPHICS_API Storage::Archive& operator<<(Storage::Archive& archive, ShaderBytecode& bytecode) noexcept
     {
         constexpr const Compression::CompressionMethod CompressUsing = Compression::CompressionMethod::LZ4HC;
 
         Storage::BinaryFormatHeader header{
             .Signature = Storage::BinarySignature{ 0xb084f8149e928dd6 },
-            .Version = Storage::BinaryFormatVersion{ 0, 0 },
-            .Encoding = ByteEncoding::LittleEndian,
+            .Version   = Storage::BinaryFormatVersion{ 0, 0 },
+            .Encoding  = ByteEncoding::LittleEndian,
         };
 
         archive << header;
@@ -53,8 +53,7 @@ namespace Graphyte::Graphics
             [[maybe_unused]] bool result = Compression::DecompressBlock(
                 CompressUsing,
                 bytecode.Bytecode,
-                data
-            );
+                data);
 
             GX_ASSERT(result);
 
@@ -75,8 +74,7 @@ namespace Graphyte::Graphics
             [[maybe_unused]] bool result = Compression::CompressBlock(
                 CompressUsing,
                 data,
-                bytecode.Bytecode
-            );
+                bytecode.Bytecode);
 
             GX_ASSERT(result);
 

@@ -7,7 +7,7 @@ namespace Graphyte::Hash
     {
         using hash_type = uint32_t;
 
-        static constexpr const hash_type Prime = 0x01000193;
+        static constexpr const hash_type Prime   = 0x01000193;
         static constexpr const hash_type Initial = 0x811C9DC5;
 
         static constexpr hash_type FromString(const char* s, hash_type initial) noexcept
@@ -17,6 +17,7 @@ namespace Graphyte::Hash
             while (*s != '\0')
             {
                 hash_type value = static_cast<uint8_t>(*s++);
+
                 result = result ^ value;
                 result *= Prime;
             }
@@ -35,6 +36,7 @@ namespace Graphyte::Hash
             for (size_t i = 0; i < size; ++i)
             {
                 hash_type value = static_cast<uint8_t>(buffer[i]);
+
                 result = result ^ value;
                 result *= Prime;
             }
@@ -51,7 +53,7 @@ namespace Graphyte::Hash
     {
         using hash_type = uint64_t;
 
-        static constexpr const hash_type Prime = 0x00000100000001B3;
+        static constexpr const hash_type Prime   = 0x00000100000001B3;
         static constexpr const hash_type Initial = 0xCBF29CE484222325;
 
         static constexpr hash_type FromString(const char* s, hash_type initial) noexcept
@@ -61,6 +63,7 @@ namespace Graphyte::Hash
             while (*s != '\0')
             {
                 hash_type value = static_cast<uint8_t>(*s++);
+
                 result = result ^ value;
                 result *= Prime;
             }
@@ -79,6 +82,7 @@ namespace Graphyte::Hash
             for (size_t i = 0; i < size; ++i)
             {
                 hash_type value = static_cast<uint8_t>(buffer[i]);
+
                 result = result ^ value;
                 result *= Prime;
             }

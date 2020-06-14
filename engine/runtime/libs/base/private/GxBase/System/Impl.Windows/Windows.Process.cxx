@@ -22,8 +22,7 @@ namespace Graphyte::System
         ProcessId* id,
         PipeHandle* pipe_stdin,
         PipeHandle* pipe_stdout,
-        PipeHandle* pipe_stderr
-    ) noexcept
+        PipeHandle* pipe_stderr) noexcept
     {
         SECURITY_ATTRIBUTES security_attributes{
             .nLength              = sizeof(SECURITY_ATTRIBUTES),
@@ -38,7 +37,7 @@ namespace Graphyte::System
             dw_create_flags |= DETACHED_PROCESS;
         }
 
-        DWORD dw_flags = 0;
+        DWORD dw_flags           = 0;
         WORD w_show_window_flags = SW_HIDE;
 
         if (Flags::Has(flags, CreateProcessFlags::Hidden))
@@ -47,7 +46,7 @@ namespace Graphyte::System
         }
         else if (Flags::Has(flags, CreateProcessFlags::Minimized))
         {
-            dw_flags = STARTF_USESHOWWINDOW;
+            dw_flags            = STARTF_USESHOWWINDOW;
             w_show_window_flags = SW_SHOWMINNOACTIVE;
         }
 
@@ -58,7 +57,7 @@ namespace Graphyte::System
         if (pipe_stdin != nullptr && pipe_stdout != nullptr && pipe_stderr != nullptr)
         {
             dw_flags |= STARTF_USESTDHANDLES;
-            native_stdin_pipe = pipe_stdin->Handle;
+            native_stdin_pipe  = pipe_stdin->Handle;
             native_stdout_pipe = pipe_stdout->Handle;
             native_stderr_pipe = pipe_stderr->Handle;
         }
@@ -96,8 +95,7 @@ namespace Graphyte::System
             nullptr,
             working_directory != nullptr ? System::Impl::WidenString(working_directory).data() : nullptr,
             &startup_info,
-            &process_information
-        );
+            &process_information);
 
         if (created == FALSE)
         {
@@ -122,8 +120,7 @@ namespace Graphyte::System
     }
 
     void Process::Close(
-        ProcessHandle& handle
-    ) noexcept
+        ProcessHandle& handle) noexcept
     {
         if (handle.Handle != nullptr)
         {
@@ -134,8 +131,7 @@ namespace Graphyte::System
 
     bool Process::IsRunning(
         ProcessHandle& handle,
-        int32_t& exit_code
-    ) noexcept
+        int32_t& exit_code) noexcept
     {
         DWORD result = WaitForSingleObject(handle.Handle, 0);
 
@@ -152,15 +148,14 @@ namespace Graphyte::System
             }
         }
 
-        exit_code = 0;
+        exit_code    = 0;
         bool running = (result == WAIT_TIMEOUT);
         return running;
     }
 
     bool Process::Wait(
         ProcessHandle& handle,
-        int32_t& exit_code
-    ) noexcept
+        int32_t& exit_code) noexcept
     {
         DWORD result = WaitForSingleObject(handle.Handle, INFINITE);
 
@@ -184,8 +179,7 @@ namespace Graphyte::System
 
     void Process::Terminate(
         ProcessHandle& handle,
-        bool tree
-    ) noexcept
+        bool tree) noexcept
     {
         if (tree)
         {
@@ -228,8 +222,7 @@ namespace Graphyte::System
         const char* params,
         const char* working_directory,
         std::string* out_stdout,
-        std::string* out_stderr
-    ) noexcept
+        std::string* out_stderr) noexcept
     {
         SECURITY_ATTRIBUTES security_attributes{
             .nLength              = sizeof(SECURITY_ATTRIBUTES),
@@ -239,7 +232,7 @@ namespace Graphyte::System
 
         DWORD dw_create_flags = NORMAL_PRIORITY_CLASS | DETACHED_PROCESS;
 
-        DWORD dw_flags = STARTF_USESHOWWINDOW;
+        DWORD dw_flags           = STARTF_USESHOWWINDOW;
         WORD w_show_window_flags = SW_SHOWMINNOACTIVE;
 
         std::array<PipeHandle, 2> pipe_read{};
@@ -284,24 +277,21 @@ namespace Graphyte::System
         PROCESS_INFORMATION process_information{};
 
         if (CreateProcessW(
-            path != nullptr ? System::Impl::WidenString(path).data() : nullptr,
-            params != nullptr ? System::Impl::WidenString(params).data() : nullptr,
-            &security_attributes,
-            &security_attributes,
-            TRUE,
-            dw_create_flags,
-            nullptr,
-            working_directory != nullptr ? System::Impl::WidenString(working_directory).data() : nullptr,
-            &startup_info,
-            &process_information
-        ))
+                path != nullptr ? System::Impl::WidenString(path).data() : nullptr,
+                params != nullptr ? System::Impl::WidenString(params).data() : nullptr,
+                &security_attributes,
+                &security_attributes,
+                TRUE,
+                dw_create_flags,
+                nullptr,
+                working_directory != nullptr ? System::Impl::WidenString(working_directory).data() : nullptr,
+                &startup_info,
+                &process_information))
         {
             if (redirect_output)
             {
-                std::array<std::string*, 2> outputs{ {
-                    out_stdout,
-                    out_stderr
-                } };
+                std::array<std::string*, 2> outputs{ { out_stdout,
+                    out_stderr } };
 
                 ProcessHandle handle{ process_information.hProcess };
 
@@ -328,7 +318,7 @@ namespace Graphyte::System
             CloseHandle(process_information.hThread);
 
             result.StatusCode = Status::Success;
-            result.ExitCode = static_cast<int32_t>(dw_exit_code);
+            result.ExitCode   = static_cast<int32_t>(dw_exit_code);
         }
         else
         {
@@ -341,7 +331,7 @@ namespace Graphyte::System
                 }
             }
 
-            result.ExitCode = 0;
+            result.ExitCode   = 0;
             result.StatusCode = Diagnostics::GetStatusFromSystemError();
         }
 
@@ -358,7 +348,7 @@ namespace Graphyte::System
 
     DateTime Process::GetLinkTime() noexcept
     {
-        HMODULE handle = GetModuleHandleW(nullptr);
+        HMODULE handle           = GetModuleHandleW(nullptr);
         IMAGE_NT_HEADERS* header = ImageNtHeader(handle);
 
         GX_ASSERT(header != nullptr);

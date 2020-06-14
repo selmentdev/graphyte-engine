@@ -25,14 +25,13 @@ namespace Graphyte::Network::Impl
         void* content,
         size_t size,
         size_t count,
-        void* context
-    )
+        void* context)
     {
         GX_ASSERT(context != nullptr);
 
         auto* buffer = reinterpret_cast<std::vector<std::byte>*>(context);
 
-        size_t content_size = size * count;
+        size_t content_size      = size * count;
         std::byte* content_typed = reinterpret_cast<std::byte*>(content);
 
         std::copy_n(content_typed, content_size, std::back_inserter(*buffer));
@@ -56,21 +55,19 @@ namespace Graphyte::Network
             nullptr,
             CLSCTX_ALL,
             IID_INetworkListManager,
-            reinterpret_cast<LPVOID*>(Impl::Windows::GNetworkListManager.GetAddressOf())
-        );
+            reinterpret_cast<LPVOID*>(Impl::Windows::GNetworkListManager.GetAddressOf()));
 
         GX_ABORT_UNLESS(SUCCEEDED(hr),
             "Failed to initialize network subsystem: ({:08x}, {})",
             hr,
-            Diagnostics::GetMessageFromHRESULT(hr)
-        );
+            Diagnostics::GetMessageFromHRESULT(hr));
 
         GX_ASSERT(Impl::Windows::GNetworkListManager != nullptr);
 
 #elif GRAPHYTE_PLATFORM_UWP
 #elif GRAPHYTE_PLATFORM_LINUX
 #else
-#   error Not supported
+#error Not supported
 #endif
 
 #if GRAPHYTE_SDKS_WITH_CURL
@@ -95,8 +92,7 @@ namespace Graphyte::Network
     }
 
     BASE_API Status HasInternetConnection(
-        bool& status
-    ) noexcept
+        bool& status) noexcept
     {
 #if GRAPHYTE_PLATFORM_WINDOWS
         GX_ASSERT(Impl::Windows::GNetworkListManager != nullptr);
@@ -127,7 +123,7 @@ namespace Graphyte::Network
 
 #else
 
-#   error "Not supported"
+#error "Not supported"
 
         status = false;
 
@@ -139,8 +135,7 @@ namespace Graphyte::Network
     BASE_API Status Download(
         [[maybe_unused]] std::unique_ptr<std::byte[]>& result,
         [[maybe_unused]] size_t& size,
-        [[maybe_unused]] std::string_view url
-    ) noexcept
+        [[maybe_unused]] std::string_view url) noexcept
     {
 #if GRAPHYTE_SDKS_WITH_CURL
         std::string url_string{ url.data(), url.size() };
@@ -168,8 +163,7 @@ namespace Graphyte::Network
         status = curl_easy_perform(handle);
         GX_ASSERTF(status == CURLE_OK, "CURL request failed with: {} (`{}`)",
             static_cast<uint32_t>(status),
-            curl_easy_strerror(status)
-        );
+            curl_easy_strerror(status));
 
         result = std::make_unique<std::byte[]>(buffer.size());
         std::copy_n(buffer.data(), buffer.size(), result.get());

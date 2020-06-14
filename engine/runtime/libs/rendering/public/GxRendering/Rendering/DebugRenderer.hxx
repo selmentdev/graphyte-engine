@@ -13,16 +13,13 @@ namespace Graphyte::Rendering
 
     public:
         virtual void Update(
-            float deltaTime
-        ) noexcept = 0;
+            float deltaTime) noexcept = 0;
 
         virtual void Enable(
-            bool value
-        ) noexcept = 0;
+            bool value) noexcept = 0;
 
         virtual void Render(
-            Graphics::GpuCommandListHandle commandList
-        ) noexcept = 0;
+            Graphics::GpuCommandListHandle commandList) noexcept = 0;
 
     public:
         virtual void Line(
@@ -31,11 +28,9 @@ namespace Graphyte::Rendering
             Maths::Color color,
             float width,
             bool ztest,
-            float timeout = 0.0F
-        ) noexcept = 0;
+            float timeout = 0.0F) noexcept = 0;
     };
 
     extern RENDERING_API std::unique_ptr<IDebugRenderer> CreateDebugRender(
-        Graphics::GpuDeviceHandle device
-    ) noexcept;
+        Graphics::GpuDeviceHandle device) noexcept;
 }

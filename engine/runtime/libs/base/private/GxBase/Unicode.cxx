@@ -6,23 +6,24 @@
 
 namespace Graphyte::Text::Impl
 {
-    constexpr const size_t HalfShift = 10;
-    constexpr const char32_t HalfBase = 0x0010000;
-    constexpr const char32_t HalfMask = 0x3FF;
-    constexpr const char32_t SurrogateHighStart = 0xD800;
-    constexpr const char32_t SurrogateHighEnd = 0xDBFF;
-    constexpr const char32_t SurrogateLowStart = 0xDC00;
-    constexpr const char32_t SurrogateLowEnd = 0xDFFF;
+    constexpr const size_t HalfShift                 = 10;
+    constexpr const char32_t HalfBase                = 0x0010000;
+    constexpr const char32_t HalfMask                = 0x3FF;
+    constexpr const char32_t SurrogateHighStart      = 0xD800;
+    constexpr const char32_t SurrogateHighEnd        = 0xDBFF;
+    constexpr const char32_t SurrogateLowStart       = 0xDC00;
+    constexpr const char32_t SurrogateLowEnd         = 0xDFFF;
     constexpr const char32_t Unicode_ReplacementChar = 0x0000FFFD;
-    constexpr const char32_t Unicode_MaxBmp = 0x0000FFFF;
-    constexpr const char32_t Unicode_MaxUTF16 = 0x0010FFFF;
+    constexpr const char32_t Unicode_MaxBmp          = 0x0000FFFF;
+    constexpr const char32_t Unicode_MaxUTF16        = 0x0010FFFF;
     //constexpr const char32_t Unicode_MaxUTF32 = 0x7FFFFFFF;
-    constexpr const char32_t Unicode_MaxLegalUTF32 = 0x0010FFFF;
+    constexpr const char32_t Unicode_MaxLegalUTF32         = 0x0010FFFF;
     constexpr const size_t Unicode_MaxUTF8BytesPerCodeUnit = 4;
     //constexpr const char16_t Unicode_UTF16ByteOrderMarkNative = 0xFEFF;
     //constexpr const char16_t Unicode_UTF16ByteOrderMarkSwapped = 0xFFFE;
 
     static const uint8_t TrailingBytesForUTF8[256] = {
+        // clang-format off
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -31,6 +32,7 @@ namespace Graphyte::Text::Impl
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5
+        // clang-format on
     };
 
     static const char32_t OffsetsFromUTF8[6] = {
@@ -50,12 +52,11 @@ namespace Graphyte::Text
         const char32_t* source_end,
         char16_t** target_start,
         char16_t* target_end,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         ConversionResult result = ConversionResult::Success;
-        const char32_t* source = *source_start;
-        char16_t* target = *target_start;
+        const char32_t* source  = *source_start;
+        char16_t* target        = *target_start;
 
         while (source < source_end)
         {
@@ -125,13 +126,12 @@ namespace Graphyte::Text
         const char16_t* source_end,
         char32_t** target_start,
         char32_t* target_end,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         ConversionResult result = ConversionResult::Success;
 
         const char16_t* source = (*source_start);
-        char32_t* target = (*target_start);
+        char32_t* target       = (*target_start);
 
         while (source < source_end)
         {
@@ -173,7 +173,7 @@ namespace Graphyte::Text
                     break;
                 }
             }
-            
+
             if (target >= target_end)
             {
                 source = old_source;
@@ -195,17 +195,16 @@ namespace Graphyte::Text
         const char16_t* source_end,
         char8_t** target_start,
         char8_t* target_end,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         ConversionResult result = ConversionResult::Success;
-        const char16_t* source = (*source_start);
-        char8_t* target = (*target_start);
+        const char16_t* source  = (*source_start);
+        char8_t* target         = (*target_start);
 
         while (source < source_end)
         {
-            const char32_t byte_mask = 0xBF;
-            const char32_t byte_mark = 0x80;
+            const char32_t byte_mask   = 0xBF;
+            const char32_t byte_mark   = 0x80;
             const char16_t* old_source = source;
 
             char32_t ch = (*source++);
@@ -265,6 +264,7 @@ namespace Graphyte::Text
             else
             {
                 bytes_to_write = 3;
+
                 ch = Impl::Unicode_ReplacementChar;
             }
 
@@ -280,21 +280,21 @@ namespace Graphyte::Text
 
             switch (bytes_to_write)
             {
-            case 4:
-                (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
-                ch >>= 6;
-                [[fallthrough]];
-            case 3:
-                (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
-                ch >>= 6;
-                [[fallthrough]];
-            case 2:
-                (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
-                ch >>= 6;
-                [[fallthrough]];
-            case 1:
-                (*--target) = static_cast<char8_t>(ch | Impl::FirstByteMark[bytes_to_write]);
-                break;
+                case 4:
+                    (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
+                    ch >>= 6;
+                    [[fallthrough]];
+                case 3:
+                    (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
+                    ch >>= 6;
+                    [[fallthrough]];
+                case 2:
+                    (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
+                    ch >>= 6;
+                    [[fallthrough]];
+                case 1:
+                    (*--target) = static_cast<char8_t>(ch | Impl::FirstByteMark[bytes_to_write]);
+                    break;
             }
 
             target += bytes_to_write;
@@ -311,12 +311,11 @@ namespace Graphyte::Text
         const char32_t* source_end,
         char8_t** target_start,
         char8_t* target_end,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         ConversionResult result = ConversionResult::Success;
-        const char32_t* source = (*source_start);
-        char8_t* target = (*target_start);
+        const char32_t* source  = (*source_start);
+        char8_t* target         = (*target_start);
 
         while (source < source_end)
         {
@@ -355,8 +354,8 @@ namespace Graphyte::Text
             else
             {
                 bytes_to_write = 3;
-                ch = Impl::Unicode_ReplacementChar;
-                result = ConversionResult::SourceIllegal;
+                ch             = Impl::Unicode_ReplacementChar;
+                result         = ConversionResult::SourceIllegal;
             }
 
             target += bytes_to_write;
@@ -371,21 +370,21 @@ namespace Graphyte::Text
 
             switch (bytes_to_write)
             {
-            case  4:
-                (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
-                ch >>= 6;
-                [[fallthrough]];
-            case 3:
-                (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
-                ch >>= 6;
-                [[fallthrough]];
-            case 2:
-                (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
-                ch >>= 6;
-                [[fallthrough]];
-            case 1:
-                (*--target) = static_cast<char8_t>(ch | Impl::FirstByteMark[bytes_to_write]);
-                break;
+                case 4:
+                    (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
+                    ch >>= 6;
+                    [[fallthrough]];
+                case 3:
+                    (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
+                    ch >>= 6;
+                    [[fallthrough]];
+                case 2:
+                    (*--target) = static_cast<char8_t>((ch | byte_mark) & byte_mask);
+                    ch >>= 6;
+                    [[fallthrough]];
+                case 1:
+                    (*--target) = static_cast<char8_t>(ch | Impl::FirstByteMark[bytes_to_write]);
+                    break;
             }
 
             target += bytes_to_write;
@@ -399,75 +398,74 @@ namespace Graphyte::Text
 
     static bool IsLegalUTF8(
         const char8_t* source,
-        size_t length
-    ) noexcept
+        size_t length) noexcept
     {
         const char8_t* end = source + length;
         char8_t a;
 
         switch (length)
         {
-        default:
-            return false;
-        case 4:
-            if ((a = (*--end)) < 0x80 || a > 0xBF)
-            {
-                return false;
-            }
-            [[fallthrough]];
-        case 3:
-            if ((a = (*--end)) < 0x80 || a > 0xBF)
-            {
-                return false;
-            }
-            [[fallthrough]];
-        case 2:
-            if ((a = (*--end)) < 0x80 || a > 0xBF)
-            {
-                return false;
-            }
-
-            switch (*source)
-            {
-            case 0xE0:
-                if (a < 0xA0)
-                {
-                    return false;
-                }
-                break;
-            case 0xED:
-                if (a > 0x9F)
-                {
-                    return false;
-                }
-                break;
-            case 0xF0:
-                if (a < 0x90)
-                {
-                    return false;
-                }
-                break;
-            case 0xF4:
-                if (a > 0x8F)
-                {
-                    return false;
-                }
-                break;
             default:
-                if (a < 0x80)
+                return false;
+            case 4:
+                if ((a = (*--end)) < 0x80 || a > 0xBF)
+                {
+                    return false;
+                }
+                [[fallthrough]];
+            case 3:
+                if ((a = (*--end)) < 0x80 || a > 0xBF)
+                {
+                    return false;
+                }
+                [[fallthrough]];
+            case 2:
+                if ((a = (*--end)) < 0x80 || a > 0xBF)
+                {
+                    return false;
+                }
+
+                switch (*source)
+                {
+                    case 0xE0:
+                        if (a < 0xA0)
+                        {
+                            return false;
+                        }
+                        break;
+                    case 0xED:
+                        if (a > 0x9F)
+                        {
+                            return false;
+                        }
+                        break;
+                    case 0xF0:
+                        if (a < 0x90)
+                        {
+                            return false;
+                        }
+                        break;
+                    case 0xF4:
+                        if (a > 0x8F)
+                        {
+                            return false;
+                        }
+                        break;
+                    default:
+                        if (a < 0x80)
+                        {
+                            return false;
+                        }
+                        break;
+                }
+
+                [[fallthrough]];
+            case 1:
+                if (*source >= 0x80 && *source < 0xC2)
                 {
                     return false;
                 }
                 break;
-            }
-
-            [[fallthrough]];
-        case 1:
-            if (*source >= 0x80 && *source < 0xC2)
-            {
-                return false;
-            }
-            break;
         }
 
         if (*source > 0xF4)
@@ -480,8 +478,7 @@ namespace Graphyte::Text
 
     bool IsLegalUTF8Sequence(
         const char8_t* source_start,
-        const char8_t* source_end
-    ) noexcept
+        const char8_t* source_end) noexcept
     {
         size_t length = static_cast<size_t>(Impl::TrailingBytesForUTF8[*source_start]) + 1;
 
@@ -495,8 +492,7 @@ namespace Graphyte::Text
 
     static size_t FindMaximalSubpartOfIllformedUTF8Sequence(
         const char8_t* source_start,
-        const char8_t* source_end
-    ) noexcept
+        const char8_t* source_end) noexcept
     {
         GX_ASSERT(!IsLegalUTF8Sequence(source_start, source_end));
 
@@ -595,16 +591,14 @@ namespace Graphyte::Text
     }
 
     size_t GetBytesCountForUTF8(
-        char8_t leading_byte
-    ) noexcept
+        char8_t leading_byte) noexcept
     {
         return static_cast<size_t>(Impl::TrailingBytesForUTF8[leading_byte]) + 1;
     }
 
     bool IsLegalUTF8String(
         const char8_t** source_start,
-        const char8_t* source_end
-    ) noexcept
+        const char8_t* source_end) noexcept
     {
         while (*source_start != source_end)
         {
@@ -625,13 +619,12 @@ namespace Graphyte::Text
         const char8_t* source_end,
         char16_t** target_start,
         char16_t* target_end,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         ConversionResult result = ConversionResult::Success;
 
         const char8_t* source = (*source_start);
-        char16_t* target = (*target_start);
+        char16_t* target      = (*target_start);
 
         while (source < source_end)
         {
@@ -653,29 +646,29 @@ namespace Graphyte::Text
 
             switch (extra_bytes_to_read)
             {
-            case 5:
-                ch += (*source++);
-                ch <<= 6;
-                [[fallthrough]];
-            case 4:
-                ch += (*source++);
-                ch <<= 6;
-                [[fallthrough]];
-            case 3:
-                ch += (*source++);
-                ch <<= 6;
-                [[fallthrough]];
-            case 2:
-                ch += (*source++);
-                ch <<= 6;
-                [[fallthrough]];
-            case 1:
-                ch += (*source++);
-                ch <<= 6;
-                [[fallthrough]];
-            case 0:
-                ch += (*source++);
-                break;
+                case 5:
+                    ch += (*source++);
+                    ch <<= 6;
+                    [[fallthrough]];
+                case 4:
+                    ch += (*source++);
+                    ch <<= 6;
+                    [[fallthrough]];
+                case 3:
+                    ch += (*source++);
+                    ch <<= 6;
+                    [[fallthrough]];
+                case 2:
+                    ch += (*source++);
+                    ch <<= 6;
+                    [[fallthrough]];
+                case 1:
+                    ch += (*source++);
+                    ch <<= 6;
+                    [[fallthrough]];
+                case 0:
+                    ch += (*source++);
+                    break;
             }
 
             ch -= Impl::OffsetsFromUTF8[extra_bytes_to_read];
@@ -747,12 +740,11 @@ namespace Graphyte::Text
         char32_t** target_start,
         char32_t* target_end,
         ConversionType type,
-        bool input_is_partial
-    ) noexcept
+        bool input_is_partial) noexcept
     {
         ConversionResult result = ConversionResult::Success;
-        const char8_t* source = (*source_start);
-        char32_t* target = (*target_start);
+        const char8_t* source   = (*source_start);
+        char32_t* target        = (*target_start);
 
         while (source < source_end)
         {
@@ -800,29 +792,29 @@ namespace Graphyte::Text
 
             switch (extra_bytes_to_read)
             {
-            case 5:
-                ch += (*source++);
-                ch <<= 6;
-                [[fallthrough]];
-            case 4:
-                ch += (*source++);
-                ch <<= 6;
-                [[fallthrough]];
-            case 3:
-                ch += (*source++);
-                ch <<= 6;
-                [[fallthrough]];
-            case 2:
-                ch += (*source++);
-                ch <<= 6;
-                [[fallthrough]];
-            case 1:
-                ch += (*source++);
-                ch <<= 6;
-                [[fallthrough]];
-            case 0:
-                ch += (*source++);
-                break;
+                case 5:
+                    ch += (*source++);
+                    ch <<= 6;
+                    [[fallthrough]];
+                case 4:
+                    ch += (*source++);
+                    ch <<= 6;
+                    [[fallthrough]];
+                case 3:
+                    ch += (*source++);
+                    ch <<= 6;
+                    [[fallthrough]];
+                case 2:
+                    ch += (*source++);
+                    ch <<= 6;
+                    [[fallthrough]];
+                case 1:
+                    ch += (*source++);
+                    ch <<= 6;
+                    [[fallthrough]];
+                case 0:
+                    ch += (*source++);
+                    break;
             }
 
             ch -= Impl::OffsetsFromUTF8[extra_bytes_to_read];
@@ -849,7 +841,7 @@ namespace Graphyte::Text
             }
             else
             {
-                result = ConversionResult::SourceIllegal;
+                result      = ConversionResult::SourceIllegal;
                 (*target++) = Impl::Unicode_ReplacementChar;
             }
         }
@@ -864,8 +856,7 @@ namespace Graphyte::Text
         const char8_t* source_end,
         char32_t** target_start,
         char32_t* target_end,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         return ConvertUTF8ToUTF32Impl(source_start, source_end, target_start, target_end, type, true);
     }
@@ -875,8 +866,7 @@ namespace Graphyte::Text
         const char8_t* source_end,
         char32_t** target_start,
         char32_t* target_end,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         return ConvertUTF8ToUTF32Impl(source_start, source_end, target_start, target_end, type, false);
     }
@@ -888,8 +878,7 @@ namespace Graphyte::Text
         const char8_t** source_start,
         const char8_t* source_end,
         char32_t* target,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         if (*source_start == source_end)
         {
@@ -910,12 +899,12 @@ namespace Graphyte::Text
         char32_t character,
         char8_t** target_start,
         char8_t* target_end,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         char32_t source[] = { character };
+
         const char32_t* source_start = &source[0];
-        const char32_t* source_end = source_start + 1;
+        const char32_t* source_end   = source_start + 1;
 
         return ConvertUTF32ToUTF8(&source_start, source_end, target_start, target_end, type);
     }
@@ -923,11 +912,10 @@ namespace Graphyte::Text
     ConversionResult ConvertString(
         std::string_view source,
         std::wstring& result,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         const char8_t* source_start = reinterpret_cast<const char8_t*>(source.data());
-        const char8_t* source_end = source_start + source.length();
+        const char8_t* source_end   = source_start + source.length();
 
         ConversionResult conversion_result = ConversionResult::Success;
 
@@ -936,8 +924,8 @@ namespace Graphyte::Text
         if constexpr (sizeof(wchar_t) == sizeof(char16_t))
         {
             char16_t* const target_begin = reinterpret_cast<char16_t*>(result.data());
-            char16_t* target_start = target_begin;
-            char16_t* const target_end = target_start + result.length();
+            char16_t* target_start       = target_begin;
+            char16_t* const target_end   = target_start + result.length();
 
             conversion_result = ConvertUTF8ToUTF16(&source_start, source_end, &target_start, target_end, type);
 
@@ -947,8 +935,8 @@ namespace Graphyte::Text
         else
         {
             char32_t* const target_begin = reinterpret_cast<char32_t*>(result.data());
-            char32_t* target_start = target_begin;
-            char32_t* const target_end = target_start + result.length();
+            char32_t* target_start       = target_begin;
+            char32_t* const target_end   = target_start + result.length();
 
             conversion_result = ConvertUTF8ToUTF32(&source_start, source_end, &target_start, target_end, type);
 
@@ -969,27 +957,26 @@ namespace Graphyte::Text
     ConversionResult ConvertString(
         std::wstring_view source,
         std::string& result,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         result.resize(source.length() * Impl::Unicode_MaxUTF8BytesPerCodeUnit + 1);
 
         char8_t* const target_begin = reinterpret_cast<char8_t*>(result.data());
-        char8_t* target_start = target_begin;
-        char8_t* const target_end = target_start + result.length();
+        char8_t* target_start       = target_begin;
+        char8_t* const target_end   = target_start + result.length();
 
         ConversionResult conversion_result = ConversionResult::Success;
 
         if constexpr (sizeof(wchar_t) == sizeof(char16_t))
         {
-            const char16_t* source_start = reinterpret_cast<const char16_t*>(source.data());
+            const char16_t* source_start     = reinterpret_cast<const char16_t*>(source.data());
             const char16_t* const source_end = source_start + source.length();
 
             conversion_result = ConvertUTF16ToUTF8(&source_start, source_end, &target_start, target_end, type);
         }
         else
         {
-            const char32_t* source_start = reinterpret_cast<const char32_t*>(source.data());
+            const char32_t* source_start     = reinterpret_cast<const char32_t*>(source.data());
             const char32_t* const source_end = source_start + source.length();
 
             conversion_result = ConvertUTF32ToUTF8(&source_start, source_end, &target_start, target_end, type);
@@ -1014,17 +1001,16 @@ namespace Graphyte::Text
     ConversionResult ConvertString(
         std::string_view source,
         std::u16string& result,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
-        const char8_t* source_start = reinterpret_cast<const char8_t*>(source.data());
+        const char8_t* source_start     = reinterpret_cast<const char8_t*>(source.data());
         const char8_t* const source_end = source_start + source.length();
 
         result.resize(source.length() + 1);
 
         char16_t* const target_begin = reinterpret_cast<char16_t*>(result.data());
-        char16_t* target_start = target_begin;
-        char16_t* const target_end = target_start + result.length();
+        char16_t* target_start       = target_begin;
+        char16_t* const target_end   = target_start + result.length();
 
         ConversionResult conversion_result = ConvertUTF8ToUTF16(&source_start, source_end, &target_start, target_end, type);
 
@@ -1046,17 +1032,16 @@ namespace Graphyte::Text
     ConversionResult ConvertString(
         std::string_view source,
         std::u32string& result,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
-        const char8_t* source_start = reinterpret_cast<const char8_t*>(source.data());
+        const char8_t* source_start     = reinterpret_cast<const char8_t*>(source.data());
         const char8_t* const source_end = source_start + source.length();
 
         result.resize(source.length() + 1);
 
         char32_t* const target_begin = reinterpret_cast<char32_t*>(result.data());
-        char32_t* target_start = target_begin;
-        char32_t* const target_end = target_start + result.length();
+        char32_t* target_start       = target_begin;
+        char32_t* const target_end   = target_start + result.length();
 
         ConversionResult conversion_result = ConvertUTF8ToUTF32(&source_start, source_end, &target_start, target_end, type);
 
@@ -1078,16 +1063,15 @@ namespace Graphyte::Text
     ConversionResult ConvertString(
         std::u16string_view source,
         std::string& result,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         result.resize(source.length() * Impl::Unicode_MaxUTF8BytesPerCodeUnit + 1);
 
         char8_t* const target_begin = reinterpret_cast<char8_t*>(result.data());
-        char8_t* target_start = target_begin;
-        char8_t* const target_end = target_start + result.length();
+        char8_t* target_start       = target_begin;
+        char8_t* const target_end   = target_start + result.length();
 
-        const char16_t* source_start = reinterpret_cast<const char16_t*>(source.data());
+        const char16_t* source_start     = reinterpret_cast<const char16_t*>(source.data());
         const char16_t* const source_end = source_start + source.length();
 
         ConversionResult conversion_result = ConvertUTF16ToUTF8(&source_start, source_end, &target_start, target_end, type);
@@ -1110,16 +1094,15 @@ namespace Graphyte::Text
     ConversionResult ConvertString(
         std::u32string_view source,
         std::string& result,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         result.resize(source.length() * Impl::Unicode_MaxUTF8BytesPerCodeUnit + 1);
 
         char8_t* const target_begin = reinterpret_cast<char8_t*>(result.data());
-        char8_t* target_start = target_begin;
-        char8_t* const target_end = target_start + result.length();
+        char8_t* target_start       = target_begin;
+        char8_t* const target_end   = target_start + result.length();
 
-        const char32_t* source_start = reinterpret_cast<const char32_t*>(source.data());
+        const char32_t* source_start     = reinterpret_cast<const char32_t*>(source.data());
         const char32_t* const source_end = source_start + source.length();
 
         ConversionResult conversion_result = ConvertUTF32ToUTF8(&source_start, source_end, &target_start, target_end, type);
@@ -1142,17 +1125,16 @@ namespace Graphyte::Text
     ConversionResult ConvertString(
         std::u16string_view source,
         std::u32string& result,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         // Resize to about same size - surrogate pairs may shrink into single code points at most.
         result.resize(source.length());
 
         char32_t* const target_begin = result.data();
-        char32_t* target_start = target_begin;
-        char32_t* const target_end = target_start + result.length();
+        char32_t* target_start       = target_begin;
+        char32_t* const target_end   = target_start + result.length();
 
-        const char16_t* source_start = source.data();
+        const char16_t* source_start     = source.data();
         const char16_t* const source_end = source_start + source.length();
 
         ConversionResult conversion_result = ConvertUTF16ToUTF32(&source_start, source_end, &target_start, target_end, type);
@@ -1175,16 +1157,15 @@ namespace Graphyte::Text
     ConversionResult ConvertString(
         std::u32string_view source,
         std::u16string& result,
-        ConversionType type
-    ) noexcept
+        ConversionType type) noexcept
     {
         result.resize(source.length() * 2);
 
         char16_t* const target_begin = result.data();
-        char16_t* target_start = target_begin;
-        char16_t* const target_end = target_start + result.length();
+        char16_t* target_start       = target_begin;
+        char16_t* const target_end   = target_start + result.length();
 
-        const char32_t* source_start = source.data();
+        const char32_t* source_start     = source.data();
         const char32_t* const source_end = source_start + source.length();
 
         ConversionResult conversion_result = ConvertUTF32ToUTF16(&source_start, source_end, &target_start, target_end, type);

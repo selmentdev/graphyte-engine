@@ -19,8 +19,7 @@ namespace Graphyte::System
     }
 
     BASE_API bool HasPlatformFeature(
-        PlatformFeature feature
-    ) noexcept
+        PlatformFeature feature) noexcept
     {
         return Impl::GPlatformFeatureSet.Has(feature);
     }
@@ -36,7 +35,7 @@ namespace Graphyte::System
         return {};
 
 #else
-#   error "Unknown file manager name"
+#error "Unknown file manager name"
 #endif
     }
 
@@ -51,7 +50,7 @@ namespace Graphyte::System
         return "so";
 
 #else
-#   error "Unknown module extension"
+#error "Unknown module extension"
 #endif
     }
 
@@ -66,7 +65,7 @@ namespace Graphyte::System
         return "lib";
 
 #else
-#   error "Unknown module prefix"
+#error "Unknown module prefix"
 #endif
     }
 
@@ -81,7 +80,7 @@ namespace Graphyte::System
         return {};
 
 #else
-#   error "Unknown executable extension"
+#error "Unknown executable extension"
 #endif
     }
 }

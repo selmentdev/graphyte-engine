@@ -8,8 +8,7 @@
 namespace Graphyte::Graphics
 {
     void NullGpuCommandList::BindResourceSet(
-        [[maybe_unused]] GpuResourceSetHandle handle
-    ) noexcept
+        [[maybe_unused]] GpuResourceSetHandle handle) noexcept
     {
     }
 }
@@ -17,22 +16,19 @@ namespace Graphyte::Graphics
 namespace Graphyte::Graphics
 {
     GpuResourceSetHandle NullGpuDevice::CreateResourceSet(
-        [[maybe_unused]] const GpuResourceSetDesc& desc
-    ) noexcept
+        [[maybe_unused]] const GpuResourceSetDesc& desc) noexcept
     {
         return nullptr;
     }
 
     void NullGpuDevice::DestroyResourceSet(
-        [[maybe_unused]] GpuResourceSetHandle handle
-    ) noexcept
+        [[maybe_unused]] GpuResourceSetHandle handle) noexcept
     {
     }
 
     void NullGpuDevice::UpdateResourceSet(
         [[maybe_unused]] GpuResourceSetHandle handle,
-        [[maybe_unused]] const GpuResourceSetDesc& desc
-    ) noexcept
+        [[maybe_unused]] const GpuResourceSetDesc& desc) noexcept
     {
     }
 }

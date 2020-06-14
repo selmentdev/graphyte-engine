@@ -3,8 +3,8 @@
 
 namespace Graphyte::Impl
 {
-    static constexpr uint32_t const GCrc32Table[256] =
-    {
+    static constexpr uint32_t const GCrc32Table[256] = {
+        // clang-format off
         0x00000000u, 0x04C11DB7u, 0x09823B6Eu, 0x0D4326D9u, 0x130476DCu, 0x17C56B6Bu, 0x1A864DB2u, 0x1E475005u,
         0x2608EDB8u, 0x22C9F00Fu, 0x2F8AD6D6u, 0x2B4BCB61u, 0x350C9B64u, 0x31CD86D3u, 0x3C8EA00Au, 0x384FBDBDu,
         0x4C11DB70u, 0x48D0C6C7u, 0x4593E01Eu, 0x4152FDA9u, 0x5F15ADACu, 0x5BD4B01Bu, 0x569796C2u, 0x52568B75u,
@@ -37,6 +37,7 @@ namespace Graphyte::Impl
         0xE3A1CBC1u, 0xE760D676u, 0xEA23F0AFu, 0xEEE2ED18u, 0xF0A5BD1Du, 0xF464A0AAu, 0xF9278673u, 0xFDE69BC4u,
         0x89B8FD09u, 0x8D79E0BEu, 0x803AC667u, 0x84FBDBD0u, 0x9ABC8BD5u, 0x9E7D9662u, 0x933EB0BBu, 0x97FFAD0Cu,
         0xAFB010B1u, 0xAB710D06u, 0xA6322BDFu, 0xA2F33668u, 0xBCB4666Du, 0xB8757BDAu, 0xB5365D03u, 0xB1F740B4u,
+        // clang-format on
     };
 }
 
@@ -45,10 +46,9 @@ namespace Graphyte
     BASE_API uint32_t Crc32(
         notstd::span<std::byte const> buffer,
         uint32_t initial,
-        bool finalize
-    ) noexcept
+        bool finalize) noexcept
     {
-        std::uint8_t const* it = reinterpret_cast<const std::uint8_t*>(buffer.data());
+        std::uint8_t const* it  = reinterpret_cast<const std::uint8_t*>(buffer.data());
         std::uint8_t const* end = it + buffer.size();
 
         // TODO:
@@ -58,7 +58,7 @@ namespace Graphyte
         while (it < end)
         {
             std::size_t const index = (static_cast<std::size_t>(initial >> 24) ^ *it++) & 0xFFu;
-            initial = Impl::GCrc32Table[index] ^ (initial << 8);
+            initial                 = Impl::GCrc32Table[index] ^ (initial << 8);
         }
 
         if (finalize)
@@ -72,8 +72,8 @@ namespace Graphyte
 
 namespace Graphyte::Impl
 {
-    static constexpr uint64_t const GCrc64Table[256] =
-    {
+    static constexpr uint64_t const GCrc64Table[256] = {
+        // clang-format off
         0x0000000000000000u, 0x42F0E1EBA9EA3693u, 0x85E1C3D753D46D26u, 0xC711223CFA3E5BB5u,
         0x493366450E42ECDFu, 0x0BC387AEA7A8DA4Cu, 0xCCD2A5925D9681F9u, 0x8E224479F47CB76Au,
         0x9266CC8A1C85D9BEu, 0xD0962D61B56FEF2Du, 0x17870F5D4F51B498u, 0x5577EEB6E6BB820Bu,
@@ -138,6 +138,7 @@ namespace Graphyte::Impl
         0xCF8B0890283E370Cu, 0x8D7BE97B81D4019Fu, 0x4A6ACB477BEA5A2Au, 0x089A2AACD2006CB9u,
         0x14DEA25F3AF9026Du, 0x562E43B4931334FEu, 0x913F6188692D6F4Bu, 0xD3CF8063C0C759D8u,
         0x5DEDC41A34BBEEB2u, 0x1F1D25F19D51D821u, 0xD80C07CD676F8394u, 0x9AFCE626CE85B507u,
+        // clang-format on
     };
 }
 
@@ -146,16 +147,15 @@ namespace Graphyte
     BASE_API uint64_t Crc64(
         notstd::span<std::byte const> buffer,
         uint64_t initial,
-        bool finalize
-    ) noexcept
+        bool finalize) noexcept
     {
-        std::uint8_t const* it = reinterpret_cast<const std::uint8_t*>(buffer.data());
+        std::uint8_t const* it  = reinterpret_cast<const std::uint8_t*>(buffer.data());
         std::uint8_t const* end = it + buffer.size();
 
         while (it < end)
         {
             std::size_t const index = (static_cast<std::size_t>(initial >> 56) ^ *it++) & 0xFFu;
-            initial = Impl::GCrc64Table[index] ^ (initial << 8);
+            initial                 = Impl::GCrc64Table[index] ^ (initial << 8);
         }
 
         if (finalize)

@@ -4,6 +4,8 @@
 
 namespace Graphyte::Graphics
 {
-    class NullGpuGraphicsPipelineState final : public GpuGraphicsPipelineState { };
+    class NullGpuGraphicsPipelineState final : public GpuGraphicsPipelineState
+    {
+    };
     static_assert(!std::is_polymorphic_v<NullGpuGraphicsPipelineState>);
 }

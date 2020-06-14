@@ -9,111 +9,88 @@ namespace Graphyte::System::Impl
 {
     const std::array<const SDL_MessageBoxButtonData, 1> MessageDialogButtons_Ok = {
         {
-            {
-                SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
+            { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
                 static_cast<int>(MessageDialogResult::Ok),
-                "OK"
-            },
+                "OK" },
         }
     };
 
     const std::array<const SDL_MessageBoxButtonData, 2> MessageDialogButtons_OkCancel = {
         {
-            {
-                SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
+            { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
                 static_cast<int>(MessageDialogResult::Ok),
-                "OK"
-            },
-            {
-                SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
+                "OK" },
+            { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
                 static_cast<int>(MessageDialogResult::Cancel),
-                "Cancel"
-            },
+                "Cancel" },
         }
     };
 
     const std::array<const SDL_MessageBoxButtonData, 2> MessageDialogButtons_YesNo = {
         {
-            {
-                SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
+            { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
                 static_cast<int>(MessageDialogResult::Yes),
-                "Yes"
-            },
-            {
-                SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
+                "Yes" },
+            { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
                 static_cast<int>(MessageDialogResult::No),
-                "No"
-            },
+                "No" },
         }
     };
 
     const std::array<const SDL_MessageBoxButtonData, 3> MessageDialogButtons_YesNoCancel = {
         {
-            {
-                SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
+            { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
                 static_cast<int>(MessageDialogResult::Yes),
-                "Yes"
-            },
-            {
-                0,
+                "Yes" },
+            { 0,
                 static_cast<int>(MessageDialogResult::No),
-                "No"
-            },
-            {
-                SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
+                "No" },
+            { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
                 static_cast<int>(MessageDialogResult::Cancel),
-                "Cancel"
-            },
+                "Cancel" },
         }
     };
 
     const std::array<const SDL_MessageBoxButtonData, 3> MessageDialogButtons_CancelTryContinue = {
         {
-            {
-                SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT | SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
+            { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT | SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
                 static_cast<int>(MessageDialogResult::Cancel),
-                "Cancel"
-            },
-            {
-                0,
+                "Cancel" },
+            { 0,
                 static_cast<int>(MessageDialogResult::Try),
-                "Try"
-            },
-            {
-                0,
+                "Try" },
+            { 0,
                 static_cast<int>(MessageDialogResult::Continue),
-                "Continue"
-            },
+                "Continue" },
         }
     };
 
     static notstd::span<const SDL_MessageBoxButtonData> GetMessageButtons(
-        MessageDialogType type
-    ) noexcept
+        MessageDialogType type) noexcept
     {
         switch (type)
         {
-        case MessageDialogType::Ok:
+            case MessageDialogType::Ok:
             {
                 return { Impl::MessageDialogButtons_Ok };
             }
-        case MessageDialogType::OkCancel:
+            case MessageDialogType::OkCancel:
             {
                 return { Impl::MessageDialogButtons_OkCancel };
             }
-        case MessageDialogType::YesNo:
+            case MessageDialogType::YesNo:
             {
                 return { Impl::MessageDialogButtons_YesNo };
             }
-        case MessageDialogType::YesNoCancel:
+            case MessageDialogType::YesNoCancel:
             {
                 return { Impl::MessageDialogButtons_YesNoCancel };
             }
-        case MessageDialogType::CancelTryContinue:
+            case MessageDialogType::CancelTryContinue:
             {
                 return { Impl::MessageDialogButtons_CancelTryContinue };
             }
-        default:
+            default:
             {
                 break;
             }
@@ -129,8 +106,7 @@ namespace Graphyte::System
         std::string_view title,
         std::string_view message,
         MessageDialogType type,
-        MessageDialogImage image
-    ) noexcept
+        MessageDialogImage image) noexcept
     {
         std::string szTitle{ std::data(title), std::size(title) };
         std::string szMessage{ std::data(message), std::size(message) };
@@ -141,24 +117,24 @@ namespace Graphyte::System
 
         switch (image)
         {
-        case MessageDialogImage::None:
+            case MessageDialogImage::None:
             {
                 break;
             }
 
-        case MessageDialogImage::Information:
+            case MessageDialogImage::Information:
             {
                 icon = SDL_MESSAGEBOX_INFORMATION;
                 break;
             }
 
-        case MessageDialogImage::Warning:
+            case MessageDialogImage::Warning:
             {
                 icon = SDL_MESSAGEBOX_WARNING;
                 break;
             }
-            
-        case MessageDialogImage::Error:
+
+            case MessageDialogImage::Error:
             {
                 icon = SDL_MESSAGEBOX_ERROR;
                 break;

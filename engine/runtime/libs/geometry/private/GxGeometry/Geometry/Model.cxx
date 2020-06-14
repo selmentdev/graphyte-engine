@@ -41,26 +41,26 @@ namespace Graphyte::Geometry
     Matrix Model::ComputeWorldMatrix([[maybe_unused]] ModelPart* part) const noexcept
     {
         Matrix result = Maths::Identity<Matrix>();
-        
+
         while (part != nullptr)
         {
             auto const local = Maths::Load<Matrix>(&part->LocalTransform);
-            result = Maths::MultiplyTranspose(result, local);
-            part = part->Parent;
+            result           = Maths::MultiplyTranspose(result, local);
+            part             = part->Parent;
         }
-        
+
         result = Maths::Transpose(result);
         return result;
     }
 
-    GEOMETRY_API Storage::Archive& operator<< (Storage::Archive& archive, Model& model) noexcept
+    GEOMETRY_API Storage::Archive& operator<<(Storage::Archive& archive, Model& model) noexcept
     {
         Storage::BinaryFormatHeader header{};
-        header.Signature = Impl::ModelFileSignature;
-        header.Version = Impl::ModelFileVersion;
-        header.Encoding = ByteEncoding::LittleEndian;
-        header.CustomFlags = {};
-        header.FileSize = {};
+        header.Signature          = Impl::ModelFileSignature;
+        header.Version            = Impl::ModelFileVersion;
+        header.Encoding           = ByteEncoding::LittleEndian;
+        header.CustomFlags        = {};
+        header.FileSize           = {};
         header.OffsetToFirstBlock = {};
 
         archive << header;
@@ -165,14 +165,10 @@ namespace Graphyte::Geometry
 
         for (size_t i = 0; i < static_cast<size_t>(parts_count); ++i)
         {
-            auto* part = model.Parts[i];
-            bool const contains_mesh =
-                part->Type == ModelPartType::Hull ||
-                part->Type == ModelPartType::Mesh;
+            auto* part               = model.Parts[i];
+            bool const contains_mesh = part->Type == ModelPartType::Hull || part->Type == ModelPartType::Mesh;
 
-            bool const helper_mesh =
-                part->Type == ModelPartType::Helper &&
-                part->HelperType == ModelHelperType::Mesh;
+            bool const helper_mesh = part->Type == ModelPartType::Helper && part->HelperType == ModelHelperType::Mesh;
 
             if (contains_mesh || helper_mesh)
             {

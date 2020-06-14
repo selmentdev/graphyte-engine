@@ -14,8 +14,7 @@ namespace Graphyte::Diagnostics::Impl
     bool ReportAbort(
         std::string_view title,
         std::string_view content,
-        std::string_view stacktrace
-    ) noexcept
+        std::string_view stacktrace) noexcept
     {
         std::string umessage = "Abort:\n\n";
         umessage += content;
@@ -25,11 +24,9 @@ namespace Graphyte::Diagnostics::Impl
         std::string utitle{ title };
 
         const SDL_MessageBoxButtonData buttons[] = {
-            {
-                SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT | SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
+            { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT | SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
                 0,
-                "OK"
-            },
+                "OK" },
         };
 
         const SDL_MessageBoxData msgbox = {

@@ -19,31 +19,27 @@ namespace Graphyte::Storage
 
     public:
         ArchiveFileReader(
-            std::unique_ptr<IStream> stream
-        ) noexcept;
+            std::unique_ptr<IStream> stream) noexcept;
 
         virtual ~ArchiveFileReader() noexcept;
 
     public:
         virtual void Serialize(
             void* buffer,
-            size_t size
-        ) noexcept override;
+            size_t size) noexcept override;
 
         virtual int64_t GetPosition() noexcept override;
 
         virtual int64_t GetSize() noexcept override;
 
         virtual void SetPosition(
-            int64_t position
-        ) noexcept override;
+            int64_t position) noexcept override;
 
         virtual void Flush() noexcept override;
 
     private:
         bool PrecacheImpl(
             int64_t offset,
-            int64_t size
-        ) noexcept;
+            int64_t size) noexcept;
     };
 }

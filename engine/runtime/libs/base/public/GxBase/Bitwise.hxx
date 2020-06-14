@@ -22,8 +22,7 @@ namespace Graphyte
         requires std::conjunction_v<
             std::bool_constant<sizeof(TTo) == sizeof(TFrom)>,
             std::is_trivially_copyable<TTo>,
-            std::is_trivially_copyable<TFrom>
-        >
+            std::is_trivially_copyable<TFrom>>
     {
 #if (defined(_MSC_VER) && (_MSC_VER >= 1926)) || (defined(__clang__) && (__clang_major__ >= 10))
         return __builtin_bit_cast(TTo, source);
@@ -46,7 +45,7 @@ namespace Graphyte
     enum class ByteEncoding : uint32_t
     {
         LittleEndian = 0x01020304,
-        BigEndian = 0x04030201,
+        BigEndian    = 0x04030201,
 
         Network = BigEndian,
 #if GRAPHYTE_ENDIAN_LITTLE
@@ -78,22 +77,27 @@ namespace Graphyte
             }
             else if constexpr (sizeof(T) == 2)
             {
+                // clang-format off
                 return static_cast<uint16_t>(
                     ((value & static_cast<uint16_t>(0x00ff)) << 8) |
                     ((value & static_cast<uint16_t>(0xff00)) >> 8)
                     );
+                // clang-format on
             }
             else if constexpr (sizeof(T) == 4)
             {
+                // clang-format off
                 return static_cast<uint32_t>(
                     ((value & static_cast<uint32_t>(0x0000'00ff)) << 24) |
                     ((value & static_cast<uint32_t>(0x0000'ff00)) << 8) |
                     ((value & static_cast<uint32_t>(0x00ff'0000)) >> 8) |
                     ((value & static_cast<uint32_t>(0xff00'0000)) >> 24)
                     );
+                // clang-format on
             }
             else if constexpr (sizeof(T) == 8)
             {
+                // clang-format off
                 return static_cast<uint64_t>(
                     ((value & static_cast<uint64_t>(0x0000'0000'0000'00ff)) << 56) |
                     ((value & static_cast<uint64_t>(0x0000'0000'0000'ff00)) << 40) |
@@ -104,6 +108,7 @@ namespace Graphyte
                     ((value & static_cast<uint64_t>(0x00ff'0000'0000'0000)) >> 40) |
                     ((value & static_cast<uint64_t>(0xff00'0000'0000'0000)) >> 56)
                     );
+                // clang-format on
             }
         }
         else
@@ -214,8 +219,7 @@ namespace Graphyte
     {
         return IsAligned<std::uintptr_t>(
             reinterpret_cast<std::uintptr_t>(pointer),
-            static_cast<std::uintptr_t>(alignment)
-            );
+            static_cast<std::uintptr_t>(alignment));
     }
 
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
@@ -235,8 +239,7 @@ namespace Graphyte
     {
         return reinterpret_cast<T>(AlignUp<uintptr_t>(
             reinterpret_cast<uintptr_t>(pointer),
-            static_cast<uintptr_t>(alignment)
-            ));
+            static_cast<uintptr_t>(alignment)));
     }
 
     template <typename T, std::enable_if_t<std::is_pointer_v<T>, int> = 0>
@@ -244,8 +247,7 @@ namespace Graphyte
     {
         return reinterpret_cast<T>(AlignDown<std::uintptr_t>(
             reinterpret_cast<std::uintptr_t>(pointer),
-            static_cast<std::uintptr_t>(alignment)
-            ));
+            static_cast<std::uintptr_t>(alignment)));
     }
 
     template <typename T, std::enable_if_t<std::is_pointer_v<T>, int> = 0>
@@ -274,18 +276,14 @@ namespace Graphyte
     [[nodiscard]] constexpr T BitRotateLeft(T value, int bits) noexcept
     {
         return static_cast<T>(
-            static_cast<T>(value << bits) |
-            static_cast<T>(value >> (std::numeric_limits<T>::digits - bits))
-            );
+            static_cast<T>(value << bits) | static_cast<T>(value >> (std::numeric_limits<T>::digits - bits)));
     }
 
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr T BitRotateRight(T value, int bits) noexcept
     {
         return static_cast<T>(
-            static_cast<T>(value >> bits) |
-            static_cast<T>(value << (std::numeric_limits<T>::digits - bits))
-            );
+            static_cast<T>(value >> bits) | static_cast<T>(value << (std::numeric_limits<T>::digits - bits)));
     }
 
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
@@ -360,8 +358,7 @@ namespace Graphyte
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr bool IsPowerOf2(T value) noexcept
     {
-        return value != 0
-            && (value & (value - 1)) == 0;
+        return (value != 0) && ((value & (value - 1)) == 0);
     }
 
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>

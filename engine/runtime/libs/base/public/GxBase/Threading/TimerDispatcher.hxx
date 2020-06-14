@@ -25,11 +25,11 @@ namespace Graphyte::Threading
             Handle = 0;
         }
 
-        bool operator == (const TimerHandle& other) const noexcept
+        bool operator==(const TimerHandle& other) const noexcept
         {
             return Handle == other.Handle;
         }
-        bool operator != (const TimerHandle& other) const noexcept
+        bool operator!=(const TimerHandle& other) const noexcept
         {
             return Handle != other.Handle;
         }
@@ -47,7 +47,7 @@ namespace Graphyte::Threading
         bool Looped;
         bool RequireCallback;
 
-        bool operator < (const TimerDesc& other) const noexcept
+        bool operator<(const TimerDesc& other) const noexcept
         {
             return this->Expire < other.Expire;
         }

@@ -14,16 +14,18 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                x, y, 0, 0,
-            } } };
+            x,
+            y,
+            0,
+            0,
+        } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128i const result = _mm_set_epi32(
             static_cast<int>(0),
             static_cast<int>(0),
             static_cast<int>(y),
-            static_cast<int>(x)
-        );
+            static_cast<int>(x));
         return { result };
 #elif GRAPHYTE_HW_NEON
 #error Not implemented
@@ -37,11 +39,11 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-                value,
-                value,
-                value,
-                value,
-            } } };
+            value,
+            value,
+            value,
+            value,
+        } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128i const result = _mm_set1_epi32(static_cast<int>(value));
@@ -132,7 +134,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return (a.V.U[0] == b.V.U[0])
-            && (a.V.U[1] == b.V.U[1]);
+               && (a.V.U[1] == b.V.U[1]);
 #elif GRAPHYTE_HW_AVX
         __m128i const mask = _mm_cmpeq_epi32(a.V, b.V);
         return (_mm_movemask_epi8(mask) & 0x00FF) == 0x00FFu;
@@ -148,7 +150,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return (a.V.U[0] != b.V.U[0])
-            || (a.V.U[1] != b.V.U[1]);
+               || (a.V.U[1] != b.V.U[1]);
 #elif GRAPHYTE_HW_AVX
         __m128i const mask = _mm_cmpeq_epi32(a.V, b.V);
         return (_mm_movemask_epi8(mask) & 0x00FF) != 0x00FFu;
@@ -173,7 +175,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return (v.V.U[0] != 0)
-            && (v.V.U[1] != 0);
+               && (v.V.U[1] != 0);
 #elif GRAPHYTE_HW_AVX
         int const movemask = _mm_movemask_epi8(v.V);
         return (movemask & 0x00FF) == 0x00FF;
@@ -189,7 +191,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return (v.V.U[0] == 0)
-            && (v.V.U[1] == 0);
+               && (v.V.U[1] == 0);
 #elif GRAPHYTE_HW_AVX
         int const movemask = _mm_movemask_epi8(v.V);
         return (movemask & 0x00FF) == 0;
@@ -205,7 +207,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return (v.V.U[0] != 0)
-            || (v.V.U[1] != 0);
+               || (v.V.U[1] != 0);
 #elif GRAPHYTE_HW_AVX
         int const movemask = _mm_movemask_epi8(v.V);
         return (movemask & 0x00FF) != 0;
@@ -221,7 +223,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return (v.V.U[0] == 0)
-            || (v.V.U[1] == 0);
+               || (v.V.U[1] == 0);
 #elif GRAPHYTE_HW_AVX
         int const movemask = _mm_movemask_epi8(v.V);
         return (movemask & 0x00FF) != 0x00FF;

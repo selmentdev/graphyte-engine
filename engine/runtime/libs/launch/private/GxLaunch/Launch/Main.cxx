@@ -86,57 +86,50 @@ namespace Graphyte::Launch
     {
 #if !GRAPHYTE_MATH_NO_INTRINSICS
 
-#   if GRAPHYTE_HW_AVX2 && !GRAPHYTE_HW_AVX
-#       error "AVX must be enabled with AVX2"
-#   endif
+#if GRAPHYTE_HW_AVX2 && !GRAPHYTE_HW_AVX
+#error "AVX must be enabled with AVX2"
+#endif
 
-        using Graphyte::System::ProcessorFeature;
         using Graphyte::Flags;
+        using Graphyte::System::ProcessorFeature;
 
         // F16C, FMA3, AVX, OSXSAVE, SSSE4.1, and SSE3
 
-#   if GRAPHYTE_HW_SSE2
+#if GRAPHYTE_HW_SSE2
         GX_ABORT_UNLESS(
             System::HasProcessorFeature(System::ProcessorFeature::SSE2),
-            "Support for SSE2 is required"
-        );
-#   endif
+            "Support for SSE2 is required");
+#endif
 
-#   if GRAPHYTE_HW_AVX
+#if GRAPHYTE_HW_AVX
         GX_ABORT_UNLESS(
             System::HasProcessorFeature(System::ProcessorFeature::SSE3),
-            "Support for SSE3 is required"
-        );
+            "Support for SSE3 is required");
         GX_ABORT_UNLESS(
             System::HasProcessorFeature(System::ProcessorFeature::SSE41),
-            "Support for SSE4.1 is required"
-        );
+            "Support for SSE4.1 is required");
         GX_ABORT_UNLESS(
             System::HasProcessorFeature(System::ProcessorFeature::AVX),
-            "Support for AVX is required"
-        );
-#   endif
+            "Support for AVX is required");
+#endif
 
-#   if GRAPHYTE_HW_AVX2
+#if GRAPHYTE_HW_AVX2
         GX_ABORT_UNLESS(
             System::HasProcessorFeature(System::ProcessorFeature::AVX2),
-            "Support for AVX2 is required"
-        );
-#   endif
+            "Support for AVX2 is required");
+#endif
 
-#   if GRAPHYTE_HW_AVX2 || GRAPHYTE_HW_FMA3
+#if GRAPHYTE_HW_AVX2 || GRAPHYTE_HW_FMA3
         GX_ABORT_UNLESS(
             System::HasProcessorFeature(System::ProcessorFeature::FMA3),
-            "Support for FMA3 is required"
-        );
-#   endif
+            "Support for FMA3 is required");
+#endif
 
-#   if GRAPHYTE_HW_AVX2 || GRAPHYTE_HW_F16C
+#if GRAPHYTE_HW_AVX2 || GRAPHYTE_HW_F16C
         GX_ABORT_UNLESS(
             System::HasProcessorFeature(System::ProcessorFeature::F16C),
-            "Support for F16C is required"
-        );
-#   endif
+            "Support for F16C is required");
+#endif
 
 #endif
     }
@@ -146,10 +139,10 @@ namespace Graphyte::Launch
         std::vector<std::string> features{};
 
 #define CHECK_FEATURE(x) \
-        if (Graphyte::System::HasProcessorFeature(Graphyte::System::ProcessorFeature::x)) \
-        { \
-            features.push_back(#x); \
-        }
+    if (Graphyte::System::HasProcessorFeature(Graphyte::System::ProcessorFeature::x)) \
+    { \
+        features.push_back(#x); \
+    }
 
 #if GRAPHYTE_CPU_X86_64 || GRAPHYTE_CPU_X86_32
 
@@ -245,8 +238,7 @@ namespace Graphyte::Launch
         GX_LOG(LogInit, Info, "Engine version: {}\n", engine_version);
         GX_LOG(LogInit, Info, "Build-ID: {}-{}\n",
             System::GetBuildBranch(),
-            System::GetBuildCommit()
-        );
+            System::GetBuildCommit());
         GX_LOG(LogInit, Info, "System version: {}\n", System::GetSystemVersion());
         GX_LOG(LogInit, Info, "Process ID: {}\n", Graphyte::System::Process::GetCurrent());
 
@@ -265,18 +257,15 @@ namespace Graphyte::Launch
             memory_properties.TotalVirtual >> 20,
             memory_properties.TotalPhysical >> 20,
             memory_properties.TotalPagefile >> 20,
-            memory_properties.PageSize
-        );
+            memory_properties.PageSize);
 
         GX_LOG(LogInit, Info, "CPU: {} {}\n",
             System::GetProcessorVendor(),
-            System::GetProcessorBrand()
-        );
+            System::GetProcessorBrand());
 
         GX_LOG(LogInit, Info, "CPU Cores (logical: {}, physical: {})\n",
             System::GetLogicalCores(),
-            System::GetPhysicalCores()
-        );
+            System::GetPhysicalCores());
 
         GX_LOG(LogInit, Info, "CPU Features: {}\n", GetProcessorFeaturesAsString());
 
@@ -287,8 +276,7 @@ namespace Graphyte::Launch
                 metrics.VirtualDisplayRect.Left,
                 metrics.VirtualDisplayRect.Top,
                 metrics.VirtualDisplayRect.Width,
-                metrics.VirtualDisplayRect.Height
-            );
+                metrics.VirtualDisplayRect.Height);
 
             for (size_t i = 0; i < metrics.Displays.size(); ++i)
             {
@@ -300,8 +288,7 @@ namespace Graphyte::Launch
                     display.DisplayRect.Left,
                     display.DisplayRect.Top,
                     display.DisplayRect.Width,
-                    display.DisplayRect.Height
-                );
+                    display.DisplayRect.Height);
             }
         }
     }
@@ -325,8 +312,7 @@ namespace Graphyte::Launch
 
         CommandLine::Initialize(
             static_cast<size_t>(argc),
-            const_cast<const char**>(argv)
-        );
+            const_cast<const char**>(argv));
 
         Diagnostics::Initialize();
 

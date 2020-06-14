@@ -17,8 +17,7 @@ namespace Graphyte::Threading
     BASE_API void ParallelFor(
         uint32_t count,
         std::function<void(uint32_t)> code,
-        bool single_thread = false
-    ) noexcept;
+        bool single_thread = false) noexcept;
 
     //! Executes specified code in parallel threads for specified amount of items.
     //!
@@ -30,8 +29,7 @@ namespace Graphyte::Threading
         uint32_t count,
         std::function<void(uint32_t)> code,
         std::function<void(void)> preprocess,
-        bool singlethreaded = false
-    ) noexcept;
+        bool singlethreaded = false) noexcept;
 }
 
 
@@ -46,7 +44,7 @@ namespace Graphyte::Threading
 {
     template <typename T>
     inline T VolatileLoad(const T* p) noexcept
-        requires (std::is_trivially_copyable_v<T>)
+        requires(std::is_trivially_copyable_v<T>)
     {
         GX_ASSERT(p != nullptr);
 
@@ -55,7 +53,7 @@ namespace Graphyte::Threading
 
     template <typename T>
     inline void VolatileStore(T* p, T v) noexcept
-        requires (std::is_trivially_copyable_v<T>)
+        requires(std::is_trivially_copyable_v<T>)
     {
         GX_ASSERT(p != nullptr);
 
@@ -85,7 +83,7 @@ namespace Graphyte::Threading
     enum struct ThreadAffinity : uint64_t
     {
         None = uint64_t{},
-        All = ~uint64_t{},
+        All  = ~uint64_t{},
     };
 
     constexpr ThreadAffinity MakeThreadAffinity(uint64_t processor) noexcept
@@ -198,7 +196,9 @@ namespace Graphyte::Threading
 #if GRAPHYTE_COMPILER_MSVC
         _ReadBarrier();
 #else
-        __asm__ __volatile__("":::"memory");
+        // clang-format off
+        __asm__ __volatile__("" : : : "memory");
+        // clang-format on
 #endif
     }
 
@@ -207,7 +207,9 @@ namespace Graphyte::Threading
 #if GRAPHYTE_COMPILER_MSVC
         _WriteBarrier();
 #else
-        __asm__ __volatile__("":::"memory");
+        // clang-format off
+        __asm__ __volatile__("" : : : "memory");
+        // clang-format on
 #endif
     }
 
@@ -216,7 +218,9 @@ namespace Graphyte::Threading
 #if GRAPHYTE_COMPILER_MSVC
         _ReadWriteBarrier();
 #else
-        __asm__ __volatile__("":::"memory");
+        // clang-format off
+        __asm__ __volatile__("" : : : "memory");
+        // clang-format on
 #endif
     }
 }
@@ -239,13 +243,17 @@ namespace Graphyte::Threading
 #elif GRAPHYTE_CPU_ARM_64 && GRAPHYTE_COMPILER_MSVC
         __dmb(_ARM64_BARRIER_ISHST);
 #elif GRAPHYTE_CPU_ARM_64 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+        // clang-format off
         __asm__ __volatile__("dmb ishst" : : : "memory");
+        // clang-format on
 #elif GRAPHYTE_CPU_ARM_32 && GRAPHYTE_COMPILER_MSVC
         __dmb(_ARM_BARRIER_ISHST);
 #elif GRAPHYTE_CPU_ARM_32 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+        // clang-format off
         __asm__ __volatile__("dmb ishst" : : : "memory");
+        // clang-format on
 #else
-#   error "Not supported"
+#error "Not supported"
 #endif
     }
 
@@ -257,13 +265,17 @@ namespace Graphyte::Threading
 #elif GRAPHYTE_CPU_ARM_64 && GRAPHYTE_COMPILER_MSVC
         __dmb(_ARM64_BARRIER_ISH);
 #elif GRAPHYTE_CPU_ARM_64 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+        // clang-format off
         __asm__ __volatile__("dmb ish" : : : "memory");
+        // clang-format on
 #elif GRAPHYTE_CPU_ARM_32 && GRAPHYTE_COMPILER_MSVC
         __dmb(_ARM_BARRIER_ISH);
 #elif GRAPHYTE_CPU_ARM_32 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+        // clang-format off
         __asm__ __volatile__("dmb ish" : : : "memory");
+        // clang-format on
 #else
-#   error "Not supported"
+#error "Not supported"
 #endif
     }
 
@@ -275,13 +287,17 @@ namespace Graphyte::Threading
 #elif GRAPHYTE_CPU_ARM_64 && GRAPHYTE_COMPILER_MSVC
         __dmb(_ARM64_BARRIER_ISHLD);
 #elif GRAPHYTE_CPU_ARM_64 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+        // clang-format off
         __asm__ __volatile__("dmb ishld" : : : "memory");
+        // clang-format on
 #elif GRAPHYTE_CPU_ARM_32 && GRAPHYTE_COMPILER_MSVC
         __dmb(_ARM_BARRIER_ISH);
 #elif GRAPHYTE_CPU_ARM_32 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+        // clang-format off
         __asm__ __volatile__("dmb ish" : : : "memory");
+        // clang-format on
 #else
-#   error "Not supported"
+#error "Not supported"
 #endif
     }
 
@@ -293,13 +309,17 @@ namespace Graphyte::Threading
 #elif GRAPHYTE_CPU_ARM_64 && GRAPHYTE_COMPILER_MSVC
         __dmb(_ARM64_BARRIER_ISHLD);
 #elif GRAPHYTE_CPU_ARM_64 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+        // clang-format off
         __asm__ __volatile__("dmb ishld" : : : "memory");
+        // clang-format on
 #elif GRAPHYTE_CPU_ARM_32 && GRAPHYTE_COMPILER_MSVC
         __dmb(_ARM_BARRIER_ISH);
 #elif GRAPHYTE_CPU_ARM_32 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+        // clang-format off
         __asm__ __volatile__("dmb ish" : : : "memory");
+        // clang-format on
 #else
-#   error "Not supported"
+#error "Not supported"
 #endif
     }
 

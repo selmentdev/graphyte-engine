@@ -7,8 +7,7 @@
 namespace Graphyte::Diagnostics
 {
     BASE_API void OnCrash(
-        EXCEPTION_POINTERS* exception
-    ) noexcept
+        EXCEPTION_POINTERS* exception) noexcept
     {
         (void)exception;
         Diagnostics::FailFast();

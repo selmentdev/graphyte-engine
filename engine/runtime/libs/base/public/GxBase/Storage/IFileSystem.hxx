@@ -38,8 +38,7 @@ namespace Graphyte::Storage
          */
         virtual Status Visit(
             const std::string& path,
-            bool is_directory
-        ) noexcept = 0;
+            bool is_directory) noexcept = 0;
     };
 
     /*!
@@ -60,8 +59,7 @@ namespace Graphyte::Storage
          */
         virtual Status Visit(
             const std::string& path,
-            const FileInfo& info
-        ) noexcept = 0;
+            const FileInfo& info) noexcept = 0;
     };
 
     /*!
@@ -94,8 +92,7 @@ namespace Graphyte::Storage
         virtual Status OpenRead(
             std::unique_ptr<IStream>& result,
             const std::string& path,
-            bool share = false
-        ) noexcept = 0;
+            bool share = false) noexcept = 0;
 
         /*!
          * \brief   Opens file for write.
@@ -110,8 +107,7 @@ namespace Graphyte::Storage
             std::unique_ptr<IStream>& result,
             const std::string& path,
             bool append = false,
-            bool share = false
-        ) noexcept = 0;
+            bool share  = false) noexcept = 0;
 
     public:
         /*!
@@ -123,8 +119,7 @@ namespace Graphyte::Storage
          */
         virtual Status IsReadonly(
             bool& result,
-            const std::string& path
-        ) noexcept = 0;
+            const std::string& path) noexcept = 0;
 
         /*!
          * \brief   Sets file read only flag.
@@ -136,8 +131,7 @@ namespace Graphyte::Storage
          */
         virtual Status SetReadonly(
             const std::string& path,
-            bool value
-        ) noexcept = 0;
+            bool value) noexcept = 0;
 
         /*!
          * \brief   Gets file info for specified path.
@@ -149,8 +143,7 @@ namespace Graphyte::Storage
          */
         virtual Status GetFileInfo(
             FileInfo& result,
-            const std::string& path
-        ) noexcept = 0;
+            const std::string& path) noexcept = 0;
 
         /*!
          * \brief   Gets file size.
@@ -162,8 +155,7 @@ namespace Graphyte::Storage
          */
         virtual Status GetFileSize(
             int64_t& result,
-            const std::string& path
-        ) noexcept = 0;
+            const std::string& path) noexcept = 0;
 
         /*!
          * \brief   Determines whether file at specified path exists.
@@ -173,8 +165,7 @@ namespace Graphyte::Storage
          * \return  The status code.
          */
         virtual Status Exists(
-            const std::string& path
-        ) noexcept = 0;
+            const std::string& path) noexcept = 0;
 
     public:
         /*!
@@ -187,8 +178,7 @@ namespace Graphyte::Storage
          */
         virtual Status FileCopy(
             const std::string& destination,
-            const std::string& source
-        ) noexcept;
+            const std::string& source) noexcept;
 
         /*!
          * \brief   Moves file from source to destination.
@@ -200,8 +190,7 @@ namespace Graphyte::Storage
          */
         virtual Status FileMove(
             const std::string& destination,
-            const std::string& source
-        ) noexcept = 0;
+            const std::string& source) noexcept = 0;
 
         /*!
          * \brief   Deletes file at specified path.
@@ -211,8 +200,7 @@ namespace Graphyte::Storage
          * \return  The status code.
          */
         virtual Status FileDelete(
-            const std::string& path
-        ) noexcept = 0;
+            const std::string& path) noexcept = 0;
 
     public:
         /*!
@@ -223,8 +211,7 @@ namespace Graphyte::Storage
          * \return  \c true when successful, \c false otherwise.
          */
         virtual Status DirectoryCreate(
-            const std::string& path
-        ) noexcept = 0;
+            const std::string& path) noexcept = 0;
 
         /*!
          * \brief   Deletes directory at specified path.
@@ -234,8 +221,7 @@ namespace Graphyte::Storage
          * \return  The status code.
          */
         virtual Status DirectoryDelete(
-            const std::string& path
-        ) noexcept = 0;
+            const std::string& path) noexcept = 0;
 
     public:
         /*!
@@ -248,8 +234,7 @@ namespace Graphyte::Storage
          */
         virtual Status Enumerate(
             const std::string& path,
-            IDirectoryVisitor& visitor
-        ) noexcept = 0;
+            IDirectoryVisitor& visitor) noexcept = 0;
 
         /*!
          * \brief   Enumerates contents of directory at specified path.
@@ -261,8 +246,7 @@ namespace Graphyte::Storage
          */
         virtual Status Enumerate(
             const std::string& path,
-            IDirectoryInfoVisitor& visitor
-        ) noexcept = 0;
+            IDirectoryInfoVisitor& visitor) noexcept = 0;
 
     public:
         /*!
@@ -275,8 +259,7 @@ namespace Graphyte::Storage
          */
         virtual Status EnumerateRecursive(
             const std::string& path,
-            IDirectoryVisitor& visitor
-        ) noexcept;
+            IDirectoryVisitor& visitor) noexcept;
 
         /*!
          * \brief   Enumerates contents of directory at specified path recursively.
@@ -288,8 +271,7 @@ namespace Graphyte::Storage
          */
         virtual Status EnumerateRecursive(
             const std::string& path,
-            IDirectoryInfoVisitor& visitor
-        ) noexcept;
+            IDirectoryInfoVisitor& visitor) noexcept;
 
     public:
         /*!
@@ -300,8 +282,7 @@ namespace Graphyte::Storage
          * \return  The status code.
          */
         virtual Status DirectoryTreeCreate(
-            const std::string& path
-        ) noexcept;
+            const std::string& path) noexcept;
 
         /*!
          * \brief   Deletes directory tree recursively for specified path.
@@ -311,8 +292,7 @@ namespace Graphyte::Storage
          * \return  The status code.
          */
         virtual Status DirectoryTreeDelete(
-            const std::string& path
-        ) noexcept;
+            const std::string& path) noexcept;
 
         /*!
          * \brief   Copies directory tree recursively.
@@ -327,8 +307,7 @@ namespace Graphyte::Storage
         virtual Status DirectoryTreeCopy(
             const std::string& destination,
             const std::string& source,
-            bool overwrite
-        ) noexcept;
+            bool overwrite) noexcept;
 
     public:
         /*!
@@ -343,8 +322,7 @@ namespace Graphyte::Storage
         virtual Status FindFiles(
             std::vector<std::string>& result,
             const std::string& path,
-            std::string_view extension
-        ) noexcept;
+            std::string_view extension) noexcept;
 
         /*!
          * \brief   Finds files recursively at specified path, matching provided extension.
@@ -358,7 +336,6 @@ namespace Graphyte::Storage
         virtual Status FindFilesRecursive(
             std::vector<std::string>& result,
             const std::string& path,
-            std::string_view extension
-        ) noexcept;
+            std::string_view extension) noexcept;
     };
 }

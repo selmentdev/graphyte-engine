@@ -7,12 +7,11 @@ namespace Graphyte::Crypto
     BASE_API Status GetRandomBytes(notstd::span<std::byte> buffer) noexcept
     {
         if (!buffer.empty())
-        {        
+        {
             ssize_t size = getrandom(
                 buffer.data(),
                 buffer.size(),
-                GRND_RANDOM
-            );
+                GRND_RANDOM);
 
             if (size < 0)
             {

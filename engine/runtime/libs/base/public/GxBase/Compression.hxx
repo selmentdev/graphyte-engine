@@ -1,4 +1,4 @@
-    #pragma once
+#pragma once
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Span.hxx>
 
@@ -22,8 +22,7 @@ namespace Graphyte::Compression
     //! \return         The minimum number of bytes required to compress data of specified size.
     extern BASE_API size_t MemoryBound(
         CompressionMethod method,
-        size_t size
-    ) noexcept;
+        size_t size) noexcept;
 
 
     //! Compresses memory block.
@@ -40,8 +39,7 @@ namespace Graphyte::Compression
         void* output_buffer,
         size_t& output_size,
         const void* input_buffer,
-        size_t input_size
-    ) noexcept;
+        size_t input_size) noexcept;
 
 
     //! Decompresses memory block.
@@ -58,32 +56,27 @@ namespace Graphyte::Compression
         void* output_buffer,
         size_t output_size,
         const void* input_buffer,
-        size_t input_size
-    ) noexcept;
+        size_t input_size) noexcept;
 
     extern BASE_API bool CompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        notstd::span<const std::byte> input
-    ) noexcept;
+        notstd::span<const std::byte> input) noexcept;
 
     extern BASE_API bool DecompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        notstd::span<const std::byte> input
-    ) noexcept;
+        notstd::span<const std::byte> input) noexcept;
 
     extern BASE_API bool CompressString(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        std::string_view input
-    ) noexcept;
+        std::string_view input) noexcept;
 
     extern BASE_API bool DecompressString(
         CompressionMethod method,
         std::string& output,
-        const std::vector<std::byte>& input
-    ) noexcept;
+        const std::vector<std::byte>& input) noexcept;
 
     //! Compresses byte vector.
     //!
@@ -95,14 +88,12 @@ namespace Graphyte::Compression
     inline bool CompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        const std::vector<std::byte>& input
-    ) noexcept
+        const std::vector<std::byte>& input) noexcept
     {
         return Compression::CompressBlock(
             method,
             output,
-            notstd::span<const std::byte>(input)
-        );
+            notstd::span<const std::byte>(input));
     }
 
     //! Decompresses byte vector.
@@ -116,13 +107,11 @@ namespace Graphyte::Compression
     inline bool DecompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        const std::vector<std::byte>& input
-    ) noexcept
+        const std::vector<std::byte>& input) noexcept
     {
         return Compression::DecompressBlock(
             method,
             output,
-            notstd::span<const std::byte>(input)
-        );
+            notstd::span<const std::byte>(input));
     }
 }

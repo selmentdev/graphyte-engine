@@ -48,8 +48,8 @@ namespace Graphyte::Storage
         __forceinline void UpdateAsync() noexcept
         {
             ULARGE_INTEGER li{};
-            li.QuadPart = this->m_AsyncPosition;
-            this->m_Async.Offset = li.LowPart;
+            li.QuadPart              = this->m_AsyncPosition;
+            this->m_Async.Offset     = li.LowPart;
             this->m_Async.OffsetHigh = li.HighPart;
         }
 
@@ -90,12 +90,11 @@ namespace Graphyte::Storage
         }
 
         void StartAsyncRead(
-            int32_t buffer
-        ) noexcept
+            int32_t buffer) noexcept
         {
             if (!this->m_IsEOF)
             {
-                this->m_IsReading = true;
+                this->m_IsReading              = true;
                 this->m_CurrentAsyncReadBuffer = buffer;
 
                 DWORD dwProcessed{};
@@ -110,7 +109,7 @@ namespace Graphyte::Storage
 
                     if (dwError != ERROR_IO_PENDING)
                     {
-                        this->m_IsEOF = true;
+                        this->m_IsEOF     = true;
                         this->m_IsReading = false;
                     }
                 }
@@ -130,13 +129,12 @@ namespace Graphyte::Storage
         __forceinline bool IsValidHandle() const noexcept
         {
             return this->m_Handle != nullptr
-                && this->m_Handle != INVALID_HANDLE_VALUE;
+                   && this->m_Handle != INVALID_HANDLE_VALUE;
         }
 
     public:
         WindowsAsyncFileStream(
-            HANDLE handle
-        ) noexcept
+            HANDLE handle) noexcept
             : m_Handle{ handle }
             , m_Async{}
             , m_Size{}
@@ -147,7 +145,7 @@ namespace Graphyte::Storage
             , m_SerializeBuffer{}
             , m_StreamBuffer{ 1 }
             , m_CurrentAsyncReadBuffer{}
-            , m_IsEOF{ false } 
+            , m_IsEOF{ false }
             , m_IsReading{ false }
         {
             GX_ASSERT(this->IsValidHandle());
@@ -177,8 +175,7 @@ namespace Graphyte::Storage
 
         virtual Status Read(
             notstd::span<std::byte> buffer,
-            size_t& processed
-        ) noexcept final override
+            size_t& processed) noexcept final override
         {
             GX_ASSERT(this->IsValidHandle());
 
@@ -210,11 +207,9 @@ namespace Graphyte::Storage
 
             while (!buffer.empty())
             {
-                int64_t requested = std::min<int64_t>({
-                    static_cast<int64_t>(buffer.size()),
+                int64_t requested = std::min<int64_t>({ static_cast<int64_t>(buffer.size()),
                     static_cast<int64_t>(DefaultBufferSize - m_SerializePosition),
-                    static_cast<int64_t>(m_Size - m_Position)
-                });
+                    static_cast<int64_t>(m_Size - m_Position) });
 
                 GX_ASSERT(requested <= DefaultBufferSize);
 
@@ -225,8 +220,7 @@ namespace Graphyte::Storage
                     std::memcpy(
                         buffer.data(),
                         &m_Buffers[m_SerializeBuffer][m_SerializePosition],
-                        to_copy
-                    );
+                        to_copy);
 
                     m_SerializePosition += to_copy;
                     GX_ASSERT(m_SerializePosition <= DefaultBufferSize);
@@ -267,8 +261,7 @@ namespace Graphyte::Storage
 
         virtual Status Write(
             [[maybe_unused]] notstd::span<const std::byte> buffer,
-            [[maybe_unused]] size_t& processed
-        ) noexcept final override
+            [[maybe_unused]] size_t& processed) noexcept final override
         {
             GX_ASSERT(this->IsValidHandle());
 
@@ -294,24 +287,23 @@ namespace Graphyte::Storage
 
         virtual Status SetPosition(
             int64_t value,
-            SeekOrigin origin
-        ) noexcept final override
+            SeekOrigin origin) noexcept final override
         {
             GX_ASSERT(this->IsValidHandle());
 
             switch (origin)
             {
-            case SeekOrigin::Begin:
+                case SeekOrigin::Begin:
                 {
                     return this->SetPosition(value);
                 }
 
-            case SeekOrigin::Current:
+                case SeekOrigin::Current:
                 {
                     return this->SetPosition(this->m_Position + value);
                 }
 
-            case SeekOrigin::End:
+                case SeekOrigin::End:
                 {
                     return this->SetPosition(m_Size - value);
                 }
@@ -322,8 +314,7 @@ namespace Graphyte::Storage
         }
 
         virtual Status SetPosition(
-            int64_t value
-        ) noexcept final override
+            int64_t value) noexcept final override
         {
             GX_ASSERT(this->IsValidHandle());
             GX_ASSERT(value >= 0);
@@ -344,7 +335,7 @@ namespace Graphyte::Storage
             m_Position = value;
 
             bool in_range = ((delta < 0) && ((static_cast<int64_t>(m_SerializePosition) - std::abs(delta)) >= 0))
-                || ((delta > 0) && ((delta + m_SerializePosition) < DefaultBufferSize));
+                            || ((delta > 0) && ((delta + m_SerializePosition) < DefaultBufferSize));
 
             if (in_range)
             {
@@ -354,11 +345,11 @@ namespace Graphyte::Storage
             {
                 GX_ASSERT(value >= 0);
 
-                m_IsEOF = true;
+                m_IsEOF         = true;
                 m_AsyncPosition = static_cast<uint64_t>(value);
                 UpdateAsync();
                 m_CurrentAsyncReadBuffer = m_SerializeBuffer;
-                m_SerializePosition = 0;
+                m_SerializePosition      = 0;
                 StartSerializeBufferRead();
             }
 

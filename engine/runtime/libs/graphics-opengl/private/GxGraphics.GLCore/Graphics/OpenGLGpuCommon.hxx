@@ -28,8 +28,7 @@ namespace Graphyte::Graphics
     GX_DECLARE_LOG_CATEGORY(LogOpenGLRender, Trace, Trace);
 
     std::string_view OpenGLGetErrorString(
-        GLenum error
-    ) noexcept;
+        GLenum error) noexcept;
 }
 
 #define GPU_GL_VALIDATE(expression) \

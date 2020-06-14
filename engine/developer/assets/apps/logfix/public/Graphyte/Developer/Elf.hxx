@@ -10,34 +10,34 @@ namespace Graphyte::Developer::Elf
 
     enum class ElfImageHeaderFileClass : uint8_t
     {
-        None = 0,
+        None  = 0,
         Bit32 = 1,
         Bit64 = 2,
     };
 
     enum class ElfImageHeaderFileEncoding : uint8_t
     {
-        None = 0,
+        None         = 0,
         LittleEndian = 1,
-        BigEndian = 2,
+        BigEndian    = 2,
     };
 
     enum class ElfImageHeaderFileVersion : uint8_t
     {
-        None = 0,
+        None    = 0,
         Current = 1,
     };
 
     enum class ElfImageHeaderOsAbi : uint8_t
     {
-        SysV = 0,
-        HPUX = 1,
-        NetBSD = 2,
-        Linux = 3,
-        FreeBSD = 9,
-        OpenBSD = 12,
-        ARM_AEABI = 64,
-        ARM = 97,
+        SysV       = 0,
+        HPUX       = 1,
+        NetBSD     = 2,
+        Linux      = 3,
+        FreeBSD    = 9,
+        OpenBSD    = 12,
+        ARM_AEABI  = 64,
+        ARM        = 97,
         Standalone = 255,
     };
 
@@ -48,32 +48,32 @@ namespace Graphyte::Developer::Elf
 
     enum class ElfImageHeaderFileType : uint16_t
     {
-        None = 0,
-        Relocatable = 1,
-        Executable = 2,
+        None          = 0,
+        Relocatable   = 1,
+        Executable    = 2,
         SharedLibrary = 3,
-        CoreDump = 4,
-        LoOs = 0xFE00u,
-        HiOs = 0xFEFFu,
-        LoProc = 0xFF00u,
-        HiProc = 0xFFFFu,
+        CoreDump      = 4,
+        LoOs          = 0xFE00u,
+        HiOs          = 0xFEFFu,
+        LoProc        = 0xFF00u,
+        HiProc        = 0xFFFFu,
     };
 
 
     enum class ElfImageHeaderMachineType : uint16_t
     {
-        None = 0,
-        X86_32 = 3,
-        PPC = 20,
-        PPC64 = 21,
-        ARM = 40,
-        X86_64 = 62,
+        None    = 0,
+        X86_32  = 3,
+        PPC     = 20,
+        PPC64   = 21,
+        ARM     = 40,
+        X86_64  = 62,
         AARCH64 = 183,
     };
 
     enum class ElfImageHeaderObjectVersion : uint32_t
     {
-        None = 0,
+        None    = 0,
         Current = 1,
     };
 
@@ -136,38 +136,38 @@ namespace Graphyte::Developer::Elf
 
     enum class ElfSectionType : uint32_t
     {
-        Unused = 0,
-        ProgramData = 1,
-        SymbolTable = 2,
-        StringTable = 3,
-        Rela = 4,
-        SymbolHashTable = 5,
-        Dynamic = 6,
-        Notes = 7,
-        NoBits = 8,
-        Rel = 9,
-        SharedLib = 10,
-        LinkerSymbolTable = 11,
-        CtorArray = 14,
-        DtorArray = 15,
-        PreCtorArray = 16,
-        SectionGroup = 17,
+        Unused              = 0,
+        ProgramData         = 1,
+        SymbolTable         = 2,
+        StringTable         = 3,
+        Rela                = 4,
+        SymbolHashTable     = 5,
+        Dynamic             = 6,
+        Notes               = 7,
+        NoBits              = 8,
+        Rel                 = 9,
+        SharedLib           = 10,
+        LinkerSymbolTable   = 11,
+        CtorArray           = 14,
+        DtorArray           = 15,
+        PreCtorArray        = 16,
+        SectionGroup        = 17,
         SymbolTableExtended = 18,
     };
 
     enum class ElfSectionFlags : uint32_t
     {
-        Write = 1 << 0,
-        Alloc = 1 << 1,
-        Executable = 1 << 2,
-        Merge = 1 << 4,
-        Strings = 1 << 5,
-        InfoLink = 1 << 6,
-        LinkOrder = 1 << 7,
+        Write           = 1 << 0,
+        Alloc           = 1 << 1,
+        Executable      = 1 << 2,
+        Merge           = 1 << 4,
+        Strings         = 1 << 5,
+        InfoLink        = 1 << 6,
+        LinkOrder       = 1 << 7,
         OsNonConforming = 1 << 8,
-        Group = 1 << 9,
-        Tls = 1 << 10,
-        Compressed = 1 << 11,
+        Group           = 1 << 9,
+        Tls             = 1 << 10,
+        Compressed      = 1 << 11,
     };
 
     struct ElfSectionHeader32 final
@@ -202,27 +202,27 @@ namespace Graphyte::Developer::Elf
 
     enum class ElfSymbolType : uint8_t
     {
-        NoType = 0,
-        Object = 1,
+        NoType   = 0,
+        Object   = 1,
         Function = 2,
-        Section = 3,
-        File = 4,
-        Common = 5,
-        Tls = 6,
+        Section  = 3,
+        File     = 4,
+        Common   = 5,
+        Tls      = 6,
     };
 
     enum class ElfSymbolBind : uint8_t
     {
-        Local = 0,
+        Local  = 0,
         Global = 1,
-        Weak = 2,
+        Weak   = 2,
     };
 
     enum class ElfSymbolVisibility : uint8_t
     {
-        Default = 0,
-        Internal = 1,
-        Hidden = 2,
+        Default   = 0,
+        Internal  = 1,
+        Hidden    = 2,
         Protected = 3,
     };
 

@@ -5,8 +5,7 @@
 namespace Graphyte::CommandLine::Impl
 {
     extern BASE_API auto SplitCommandLineNameValue(
-        std::string_view value
-    ) noexcept->std::pair<std::string_view, std::optional<std::string_view>>;
+        std::string_view value) noexcept -> std::pair<std::string_view, std::optional<std::string_view>>;
 }
 
 namespace Graphyte::CommandLine
@@ -33,8 +32,7 @@ namespace Graphyte::CommandLine
             if (m_Index < m_Args.size())
             {
                 std::tie(this->Name, this->Value) = Impl::SplitCommandLineNameValue(
-                    std::string_view{ m_Args[m_Index] }
-                );
+                    std::string_view{ m_Args[m_Index] });
 
                 ++m_Index;
                 return true;

@@ -8,8 +8,7 @@ namespace Graphyte::System::Impl
 {
     HRESULT SetDialogFilters(
         IFileDialog& dialog,
-        notstd::span<FileDialogFilter> filters
-    ) noexcept
+        notstd::span<FileDialogFilter> filters) noexcept
     {
         std::vector<std::pair<std::wstring, std::wstring>> wfilters{};
         wfilters.reserve(filters.size());
@@ -18,8 +17,7 @@ namespace Graphyte::System::Impl
         {
             wfilters.emplace_back(
                 Graphyte::System::Impl::WidenString(filter.Display),
-                Graphyte::System::Impl::WidenString(filter.Filter)
-            );
+                Graphyte::System::Impl::WidenString(filter.Filter));
         }
 
         std::vector<COMDLG_FILTERSPEC> dialog_filters{};
@@ -31,20 +29,17 @@ namespace Graphyte::System::Impl
                 COMDLG_FILTERSPEC{
                     .pszName = filter.first.c_str(),
                     .pszSpec = filter.second.c_str(),
-                }
-            );
+                });
         }
 
         return dialog.SetFileTypes(
             static_cast<UINT>(dialog_filters.size()),
-            dialog_filters.data()
-        );
+            dialog_filters.data());
     }
 
     HRESULT GetResult(
         IFileDialog& dialog,
-        std::string& out_path
-    ) noexcept
+        std::string& out_path) noexcept
     {
         Microsoft::WRL::ComPtr<IShellItem> item{};
 
@@ -69,8 +64,7 @@ namespace Graphyte::System::Impl
 
     HRESULT GetResult(
         IFileOpenDialog& dialog,
-        std::vector<std::string>& out_paths
-    ) noexcept
+        std::vector<std::string>& out_paths) noexcept
     {
         Microsoft::WRL::ComPtr<IShellItemArray> items{};
         HRESULT hr = dialog.GetResults(items.GetAddressOf());
@@ -121,8 +115,7 @@ namespace Graphyte::System
     BASE_API Status OpenFile(
         std::string& out_path,
         notstd::span<FileDialogFilter> filters,
-        std::string_view title
-    ) noexcept
+        std::string_view title) noexcept
     {
         Microsoft::WRL::ComPtr<IFileOpenDialog> dialog{};
 
@@ -131,8 +124,7 @@ namespace Graphyte::System
             nullptr,
             CLSCTX_ALL,
             IID_IFileOpenDialog,
-            (void**)dialog.GetAddressOf()
-        );
+            (void**)dialog.GetAddressOf());
 
         if (SUCCEEDED(hr))
         {
@@ -152,15 +144,14 @@ namespace Graphyte::System
         hr = Impl::GetResult(*dialog.Get(), out_path);
 
         return SUCCEEDED(hr)
-            ? Status::Success
-            : Status::Failure;
+                   ? Status::Success
+                   : Status::Failure;
     }
 
     BASE_API Status OpenFile(
         std::vector<std::string>& out_paths,
         notstd::span<FileDialogFilter> filters,
-        std::string_view title
-    ) noexcept
+        std::string_view title) noexcept
     {
         Microsoft::WRL::ComPtr<IFileOpenDialog> dialog{};
         HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_ALL, IID_IFileOpenDialog, (void**)dialog.GetAddressOf());
@@ -198,15 +189,14 @@ namespace Graphyte::System
         }
 
         return SUCCEEDED(hr)
-            ? Status::Success
-            : Status::Failure;
+                   ? Status::Success
+                   : Status::Failure;
     }
 
     BASE_API Status SaveFile(
         std::string& out_path,
         notstd::span<FileDialogFilter> filters,
-        std::string_view title
-    ) noexcept
+        std::string_view title) noexcept
     {
         Microsoft::WRL::ComPtr<IFileSaveDialog> dialog{};
 
@@ -215,8 +205,7 @@ namespace Graphyte::System
             nullptr,
             CLSCTX_ALL,
             IID_IFileSaveDialog,
-            (void**)dialog.GetAddressOf()
-        );
+            (void**)dialog.GetAddressOf());
 
         if (SUCCEEDED(hr))
         {
@@ -236,7 +225,7 @@ namespace Graphyte::System
         hr = Impl::GetResult(*dialog.Get(), out_path);
 
         return SUCCEEDED(hr)
-            ? Status::Success
-            : Status::Failure;
+                   ? Status::Success
+                   : Status::Failure;
     }
 }

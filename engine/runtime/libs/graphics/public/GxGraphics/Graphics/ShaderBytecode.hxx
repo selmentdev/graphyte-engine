@@ -10,8 +10,8 @@ namespace Graphyte::Graphics
 
     enum struct ShaderBytecodeFlags : uint32_t
     {
-        None = 0,
-        Debug = 1 << 0,
+        None   = 0,
+        Debug  = 1 << 0,
         Helper = 1 << 1,
     };
     GX_ENUM_CLASS_FLAGS(ShaderBytecodeFlags);
@@ -19,7 +19,7 @@ namespace Graphyte::Graphics
     class ShaderBytecode final
     {
     public:
-        static constexpr const uint64_t FileSignature = 0xb084f8149e928dd6;
+        static constexpr const uint64_t FileSignature  = 0xb084f8149e928dd6;
         static constexpr const uint32_t CurrentVersion = 1;
 
     public:
@@ -37,6 +37,6 @@ namespace Graphyte::Graphics
         }
 
     public:
-        GRAPHICS_API friend Storage::Archive& operator << (Storage::Archive& archive, ShaderBytecode& bytecode) noexcept;
+        GRAPHICS_API friend Storage::Archive& operator<<(Storage::Archive& archive, ShaderBytecode& bytecode) noexcept;
     };
 }

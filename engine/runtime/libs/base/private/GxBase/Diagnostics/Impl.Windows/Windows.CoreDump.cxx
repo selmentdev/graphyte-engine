@@ -12,15 +12,14 @@ namespace Graphyte::Diagnostics
 #if defined(__MINGW32__) || defined(__MINGW64__)
 
     static constexpr MINIDUMP_TYPE MiniDumpWithModuleHeaders = 0x00080000;
-    static constexpr MINIDUMP_TYPE MiniDumpFilterTriage = 0x00100000;
+    static constexpr MINIDUMP_TYPE MiniDumpFilterTriage      = 0x00100000;
 
 #endif
 
     static BOOL CALLBACK CreateMiniDumpCallback(
         [[maybe_unused]] PVOID param,
         const PMINIDUMP_CALLBACK_INPUT input,
-        PMINIDUMP_CALLBACK_OUTPUT output
-    ) noexcept
+        PMINIDUMP_CALLBACK_OUTPUT output) noexcept
     {
         BOOL result = FALSE;
 
@@ -33,24 +32,24 @@ namespace Graphyte::Diagnostics
                 case ThreadCallback:
                 case ThreadExCallback:
                 case MemoryCallback:
-                    {
-                        result = TRUE;
-                        break;
-                    }
+                {
+                    result = TRUE;
+                    break;
+                }
                 case ModuleCallback:
+                {
+                    if ((output->ModuleWriteFlags & ModuleReferencedByMemory) != 0)
                     {
-                        if ((output->ModuleWriteFlags & ModuleReferencedByMemory) != 0)
-                        {
-                            output->ModuleWriteFlags ^= ModuleWriteModule;
-                        }
+                        output->ModuleWriteFlags ^= ModuleWriteModule;
+                    }
 
-                        result = TRUE;
-                        break;
-                    }
+                    result = TRUE;
+                    break;
+                }
                 case CancelCallback:
-                    {
-                        break;
-                    }
+                {
+                    break;
+                }
             }
         }
 
@@ -59,24 +58,24 @@ namespace Graphyte::Diagnostics
 
     Status WriteCoreDump(
         HANDLE handle,
-        EXCEPTION_POINTERS* exception
-    ) noexcept
+        EXCEPTION_POINTERS* exception) noexcept
     {
         GX_ASSERT(handle != nullptr);
         GX_ASSERT(exception != nullptr);
 
         MINIDUMP_EXCEPTION_INFORMATION mdei{
-            .ThreadId = GetCurrentThreadId(),
+            .ThreadId          = GetCurrentThreadId(),
             .ExceptionPointers = exception,
-            .ClientPointers = FALSE,
+            .ClientPointers    = FALSE,
         };
 
         MINIDUMP_CALLBACK_INFORMATION mdci{
             .CallbackRoutine = static_cast<MINIDUMP_CALLBACK_ROUTINE>(CreateMiniDumpCallback),
-            .CallbackParam = nullptr,
+            .CallbackParam   = nullptr,
         };
 
         auto mdt = static_cast<MINIDUMP_TYPE>(
+            // clang-format off
             MiniDumpNormal |
             MiniDumpWithDataSegs |
             MiniDumpWithHandleData |
@@ -88,6 +87,7 @@ namespace Graphyte::Diagnostics
             MiniDumpWithPrivateWriteCopyMemory |
             MiniDumpWithTokenInformation |
             MiniDumpWithModuleHeaders
+            // clang-format on
         );
 
         BOOL result = MiniDumpWriteDump(
@@ -97,8 +97,7 @@ namespace Graphyte::Diagnostics
             mdt,
             &mdei,
             nullptr,
-            &mdci
-        );
+            &mdci);
 
         if (result == FALSE)
         {
@@ -113,8 +112,7 @@ namespace Graphyte::Diagnostics
     }
 
     Status CreateCoreDump(
-        EXCEPTION_POINTERS* exception
-    ) noexcept
+        EXCEPTION_POINTERS* exception) noexcept
     {
         GX_ASSERT(exception != nullptr);
 
@@ -138,8 +136,7 @@ namespace Graphyte::Diagnostics
                 nullptr,
                 CREATE_ALWAYS,
                 FILE_ATTRIBUTE_NORMAL,
-                nullptr
-            );
+                nullptr);
 
             if (hFile != INVALID_HANDLE_VALUE)
             {
