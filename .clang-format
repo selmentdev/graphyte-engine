@@ -1,0 +1,44 @@
+BasedOnStyle: WebKit
+AlignEscapedNewlines: DontAlign
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+BreakBeforeBraces: Allman
+IndentCaseLabels: true
+MaxEmptyLinesToKeep: 2
+NamespaceIndentation: All
+SortIncludes: false
+SpaceBeforeCpp11BracedList: false
+Standard: Latest
+AlignConsecutiveAssignments: true
+#AlignConsecutiveBitFields: true
+AlignConsecutiveMacros: true
+AlignTrailingComments: true
+AllowShortLambdasOnASingleLine: None
+AlignOperands: true
+#Cpp11BracedListStyle: true
+UseCRLF: false
+UseTab: Never
+#ColumnLimit: 120
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+PenaltyReturnTypeOnItsOwnLine: 100000
+#BreakBeforeBraces: Custom
+#BraceWrapping:
+#  BeforeLambdaBody: true
+#  BraceWrappingAfterControlStatementStyle: Always
+#  BeforeWhile: true
+#  SplitEmptyRecord: false
+#  AfterCaseLabel: true
+#  AfterClass: true
+#  IndentBraces: false
+#  AfterEnum: true
+#  AfterFunction: true
+#  AfterNamespace: true
+#  AfterStruct: true
+#  AfterUnion: true
+#  AfterExternBlock: true
+#  BeforeCatch: true
+#  BeforeElse: true
+#  SplitEmptyFunction: true
+#  SplitEmptyNamespace: true
+#  BraceWrappingAfterControlStatementStyle: Always
