@@ -22,7 +22,7 @@
 #include "engine/runtime/libs/launch/project.bff"
 
 #include "engine/developer/assets/libs/base/project.bff"
-;#include "engine/developer/assets/libs/shader/project.bff"
+#include "engine/developer/assets/libs/shader/project.bff"
 #include "engine/developer/assets/libs/mesh/project.bff"
 #include "engine/developer/assets/apps/compiler/project.bff"
 #include "engine/developer/assets/apps/logfix/project.bff"
