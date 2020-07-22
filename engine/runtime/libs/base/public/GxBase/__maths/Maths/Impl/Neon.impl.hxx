@@ -5,7 +5,7 @@
 // This module implements NEON specific helper functions
 //
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     mathinline float32x4_t mathcall neon_permute(
         float32x4_t a,
@@ -398,7 +398,7 @@ namespace Graphyte::Impl
     }
 }
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     // (a * b) + c
     mathinline float32x4_t mathcall neon_fmadd_f32x4(
@@ -439,7 +439,7 @@ namespace Graphyte::Impl
     }
 }
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     mathinline float32x4_t mathcall neon_dp4(float32x4_t a, float32x4_t b) noexcept
     {

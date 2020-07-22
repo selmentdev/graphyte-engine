@@ -1,39 +1,16 @@
 #pragma once
 #include <GxBase/Maths/Base.hxx>
-#include <GxBase/Maths/Vector4.hxx>
+#include <GxBase/Maths/Vector.hxx>
 
-
-// =================================================================================================
-//
-// Type construction functions.
-//
-
-namespace Graphyte::MathsX
+namespace Graphyte
 {
-    template <>
-    mathinline Quaternion mathcall Make<Quaternion, float>(float x, float y, float z, float w) noexcept
+    struct Quaternion final
     {
-        return { Make<Vector4, float>(x, y, z, w).V };
-    }
-}
+        Impl::NativeFloat32x4 V;
 
+        static constexpr const size_t Components = 4;
 
-// =================================================================================================
-//
-// Vector conversion functions.
-//
-
-namespace Graphyte::MathsX
-{
-    template <>
-    mathinline Quaternion mathcall Make<Quaternion, Vector4>(Vector4 v) noexcept
-    {
-        return { v.V };
-    }
-
-    template <>
-    mathinline Vector4 mathcall Make<Vector4, Quaternion>(Quaternion v) noexcept
-    {
-        return { v.V };
-    }
+        using ComponentType = float;
+        using MaskType      = Bool4;
+    };
 }

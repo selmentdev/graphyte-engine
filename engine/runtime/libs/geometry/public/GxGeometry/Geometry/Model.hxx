@@ -3,6 +3,7 @@
 #include <GxBase/Types.hxx>
 #include <GxBase/Maths.hxx>
 #include <GxGeometry/Geometry/Mesh.hxx>
+#include <GxBase/Maths/Matrix.hxx>
 
 namespace Graphyte::Geometry
 {
