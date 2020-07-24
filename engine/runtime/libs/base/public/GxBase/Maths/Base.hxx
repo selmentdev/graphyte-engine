@@ -41,7 +41,7 @@
 // Native vector type.
 //
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
 #if GRAPHYTE_MATH_NO_INTRINSICS
     struct alignas(16) NativeFloat32x4 final
@@ -85,7 +85,7 @@ namespace Graphyte::Impl
 // Native matrix type
 //
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
 #if GRAPHYTE_MATH_NO_INTRINSICS
     struct alignas(16) NativeFloat32x4x4 final
@@ -122,7 +122,7 @@ namespace Graphyte::Impl
 // Constant types
 //
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     struct alignas(16) ConstFloat32x4 final
     {
@@ -202,7 +202,7 @@ namespace Graphyte::Impl
 // Concepts
 //
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     template <typename T, typename = std::void_t<T::IsSimdFloat4>>
     inline constexpr bool IsSimdFloat4 = false;
@@ -221,4 +221,164 @@ namespace Graphyte::Impl
 
     template <typename T>
     inline constexpr bool IsVector<T, void> = true;
+}
+
+
+// =================================================================================================
+//
+// Standard math types
+//
+
+namespace Graphyte::Maths
+{
+    struct Bool4 final
+    {
+        Impl::NativeFloat32x4 V;
+
+        using IsSimdUInt4 = void;
+
+        static constexpr const size_t Components = 4;
+
+        using ComponentType = uint32_t;
+        using MaskType = Bool4;
+    };
+
+    struct Bool3 final
+    {
+        Impl::NativeFloat32x4 V;
+
+        using IsSimdUInt4 = void;
+
+        static constexpr const size_t Components = 3;
+
+        using ComponentType = uint32_t;
+        using MaskType = Bool3;
+    };
+
+    struct Bool2 final
+    {
+        Impl::NativeFloat32x4 V;
+
+        using IsSimdUInt4 = void;
+
+        static constexpr const size_t Components = 2;
+
+        using ComponentType = uint32_t;
+        using MaskType = Bool2;
+    };
+
+    struct Bool1 final
+    {
+        Impl::NativeFloat32x4 V;
+
+        using IsSimdUInt4 = void;
+
+        static constexpr const size_t Components = 1;
+
+        using ComponentType = uint32_t;
+        using MaskType = Bool1;
+    };
+
+    struct Vector4 final
+    {
+        Impl::NativeFloat32x4 V;
+
+        using IsSimdFloat4 = void;
+        using IsVector = void;
+
+        static constexpr const size_t Components = 4;
+
+        using ComponentType = float;
+        using MaskType = Bool4;
+    };
+
+    struct Vector3 final
+    {
+        Impl::NativeFloat32x4 V;
+
+        using IsSimdFloat4 = void;
+        using IsVector = void;
+
+        static constexpr const size_t Components = 3;
+
+        using ComponentType = float;
+        using MaskType = Bool3;
+    };
+
+    struct Vector2 final
+    {
+        Impl::NativeFloat32x4 V;
+
+        using IsSimdFloat4 = void;
+        using IsVector = void;
+
+        static constexpr const size_t Components = 2;
+
+        using ComponentType = float;
+        using MaskType = Bool2;
+    };
+
+    struct Vector1 final
+    {
+        Impl::NativeFloat32x4 V;
+
+        using IsSimdFloat4 = void;
+        using IsVector = void;
+
+        static constexpr const size_t Components = 1;
+
+        using ComponentType = float;
+        using MaskType = Bool1;
+    };
+
+    struct Color final
+    {
+        Impl::NativeFloat32x4 V;
+
+        static constexpr const size_t Components = 4;
+
+        using ComponentType = float;
+        using MaskType = Bool4;
+    };
+
+    struct Matrix final
+    {
+        Impl::NativeFloat32x4x4 M;
+
+        static constexpr const size_t Components = 16;
+        static constexpr const size_t Rows = 4;
+        static constexpr const size_t Columns = 4;
+
+        using ComponentType = float;
+    };
+
+    struct Plane final
+    {
+        Impl::NativeFloat32x4 V;
+
+        static constexpr const size_t Components = 4;
+
+        using ComponentType = float;
+        using MaskType = Bool4;
+    };
+
+    struct Quaternion final
+    {
+        Impl::NativeFloat32x4 V;
+
+        static constexpr const size_t Components = 4;
+
+        using ComponentType = float;
+        using MaskType = Bool4;
+    };
+
+    struct Sphere final
+    {
+        Impl::NativeFloat32x4 V;
+
+        static constexpr const size_t Components = 4;
+
+        using ComponentType = float;
+        using MaskType = Bool4;
+    };
 }

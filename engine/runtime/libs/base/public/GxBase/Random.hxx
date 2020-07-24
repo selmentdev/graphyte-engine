@@ -3,9 +3,7 @@
 #include <GxBase/Types.hxx>
 #include <GxBase/Span.hxx>
 #include <GxBase/Maths.hxx>
-#include <GxBase/Maths/Vector2.hxx>
-#include <GxBase/Maths/Vector3.hxx>
-#include <GxBase/Maths/Vector4.hxx>
+#include <GxBase/Maths/Vector.hxx>
 
 namespace Graphyte::Random::Impl
 {
@@ -72,13 +70,13 @@ namespace Graphyte::Random
     extern BASE_API float NextNormal(RandomState& state) noexcept;
     extern BASE_API float NextNormal(RandomState& state, float mean, float stddev) noexcept;
 
-    extern BASE_API Vector3 InsideUnitSphere(RandomState& state) noexcept;
-    extern BASE_API Vector3 OnUnitSphere(RandomState& state) noexcept;
-    extern BASE_API Vector2 OnUnitCircle(RandomState& state) noexcept;
+    extern BASE_API Maths::Vector3 InsideUnitSphere(RandomState& state) noexcept;
+    extern BASE_API Maths::Vector3 OnUnitSphere(RandomState& state) noexcept;
+    extern BASE_API Maths::Vector2 OnUnitCircle(RandomState& state) noexcept;
 
-    extern BASE_API Vector4 NextVector4(RandomState& state) noexcept;
-    extern BASE_API Vector3 NextVector3(RandomState& state) noexcept;
-    extern BASE_API Vector2 NextVector2(RandomState& state) noexcept;
+    extern BASE_API Maths::Vector4 NextVector4(RandomState& state) noexcept;
+    extern BASE_API Maths::Vector3 NextVector3(RandomState& state) noexcept;
+    extern BASE_API Maths::Vector2 NextVector2(RandomState& state) noexcept;
 
     extern BASE_API Float4 NextFloat4(RandomState& state) noexcept;
     extern BASE_API Float3 NextFloat3(RandomState& state) noexcept;

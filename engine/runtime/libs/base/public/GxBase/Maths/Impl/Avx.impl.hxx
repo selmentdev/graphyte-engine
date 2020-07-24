@@ -5,8 +5,11 @@
 // This module implements AVX specific helper functions.
 //
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
+    template <size_t Components>
+    inline constexpr int avx_mm_dp_mask = 0xFF >> (4 - Components);
+
     mathinline __m128 mathcall avx_fmadd_f32x4(
         __m128 a,
         __m128 b,
@@ -83,7 +86,7 @@ namespace Graphyte::Impl
     }
 }
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline __m128 mathcall avx_permute(__m128 a, __m128 b) noexcept

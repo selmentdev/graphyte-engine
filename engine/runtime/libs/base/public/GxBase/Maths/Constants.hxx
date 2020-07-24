@@ -1,7 +1,7 @@
 #pragma once
 #include <GxBase/Maths/Base.hxx>
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     template <typename T>
     inline constexpr const T g_Const_E = static_cast<T>(2.71828182845904523536028747135266249775724709369996);
@@ -127,7 +127,7 @@ namespace Graphyte::Impl
 //
 
 #if false
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     template <typename T> constexpr const T PI = T(3.14159265358979323846264338327950288419716939937510);
     template <typename T> constexpr const T PI2 = T(6.28318530717958647692528676655900576839433879875021);
@@ -161,7 +161,7 @@ namespace Graphyte::Impl
 // Vector constants
 //
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     // clang-format off
     mathconst ConstFloat32x4 VEC4_POSITIVE_UNIT_X = { { { 1.0f, 0.0f, 0.0f, 0.0f, } } };

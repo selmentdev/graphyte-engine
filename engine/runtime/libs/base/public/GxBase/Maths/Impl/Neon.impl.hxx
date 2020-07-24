@@ -5,7 +5,7 @@
 // This module implements NEON specific helper functions
 //
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     mathinline float32x4_t mathcall neon_permute(
         float32x4_t a,
@@ -398,7 +398,7 @@ namespace Graphyte::Impl
     }
 }
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
     // (a * b) + c
     mathinline float32x4_t mathcall neon_fmadd_f32x4(
@@ -439,9 +439,16 @@ namespace Graphyte::Impl
     }
 }
 
-namespace Graphyte::Impl
+namespace Graphyte::Maths::Impl
 {
-    mathinline float32x4_t mathcall neon_dp4(float32x4_t a, float32x4_t b) noexcept
+    template <size_t Components>
+    float32x4_t neon_dp(float32x4_t a, float32x4_t b) = delete;
+
+    template <size_t Components>
+    float32x4_t neon_dp(float32x4_t v) = delete;
+
+    template <>
+    mathinline float32x4_t mathcall neon_dp<4>(float32x4_t a, float32x4_t b) noexcept
     {
         // {r0}[x, y, z, w] = {a,b}[x1*x2, y1*y2, z1*z2, w1*w2]
         float32x4_t const r0 = vmulq_f32(a, b);
@@ -461,7 +468,14 @@ namespace Graphyte::Impl
         float32x4_t const result = vcombine_f32(r4, r4);
     }
 
-    mathinline float32x4_t mathcall neon_dp3(float32x4_t a, float32x4_t b) noexcept
+    template <>
+    mathinline float32x4_t mathcall neon_dp<4>(float32x4_t v) noexcept
+    {
+        return neon_dp<4>(v, v);
+    }
+
+    template <>
+    mathinline float32x4_t mathcall neon_dp<3>(float32x4_t a, float32x4_t b) noexcept
     {
         // {r0}[x, y, z, w] = {a,b}[x1*x2, y1*y2, z1*z2, w1*w2]
         float32x4_t const r0 = vmulq_f32(a, b);
@@ -484,22 +498,64 @@ namespace Graphyte::Impl
         return result;
     }
 
-    mathinline float32x4_t mathcall neon_dp2(float32x4_t a, float32x4_t b) noexcept
+    template <>
+    mathinline float32x4_t mathcall neon_dp<3>(float32x4_t v) noexcept
+    {
+        return neon_dp<3>(v, v);
+    }
+
+    template <>
+    mathinline float32x4_t mathcall neon_dp<2>(float32x4_t a, float32x4_t b) noexcept
     {
         // {r0}[x, y] = {a}[x, y]
-        float32x2_t r0 = vget_low_f32(a);
+        float32x2_t const r0 = vget_low_f32(a);
 
         // {r1}[x, y] = {a}[x, y]
-        float32x2_t r1 = vget_low_f32(b);
+        float32x2_t const r1 = vget_low_f32(b);
 
         // {r2}[x, y] = {r0,r1}[x1*x2, y1*y2]
-        float32x2_t r2 = vmul_f32(r0, r1);
+        float32x2_t const r2 = vmul_f32(r0, r1);
 
         // {r3}[x, y] = {r2,r2}[x1+x2, y1+y2] = [x1*x2 + y1*y2, ...]
         float32x2_t const r3 = vpadd_f32(r2, r2);
 
         // {result}[x, y, z, w] = {r3,r3}[x1, y1, x2, y2]
         float32x4_t const result = vcombine_f32(r3, r3);
+        return result;
+    }
+
+    template <>
+    mathinline float32x4_t mathcall neon_dp<2>(float32x4_t v) noexcept
+    {
+        // {r0}[x, y] = {v}[x, y]
+        float32x2_t const r0 = vget_low_f32(v);
+
+        // {r1}[x, y] = {r0, r0}[x*x, y*y]
+        float32x2_t const r1 = vmul_f32(r0, r0);
+
+        // {r2}[x, y] = {r1, r1}{x*x + y*y, ...]
+        float32x2_t const r2 = vpadd_f32(r1, r1);
+
+        // {result}[x, y, z, w] = {r2, r2}{x1, y1, x1, y1]
+        float32x4_t const result = vcombine_f32(r2, r2);
+
+        return result;
+    }
+
+    template <>
+    mathinline float32x4_t mathcall neon_dp<1>(float32x4_t a, float32x4_t b) noexcept
+    {
+        float32x4_t const axxxx = vdupq_lane_f32(a, 0);
+        float32x4_t const bxxxx = vdupq_lane_f32(b, 0);
+        float32x4_t const result = vmulq_f32(axxxx, bxxxx);
+        return result;
+    }
+
+    template <>
+    mathinline float32x4_t mathcall neon_dp<1>(float32x4_t v) noexcept
+    {
+        float32x4_t const vxxxx = vdupq_lane_f32(v, 0);
+        float32x4_t const result = vmulq_f32(vxxxx, vxxxx);
         return result;
     }
 }

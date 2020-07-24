@@ -432,10 +432,10 @@ namespace Graphyte
         {
 #if !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_HW_F16C
             __m128 const vf  = _mm_set_ss(value);
-            __m128i const vh = _mm_cvtps_ph(vf, 0);
+            __m128i const vh = _mm_cvtps_ph(vf, _MM_FROUND_TO_NEAREST_INT);
 
             return Graphyte::Half{
-                .Value = static_cast<uint16_t>(_mm_cvtsi128_si32(vh))
+                .Value = static_cast<uint16_t>(_mm_extract_epi16(vh, 0))
             };
 #elif !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_HW_NEON
             float32x4_t const vf = vdupq_n_f32(value);

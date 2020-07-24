@@ -1,6 +1,9 @@
 #include <GxBase/Random.hxx>
 #include <GxBase/Bitwise.hxx>
 #include <GxBase/Maths.hxx>
+#include <GxBase/Maths/Scalar.hxx>
+#include <GxBase/Maths/Vector.hxx>
+#include <GxBase/Maths/Arithmetic.hxx>
 
 namespace Graphyte::Random::Impl
 {
@@ -306,55 +309,61 @@ namespace Graphyte::Random
         return mean + NextNormal(state) * stddev;
     }
 
-    Vector3 InsideUnitSphere(RandomState& state) noexcept
+    Maths::Vector3 InsideUnitSphere(RandomState& state) noexcept
     {
         float const theta = NextFloat(state, Maths::Pi2<float>());
         float const v     = NextFloat(state);
         float const phi   = Maths::Acos((2.0f * v) - 1.0f);
         float const r     = Maths::Power(NextFloat(state), 1.0f / 3.0f);
 
-        auto [sin_phi, cos_phi]     = Maths::SinCos(phi);
-        auto [sin_theta, cos_theta] = Maths::SinCos(theta);
+        float sin_phi;
+        float cos_phi;
+        float sin_theta;
+        float cos_theta;
 
-        return Maths::Make<Vector3>(
+        Maths::SinCos(sin_phi, cos_phi, phi);
+        Maths::SinCos(sin_theta, cos_theta, theta);
+
+        return Maths::Make<Maths::Vector3>(
             r * sin_phi * cos_theta,
             r * sin_phi * sin_theta,
             r * cos_phi);
     }
 
-    Vector3 OnUnitSphere(RandomState& state) noexcept
+    Maths::Vector3 OnUnitSphere(RandomState& state) noexcept
     {
         float const x = NextNormal(state);
         float const y = NextNormal(state);
         float const z = NextNormal(state);
 
-        Vector3 const r = Maths::Make<Vector3>(x, y, z);
+        Maths::Vector3 const r = Maths::Make<Maths::Vector3>(x, y, z);
         return Maths::Normalize(r);
     }
 
-    Vector2 OnUnitCircle(RandomState& state) noexcept
+    Maths::Vector2 OnUnitCircle(RandomState& state) noexcept
     {
-        float const theta   = NextFloat(state, Maths::Pi2<float>());
-        Float2 const coords = Maths::SinCos(theta);
-        return Maths::Load<Vector2>(&coords);
+        float const theta = NextFloat(state, Maths::Pi2<float>());
+        Float2 coords;
+        Maths::SinCos(coords.X, coords.Y, theta);
+        return Maths::Load<Maths::Vector2>(&coords);
     }
 
-    Vector4 NextVector4(RandomState& state) noexcept
+    Maths::Vector4 NextVector4(RandomState& state) noexcept
     {
         Float4 const sample = NextFloat4(state);
-        return Maths::Load<Vector4>(&sample);
+        return Maths::Load<Maths::Vector4>(&sample);
     }
 
-    Vector3 NextVector3(RandomState& state) noexcept
+    Maths::Vector3 NextVector3(RandomState& state) noexcept
     {
         Float3 const sample = NextFloat3(state);
-        return Maths::Load<Vector3>(&sample);
+        return Maths::Load<Maths::Vector3>(&sample);
     }
 
-    Vector2 NextVector2(RandomState& state) noexcept
+    Maths::Vector2 NextVector2(RandomState& state) noexcept
     {
         Float2 const sample = NextFloat2(state);
-        return Maths::Load<Vector2>(&sample);
+        return Maths::Load<Maths::Vector2>(&sample);
     }
 
     Float4 NextFloat4(RandomState& state) noexcept

@@ -2,6 +2,7 @@
 #include <GxAssetsMesh/Assets.Mesh.module.hxx>
 #include <GxBase/Storage/Archive.hxx>
 #include <GxGeometry/Geometry/Model.hxx>
+#include <GxBase/Maths/Matrix.hxx>
 
 namespace Graphyte::AssetsPipeline::Meshes
 {

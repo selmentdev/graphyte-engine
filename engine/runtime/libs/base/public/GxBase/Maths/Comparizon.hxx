@@ -6,7 +6,7 @@
 // Boolean comparisons
 //
 
-namespace Graphyte
+namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall CompareEqual(T a, T b) noexcept
@@ -128,7 +128,7 @@ namespace Graphyte
 // Boolean mask qualification
 //
 
-namespace Graphyte
+namespace Graphyte::Maths
 {
     template <typename T>
     mathinline bool mathcall AllTrue(T v) noexcept
@@ -301,10 +301,10 @@ namespace Graphyte
 // Bit comparison
 //
 
-namespace Graphyte
+namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline typename T::Mask BitCompareEqual(T a, T b) noexcept
+    mathinline typename T::MaskType BitCompareEqual(T a, T b) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -323,7 +323,7 @@ namespace Graphyte
     }
 
     template <typename T>
-    mathinline typename T::Mask BitCompareNotEqual(T a, T b) noexcept
+    mathinline typename T::MaskType BitCompareNotEqual(T a, T b) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -348,10 +348,10 @@ namespace Graphyte
 // Value comparison
 //
 
-namespace Graphyte
+namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline typename T::Mask CompareEqual(T a, T b) noexcept
+    mathinline typename T::MaskType CompareEqual(T a, T b) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -371,7 +371,7 @@ namespace Graphyte
     }
 
     template <typename T>
-    mathinline typename T::Mask CompareEqual(T a, T b, T epsilon) noexcept
+    mathinline typename T::MaskType CompareEqual(T a, T b, T epsilon) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -408,7 +408,7 @@ namespace Graphyte
     }
 
     template <typename T>
-    mathinline typename T::Mask CompareNotEqual(T a, T b) noexcept
+    mathinline typename T::MaskType CompareNotEqual(T a, T b) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -430,7 +430,7 @@ namespace Graphyte
     }
 
     template <typename T>
-    mathinline typename T::Mask CompareGreater(T a, T b) noexcept
+    mathinline typename T::MaskType CompareGreater(T a, T b) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -450,7 +450,7 @@ namespace Graphyte
     }
 
     template <typename T>
-    mathinline typename T::Mask CompareGreaterEqual(T a, T b) noexcept
+    mathinline typename T::MaskType CompareGreaterEqual(T a, T b) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -470,7 +470,7 @@ namespace Graphyte
     }
 
     template <typename T>
-    mathinline typename T::Mask CompareLess(T a, T b) noexcept
+    mathinline typename T::MaskType CompareLess(T a, T b) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -490,7 +490,7 @@ namespace Graphyte
     }
 
     template <typename T>
-    mathinline typename T::Mask CompareLessEqual(T a, T b) noexcept
+    mathinline typename T::MaskType CompareLessEqual(T a, T b) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -515,7 +515,7 @@ namespace Graphyte
 #endif
 
     template <typename T>
-    mathinline typename T::Mask mathcall CompareNan(T v) noexcept
+    mathinline typename T::MaskType mathcall CompareNan(T v) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -537,7 +537,7 @@ namespace Graphyte
 #endif
 
     template <typename T>
-    mathinline typename T::Mask mathcall CompareInfinite(T v) noexcept
+    mathinline typename T::MaskType mathcall CompareInfinite(T v) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -556,7 +556,7 @@ namespace Graphyte
     }
 
     template <typename T>
-    mathinline typename T::Mask mathcall CompareInBounds(T v, T bounds) noexcept
+    mathinline typename T::MaskType mathcall CompareInBounds(T v, T bounds) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -583,7 +583,7 @@ namespace Graphyte
 // Explicit comparison.
 //
 
-namespace Graphyte
+namespace Graphyte::Maths
 {
     template <typename T>
     mathinline bool mathcall IsZero(T v) noexcept
@@ -632,7 +632,7 @@ namespace Graphyte
 
     template <typename T>
     mathinline bool mathcall IsZero(T v) noexcept
-        requires(std::is_floating_point_v<T>)
+        requires(std::floating_point<T>)
     {
         return v == T(0.0);
     }
@@ -684,6 +684,7 @@ namespace Graphyte
 
     template <typename T>
     mathinline bool mathcall IsZero(T v, T epsilon) noexcept
+        requires(std::floating_point<T>)
     {
         return fabs(v) <= epsilon;
     }
@@ -733,7 +734,7 @@ namespace Graphyte
 
     template <typename T>
     mathinline bool mathcall IsEqual(T a, T b) noexcept
-        requires(std::is_floating_point_v<T>)
+        requires(std::floating_point<T>)
     {
         return (a == b);
     }
@@ -801,7 +802,7 @@ namespace Graphyte
 
     template <typename T>
     mathinline bool mathcall IsEqual(T a, T b, T epsilon) noexcept
-        requires(std::is_floating_point_v<T>)
+        requires(std::floating_point<T>)
     {
         return (fabs(a - b) <= epsilon);
     }
@@ -851,7 +852,7 @@ namespace Graphyte
 
     template <typename T>
     mathinline bool mathcall IsNotEqual(T a, T b) noexcept
-        requires(std::is_floating_point_v<T>)
+        requires(std::floating_point<T>)
     {
         return (a != b);
     }
@@ -901,7 +902,7 @@ namespace Graphyte
 
     template <typename T>
     mathinline bool mathcall IsGreater(T a, T b) noexcept
-        requires(std::is_floating_point_v<T>)
+        requires(std::floating_point<T>)
     {
         return (a > b);
     }
@@ -951,7 +952,7 @@ namespace Graphyte
 
     template <typename T>
     mathinline bool mathcall IsGreaterEqual(T a, T b) noexcept
-        requires(std::is_floating_point_v<T>)
+        requires(std::floating_point<T>)
     {
         return (a >= b);
     }
@@ -1001,7 +1002,7 @@ namespace Graphyte
 
     template <typename T>
     mathinline bool mathcall IsLess(T a, T b) noexcept
-        requires(std::is_floating_point_v<T>)
+        requires(std::floating_point<T>)
     {
         return (a < b);
     }
@@ -1051,7 +1052,7 @@ namespace Graphyte
 
     template <typename T>
     mathinline bool mathcall IsLessEqual(T a, T b) noexcept
-        requires(std::is_floating_point_v<T>)
+        requires(std::floating_point<T>)
     {
         return (a <= b);
     }
@@ -1189,21 +1190,3 @@ namespace Graphyte
 #endif
     }
 }
-
-requires(Impl::IsSimdFloat4<T>)
-requires(std::is_floating_point_v<T>)
-
-
-
-        if constexpr (T::Components == 4)
-        {
-        }
-        else if constexpr (T::Components == 3)
-        {
-        }
-        else if constexpr (T::Components == 2)
-        {
-        }
-        else if constexpr (T::Components == 1)
-        {
-        }

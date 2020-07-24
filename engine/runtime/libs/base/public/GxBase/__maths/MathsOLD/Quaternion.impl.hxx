@@ -1,9 +1,3 @@
-mathinline Quaternion mathcall Quaternion::Slerp(Quaternion q0, Quaternion q1, float t) noexcept
-{
-    auto v_t = Vector4::Make(t);
-    return Quaternion::Slerp(q0, q1, v_t);
-}
-
 mathinline Quaternion mathcall Quaternion::Slerp(Quaternion q0, Quaternion q1, Vector4 t) noexcept
 {
     GX_ASSERT(
