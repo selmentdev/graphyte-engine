@@ -79,7 +79,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Select(T a, T b, T control) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (control >= 0) ? a : b;
     }
@@ -2547,7 +2547,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CopySign(T number, T sign) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return copysign(number, sign);
     }
@@ -2589,7 +2589,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Sign(T x) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const gt_zero = ((T(0.0) < x) ? T(1.0) : T(0.0));
         T const lt_zero = ((x < T(0.0)) ? T(1.0) : T(0.0));
@@ -2618,7 +2618,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Ceiling(T v) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return ceil(v);
     }
@@ -2645,7 +2645,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Floor(T v) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return floor(v);
     }
@@ -2683,7 +2683,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Truncate(T v) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return trunc(v);
     }
@@ -2710,7 +2710,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Round(T v) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return round(v);
     }
@@ -2751,7 +2751,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Remainder(T x, T y) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return fmod(x, y);
     }
@@ -2765,7 +2765,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Fraction(T x) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return x - Floor(x);
     }
@@ -2800,7 +2800,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Min(T a, T b) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (a < b) ? a : b;
     }
@@ -2827,7 +2827,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Max(T a, T b) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (a > b) ? a : b;
     }
@@ -2855,7 +2855,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Clamp(T v, T min, T max) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const below  = Max(min, v);
         T const result = Min(max, below);
@@ -2887,7 +2887,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Saturate(T v) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const below  = Max(T(0.0), v);
         T const result = Min(T(1.0), below);
@@ -2933,7 +2933,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Wrap(T v, T min, T max) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const range    = (max - min);
         T const progress = (v - min);
@@ -3517,7 +3517,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall MoveTowards(T current, T target, T max_distance) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const distance = (target - current);
 

@@ -632,7 +632,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsZero(T v) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return v == T(0.0);
     }
@@ -684,7 +684,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsZero(T v, T epsilon) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return fabs(v) <= epsilon;
     }
@@ -734,7 +734,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsEqual(T a, T b) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (a == b);
     }
@@ -802,7 +802,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsEqual(T a, T b, T epsilon) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (fabs(a - b) <= epsilon);
     }
@@ -852,7 +852,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsNotEqual(T a, T b) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (a != b);
     }
@@ -902,7 +902,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsGreater(T a, T b) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (a > b);
     }
@@ -952,7 +952,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsGreaterEqual(T a, T b) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (a >= b);
     }
@@ -1002,7 +1002,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsLess(T a, T b) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (a < b);
     }
@@ -1052,7 +1052,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsLessEqual(T a, T b) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (a <= b);
     }

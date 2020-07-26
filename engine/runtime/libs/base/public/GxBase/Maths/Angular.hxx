@@ -1,4 +1,5 @@
 #pragma once
+#include <GxBase/Types.hxx>
 #include <GxBase/Maths/Base.hxx>
 #include <GxBase/Maths/Vector.hxx>
 
@@ -15,7 +16,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall RevolutionsToDegrees(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value * T(360.0);
     }
@@ -31,7 +32,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall RevolutionsToRadians(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value * Maths::Impl::ConstPi<T>;
     }
@@ -47,7 +48,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall RevolutionsToGradians(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value * T(400.0);
     }
@@ -63,7 +64,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall DegreesToRevolutions(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value / T(360.0);
     }
@@ -79,7 +80,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall RadiansToRevolutions(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value / Maths::Impl::ConstPi2<T>;
     }
@@ -95,7 +96,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall GradiansToRevolutions(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value / T(400.0);
     }
@@ -111,7 +112,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall RadiansToGradians(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value * (T(200.0) / Maths::Impl::ConstPi<T>);
     }
@@ -127,7 +128,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall GradiansToRadians(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value * (Maths::Impl::ConstPi<T> / T(200.0));
     }
@@ -143,7 +144,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall RadiansToDegrees(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value * (T(180.0) / Maths::Impl::ConstPi<T>);
     }
@@ -159,7 +160,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall DegreesToRadians(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value * (Maths::Impl::ConstPi<T> / T(180.0));
     }
@@ -175,7 +176,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall GradiansToDegrees(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value * (T(9.0) / T(10.0));
     }
@@ -191,7 +192,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall DegreesToGradians(T value) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return value * (T(10.0) / T(9.0));
     }

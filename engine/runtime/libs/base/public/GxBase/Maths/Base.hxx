@@ -199,33 +199,6 @@ namespace Graphyte::Maths::Impl
 
 // =================================================================================================
 //
-// Concepts
-//
-
-namespace Graphyte::Maths::Impl
-{
-    template <typename T, typename = std::void_t<T::IsSimdFloat4>>
-    inline constexpr bool IsSimdFloat4 = false;
-
-    template <typename T>
-    inline constexpr bool IsSimdFloat4<T, void> = true;
-
-    template <typename T, typename = std::void_t<T::IsSimdUInt4>>
-    inline constexpr bool IsSimdUInt4 = false;
-
-    template <typename T>
-    inline constexpr bool IsSimdUInt4<T, void> = true;
-
-    template <typename T, typename = std::void_t<T::IsVector>>
-    inline constexpr bool IsVector = false;
-
-    template <typename T>
-    inline constexpr bool IsVector<T, void> = true;
-}
-
-
-// =================================================================================================
-//
 // Standard math types
 //
 
@@ -240,7 +213,7 @@ namespace Graphyte::Maths
         static constexpr const size_t Components = 4;
 
         using ComponentType = uint32_t;
-        using MaskType = Bool4;
+        using MaskType      = Bool4;
     };
 
     struct Bool3 final
@@ -252,7 +225,7 @@ namespace Graphyte::Maths
         static constexpr const size_t Components = 3;
 
         using ComponentType = uint32_t;
-        using MaskType = Bool3;
+        using MaskType      = Bool3;
     };
 
     struct Bool2 final
@@ -264,7 +237,7 @@ namespace Graphyte::Maths
         static constexpr const size_t Components = 2;
 
         using ComponentType = uint32_t;
-        using MaskType = Bool2;
+        using MaskType      = Bool2;
     };
 
     struct Bool1 final
@@ -276,7 +249,7 @@ namespace Graphyte::Maths
         static constexpr const size_t Components = 1;
 
         using ComponentType = uint32_t;
-        using MaskType = Bool1;
+        using MaskType      = Bool1;
     };
 
     struct Vector4 final
@@ -289,7 +262,7 @@ namespace Graphyte::Maths
         static constexpr const size_t Components = 4;
 
         using ComponentType = float;
-        using MaskType = Bool4;
+        using MaskType      = Bool4;
     };
 
     struct Vector3 final
@@ -302,7 +275,7 @@ namespace Graphyte::Maths
         static constexpr const size_t Components = 3;
 
         using ComponentType = float;
-        using MaskType = Bool3;
+        using MaskType      = Bool3;
     };
 
     struct Vector2 final
@@ -315,7 +288,7 @@ namespace Graphyte::Maths
         static constexpr const size_t Components = 2;
 
         using ComponentType = float;
-        using MaskType = Bool2;
+        using MaskType      = Bool2;
     };
 
     struct Vector1 final
@@ -328,26 +301,32 @@ namespace Graphyte::Maths
         static constexpr const size_t Components = 1;
 
         using ComponentType = float;
-        using MaskType = Bool1;
+        using MaskType      = Bool1;
     };
 
     struct Color final
     {
         Impl::NativeFloat32x4 V;
 
+        using IsSimdFloat4 = void;
+        using IsColor = void;
+
         static constexpr const size_t Components = 4;
 
         using ComponentType = float;
-        using MaskType = Bool4;
+        using MaskType      = Bool4;
     };
 
     struct Matrix final
     {
         Impl::NativeFloat32x4x4 M;
 
+        using IsSimdFloat4x4 = void;
+        using IsMatrix       = void;
+
         static constexpr const size_t Components = 16;
-        static constexpr const size_t Rows = 4;
-        static constexpr const size_t Columns = 4;
+        static constexpr const size_t Rows       = 4;
+        static constexpr const size_t Columns    = 4;
 
         using ComponentType = float;
     };
@@ -356,29 +335,102 @@ namespace Graphyte::Maths
     {
         Impl::NativeFloat32x4 V;
 
+        using IsSimdFloat4 = void;
+        using IsPlane      = void;
+
         static constexpr const size_t Components = 4;
 
         using ComponentType = float;
-        using MaskType = Bool4;
+        using MaskType      = Bool4;
     };
 
     struct Quaternion final
     {
         Impl::NativeFloat32x4 V;
 
+        using IsSimdFloat4 = void;
+        using IsQuaternion = void;
+
         static constexpr const size_t Components = 4;
 
         using ComponentType = float;
-        using MaskType = Bool4;
+        using MaskType      = Bool4;
     };
 
     struct Sphere final
     {
         Impl::NativeFloat32x4 V;
 
+        using IsSimdFloat4 = void;
+        using IsSphere     = void;
+
         static constexpr const size_t Components = 4;
 
         using ComponentType = float;
-        using MaskType = Bool4;
+        using MaskType      = Bool4;
+    };
+}
+
+
+// =================================================================================================
+//
+// Traits
+//
+
+namespace Graphyte::Maths::Impl
+{
+    template <typename T>
+    concept IsSimdFloat4 = requires
+    {
+        typename T::ComponentType;
+        typename T::IsSimdFloat4;
+    };
+
+    template <typename T>
+    concept IsSimdUInt4 = requires
+    {
+        typename T::ComponentType;
+        typename T::IsSimdUInt4;
+    };
+
+    template <typename T>
+    concept IsColor = requires
+    {
+        typename T::ComponentType;
+        typename T::IsSimdFloat4;
+        typename T::IsColor;
+    } && T::Components == 4;
+
+    template <typename T>
+    concept IsQuaternion = requires
+    {
+        typename T::ComponentType;
+        typename T::IsSimdFloat4;
+        typename T::IsQuaternion;
+    } && T::Components == 4;
+
+    template <typename T>
+    concept IsPlane = requires
+    {
+        typename T::ComponentType;
+        typename T::IsSimdFloat4;
+        typename T::IsPlane;
+    } && T::Components == 4;
+
+
+    template <typename T>
+    concept IsMatrix = requires
+    {
+        typename T::ComponentType;
+        typename T::IsSimdFloat4x4;
+        typename T::IsMatrix;
+    };
+
+    template <typename T>
+    concept IsVector = requires
+    {
+        typename T::ComponentType;
+        typename T::IsSimdFloat4;
+        typename T::IsVector;
     };
 }

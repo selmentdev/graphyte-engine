@@ -37,14 +37,14 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Lerp(T a, T b, T t) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return a + (b - a) * t;
     }
 
     template <typename T>
     mathinline T mathcall LerpPrecise(T a, T b, T t) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return ((T(1) - t) * a) + (t * b);
     }
@@ -133,7 +133,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Hermite(T position0, T tangent0, T position1, T tangent1, T t) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const t2 = t * t;
         T const t3 = t * t2;
@@ -183,7 +183,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Barycentric(T a, T b, T c, T f, T g) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const pba    = b - a;
         T const pca    = c - a;
@@ -332,7 +332,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CatmullRom(T p0, T p1, T p2, T p3, T t) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         float const t2 = t * t;
         float const t3 = t * t2;
@@ -380,7 +380,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Remap(T value, T from_min, T from_max, T to_min, T to_max) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const from_abs     = (value - from_min);
         T const from_max_abs = (from_max - from_min);
@@ -414,7 +414,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Unlerp(T value, T min, T max) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const base   = (value - min);
         T const range  = (max - min);
@@ -424,7 +424,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Bezier(T a, T b, T c, T t) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const t2  = t * t;
         T const t1  = T(1.0) - t;
@@ -434,7 +434,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Bezier(T a, T b, T c, T d, T t) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const t1  = T(1.0) - t;
         T const t13 = t1 * t1 * t1;
@@ -445,7 +445,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Cubic(T a, T b, T c, T d, T t) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         T const t2 = t * t;
         T const a2 = (T(-0.5) * b) + (T(1.5) * a) - (T(1.5) * d) + (T(0.5) * c);
@@ -478,7 +478,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SmoothStep(T a, T b, T x) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         float const t = Saturate((x - a) / (b - a));
         float const result = t * (t * NegateMultiplyAdd(t, 2.0f, 3.0f));
@@ -487,7 +487,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Cosine(T a, T b, T t) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         float const t0 = (T(1.0) - Cos(t * Impl::g_Const_Pi<T>)) * T(0.5);
         return Lerp(a, b, t0);
@@ -495,14 +495,14 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall EaseSmoothC2(T x) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         return (x * x * x) * (x * ((x * T(6.0)) - T(15.0)) + T(10.0));
     }
 
     template <typename T>
     mathinline T mathcall Smooth(T min, T max, T x) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         if (x <= min)
         {
@@ -520,7 +520,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SmoothSquared(T min, T max, T x) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         if (x <= min)
         {
@@ -537,7 +537,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SmoothInvSquared(T min, T max, T x) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         if (x <= min)
         {
@@ -556,7 +556,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SmoothCubed(T min, T max, T x) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         if (x <= min)
         {
@@ -573,7 +573,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall SmoothInvCubed(T min, T max, T x) noexcept
-        requires(std::floating_point<T>)
+        requires(std::is_floating_point_v<T>)
     {
         if (x <= min)
         {
