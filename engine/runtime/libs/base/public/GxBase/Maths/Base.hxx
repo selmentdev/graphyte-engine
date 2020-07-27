@@ -257,7 +257,7 @@ namespace Graphyte::Maths
         Impl::NativeFloat32x4 V;
 
         using IsSimdFloat4 = void;
-        using IsVector = void;
+        using IsVector     = void;
 
         static constexpr const size_t Components = 4;
 
@@ -270,7 +270,7 @@ namespace Graphyte::Maths
         Impl::NativeFloat32x4 V;
 
         using IsSimdFloat4 = void;
-        using IsVector = void;
+        using IsVector     = void;
 
         static constexpr const size_t Components = 3;
 
@@ -283,7 +283,7 @@ namespace Graphyte::Maths
         Impl::NativeFloat32x4 V;
 
         using IsSimdFloat4 = void;
-        using IsVector = void;
+        using IsVector     = void;
 
         static constexpr const size_t Components = 2;
 
@@ -296,25 +296,12 @@ namespace Graphyte::Maths
         Impl::NativeFloat32x4 V;
 
         using IsSimdFloat4 = void;
-        using IsVector = void;
+        using IsVector     = void;
 
         static constexpr const size_t Components = 1;
 
         using ComponentType = float;
         using MaskType      = Bool1;
-    };
-
-    struct Color final
-    {
-        Impl::NativeFloat32x4 V;
-
-        using IsSimdFloat4 = void;
-        using IsColor = void;
-
-        static constexpr const size_t Components = 4;
-
-        using ComponentType = float;
-        using MaskType      = Bool4;
     };
 
     struct Matrix final
@@ -329,6 +316,19 @@ namespace Graphyte::Maths
         static constexpr const size_t Columns    = 4;
 
         using ComponentType = float;
+    };
+
+    struct Color final
+    {
+        Impl::NativeFloat32x4 V;
+
+        using IsSimdFloat4 = void;
+        using IsColor      = void;
+
+        static constexpr const size_t Components = 4;
+
+        using ComponentType = float;
+        using MaskType      = Bool4;
     };
 
     struct Plane final
@@ -394,43 +394,58 @@ namespace Graphyte::Maths::Impl
     };
 
     template <typename T>
-    concept IsColor = requires
+    concept IsColor
+        = T::Components == 4
+          && requires
     {
+        typename T::MaskType;
         typename T::ComponentType;
+
         typename T::IsSimdFloat4;
         typename T::IsColor;
-    } && T::Components == 4;
+    }
+    &&T::Components == 4;
 
     template <typename T>
-    concept IsQuaternion = requires
+    concept IsQuaternion
+        = T::Components == 4
+          && requires
     {
+        typename T::MaskType;
         typename T::ComponentType;
+
         typename T::IsSimdFloat4;
         typename T::IsQuaternion;
-    } && T::Components == 4;
+    };
 
     template <typename T>
-    concept IsPlane = requires
+    concept IsPlane
+        = T::Components == 4
+          && requires
     {
+        typename T::MaskType;
         typename T::ComponentType;
+
         typename T::IsSimdFloat4;
         typename T::IsPlane;
-    } && T::Components == 4;
-
-
-    template <typename T>
-    concept IsMatrix = requires
-    {
-        typename T::ComponentType;
-        typename T::IsSimdFloat4x4;
-        typename T::IsMatrix;
     };
 
     template <typename T>
     concept IsVector = requires
     {
+        typename T::MaskType;
         typename T::ComponentType;
+
         typename T::IsSimdFloat4;
         typename T::IsVector;
+    };
+
+    template <typename T>
+    concept IsMatrix = requires
+    {
+        typename T::ComponentType;
+
+        typename T::IsSimdFloat4x4;
+        typename T::IsMatrix;
     };
 }
