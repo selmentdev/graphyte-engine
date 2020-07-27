@@ -6,7 +6,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Load(ColorBGRA const* source) noexcept
-        requires(std::same_as<T, Color>)
+        requires(Impl::IsColor<T>)
     {
         GX_ASSERT(source != nullptr);
 
@@ -36,7 +36,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(ColorBGRA* destination, T color) noexcept
-        requires(std::same_as<T, Color>)
+        requires(Impl::IsColor<T>)
     {
         GX_ASSERT(destination != nullptr);
 
@@ -75,7 +75,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Negative(T v) noexcept
-        requires(std::same_as<T, Color>)
+        requires(Impl::IsColor<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -94,7 +94,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Modulate(T a, T b) noexcept
-        requires(std::same_as<T, Color>)
+        requires(Impl::IsColor<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -111,7 +111,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall AdjustSaturation(T v, float saturation) noexcept
-        requires(std::same_as<T, Color>)
+        requires(Impl::IsColor<T>)
     {
         static Impl::ConstFloat32x4 const luminance{ { {
             0.2125F,
@@ -145,7 +145,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall AdjustContrast(T v, float contrast) noexcept
-        requires(std::same_as<T, Color>)
+        requires(Impl::IsColor<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { { ((v.V.F[0] - 0.5F) * contrast) + 0.5F,

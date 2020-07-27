@@ -7,21 +7,21 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Identity() noexcept
-        requires(std::same_as<T, Quaternion>)
+        requires(Impl::IsQuaternion<T>)
     {
         return { Impl::VEC4_POSITIVE_UNIT_W.V };
     }
 
     template <typename T>
     mathinline bool mathcall IsIdentity(Quaternion q) noexcept
-        requires(std::same_as<T, Quaternion>)
+        requires(Impl::IsQuaternion<T>)
     {
         return IsEqual(Vector4{ q.V }, Vector4{ Impl::VEC4_POSITIVE_UNIT_W.V });
     }
 
     template <typename T>
     mathinline bool mathcall IsIdentity(Quaternion q, Vector4 epsilon) noexcept
-        requires(std::same_as<T, Quaternion>)
+        requires(Impl::IsQuaternion<T>)
     {
         return IsEqual(Vector4{ q.V }, Vector4{ Impl::VEC4_POSITIVE_UNIT_W.V }, epsilon);
     }
@@ -64,7 +64,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Multiply(T q1, T q2) noexcept
-        requires(std::same_as<T, Quaternion>)
+        requires(Impl::IsQuaternion<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -101,9 +101,35 @@ namespace Graphyte::Maths
 #endif
     }
 
+    mathinline Vector3 Rotate(Vector3 v, Quaternion q) noexcept
+    {
+        Quaternion const a = Select<Quaternion>(
+            Quaternion{ Impl::VEC4_MASK_SELECT_1110.V },
+            Quaternion{ v.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+
+        Quaternion const qn = Conjugate(q);
+        Quaternion const qa = Multiply(q, a);
+        Quaternion const qaqn = Multiply(qa, qn);
+        return Vector3{ qaqn.V };
+    }
+
+    mathinline Vector3 InverseRotate(Vector3 v, Quaternion q) noexcept
+    {
+        Quaternion const a = Select<Quaternion>(
+            Quaternion{ Impl::VEC4_MASK_SELECT_1110.V },
+            Quaternion{ v.V },
+            Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+
+        Quaternion const qn = Conjugate(q);
+        Quaternion const qna = Multiply(qn, a);
+        Quaternion const qnaq = Multiply(qna, q);
+        return Vector3{ qnaq.V };
+    }
+
     template <typename T>
     mathinline T mathcall Exp(T q) noexcept
-        requires(std::same_as<T, Quaternion>)
+        requires(Impl::IsQuaternion<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector3 const q_xyz{ q.V };
@@ -160,7 +186,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Log(T q) noexcept
-        requires(std::same_as<T, Quaternion>)
+        requires(Impl::IsQuaternion<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const qv{ q.V };
@@ -212,7 +238,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateFromEuler(Vector3 angles) noexcept
-        requires(std::same_as<T, Quaternion>)
+        requires(Impl::IsQuaternion<T>)
     {
         static Impl::ConstFloat32x4 const sign{ { {
             1.0F,
@@ -245,11 +271,234 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateFromEuler(float x, float y, float z) noexcept
-        requires(std::same_as<T, Quaternion>)
+        requires(Impl::IsQuaternion<T>)
     {
         Vector3 const angles = Make<Vector3>(x, y, z);
         Quaternion const result = CreateFromEuler<Quaternion>(angles);
         return result;
+    }
+
+    template <typename T>
+    mathinline T mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept
+        requires(Impl::IsQuaternion<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Vector4 qv = Select(Vector4{ Impl::VEC4_ONE_4.V }, Vector4{ normal.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+
+        float fsin;
+        float fcos;
+        SinCos(fsin, fcos, 0.5F * angle);
+
+        Vector4 const scale = Make<Vector4>(fsin, fsin, fsin, fcos);
+        Vector4 const result = Multiply(qv, scale);
+        return Quaternion{ result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128 const normal_xyz = _mm_and_ps(normal.V, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 const normal_xyz1 = _mm_or_ps(normal_xyz, Impl::VEC4_POSITIVE_UNIT_W.V);
+        __m128 const scale = _mm_set_ps1(0.5F * angle);
+
+        Vector4 vsin;
+        Vector4 vcos;
+        SinCos(vsin, vcos, Vector4{ scale });
+
+        __m128 const sin_xyzn = _mm_and_ps(vsin.V, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 const cos_nnnw = _mm_and_ps(vcos.V, Impl::VEC4_MASK_COMPONENT_W.V);
+
+        __m128 const sincos_xyzw = _mm_or_ps(sin_xyzn, cos_nnnw);
+        __m128 const result = _mm_mul_ps(normal_xyz1, sincos_xyzw);
+        return { result };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept
+        requires(Impl::IsQuaternion<T>)
+    {
+        GX_ASSERT(IsNotEqual(axis, Zero<Vector3>()));
+        GX_ASSERT(!IsInfinity(axis));
+
+        Vector3 const normal = Normalize(axis);
+        Quaternion const result = CreateFromNormalAngle<Quaternion>(normal, angle);
+        return result;
+    }
+
+    mathinline void mathcall ToAxisAngle(Vector3& axis, float& angle, Quaternion q) noexcept
+    {
+        axis = Vector3{ q.V };
+        angle = 2.0f * Acos(GetW(q));
+    }
+
+    template <typename T>
+    mathinline T mathcall CreateFromMatrix(Matrix m) noexcept
+        requires(Impl::IsQuaternion<T>)
+    {
+        //
+        // Converting a Rotation Matrix to a Quaternion
+        // Mike Day, Insomniac Gamesmday@insomniacgames.com
+        //
+        //  if (m22 < 0)
+        //  {
+        //      if (m00 > m11)
+        //      {
+        //          t = 1 + m00 - m11 - m22;
+        //          q = quat(t, m01 + m10, m20 + m02, m12 - m21);
+        //      }
+        //      else
+        //      {
+        //          t = 1 - m00 + m11 - m22;
+        //          q = quat(m01 + m10, t, m12 + m21, m20 - m02);
+        //      }
+        //  }
+        //  else
+        //  {
+        //      if (m00 < -m11)
+        //      {
+        //          t = 1 - m00 - m11 + m22;
+        //          q = quat(m20 + m02, m12 + m21, t, m01 - m10);
+        //      }
+        //      else
+        //      {
+        //          t = 1 + m00 + m11 + m22;
+        //          q = quat(m12 - m21, m20 - m02, m01 - m10, t);
+        //      }
+        //  }
+        //
+        //  q *= 0.5 / Sqrt(t);
+        //
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 result;
+
+        float const m22 = m.M.M[2][2];
+
+        if (m22 <= 0.0f)
+        {
+            // (x*x + y*y) >= (z*z + w*w)
+            float const diff_m11_m00 = m.M.M[1][1] - m.M.M[0][0];
+            float const diff_one_m22 = 1.0f - m22;
+
+            if (diff_m11_m00 <= 0.0f)
+            {
+                // (x*x) >= (y*y)
+                float const x_sqr = diff_one_m22 - diff_m11_m00;
+                float const x_inv = 0.5f / sqrtf(x_sqr);
+
+                result.F[0] = x_sqr * x_inv;
+                result.F[1] = (m.M.M[0][1] + m.M.M[1][0]) * x_inv;
+                result.F[2] = (m.M.M[0][2] + m.M.M[2][0]) * x_inv;
+                result.F[3] = (m.M.M[1][2] - m.M.M[2][1]) * x_inv;
+            }
+            else
+            {
+                // (y*y) >= (x*x)
+                float const y_sqr = diff_one_m22 + diff_m11_m00;
+                float const y_inv = 0.5f / sqrtf(y_sqr);
+
+                result.F[0] = (m.M.M[0][1] + m.M.M[1][0]) * y_inv;
+                result.F[1] = y_sqr * y_inv;
+                result.F[2] = (m.M.M[1][2] + m.M.M[2][1]) * y_inv;
+                result.F[3] = (m.M.M[2][0] - m.M.M[0][2]) * y_inv;
+            }
+        }
+        else
+        {
+            // (z*z + w*w) >= (x*x + y*y)
+            float const sum_m11_m00 = m.M.M[1][1] + m.M.M[0][0];
+            float const sum_one_m22 = 1.0f + m22;
+
+            if (sum_m11_m00 <= 0.0f)
+            {
+                // (z*z) >= (w*w)
+                float const z_sqr = sum_one_m22 - sum_m11_m00;
+                float const z_inv = 0.5f / sqrtf(z_sqr);
+
+                result.F[0] = (m.M.M[0][2] + m.M.M[2][0]) * z_inv;
+                result.F[1] = (m.M.M[1][2] + m.M.M[2][1]) * z_inv;
+                result.F[2] = z_sqr * z_inv;
+                result.F[3] = (m.M.M[0][1] - m.M.M[1][0]) * z_inv;
+            }
+            else
+            {
+                // (w*w) >= (z*z)
+                float const w_sqr = sum_one_m22 + sum_m11_m00;
+                float const w_inv = 0.5f / sqrtf(w_sqr);
+
+                result.F[0] = (m.M.M[1][2] - m.M.M[2][1]) * w_inv;
+                result.F[1] = (m.M.M[2][0] - m.M.M[0][2]) * w_inv;
+                result.F[2] = (m.M.M[0][1] - m.M.M[1][0]) * w_inv;
+                result.F[3] = w_sqr * w_inv;
+            }
+        }
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        static Impl::ConstFloat32x4 const const_p1_m1_m1_p1{ { { +1.0f, -1.0f, -1.0f, +1.0f } } };
+        static Impl::ConstFloat32x4 const const_m1_p1_m1_p1{ { { -1.0f, +1.0f, -1.0f, +1.0f } } };
+        static Impl::ConstFloat32x4 const const_m1_m1_p1_p1{ { { -1.0f, -1.0f, +1.0f, +1.0f } } };
+
+        __m128 const r0_xyz = m.M.R[0];
+        __m128 const r1_xyz = m.M.R[1];
+        __m128 const r2_xyz = m.M.R[2];
+
+        // compute trace of matrix: m00 + m11 + m22
+        __m128 const r0_xxx = _mm_permute_ps(r0_xyz, _MM_SHUFFLE(0, 0, 0, 0));
+        __m128 const r1_yyy = _mm_permute_ps(r1_xyz, _MM_SHUFFLE(1, 1, 1, 1));
+        __m128 const r2_zzz = _mm_permute_ps(r2_xyz, _MM_SHUFFLE(2, 2, 2, 2));
+
+        __m128 const sub_m11_m00 = _mm_sub_ps(r1_yyy, r0_xxx);
+        __m128 const mask_x2_ge_y2 = _mm_cmple_ps(sub_m11_m00, _mm_setzero_ps());
+
+        __m128 const add_m11_m00 = _mm_add_ps(r1_yyy, r0_xxx);
+        __m128 const mask_z2_ge_w2 = _mm_cmple_ps(add_m11_m00, _mm_setzero_ps());
+
+        __m128 const mask_x2y2_ge_z2w2 = _mm_cmple_ps(r2_zzz, _mm_setzero_ps());
+
+        __m128 const t0_0 = _mm_mul_ps(const_p1_m1_m1_p1.V, r0_xxx);
+        __m128 const t1_0 = _mm_mul_ps(const_m1_p1_m1_p1.V, r1_yyy);
+        __m128 const t2_0 = _mm_mul_ps(const_m1_m1_p1_p1.V, r2_zzz);
+
+        __m128 const x2y2z2w2_0 = _mm_add_ps(t0_0, t1_0);
+        __m128 const x2y2z2w2_1 = _mm_add_ps(t2_0, x2y2z2w2_0);
+        __m128 const x2y2z2w2_2 = _mm_add_ps(x2y2z2w2_1, Impl::VEC4_ONE_4.V);
+
+        __m128 const t0_1 = _mm_shuffle_ps(r0_xyz, r1_xyz, _MM_SHUFFLE(1, 2, 2, 1));
+        __m128 const t1_1_a = _mm_shuffle_ps(r1_xyz, r2_xyz, _MM_SHUFFLE(1, 0, 0, 0));
+        __m128 const t1_1 = _mm_permute_ps(t1_1_a, _MM_SHUFFLE(1, 3, 2, 0));
+
+        __m128 const xyxzyz = _mm_add_ps(t0_1, t1_1);
+
+        __m128 const t0_2 = _mm_shuffle_ps(r2_xyz, r1_xyz, _MM_SHUFFLE(0, 0, 0, 1));
+        __m128 const t1_2_a = _mm_shuffle_ps(r1_xyz, r0_xyz, _MM_SHUFFLE(1, 2, 2, 2));
+        __m128 const t1_2 = _mm_permute_ps(t1_2_a, _MM_SHUFFLE(1, 3, 2, 0));
+
+        __m128 const xwywzw_0 = _mm_sub_ps(t0_2, t1_2);
+        __m128 const xwywzw_1 = _mm_mul_ps(const_m1_p1_m1_p1.V, xwywzw_0);
+
+        __m128 const t0_3 = _mm_shuffle_ps(x2y2z2w2_2, xyxzyz, _MM_SHUFFLE(0, 0, 1, 0));
+        __m128 const t1_3 = _mm_shuffle_ps(x2y2z2w2_2, xwywzw_1, _MM_SHUFFLE(0, 2, 3, 2));
+        __m128 const t2_3 = _mm_shuffle_ps(xyxzyz, xwywzw_1, _MM_SHUFFLE(1, 0, 2, 1));
+
+        __m128 const tensor0 = _mm_shuffle_ps(t0_3, t2_3, _MM_SHUFFLE(2, 0, 2, 0));
+        __m128 const tensor1 = _mm_shuffle_ps(t0_3, t2_3, _MM_SHUFFLE(3, 1, 1, 2));
+        __m128 const tensor2 = _mm_shuffle_ps(t2_3, t1_3, _MM_SHUFFLE(2, 0, 1, 0));
+        __m128 const tensor3 = _mm_shuffle_ps(t2_3, t1_3, _MM_SHUFFLE(1, 2, 3, 2));
+
+        __m128 const ga0 = _mm_and_ps(mask_x2_ge_y2, tensor0);
+        __m128 const gb0 = _mm_andnot_ps(mask_x2_ge_y2, tensor1);
+        __m128 const t0 = _mm_or_ps(ga0, gb0);
+
+        __m128 const ga1 = _mm_and_ps(mask_z2_ge_w2, tensor2);
+        __m128 const gb1 = _mm_andnot_ps(mask_z2_ge_w2, tensor3);
+        __m128 const t1 = _mm_or_ps(ga1, gb1);
+
+        __m128 const m0 = _mm_and_ps(mask_x2y2_ge_z2w2, t0);
+        __m128 const m1 = _mm_andnot_ps(mask_x2y2_ge_z2w2, t1);
+        __m128 const m2 = _mm_or_ps(m0, m1);
+
+        __m128 const length = Length(Vector4{ m2 }).V;
+
+        return { _mm_div_ps(m2, length) };
+#endif
     }
 }
 

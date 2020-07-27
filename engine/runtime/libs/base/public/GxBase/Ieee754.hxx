@@ -20,6 +20,8 @@ namespace Graphyte
     template <>
     struct FloatTraits<Half> final
     {
+        using BitsType = uint16_t;
+
         static constexpr size_t const SignBits     = 1;
         static constexpr size_t const ExponentBits = 5;
         static constexpr size_t const MantissaBits = 10;
@@ -115,6 +117,8 @@ namespace Graphyte
     template <>
     struct FloatTraits<float> final
     {
+        using BitsType = uint32_t;
+
         static constexpr size_t const SignBits     = 1;
         static constexpr size_t const ExponentBits = 8;
         static constexpr size_t const MantissaBits = 23;
@@ -159,12 +163,12 @@ namespace Graphyte
 
         static constexpr float FromBits(uint32_t bits) noexcept
         {
-            return Layout{ .AsUInt32 = bits }.AsFloat32;
+            return BitCast<float, uint32_t>(bits);
         }
 
         static constexpr uint32_t ToBits(float value) noexcept
         {
-            return Layout{ .AsFloat32 = value }.AsUInt32;
+            return BitCast<uint32_t, float>(value);
         }
 
         static constexpr bool BitIsNan(uint32_t bits) noexcept
@@ -218,6 +222,8 @@ namespace Graphyte
     template <>
     struct FloatTraits<double> final
     {
+        using BitsType = uint64_t;
+
         static constexpr size_t const SignBits     = 1;
         static constexpr size_t const ExponentBits = 11;
         static constexpr size_t const MantissaBits = 52;
@@ -264,12 +270,12 @@ namespace Graphyte
 
         static constexpr double FromBits(uint64_t bits) noexcept
         {
-            return Layout{ .AsUInt64 = bits }.AsFloat64;
+            return BitCast<double, uint64_t>(bits);
         }
 
         static constexpr uint64_t ToBits(double value) noexcept
         {
-            return Layout{ .AsFloat64 = value }.AsUInt64;
+            return BitCast<uint64_t, double>(value);
         }
 
         static constexpr bool BitIsNan(uint64_t bits) noexcept

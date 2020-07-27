@@ -100,25 +100,25 @@ namespace Graphyte::Maths::Impl
     inline constexpr const size_t CACHE_LINE_SIZE = 64;
 
     template <typename T>
-    inline constexpr const T g_RoundingError = Graphyte::InvalidType<T>{};
+    inline constexpr const T g_Const_RoundingError = Graphyte::InvalidType<T>{};
 
     template <>
-    inline constexpr const int32_t g_RoundingError<int32_t> = 0;
+    inline constexpr const int32_t g_Const_RoundingError<int32_t> = 0;
 
     template <>
-    inline constexpr const int64_t g_RoundingError<int64_t> = 0;
+    inline constexpr const int64_t g_Const_RoundingError<int64_t> = 0;
 
     template <>
-    inline constexpr const uint32_t g_RoundingError<uint32_t> = 0;
+    inline constexpr const uint32_t g_Const_RoundingError<uint32_t> = 0;
 
     template <>
-    inline constexpr const uint64_t g_RoundingError<uint64_t> = 0;
+    inline constexpr const uint64_t g_Const_RoundingError<uint64_t> = 0;
 
     template <>
-    inline constexpr const float g_RoundingError<float> = 0.000001f;
+    inline constexpr const float g_Const_RoundingError<float> = 0.000001f;
 
     template <>
-    inline constexpr const double g_RoundingError<double> = 0.00000001;
+    inline constexpr const double g_Const_RoundingError<double> = 0.00000001;
 }
 
 // =================================================================================================
@@ -205,6 +205,35 @@ namespace Graphyte::Maths::Impl
     mathconst ConstFloat32x4 VEC4_RECIPROCAL_PI = { { { g_Const_InvPi<float>, g_Const_InvPi<float>, g_Const_InvPi<float>, g_Const_InvPi<float>, } } };
     mathconst ConstFloat32x4 VEC4_HALF_PI = { { { g_Const_Pi<float> / 2.0f, g_Const_Pi<float> / 2.0f, g_Const_Pi<float> / 2.0f, g_Const_Pi<float> / 2.0f, } } };
     mathconst ConstFloat32x4 VEC4_UNIT_EPSILON = { { { 1.0e-4f, 1.0e-4f, 1.0e-4f, 1.0e-4f, } } };
+
+    mathconst ConstFloat32x4 g_Const_E_Vec4 = { { { g_Const_E<float>, g_Const_E<float>, g_Const_E<float>, g_Const_E<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Log2E_Vec4 = { { { g_Const_Log2E<float>, g_Const_Log2E<float>, g_Const_Log2E<float>, g_Const_Log2E<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Log10E_Vec4 = { { { g_Const_Log10E<float>, g_Const_Log10E<float>, g_Const_Log10E<float>, g_Const_Log10E<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Ln2_Vec4 = { { { g_Const_Ln2<float>, g_Const_Ln2<float>, g_Const_Ln2<float>, g_Const_Ln2<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Ln10_Vec4 = { { { g_Const_Ln10<float>, g_Const_Ln10<float>, g_Const_Ln10<float>, g_Const_Ln10<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Pi_Vec4 = { { { g_Const_Pi<float>, g_Const_Pi<float>, g_Const_Pi<float>, g_Const_Pi<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Pi2_Vec4 = { { { g_Const_Pi2<float>, g_Const_Pi2<float>, g_Const_Pi2<float>, g_Const_Pi2<float>, } } };
+    mathconst ConstFloat32x4 g_Const_InvPi_Vec4 = { { { g_Const_InvPi<float>, g_Const_InvPi<float>, g_Const_InvPi<float>, g_Const_InvPi<float>, } } };
+    mathconst ConstFloat32x4 g_Const_InvPi2_Vec4 = { { { g_Const_InvPi2<float>, g_Const_InvPi2<float>, g_Const_InvPi2<float>, g_Const_InvPi2<float>, } } };
+    mathconst ConstFloat32x4 g_Const_InvSqrtPi_Vec4 = { { { g_Const_InvSqrtPi<float>, g_Const_InvSqrtPi<float>, g_Const_InvSqrtPi<float>, g_Const_InvSqrtPi<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Sqrt2_Vec4 = { { { g_Const_Sqrt2<float>, g_Const_Sqrt2<float>, g_Const_Sqrt2<float>, g_Const_Sqrt2<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Sqrt3_Vec4 = { { { g_Const_Sqrt3<float>, g_Const_Sqrt3<float>, g_Const_Sqrt3<float>, g_Const_Sqrt3<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Sqrt5_Vec4 = { { { g_Const_Sqrt5<float>, g_Const_Sqrt5<float>, g_Const_Sqrt5<float>, g_Const_Sqrt5<float>, } } };
+    mathconst ConstFloat32x4 g_Const_InvSqrt2_Vec4 = { { { g_Const_InvSqrt2<float>, g_Const_InvSqrt2<float>, g_Const_InvSqrt2<float>, g_Const_InvSqrt2<float>, } } };
+    mathconst ConstFloat32x4 g_Const_InvSqrt3_Vec4 = { { { g_Const_InvSqrt3<float>, g_Const_InvSqrt3<float>, g_Const_InvSqrt3<float>, g_Const_InvSqrt3<float>, } } };
+    mathconst ConstFloat32x4 g_Const_InvSqrt5_Vec4 = { { { g_Const_InvSqrt5<float>, g_Const_InvSqrt5<float>, g_Const_InvSqrt5<float>, g_Const_InvSqrt5<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Phi_Vec4 = { { { g_Const_Phi<float>, g_Const_Phi<float>, g_Const_Phi<float>, g_Const_Phi<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Gamma_Vec4 = { { { g_Const_Gamma<float>, g_Const_Gamma<float>, g_Const_Gamma<float>, g_Const_Gamma<float>, } } };
+    mathconst ConstFloat32x4 g_Const_PiDiv2_Vec4 = { { { g_Const_PiDiv2<float>, g_Const_PiDiv2<float>, g_Const_PiDiv2<float>, g_Const_PiDiv2<float>, } } };
+    mathconst ConstFloat32x4 g_Const_PiDiv3_Vec4 = { { { g_Const_PiDiv3<float>, g_Const_PiDiv3<float>, g_Const_PiDiv3<float>, g_Const_PiDiv3<float>, } } };
+    mathconst ConstFloat32x4 g_Const_PiDiv4_Vec4 = { { { g_Const_PiDiv4<float>, g_Const_PiDiv4<float>, g_Const_PiDiv4<float>, g_Const_PiDiv4<float>, } } };
+    mathconst ConstFloat32x4 g_Const_PiDiv6_Vec4 = { { { g_Const_PiDiv6<float>, g_Const_PiDiv6<float>, g_Const_PiDiv6<float>, g_Const_PiDiv6<float>, } } };
+    mathconst ConstFloat32x4 g_Const_PiDiv8_Vec4 = { { { g_Const_PiDiv8<float>, g_Const_PiDiv8<float>, g_Const_PiDiv8<float>, g_Const_PiDiv8<float>, } } };
+    mathconst ConstFloat32x4 g_Const_EpsilonAngular_Vec4 = { { { g_Const_EpsilonAngular<float>, g_Const_EpsilonAngular<float>, g_Const_EpsilonAngular<float>, g_Const_EpsilonAngular<float>, } } };
+    mathconst ConstFloat32x4 g_Const_EpsilonLow_Vec4 = { { { g_Const_EpsilonLow<float>, g_Const_EpsilonLow<float>, g_Const_EpsilonLow<float>, g_Const_EpsilonLow<float>, } } };
+    mathconst ConstFloat32x4 g_Const_Epsilon_Vec4 = { { { g_Const_Epsilon<float>, g_Const_Epsilon<float>, g_Const_Epsilon<float>, g_Const_Epsilon<float>, } } };
+    mathconst ConstFloat32x4 g_Const_EpsilonHigh_Vec4 = { { { g_Const_EpsilonHigh<float>, g_Const_EpsilonHigh<float>, g_Const_EpsilonHigh<float>, g_Const_EpsilonHigh<float>, } } };
+    mathconst ConstFloat32x4 g_Const_RoundingError_Vec4 = { { { g_Const_RoundingError<float>, g_Const_RoundingError<float>, g_Const_RoundingError<float>, g_Const_RoundingError<float>, } } };
 
     // sin cos log exp implementation: http://gruntthepeon.free.fr/ssemath/
     mathconst ConstFloat32x4 VEC4_PI_CONSTANTS_0 = { { { g_Const_Pi<float>, g_Const_Pi2<float>, g_Const_InvPi<float>, g_Const_InvPi2<float>, } } };

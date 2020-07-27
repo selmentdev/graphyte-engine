@@ -12,7 +12,7 @@ namespace Graphyte::Maths
         float m10, float m11, float m12, float m13,
         float m20, float m21, float m22, float m23,
         float m30, float m31, float m32, float m33) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Matrix result;
@@ -53,7 +53,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Load(Float4x4A const* source) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -100,7 +100,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Store(Float4x4A* destination, T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
@@ -139,7 +139,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Load(Float4x3A const* source) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -206,7 +206,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float4x3A* destination, T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
@@ -260,7 +260,7 @@ namespace Graphyte::Maths
     /// \note   Float3x4 is stored as transposed Float4x3
     template <typename T>
     mathinline T mathcall Load(Float3x4A const* source) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
@@ -314,7 +314,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float3x4A* destination, T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
@@ -353,7 +353,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Load(Float4x4 const* source) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -394,7 +394,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float4x4* destination, T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(destination != nullptr);
 
@@ -428,7 +428,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Load(Float4x3 const* source) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
 
@@ -494,7 +494,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float4x3* destination, T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(destination != nullptr);
 
@@ -547,7 +547,7 @@ namespace Graphyte::Maths
     /// \note   Float3x4 is stored as transposed Float4x3
     template <typename T>
     mathinline T mathcall Load(Float3x4 const* source) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
 
@@ -600,7 +600,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float3x4* destination, T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(destination != nullptr);
 
@@ -638,7 +638,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Load(Float3x3 const* source) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -691,7 +691,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline void mathcall Store(Float3x3* destination, T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(destination != nullptr);
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -726,7 +726,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall Nan() noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
         result.M.R[0] = Impl::VEC4_QNAN.V;
@@ -790,7 +790,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Infinity() noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
 
@@ -804,7 +804,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsInfinity(T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         size_t count = 16;
@@ -858,7 +858,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Identity() noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
         result.M.R[0] = Impl::VEC4_POSITIVE_UNIT_X.V;
@@ -870,7 +870,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline bool mathcall IsIdentity(T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
 
@@ -950,7 +950,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall OuterProduct(Vector4 c, Vector4 r) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -974,7 +974,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline Vector4 mathcall Diagnoal(T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -1014,7 +1014,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline Vector4 mathcall Trace(T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Vector4 const diagnoal = Diagnoal(m);
         return Hsum(diagnoal);
@@ -1022,7 +1022,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Add(T m1, T m2) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1046,7 +1046,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Subtract(T m1, T m2) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1070,7 +1070,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Negate(T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
         result.M.R[0] = Negate(Vector4{ m.M.R[0] }).V;
@@ -1082,7 +1082,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Multiply(float s, T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1108,7 +1108,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Multiply(T m, float s) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1134,7 +1134,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Divide(T m, float s) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1161,7 +1161,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall ComponentMultiply(T a, T b) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Matrix result;
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1185,7 +1185,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Multiply(T a, T b) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
 
@@ -1364,7 +1364,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall MultiplyTranspose(T a, T b) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
 
@@ -1517,7 +1517,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Transpose(T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Matrix result;
@@ -1577,7 +1577,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Inverse(T m, Vector4* determinant = nullptr) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Matrix const mt = Transpose(m);
@@ -1794,7 +1794,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline Vector4 mathcall Determinant(T m) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         static Impl::ConstFloat32x4 const sign{ { { 1.0f,
             -1.0f,
@@ -1999,7 +1999,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
         float sin_angle;
@@ -2087,7 +2087,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(!IsEqual(axis, Zero<Vector3>()));
         GX_ASSERT(!IsInfinity(axis));
@@ -2098,7 +2098,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateFromQuaternion(Quaternion q) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const q_xyzw{ q.V };
@@ -2180,7 +2180,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateFromEuler(Vector3 angles) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Quaternion const q = CreateFromEuler<Quaternion>(angles);
         return CreateFromQuaternion<T>(q);
@@ -2188,7 +2188,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateFromEuler(float x, float y, float z) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Vector3 const v = Make<Vector3>(x, y, z);
         return CreateFromEuler<Matrix>(v);
@@ -2202,7 +2202,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall CreateTranslation(float x, float y, float z) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Matrix result;
@@ -2243,7 +2243,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateTranslation(Vector3 translation) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Matrix result;
@@ -2288,7 +2288,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateScaling(float x, float y, float z) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Matrix result;
@@ -2329,7 +2329,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateScaling(Vector3 scale) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Matrix result;
@@ -2370,7 +2370,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateRotationX(float angle) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float sin_angle;
@@ -2426,7 +2426,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateRotationY(float angle) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float sin_angle;
@@ -2482,7 +2482,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall CreateRotationZ(float angle) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float sin_angle;
@@ -2544,7 +2544,7 @@ namespace Graphyte::Maths
         Vector2 rotation_origin,
         float rotation,
         Vector2 translation) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Vector3 const v_scaling_origin{ Select(
             Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
@@ -2604,7 +2604,7 @@ namespace Graphyte::Maths
         Vector2 rotation_origin,
         float rotation,
         Vector2 translation) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Vector3 const v_scaling{ Select(
             Vector4{ Impl::VEC4_ONE_4.V },
@@ -2641,7 +2641,7 @@ namespace Graphyte::Maths
         Vector3 rotation_origin,
         Quaternion rotation,
         Vector3 translation) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Vector3 const v_scaling_origin{ Select(
             Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
@@ -2684,7 +2684,7 @@ namespace Graphyte::Maths
         Vector3 rotation_origin,
         Quaternion rotation,
         Vector3 translation) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Vector4 const v_rotation_origin = Select(
             Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
@@ -2715,7 +2715,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall LookToLH(Vector3 eye_position, Vector3 eye_direction, Vector3 up_direction) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(!IsEqual(eye_direction, Zero<Vector3>()));
         GX_ASSERT(!IsInfinity(eye_direction));
@@ -2746,7 +2746,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall LookToRH(Vector3 eye_position, Vector3 eye_direction, Vector3 up_direction) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Vector3 const neg_eye_direction = Negate(eye_direction);
         return LookToLH<Matrix>(eye_position, neg_eye_direction, up_direction);
@@ -2754,7 +2754,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall LookAtLH(Vector3 eye_position, Vector3 focus_position, Vector3 up_direction) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Vector3 const eye_direction = Subtract(eye_position, focus_position);
         return LookToLH<Matrix>(eye_position, eye_direction, up_direction);
@@ -2762,7 +2762,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall LookAtRH(Vector3 eye_position, Vector3 focus_position, Vector3 up_direction) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         Vector3 const eye_direction = Subtract(eye_position, focus_position);
         return LookToRH<Matrix>(eye_position, eye_direction, up_direction);
@@ -2780,7 +2780,7 @@ namespace Graphyte::Maths
         float view_height,
         float z_near,
         float z_far) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(z_near > 0.0f && z_far > 0.0f);
         GX_ASSERT(!IsEqual(view_width, 0.0f, 0.000001f));
@@ -2857,7 +2857,7 @@ namespace Graphyte::Maths
         float view_height,
         float z_near,
         float z_far) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(z_near > 0.0f && z_far > 0.0f);
         GX_ASSERT(!IsEqual(view_width, 0.0f, 0.000001f));
@@ -2934,7 +2934,7 @@ namespace Graphyte::Maths
         float aspect_ratio,
         float z_near,
         float z_far) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(z_near > 0.0f && z_far > 0.0f);
         GX_ASSERT(!IsEqual(fov_angle_y, 0.0f, 0.00001f * 2.0f));
@@ -3016,7 +3016,7 @@ namespace Graphyte::Maths
         float aspect_ratio,
         float z_near,
         float z_far) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(z_near > 0.0f && z_far > 0.0f);
         GX_ASSERT(!IsEqual(fov_angle_y, 0.0f, 0.00001f * 2.0f));
@@ -3100,7 +3100,7 @@ namespace Graphyte::Maths
         float view_top,
         float z_near,
         float z_far)
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(z_near > 0.0f && z_far > 0.0f);
         GX_ASSERT(!IsEqual(view_right, view_left, 0.00001f));
@@ -3187,7 +3187,7 @@ namespace Graphyte::Maths
         float view_top,
         float z_near,
         float z_far)
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(z_near > 0.0f && z_far > 0.0f);
         GX_ASSERT(!IsEqual(view_right, view_left, 0.00001f));
@@ -3272,7 +3272,7 @@ namespace Graphyte::Maths
         float view_height,
         float z_near,
         float z_far) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(!IsEqual(view_width, 0.0f, 0.00001f));
         GX_ASSERT(!IsEqual(view_height, 0.0f, 0.00001f));
@@ -3338,7 +3338,7 @@ namespace Graphyte::Maths
         float view_height,
         float z_near,
         float z_far) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(!IsEqual(view_width, 0.0f, 0.00001f));
         GX_ASSERT(!IsEqual(view_height, 0.0f, 0.00001f));
@@ -3406,7 +3406,7 @@ namespace Graphyte::Maths
         float view_top,
         float z_near,
         float z_far) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(!IsEqual(view_right, view_left, 0.00001f));
         GX_ASSERT(!IsEqual(view_top, view_bottom, 0.00001f));
@@ -3492,7 +3492,7 @@ namespace Graphyte::Maths
         float view_top,
         float z_near,
         float z_far) noexcept
-        requires(std::same_as<T, Matrix>)
+        requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(!IsEqual(view_right, view_left, 0.00001f));
         GX_ASSERT(!IsEqual(view_top, view_bottom, 0.00001f));
@@ -3655,5 +3655,3 @@ namespace Graphyte::Maths
         return result;
     }
 }
-
-//requires(std::same_as<T, Matrix>)

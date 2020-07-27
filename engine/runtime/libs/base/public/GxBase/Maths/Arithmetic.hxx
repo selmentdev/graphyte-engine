@@ -1183,7 +1183,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Multiply(T a, T b) noexcept
-        requires(Impl::IsSimdFloat4<T>)
+        requires(Impl::IsVector<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -1203,7 +1203,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Multiply(T a, float b) noexcept
-        requires(Impl::IsSimdFloat4<T>)
+        requires(Impl::IsVector<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
