@@ -29,9 +29,9 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp{
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {
     using namespace Graphyte::Maths;
-    auto const v0 = Make<Vector4>(1.0f, 2.0f, 3.0f, 4.0f);
+    auto const v0 = Make<Quaternion>(1.0f, 2.0f, 3.0f, 4.0f);
     auto const q0 = Make<Quaternion>(1.0f, 0.0f, 0.0f, 5.0f);
-    auto const l0 = Length(q0);
-    (void)l0;
-    return 0;
+    auto const l0 = Length(Multiply(q0, v0));
+
+    return static_cast<int>(GetX(l0));
 }

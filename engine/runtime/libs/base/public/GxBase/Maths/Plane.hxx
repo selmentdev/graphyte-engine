@@ -69,7 +69,7 @@ namespace Graphyte::Maths
     mathinline Plane mathcall NormalizeEst(Plane p) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 const length = ReciprocalLengthEst(Vector3{ p.V });
+        Vector4 const length{ ReciprocalLengthEst(Vector3{ p.V }).V };
         Vector4 const result = Multiply(Vector4{ p.V }, length);
         return Plane{ result.V };
 #elif GRAPHYTE_HW_AVX

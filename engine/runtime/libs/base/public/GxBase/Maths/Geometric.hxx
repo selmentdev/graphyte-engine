@@ -66,9 +66,9 @@ namespace Graphyte::Maths
 
         Vector2 result;
 
-        if (IsEqual(c0, zero, Epsilon<Vector4>()))
+        if (IsEqual(c0, zero, Epsilon<Vector2>()))
         {
-            if (IsEqual(c1, zero, Epsilon<Vector4>()))
+            if (IsEqual(c1, zero, Epsilon<Vector2>()))
             {
                 // concident
                 result = Infinity<Vector2>();

@@ -1583,64 +1583,64 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Matrix const mt = Transpose(m);
 
-        Vector4 const ca0 = Swizzle<0, 0, 1, 1>({ mt.M.R[2] });
-        Vector4 const ca1 = Swizzle<2, 3, 2, 3>({ mt.M.R[3] });
-        Vector4 const cb0 = Swizzle<0, 0, 1, 1>({ mt.M.R[0] });
-        Vector4 const cb1 = Swizzle<2, 3, 2, 3>({ mt.M.R[1] });
-        Vector4 const cc0 = Permute<PERMUTE_0X, PERMUTE_0Z, PERMUTE_1X, PERMUTE_1Z>({ mt.M.R[2] }, { mt.M.R[0] });
-        Vector4 const cc1 = Permute<PERMUTE_0Y, PERMUTE_0W, PERMUTE_1Y, PERMUTE_1W>({ mt.M.R[3] }, { mt.M.R[1] });
+        Vector4 const ca0 = Swizzle<0, 0, 1, 1>(Vector4{ mt.M.R[2] });
+        Vector4 const ca1 = Swizzle<2, 3, 2, 3>(Vector4{ mt.M.R[3] });
+        Vector4 const cb0 = Swizzle<0, 0, 1, 1>(Vector4{ mt.M.R[0] });
+        Vector4 const cb1 = Swizzle<2, 3, 2, 3>(Vector4{ mt.M.R[1] });
+        Vector4 const cc0 = Permute<0, 2, 4, 6>(Vector4{ mt.M.R[2] }, Vector4{ mt.M.R[0] });
+        Vector4 const cc1 = Permute<1, 3, 5, 7>(Vector4{ mt.M.R[3] }, Vector4{ mt.M.R[1] });
 
         Vector4 const ra0 = Multiply(ca0, ca1);
         Vector4 const rb0 = Multiply(cb0, cb1);
         Vector4 const rc0 = Multiply(cc0, cc1);
 
-        Vector4 const da0 = Swizzle<2, 3, 2, 3>({ mt.M.R[2] });
-        Vector4 const da1 = Swizzle<0, 0, 1, 1>({ mt.M.R[3] });
-        Vector4 const db0 = Swizzle<2, 3, 2, 3>({ mt.M.R[0] });
-        Vector4 const db1 = Swizzle<0, 0, 1, 1>({ mt.M.R[1] });
-        Vector4 const dc0 = Permute<PERMUTE_0Y, PERMUTE_0W, PERMUTE_1Y, PERMUTE_1W>({ mt.M.R[2] }, { mt.M.R[0] });
-        Vector4 const dc1 = Permute<PERMUTE_0X, PERMUTE_0Z, PERMUTE_1X, PERMUTE_1Z>({ mt.M.R[3] }, { mt.M.R[1] });
+        Vector4 const da0 = Swizzle<2, 3, 2, 3>(Vector4{ mt.M.R[2] });
+        Vector4 const da1 = Swizzle<0, 0, 1, 1>(Vector4{ mt.M.R[3] });
+        Vector4 const db0 = Swizzle<2, 3, 2, 3>(Vector4{ mt.M.R[0] });
+        Vector4 const db1 = Swizzle<0, 0, 1, 1>(Vector4{ mt.M.R[1] });
+        Vector4 const dc0 = Permute<1, 3, 5, 7>(Vector4{ mt.M.R[2] }, Vector4{ mt.M.R[0] });
+        Vector4 const dc1 = Permute<0, 2, 4, 6>(Vector4{ mt.M.R[3] }, Vector4{ mt.M.R[1] });
 
         Vector4 const ra1 = NegateMultiplyAdd(da0, da1, ra0);
         Vector4 const rb1 = NegateMultiplyAdd(db0, db1, rb0);
         Vector4 const rc1 = NegateMultiplyAdd(dc0, dc1, rc0);
 
-        Vector4 const ea0 = Swizzle<1, 2, 0, 1>({ mt.M.R[1] });
-        Vector4 const ea1 = Permute<PERMUTE_1Y, PERMUTE_0Y, PERMUTE_0W, PERMUTE_0X>(ra1, rc1);
-        Vector4 const eb0 = Swizzle<2, 0, 1, 0>({ mt.M.R[0] });
-        Vector4 const eb1 = Permute<PERMUTE_0W, PERMUTE_1Y, PERMUTE_0Y, PERMUTE_0Z>(ra1, rc1);
-        Vector4 const ec0 = Swizzle<1, 2, 0, 1>({ mt.M.R[3] });
-        Vector4 const ec1 = Permute<PERMUTE_1W, PERMUTE_0Y, PERMUTE_0W, PERMUTE_0X>(rb1, rc1);
-        Vector4 const ed0 = Swizzle<2, 0, 1, 0>({ mt.M.R[2] });
-        Vector4 const ed1 = Permute<PERMUTE_0W, PERMUTE_1W, PERMUTE_0Y, PERMUTE_0Z>(rb1, rc1);
+        Vector4 const ea0 = Swizzle<1, 2, 0, 1>(Vector4{ mt.M.R[1] });
+        Vector4 const ea1 = Permute<5, 1, 3, 0>(ra1, rc1);
+        Vector4 const eb0 = Swizzle<2, 0, 1, 0>(Vector4{ mt.M.R[0] });
+        Vector4 const eb1 = Permute<3, 5, 1, 2>(ra1, rc1);
+        Vector4 const ec0 = Swizzle<1, 2, 0, 1>(Vector4{ mt.M.R[3] });
+        Vector4 const ec1 = Permute<7, 1, 3, 0>(rb1, rc1);
+        Vector4 const ed0 = Swizzle<2, 0, 1, 0>(Vector4{ mt.M.R[2] });
+        Vector4 const ed1 = Permute<3, 7, 1, 2>(rb1, rc1);
 
         Vector4 const fa0 = Multiply(ea0, ea1);
         Vector4 const fb0 = Multiply(eb0, eb1);
         Vector4 const fc0 = Multiply(ec0, ec1);
         Vector4 const fd0 = Multiply(ed0, ed1);
 
-        Vector4 const ga0 = Swizzle<2, 3, 1, 2>({ mt.M.R[1] });
-        Vector4 const ga1 = Permute<PERMUTE_0W, PERMUTE_0X, PERMUTE_0Y, PERMUTE_1X>(ra1, rc1);
-        Vector4 const gb0 = Swizzle<3, 2, 3, 1>({ mt.M.R[0] });
-        Vector4 const gb1 = Permute<PERMUTE_0Z, PERMUTE_0Y, PERMUTE_1X, PERMUTE_0X>(ra1, rc1);
-        Vector4 const gc0 = Swizzle<2, 3, 1, 2>({ mt.M.R[3] });
-        Vector4 const gc1 = Permute<PERMUTE_0W, PERMUTE_0X, PERMUTE_0Y, PERMUTE_1Z>(rb1, rc1);
-        Vector4 const gd0 = Swizzle<3, 2, 3, 1>({ mt.M.R[2] });
-        Vector4 const gd1 = Permute<PERMUTE_0Z, PERMUTE_0Y, PERMUTE_1Z, PERMUTE_0X>(rb1, rc1);
+        Vector4 const ga0 = Swizzle<2, 3, 1, 2>(Vector4{ mt.M.R[1] });
+        Vector4 const ga1 = Permute<3, 0, 1, 4>(ra1, rc1);
+        Vector4 const gb0 = Swizzle<3, 2, 3, 1>(Vector4{ mt.M.R[0] });
+        Vector4 const gb1 = Permute<2, 1, 4, 0>(ra1, rc1);
+        Vector4 const gc0 = Swizzle<2, 3, 1, 2>(Vector4{ mt.M.R[3] });
+        Vector4 const gc1 = Permute<3, 0, 1, 6>(rb1, rc1);
+        Vector4 const gd0 = Swizzle<3, 2, 3, 1>(Vector4{ mt.M.R[2] });
+        Vector4 const gd1 = Permute<2, 1, 6, 0>(rb1, rc1);
 
         Vector4 const fa1 = NegateMultiplyAdd(ga0, ga1, fa0);
         Vector4 const fb1 = NegateMultiplyAdd(gb0, gb1, fb0);
         Vector4 const fc1 = NegateMultiplyAdd(gc0, gc1, fc0);
         Vector4 const fd1 = NegateMultiplyAdd(gd0, gd1, fd0);
 
-        Vector4 const ha0 = Swizzle<3, 0, 3, 0>({ mt.M.R[1] });
-        Vector4 const ha1 = Permute<PERMUTE_0Z, PERMUTE_1Y, PERMUTE_1X, PERMUTE_0Z>(ra1, rc1);
-        Vector4 const hb0 = Swizzle<1, 3, 0, 2>({ mt.M.R[0] });
-        Vector4 const hb1 = Permute<PERMUTE_1Y, PERMUTE_0X, PERMUTE_0W, PERMUTE_1X>(ra1, rc1);
-        Vector4 const hc0 = Swizzle<3, 0, 3, 0>({ mt.M.R[3] });
-        Vector4 const hc1 = Permute<PERMUTE_0Z, PERMUTE_1W, PERMUTE_1Z, PERMUTE_0Z>(rb1, rc1);
-        Vector4 const hd0 = Swizzle<1, 3, 0, 2>({ mt.M.R[2] });
-        Vector4 const hd1 = Permute<PERMUTE_1W, PERMUTE_0X, PERMUTE_0W, PERMUTE_1Z>(rb1, rc1);
+        Vector4 const ha0 = Swizzle<3, 0, 3, 0>(Vector4{ mt.M.R[1] });
+        Vector4 const ha1 = Permute<2, 5, 4, 2>(ra1, rc1);
+        Vector4 const hb0 = Swizzle<1, 3, 0, 2>(Vector4{ mt.M.R[0] });
+        Vector4 const hb1 = Permute<5, 0, 3, 4>(ra1, rc1);
+        Vector4 const hc0 = Swizzle<3, 0, 3, 0>(Vector4{ mt.M.R[3] });
+        Vector4 const hc1 = Permute<2, 7, 6, 2>(rb1, rc1);
+        Vector4 const hd0 = Swizzle<1, 3, 0, 2>(Vector4{ mt.M.R[2] });
+        Vector4 const hd1 = Permute<7, 0, 3, 6>(rb1, rc1);
 
         Vector4 const r1 = NegateMultiplyAdd(ha0, ha1, fa1);
         Vector4 const r0 = MultiplyAdd(ha0, ha1, fa1);

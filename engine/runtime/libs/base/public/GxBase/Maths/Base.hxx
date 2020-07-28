@@ -669,6 +669,40 @@ namespace Graphyte::Maths::Impl
 
 
 // =================================================================================================
+// Rounding internals
+
+namespace Graphyte::Maths::Impl
+{
+    template <typename T>
+    mathinline T mathcall RoundToNearest(T value) noexcept
+    {
+        T const integral = floor(value);
+        T const fraction = value - integral;
+
+        if (fraction < T(0.5))
+        {
+            return integral;
+        }
+
+        if (fraction > T(0.5))
+        {
+            return integral + T(1.0);
+        }
+
+        T integral_part;
+        modf(integral / T(2.0), &integral_part);
+
+        if ((T(2.0) * integral_part) == integral)
+        {
+            return integral;
+        }
+
+        return integral + T(1.0);
+    }
+}
+
+
+// =================================================================================================
 // Select control masking
 
 namespace Graphyte::Maths

@@ -346,10 +346,10 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
-            FloatTraits<float>::QNan,
-            FloatTraits<float>::QNan,
-            FloatTraits<float>::QNan,
-            FloatTraits<float>::QNan,
+            FloatTraits<float>::QNaN,
+            FloatTraits<float>::QNaN,
+            FloatTraits<float>::QNaN,
+            FloatTraits<float>::QNaN,
         } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
@@ -804,7 +804,7 @@ namespace Graphyte::Maths
                 fdot,
             } } };
 
-            return result;
+            return { result.V };
         }
         else if constexpr (T::Components == 3)
         {
@@ -820,7 +820,7 @@ namespace Graphyte::Maths
                 fdot,
             } } };
 
-            return result;
+            return { result.V };
         }
         else if constexpr (T::Components == 2)
         {
@@ -835,7 +835,7 @@ namespace Graphyte::Maths
                 fdot,
             } } };
 
-            return result;
+            return { result.V };
         }
         else if constexpr (T::Components == 1)
         {
@@ -849,7 +849,7 @@ namespace Graphyte::Maths
                 fdot,
             } } };
 
-            return result;
+            return { result.V };
         }
 #elif GRAPHYTE_HW_AVX
         constexpr int dp_mask = Impl::avx_mm_dp_mask<T::Components>;
