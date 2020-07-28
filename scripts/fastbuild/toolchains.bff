@@ -373,6 +373,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 .GxToolchainDef_Compiler_MSVC_Config_Release = [
     .CompilerOptions_Config
         = ' /DGX_CONFIG_RELEASE=1'
+        + ' /DNDEBUG=1'
         + ' /MD'                    // Use Release DLL Run-Time Library
         + ' /O2'                    // Optimize for maximum speed
         + ' /Ob3'                   // Enable Inline Function Expansion
@@ -559,6 +560,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 .GxToolchainDef_Compiler_Clang_Config_Release = [
     .CompilerOptions_Config
         = ' -DGX_CONFIG_RELEASE=1'
+        + ' -DNDEBUG=1'
         + ' -O3'
     .LinkerOptions_Config = ''
 ]
@@ -721,6 +723,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 .GxToolchainDef_Compiler_GCC_Config_Release = [
     .CompilerOptions_Config
         = ' -DGX_CONFIG_RELEASE=1'
+        + ' -DNDEBUG=1'
         + ' -O3'
     .LinkerOptions_Config = ''
 ]
