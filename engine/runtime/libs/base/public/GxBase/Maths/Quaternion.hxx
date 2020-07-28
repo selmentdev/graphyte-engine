@@ -28,6 +28,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Conjugate(T q) noexcept
+        requires(Impl::IsQuaternion<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
@@ -52,6 +53,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Inverse(T q) noexcept
+        requires(Impl::IsQuaternion<T>)
     {
         Vector4 const zero = Zero<Vector4>();
         Vector4 const length = Length(q);

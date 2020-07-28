@@ -276,8 +276,9 @@ namespace notstd
         return span<const std::byte>{ reinterpret_cast<const std::byte*>(other.data()), other.size_bytes() };
     };
 
-    template <typename T, typename = std::enable_if_t<!std::is_const<T>::value>>
+    template <typename T>
     [[nodiscard]] constexpr span<std::byte> as_writable_bytes(span<T> other) noexcept
+        requires(!std::is_const_v<T>)
     {
         return span<std::byte>{ reinterpret_cast<std::byte*>(other.data()), other.size_bytes() };
     };

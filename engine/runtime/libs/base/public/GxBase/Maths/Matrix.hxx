@@ -2,6 +2,7 @@
 #include <GxBase/Maths/Base.hxx>
 #include <GxBase/Maths/Vector.hxx>
 #include <GxBase/Maths/Quaternion.hxx>
+#include <GxBase/Maths/Scalar.hxx>
 
 // Make matrix
 namespace Graphyte::Maths

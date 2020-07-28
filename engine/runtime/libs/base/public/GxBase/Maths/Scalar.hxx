@@ -289,18 +289,341 @@ namespace Graphyte::Maths
 
 
 // =================================================================================================
-// Fused Multiply-Add
+// Arithmetic
 
 namespace Graphyte::Maths
 {
-}
+    template <typename T>
+    mathinline T mathcall Cos(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return cos(v);
+    }
 
+    template <typename T>
+    mathinline T mathcall Sin(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return sin(v);
+    }
 
-// =================================================================================================
-// Trigonometric functions
+    template <typename T>
+    mathinline void mathcall SinCos(T& out_sin, T& out_cos, T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        out_sin = sin(v);
+        out_cos = cos(v);
+    }
 
-namespace Graphyte::Maths
-{
+    template <typename T>
+    mathinline T mathcall Tan(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return tan(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Asin(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return asin(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Acos(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return acos(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Atan(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return atan(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Atan2(T y, T x) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return atan2(y, x);
+    }
+
+    template <typename T>
+    mathinline T mathcall Sinh(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return sinh(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Cosh(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return cosh(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Tanh(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return tanh(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Asinh(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return asinh(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Acosh(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return acosh(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Atanh(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return atanh(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Log(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return log(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Log(T base, T value) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return log(value) / log(base);
+    }
+
+    template <typename T>
+    mathinline T mathcall Log10(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return log10(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Log2(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return log2(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Exp(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return exp(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Exp10(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return pow(T(10), v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Exp2(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return exp2(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Power(T x, T y) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return pow(x, y);
+    }
+
+    template <typename T>
+    mathinline T mathcall Hypot(T x, T y) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return hypot(x, y);
+    }
+
+    template <typename T>
+    mathinline T mathcall Sqrt(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+        return sqrtf(v);
+#elif GRAPHYTE_HW_AVX
+        __m128 const s = _mm_sqrt_ss(_mm_set_ss(v));
+        float result;
+        _mm_store_ss(&result, s);
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall SqrtEst(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+        return sqrtf(v);
+#elif GRAPHYTE_HW_AVX
+        __m128 const s = _mm_rcp_ss(_mm_rsqrt_ss(_mm_set_ss(v)));
+        float result;
+        _mm_store_ss(&result, s);
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall InvSqrt(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+        return 1.0F / sqrtf(v);
+#elif GRAPHYTE_HW_AVX
+        __m128 const vv = _mm_set_ss(v);
+        __m128 const rv = _mm_rsqrt_ss(vv);
+        float result;
+        _mm_store_ss(&result, rv);
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall InvSqrtEst(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+        return 1.0F / sqrtf(v);
+#elif GRAPHYTE_HW_AVX
+        __m128 const vv = _mm_set_ss(v);
+        __m128 const rv = _mm_rsqrt_ss(vv);
+        float result;
+        _mm_store_ss(&result, rv);
+        return result;
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Cbrt(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return cbrt(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall InvCbrt(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return T(1) / cbrt(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Abs(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return fabs(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Negate(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return -v;
+    }
+
+    template <typename T>
+    mathinline T mathcall Add(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return a + b;
+    }
+
+    template <typename T>
+    mathinline T mathcall Subtract(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return a - b;
+    }
+
+    template <typename T>
+    mathinline T mathcall Multiply(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return a * b;
+    }
+
+    template <typename T>
+    mathinline T mathcall Reciprocal(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return T(1) / v;
+    }
+
+    template <typename T>
+    mathinline T mathcall Divide(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return a / b;
+    }
+
+    template <typename T>
+    mathinline T mathcall MultiplyAdd(T a, T b, T c) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (a * b) + c;
+    }
+
+    template <typename T>
+    mathinline T mathcall MultiplySubtract(T a, T b, T c) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (a * b) - c;
+    }
+
+    template <typename T>
+    mathinline T mathcall NegateMultiplyAdd(T a, T b, T c) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return -(a * b) + c;
+    }
+
+    template <typename T>
+    mathinline T mathcall NegateMultiplySubtract(T a, T b, T c) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return -(a * b) - c;
+    }
+
+    template <typename T>
+    mathinline T mathcall Square(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return v * v;
+    }
+
+    template <typename T>
+    mathinline T mathcall SignedSquare(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return v * fabs(v);
+    }
+
+    template <typename T>
+    mathinline T mathcall Cube(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return v * v * v;
+    }
 }
 
 

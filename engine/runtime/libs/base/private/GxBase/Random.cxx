@@ -3,7 +3,6 @@
 #include <GxBase/Maths.hxx>
 #include <GxBase/Maths/Scalar.hxx>
 #include <GxBase/Maths/Vector.hxx>
-#include <GxBase/Maths/Arithmetic.hxx>
 
 namespace Graphyte::Random::Impl
 {
