@@ -1,10 +1,51 @@
 #pragma once
 #include <GxBase/Maths/Base.hxx>
 #include <GxBase/Maths/Vector.hxx>
-#include <GxBase/Maths/Comparizon.hxx>
 
 namespace Graphyte::Maths
 {
+    template <typename T>
+    mathinline T mathcall Dot(T a, T b) noexcept
+        requires(Impl::IsQuaternion<T>)
+    {
+        return { Dot(Vector4{ a.V }, Vector4{ b.V }).V };
+    }
+
+    template <typename T>
+    mathinline T mathcall Length(T v) noexcept
+        requires(Impl::IsQuaternion<T>)
+    {
+        return { Length(Vector4{ v.V }).V };
+    }
+
+    template <typename T>
+    mathinline T mathcall LengthSquared(T v) noexcept
+        requires(Impl::IsQuaternion<T>)
+    {
+        return { LengthSquared(Vector4{ v.V }).V };
+    }
+
+    template <typename T>
+    mathinline T mathcall ReciprocalLength(T v) noexcept
+        requires(Impl::IsQuaternion<T>)
+    {
+        return { ReciprocalLength(Vector4{ v.V }).V };
+    }
+
+    template <typename T>
+    mathinline T mathcall Normalize(T v) noexcept
+        requires(Impl::IsQuaternion<T>)
+    {
+        return { Normalize(Vector4{ v.V }).V };
+    }
+
+    template <typename T>
+    mathinline T mathcall NormalizeEst(T v) noexcept
+        requires(Impl::IsQuaternion<T>)
+    {
+        return { NormalizeEst(Vector4{ v.V }).V };
+    }
+
     template <typename T>
     mathinline T mathcall Identity() noexcept
         requires(Impl::IsQuaternion<T>)
@@ -13,14 +54,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline bool mathcall IsIdentity(Quaternion q) noexcept
+    mathinline bool mathcall IsIdentity(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return IsEqual(Vector4{ q.V }, Vector4{ Impl::VEC4_POSITIVE_UNIT_W.V });
     }
 
     template <typename T>
-    mathinline bool mathcall IsIdentity(Quaternion q, Vector4 epsilon) noexcept
+    mathinline bool mathcall IsIdentity(T q, Vector4 epsilon) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return IsEqual(Vector4{ q.V }, Vector4{ Impl::VEC4_POSITIVE_UNIT_W.V }, epsilon);
@@ -55,12 +96,12 @@ namespace Graphyte::Maths
     mathinline T mathcall Inverse(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
-        Vector4 const zero = Zero<Vector4>();
-        Vector4 const length = Length(q);
-        Quaternion const conj = Conjugate(q);
-        Bool4 const control = CompareLessEqual(length, Epsilon<Vector4>());
+        Vector4 const zero            = Zero<Vector4>();
+        Vector4 const length          = Length(q);
+        Quaternion const conj         = Conjugate(q);
+        Bool4 const control           = CompareLessEqual(length, Epsilon<Vector4>());
         Vector4 const normalized_conj = Divide(Vector4{ conj.V }, length);
-        Vector4 const result = Select(normalized_conj, zero, control);
+        Vector4 const result          = Select(normalized_conj, zero, control);
         return Quaternion{ result.V };
     }
 
@@ -83,17 +124,17 @@ namespace Graphyte::Maths
         __m128 const q2_xyzw = q2.V;
 
         __m128 const q1_wwww = _mm_permute_ps(q1_xyzw, _MM_SHUFFLE(3, 3, 3, 3));
-        __m128 const r0 = _mm_mul_ps(q1_wwww, q2_xyzw);
+        __m128 const r0      = _mm_mul_ps(q1_wwww, q2_xyzw);
 
         __m128 const q1_xyzx = _mm_permute_ps(q1_xyzw, _MM_SHUFFLE(0, 2, 1, 0));
         __m128 const q2_wwwx = _mm_permute_ps(q2_xyzw, _MM_SHUFFLE(0, 3, 3, 3));
-        __m128 const r1 = _mm_mul_ps(q1_xyzx, q2_wwwx);
+        __m128 const r1      = _mm_mul_ps(q1_xyzx, q2_wwwx);
 
         __m128 const q2_zxyy = _mm_permute_ps(q2_xyzw, _MM_SHUFFLE(1, 1, 0, 2));
         __m128 const q1_yzxy = _mm_permute_ps(q1_xyzw, _MM_SHUFFLE(1, 0, 2, 1));
 
-        __m128 const r4 = Impl::avx_fmadd_f32x4(q1_yzxy, q2_zxyy, r1);
-        __m128 const r6 = Impl::avx_fmadd_f32x4(r4, control.V, r0);
+        __m128 const r4      = Impl::avx_fmadd_f32x4(q1_yzxy, q2_zxyy, r1);
+        __m128 const r6      = Impl::avx_fmadd_f32x4(r4, control.V, r0);
         __m128 const q1_zxyz = _mm_permute_ps(q1_xyzw, _MM_SHUFFLE(2, 1, 0, 2));
         __m128 const q2_yzxz = _mm_permute_ps(q2_xyzw, _MM_SHUFFLE(2, 0, 2, 1));
 
@@ -110,8 +151,8 @@ namespace Graphyte::Maths
             Quaternion{ v.V },
             Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
 
-        Quaternion const qn = Conjugate(q);
-        Quaternion const qa = Multiply(q, a);
+        Quaternion const qn   = Conjugate(q);
+        Quaternion const qa   = Multiply(q, a);
         Quaternion const qaqn = Multiply(qa, qn);
         return Vector3{ qaqn.V };
     }
@@ -123,8 +164,8 @@ namespace Graphyte::Maths
             Quaternion{ v.V },
             Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
 
-        Quaternion const qn = Conjugate(q);
-        Quaternion const qna = Multiply(qn, a);
+        Quaternion const qn   = Conjugate(q);
+        Quaternion const qna  = Multiply(qn, a);
         Quaternion const qnaq = Multiply(qna, q);
         return Vector3{ qnaq.V };
     }
@@ -135,32 +176,32 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector3 const q_xyz{ q.V };
-        Vector4 const q_dot = Dot(q_xyz, q_xyz);
+        Vector4 const q_dot     = Dot(q_xyz, q_xyz);
         Vector4 const v_rcp_len = InvSqrt(q_dot);
-        Vector4 const v_len = Reciprocal(v_rcp_len);
+        Vector4 const v_len     = Reciprocal(v_rcp_len);
 
         Vector4 sinlen;
         Vector4 coslen;
         SinCos(sinlen, coslen, v_len);
 
-        Vector4 const r0 = Multiply(Multiply(Vector4{ q.V }, v_rcp_len), sinlen);
-        Vector4 const r1 = Select(coslen, r0, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
-        Vector4 const w = SplatW(Vector4{ q.V });
-        Vector4 const wexp = Exp(w);
+        Vector4 const r0     = Multiply(Multiply(Vector4{ q.V }, v_rcp_len), sinlen);
+        Vector4 const r1     = Select(coslen, r0, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Vector4 const w      = SplatW(Vector4{ q.V });
+        Vector4 const wexp   = Exp(w);
         Vector4 const result = Multiply(r1, wexp);
         return Quaternion{ result.V };
 #elif GRAPHYTE_HW_AVX
-        __m128 const v_len_sq = _mm_dp_ps(q.V, q.V, 0x7F);
+        __m128 const v_len_sq  = _mm_dp_ps(q.V, q.V, 0x7F);
         __m128 const v_rcp_len = _mm_rsqrt_ps(v_len_sq);
-        __m128 const v_len = _mm_rcp_ps(v_rcp_len);
+        __m128 const v_len     = _mm_rcp_ps(v_rcp_len);
 
 #if GRAPHYTE_MATH_SVML
         __m128 coslen;
         __m128 const sinlen = _mm_sincos_ps(&coslen, v_len);
 #else
-        float const f_len = _mm_cvtss_f32(v_len);
-        __m128 const coslen = _mm_set_ps1(cosf(f_len));
-        __m128 const sinlen = _mm_set_ps1(sinf(f_len));
+        float const f_len         = _mm_cvtss_f32(v_len);
+        __m128 const coslen       = _mm_set_ps1(cosf(f_len));
+        __m128 const sinlen       = _mm_set_ps1(sinf(f_len));
 #endif
         __m128 const r_xyzw = _mm_mul_ps(_mm_mul_ps(q.V, v_rcp_len), sinlen);
 
@@ -176,8 +217,8 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_SVML
         __m128 const q_w_exp = _mm_exp_ps(q_w);
 #else
-        float const f_q_w = _mm_cvtss_f32(q_w);
-        __m128 const q_w_exp = _mm_set_ps1(expf(f_q_w));
+        float const f_q_w         = _mm_cvtss_f32(q_w);
+        __m128 const q_w_exp      = _mm_set_ps1(expf(f_q_w));
 #endif
 
         __m128 const result = _mm_mul_ps(r2, q_w_exp);
@@ -195,26 +236,26 @@ namespace Graphyte::Maths
         Vector3 const q_xyz{ qv.V };
         Vector4 const v_len_sq = Dot(q_xyz, q_xyz);
 
-        Vector4 const q_w = SplatW(Vector4{ q.V });
+        Vector4 const q_w      = SplatW(Vector4{ q.V });
         Vector4 const q_len_sq = MultiplyAdd(q_w, q_w, v_len_sq);
 
-        Vector4 const s = Multiply(Acos(Clamp(Multiply(q_w, InvSqrt(q_len_sq)), Vector4{ Impl::VEC4_NEGATIVE_ONE_4.V }, Vector4{ Impl::VEC4_ONE_4.V })), InvSqrt(v_len_sq));
+        Vector4 const s       = Multiply(Acos(Clamp(Multiply(q_w, InvSqrt(q_len_sq)), Vector4{ Impl::VEC4_NEGATIVE_ONE_4.V }, Vector4{ Impl::VEC4_ONE_4.V })), InvSqrt(v_len_sq));
         Vector4 const q_xyz_s = Multiply(qv, s);
-        Vector4 const w = Multiply(Log(q_len_sq), 0.5F);
+        Vector4 const w       = Multiply(Log(q_len_sq), 0.5F);
 
         Quaternion r0{ Select(w, Vector4{ q_xyz_s.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V }).V };
         return r0;
 #elif GRAPHYTE_HW_AVX
         __m128 const v_len_sq = _mm_dp_ps(q.V, q.V, 0x7F);
-        __m128 const q_w = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
+        __m128 const q_w      = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
 
         __m128 const q_len_sq = Impl::avx_fmadd_f32x4(q_w, q_w, v_len_sq);
 
         __m128 const none = _mm_set_ps1(-1.0F);
         __m128 const pone = _mm_set_ps1(1.0F);
 
-        __m128 const rcp = _mm_mul_ps(q_w, _mm_rsqrt_ps(q_len_sq));
-        __m128 const clamped = _mm_max_ps(_mm_min_ps(rcp, pone), none);
+        __m128 const rcp          = _mm_mul_ps(q_w, _mm_rsqrt_ps(q_len_sq));
+        __m128 const clamped      = _mm_max_ps(_mm_min_ps(rcp, pone), none);
 
 #if GRAPHYTE_MATH_SVML
         __m128 const acos_clamped = _mm_acos_ps(clamped);
@@ -222,13 +263,13 @@ namespace Graphyte::Maths
         __m128 const acos_clamped = _mm_set_ps1(acosf(_mm_cvtss_f32(clamped)));
 #endif
 
-        __m128 const s = _mm_mul_ps(acos_clamped, _mm_rsqrt_ps(v_len_sq));
+        __m128 const s       = _mm_mul_ps(acos_clamped, _mm_rsqrt_ps(v_len_sq));
         __m128 const q_xyz_s = _mm_mul_ps(q.V, s);
 
 #if GRAPHYTE_MATH_SVML
-        __m128 const w = _mm_mul_ps(_mm_log_ps(q_len_sq), _mm_set_ps1(0.5F));
+        __m128 const w       = _mm_mul_ps(_mm_log_ps(q_len_sq), _mm_set_ps1(0.5F));
 #else
-        __m128 const w = _mm_set_ps1(logf(_mm_cvtss_f32(q_len_sq)) * 0.5F);
+        __m128 const w            = _mm_set_ps1(logf(_mm_cvtss_f32(q_len_sq)) * 0.5F);
 #endif
 
         __m128 const r0 = _mm_and_ps(q_xyz_s, Impl::VEC4_MASK_SELECT_1110.V);
@@ -267,7 +308,7 @@ namespace Graphyte::Maths
         Vector4 const qb0 = Multiply(sccc_xxxx, cscc_yyyy);
         Vector4 const qa1 = Multiply(qa0, scss_yyyy);
         Vector4 const qb1 = Multiply(qb0, ccsc_zzzz);
-        Vector4 const q = MultiplyAdd(qa1, sscs_zzzz, qb1);
+        Vector4 const q   = MultiplyAdd(qa1, sscs_zzzz, qb1);
         return Quaternion{ q.V };
     }
 
@@ -275,7 +316,7 @@ namespace Graphyte::Maths
     mathinline T mathcall CreateFromEuler(float x, float y, float z) noexcept
         requires(Impl::IsQuaternion<T>)
     {
-        Vector3 const angles = Make<Vector3>(x, y, z);
+        Vector3 const angles    = Make<Vector3>(x, y, z);
         Quaternion const result = CreateFromEuler<Quaternion>(angles);
         return result;
     }
@@ -291,13 +332,13 @@ namespace Graphyte::Maths
         float fcos;
         SinCos(fsin, fcos, 0.5F * angle);
 
-        Vector4 const scale = Make<Vector4>(fsin, fsin, fsin, fcos);
+        Vector4 const scale  = Make<Vector4>(fsin, fsin, fsin, fcos);
         Vector4 const result = Multiply(qv, scale);
         return Quaternion{ result.V };
 #elif GRAPHYTE_HW_AVX
-        __m128 const normal_xyz = _mm_and_ps(normal.V, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 const normal_xyz  = _mm_and_ps(normal.V, Impl::VEC4_MASK_SELECT_1110.V);
         __m128 const normal_xyz1 = _mm_or_ps(normal_xyz, Impl::VEC4_POSITIVE_UNIT_W.V);
-        __m128 const scale = _mm_set_ps1(0.5F * angle);
+        __m128 const scale       = _mm_set_ps1(0.5F * angle);
 
         Vector4 vsin;
         Vector4 vcos;
@@ -307,7 +348,7 @@ namespace Graphyte::Maths
         __m128 const cos_nnnw = _mm_and_ps(vcos.V, Impl::VEC4_MASK_COMPONENT_W.V);
 
         __m128 const sincos_xyzw = _mm_or_ps(sin_xyzn, cos_nnnw);
-        __m128 const result = _mm_mul_ps(normal_xyz1, sincos_xyzw);
+        __m128 const result      = _mm_mul_ps(normal_xyz1, sincos_xyzw);
         return { result };
 #endif
     }
@@ -319,14 +360,14 @@ namespace Graphyte::Maths
         GX_ASSERT(IsNotEqual(axis, Zero<Vector3>()));
         GX_ASSERT(!IsInfinity(axis));
 
-        Vector3 const normal = Normalize(axis);
+        Vector3 const normal    = Normalize(axis);
         Quaternion const result = CreateFromNormalAngle<Quaternion>(normal, angle);
         return result;
     }
 
     mathinline void mathcall ToAxisAngle(Vector3& axis, float& angle, Quaternion q) noexcept
     {
-        axis = Vector3{ q.V };
+        axis  = Vector3{ q.V };
         angle = 2.0f * Acos(GetW(q));
     }
 
@@ -447,10 +488,10 @@ namespace Graphyte::Maths
         __m128 const r1_yyy = _mm_permute_ps(r1_xyz, _MM_SHUFFLE(1, 1, 1, 1));
         __m128 const r2_zzz = _mm_permute_ps(r2_xyz, _MM_SHUFFLE(2, 2, 2, 2));
 
-        __m128 const sub_m11_m00 = _mm_sub_ps(r1_yyy, r0_xxx);
+        __m128 const sub_m11_m00   = _mm_sub_ps(r1_yyy, r0_xxx);
         __m128 const mask_x2_ge_y2 = _mm_cmple_ps(sub_m11_m00, _mm_setzero_ps());
 
-        __m128 const add_m11_m00 = _mm_add_ps(r1_yyy, r0_xxx);
+        __m128 const add_m11_m00   = _mm_add_ps(r1_yyy, r0_xxx);
         __m128 const mask_z2_ge_w2 = _mm_cmple_ps(add_m11_m00, _mm_setzero_ps());
 
         __m128 const mask_x2y2_ge_z2w2 = _mm_cmple_ps(r2_zzz, _mm_setzero_ps());
@@ -463,15 +504,15 @@ namespace Graphyte::Maths
         __m128 const x2y2z2w2_1 = _mm_add_ps(t2_0, x2y2z2w2_0);
         __m128 const x2y2z2w2_2 = _mm_add_ps(x2y2z2w2_1, Impl::VEC4_ONE_4.V);
 
-        __m128 const t0_1 = _mm_shuffle_ps(r0_xyz, r1_xyz, _MM_SHUFFLE(1, 2, 2, 1));
+        __m128 const t0_1   = _mm_shuffle_ps(r0_xyz, r1_xyz, _MM_SHUFFLE(1, 2, 2, 1));
         __m128 const t1_1_a = _mm_shuffle_ps(r1_xyz, r2_xyz, _MM_SHUFFLE(1, 0, 0, 0));
-        __m128 const t1_1 = _mm_permute_ps(t1_1_a, _MM_SHUFFLE(1, 3, 2, 0));
+        __m128 const t1_1   = _mm_permute_ps(t1_1_a, _MM_SHUFFLE(1, 3, 2, 0));
 
         __m128 const xyxzyz = _mm_add_ps(t0_1, t1_1);
 
-        __m128 const t0_2 = _mm_shuffle_ps(r2_xyz, r1_xyz, _MM_SHUFFLE(0, 0, 0, 1));
+        __m128 const t0_2   = _mm_shuffle_ps(r2_xyz, r1_xyz, _MM_SHUFFLE(0, 0, 0, 1));
         __m128 const t1_2_a = _mm_shuffle_ps(r1_xyz, r0_xyz, _MM_SHUFFLE(1, 2, 2, 2));
-        __m128 const t1_2 = _mm_permute_ps(t1_2_a, _MM_SHUFFLE(1, 3, 2, 0));
+        __m128 const t1_2   = _mm_permute_ps(t1_2_a, _MM_SHUFFLE(1, 3, 2, 0));
 
         __m128 const xwywzw_0 = _mm_sub_ps(t0_2, t1_2);
         __m128 const xwywzw_1 = _mm_mul_ps(const_m1_p1_m1_p1.V, xwywzw_0);
@@ -487,11 +528,11 @@ namespace Graphyte::Maths
 
         __m128 const ga0 = _mm_and_ps(mask_x2_ge_y2, tensor0);
         __m128 const gb0 = _mm_andnot_ps(mask_x2_ge_y2, tensor1);
-        __m128 const t0 = _mm_or_ps(ga0, gb0);
+        __m128 const t0  = _mm_or_ps(ga0, gb0);
 
         __m128 const ga1 = _mm_and_ps(mask_z2_ge_w2, tensor2);
         __m128 const gb1 = _mm_andnot_ps(mask_z2_ge_w2, tensor3);
-        __m128 const t1 = _mm_or_ps(ga1, gb1);
+        __m128 const t1  = _mm_or_ps(ga1, gb1);
 
         __m128 const m0 = _mm_and_ps(mask_x2y2_ge_z2w2, t0);
         __m128 const m1 = _mm_andnot_ps(mask_x2y2_ge_z2w2, t1);
@@ -501,6 +542,36 @@ namespace Graphyte::Maths
 
         return { _mm_div_ps(m2, length) };
 #endif
+    }
+
+    mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, Vector4 t) noexcept;
+
+    mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, float t) noexcept
+    {
+        return Slerp(q0, q1, Make<Vector4>(t));
+    }
+
+    mathinline Quaternion mathcall Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, Vector4 t) noexcept;
+
+    mathinline Quaternion mathcall Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, float t) noexcept
+    {
+        return Squad(q0, q1, q2, q3, Make<Vector4>(t));
+    }
+
+    mathinline void mathcall SquadSetup(
+        Quaternion& a,
+        Quaternion& b,
+        Quaternion& c,
+        Quaternion q0,
+        Quaternion q1,
+        Quaternion q2,
+        Quaternion q3) noexcept;
+
+    mathinline Quaternion mathcall Barycentric(Quaternion q0, Quaternion q1, Quaternion q2, Vector4 f, Vector4 g) noexcept;
+
+    mathinline Quaternion mathcall Barycentric(Quaternion q0, Quaternion q1, Quaternion q2, float f, float g) noexcept
+    {
+        return Barycentric(q0, q1, q2, Make<Vector4>(f), Make<Vector4>(g));
     }
 }
 
@@ -520,18 +591,12 @@ namespace Graphyte::Maths
                 1.0f - 0.00001f, } } };
 
         auto v_cos_omega = Dot(q0, q1);
-        
+
 
 #elif GRAPHYTE_HW_AVX
 #else
 #error Not implemented
 #endif
-    }
-
-    mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, float t) noexcept
-    {
-        Vector4 const vt = Make<Vector4>(t);
-        return Slerp(q0, q1, vt);
     }
 }
 #endif

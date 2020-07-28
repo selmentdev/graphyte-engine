@@ -258,6 +258,34 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
+    mathinline bool mathcall IsZero(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return v == T(0.0);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsZero(T v, T epsilon) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return fabs(v) <= epsilon;
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsEqual(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (a == b);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsEqual(T a, T b, T epsilon) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (fabs(a - b) <= epsilon);
+    }
+
+    template <typename T>
     mathinline bool mathcall IsNearEqual(T a, T b, int32_t tolerance) noexcept
         requires(std::is_floating_point_v<T>)
     {
@@ -284,6 +312,62 @@ namespace Graphyte::Maths
     {
         static constexpr const int32_t tolerance{ 4 };
         return IsNearEqual<T>(a, b, tolerance);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsNotEqual(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (a != b);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsGreater(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (a > b);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsGreaterEqual(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (a >= b);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsLess(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (a < b);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsLessEqual(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (a <= b);
+    }
+
+    template <typename T>
+    mathinline bool mathcall InBounds(T v, T bounds) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (-bounds <= v) && (v <= bounds);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsNan(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return FloatTraits<T>::IsNan(v);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsInfinity(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return FloatTraits<T>::IsInf(v);
     }
 }
 
@@ -623,6 +707,297 @@ namespace Graphyte::Maths
         requires(std::is_floating_point_v<T>)
     {
         return v * v * v;
+    }
+}
+
+
+// =================================================================================================
+// Interpolation
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall Lerp(T a, T b, T t) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return a + (b - a) * t;
+    }
+
+    template <typename T>
+    mathinline T mathcall LerpPrecise(T a, T b, T t) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return ((T(1) - t) * a) + (t * b);
+    }
+
+    template <typename T>
+    mathinline T mathcall Hermite(T position0, T tangent0, T position1, T tangent1, T t) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        T const t2 = t * t;
+        T const t3 = t * t2;
+
+        T const p0 = (T(2.0) * t3 - T(3.0) * t2 + T(1.0));
+        T const t0 = (t3 - T(2.0) * t2 + t);
+        T const p1 = (T(-2.0) * t3 + T(3.0) * t2);
+        T const t1 = (t3 - t2);
+
+        T const r0 = (p0 * position0);
+        T const r1 = (t0 * tangent0) + r0;
+        T const r2 = (p1 * position1) + r1;
+        T const r3 = (t1 * tangent1) + r2;
+
+        return r3;
+    }
+
+    template <typename T>
+    mathinline T mathcall Barycentric(T a, T b, T c, T f, T g) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        T const pba    = b - a;
+        T const pca    = c - a;
+        T const accum  = (pba * f) + a;
+        T const result = (pca * g) + accum;
+        return result;
+    }
+
+    template <typename T>
+    mathinline T mathcall CatmullRom(T p0, T p1, T p2, T p3, T t) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        float const t2 = t * t;
+        float const t3 = t * t2;
+
+        float const f0 = (-t3 + T(2.0) * t2 - t) * T(0.5);
+        float const f1 = (T(3.0) * t3 - T(5.0) * t2 + T(2.0)) * T(0.5);
+        float const f2 = (T(-3.0) * t3 + T(4.0) * t2 + t) * T(0.5);
+        float const f3 = (t3 - t2) * T(0.5);
+
+        float const r0 = (f0 * p0);
+        float const r1 = (f1 * p1) + r0;
+        float const r2 = (f2 * p2) + r1;
+        float const r3 = (f3 * p3) + r2;
+
+        return r3;
+    }
+
+    template <typename T>
+    mathinline T mathcall Remap(T value, T from_min, T from_max, T to_min, T to_max) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        T const from_abs     = (value - from_min);
+        T const from_max_abs = (from_max - from_min);
+
+        T const normal = (from_abs / from_max_abs);
+
+        T const to_max_abs = (to_max - to_min);
+        T const to_abs     = (to_max_abs * normal);
+
+        T const to = (to_abs + to_min);
+
+        return to;
+    }
+
+    template <typename T>
+    mathinline T mathcall Unlerp(T value, T min, T max) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        T const base   = (value - min);
+        T const range  = (max - min);
+        T const result = (base / range);
+        return result;
+    }
+
+    template <typename T>
+    mathinline T mathcall Bezier(T a, T b, T c, T t) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        T const t2  = t * t;
+        T const t1  = T(1.0) - t;
+        T const t12 = t1 * t1;
+        return (a * t12) + (T(2.0) * b * t1 * t) + (c * t2);
+    }
+
+    template <typename T>
+    mathinline T mathcall Bezier(T a, T b, T c, T d, T t) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        T const t1  = T(1.0) - t;
+        T const t13 = t1 * t1 * t1;
+        T const t3  = t * t * t;
+
+        return (t13 * a) + (T(3.0) * t * t1 * t1 * b) + (T(3.0) * t * t * t1 * c) + (t3 * d);
+    }
+
+    template <typename T>
+    mathinline T mathcall Cubic(T a, T b, T c, T d, T t) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        T const t2 = t * t;
+        T const a2 = (T(-0.5) * b) + (T(1.5) * a) - (T(1.5) * d) + (T(0.5) * c);
+        T const a1 = b - (T(2.5) * a) + (T(2.0) * d) - (T(0.5) * c);
+        T const a0 = (T(-0.5) * b) + (T(0.5) * d);
+
+        T const result = (a2 * t * t2) + (a1 * t2) + (a0 * t) + a;
+    }
+
+    template <typename T>
+    mathinline T mathcall SmoothStep(T a, T b, T x) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        float const t      = Saturate((x - a) / (b - a));
+        float const result = t * (t * NegateMultiplyAdd(t, 2.0f, 3.0f));
+        return result;
+    }
+
+    template <typename T>
+    mathinline T mathcall Cosine(T a, T b, T t) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        float const t0 = (T(1.0) - Cos(t * Impl::g_Const_Pi<T>)) * T(0.5);
+        return Lerp(a, b, t0);
+    }
+
+    template <typename T>
+    mathinline T mathcall EaseSmoothC2(T x) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (x * x * x) * (x * ((x * T(6.0)) - T(15.0)) + T(10.0));
+    }
+
+    template <typename T>
+    mathinline T mathcall Smooth(T min, T max, T x) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        if (x <= min)
+        {
+            return min;
+        }
+        else if (x >= max)
+        {
+            return max;
+        }
+
+        T const xx     = (x - min) / (max - min);
+        T const result = (xx * (xx * (T(3.0) - (T(2.0) * x))));
+        return result;
+    }
+
+    template <typename T>
+    mathinline T mathcall SmoothSquared(T min, T max, T x) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        if (x <= min)
+        {
+            return min;
+        }
+        else if (x >= max)
+        {
+            return max;
+        }
+
+        T const xx = (x * x);
+        return Lerp<T>(min, max, xx);
+    }
+
+    template <typename T>
+    mathinline T mathcall SmoothInvSquared(T min, T max, T x) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        if (x <= min)
+        {
+            return min;
+        }
+        else if (x >= max)
+        {
+            return max;
+        }
+
+        T const ox   = T(1.0) - x;
+        T const oxox = ox * ox;
+        T const xx   = T(1.0) - oxox;
+        return Lerp<T>(min, max, xx);
+    }
+
+    template <typename T>
+    mathinline T mathcall SmoothCubed(T min, T max, T x) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        if (x <= min)
+        {
+            return min;
+        }
+        else if (x >= max)
+        {
+            return max;
+        }
+
+        T const xx = (x * x * x);
+        return Lerp<T>(min, max, xx);
+    }
+
+    template <typename T>
+    mathinline T mathcall SmoothInvCubed(T min, T max, T x) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        if (x <= min)
+        {
+            return min;
+        }
+        else if (x >= max)
+        {
+            return max;
+        }
+
+        T const ox     = T(1.0) - x;
+        T const oxoxox = (ox * ox * ox);
+        T const xx     = T(1.0) - oxoxox;
+        return Lerp<T>(min, max, xx);
+    }
+
+    template <typename T>
+    mathinline T mathcall Trapezoid(T a, T b, T c, T d, T t) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        if (t <= a)
+        {
+            return T{};
+        }
+        else if (t < b)
+        {
+            return (t - a) / (b - a);
+        }
+        else if (t < c)
+        {
+            return T(1.0);
+        }
+        else if (t < d)
+        {
+            return T(1.0) - ((t - c) / (d - c));
+        }
+
+        return T{};
+    }
+
+    template <typename T>
+    mathinline T mathcall Trapezoid(T a, T b, T c, T d, T t, T min, T max) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return Lerp<T>(min, max, Trapezoid(a, b, c, d, t));
+    }
+
+    template <typename T>
+    mathinline T mathcall MoveTowards(T current, T target, T max_distance) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        T const distance = (target - current);
+
+        if (Abs(distance) <= max_distance)
+        {
+            return target;
+        }
+
+        return current + Sign(distance) * max_distance;
     }
 }
 

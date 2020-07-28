@@ -438,6 +438,237 @@ namespace Graphyte::Maths::Impl
 
 
 // =================================================================================================
+// Constant splatting
+
+namespace Graphyte::Maths::Impl
+{
+    mathinline NativeFloat32x4 mathcall ConvertIntToFloat(NativeFloat32x4 vint, uint32_t exponent) noexcept
+    {
+        GX_ASSERT(exponent < 32);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const scale = 1.0F / static_cast<float>(1U << exponent);
+
+        ConstFloat32x4 const result{ { {
+            static_cast<float>(static_cast<int32_t>(vint.U[0])) * scale,
+            static_cast<float>(static_cast<int32_t>(vint.U[1])) * scale,
+            static_cast<float>(static_cast<int32_t>(vint.U[2])) * scale,
+            static_cast<float>(static_cast<int32_t>(vint.U[3])) * scale,
+        } } };
+
+        return result.V;
+#elif GRAPHYTE_HW_NEON
+        float const scale    = 1.0F / static_cast<float>(1U << exponent);
+        float32x4_t const r0 = vcvtq_f32_s32(vint);
+        float32x4_t const r1 = vmulq_n_f32(r0, scale);
+        return r1;
+#elif GRAPHYTE_HW_AVX
+        __m128 const r0     = _mm_cvtepi32_ps(_mm_castps_si128(vint));
+        uint32_t uscale     = 0x3F800000U - (exponent << 23);
+        __m128i const scale = _mm_set1_epi32(static_cast<int>(uscale));
+        __m128 const r1     = _mm_mul_ps(r0, _mm_castsi128_ps(scale));
+        return r1;
+#endif
+    }
+
+    mathinline NativeFloat32x4 mathcall ConvertFloatToInt(NativeFloat32x4 vfloat, uint32_t exponent) noexcept
+    {
+        GX_ASSERT(exponent < 32);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const scale = static_cast<float>(1U << exponent);
+
+        NativeFloat32x4 result;
+
+        for (size_t index = 0; index < 4; ++index)
+        {
+            float const t = vfloat.F[index] * scale;
+            int32_t r;
+
+            if (t <= -(65536.0F * 32768.0F))
+            {
+                r = (-0x7FFFFFFF) - 1;
+            }
+            else if (t > ((65536.0f * 32768.0f) - 128.0f))
+            {
+                r = 0x7FFFFFFF;
+            }
+            else
+            {
+                r = static_cast<int32_t>(t);
+            }
+
+            result.I[index] = r;
+        }
+
+        return result;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const r0      = vmulq_n_f32(vfloat, static_cast<float>(1U << exponent));
+        uint32x4_t const overflow = vcgtq_f32(r0, VEC4_INTMAX.V);
+        int32x4_t const r1        = vcvtq_s32_f32(r0);
+        uint32x4_t const r2       = vandq_u32(overflow, VEC4_MASK_ABS.V);
+        uint32x4_t const r3       = vbicq_u32(r1, overflow);
+        uint32x4_t const r4       = vorrq_u32(r3, r2);
+        return vreinterpretq_f32_u32(r4);
+#elif GRAPHYTE_HW_AVX
+        __m128 const r0       = _mm_set_ps1(static_cast<float>(1U << exponent));
+        __m128 const r1       = _mm_mul_ps(r0, vfloat);
+        __m128 const overflow = _mm_cmpgt_ps(r0, VEC4_INTMAX.V);
+        __m128i const r2      = _mm_cvttps_epi32(r1);
+        __m128 const r3       = _mm_and_ps(overflow, VEC4_MASK_ABS.V);
+        __m128 const r4       = _mm_andnot_ps(overflow, _mm_castsi128_ps(r2));
+        __m128 const r5       = _mm_or_ps(r4, r3);
+        return r5;
+#endif
+    }
+
+    mathinline NativeFloat32x4 mathcall ConvertUIntToFloat(NativeFloat32x4 vuint, uint32_t exponent) noexcept
+    {
+        GX_ASSERT(exponent < 32);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const scale = 1.0F / static_cast<float>(1U << exponent);
+
+        ConstFloat32x4 const result{ { {
+            static_cast<float>(vuint.U[0]) * scale,
+            static_cast<float>(vuint.U[1]) * scale,
+            static_cast<float>(vuint.U[2]) * scale,
+            static_cast<float>(vuint.U[3]) * scale,
+        } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_NEON
+        float const scale    = 1.0F / static_cast<float>(1U << exponent);
+        float32x4_t const r0 = vcvtq_f32_u32(vuint);
+        float32x4_t const r1 = vmulq_n_f32(r0, scale);
+        return r1;
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask0    = _mm_and_ps(vuint, VEC4_NEGATIVE_ZERO.V);
+        __m128 const r0       = _mm_xor_ps(vuint, mask0);
+        __m128 const r1       = _mm_cvtepi32_ps(_mm_castps_si128(r0));
+        __m128i const mask1   = _mm_srai_epi32(_mm_castps_si128(mask0), 31);
+        __m128 const mask2    = _mm_and_ps(_mm_castsi128_ps(mask1), VEC4_UNSIGNED_FIX.V);
+        __m128 const r2       = _mm_add_ps(r1, mask2);
+        uint32_t const uscale = 0x3F800000U - (exponent << 23);
+        __m128i const iscale  = _mm_set1_epi32(static_cast<int>(uscale));
+        __m128 const r3       = _mm_mul_ps(r2, _mm_castsi128_ps(iscale));
+        return r3;
+#endif
+    }
+
+    mathinline NativeFloat32x4 mathcall ConvertFloatToUInt(NativeFloat32x4 vfloat, uint32_t exponent)
+    {
+        GX_ASSERT(exponent < 32);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const scale = static_cast<float>(1U << exponent);
+
+        NativeFloat32x4 result;
+
+        for (size_t index = 0; index < 4; ++index)
+        {
+            float const t = vfloat.F[index] * scale;
+            uint32_t r;
+
+            if (t <= 0.0F)
+            {
+                r = 0;
+            }
+            else if (t > (65536.0F * 65536.0F))
+            {
+                r = 0xFFFFFFFF;
+            }
+            else
+            {
+                r = static_cast<uint32_t>(t);
+            }
+
+            result.U[index] = r;
+        }
+
+        return result;
+#elif GRAPHYTE_HW_NEON
+        float32x4_t const r0      = vmulq_n_f32(vfloat, static_cast<float>(1U << exponent));
+        uint32x4_t const overflow = vcgtq_f32(r0, VEC4_UINTMAX.V);
+        uint32x4_t const r1       = vcvtq_u32_f32(r0);
+        uint32x4_t const r2       = vbicq_u32(r1, overflow);
+        uint32x4_t const r3       = vorrq_u32(overflow, r2);
+        return vreinterpretq_f32_u32(r3);
+#elif GRAPHYTE_HW_AVX
+        __m128 const r0       = _mm_set_ps1(static_cast<float>(1U << exponent));
+        __m128 const r1       = _mm_mul_ps(r0, vfloat);
+        __m128 const r2       = _mm_max_ps(r1, _mm_setzero_ps());
+        __m128 const overflow = _mm_cmpgt_ps(r2, VEC4_UINTMAX.V);
+        __m128 const fix      = VEC4_UNSIGNED_FIX.V;
+        __m128 const mask     = _mm_cmpge_ps(r2, fix);
+        __m128 const max      = _mm_and_ps(fix, mask);
+        __m128 const r3       = _mm_sub_ps(r2, max);
+        __m128i const r4      = _mm_cvttps_epi32(r3);
+        __m128 const r5       = _mm_and_ps(mask, VEC4_NEGATIVE_ZERO.V);
+        __m128 const r6       = _mm_xor_ps(_mm_castsi128_ps(r4), r5);
+        __m128 const r7       = _mm_or_ps(r6, overflow);
+        return r7;
+#endif
+    }
+
+    mathinline NativeFloat32x4 mathcall SplatConstant(int32_t c, uint32_t exponent) noexcept
+    {
+        GX_ASSERT(-16 <= c && c < 16);
+        GX_ASSERT(exponent < 32);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        ConstInt32x4 const result{ { {
+            c,
+            c,
+            c,
+            c,
+        } } };
+
+        return result.V;
+#elif GRAPHYTE_HW_NEON
+        int32x4_t const fscale    = vdupq_n_s32(c);
+        float32x4_t const vfscale = vcvtq_f32_s32(fscale);
+        uint32_t const uscale     = 0x3F800000U - (exponent << 23);
+        uint32x4_t const vuscale  = vdupq_n_u32(uscale);
+        float32x4_t const result  = vmulq_f32(vfscale, vreinterpretq_f32_u32(vuscale));
+        return result;
+#elif GRAPHYTE_HW_AVX
+        __m128i const fscale  = _mm_set1_epi32(c);
+        __m128 const vfscale  = _mm_cvtepi32_ps(fscale);
+        uint32_t uscale       = 0x3F800000u - (exponent << 23);
+        __m128i const vuscale = _mm_set1_epi32(static_cast<int>(uscale));
+        __m128 const result   = _mm_mul_ps(vfscale, _mm_castsi128_ps(vuscale));
+        return result;
+#endif
+    }
+
+    mathinline NativeFloat32x4 mathcall SplatConstant(int32_t c) noexcept
+    {
+        GX_ASSERT(-16 <= c && c < 16);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        ConstInt32x4 const result{ { {
+            c,
+            c,
+            c,
+            c,
+        } } };
+
+        return result.V;
+#elif GRAPHYTE_HW_NEON
+        int32x4_t const r0   = vdupq_n_s32(c);
+        float32x4_t const r1 = vreinterpretq_f32_s32(r0);
+        return r1;
+#elif GRAPHYTE_HW_AVX
+        __m128i const r0 = _mm_set1_epi32(c);
+        __m128 const r1  = _mm_castsi128_ps(r0);
+        return r1;
+#endif
+    }
+}
+
+
+// =================================================================================================
 // Select control masking
 
 namespace Graphyte::Maths
@@ -3042,6 +3273,190 @@ namespace Graphyte::Maths
     }
 }
 
+
+// =================================================================================================
+// Generic comparisons
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline bool mathcall IsZero(T v) noexcept
+        requires(Impl::IsSimdFloat4<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return (v.V.F[0] == 0.0F)
+                   && (v.V.F[1] == 0.0F)
+                   && (v.V.F[2] == 0.0F)
+                   && (v.V.F[3] == 0.0F);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (v.V.F[0] == 0.0F)
+                   && (v.V.F[1] == 0.0F)
+                   && (v.V.F[2] == 0.0F);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (v.V.F[0] == 0.0F)
+                   && (v.V.F[1] == 0.0F);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (v.V.F[0] == 0.0F);
+        }
+#elif GRAPHYTE_HW_AVX
+        constexpr uint32_t expected = (1u << T::Components) - 1;
+
+        __m128 const zero = _mm_setzero_ps();
+        __m128 const mask = _mm_cmpeq_ps(v.V, zero);
+
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) == expected;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & expected) == expected;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsZero(T v, T epsilon) noexcept
+        requires(Impl::IsSimdFloat4<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return (fabsf(v.V.F[0]) <= epsilon.V.F[0])
+                   && (fabsf(v.V.F[1]) <= epsilon.V.F[1])
+                   && (fabsf(v.V.F[2]) <= epsilon.V.F[2])
+                   && (fabsf(v.V.F[3]) <= epsilon.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return (fabsf(v.V.F[0]) <= epsilon.V.F[0])
+                   && (fabsf(v.V.F[1]) <= epsilon.V.F[1])
+                   && (fabsf(v.V.F[2]) <= epsilon.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return (fabsf(v.V.F[0]) <= epsilon.V.F[0])
+                   && (fabsf(v.V.F[1]) <= epsilon.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return (fabsf(v.V.F[0]) <= epsilon.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        constexpr uint32_t expected = (1u << T::Components) - 1;
+
+        __m128 const zero     = _mm_setzero_ps();
+        __m128 const negative = _mm_sub_ps(zero, v.V);
+        __m128 const abs      = _mm_max_ps(v.V, negative);
+        __m128 const mask     = _mm_cmple_ps(abs, epsilon.V);
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) == expected;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & expected) == expected;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool IsNan(T v) noexcept
+        requires(Impl::IsSimdFloat4<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return FloatTraits<float>::IsNan(v.V.F[0])
+                   || FloatTraits<float>::IsNan(v.V.F[1])
+                   || FloatTraits<float>::IsNan(v.V.F[2])
+                   || FloatTraits<float>::IsNan(v.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return FloatTraits<float>::IsNan(v.V.F[0])
+                   || FloatTraits<float>::IsNan(v.V.F[1])
+                   || FloatTraits<float>::IsNan(v.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return FloatTraits<float>::IsNan(v.V.F[0])
+                   || FloatTraits<float>::IsNan(v.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return FloatTraits<float>::IsNan(v.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const mask = _mm_cmpneq_ps(v.V, v.V);
+
+        constexpr uint32_t expected = (1u << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) != 0;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & expected) != 0;
+        }
+#endif
+    }
+
+    template <typename T>
+    mathinline bool IsInfinity(T v) noexcept
+        requires(Impl::IsSimdFloat4<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        if constexpr (T::Components == 4)
+        {
+            return FloatTraits<float>::IsInf(v.V.F[0])
+                   || FloatTraits<float>::IsInf(v.V.F[1])
+                   || FloatTraits<float>::IsInf(v.V.F[2])
+                   || FloatTraits<float>::IsInf(v.V.F[3]);
+        }
+        else if constexpr (T::Components == 3)
+        {
+            return FloatTraits<float>::IsInf(v.V.F[0])
+                   || FloatTraits<float>::IsInf(v.V.F[1])
+                   || FloatTraits<float>::IsInf(v.V.F[2]);
+        }
+        else if constexpr (T::Components == 2)
+        {
+            return FloatTraits<float>::IsInf(v.V.F[0])
+                   || FloatTraits<float>::IsInf(v.V.F[1]);
+        }
+        else if constexpr (T::Components == 1)
+        {
+            return FloatTraits<float>::IsInf(v.V.F[0]);
+        }
+#elif GRAPHYTE_HW_AVX
+        __m128 const abs  = _mm_and_ps(v.V, Impl::VEC4_MASK_ABS.V);
+        __m128 const mask = _mm_cmpeq_ps(abs, Impl::VEC4_INFINITY.V);
+
+        constexpr uint32_t expected = (1u << T::Components) - 1;
+
+        if constexpr (T::Components == 4)
+        {
+            return _mm_movemask_ps(mask) != 0;
+        }
+        else
+        {
+            return (_mm_movemask_ps(mask) & expected) != 0;
+        }
+#endif
+    }
+}
 
 // =================================================================================================
 // Rounding functions

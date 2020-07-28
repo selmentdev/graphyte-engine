@@ -1,6 +1,7 @@
 #pragma once
 #include <GxBase/Maths/Base.hxx>
 #include <GxBase/Maths/Vector.hxx>
+#include <GxBase/Maths/Matrix.hxx>
 
 namespace Graphyte::Maths
 {
@@ -106,9 +107,9 @@ namespace Graphyte::Maths
 
     mathinline Plane mathcall CreateFromPointNormal(Vector3 point, Vector3 normal) noexcept
     {
-        Vector4 const p_wwww = Dot(point, normal);
-        Vector4 const n_wwww = Negate(p_wwww);
-        Vector4 const abcw = Select(n_wwww, Vector4{ normal.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Vector3 const p_wwww = Dot(point, normal);
+        Vector3 const n_wwww = Negate(p_wwww);
+        Vector4 const abcw   = Select(Vector4{ n_wwww.V }, Vector4{ normal.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
         Plane const result{ abcw.V };
         return result;
     }

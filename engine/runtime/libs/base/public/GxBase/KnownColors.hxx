@@ -1,7 +1,7 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
 
-namespace Graphyte::Maths
+namespace Graphyte
 {
     enum class KnownColor : uint32_t
     {
