@@ -25,6 +25,7 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp{
 #include <GxBase/Maths/Plane.hxx>
 #include <GxBase/Maths/Quaternion.hxx>
 #include <GxBase/Maths/Geometric.hxx>
+#include <GxBase/Maths/Color.hxx>
 
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {

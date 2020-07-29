@@ -49,7 +49,7 @@ template <>
 struct fmt::formatter<Graphyte::Version>
 {
     template <typename ParseContext>
-    constexpr auto Parse(ParseContext& context)
+    constexpr auto parse(ParseContext& context)
     {
         return context.begin();
     }

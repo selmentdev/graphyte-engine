@@ -85,12 +85,6 @@ mathinline Quaternion mathcall Quaternion::Slerp(Quaternion q0, Quaternion q1, V
 #endif
 }
 
-mathinline Quaternion mathcall Quaternion::Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, float t) noexcept
-{
-    auto v_t = Vector4::Make(t);
-    return Quaternion::Squad(q0, q1, q2, q3, v_t);
-}
-
 mathinline Quaternion mathcall Quaternion::Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, Vector4 t) noexcept
 {
     GX_ASSERT(

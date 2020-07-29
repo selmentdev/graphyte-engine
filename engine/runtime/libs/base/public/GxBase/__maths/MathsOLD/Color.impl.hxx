@@ -1,43 +1,5 @@
 namespace Graphyte::Maths
 {
-    mathinline Vector4 mathcall Color::HueToClr(Vector4 p, Vector4 q, Vector4 h) noexcept
-    {
-        static const Detail::Vector4F32 v_one_sixth  = { { { 1.0F / 6.0F, 1.0F / 6.0F, 1.0F / 6.0F, 1.0F / 6.0F } } };
-        static const Detail::Vector4F32 v_two_thirds = { { { 2.0F / 3.0F, 2.0F / 3.0F, 2.0F / 3.0F, 2.0F / 3.0F } } };
-
-        auto t = h;
-        if (Vector3::IsLess({ t.V }, Vector3::Zero()))
-        {
-            t = Vector4::Add(t, Vector4::One());
-        }
-
-        if (Vector3::IsGreater({ t.V }, Vector3::One()))
-        {
-            t = Vector4::Subtract(t, Vector4::One());
-        }
-
-        if (Vector3::IsLess({ t.V }, { v_one_sixth.V }))
-        {
-            auto v_t1 = Vector4::Subtract(q, p);
-            auto v_t2 = Vector4::Multiply({ Detail::VEC4_SIX_4.V }, t);
-            return Vector4::MultiplyAdd(v_t1, v_t2, p);
-        }
-
-        if (Vector3::IsLess({ t.V }, { Detail::VEC4_ONE_HALF_4.V }))
-        {
-            return q;
-        }
-
-        if (Vector3::IsLess({ t.V }, { v_two_thirds.V }))
-        {
-            auto v_t1 = Vector4::Subtract(q, p);
-            auto v_t2 = Vector4::Multiply({ Detail::VEC4_SIX_4.V }, Vector4::Subtract({ v_two_thirds.V }, t));
-            return Vector4::MultiplyAdd(v_t1, v_t2, p);
-        }
-
-        return p;
-    }
-
     mathinline Color mathcall Color::RGBToHSL(Color c) noexcept
     {
         auto v_r = Vector4::SplatX({ c.V });

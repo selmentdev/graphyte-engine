@@ -2,6 +2,9 @@
 #include <GxBase/Maths/Base.hxx>
 #include <GxBase/Maths/Vector.hxx>
 
+// =================================================================================================
+// Load / store
+
 namespace Graphyte::Maths
 {
     template <typename T>
@@ -70,6 +73,10 @@ namespace Graphyte::Maths
 #endif
     }
 }
+
+
+// =================================================================================================
+// Color opereations
 
 namespace Graphyte::Maths
 {
@@ -161,5 +168,63 @@ namespace Graphyte::Maths
         __m128 const r3 = _mm_shuffle_ps(r1, r2, _MM_SHUFFLE(3, 0, 1, 0));
         return { r3 };
 #endif
+    }
+}
+
+
+// =================================================================================================
+// Color space conversion
+
+namespace Graphyte::Maths::Impl
+{
+    mathinline Vector3 mathcall HueToColor(Vector3 p, Vector3 q, Vector3 h) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 g_OneSixth = { { {
+                1.0f / 6.0f,
+                1.0f / 6.0f,
+                1.0f / 6.0f,
+                1.0f / 6.0f,
+            } } };
+        static constexpr Impl::ConstFloat32x4 g_TwoThirds = { { {
+                2.0f / 3.0f,
+                2.0f / 3.0f,
+                2.0f / 3.0f,
+                2.0f / 3.0f,
+            } } };
+
+        Vector3 const one = One<Vector3>();
+
+        Vector3 t = h;
+
+        if (IsLess(t, Zero<Vector3>()))
+        {
+            t = Add(t, one);
+        }
+
+        if (IsGreater(t, one))
+        {
+            t = Subtract(t, one);
+        }
+
+        if (IsLess(t, Vector3{ g_OneSixth.V }))
+        {
+            Vector3 const vt1 = Subtract(q, p);
+            Vector3 const vt2 = Multiply(Vector3{ Impl::VEC4_SIX_4.V }, t);
+            return MultiplyAdd(vt1, vt2, p);
+        }
+
+        if (IsLess(t, Vector3{ Impl::VEC4_ONE_HALF_4.V }))
+        {
+            return q;
+        }
+
+        if (IsLess(t, Vector3{ g_TwoThirds.V }))
+        {
+            Vector3 const vt1 = Subtract(q, p);
+            Vector3 const vt2 = Multiply(Vector3{ Impl::VEC4_SIX_4.V }, Subtract(Vector3{ g_TwoThirds.V }, t));
+            return MultiplyAdd(vt1, vt2, p);
+        }
+
+        return p;
     }
 }
