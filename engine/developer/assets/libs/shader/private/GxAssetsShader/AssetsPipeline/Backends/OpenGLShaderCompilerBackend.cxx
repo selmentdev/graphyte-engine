@@ -119,7 +119,7 @@ namespace Graphyte::AssetsPipeline
             &std_output,
             &std_error);
 
-        if (bool success = called.StatusCode == Status::Success and called.ExitCode == 0; success)
+        if (bool success = called.StatusCode == Status::Success && called.ExitCode == 0; success)
         {
             for (auto&& line : Split(std_error, '\n'))
             {

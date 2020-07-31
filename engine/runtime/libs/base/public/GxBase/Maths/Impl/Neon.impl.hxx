@@ -51,109 +51,109 @@ namespace Graphyte::Maths::Impl
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline float32x4_t mathcall neon_permute(float32x4_t a, float32x4_t b) noexcept
     {
-        static_assert((X < 8) and (Y < 8) and (Z < 8) and (W < 8));
+        static_assert((X < 8) && (Y < 8) && (Z < 8) && (W < 8));
 
-        if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
+        if constexpr (X == 0 && Y == 1 && Z == 2 && W == 3)
         {
             return a;
         }
-        else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 7)
+        else if constexpr (X == 4 && Y == 5 && Z == 6 && W == 7)
         {
             return b;
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 4 and W == 5)
+        else if constexpr (X == 0 && Y == 1 && Z == 4 && W == 5)
         {
             return vcombine_f32(vget_low_f32(a), vget_low_f32(b));
         }
-        else if constexpr (X == 1 and Y == 0 and Z == 4 and W == 5)
+        else if constexpr (X == 1 && Y == 0 && Z == 4 && W == 5)
         {
             return vcombine_f32(vrev64_f32(vget_low_f32(a)), vget_low_f32(b));
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 5 and W == 4)
+        else if constexpr (X == 0 && Y == 1 && Z == 5 && W == 4)
         {
             return vcombine_f32(vget_low_f32(a), vrev64_f32(vget_low_f32(b)));
         }
-        else if constexpr (X == 1 and Y == 0 and Z == 5 and W == 4)
+        else if constexpr (X == 1 && Y == 0 && Z == 5 && W == 4)
         {
             return vcombine_f32(vrev64_f32(vget_low_f32(a)), vrev64_f32(vget_low_f32(b)));
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 6 and W == 7)
+        else if constexpr (X == 2 && Y == 3 && Z == 6 && W == 7)
         {
             return vcombine_f32(vget_high_f32(a), vget_high_f32(b));
         }
-        else if constexpr (X == 3 and Y == 2 and Z == 6 and W == 7)
+        else if constexpr (X == 3 && Y == 2 && Z == 6 && W == 7)
         {
             return vcombine_f32(vrev64_f32(vget_high_f32(a)), vget_high_f32(b));
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 7 and W == 6)
+        else if constexpr (X == 2 && Y == 3 && Z == 7 && W == 6)
         {
             return vcombine_f32(vget_high_f32(a), vrev64_f32(vget_high_f32(b)));
         }
-        else if constexpr (X == 3 and Y == 2 and Z == 7 and W == 6)
+        else if constexpr (X == 3 && Y == 2 && Z == 7 && W == 6)
         {
             return vcombine_f32(vrev64_f32(vget_high_f32(a)), vrev64_f32(vget_high_f32(b)));
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 6 and W == 7)
+        else if constexpr (X == 0 && Y == 1 && Z == 6 && W == 7)
         {
             return vcombine_f32(vget_low_f32(a), vget_high_f32(b));
         }
-        else if constexpr (X == 1 and Y == 0 and Z == 6 and W == 7)
+        else if constexpr (X == 1 && Y == 0 && Z == 6 && W == 7)
         {
             return vcombine_f32(vrev64_f32(vget_low_f32(a)), vget_high_f32(b));
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 7 and W == 6)
+        else if constexpr (X == 0 && Y == 1 && Z == 7 && W == 6)
         {
             return vcombine_f32(vget_low_f32(a), vrev64_f32(vget_high_f32(b)));
         }
-        else if constexpr (X == 1 and Y == 0 and Z == 7 and W == 6)
+        else if constexpr (X == 1 && Y == 0 && Z == 7 && W == 6)
         {
             return vcombine_f32(vrev64_f32(vget_low_f32(a)), vrev64_f32(vget_high_f32(b)));
         }
-        else if constexpr (X == 3 and Y == 2 and Z == 4 and W == 5)
+        else if constexpr (X == 3 && Y == 2 && Z == 4 && W == 5)
         {
             return vcombine_f32(vrev64_f32(vget_high_f32(a)), vget_low_f32(b));
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 5 and W == 4)
+        else if constexpr (X == 2 && Y == 3 && Z == 5 && W == 4)
         {
             return vcombine_f32(vget_high_f32(a), vrev64_f32(vget_low_f32(b)));
         }
-        else if constexpr (X == 3 and Y == 2 and Z == 5 and W == 4)
+        else if constexpr (X == 3 && Y == 2 && Z == 5 && W == 4)
         {
             return vcombine_f32(vrev64_f32(vget_high_f32(a)), vrev64_f32(vget_low_f32(b)));
         }
-        else if constexpr (X == 0 and Y == 4 and Z == 2 and W == 6)
+        else if constexpr (X == 0 && Y == 4 && Z == 2 && W == 6)
         {
             return vtrnq_f32(a, b).val[0];
         }
-        else if constexpr (X == 1 and Y == 5 and Z == 3 and W == 7)
+        else if constexpr (X == 1 && Y == 5 && Z == 3 && W == 7)
         {
             return vtrnq_f32(a, b).val[1];
         }
-        else if constexpr (X == 0 and Y == 4 and Z == 1 and W == 5)
+        else if constexpr (X == 0 && Y == 4 && Z == 1 && W == 5)
         {
             return vzipq_f32(a, b).val[0];
         }
-        else if constexpr (X == 2 and Y == 6 and Z == 3 and W == 7)
+        else if constexpr (X == 2 && Y == 6 && Z == 3 && W == 7)
         {
             return vzipq_f32(a, b).val[1];
         }
-        else if constexpr (X == 0 and Y == 2 and Z == 4 and W == 6)
+        else if constexpr (X == 0 && Y == 2 && Z == 4 && W == 6)
         {
             return vuzpq_f32(a, b).val[0];
         }
-        else if constexpr (X == 1 and Y == 3 and Z == 5 and W == 7)
+        else if constexpr (X == 1 && Y == 3 && Z == 5 && W == 7)
         {
             return vuzpq_f32(a, b).val[1];
         }
-        else if constexpr (X == 1 and Y == 2 and Z == 3 and W == 4)
+        else if constexpr (X == 1 && Y == 2 && Z == 3 && W == 4)
         {
             return vextq_f32(a, b, 1);
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 4 and W == 5)
+        else if constexpr (X == 2 && Y == 3 && Z == 4 && W == 5)
         {
             return vextq_f32(a, b, 2);
         }
-        else if constexpr (X == 3 and Y == 4 and Z == 5 and W == 6)
+        else if constexpr (X == 3 && Y == 4 && Z == 5 && W == 6)
         {
             return vextq_f32(a, b, 3);
         }
@@ -166,85 +166,85 @@ namespace Graphyte::Maths::Impl
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline float32x4_t mathcall neon_shuffle(float32x4_t a, float32x4_t b) noexcept
     {
-        static_assert((X < 4) and (Y < 4) and (Z < 4) and (W < 4));
+        static_assert((X < 4) && (Y < 4) && (Z < 4) && (W < 4));
 
-        if constexpr (X == 0 and Y == 0 and Z == 0 and W == 0)
+        if constexpr (X == 0 && Y == 0 && Z == 0 && W == 0)
         {
             return vcombine_f32(vdup_lane_f32(vget_low_f32(a), 0), vdup_lane_f32(vget_low_f32(b), 0));
         }
-        else if constexpr (X == 1 and Y == 1 and Z == 1 and W == 1)
+        else if constexpr (X == 1 && Y == 1 && Z == 1 && W == 1)
         {
             return vcombine_f32(vdup_lane_f32(vget_low_f32(a), 1), vdup_lane_f32(vget_low_f32(b), 1));
         }
-        else if constexpr (X == 2 and Y == 2 and Z == 2 and W == 2)
+        else if constexpr (X == 2 && Y == 2 && Z == 2 && W == 2)
         {
             return vcombine_f32(vdup_lane_f32(vget_high_f32(a), 0), vdup_lane_f32(vget_high_f32(b), 0));
         }
-        else if constexpr (X == 3 and Y == 3 and Z == 3 and W == 3)
+        else if constexpr (X == 3 && Y == 3 && Z == 3 && W == 3)
         {
             return vcombine_f32(vdup_lane_f32(vget_high_f32(a), 1), vdup_lane_f32(vget_high_f32(b), 1));
         }
-        else if constexpr (X == 0 and Y == 0 and Z == 1 and W == 1)
+        else if constexpr (X == 0 && Y == 0 && Z == 1 && W == 1)
         {
             return vzipq_f32(a, b).val[0];
         }
-        else if constexpr (X == 2 and Y == 2 and Z == 3 and W == 3)
+        else if constexpr (X == 2 && Y == 2 && Z == 3 && W == 3)
         {
             return vzipq_f32(a, b).val[1];
         }
-        else if constexpr (X == 0 and Y == 0 and Z == 2 and W == 2)
+        else if constexpr (X == 0 && Y == 0 && Z == 2 && W == 2)
         {
             return vtrnq_f32(a, b).val[0];
         }
-        else if constexpr (X == 1 and Y == 1 and Z == 3 and W == 3)
+        else if constexpr (X == 1 && Y == 1 && Z == 3 && W == 3)
         {
             return vtrnq_f32(a, b).val[1];
         }
-        else if constexpr (X == 0 and Y == 2 and Z == 0 and W == 2)
+        else if constexpr (X == 0 && Y == 2 && Z == 0 && W == 2)
         {
             return vuzpq_f32(a, b).val[0];
         }
-        else if constexpr (X == 1 and Y == 3 and Z == 1 and W == 3)
+        else if constexpr (X == 1 && Y == 3 && Z == 1 && W == 3)
         {
             return vuzpq_f32(a, b).val[1];
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 0 and W == 1)
+        else if constexpr (X == 0 && Y == 1 && Z == 0 && W == 1)
         {
             return vcombine_f32(vget_low_f32(a), vget_low_f32(b));
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 2 and W == 3)
+        else if constexpr (X == 2 && Y == 3 && Z == 2 && W == 3)
         {
             return vcombine_f32(vget_high_f32(a), vget_high_f32(b));
         }
-        else if constexpr (X == 1 and Y == 0 and Z == 2 and W == 3)
+        else if constexpr (X == 1 && Y == 0 && Z == 2 && W == 3)
         {
             return vcombine_f32(vrev64_f32(vget_low_f32(a)), vget_high_f32(b));
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
+        else if constexpr (X == 0 && Y == 1 && Z == 2 && W == 3)
         {
             return vcombine_f32(vget_low_f32(a), vget_high_f32(b));
         }
-        else if constexpr (X == 1 and Y == 0 and Z == 3 and W == 2)
+        else if constexpr (X == 1 && Y == 0 && Z == 3 && W == 2)
         {
             return vcombine_f32(vrev64_f32(vget_low_f32(a)), vrev64_f32(vget_high_f32(b)));
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 3 and W == 2)
+        else if constexpr (X == 0 && Y == 1 && Z == 3 && W == 2)
         {
             return vcombine_f32(vget_low_f32(a), vrev64_f32(vget_high_f32(b)));
         }
-        else if constexpr (X == 3 and Y == 2 and Z == 1 and W == 0)
+        else if constexpr (X == 3 && Y == 2 && Z == 1 && W == 0)
         {
             return vcombine_f32(vrev64_f32(vget_high_f32(a)), vrev64_f32(vget_low_f32(b)));
         }
-        else if constexpr (X == 3 and Y == 2 and Z == 0 and W == 1)
+        else if constexpr (X == 3 && Y == 2 && Z == 0 && W == 1)
         {
             return vcombine_f32(vrev64_f32(vget_high_f32(a)), vget_low_f32(b));
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 1 and W == 0)
+        else if constexpr (X == 2 && Y == 3 && Z == 1 && W == 0)
         {
             return vcombine_f32(vget_high_f32(a), vrev64_f32(vget_low_f32(b)));
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 0 and W == 1)
+        else if constexpr (X == 2 && Y == 3 && Z == 0 && W == 1)
         {
             return vcombine_f32(vget_high_f32(a), vget_low_f32(b));
         }
@@ -289,105 +289,105 @@ namespace Graphyte::Maths::Impl
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline float32x4_t mathcall neon_swizzle(float32x4_t v) noexcept
     {
-        static_assert((X < 4) and (Y < 4) and (Z < 4) and (W < 4));
+        static_assert((X < 4) && (Y < 4) && (Z < 4) && (W < 4));
 
-        if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
+        if constexpr (X == 0 && Y == 1 && Z == 2 && W == 3)
         {
             return v;
         }
-        else if constexpr (X == 0 and Y == 0 and Z == 0 and W == 0)
+        else if constexpr (X == 0 && Y == 0 && Z == 0 && W == 0)
         {
             return vdupq_lane_f32(vget_low_f32(v), 0);
         }
-        else if constexpr (X == 1 and Y == 1 and Z == 1 and W == 1)
+        else if constexpr (X == 1 && Y == 1 && Z == 1 && W == 1)
         {
             return vdupq_lane_f32(vget_low_f32(v), 1);
         }
-        else if constexpr (X == 2 and Y == 2 and Z == 2 and W == 2)
+        else if constexpr (X == 2 && Y == 2 && Z == 2 && W == 2)
         {
             return vdupq_lane_f32(vget_high_f32(v), 0);
         }
-        else if constexpr (X == 3 and Y == 3 and Z == 3 and W == 3)
+        else if constexpr (X == 3 && Y == 3 && Z == 3 && W == 3)
         {
             return vdupq_lane_f32(vget_high_f32(v), 1);
         }
-        else if constexpr (X == 1 and Y == 0 and Z == 3 and W == 2)
+        else if constexpr (X == 1 && Y == 0 && Z == 3 && W == 2)
         {
             return vrev64q_f32(v);
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 0 and W == 1)
+        else if constexpr (X == 0 && Y == 1 && Z == 0 && W == 1)
         {
             float32x2_t vt = vget_low_f32(v);
             return vcombine_f32(vt, vt);
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 2 and W == 3)
+        else if constexpr (X == 2 && Y == 3 && Z == 2 && W == 3)
         {
             float32x2_t vt = vget_high_f32(v);
             return vcombine_f32(vt, vt);
         }
-        else if constexpr (X == 1 and Y == 0 and Z == 1 and W == 0)
+        else if constexpr (X == 1 && Y == 0 && Z == 1 && W == 0)
         {
             float32x2_t vt = vrev64_f32(vget_low_f32(v));
             return vcombine_f32(vt, vt);
         }
-        else if constexpr (X == 3 and Y == 2 and Z == 3 and W == 2)
+        else if constexpr (X == 3 && Y == 2 && Z == 3 && W == 2)
         {
             float32x2_t vt = vrev64_f32(vget_high_f32(v));
             return vcombine_f32(vt, vt);
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 3 and W == 2)
+        else if constexpr (X == 0 && Y == 1 && Z == 3 && W == 2)
         {
             return vcombine_f32(vget_low_f32(v), vrev64_f32(vget_high_f32(v)));
         }
-        else if constexpr (X == 1 and Y == 0 and Z == 2 and W == 3)
+        else if constexpr (X == 1 && Y == 0 && Z == 2 && W == 3)
         {
             return vcombine_f32(vrev64_f32(vget_low_f32(v)), vget_high_f32(v));
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 1 and W == 0)
+        else if constexpr (X == 2 && Y == 3 && Z == 1 && W == 0)
         {
             return vcombine_f32(vget_high_f32(v), vrev64_f32(vget_low_f32(v)));
         }
-        else if constexpr (X == 3 and Y == 2 and Z == 0 and W == 1)
+        else if constexpr (X == 3 && Y == 2 && Z == 0 && W == 1)
         {
             return vcombine_f32(vrev64_f32(vget_high_f32(v)), vget_low_f32(v));
         }
-        else if constexpr (X == 3 and Y == 2 and Z == 1 and W == 0)
+        else if constexpr (X == 3 && Y == 2 && Z == 1 && W == 0)
         {
             return vcombine_f32(vrev64_f32(vget_high_f32(v)), vrev64_f32(vget_low_f32(v)));
         }
-        else if constexpr (X == 0 and Y == 0 and Z == 2 and W == 2)
+        else if constexpr (X == 0 && Y == 0 && Z == 2 && W == 2)
         {
             return vtrnq_f32(v, v).val[0];
         }
-        else if constexpr (X == 1 and Y == 1 and Z == 3 and W == 3)
+        else if constexpr (X == 1 && Y == 1 && Z == 3 && W == 3)
         {
             return vtrnq_f32(v, v).val[1];
         }
-        else if constexpr (X == 0 and Y == 0 and Z == 1 and W == 1)
+        else if constexpr (X == 0 && Y == 0 && Z == 1 && W == 1)
         {
             return vzipq_f32(v, v).val[0];
         }
-        else if constexpr (X == 2 and Y == 2 and Z == 3 and W == 3)
+        else if constexpr (X == 2 && Y == 2 && Z == 3 && W == 3)
         {
             return vzipq_f32(v, v).val[1];
         }
-        else if constexpr (X == 0 and Y == 2 and Z == 0 and W == 2)
+        else if constexpr (X == 0 && Y == 2 && Z == 0 && W == 2)
         {
             return vuzpq_f32(v, v).val[0];
         }
-        else if constexpr (X == 1 and Y == 3 and Z == 1 and W == 3)
+        else if constexpr (X == 1 && Y == 3 && Z == 1 && W == 3)
         {
             return vuzpq_f32(v, v).val[1];
         }
-        else if constexpr (X == 1 and Y == 2 and Z == 3 and W == 0)
+        else if constexpr (X == 1 && Y == 2 && Z == 3 && W == 0)
         {
             return vextq_f32(v, v, 1);
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 0 and W == 1)
+        else if constexpr (X == 2 && Y == 3 && Z == 0 && W == 1)
         {
             return vextq_f32(v, v, 2);
         }
-        else if constexpr (X == 3 and Y == 0 and Z == 1 and W == 2)
+        else if constexpr (X == 3 && Y == 0 && Z == 1 && W == 2)
         {
             return vextq_f32(v, v, 3);
         }

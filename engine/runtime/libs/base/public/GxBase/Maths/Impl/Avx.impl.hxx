@@ -91,7 +91,7 @@ namespace Graphyte::Maths::Impl
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline __m128 mathcall avx_permute(__m128 a, __m128 b) noexcept
     {
-        static_assert((X < 8) and (Y < 8) and (Z < 8) and (W < 8));
+        static_assert((X < 8) && (Y < 8) && (Z < 8) && (W < 8));
 
         constexpr bool x_up = (X >= 4);
         constexpr bool y_up = (Y >= 4);
@@ -100,141 +100,141 @@ namespace Graphyte::Maths::Impl
 
         constexpr int shuffle = _MM_SHUFFLE(W & 3, Z & 3, Y & 3, X & 3);
 
-        if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
+        if constexpr (X == 0 && Y == 1 && Z == 2 && W == 3)
         {
             return a;
         }
-        else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 7)
+        else if constexpr (X == 4 && Y == 5 && Z == 6 && W == 7)
         {
             return b;
         }
-        else if constexpr (X == 4 and Y == 1 and Z == 2 and W == 3)
+        else if constexpr (X == 4 && Y == 1 && Z == 2 && W == 3)
         {
             return _mm_blend_ps(a, b, 0x1);
         }
-        else if constexpr (X == 0 and Y == 5 and Z == 2 and W == 3)
+        else if constexpr (X == 0 && Y == 5 && Z == 2 && W == 3)
         {
             return _mm_blend_ps(a, b, 0x2);
         }
-        else if constexpr (X == 4 and Y == 5 and Z == 2 and W == 3)
+        else if constexpr (X == 4 && Y == 5 && Z == 2 && W == 3)
         {
             return _mm_blend_ps(a, b, 0x3);
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 6 and W == 3)
+        else if constexpr (X == 0 && Y == 1 && Z == 6 && W == 3)
         {
             return _mm_blend_ps(a, b, 0x4);
         }
-        else if constexpr (X == 4 and Y == 1 and Z == 6 and W == 3)
+        else if constexpr (X == 4 && Y == 1 && Z == 6 && W == 3)
         {
             return _mm_blend_ps(a, b, 0x5);
         }
-        else if constexpr (X == 0 and Y == 5 and Z == 6 and W == 3)
+        else if constexpr (X == 0 && Y == 5 && Z == 6 && W == 3)
         {
             return _mm_blend_ps(a, b, 0x6);
         }
-        else if constexpr (X == 4 and Y == 5 and Z == 6 and W == 3)
+        else if constexpr (X == 4 && Y == 5 && Z == 6 && W == 3)
         {
             return _mm_blend_ps(a, b, 0x7);
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 2 and W == 7)
+        else if constexpr (X == 0 && Y == 1 && Z == 2 && W == 7)
         {
             return _mm_blend_ps(a, b, 0x8);
         }
-        else if constexpr (X == 4 and Y == 1 and Z == 2 and W == 7)
+        else if constexpr (X == 4 && Y == 1 && Z == 2 && W == 7)
         {
             return _mm_blend_ps(a, b, 0x9);
         }
-        else if constexpr (X == 0 and Y == 5 and Z == 2 and W == 7)
+        else if constexpr (X == 0 && Y == 5 && Z == 2 && W == 7)
         {
             return _mm_blend_ps(a, b, 0xA);
         }
-        else if constexpr (X == 4 and Y == 5 and Z == 2 and W == 7)
+        else if constexpr (X == 4 && Y == 5 && Z == 2 && W == 7)
         {
             return _mm_blend_ps(a, b, 0xB);
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 6 and W == 7)
+        else if constexpr (X == 0 && Y == 1 && Z == 6 && W == 7)
         {
             return _mm_blend_ps(a, b, 0xC);
         }
-        else if constexpr (X == 4 and Y == 1 and Z == 6 and W == 7)
+        else if constexpr (X == 4 && Y == 1 && Z == 6 && W == 7)
         {
             return _mm_blend_ps(a, b, 0xD);
         }
-        else if constexpr (X == 0 and Y == 5 and Z == 6 and W == 7)
+        else if constexpr (X == 0 && Y == 5 && Z == 6 && W == 7)
         {
             return _mm_blend_ps(a, b, 0xE);
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 0 and W == 1)
+        else if constexpr (X == 0 && Y == 1 && Z == 0 && W == 1)
         {
             return _mm_movelh_ps(a, a);
         }
-        else if constexpr (X == 4 and Y == 5 and Z == 4 and W == 5)
+        else if constexpr (X == 4 && Y == 5 && Z == 4 && W == 5)
         {
             return _mm_movelh_ps(b, b);
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 2 and W == 3)
+        else if constexpr (X == 2 && Y == 3 && Z == 2 && W == 3)
         {
             return _mm_movehl_ps(a, a);
         }
-        else if constexpr (X == 6 and Y == 7 and Z == 6 and W == 7)
+        else if constexpr (X == 6 && Y == 7 && Z == 6 && W == 7)
         {
             return _mm_movehl_ps(b, b);
         }
-        else if constexpr (X == 0 and Y == 0 and Z == 1 and W == 1)
+        else if constexpr (X == 0 && Y == 0 && Z == 1 && W == 1)
         {
             return _mm_unpacklo_ps(a, a);
         }
-        else if constexpr (X == 4 and Y == 4 and Z == 5 and W == 5)
+        else if constexpr (X == 4 && Y == 4 && Z == 5 && W == 5)
         {
             return _mm_unpacklo_ps(b, b);
         }
-        else if constexpr (X == 2 and Y == 2 and Z == 3 and W == 3)
+        else if constexpr (X == 2 && Y == 2 && Z == 3 && W == 3)
         {
             return _mm_unpackhi_ps(a, a);
         }
-        else if constexpr (X == 6 and Y == 6 and Z == 7 and W == 7)
+        else if constexpr (X == 6 && Y == 6 && Z == 7 && W == 7)
         {
             return _mm_unpackhi_ps(b, b);
         }
-        else if constexpr (X == 0 and Y == 0 and Z == 2 and W == 2)
+        else if constexpr (X == 0 && Y == 0 && Z == 2 && W == 2)
         {
             return _mm_moveldup_ps(a);
         }
-        else if constexpr (X == 1 and Y == 1 and Z == 3 and W == 3)
+        else if constexpr (X == 1 && Y == 1 && Z == 3 && W == 3)
         {
             return _mm_movehdup_ps(a);
         }
-        else if constexpr (X == 4 and Y == 4 and Z == 6 and W == 6)
+        else if constexpr (X == 4 && Y == 4 && Z == 6 && W == 6)
         {
             return _mm_moveldup_ps(b);
         }
-        else if constexpr (X == 5 and Y == 5 and Z == 7 and W == 7)
+        else if constexpr (X == 5 && Y == 5 && Z == 7 && W == 7)
         {
             return _mm_movehdup_ps(b);
         }
 #if GRAPHYTE_HW_AVX2
-        else if constexpr (X == 0 and Y == 0 and Z == 0 and W == 0)
+        else if constexpr (X == 0 && Y == 0 && Z == 0 && W == 0)
         {
             return _mm_broadcastss_ps(a, shuffle);
         }
-        else if constexpr (X == 4 and Y == 4 and Z == 4 and W == 4)
+        else if constexpr (X == 4 && Y == 4 && Z == 4 && W == 4)
         {
             return _mm_broadcastss_ps(b, shuffle);
         }
 #endif
-        else if constexpr (!x_up and !y_up and !z_up and !w_up)
+        else if constexpr (!x_up && !y_up && !z_up && !w_up)
         {
             return _mm_permute_ps(a, shuffle);
         }
-        else if constexpr (x_up and y_up and z_up and w_up)
+        else if constexpr (x_up && y_up && z_up && w_up)
         {
             return _mm_permute_ps(b, shuffle);
         }
-        else if constexpr (!x_up and !y_up and z_up and w_up)
+        else if constexpr (!x_up && !y_up && z_up && w_up)
         {
             return _mm_shuffle_ps(a, b, shuffle);
         }
-        else if constexpr (x_up and y_up and !z_up and !w_up)
+        else if constexpr (x_up && y_up && !z_up && !w_up)
         {
             return _mm_shuffle_ps(b, a, shuffle);
         }
@@ -265,38 +265,38 @@ namespace Graphyte::Maths::Impl
     template <size_t X, size_t Y, size_t Z, size_t W>
     mathinline __m128 mathcall avx_swizzle(__m128 v) noexcept
     {
-        static_assert((X < 4) and (Y < 4) and (Z < 4) and (W < 4));
+        static_assert((X < 4) && (Y < 4) && (Z < 4) && (W < 4));
 
-        if constexpr (X == 0 and Y == 1 and Z == 2 and W == 3)
+        if constexpr (X == 0 && Y == 1 && Z == 2 && W == 3)
         {
             return v;
         }
-        else if constexpr (X == 0 and Y == 1 and Z == 0 and W == 1)
+        else if constexpr (X == 0 && Y == 1 && Z == 0 && W == 1)
         {
             return _mm_movelh_ps(v, v);
         }
-        else if constexpr (X == 2 and Y == 3 and Z == 2 and W == 3)
+        else if constexpr (X == 2 && Y == 3 && Z == 2 && W == 3)
         {
             return _mm_movehl_ps(v, v);
         }
-        else if constexpr (X == 0 and Y == 0 and Z == 1 and W == 1)
+        else if constexpr (X == 0 && Y == 0 && Z == 1 && W == 1)
         {
             return _mm_unpacklo_ps(v, v);
         }
-        else if constexpr (X == 2 and Y == 2 and Z == 3 and W == 3)
+        else if constexpr (X == 2 && Y == 2 && Z == 3 && W == 3)
         {
             return _mm_unpackhi_ps(v, v);
         }
-        else if constexpr (X == 0 and Y == 0 and Z == 2 and W == 2)
+        else if constexpr (X == 0 && Y == 0 && Z == 2 && W == 2)
         {
             return _mm_moveldup_ps(v);
         }
-        else if constexpr (X == 1 and Y == 1 and Z == 3 and W == 3)
+        else if constexpr (X == 1 && Y == 1 && Z == 3 && W == 3)
         {
             return _mm_movehdup_ps(v);
         }
 #if GRAPHYTE_HW_AVX2
-        else if constexpr (X == 0 and Y == 0 and Z == 0 and W == 0)
+        else if constexpr (X == 0 && Y == 0 && Z == 0 && W == 0)
         {
             return _mm_broadcastss_ps(v);
         }
