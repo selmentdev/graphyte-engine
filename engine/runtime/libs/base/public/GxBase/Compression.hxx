@@ -4,7 +4,7 @@
 
 namespace Graphyte::Compression
 {
-    //! Compression methods available in engine.
+    //! \brief Compression methods available in engine.
     enum class CompressionMethod : uint32_t
     {
         LZ4,
@@ -14,7 +14,7 @@ namespace Graphyte::Compression
     };
 
 
-    //! Computes memory bound for given buffer size and compression method.
+    //! \brief Computes memory bound for given buffer size and compression method.
     //!
     //! \param method   Provides a compression method.
     //! \param size     Provides size of uncompressed data.
@@ -25,7 +25,7 @@ namespace Graphyte::Compression
         size_t size) noexcept;
 
 
-    //! Compresses memory block.
+    //! \brief Compresses memory block.
     //!
     //! \param method           Provides a compression method.
     //! \param output_buffer    Provides output buffer for compressed data.
@@ -42,7 +42,7 @@ namespace Graphyte::Compression
         size_t input_size) noexcept;
 
 
-    //! Decompresses memory block.
+    //! \brief Decompresses memory block.
     //!
     //! \param method          Provides a compression method.
     //! \param output_buffer   Points to output buffer for decompressed data.
@@ -78,7 +78,7 @@ namespace Graphyte::Compression
         std::string& output,
         const std::vector<std::byte>& input) noexcept;
 
-    //! Compresses byte vector.
+    //! \brief Compresses byte vector.
     //!
     //! \param method   Provides a compression method.
     //! \param output   Provides output vector for compressed data.
@@ -96,7 +96,7 @@ namespace Graphyte::Compression
             notstd::span<const std::byte>(input));
     }
 
-    //! Decompresses byte vector.
+    //! \brief Decompresses byte vector.
     //! \param method   Provides a compression method.
     //! \param output   Provides output vector for decompressed data.
     //! \param input    Provides input vector data to decompress.

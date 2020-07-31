@@ -117,14 +117,12 @@ namespace Graphyte::Storage
     [[nodiscard]] extern BASE_API std::string_view GetScheme(
         std::string_view path) noexcept;
 
-    /*!
-     * \brief   Splits source path into separate parts.
-     *
-     * \param   path            Provides source path to split.
-     * \param   path_part       Returns path of source.
-     * \param   filename_part   Returns file name of source.
-     * \param   extension_part  Returns extension of source.
-     */
+    //! \brief Splits source path into separate parts.
+    //!
+    //! \param path           Provides source path to split.
+    //! \param path_part      Returns path of source.
+    //! \param filename_part  Returns file name of source.
+    //! \param extension_part Returns extension of source.
     extern BASE_API void SplitPath(
         std::string_view path,
         std::string_view& path_part,

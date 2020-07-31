@@ -935,8 +935,8 @@
 
 #elif GRAPHYTE_COMPILER_GCC
 
-#define GX_OPTIMIZE_ENABLE  /* not supported */
-#define GX_OPTIMIZE_DISABLE /* not supported */
+#define GX_OPTIMIZE_ENABLE
+#define GX_OPTIMIZE_DISABLE
 
 #else
 #error "Not supported compiler"

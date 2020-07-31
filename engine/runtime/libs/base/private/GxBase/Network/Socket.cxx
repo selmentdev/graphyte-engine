@@ -141,13 +141,13 @@ namespace Graphyte::Network
             }
         }
 
-        /*static int32_t ConvertSocketOptions(int32_t level, int32_t name, int32_t& nativeLevel, int32_t& nativeName) noexcept
+        static int32_t ConvertSocketOptions(int32_t level, int32_t name, int32_t& nativeLevel, int32_t& nativeName) noexcept
         {
         switch (level)
         {
 
         }
-        }*/
+        }
     };
 
     Socket::Socket() noexcept

@@ -3,16 +3,14 @@
 
 namespace Graphyte::Geometry
 {
-    /**
-     * @brief   Provides way of comparing mesh vertices in generic way.
-     */
+    //! \brief Provides way of comparing mesh vertices in generic way.
     struct MeshVertexComparator final
     {
-        bool CompareNormals;      //!< Compare normals.
-        bool CompareTangentX;     //!< Compare U tangents.
-        bool CompareTangentY;     //!< Compare V tangents.
-        bool CompareTexcoords[8]; //!< Compare texcoords.
-        bool CompareColors;       //!< Compare colors.
+        bool CompareNormals;
+        bool CompareTangentX;
+        bool CompareTangentY;
+        bool CompareTexcoords[8];
+        bool CompareColors;
 
         GEOMETRY_API int Compare(const Mesh& mesh, uint32_t lhs_index, uint32_t rhs_index, float tolerance) const noexcept;
     };

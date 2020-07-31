@@ -19,27 +19,22 @@ namespace Graphyte::Text
 
     enum struct ConversionType
     {
-        /*!
-         * Strict conversion breaks on non-convertible byte sequences.
-         */
+        //! Strict conversion breaks on non-convertible byte sequences.
         Strict,
 
-        /*!
-         * Tolerant conversion uses replacement characters on failure.
-         */
+        //! Tolerant conversion uses replacement characters on failure.
         Tolerant,
     };
 
-    //! \brief  Converts range of chars from UTF8 to UTF16.
+    //! \brief Converts range of chars from UTF8 to UTF16.
     //!
-    //! \detail
-    //!     Parameters @p source_start and @p target_start are updated accordingly.
+    //! \details Parameters @p source_start and @p target_start are updated accordingly.
     //!
-    //! \param  source_start    Provides location of source characters range.
-    //! \param  source_end      Provides end of source characters range.
-    //! \param  target_start    Provides location of destination character range.
-    //! \param  target_end      Provides end of destination characters range.
-    //! \param   type            Provides type of conversion.
+    //! \param source_start Provides location of source characters range.
+    //! \param source_end   Provides end of source characters range.
+    //! \param target_start Provides location of destination character range.
+    //! \param target_end   Provides end of destination characters range.
+    //! \param type         Provides type of conversion.
     //!
     //! \return The result of conversion.
     BASE_API ConversionResult ConvertUTF8ToUTF16(
@@ -49,22 +44,17 @@ namespace Graphyte::Text
         char16_t* target_end,
         ConversionType type) noexcept;
 
-    /*!
-     * \brief
-     *  Converts range of characters from UTF8 to UTF32.
-     * 
-     * \detail
-     *  Patameters \p source_start and \p target_start are updated accordingly.
-     * 
-     * \param   source_start    Provides location of source characters range.
-     * \param   source_end      Provides end of source characters range.
-     * \param   target_start    Provides location of destination characters range.
-     * \param   target_end      Provides end of destination characters range.
-     * \param   type            Provides type of conversion.
-     * 
-     * \return
-     *  The result of conversion.
-     */
+    //! \brief Converts range of characters from UTF8 to UTF32.
+    //!
+    //! \details Patameters \p source_start and \p target_start are updated accordingly.
+    //!
+    //! \param source_start Provides location of source characters range.
+    //! \param source_end   Provides end of source characters range.
+    //! \param target_start Provides location of destination characters range.
+    //! \param target_end   Provides end of destination characters range.
+    //! \param type         Provides type of conversion.
+    //!
+    //! \return The result of conversion.
     BASE_API ConversionResult ConvertUTF8ToUTF32Partial(
         const char8_t** source_start,
         const char8_t* source_end,
@@ -72,27 +62,17 @@ namespace Graphyte::Text
         char32_t* target_end,
         ConversionType type) noexcept;
 
-    /*!
-     * \brief
-     *  Converts range of characters from UTF8 to UTF32.
-     * 
-     * \detail
-     *  Patameters \p source_start and \p target_start are updated accordingly.
-     * 
-     * \param source_start
-     *  Provides location of source characters range.
-     * \param source_end
-     *  Provides end of source characters range.
-     * \param target_start
-     *  Provides location of destination characters range.
-     * \param target_end
-     *  Provides end of destination characters range.
-     * \param type
-     *  Provides type of conversion.
-     * 
-     * \return
-     *  The result of conversion.
-     */
+    //! \brief Converts range of characters from UTF8 to UTF32.
+    //!
+    //! \details Patameters \p source_start and \p target_start are updated accordingly.
+    //!
+    //! \param source_start Provides location of source characters range.
+    //! \param source_end   Provides end of source characters range.
+    //! \param target_start Provides location of destination characters range.
+    //! \param target_end   Provides end of destination characters range.
+    //! \param type         Provides type of conversion.
+    //!
+    //! \return The result of conversion.
     BASE_API ConversionResult ConvertUTF8ToUTF32(
         const char8_t** source_start,
         const char8_t* source_end,

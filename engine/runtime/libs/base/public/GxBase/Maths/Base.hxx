@@ -1122,7 +1122,7 @@ namespace Graphyte::Maths
 
 
 // =================================================================================================
-// Load / store operations
+// Load / store operations (float)
 
 namespace Graphyte::Maths
 {
@@ -1476,6 +1476,67 @@ namespace Graphyte::Maths
         __m128 const h0 = _mm_cvtps_ph(v.V, _MM_FROUND_TO_NEAREST_INT);
         __m128 const h1 = _mm_castsi128_ps(h0);
         _mm_store_ss(reinterpret_cast<float*>(destination), h1);
+#endif
+    }
+}
+
+
+// =================================================================================================
+// Load / store operations (int/uint)
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall Load(SInt4 const* source) noexcept
+        requires(Impl::IsSimdFloat4<T>)
+    {
+        GX_ASSERT(source != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                static_cast<float>(source->X),
+                static_cast<float>(source->Y),
+                static_cast<float>(source->Z),
+                static_cast<float>(source->W),
+                } } };
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const v = _mm_loadu_si128(reinterpret_cast<__m128i const*>(source));
+        __m128 const result = _mm_cvtepi32_ps(v);
+        return { result };
+#elif GRAPHYTE_HW_NEON
+        int32x4_t const v = vld1q_s32(reinterpret_cast<int32_t const*>(source));
+        return { vcvtq_f32_s32(v) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Load(UInt4 const* source) noexcept
+        requires(Impl::IsSimdFloat4<T>)
+    {
+        GX_ASSERT(source != nullptr);
+
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const result{ { {
+                static_cast<float>(source->X),
+                static_cast<float>(source->Y),
+                static_cast<float>(source->Z),
+                static_cast<float>(source->W),
+            } } };
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        __m128i const vsource = _mm_loadu_si128(reinterpret_cast<uint32_t const*>(source));
+        __m128 const vvalues = _mm_castsi128_ps(vsource);
+        __m128 const vmask = _mm_and_ps(vvalues, Impl::VEC4_NEGATIVE_ZERO.V);
+        __m128 const vpositive = _mm_xor_ps(vvalues, vmask);
+        __m128 const vresult = _mm_cvtepi32_ps(_mm_castps_si128(vpositive));
+        __m128i const imask = _mm_srai_epi32(_mm_castps_si128(vmask), 31);
+        __m128 const vfixup = _mm_and_ps(_mm_castsi128_ps(imask), Impl::VEC4_UNSIGNED_FIX.V);
+        __m128 const vfinal = _mm_add_ps(vresult, vfixup);
+        return { vfinal };
+#elif GRAPHYTE_HW_NEON
+        uint32x4_t const result = vld1q_u32(reinterpret_cast<uint32_t const*>(source));
+        return { vcvtq_f32_u32(result) };
 #endif
     }
 }
@@ -3705,6 +3766,33 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
+    mathinline T mathcall Min(T a, T b, T c) noexcept
+        requires(Impl::IsSimdFloat4<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const ab{ { {
+                (a.V.F[0] < b.V.F[0]) ? a.V.F[0] : b.V.F[0],
+                (a.V.F[1] < b.V.F[1]) ? a.V.F[1] : b.V.F[1],
+                (a.V.F[2] < b.V.F[2]) ? a.V.F[2] : b.V.F[2],
+                (a.V.F[3] < b.V.F[3]) ? a.V.F[3] : b.V.F[3],
+            } } };
+
+        Impl::ConstFloat32x4 const result{ { {
+                (ab.V.F[0] < c.V.F[0]) ? ab.V.F[0] : c.V.F[0],
+                (ab.V.F[1] < c.V.F[1]) ? ab.V.F[1] : c.V.F[1],
+                (ab.V.F[2] < c.V.F[2]) ? ab.V.F[2] : c.V.F[2],
+                (ab.V.F[3] < c.V.F[3]) ? ab.V.F[3] : c.V.F[3],
+            } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_min_ps(_mm_min_ps(a.V, b.V), c.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vminq_f32(vminq_f32(a.V, b.V), c.V) };
+#endif
+    }
+
+    template <typename T>
     mathinline T mathcall Max(T a, T b) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
@@ -3721,6 +3809,32 @@ namespace Graphyte::Maths
         return { _mm_max_ps(a.V, b.V) };
 #elif GRAPHYTE_HW_NEON
         return { vmaxq_f32(a.V, b.V) };
+#endif
+    }
+
+    template <typename T>
+    mathinline T mathcall Max(T a, T b, T c) noexcept
+        requires(Impl::IsSimdFloat4<T>)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        Impl::ConstFloat32x4 const ab{ { {
+            (a.V.F[0] < b.V.F[0]) ? b.V.F[0] : a.V.F[0],
+            (a.V.F[1] < b.V.F[1]) ? b.V.F[1] : a.V.F[1],
+            (a.V.F[2] < b.V.F[2]) ? b.V.F[2] : a.V.F[2],
+            (a.V.F[3] < b.V.F[3]) ? b.V.F[3] : a.V.F[3],
+        } } };
+        Impl::ConstFloat32x4 const result{ { {
+            (ab.V.F[0] < c.V.F[0]) ? c.V.F[0] : ab.V.F[0],
+            (ab.V.F[1] < c.V.F[1]) ? c.V.F[1] : ab.V.F[1],
+            (ab.V.F[2] < c.V.F[2]) ? c.V.F[2] : ab.V.F[2],
+            (ab.V.F[3] < c.V.F[3]) ? c.V.F[3] : ab.V.F[3],
+        } } };
+
+        return { result.V };
+#elif GRAPHYTE_HW_AVX
+        return { _mm_max_ps(_mm_max_ps(a.V, b.V), c.V) };
+#elif GRAPHYTE_HW_NEON
+        return { vmaxq_f32(vmaxq_f32(a.V, b.V), c.V) };
 #endif
     }
 

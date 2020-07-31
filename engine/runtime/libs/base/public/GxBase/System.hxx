@@ -19,10 +19,10 @@ GX_DECLARE_LOG_CATEGORY(LogPlatform, Trace, Trace);
 
 namespace Graphyte::System
 {
-    //! Initializes platform specific engine part.
+    //! \brief Initializes platform specific engine part.
     extern BASE_API void Initialize() noexcept;
 
-    //! Finalizes platform specific engine part.
+    //! \brief Finalizes platform specific engine part.
     extern BASE_API void Finalize() noexcept;
 }
 
@@ -104,7 +104,7 @@ namespace Graphyte::System
         uint64_t PeakUsedPhysical;
     };
 
-    //! Gets current application memory usage.
+    //! \brief Gets current application memory usage.
     extern BASE_API MemoryUsage GetMemoryUsage() noexcept;
 
     struct MemoryProperties final
@@ -117,7 +117,7 @@ namespace Graphyte::System
         uint64_t AddressLimit;
     };
 
-    //! Gets system memory properties.
+    //! \brief Gets system memory properties.
     extern BASE_API MemoryProperties GetMemoryProperties() noexcept;
 }
 
@@ -282,111 +282,69 @@ namespace Graphyte::System
 
 namespace Graphyte::System
 {
-    /*!
-     * \brief   Gets user directory.
-     */
+    //! \brief Gets user directory.
     extern BASE_API std::string GetUserDirectory() noexcept;
 
-    /*!
-     * \brief   Gets user documents directory.
-     */
+    //! \brief Gets user documents directory.
     extern BASE_API std::string GetUserDocumentsDirectory() noexcept;
 
-    /*!
-     * \brief   Gets user temp directory.
-     */
+    //! \brief Gets user temp directory.
     extern BASE_API std::string GetUserTemporaryDirectory() noexcept;
 
-    /*!
-     * \brief   Gets user settings directory.
-     */
+    //! \brief Gets user settings directory.
     extern BASE_API std::string GetUserSettingsDirectory() noexcept;
 
-    /*!
-     * \brief   Gets directory for application common data.
-     */
+    //! \brief Gets directory for application common data.
     extern BASE_API std::string GetApplicationCommonDataDirectory() noexcept;
 
-    /*!
-     * \brief   Gets user domain name.
-     */
+    //! \brief Gets user domain name.
     extern BASE_API std::string GetUserDomain() noexcept;
 
-    /*!
-     * \brief   Gets user name.
-     */
+    //! \brief Gets user name.
     extern BASE_API std::string GetUserName() noexcept;
 
-    /*!
-     * \brief   Gets system version.
-     */
+    //! \brief Gets system version.
     extern BASE_API std::string GetSystemVersion() noexcept;
 
-    /*!
-     * \brief   Gets system identifier.
-     */
+    //! \brief Gets system identifier.
     extern BASE_API std::string GetSystemId() noexcept;
 
-    /*!
-     * \brief   Gets default locale name.
-     */
+    //! \brief Gets default locale name.
     extern BASE_API std::string GetDefaultLocale() noexcept;
 
-    /*!
-     * \brief   Gets default language.
-     */
+    //! \brief Gets default language.
     extern BASE_API std::string GetDefaultLanguage() noexcept;
 
-    /*!
-     * \brief   Gets local currency code.
-     */
+    //! \brief Gets local currency code.
     extern BASE_API std::string GetLocalCurrencyCode() noexcept;
 
-    /*!
-     * \brief   Gets local currency symbol.
-     */
+    //! \brief Gets local currency symbol.
     extern BASE_API std::string GetLocalCurrencySymbol() noexcept;
 
-    /*!
-     * \brief   Checks whether WIFI connection is active.
-     */
+    //! \brief Checks whether WIFI connection is active.
     extern BASE_API bool HasActiveWifiConnection() noexcept;
 
-    /*!
-     * \brief   Gets value indicating whether process is running on 64-bit operating system.
-     */
+    //! \brief Gets value indicating whether process is running on 64-bit operating system.
     extern BASE_API bool Is64BitOperatingSystem() noexcept;
 
-    /*!
-     * \brief   Gets value indicating whether current process is 64-bit.
-     */
+    //! \brief Gets value indicating whether current process is 64-bit.
     extern BASE_API bool Is64BitProcess() noexcept;
 
-    /*!
-     * \brief   Gets value indicating whether mouse HID is present.
-     */
+    //! \brief Gets value indicating whether mouse HID is present.
     extern BASE_API bool IsMousePresent() noexcept;
 
-    /*!
-     * \brief   Gets value indicating whether mouse has wheel.
-     */
+    //! \brief Gets value indicating whether mouse has wheel.
     extern BASE_API bool IsMouseWheelPresent() noexcept;
 
-    /*!
-     * \brief   Gets value indicating whether platform is little endian.
-     */
+    //! \brief Gets value indicating whether platform is little endian.
     extern BASE_API bool IsLittleEndian() noexcept;
 
-    /*!
-     * \brief   Gets platform specific hardware window.
-     */
+    //! \brief Gets platform specific hardware window.
     extern BASE_API void* GetHardwareWindow() noexcept;
 
-    /*!
-     * \brief   Restores system UI.
-     *
-     * \remarks Releases mouse capture and clipping for UI purposes
-     */
+    //! \brief Restores system UI.
+    //!
+    //! \remarks Releases mouse capture and clipping for UI purposes
     extern BASE_API void RestoreSystemUI() noexcept;
 }
 
@@ -406,9 +364,7 @@ namespace Graphyte::System
         Release,
     };
 
-    /*!
-     * \brief   Gets kind of build.
-     */
+    //! \brief Gets kind of build.
     extern BASE_API BuildKind GetBuildKind() noexcept;
 
     // clang-format off
@@ -440,54 +396,34 @@ namespace Graphyte::System
 #endif
     // clang-format on
 
-    /*!
-     * \brief   Gets build type.
-     */
+    //! \brief Gets build type.
     extern BASE_API BuildType GetBuildType() noexcept;
 
-    /*!
-     * \brief   Checks whether current process runs on build machine.
-     */
+    //! \brief Checks whether current process runs on build machine.
     extern BASE_API bool IsBuildMachine() noexcept;
 
-    /*!
-     * \brief   Gets unique build ID.
-     */
+    //! \brief Gets unique build ID.
     extern BASE_API std::string_view GetBuildId() noexcept;
 
-    /*!
-     * \brief   Gets source code build branch.
-     */
+    //! \brief Gets source code build branch.
     extern BASE_API std::string_view GetBuildBranch() noexcept;
 
-    /*!
-     * \brief   Gets source code build commit.
-     */
+    //! \brief Gets source code build commit.
     extern BASE_API std::string_view GetBuildCommit() noexcept;
 
-    /*!
-     * \brief   Gets source code build version.
-     */
+    //! \brief Gets source code build version.
     extern BASE_API Version GetBuildVersion() noexcept;
 
-    /*!
-     * \brief   Gets builder machine host system name.
-     */
+    //! \brief Gets builder machine host system name.
     extern BASE_API std::string_view GetBuildHostSystem() noexcept;
 
-    /*!
-     * \brief   Gets builder machine host system version.
-     */
+    //! \brief Gets builder machine host system version.
     extern BASE_API std::string_view GetBuildHostVersion() noexcept;
 
-    /*!
-     * \brief   Gets build timestamp.
-     */
+    //! \brief Gets build timestamp.
     extern BASE_API std::string_view GetBuildTimestamp() noexcept;
 
-    /*!
-     * \brief   Gets build compiler name.
-     */
+    //! \brief Gets build compiler name.
     extern BASE_API std::string_view GetCompilerName() noexcept;
 }
 
@@ -519,9 +455,7 @@ namespace Graphyte::System
 #endif
     // clang-format on
 
-    /*!
-     * \brief   Gets platform kind.
-     */
+    //! \brief Gets platform kind.
     extern BASE_API PlatformKind GetPlatformKind() noexcept;
 
     enum struct PlatformType : uint32_t
@@ -572,14 +506,10 @@ namespace Graphyte::System
     // clang-format on
 
 
-    /*!
-     * \brief   Gets platform type.
-     */
+    //! \brief Gets platform type.
     extern BASE_API PlatformType GetPlatformType() noexcept;
 
-    /*!
-     * \brief   Gets platform name.
-     */
+    //! \brief Gets platform name.
     extern BASE_API std::string_view GetPlatformName() noexcept;
 
     enum struct PlatformFeature : uint32_t
@@ -615,30 +545,20 @@ namespace Graphyte::System
         RequiresUserCredenials,
     };
 
-    /*!
-     * \brief   Checks whether specific platform feature is supported.
-     */
+    //! \brief Checks whether specific platform feature is supported.
     extern BASE_API bool HasPlatformFeature(
         PlatformFeature feature) noexcept;
 
-    /*!
-     * \brief   Gets name of file manager.
-     */
+    //! \brief Gets name of file manager.
     extern BASE_API std::string_view GetFileManagerName() noexcept;
 
-    /*!
-     * \brief   Gets platform specific module extension.
-     */
+    //! \brief Gets platform specific module extension.
     extern BASE_API std::string_view GetModuleExtension() noexcept;
 
-    /*!
-     * \brief   Gets platform specific module prefix.
-     */
+    //! \brief Gets platform specific module prefix.
     extern BASE_API std::string_view GetModulePrefix() noexcept;
 
-    /*!
-     * \brief   Gets platform specific executable extension.
-     */
+    //! \brief Gets platform specific executable extension.
     extern BASE_API std::string_view GetExecutableExtension() noexcept;
 }
 
@@ -650,7 +570,7 @@ namespace Graphyte::System
 
 namespace Graphyte::System
 {
-    //! Gets content of clipboard.
+    //! \brief Gets content of clipboard.
     //!
     //! \param content Returns current content of clipboard.
     //!
@@ -659,7 +579,7 @@ namespace Graphyte::System
         std::string& content) noexcept;
 
 
-    //! Sets content of clipboard.
+    //! \brief Sets content of clipboard.
     //!
     //! \param content Provides new content of clipboard.
     //!
@@ -667,96 +587,76 @@ namespace Graphyte::System
     extern BASE_API Status SetClipboardContent(
         std::string_view content) noexcept;
 
-    /*!
-     * \brief   Gets content of environment variable.
-     *
-     * \param   result      Returns content of variable.
-     * \param   name        Provides name of variable.
-     *
-     * \return  The status code.
-     */
+    //! \brief Gets content of environment variable.
+    //!
+    //! \param result Returns content of variable.
+    //! \param name   Provides name of variable.
+    //!
+    //! \return The status code.
     extern BASE_API Status GetEnvironmentVariable(
         std::string& result,
         const char* name) noexcept;
 
-    /*!
-     * \brief   Sets content of environment variable.
-     *
-     * \param   name        Provides name of variable.
-     * \param   value       Provides content of variable.
-     *
-     * \return  The status code.
-     */
+    //! \brief Sets content of environment variable.
+    //!
+    //! \param name  Provides name of variable.
+    //! \param value Provides content of variable.
+    //!
+    //! \return The status code.
     extern BASE_API Status SetEnvironmentVariable(
         const char* name,
         const char* value) noexcept;
 
-    /*!
-     * \brief   Removes environment variable.
-     *
-     * \param   name        Provides name of variable to remove.
-     *
-     * \return  The status code.
-     */
+    //! \brief Removes environment variable.
+    //!
+    //! \param name Provides name of variable to remove.
+    //!
+    //! \return The status code.
     extern BASE_API Status RemoveEnvironmentVariable(
         const char* name) noexcept;
 
-    /*!
-     * \brief   Sets current thread current directory.
-     *
-     * \param   value       Provides new path for directory.
-     *
-     * \return  The status code.
-     */
+    //! \brief Sets current thread current directory.
+    //!
+    //! \param value Provides new path for directory.
+    //!
+    //! \return The status code.
     extern BASE_API Status SetCurrentDirectory(
         const std::string& value) noexcept;
 
-    /*!
-     * \brief   Gets current thread current directory.
-     *
-     * \param   result      Returns current directory.
-     *
-     * \return  The status code.
-     */
+    //! \brief Gets current thread current directory.
+    //!
+    //! \param result Returns current directory.
+    //!
+    //! \return The status code.
     extern BASE_API Status GetCurrentDirectory(
         std::string& result) noexcept;
 
-    //!
-    //! \brief  Gets full path to currently running application executable.
-    //!
+    //! \brief Gets full path to currently running application executable.
     extern BASE_API std::string GetExecutablePath() noexcept;
 
-    //!
-    //! \brief  Gets name of currently running application executable.
-    //!
+    //! \brief Gets name of currently running application executable.
     extern BASE_API std::string GetExecutableName() noexcept;
 
-    //!
-    //! \brief  Gets base directory of currently runnning application executable.
-    //!
+    //! \brief Gets base directory of currently runnning application executable.
     extern BASE_API std::string GetBaseDirectory() noexcept;
 
-    /*!
-     * \brief   Executes system process command.
-     *
-     * \param   type        Provides type of action to execute.
-     * \param   command     Provides command to execute.
-     * \param   params      Provides params string.
-     *
-     * \return  The status code.
-     */
+    //! \brief Executes system process command.
+    //!
+    //! \param type    Provides type of action to execute.
+    //! \param command Provides command to execute.
+    //! \param params  Provides params string.
+    //!
+    //! \return The status code.
     [[deprecated("this API is not portable")]] extern BASE_API Status Execute(
         const char* type,
         const char* command,
         const char* params) noexcept;
 
-    /*!
-     * \brief   Opens system specific file manager.
-     *
-     * \param   path        Provides path to open.
-     *
-     * \return  The status code.
-     */
+    //! \brief Opens system specific file manager.
+    //!
+    //! \param path Provides path to open.
+    //!
+    //! \return The status code.
     extern BASE_API Status Explore(
         const char* path) noexcept;
 }
@@ -785,15 +685,13 @@ namespace Graphyte::System
         Charged,
     };
 
-    /*!
-     * \brief   Gets battery state.
-     *
-     * \param   state       Returns current battery state.
-     * \param   level       Returns current battery level in percents.
-     * \param   lifetime    Returns expected battery lifetime.
-     *
-     * \return  The status code.
-     */
+    //! \brief Gets battery state.
+    //!
+    //! \param state    Returns current battery state.
+    //! \param level    Returns current battery level in percents.
+    //! \param lifetime Returns expected battery lifetime.
+    //!
+    //! \return The status code.
     extern BASE_API Status GetBatteryState(
         BatteryState& state,
         int& level,
@@ -848,9 +746,7 @@ namespace Graphyte::System
 #endif
 
 
-    /*!
-     * \brief   Gets current processor architecture.
-     */
+    //! \brief Gets current processor architecture.
     extern BASE_API ProcessorArchitecture GetProcessorArchitecture() noexcept;
 
     // https://github.com/dotnet/coreclr/blob/master/src/pal/src/misc/jitsupport.cpp on ARMs; use cpuid on x86
@@ -942,49 +838,33 @@ namespace Graphyte::System
 #endif
     };
 
-    /*!
-     * \brief   Determines whether processor supports specific feature.
-     *
-     * \param   feature     Provides CPU feature to check.
-     *
-     * \return  The value indicating whether feature is supported.
-     */
+    //! \brief Determines whether processor supports specific feature.
+    //!
+    //! \param feature Provides CPU feature to check.
+    //!
+    //! \return The value indicating whether feature is supported.
     extern BASE_API bool HasProcessorFeature(
         ProcessorFeature feature) noexcept;
 
-    /*!
-     * \brief   Gets number of available I/O worker threads.
-     */
+    //! \brief Gets number of available I/O worker threads.
     extern BASE_API size_t GetIoWorkerThreads() noexcept;
 
-    /*!
-     * \brief   Gets number of worker threads.
-     */
+    //! \brief Gets number of worker threads.
     extern BASE_API size_t GetWorkerThreads() noexcept;
 
-    /*!
-     * \brief   Gets number of physical cores.
-     */
+    //! \brief Gets number of physical cores.
     extern BASE_API size_t GetPhysicalCores() noexcept;
 
-    /*!
-     * \brief   Gets number of logical cores.
-     */
+    //! \brief Gets number of logical cores.
     extern BASE_API size_t GetLogicalCores() noexcept;
 
-    /*!
-     * \brief   Gets size of cacheline.
-     */
+    //! \brief Gets size of cacheline.
     extern BASE_API size_t GetProcessorCachelineSize() noexcept;
 
-    /*!
-     * \brief   Gets processor vendor.
-     */
+    //! \brief Gets processor vendor.
     extern BASE_API std::string_view GetProcessorVendor() noexcept;
 
-    /*!
-     * \brief   Gets brand of processor.
-     */
+    //! \brief Gets brand of processor.
     extern BASE_API std::string_view GetProcessorBrand() noexcept;
 }
 
@@ -1015,31 +895,36 @@ namespace Graphyte::System
         Size PrimaryDisplaySize;
     };
 
-    /*!
-     * \brief   Gets display metrics.
-     *
-     * \param   result      Returns current display metrics.
-     *
-     * \return  The status code.
-     */
+    //! \brief Gets display metrics.
+    //!
+    //! \param result Returns current display metrics.
+    //!
+    //! \return The status code.
     extern BASE_API Status GetDisplayMetrics(
         DisplayMetrics& result) noexcept;
 
     enum class DeviceScreenOrientation
     {
-        None,             //!< Cannot determine current screen orientation.
-        Landscape,        //!< Landscape.
-        LandscapeFlipped, //!< Landscape turned 180 degrees.
-        Portrait,         //!< Portrait.
-        PortraitFlipped,  //!< Portrait turned 180 degrees.
+        //! Cannot determine current screen orientation.
+        None,
+
+        //! Landscape.
+        Landscape,
+
+        //! Landscape turned 180 degrees.
+        LandscapeFlipped,
+
+        //! Portrait.
+        Portrait,
+
+        //! Portrait turned 180 degrees.
+        PortraitFlipped,
     };
 
-    /*!
-     * \brief   Gets screen orientation.
-     */
+    //! \brief Gets screen orientation.
     extern BASE_API DeviceScreenOrientation GetScreenOrientation() noexcept;
 
-    //! Gets color of pixel on screen.
+    //! \brief Gets color of pixel on screen.
     //!
     //! \param position Provides pixel position.
     //! \param gamma    Provides gamma factor.
@@ -1049,19 +934,15 @@ namespace Graphyte::System
         Point position,
         float gamma) noexcept;
 
-    /*!
-     * \brief   Enables or disables screen saver.
-     *
-     * \param   enable      Specifies whether to enable or disable screen saver.
-     *
-     * \return  The status code.
-     */
+    //! \brief Enables or disables screen saver.
+    //!
+    //! \param enable Specifies whether to enable or disable screen saver.
+    //!
+    //! \return The status code.
     extern BASE_API Status ControlScreensaver(
         bool enable) noexcept;
 
-    /*!
-     * \brief   Prevents screen saver.
-     */
+    //! \brief Prevents screen saver.
     extern BASE_API void PreventScreensaver() noexcept;
 }
 
@@ -1081,19 +962,15 @@ namespace Graphyte::System
 
     extern BASE_API double GSecondsPerCycle;
 
-    /*!
-     * @brief   Gets UTC system time as calendar time.
-     *
-     * @param   time    Returns system time.
-     */
+    //! \brief Gets UTC system time as calendar time.
+    //!
+    //! \param time Returns system time.
     extern BASE_API void GetSystemTime(
         CalendarTime& time) noexcept;
 
-    /*!
-     * @brief   Gets local time as calendar time.
-     *
-     * @param   time    Returns local time.
-     */
+    //! \brief Gets local time as calendar time.
+    //!
+    //! \param time Returns local time.
     extern BASE_API void GetLocalTime(
         CalendarTime& time) noexcept;
 
@@ -1118,9 +995,7 @@ namespace Graphyte::System
 
 namespace Graphyte::System
 {
-    /*!
-     * \brief   Represents available message dialog types.
-     */
+    //! \brief Represents available message dialog types.
     enum class MessageDialogType
     {
         Ok,
@@ -1131,9 +1006,7 @@ namespace Graphyte::System
     };
 
 
-    /*!
-     * \brief   Represents possible message dialog results.
-     */
+    //! \brief Represents possible message dialog results.
     enum struct MessageDialogResult
     {
         None,
@@ -1146,9 +1019,7 @@ namespace Graphyte::System
     };
 
 
-    /*!
-     * \brief   Represents available message dialog images.
-     */
+    //! \brief Represents available message dialog images.
     enum struct MessageDialogImage
     {
         None,
@@ -1158,16 +1029,14 @@ namespace Graphyte::System
     };
 
 
-    /*!
-     * @brief   Shows native message dialog
-     *
-     * @param   title       Provides title of message dialog.
-     * @param   message     Provides message of message dialog.
-     * @param   type        Provides type of message dialog
-     * @param   image       Provides image type.
-     *
-     * @return  The message dialog result.
-     */
+    //! \brief Shows native message dialog
+    //!
+    //! \param title   Provides title of message dialog.
+    //! \param message Provides message of message dialog.
+    //! \param type    Provides type of message dialog
+    //! \param image   Provides image type.
+    //!
+    //! \return  The message dialog result.
     BASE_API MessageDialogResult ShowMessageDialog(
         std::string_view title,
         std::string_view message,

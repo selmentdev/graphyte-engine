@@ -287,12 +287,10 @@ namespace Graphyte::Graphics
     GX_ENUM_CLASS_FLAGS(GpuShaderVisibility);
 
 
-    /**
-     * @brief   This enum specifies available shader profiles.
-     *
-     * @note    Essentially, these enum values represent internal shader format. For example, SPIRV_1_0 may be used with
-     *          both OpenGL and Vulkan.
-     */
+    //! \brief This enum specifies available shader profiles.
+    //!
+    //! \note Essentially, these enum values represent internal shader format. For example,
+    //! SPIRV_1_0 may be used with both OpenGL and Vulkan.
     enum struct GpuShaderProfile : uint32_t
     {
         D3DSM_5_0 = 0x0001'05'00,
@@ -641,10 +639,7 @@ namespace Graphyte::Graphics
         TextureCube,
     };
 
-    /*!
-     * \remarks
-     *      Render target used in 3D environment should also have mipmaps generated.
-     */
+    //! Render target used in 3D environment should also have mipmaps generated.
     enum struct GpuTextureFlags : uint32_t
     {
         Default         = 0,

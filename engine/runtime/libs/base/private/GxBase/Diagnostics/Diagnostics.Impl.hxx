@@ -28,18 +28,16 @@ namespace Graphyte::Diagnostics::Impl
         std::string_view content,
         std::string_view stacktrace) noexcept;
 
-    /*!
-     * \brief   Writes text to debugger output.
-     *
-     * \param   level       Provides log level for this message.
-     * \param   text        Provides text to write.
-     *
-     * \note    This function is thread-safe.
-     *
-     * \remarks This function interfaces with native debugger APIs, which in most cases use regular
-     *          C string as one and only paramter. We just assume that log implementation guarantees
-     *          that this parameter is valid raw C string.
-     */
+    //! \brief Writes text to debugger output.
+    //!
+    //! \param  level       Provides log level for this message.
+    //! \param  text        Provides text to write.
+    //!
+    //! \note   This function is thread-safe.
+    //!
+    //! \remarks This function interfaces with native debugger APIs, which in most cases use regular
+    //!          C string as one and only paramter. We just assume that log implementation
+    //!          guarantees that this parameter is valid raw C string.
     extern void DebugOutput(LogLevel level, const char* text) noexcept;
 
     extern Threading::CriticalSection& GetDiagnosticsLock() noexcept;

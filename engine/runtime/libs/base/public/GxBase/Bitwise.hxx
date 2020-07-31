@@ -9,12 +9,12 @@
 
 namespace Graphyte
 {
-    //! Performs safe bit casting between two types.
+    //! \brief Performs safe bit casting between two types.
     //!
     //! # Examples
     //!
     //! ```
-    //! float f = BitCast(0x3F800000);
+    //! float f = BitCast<float>(0x3F800000);
     //! GX_ASSERT(f == 1.0f);
     //! ```
     template <typename TTo, typename TFrom>

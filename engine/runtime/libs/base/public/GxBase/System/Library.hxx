@@ -78,16 +78,12 @@ namespace Graphyte::System
         }
 
     public:
-        /*!
-         * \brief   Loads specified shared library.
-         *
-         * \param   path    Provides path to library.
-         */
+        //! \brief Loads specified shared library.
+        //!
+        //! \param path Provides path to library.
         Status Load(std::string_view path) noexcept;
 
-        /*!
-         * \brief   Unloads library.
-         */
+        //! \brief Unloads library.
         Status Unload() noexcept;
 
         void* Resolve(const char* name) const noexcept;

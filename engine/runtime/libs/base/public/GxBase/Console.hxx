@@ -24,19 +24,13 @@ namespace Graphyte
 
     struct IConsoleObject
     {
-        /*!
-         * \brief   Gets help string associated with this console object.
-         */
+        //! \brief Gets help string associated with this console object.
         virtual std::string_view GetHelp() const noexcept = 0;
 
-        /*!
-         * \brief   Gets name of this console object.
-         */
+        //! \brief Gets name of this console object.
         virtual std::string_view GetName() const noexcept = 0;
 
-        /*!
-         * \brief   Gets flags of this console object.
-         */
+        //! \brief Gets flags of this console object.
         virtual ConsoleObjectFlags GetFlags() const noexcept = 0;
     };
 
@@ -45,26 +39,20 @@ namespace Graphyte
     {
         IntrusiveListNode<IConsoleVariable> ListEntry;
 
-        /*!
-         * \brief   Gets store where to put this variable.
-         */
+        //! \brief Gets store where to put this variable.
         virtual std::string_view GetStore() const noexcept = 0;
 
-        /*!
-         * \brief   Sets value of this variable from string.
-         *
-         * \param   value       Provides value to parse.
-         *
-         * \return  @c true when succeeded, @c false otherwise.
-         */
+        //! \brief Sets value of this variable from string.
+        //!
+        //! \param value Provides value to parse.
+        //!
+        //! \return @c true when succeeded, @c false otherwise.
         virtual bool FromString(
             std::string_view value) noexcept = 0;
 
-        /*!
-         * \brief   Gets value of this variable as string.
-         *
-         * \return  The value converted to string.
-         */
+        //! \brief Gets value of this variable as string.
+        //!
+        //! \return The value converted to string.
         virtual std::string ToString() const noexcept = 0;
     };
 
@@ -204,13 +192,11 @@ namespace Graphyte
 
 namespace Graphyte
 {
-    /*!
-     * \brief   Represents delegate callback to execute when console command is invoked.
-     *
-     * \param   params      Provides command params.
-     *
-     * \return  The command execution status.
-     */
+    //! \brief Represents delegate callback to execute when console command is invoked.
+    //!
+    //! \param params Provides command params.
+    //!
+    //! \return The command execution status.
     using ConsoleCommandDelegate = std::function<ConsoleCommandResult(
         notstd::span<std::string_view> params)>;
 
@@ -303,25 +289,19 @@ namespace Graphyte
             notstd::span<std::string_view> params) noexcept;
 
     public:
-        /*!
-         * \brief   Enumerates all registered variables.
-         *
-         * \param   variables   Returns list of registered variables.
-         *
-         * \remarks Returned list must not be persisted, because variable instance may be
-         *          unloaded.
-         */
+        //! \brief Enumerates all registered variables.
+        //!
+        //! \param variables Returns list of registered variables.
+        //!
+        //! \remarks Returned list must not be persisted, because variable instance may be unloaded.
         BASE_API static void EnumerateVariables(
             std::vector<std::string_view>& variables) noexcept;
 
-        /*!
-         * \brief   Enumerates all registered commands.
-         *
-         * \param   commands    Returns list of registered commands.
-         *
-         * \remarks Returned list must not be persisted, because variable instance may be
-         *          unloaded.
-         */
+        //! \brief Enumerates all registered commands.
+        //!
+        //! \param commands Returns list of registered commands.
+        //!
+        //! \remarks Returned list must not be persisted, because variable instance may be unloaded.
         BASE_API static void EnumerateCommands(
             std::vector<std::string_view>& commands) noexcept;
 

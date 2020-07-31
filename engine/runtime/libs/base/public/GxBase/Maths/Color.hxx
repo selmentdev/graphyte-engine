@@ -228,3 +228,189 @@ namespace Graphyte::Maths::Impl
         return p;
     }
 }
+
+namespace Graphyte::Maths
+{
+    mathinline Color mathcall RGBToHSL(Color c) noexcept;
+    mathinline Color mathcall HSLToRGB(Color c) noexcept;
+    mathinline Color mathcall RGBToHSV(Color c) noexcept;
+    mathinline Color mathcall HSVToRGB(Color c) noexcept;
+
+    mathinline Color mathcall RGBToYUV(Color c) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 m0{ { { 0.299f, -0.147f, 0.615f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m1{ { { 0.587f, -0.289f, -0.515f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m2{ { { 0.114f, 0.436f, -0.100f, 0.0f } } };
+
+        Matrix m;
+        m.M.R[0] = m0.V;
+        m.M.R[1] = m1.V;
+        m.M.R[2] = m2.V;
+        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+
+        Vector3 const result = Transform(Vector3{ c.V }, m);
+
+        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+    }
+
+    mathinline Color mathcall YUVToRGB(Color c) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 m1{ { { 0.0f, -0.395f, 2.032f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m2{ { { 1.140f, -0.581f, 0.0f, 0.0f } } };
+
+        Matrix m;
+        m.M.R[0] = Impl::VEC4_ONE_4.V;
+        m.M.R[1] = m1.V;
+        m.M.R[2] = m2.V;
+        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+
+        Vector3 const result = Transform(Vector3{ c.V }, m);
+
+        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+    }
+
+    mathinline Color mathcall RGBToYUVHD(Color c) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 m0{ { { 0.2126f, -0.0997f, 0.6150f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m1{ { { 0.7152f, -0.3354f, -0.5586f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m2{ { { 0.0722f, 0.4351f, -0.0564f, 0.0f } } };
+
+        Matrix m;
+        m.M.R[0] = m0.V;
+        m.M.R[1] = m1.V;
+        m.M.R[2] = m2.V;
+        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+
+        Vector3 const result = Transform(Vector3{ c.V }, m);
+
+        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+    }
+
+    mathinline Color mathcall YUVToRGBHD(Color c) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 m1{ { { 0.0f, -0.2153f, 2.1324f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m2{ { { 1.2803f, -0.3806f, 0.0f, 0.0f } } };
+
+        Matrix m;
+        m.M.R[0] = Impl::VEC4_ONE_4.V;
+        m.M.R[1] = m1.V;
+        m.M.R[2] = m2.V;
+        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+
+        Vector3 const result = Transform(Vector3{ c.V }, m);
+
+        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+    }
+
+    mathinline Color mathcall RGBToXYZ(Color c) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 m0{ { { 0.4887180f, 0.1762044f, 0.0000000f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m1{ { { 0.3106803f, 0.8129847f, 0.0102048f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m2{ { { 0.2006017f, 0.0108109f, 0.9897952f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 scale{ { { 1.0f / 0.17697f, 1.0f / 0.17697f, 1.0f / 0.17697f, 0.0f } } };
+
+        Matrix m;
+        m.M.R[0] = m0.V;
+        m.M.R[1] = m1.V;
+        m.M.R[2] = m2.V;
+        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+
+        Vector3 const result = Multiply(Transform(Vector3{ c.V }, m), Vector3{ scale.V });
+        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+    }
+
+    mathinline Color mathcall XYZToRGB(Color c) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 m0{ { { 2.3706743f, -0.5138850f, 0.0052982f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m1{ { { -0.9000405f, 1.4253036f, -0.0146949f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m2{ { { -0.4706338f, 0.0885814f, 1.0093968f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 scale{ { { 0.17697f, 0.17697f, 0.17697f, 0.0f } } };
+
+        Matrix m;
+        m.M.R[0] = m0.V;
+        m.M.R[1] = m1.V;
+        m.M.R[2] = m2.V;
+        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+
+        Vector3 const result = Multiply(Transform(Vector3{ c.V }, m), Vector3{ scale.V });
+        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+    }
+
+    mathinline Color mathcall XYZToSRGB(Color c) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 m0{ { { 3.2406f, -0.9689f, 0.0557f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m1{ { { -1.5372f, 1.8758f, -0.2040f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m2{ { { -0.4986f, 0.0415f, 1.0570f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 cut{ { { 0.0031308f, 0.0031308f, 0.0031308f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 exp{ { { 1.0f / 2.4f, 1.0f / 2.4f, 1.0f / 2.4f, 1.0f } } };
+
+        Matrix m;
+        m.M.R[0] = m0.V;
+        m.M.R[1] = m1.V;
+        m.M.R[2] = m2.V;
+        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+
+        Vector4 const lclr{ Transform(Vector3{ c.V }, m).V };
+
+        Bool4 const vsel = CompareGreater(lclr, Vector4{ cut.V });
+        Vector4 const vsmall_color = Multiply(lclr, Vector4{ Impl::VEC4_MSRGB_SCALE.V });
+        Vector4 const vlarge_color = Subtract(Multiply(Vector4{ Impl::VEC4_MSRGB_A1.V }, Power(lclr, Vector4{ exp.V })), Vector4{ Impl::VEC4_MSRGB_A.V });
+        Vector4 const vclr = Select(vsmall_color, vlarge_color, vsel);
+        return Select(c, Color{ vclr.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+    }
+
+    mathinline Color mathcall SRGBToXYZ(Color c) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 m0{ { { 0.4124f, 0.2126f, 0.0193f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m1{ { { 0.3576f, 0.7152f, 0.1192f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 m2{ { { 0.1805f, 0.0722f, 0.9505f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 cut{ { { 0.04045f, 0.04045f, 0.04045f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 exp{ { { 2.4f, 2.4f, 2.4f, 1.0f } } };
+
+        Bool4 const vsel = CompareGreater(Vector4{ c.V }, Vector4{ cut.V });
+        Vector4 const vsmall_color = Divide(Vector4{ c.V }, Vector4{ Impl::VEC4_MSRGB_SCALE.V });
+        Vector4 const vlarge_color = Power(Divide(Add(Vector4{ c.V }, Vector4{ Impl::VEC4_MSRGB_A.V }), Vector4{ Impl::VEC4_MSRGB_A1.V }), Vector4{ exp.V });
+        Vector4 const vlclr = Select(vsmall_color, vlarge_color, vsel);
+
+        Matrix m;
+        m.M.R[0] = m0.V;
+        m.M.R[1] = m1.V;
+        m.M.R[2] = m2.V;
+        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+
+        Color const vclr{ Transform(Vector3{ vlclr.V }, m).V };
+        return Select(c, vclr, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+    }
+
+    mathinline Color mathcall RGBToSRGB(Color c) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 cutoff{ { { 0.0031308f, 0.0031308f, 0.0031308f, 1.0f } } };
+        static constexpr Impl::ConstFloat32x4 linear{ { { 12.92f, 12.92f, 12.92f, 1.0f } } };
+        static constexpr Impl::ConstFloat32x4 scale{ { { 1.055f, 1.055f, 1.055f, 1.0f } } };
+        static constexpr Impl::ConstFloat32x4 bias{ { { 0.055f, 0.055f, 0.055f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 inv_gamma{ { { 1.0f / 2.4f, 1.0f / 2.4f, 1.0f / 2.4f, 1.0f } } };
+
+        Vector4 const vv = Saturate(Vector4{ c.V });
+        Vector4 const vv0 = Multiply(vv, Vector4{ linear.V });
+        Vector4 const vv1 = Subtract(Multiply(Vector4{ scale.V }, Power(vv, Vector4{ inv_gamma.V })), Vector4{ bias.V });
+        Bool4 const vsel = CompareLess(vv, Vector4{ cutoff.V });
+        Vector4 vv2 = Select(vv1, vv0, vsel);
+        return Select(c, Color{ vv2.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+    }
+
+    mathinline Color mathcall SRGBToRGB(Color c) noexcept
+    {
+        static constexpr Impl::ConstFloat32x4 cutoff{ { { 0.04045f, 0.04045f, 0.04045f, 1.0f } } };
+        static constexpr Impl::ConstFloat32x4 linear{ { { 1.0f / 12.92f, 1.0f / 12.92f, 1.0f / 12.92f, 1.0f } } };
+        static constexpr Impl::ConstFloat32x4 scale{ { { 1.0f / 1.055f, 1.0f / 1.055f, 1.0f / 1.055f, 1.0f } } };
+        static constexpr Impl::ConstFloat32x4 bias{ { { 0.055f, 0.055f, 0.055f, 0.0f } } };
+        static constexpr Impl::ConstFloat32x4 gamma{ { { 2.4f, 2.4f, 2.4f, 1.0f } } };
+
+        Vector4 const vv = Saturate(Vector4{ c.V });
+        Vector4 const vv0 = Multiply(vv, Vector4{ linear.V });
+        Vector4 const vv1 = Power(Multiply(Add(vv, Vector4{ bias.V }), Vector4{ scale.V }), Vector4{ gamma.V });
+        Bool4 const vsel = CompareGreater(vv, Vector4{ cutoff.V });
+        Vector4 const v01 = Select(vv0, vv1, vsel);
+        return Select(c, Color{ v01.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+    }
+}

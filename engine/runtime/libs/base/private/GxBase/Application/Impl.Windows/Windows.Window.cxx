@@ -164,8 +164,8 @@ namespace Graphyte::Application::Impl
                 GX_ABORT("Failed to set window NC policy");
             }
 
-            /*MARGINS margins{ -1 };
-            GX_VERIFY(SUCCEEDED(DwmExtendFrameIntoClientArea(m_Handle, &margins)));*/
+            //MARGINS margins{ -1 };
+            //GX_VERIFY(SUCCEEDED(DwmExtendFrameIntoClientArea(m_Handle, &margins)));
         }
 
         if (m_Descriptor.Regular && !m_Descriptor.SystemBorder)
