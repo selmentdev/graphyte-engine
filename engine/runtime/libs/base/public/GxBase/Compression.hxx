@@ -4,7 +4,7 @@
 
 namespace Graphyte::Compression
 {
-    //! \brief Compression methods available in engine.
+    /// @brief Compression methods available in engine.
     enum class CompressionMethod : uint32_t
     {
         LZ4,
@@ -14,26 +14,26 @@ namespace Graphyte::Compression
     };
 
 
-    //! \brief Computes memory bound for given buffer size and compression method.
-    //!
-    //! \param method   Provides a compression method.
-    //! \param size     Provides size of uncompressed data.
-    //!
-    //! \return         The minimum number of bytes required to compress data of specified size.
+    /// @brief Computes memory bound for given buffer size and compression method.
+    ///
+    /// @param method   Provides a compression method.
+    /// @param size     Provides size of uncompressed data.
+    ///
+    /// @return         The minimum number of bytes required to compress data of specified size.
     extern BASE_API size_t MemoryBound(
         CompressionMethod method,
         size_t size) noexcept;
 
 
-    //! \brief Compresses memory block.
-    //!
-    //! \param method           Provides a compression method.
-    //! \param output_buffer    Provides output buffer for compressed data.
-    //! \param output_size      Provides size of output buffer.
-    //! \param input_buffer     Provides input buffer to compress.
-    //! \param input_size       Provides size of input buffer.
-    //!
-    //! \return Value indicating whether memory block was decompressed successfully.
+    /// @brief Compresses memory block.
+    ///
+    /// @param method           Provides a compression method.
+    /// @param output_buffer    Provides output buffer for compressed data.
+    /// @param output_size      Provides size of output buffer.
+    /// @param input_buffer     Provides input buffer to compress.
+    /// @param input_size       Provides size of input buffer.
+    ///
+    /// @return Value indicating whether memory block was decompressed successfully.
     extern BASE_API bool CompressBlock(
         CompressionMethod method,
         void* output_buffer,
@@ -42,15 +42,15 @@ namespace Graphyte::Compression
         size_t input_size) noexcept;
 
 
-    //! \brief Decompresses memory block.
-    //!
-    //! \param method          Provides a compression method.
-    //! \param output_buffer   Points to output buffer for decompressed data.
-    //! \param output_size     Provides size of output buffer.
-    //! \param input_buffer    Points to input buffer to decompress.
-    //! \param input_size      Provides size of input buffer.
-    //!
-    //! \return Value indicating whether memory block was decompressed successfully.
+    /// @brief Decompresses memory block.
+    ///
+    /// @param method          Provides a compression method.
+    /// @param output_buffer   Points to output buffer for decompressed data.
+    /// @param output_size     Provides size of output buffer.
+    /// @param input_buffer    Points to input buffer to decompress.
+    /// @param input_size      Provides size of input buffer.
+    ///
+    /// @return Value indicating whether memory block was decompressed successfully.
     extern BASE_API bool DecompressBlock(
         CompressionMethod method,
         void* output_buffer,
@@ -78,13 +78,13 @@ namespace Graphyte::Compression
         std::string& output,
         const std::vector<std::byte>& input) noexcept;
 
-    //! \brief Compresses byte vector.
-    //!
-    //! \param method   Provides a compression method.
-    //! \param output   Provides output vector for compressed data.
-    //! \param input    Provides input vector data to compress.
-    //!
-    //! \return Value indicating whether memory block was compressed successfully.
+    /// @brief Compresses byte vector.
+    ///
+    /// @param method   Provides a compression method.
+    /// @param output   Provides output vector for compressed data.
+    /// @param input    Provides input vector data to compress.
+    ///
+    /// @return Value indicating whether memory block was compressed successfully.
     inline bool CompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
@@ -96,14 +96,14 @@ namespace Graphyte::Compression
             notstd::span<const std::byte>(input));
     }
 
-    //! \brief Decompresses byte vector.
-    //! \param method   Provides a compression method.
-    //! \param output   Provides output vector for decompressed data.
-    //! \param input    Provides input vector data to decompress.
-    //!
-    //! \return Value indicating whether memory block was decompressed successfully.
-    //!
-    //! \pre Output vector must contain enough place for decompressed data.
+    /// @brief Decompresses byte vector.
+    /// @param method   Provides a compression method.
+    /// @param output   Provides output vector for decompressed data.
+    /// @param input    Provides input vector data to decompress.
+    ///
+    /// @return Value indicating whether memory block was decompressed successfully.
+    ///
+    /// @pre Output vector must contain enough place for decompressed data.
     inline bool DecompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,

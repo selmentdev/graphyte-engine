@@ -9,22 +9,22 @@
 
 namespace Graphyte::Threading
 {
-    //! \brief Executes specified code in parallel threads for specified amount of items.
-    //!
-    //! \param count         Provides number of items to run on parallel threads.
-    //! \param code          Provides delegate to invoke for each item in parallel.
-    //! \param single_thread Specifies whether this loop should be invoked on single thread.
+    /// @brief Executes specified code in parallel threads for specified amount of items.
+    ///
+    /// @param count         Provides number of items to run on parallel threads.
+    /// @param code          Provides delegate to invoke for each item in parallel.
+    /// @param single_thread Specifies whether this loop should be invoked on single thread.
     BASE_API void ParallelFor(
         uint32_t count,
         std::function<void(uint32_t)> code,
         bool single_thread = false) noexcept;
 
-    //! \brief Executes specified code in parallel threads for specified amount of items.
-    //!
-    //! \param count         Provides number of items to run on parallel threads.
-    //! \param code          Provides delegate to invoke for each item in parallel.
-    //! \param preprocess    Provides delegate to invoke before parallel for runs.
-    //! \param single_thread Specifies whether this loop should be invoked on single thread.
+    /// @brief Executes specified code in parallel threads for specified amount of items.
+    ///
+    /// @param count         Provides number of items to run on parallel threads.
+    /// @param code          Provides delegate to invoke for each item in parallel.
+    /// @param preprocess    Provides delegate to invoke before parallel for runs.
+    /// @param single_thread Specifies whether this loop should be invoked on single thread.
     BASE_API void ParallelFor(
         uint32_t count,
         std::function<void(uint32_t)> code,
@@ -133,7 +133,7 @@ namespace Graphyte::Threading
 
 namespace Graphyte::Threading
 {
-    //! \brief Yields execution of current thread.
+    /// @brief Yields execution of current thread.
     __forceinline void YieldThread() noexcept
     {
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
@@ -149,9 +149,9 @@ namespace Graphyte::Threading
 #endif
     }
 
-    //! \brief Sleeps current thread for specified time in milliseconds.
-    //!
-    //! \param milliseconds Provides timeout in milliseconds.
+    /// @brief Sleeps current thread for specified time in milliseconds.
+    ///
+    /// @param milliseconds Provides timeout in milliseconds.
     __forceinline void SleepThread(uint32_t milliseconds) noexcept
     {
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
@@ -167,7 +167,7 @@ namespace Graphyte::Threading
 #endif
     }
 
-    //! \brief Gets current thread id.
+    /// @brief Gets current thread id.
     __forceinline ThreadId CurrentThreadId() noexcept
     {
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP

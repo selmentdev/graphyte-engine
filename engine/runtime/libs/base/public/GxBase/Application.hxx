@@ -28,44 +28,44 @@ namespace Graphyte::Application
         Version AppVersion;
     };
 
-    //! \brief Initializes application submodule.
+    /// @brief Initializes application submodule.
     extern BASE_API void Initialize() noexcept;
 
-    //! \brief Finalizes application submodule.
+    /// @brief Finalizes application submodule.
     extern BASE_API void Finalize() noexcept;
 
-    //! \brief Gets descriptor of current application.
+    /// @brief Gets descriptor of current application.
     extern BASE_API const ApplicationDescriptor& GetDescriptor() noexcept;
 
-    //! \brief Gets value indicating whether current application is first instance.
+    /// @brief Gets value indicating whether current application is first instance.
     extern BASE_API bool IsFirstInstance() noexcept;
 
-    //! \brief Gets value indicating whether application requested exit.
+    /// @brief Gets value indicating whether application requested exit.
     extern BASE_API bool IsRequestingExit() noexcept;
 
-    //! \brief Requests exit from application.
-    //!
-    //! \param force Provides value indicating whether application should close immediately or just
-    //!              continue looping.
+    /// @brief Requests exit from application.
+    ///
+    /// @param force Provides value indicating whether application should close immediately or just
+    ///              continue looping.
     extern BASE_API void RequestExit(
         bool force) noexcept;
 
-    //! \brief Gets value indicating whether current application is in foreground.
+    /// @brief Gets value indicating whether current application is in foreground.
     extern BASE_API bool IsForeground() noexcept;
 
-    //! \brief Polls input devices.
-    //!
-    //! \param deltaTime Provides delta time since last frame.
+    /// @brief Polls input devices.
+    ///
+    /// @param deltaTime Provides delta time since last frame.
     extern BASE_API void PollInputDevices(float deltaTime) noexcept;
 
-    //! \brief Pumps messages.
-    //!
-    //! \param deltaTime Provides delta time since last frame.
+    /// @brief Pumps messages.
+    ///
+    /// @param deltaTime Provides delta time since last frame.
     extern BASE_API void PumpMessages(float deltaTime) noexcept;
 
-    //! \brief Ticks application.
-    //!
-    //! \param deltaTime Provides delta time since last frame.
+    /// @brief Ticks application.
+    ///
+    /// @param deltaTime Provides delta time since last frame.
     extern BASE_API void Tick(float deltaTime) noexcept;
 }
 
@@ -290,17 +290,17 @@ namespace Graphyte::Application
         }
     };
 
-    //! \brief Creates new instance of window.
-    //!
-    //! \param descriptor Provides window descriptor.
-    //!
-    //! \return The instance of new window.
+    /// @brief Creates new instance of window.
+    ///
+    /// @param descriptor Provides window descriptor.
+    ///
+    /// @return The instance of new window.
     extern BASE_API Window* CreateWindow(
         const WindowDescriptor& descriptor) noexcept;
 
-    //! \brief Destroys instance of window.
-    //!
-    //! \param window Provides instance of window to destroy.
+    /// @brief Destroys instance of window.
+    ///
+    /// @param window Provides instance of window to destroy.
     extern BASE_API void DestroyWindow(
         Window* window) noexcept;
 }
@@ -458,14 +458,14 @@ namespace Graphyte::Application
             ShutdownReason reason) noexcept;
     };
 
-    //! \brief Sets current application event handler.
-    //!
-    //! \param handler Provides new event handler
+    /// @brief Sets current application event handler.
+    ///
+    /// @param handler Provides new event handler
     extern BASE_API void SetEventHandler(
         EventHandler* handler) noexcept;
 
-    //! \brief Gets current application event handler.
-    //!
-    //! \return The current application event handler.
+    /// @brief Gets current application event handler.
+    ///
+    /// @return The current application event handler.
     extern BASE_API EventHandler* GetEventHandler() noexcept;
 }

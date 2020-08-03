@@ -3,7 +3,7 @@
 
 namespace Graphyte::Geometry
 {
-    //! \brief Provides way of comparing mesh vertices in generic way.
+    /// @brief Provides way of comparing mesh vertices in generic way.
     struct MeshVertexComparator final
     {
         bool CompareNormals;

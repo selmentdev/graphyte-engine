@@ -16,10 +16,20 @@ namespace Graphyte::System
     class BASE_API Pipe final
     {
     public:
+        /// @brief Creates new pipe
+        ///
+        /// @param read  Returns pipe handle for reading.
+        /// @param write Returns pipe handle for writing.
+        ///
+        /// @return @c true when successeded, @c false otherwise.
         static bool Create(
             PipeHandle& read,
             PipeHandle& write) noexcept;
 
+        /// @brief Closes pipe handles.
+        ///
+        /// @param read  Provides pipe handle for reading.
+        /// @param write Provides pipe handle for writing.
         static void Close(
             PipeHandle& read,
             PipeHandle& write) noexcept;

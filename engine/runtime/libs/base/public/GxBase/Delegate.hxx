@@ -47,8 +47,8 @@ namespace Graphyte
         };
     };
 
-    //! \brief This class implements delegate object which can invoke any callable object matching
-    //! function signature to TInvokable.
+    /// @brief This class implements delegate object which can invoke any callable object matching
+    /// function signature to TInvokable.
     template <typename TInvokable>
     struct Delegate;
 
@@ -121,28 +121,28 @@ namespace Graphyte
         }
 
     public:
-        //! \brief Makes instance of delegate object from pointer to member function.
+        /// @brief Makes instance of delegate object from pointer to member function.
         template <typename TClass, TResult (TClass::*TMethod)(TArgs...)>
         static Delegate Make(TClass* instance) noexcept
         {
             return Delegate{ instance, MethodStub<TClass, TMethod> };
         }
 
-        //! \brief Makes instance of delegate object from pointer to member function.
+        /// @brief Makes instance of delegate object from pointer to member function.
         template <typename TClass, TResult (TClass::*TMethod)(TArgs...) const>
         static Delegate Make(TClass const* instance) noexcept
         {
             return Delegate{ const_cast<TClass*>(instance), ConstMethodStub<TClass, TMethod> };
         }
 
-        //! \brief Makes instance of delegate object from pointer to static / free function.
+        /// @brief Makes instance of delegate object from pointer to static / free function.
         template <TResult (*TMethod)(TArgs...)>
         static Delegate Make() noexcept
         {
             return Delegate{ nullptr, FunctionStub<TMethod> };
         }
 
-        //! \brief Makes instance of delegate object from lambda object.
+        /// @brief Makes instance of delegate object from lambda object.
         template <typename TLambda>
         static Delegate Make(const TLambda& lambda) noexcept
         {

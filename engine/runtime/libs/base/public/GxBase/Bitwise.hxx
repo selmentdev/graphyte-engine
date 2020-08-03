@@ -9,14 +9,14 @@
 
 namespace Graphyte
 {
-    //! \brief Performs safe bit casting between two types.
-    //!
-    //! # Examples
-    //!
-    //! ```
-    //! float f = BitCast<float>(0x3F800000);
-    //! GX_ASSERT(f == 1.0f);
-    //! ```
+    /// @brief Performs safe bit casting between two types.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// float f = BitCast<float>(0x3F800000);
+    /// GX_ASSERT(f == 1.0f);
+    /// ```
     template <typename TTo, typename TFrom>
     [[nodiscard]] constexpr TTo BitCast(TFrom const& source) noexcept
         requires std::conjunction_v<

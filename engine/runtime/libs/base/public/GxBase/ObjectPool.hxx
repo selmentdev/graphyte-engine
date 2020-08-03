@@ -6,9 +6,9 @@
 
 namespace Graphyte
 {
-    //! \brief This class is base class for all pool containers.
-    //!
-    //! \tparam ElementCount Number of elements within single pool descriptor.
+    /// @brief This class is base class for all pool containers.
+    ///
+    /// @tparam ElementCount Number of elements within single pool descriptor.
     template <std::size_t ElementCount>
     class PoolContainerBase
     {
@@ -16,34 +16,34 @@ namespace Graphyte
         static_assert(IsPowerOf2(ElementCount));
 
     public:
-        //! Number of elements within pool descriptor.
+        /// Number of elements within pool descriptor.
         static constexpr const std::size_t PoolCapacity = ElementCount;
 
     private:
-        //! \brief This type represents allocation address.
+        /// @brief This type represents allocation address.
         enum class Address : std::uintptr_t
         {
             Invalid = ~std::uintptr_t{},
         };
 
-        //! \brief This type represents pool descriptor index.
+        /// @brief This type represents pool descriptor index.
         enum class PoolIndex : std::uintptr_t
         {
             Invalid = ~std::uintptr_t{},
         };
 
-        //! \brief This type represents allocation index within pool descriptor.
+        /// @brief This type represents allocation index within pool descriptor.
         enum class ItemIndex : std::uintptr_t
         {
             Invalid = ~std::uintptr_t{},
         };
 
-        //! \brief Makes allocation address from pool and item indices.
-        //!
-        //! \param pool Provides index of pool descriptor.
-        //! \param item Provides index of item allocation.
-        //!
-        //! \return The address of specified allocation.
+        /// @brief Makes allocation address from pool and item indices.
+        ///
+        /// @param pool Provides index of pool descriptor.
+        /// @param item Provides index of item allocation.
+        ///
+        /// @return The address of specified allocation.
         static constexpr Address MakeAddress(
             PoolIndex pool,
             ItemIndex item) noexcept
@@ -52,11 +52,11 @@ namespace Graphyte
                 (ElementCount * static_cast<uintptr_t>(pool)) + static_cast<uintptr_t>(item));
         }
 
-        //! \brief Gets pool descriptor index from address.
-        //!
-        //! \param address Provides an address of allocation.
-        //!
-        //! \return The pool descriptor index.
+        /// @brief Gets pool descriptor index from address.
+        ///
+        /// @param address Provides an address of allocation.
+        ///
+        /// @return The pool descriptor index.
         static constexpr PoolIndex GetPoolIndex(
             Address address) noexcept
         {
@@ -64,11 +64,11 @@ namespace Graphyte
                 static_cast<uintptr_t>(address) / ElementCount);
         }
 
-        //! \brief Gets item allocation index from address.
-        //!
-        //! \param address Provides an address of allocation.
-        //!
-        //! \return The item allocation index.
+        /// @brief Gets item allocation index from address.
+        ///
+        /// @param address Provides an address of allocation.
+        ///
+        /// @return The item allocation index.
         static constexpr ItemIndex GetItemIndex(
             Address address) noexcept
         {
@@ -77,34 +77,34 @@ namespace Graphyte
         }
 
     private:
-        //! \brief Represents free item.
+        /// @brief Represents free item.
         struct FreeItem final
         {
             // Index of next allocation within current pool descriptor.
             ItemIndex NextFreeItem;
         };
 
-        //! \brief Represents pool descriptor.
+        /// @brief Represents pool descriptor.
         struct PoolDescriptor final
         {
-            //! Allocation masks for allocation items within pool descriptor.
+            /// Allocation masks for allocation items within pool descriptor.
             std::uint64_t Mask[ElementCount / 64];
 
-            //! Pointer to data buffer.
+            /// Pointer to data buffer.
             std::byte* Data;
 
-            //! Number of allocated items within pool descriptor.
+            /// Number of allocated items within pool descriptor.
             std::size_t Count;
 
-            //! Index of next free item.
+            /// Index of next free item.
             ItemIndex NextFreeItem;
 
-            //! Index of next free pool descriptor.
+            /// Index of next free pool descriptor.
             PoolIndex NextFreeDescriptor;
 
-            //! \brief Sets specified item index as allocated.
-            //!
-            //! \param item Provides item index.
+            /// @brief Sets specified item index as allocated.
+            ///
+            /// @param item Provides item index.
             void SetAllocated(
                 ItemIndex item) noexcept
             {
@@ -114,9 +114,9 @@ namespace Graphyte
                 this->Mask[base] |= mask;
             }
 
-            //! \brief Sets specified item index as unallocated.
-            //!
-            //! \param item Provides item index.
+            /// @brief Sets specified item index as unallocated.
+            ///
+            /// @param item Provides item index.
             void ClearAllocated(
                 ItemIndex item) noexcept
             {
@@ -126,11 +126,11 @@ namespace Graphyte
                 this->Mask[base] &= ~mask;
             }
 
-            //! \brief Checks whether specified item is masked as allocated.
-            //!
-            //! \param item Provides item index.
-            //!
-            //! \return The value indicating whether specified item is allocated.
+            /// @brief Checks whether specified item is masked as allocated.
+            ///
+            /// @param item Provides item index.
+            ///
+            /// @return The value indicating whether specified item is allocated.
             bool IsAllocated(
                 ItemIndex item) const noexcept
             {
@@ -148,13 +148,13 @@ namespace Graphyte
         PoolIndex m_FreePoolDescriptor;
 
     private:
-        //! \brief Find specified allocation.
-        //!
-        //! \param pointer Provides pointer to allocated item.
-        //! \param pool    Returns pool descriptor index of allocation.
-        //! \param item    Returns item index of allocation.
-        //!
-        //! \returns The value indicating whether provided pointer was found in pool.
+        /// @brief Find specified allocation.
+        ///
+        /// @param pointer Provides pointer to allocated item.
+        /// @param pool    Returns pool descriptor index of allocation.
+        /// @param item    Returns item index of allocation.
+        ///
+        /// @returns The value indicating whether provided pointer was found in pool.
         bool FindPool(
             void* pointer,
             PoolIndex& pool,
@@ -208,12 +208,12 @@ namespace Graphyte
             return false;
         }
 
-        //! \brief Gets allocation data.
-        //!
-        //! \param descriptor Provides pool descriptor.
-        //! \param item       Provides item index of allocation.
-        //!
-        //! \return The pointer to allocation data.
+        /// @brief Gets allocation data.
+        ///
+        /// @param descriptor Provides pool descriptor.
+        /// @param item       Provides item index of allocation.
+        ///
+        /// @return The pointer to allocation data.
         std::byte* GetPoolItem(
             PoolDescriptor& descriptor,
             ItemIndex item) const noexcept
@@ -222,12 +222,12 @@ namespace Graphyte
             return descriptor.Data + (static_cast<size_t>(item) * m_ItemSize);
         }
 
-        //! \brief Gets allocation data.
-        //!
-        //! @param pool Provides pool descriptor index.
-        //! @param item Provides allocation item index.
-        //!
-        //! @return The pointer to allocation data.
+        /// @brief Gets allocation data.
+        ///
+        /// @param pool Provides pool descriptor index.
+        /// @param item Provides allocation item index.
+        ///
+        /// @return The pointer to allocation data.
         std::byte* GetPoolItem(
             PoolIndex pool,
             ItemIndex item) const noexcept
@@ -238,12 +238,12 @@ namespace Graphyte
             return m_PoolDescriptors[static_cast<size_t>(pool)].Data + (static_cast<size_t>(item) * m_ItemSize);
         }
 
-        //! \brief Gets free item for specified pool descriptor allocation item.
-        //!
-        //! \param descriptor Provides pool descriptor.
-        //! \param item       Provides allocation item index.
-        //!
-        //! \returns The pointer to free item link.
+        /// @brief Gets free item for specified pool descriptor allocation item.
+        ///
+        /// @param descriptor Provides pool descriptor.
+        /// @param item       Provides allocation item index.
+        ///
+        /// @returns The pointer to free item link.
         FreeItem* GetPoolFreeItem(
             PoolDescriptor& descriptor,
             ItemIndex item) const noexcept
@@ -251,11 +251,11 @@ namespace Graphyte
             return reinterpret_cast<FreeItem*>(GetPoolItem(descriptor, item));
         }
 
-        //! \brief Gets allocation data for specified address.
-        //!
-        //! \param address Provides address of allocation.
-        //!
-        //! \returns The pointer to allocation data.
+        /// @brief Gets allocation data for specified address.
+        ///
+        /// @param address Provides address of allocation.
+        ///
+        /// @returns The pointer to allocation data.
         std::byte* GetPoolItem(Address address) const noexcept
         {
             return GetPoolItem(
@@ -263,9 +263,9 @@ namespace Graphyte
                 GetItemIndex(address));
         }
 
-        //! \brief Allocates new pool descriptor.
-        //!
-        //! \returns The pool index of newly allocated pool descriptor.
+        /// @brief Allocates new pool descriptor.
+        ///
+        /// @returns The pool index of newly allocated pool descriptor.
         PoolIndex AllocateDescriptor() noexcept
         {
             PoolIndex pool{ PoolIndex::Invalid };
@@ -333,9 +333,9 @@ namespace Graphyte
             return pool;
         }
 
-        //! \brief Deallocates pool descriptor for specified pool index.
-        //!
-        //! \param pool Provides pool descriptor index to deallocate.
+        /// @brief Deallocates pool descriptor for specified pool index.
+        ///
+        /// @param pool Provides pool descriptor index to deallocate.
         void DeallocateDescriptor(PoolIndex pool) noexcept
         {
             GX_ASSERT(static_cast<size_t>(pool) < m_PoolDescriptors.size());
@@ -385,10 +385,10 @@ namespace Graphyte
             *freePool = PoolIndex::Invalid;
         }
 
-        //! \brief Deallocates single item from specified pool.
-        //!
-        //! \param pool Provides pool index.
-        //! \param item Provides item index.
+        /// @brief Deallocates single item from specified pool.
+        ///
+        /// @param pool Provides pool index.
+        /// @param item Provides item index.
         void DeallocateItem(PoolIndex pool, ItemIndex item) noexcept
         {
             GX_ASSERT(static_cast<size_t>(pool) < m_PoolDescriptors.size());
@@ -444,9 +444,9 @@ namespace Graphyte
         }
 
     public:
-        //! \brief Allocates new item from pool.
-        //!
-        //! \return The address of newly allocated item.
+        /// @brief Allocates new item from pool.
+        ///
+        /// @return The address of newly allocated item.
         Address AllocateItem() noexcept
         {
             if (m_FreePoolDescriptor == PoolIndex::Invalid)
@@ -512,9 +512,9 @@ namespace Graphyte
             return MakeAddress(freePool, freeIndex);
         }
 
-        //! \brief Deallocates item from pool.
-        //!
-        //! \param address Provides address of allocation to deallocate.
+        /// @brief Deallocates item from pool.
+        ///
+        /// @param address Provides address of allocation to deallocate.
         void DeallocateItem(Address address) noexcept
         {
             PoolIndex pool = GetPoolIndex(address);
@@ -524,9 +524,9 @@ namespace Graphyte
         }
 
     public:
-        //! \brief Initializes new instance of PoolContainerBase for specified item size.
-        //!
-        //! \param size Provides size of item in pool.
+        /// @brief Initializes new instance of PoolContainerBase for specified item size.
+        ///
+        /// @param size Provides size of item in pool.
         PoolContainerBase(std::size_t size) noexcept
             : m_PoolDescriptors{}
             , m_ItemSize{ std::max(size, sizeof(void*)) }
@@ -543,9 +543,9 @@ namespace Graphyte
             }
         }
 
-        //! \brief Allocates new item in pool.
-        //!
-        //! \return The pointer to newly allocated item.
+        /// @brief Allocates new item in pool.
+        ///
+        /// @return The pointer to newly allocated item.
         void* DoAllocate() noexcept
         {
             //
@@ -561,9 +561,9 @@ namespace Graphyte
             return GetPoolItem(address);
         }
 
-        //! \brief Deallocates item from pool.
-        //!
-        //! \param pointer Provides pointer to item to deallocate.
+        /// @brief Deallocates item from pool.
+        ///
+        /// @param pointer Provides pointer to item to deallocate.
         void DoDeallocate(void* pointer) noexcept
         {
             PoolIndex pool;
@@ -590,11 +590,11 @@ namespace Graphyte
             }
         }
 
-        //! \brief Checks whether provided pointer is allocated.
-        //!
-        //! \param pointer Provides pointer to allocation.
-        //!
-        //! \return The value indicating whether pointer is allocated.
+        /// @brief Checks whether provided pointer is allocated.
+        ///
+        /// @param pointer Provides pointer to allocation.
+        ///
+        /// @return The value indicating whether pointer is allocated.
         bool IsAllocated(void* pointer) const noexcept
         {
             PoolIndex pool;
@@ -620,29 +620,29 @@ namespace Graphyte
             return false;
         }
 
-        //! \brief Gets item size.
+        /// @brief Gets item size.
         std::size_t GetItemSize() const noexcept
         {
             return m_ItemSize;
         }
 
-        //! \brief Gets number of elements within pool.
+        /// @brief Gets number of elements within pool.
         std::size_t GetCount() const noexcept
         {
             return m_Count;
         }
 
-        //! \brief Gets capacity of pool collection.
+        /// @brief Gets capacity of pool collection.
         std::size_t GetCapacity() const noexcept
         {
             return m_PoolDescriptors.size() * ElementCount;
         }
     };
 
-    //! \brief This class provides generic pool interface.
-    //!
-    //! \tparam TType        Provides type of element in pool.
-    //! \tparam ElementCount Number of elements within single pool descriptor.
+    /// @brief This class provides generic pool interface.
+    ///
+    /// @tparam TType        Provides type of element in pool.
+    /// @tparam ElementCount Number of elements within single pool descriptor.
     template <typename TType, size_t ElementCount>
     class PoolContainer final : public PoolContainerBase<ElementCount>
     {

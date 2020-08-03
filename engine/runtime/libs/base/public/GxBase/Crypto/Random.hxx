@@ -5,11 +5,11 @@
 
 namespace Graphyte::Crypto
 {
-    //! \brief Generates crypto secure sequence of bytes.
-    //!
-    //! \param buffer Returns buffer of random number bytes.
-    //!
-    //! \return The status code.
+    /// @brief Generates crypto secure sequence of bytes.
+    ///
+    /// @param buffer Returns buffer of random number bytes.
+    ///
+    /// @return The status code.
     BASE_API Status GetRandomBytes(
         notstd::span<std::byte> buffer) noexcept;
 }

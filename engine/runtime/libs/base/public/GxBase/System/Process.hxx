@@ -50,18 +50,18 @@ namespace Graphyte::System
     class BASE_API Process final
     {
     public:
-        //! \brief Creates new process.
-        //!
-        //! \param path              Provides path to executable.
-        //! \param params            Provides optional params for application.
-        //! \param working_directory Provides optional working directory.
-        //! \param flags             Provides additional flags.
-        //! \param id                Returns process ID.
-        //! \param pipe_stdin        Returns stdin pipe to spawned process.
-        //! \param pipe_stdout       Returns stdout pipe to spawned process.
-        //! \param pipe_stderr       Returns stderr pipe to spawned process.
-        //!
-        //! \return The process handle to spawned process.
+        /// @brief Creates new process.
+        ///
+        /// @param path              Provides path to executable.
+        /// @param params            Provides optional params for application.
+        /// @param working_directory Provides optional working directory.
+        /// @param flags             Provides additional flags.
+        /// @param id                Returns process ID.
+        /// @param pipe_stdin        Returns stdin pipe to spawned process.
+        /// @param pipe_stdout       Returns stdout pipe to spawned process.
+        /// @param pipe_stderr       Returns stderr pipe to spawned process.
+        ///
+        /// @return The process handle to spawned process.
         static ProcessHandle Create(
             const char* path,
             const char* params            = nullptr,
@@ -75,45 +75,45 @@ namespace Graphyte::System
         static void Close(
             ProcessHandle& handle) noexcept;
 
-        //! \brief Checks whether specified process is still running.
-        //!
-        //! \param handle    Provides handle to process.
-        //! \param exit_code Returns process exit code.
-        //!
-        //! @return @c true when process is still running, @c false otherwise.
+        /// @brief Checks whether specified process is still running.
+        ///
+        /// @param handle    Provides handle to process.
+        /// @param exit_code Returns process exit code.
+        ///
+        /// @return @c true when process is still running, @c false otherwise.
         static bool IsRunning(
             ProcessHandle& handle,
             int32_t& exit_code) noexcept;
 
-        //! \brief Waits for specified process to exit.
-        //!
-        //! \param handle    Provides handle to process.
-        //! \param exit_code Returns process exit code.
-        //!
-        //! \return @c true when successful, @c false otherwise.
+        /// @brief Waits for specified process to exit.
+        ///
+        /// @param handle    Provides handle to process.
+        /// @param exit_code Returns process exit code.
+        ///
+        /// @return @c true when successful, @c false otherwise.
         static bool Wait(
             ProcessHandle& handle,
             int32_t& exit_code) noexcept;
 
-        //! \brief Terminates process.
-        //!
-        //! \param handle Provides handle of process to terminate.
-        //! \param tree   Provides value indicating whether single process or process tree should be
-        //!               terminated.
+        /// @brief Terminates process.
+        ///
+        /// @param handle Provides handle of process to terminate.
+        /// @param tree   Provides value indicating whether single process or process tree should be
+        ///               terminated.
         static void Terminate(
             ProcessHandle& handle,
             bool tree) noexcept;
 
-        //! \brief Execute process.
-        //!
-        //! \param path              Provides path to executable.
-        //! \param params            Provides optional params for application.
-        //! \param working_directory Provides optional working directory.
-        //! \param exit_code         Returns exit code from process.
-        //! \param out_stdout        Returns string with process stdout stream content.
-        //! \param out_stderr        Returns string with process stderr stream content.
-        //!
-        //! \return  @c true when successful, @c false otherwise.
+        /// @brief Execute process.
+        ///
+        /// @param path              Provides path to executable.
+        /// @param params            Provides optional params for application.
+        /// @param working_directory Provides optional working directory.
+        /// @param exit_code         Returns exit code from process.
+        /// @param out_stdout        Returns string with process stdout stream content.
+        /// @param out_stderr        Returns string with process stderr stream content.
+        ///
+        /// @return  @c true when successful, @c false otherwise.
         static ProcessResult Execute(
             const char* path,
             const char* params            = nullptr,
@@ -122,10 +122,10 @@ namespace Graphyte::System
             std::string* out_stderr       = nullptr) noexcept;
 
 
-        //! \brief Gets link time of current process.
+        /// @brief Gets link time of current process.
         static DateTime GetLinkTime() noexcept;
 
-        //! \brief Gets current process ID.
+        /// @brief Gets current process ID.
         static ProcessId GetCurrent() noexcept;
     };
 }

@@ -36,15 +36,15 @@ namespace Graphyte::Threading
         }
 
     public:
-        //! \brief Starts thread with specified runnable.
-        //!
-        //! \param runnable  Provides object to run in thread.
-        //! \param name      Provides name of newly created thread.
-        //! \param stacksize Provides hint for initial size of thread stack.
-        //! \param priority  Provides initial thread priorirty.
-        //! \param affinity  Provides initial thread affinity.
-        //!
-        //! \return The value indicating whether thread started successfully.
+        /// @brief Starts thread with specified runnable.
+        ///
+        /// @param runnable  Provides object to run in thread.
+        /// @param name      Provides name of newly created thread.
+        /// @param stacksize Provides hint for initial size of thread stack.
+        /// @param priority  Provides initial thread priorirty.
+        /// @param affinity  Provides initial thread affinity.
+        ///
+        /// @return The value indicating whether thread started successfully.
         bool Start(
             IRunnable* runnable,
             std::string_view name,

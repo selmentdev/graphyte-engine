@@ -76,11 +76,11 @@ namespace Graphyte::Threading
         /// \param loop     A value indicating whether timer works in loop
         bool SetTimer(TimerHandle& handle, TimerDelegate callback, float rate, bool loop = false) noexcept;
 
-        //! \brief Sets timer
-        //!
-        //! \param handle A handle of dispatched timer.
-        //! \param rate   A rate of which event callback will be fired.
-        //! \param loop   A value indicating whether timer works in loop.
+        /// @brief Sets timer
+        ///
+        /// @param handle A handle of dispatched timer.
+        /// @param rate   A rate of which event callback will be fired.
+        /// @param loop   A value indicating whether timer works in loop.
         bool SetTimer(TimerHandle& handle, float rate, bool loop) noexcept;
         bool SetTimerNextTick(TimerDelegate callback) noexcept;
 
