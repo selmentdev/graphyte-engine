@@ -1,6 +1,5 @@
 #include "E3DImporter.hxx"
 #include <GxAssetsMesh/AssetsPipeline/MeshProcessor.hxx>
-#include <GxBase/Maths.hxx>
 #include <GxBase/Diagnostics.hxx>
 
 namespace Graphyte::AssetsPipeline::Meshes

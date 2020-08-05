@@ -219,6 +219,51 @@ namespace Graphyte::Maths
     }
 }
 
+
+// =================================================================================================
+// Bit specific functions
+
+namespace Graphyte::Maths
+{
+    template <typename T>
+    mathinline T mathcall CopySign(T number, T sign) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return copysign(number, sign);
+    }
+
+    template <typename T>
+    mathinline T mathcall Sign(T x) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        T const gt_zero = ((T(0.0) < x) ? T(1.0) : T(0.0));
+        T const lt_zero = ((x < T(0.0)) ? T(1.0) : T(0.0));
+        return gt_zero - lt_zero;
+    }
+
+    template <typename T>
+    mathinline T mathcall NearbyInt(T x) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return nearbyint(x);
+    }
+
+    template <typename T>
+    mathinline T mathcall NextToward(T value, T to) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return nexttoward(value, to);
+    }
+
+    template <typename T>
+    mathinline T mathcall NextAfter(T value, T to) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return nextafter(value, to);
+    }
+}
+
+
 // =================================================================================================
 // Comparison
 
@@ -289,31 +334,55 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
+    mathinline bool mathcall IsNearEqualSquared(T a, T b, T tolerance) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        T const diff         = (b - a);
+        T const diff_sq      = diff * diff;
+        T const tolerance_sq = tolerance * tolerance;
+
+        return diff_sq <= tolerance_sq;
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsNearEqualSquared(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return IsNearEqualSquared(a, b, Epsilon<T>());
+    }
+
+    template <typename T>
     mathinline bool mathcall IsGreater(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return (a > b);
+        return isgreater(a, b);
     }
 
     template <typename T>
     mathinline bool mathcall IsGreaterEqual(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return (a >= b);
+        return isgreaterequal(a, b);
     }
 
     template <typename T>
     mathinline bool mathcall IsLess(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return (a < b);
+        return isless(a, b);
     }
 
     template <typename T>
     mathinline bool mathcall IsLessEqual(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return (a <= b);
+        return islessequal(a, b);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsLessGreater(T a, T b) noexcept
+    {
+        return islessgreater(a, b);
     }
 
     template <typename T>
@@ -321,6 +390,20 @@ namespace Graphyte::Maths
         requires(std::is_floating_point_v<T>)
     {
         return (-bounds <= v) && (v <= bounds);
+    }
+
+    template <typename T>
+    mathinline bool mathcall InRange(T v, T min, T max) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (min <= v) && (v < max);
+    }
+
+    template <typename T>
+    mathinline bool mathcall InRangeInclusive(T v, T min, T max) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return (min <= v) && (v <= max);
     }
 
     template <typename T>
@@ -336,8 +419,21 @@ namespace Graphyte::Maths
     {
         return FloatTraits<T>::IsInf(v);
     }
-}
 
+    template <typename T>
+    mathinline bool mathcall IsNormal(T v) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return isnormal(v);
+    }
+
+    template <typename T>
+    mathinline bool mathcall IsUnordered(T a, T b) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return isunordered(a, b);
+    }
+}
 
 // =================================================================================================
 // Arithmetic
@@ -494,6 +590,13 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Power(T x, T y) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return pow(x, y);
+    }
+
+    template <typename T>
+    mathinline T mathcall Power(T x, int y) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return pow(x, y);
@@ -1158,22 +1261,6 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall CopySign(T number, T sign) noexcept
-        requires(std::is_floating_point_v<T>)
-    {
-        return copysign(number, sign);
-    }
-
-    template <typename T>
-    mathinline T mathcall Sign(T x) noexcept
-        requires(std::is_floating_point_v<T>)
-    {
-        T const gt_zero = ((T(0.0) < x) ? T(1.0) : T(0.0));
-        T const lt_zero = ((x < T(0.0)) ? T(1.0) : T(0.0));
-        return gt_zero - lt_zero;
-    }
-
-    template <typename T>
     mathinline T mathcall Ceiling(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
@@ -1223,10 +1310,38 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
+    mathinline T mathcall Min(T a, T b, T c) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return Min(Min(a, b), c);
+    }
+
+    template <typename T>
+    mathinline T mathcall Min(T a, T b, T c, T d) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return Min(Min(a, b), Min(c, d));
+    }
+
+    template <typename T>
     mathinline T mathcall Max(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (a > b) ? a : b;
+    }
+
+    template <typename T>
+    mathinline T mathcall Max(T a, T b, T c) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return Min(Min(a, b), c);
+    }
+
+    template <typename T>
+    mathinline T mathcall Max(T a, T b, T c, T d) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        return Min(Min(a, b), Min(c, d));
     }
 
     template <typename T>
@@ -1236,6 +1351,23 @@ namespace Graphyte::Maths
         T const below = Max(min, v);
         T const result = Min(max, below);
         return result;
+    }
+
+    template <typename T>
+    mathinline T mathcall ClampRoll(T v, T min, T max) noexcept
+        requires(std::is_floating_point_v<T>)
+    {
+        if (v > max)
+        {
+            return min;
+        }
+        else if (v < min)
+        {
+
+            return max;
+        }
+
+        return v;
     }
 
     template <typename T>

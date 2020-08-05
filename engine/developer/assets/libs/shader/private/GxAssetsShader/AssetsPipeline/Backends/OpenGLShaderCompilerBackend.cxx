@@ -53,7 +53,7 @@ namespace Graphyte::AssetsPipeline
 #if false
     namespace
     {
-        const char* GetShaderStage(Graphics::Gpu::GpuShaderStage stage) noexcept
+        std::string_view GetShaderStage(Graphics::Gpu::GpuShaderStage stage) noexcept
         {
             switch (stage)
             {
@@ -103,14 +103,20 @@ namespace Graphyte::AssetsPipeline
         }
 
 
-        std::string commandline{};
-        commandline += " --target-env=opengl";
+        std::string commandline = fmt::format(
+            " --target-env=opengl"
+            " -I {0}"
+            " -c {1}"
+            " -E",
+            Storage::CombinePath(Storage::GetProjectContentDirectory(), "shaders"),
+            source_temp);
+        //commandline += " --target-env=opengl";
         //commandline += " --std=450core";
         //commandline += " --fshader-stage="s + GetShaderStage(input.Stage);
-        commandline += " -I "s + Storage::GetProjectContentDirectory() + "shaders/"s;
+        //commandline += " -I "s + Storage::GetProjectContentDirectory() + "shaders/"s;
         //commandline += " -o "s + target_temp;
-        commandline += " -c "s + source_temp;
-        commandline += " -E";
+        //commandline += " -c "s + source_temp;
+        //commandline += " -E";
 
         auto called = System::Process::Execute(
             m_Glslc.c_str(),

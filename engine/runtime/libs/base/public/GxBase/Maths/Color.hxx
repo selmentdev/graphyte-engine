@@ -1,6 +1,7 @@
 #pragma once
 #include <GxBase/Maths/Base.hxx>
 #include <GxBase/Maths/Vector.hxx>
+#include <GxBase/KnownColors.hxx>
 
 // =================================================================================================
 // Load / store

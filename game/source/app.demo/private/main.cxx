@@ -18,7 +18,6 @@ Graphyte::Application::ApplicationDescriptor GraphyteApp{
 };
 
 #include <GxBase/Uuid.hxx>
-#include <GxBase/Maths.hxx>
 #include <GxBase/System/Dialogs.hxx>
 #include <GxBase/Random.hxx>
 #include <GxBase/Maths/Vector.hxx>

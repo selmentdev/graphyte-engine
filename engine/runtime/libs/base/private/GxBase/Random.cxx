@@ -1,6 +1,5 @@
 #include <GxBase/Random.hxx>
 #include <GxBase/Bitwise.hxx>
-#include <GxBase/Maths.hxx>
 #include <GxBase/Maths/Scalar.hxx>
 #include <GxBase/Maths/Vector.hxx>
 

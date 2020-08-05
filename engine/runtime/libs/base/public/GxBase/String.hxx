@@ -154,6 +154,12 @@ namespace Graphyte
         std::string_view::const_iterator value_first,
         std::string_view::const_iterator value_last) noexcept;
 
+    /// @brief Matches wildcard pattern against value.
+    ///
+    /// @param pattern Provides wildcard pattern.
+    /// @param value   Provides value to match.
+    ///
+    /// @return @c true when matched, @c false otherwise.
     inline bool MatchWildcard(
         std::string_view pattern,
         std::string_view value) noexcept

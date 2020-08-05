@@ -26,7 +26,7 @@ namespace Graphyte::AssetsPipeline
     {
     }
 
-    const char* GetShaderStage(Graphics::GpuShaderStage stage) noexcept
+    std::string_view GetShaderStage(Graphics::GpuShaderStage stage) noexcept
     {
         switch (stage)
         {
@@ -46,7 +46,7 @@ namespace Graphyte::AssetsPipeline
                 break;
         }
 
-        return nullptr;
+        return {};
     }
 
     bool SPIRVShaderCompilerBackend::IsSupported(ShaderCompilerInput& input) const noexcept
@@ -107,13 +107,22 @@ namespace Graphyte::AssetsPipeline
         }
 
 
-        std::string commandline{};
-        commandline += " --target-env=vulkan";
+        std::string commandline = fmt::format(
+            " --target-env=vulkan"
+            " -fshader-stage={0}"
+            " -I {1}"
+            " -c {2}"
+            " -o {3}",
+            GetShaderStage(input.Stage),
+            Storage::CombinePath(Storage::GetProjectContentDirectory(), "shaders"),
+            source_temp,
+            target_temp);
+        //commandline += " --target-env=vulkan";
         //commandline += " --std=450core";
-        commandline += " -fshader-stage="s + GetShaderStage(input.Stage);
-        commandline += " -I "s + Storage::GetProjectContentDirectory() + "shaders/"s;
-        commandline += " -c "s + source_temp;
-        commandline += " -o "s + target_temp;
+        //commandline += " -fshader-stage="s + GetShaderStage(input.Stage);
+        //commandline += " -I "s + Storage::GetProjectContentDirectory() + "shaders/"s;
+        //commandline += " -c "s + source_temp;
+        //commandline += " -o "s + target_temp;
 
         auto called = System::Process::Execute(
             m_CompilerPath.c_str(),

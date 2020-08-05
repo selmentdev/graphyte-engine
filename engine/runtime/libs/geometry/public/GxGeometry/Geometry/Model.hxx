@@ -1,7 +1,6 @@
 #pragma once
 #include <GxGeometry/Geometry.module.hxx>
 #include <GxBase/Types.hxx>
-#include <GxBase/Maths.hxx>
 #include <GxGeometry/Geometry/Mesh.hxx>
 #include <GxBase/Maths/Matrix.hxx>
 

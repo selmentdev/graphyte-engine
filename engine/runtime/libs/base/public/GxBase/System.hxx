@@ -41,12 +41,16 @@ namespace Graphyte::System
     {
         int32_t Left;
         int32_t Top;
+
+        constexpr auto operator<=>(Point const& rhs) const noexcept = default;
     };
 
     struct Size final
     {
         int32_t Width;
         int32_t Height;
+
+        constexpr auto operator<=>(Size const& rhs) const noexcept = default;
     };
 
     struct Rect final
@@ -55,6 +59,18 @@ namespace Graphyte::System
         int32_t Top;
         int32_t Width;
         int32_t Height;
+
+        constexpr int32_t Right() const noexcept
+        {
+            return this->Left + this->Width;
+        }
+
+        constexpr int32_t Bottom() const noexcept
+        {
+            return this->Top + this->Height;
+        }
+
+        constexpr auto operator<=>(Rect const& rhs) const noexcept = default;
     };
 
     struct PointF final

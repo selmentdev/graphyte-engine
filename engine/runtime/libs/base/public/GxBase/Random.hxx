@@ -2,7 +2,6 @@
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Types.hxx>
 #include <GxBase/Span.hxx>
-#include <GxBase/Maths.hxx>
 #include <GxBase/Maths/Vector.hxx>
 
 namespace Graphyte::Random::Impl
