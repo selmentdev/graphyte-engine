@@ -10,12 +10,12 @@ mathinline Quaternion mathcall Quaternion::Slerp(Quaternion q0, Quaternion q1, V
 
     auto v_zero    = Vector4::Zero();
     auto v_control = Vector4::CompareLess(v_cos_omega, v_zero);
-    auto v_sign    = Vector4::Select({ Detail::VEC4_ONE_4.V }, { Detail::VEC4_NEGATIVE_ONE_4.V }, v_control);
+    auto v_sign    = Vector4::Select({ Detail::c_V4_F32_One.V }, { Detail::c_V4_F32_Negative_One.V }, v_control);
 
     v_cos_omega = Vector4::Multiply(v_cos_omega, v_sign);
     v_control   = Vector4::CompareLess(v_cos_omega, { one_minus_epsilon.V });
 
-    auto v_sin_omega = Vector4::NegativeMultiplySubtract(v_cos_omega, v_cos_omega, { Detail::VEC4_ONE_4.V });
+    auto v_sin_omega = Vector4::NegativeMultiplySubtract(v_cos_omega, v_cos_omega, { Detail::c_V4_F32_One.V });
     v_sin_omega      = Vector4::Sqrt(v_sin_omega);
 
     auto v_omega = Vector4::ATan2(v_sin_omega, v_cos_omega);
@@ -24,7 +24,7 @@ mathinline Quaternion mathcall Quaternion::Slerp(Quaternion q0, Quaternion q1, V
     auto v_v01       = Vector4::ShiftLeft(t, v_zero, 2);
     v_sign_mask      = Vector4::ShiftLeft(v_sign_mask, v_zero, 3);
     v_v01            = Vector4::MaskXorUInt(v_v01, v_sign_mask);
-    v_v01            = Vector4::Add({ Detail::VEC4_POSITIVE_UNIT_X.V }, v_v01);
+    v_v01            = Vector4::Add({ Detail::c_V4_F32_PositiveUnitX.V }, v_v01);
 
     auto v_inv_sin_omega = Vector4::Reciprocal(v_sin_omega);
 
@@ -51,22 +51,22 @@ mathinline Quaternion mathcall Quaternion::Slerp(Quaternion q0, Quaternion q1, V
 
     auto v_zero    = _mm_setzero_ps();
     auto v_control = Vector4::CompareLess({ v_cos_omega }, { v_zero }).V;
-    auto v_sign    = Vector4::Select({ Detail::VEC4_ONE_4.V }, { Detail::VEC4_NEGATIVE_ONE_4.V }, { v_control }).V;
+    auto v_sign    = Vector4::Select({ Detail::c_V4_F32_One.V }, { Detail::c_V4_F32_Negative_One.V }, { v_control }).V;
 
     v_cos_omega = _mm_mul_ps(v_cos_omega, v_sign);
 
     v_control = Vector4::CompareLess({ v_cos_omega }, { one_minus_epsilon.V }).V;
 
     auto v_sin_omega = _mm_mul_ps(v_cos_omega, v_cos_omega);
-    v_sin_omega      = _mm_sub_ps(Detail::VEC4_ONE_4.V, v_sin_omega);
+    v_sin_omega      = _mm_sub_ps(Detail::c_V4_F32_One.V, v_sin_omega);
     v_sin_omega      = _mm_sqrt_ps(v_sin_omega);
 
     auto v_omega = Vector4::ATan2({ v_sin_omega }, { v_cos_omega }).V;
 
     auto v_v01 = _mm_permute_ps(t.V, _MM_SHUFFLE(2, 3, 0, 1));
-    v_v01      = _mm_and_ps(v_v01, Detail::VEC4_MASK_SELECT_1100);
+    v_v01      = _mm_and_ps(v_v01, Detail::c_V4_U32_Mask_1100);
     v_v01      = _mm_xor_ps(v_v01, sign_mask_2.V);
-    v_v01      = _mm_add_ps(Detail::VEC4_POSITIVE_UNIT_X.V, v_v01);
+    v_v01      = _mm_add_ps(Detail::c_V4_F32_PositiveUnitX.V, v_v01);
 
     auto v_s0 = _mm_mul_ps(v_v01, v_omega);
     v_s0      = Vector4::Sin({ v_s0 }).V;

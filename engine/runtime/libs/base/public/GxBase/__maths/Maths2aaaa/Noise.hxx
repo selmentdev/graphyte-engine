@@ -100,7 +100,7 @@ namespace Graphyte::Maths::Noises::Impl
         Vec4 const s       = Select(Zero<Vec4>(), One<Vec4>(), cmpneg);
         Vec4 const sxyz    = MulSub(s, Make<Vec4>(2.0F), Make<Vec4>(1.0F));
         Vec4 const rs      = MulAdd(p, sxyz, SplatW(s));
-        Vec4 const r       = Select(p, rs, { Maths::Impl::VEC4_MASK_COMPONENTS_3.V });
+        Vec4 const r       = Select(p, rs, { Maths::Impl::c_V4_U32_Mask_1110.V });
         return r;
     }
 
@@ -147,7 +147,7 @@ namespace Graphyte::Maths::Noises
         Vec4 x12 = Add(Swizzle<SwizzleMask::XYXY>(ToVec4(x0)), Swizzle<SwizzleMask::XXZZ>(c));
 
         //x12.xy -= i1;
-        x12 = Select(x12, ToVec4(Sub(ToVec2(x12), i1)), Bool4{ Maths::Impl::VEC4_MASK_SELECT_1100.V });
+        x12 = Select(x12, ToVec4(Sub(ToVec2(x12), i1)), Bool4{ Maths::Impl::c_V4_U32_Mask_1100.V });
 
         i = Impl::Mod289(i);
 

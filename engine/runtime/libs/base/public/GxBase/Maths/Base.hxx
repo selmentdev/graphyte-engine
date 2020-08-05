@@ -504,18 +504,18 @@ namespace Graphyte::Maths::Impl
         return result;
 #elif GRAPHYTE_HW_NEON
         float32x4_t const r0      = vmulq_n_f32(vfloat, static_cast<float>(1U << exponent));
-        uint32x4_t const overflow = vcgtq_f32(r0, VEC4_INTMAX.V);
+        uint32x4_t const overflow = vcgtq_f32(r0, c_V4_F32_S32_Max.V);
         int32x4_t const r1        = vcvtq_s32_f32(r0);
-        uint32x4_t const r2       = vandq_u32(overflow, VEC4_MASK_ABS.V);
+        uint32x4_t const r2       = vandq_u32(overflow, c_V4_U32_Mask_MaskAbs.V);
         uint32x4_t const r3       = vbicq_u32(r1, overflow);
         uint32x4_t const r4       = vorrq_u32(r3, r2);
         return vreinterpretq_f32_u32(r4);
 #elif GRAPHYTE_HW_AVX
         __m128 const r0       = _mm_set_ps1(static_cast<float>(1U << exponent));
         __m128 const r1       = _mm_mul_ps(r0, vfloat);
-        __m128 const overflow = _mm_cmpgt_ps(r0, VEC4_INTMAX.V);
+        __m128 const overflow = _mm_cmpgt_ps(r0, c_V4_F32_S32_Max.V);
         __m128i const r2      = _mm_cvttps_epi32(r1);
-        __m128 const r3       = _mm_and_ps(overflow, VEC4_MASK_ABS.V);
+        __m128 const r3       = _mm_and_ps(overflow, c_V4_U32_Mask_MaskAbs.V);
         __m128 const r4       = _mm_andnot_ps(overflow, _mm_castsi128_ps(r2));
         __m128 const r5       = _mm_or_ps(r4, r3);
         return r5;
@@ -543,11 +543,11 @@ namespace Graphyte::Maths::Impl
         float32x4_t const r1 = vmulq_n_f32(r0, scale);
         return r1;
 #elif GRAPHYTE_HW_AVX
-        __m128 const mask0    = _mm_and_ps(vuint, VEC4_NEGATIVE_ZERO.V);
+        __m128 const mask0    = _mm_and_ps(vuint, c_V4_F32_Negative_Zero.V);
         __m128 const r0       = _mm_xor_ps(vuint, mask0);
         __m128 const r1       = _mm_cvtepi32_ps(_mm_castps_si128(r0));
         __m128i const mask1   = _mm_srai_epi32(_mm_castps_si128(mask0), 31);
-        __m128 const mask2    = _mm_and_ps(_mm_castsi128_ps(mask1), VEC4_UNSIGNED_FIX.V);
+        __m128 const mask2    = _mm_and_ps(_mm_castsi128_ps(mask1), c_V4_F32_U32_Fix.V);
         __m128 const r2       = _mm_add_ps(r1, mask2);
         uint32_t const uscale = 0x3F800000U - (exponent << 23);
         __m128i const iscale  = _mm_set1_epi32(static_cast<int>(uscale));
@@ -589,7 +589,7 @@ namespace Graphyte::Maths::Impl
         return result;
 #elif GRAPHYTE_HW_NEON
         float32x4_t const r0      = vmulq_n_f32(vfloat, static_cast<float>(1U << exponent));
-        uint32x4_t const overflow = vcgtq_f32(r0, VEC4_UINTMAX.V);
+        uint32x4_t const overflow = vcgtq_f32(r0, c_V4_F32_U32_Max.V);
         uint32x4_t const r1       = vcvtq_u32_f32(r0);
         uint32x4_t const r2       = vbicq_u32(r1, overflow);
         uint32x4_t const r3       = vorrq_u32(overflow, r2);
@@ -598,13 +598,13 @@ namespace Graphyte::Maths::Impl
         __m128 const r0       = _mm_set_ps1(static_cast<float>(1U << exponent));
         __m128 const r1       = _mm_mul_ps(r0, vfloat);
         __m128 const r2       = _mm_max_ps(r1, _mm_setzero_ps());
-        __m128 const overflow = _mm_cmpgt_ps(r2, VEC4_UINTMAX.V);
-        __m128 const fix      = VEC4_UNSIGNED_FIX.V;
+        __m128 const overflow = _mm_cmpgt_ps(r2, c_V4_F32_U32_Max.V);
+        __m128 const fix      = c_V4_F32_U32_Fix.V;
         __m128 const mask     = _mm_cmpge_ps(r2, fix);
         __m128 const max      = _mm_and_ps(fix, mask);
         __m128 const r3       = _mm_sub_ps(r2, max);
         __m128i const r4      = _mm_cvttps_epi32(r3);
-        __m128 const r5       = _mm_and_ps(mask, VEC4_NEGATIVE_ZERO.V);
+        __m128 const r5       = _mm_and_ps(mask, c_V4_F32_Negative_Zero.V);
         __m128 const r6       = _mm_xor_ps(_mm_castsi128_ps(r4), r5);
         __m128 const r7       = _mm_or_ps(r6, overflow);
         return r7;
@@ -1218,7 +1218,7 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const xyzn = _mm_load_ps(reinterpret_cast<float const*>(source));
-        __m128 const result = _mm_and_ps(xyzn, Impl::VEC4_MASK_COMPONENTS_3.V);
+        __m128 const result = _mm_and_ps(xyzn, Impl::c_V4_U32_Mask_1110.V);
         return { result };
 #endif
     }
@@ -1527,11 +1527,11 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128i const vsource = _mm_loadu_si128(reinterpret_cast<uint32_t const*>(source));
         __m128 const vvalues = _mm_castsi128_ps(vsource);
-        __m128 const vmask = _mm_and_ps(vvalues, Impl::VEC4_NEGATIVE_ZERO.V);
+        __m128 const vmask = _mm_and_ps(vvalues, Impl::c_V4_F32_Negative_Zero.V);
         __m128 const vpositive = _mm_xor_ps(vvalues, vmask);
         __m128 const vresult = _mm_cvtepi32_ps(_mm_castps_si128(vpositive));
         __m128i const imask = _mm_srai_epi32(_mm_castps_si128(vmask), 31);
-        __m128 const vfixup = _mm_and_ps(_mm_castsi128_ps(imask), Impl::VEC4_UNSIGNED_FIX.V);
+        __m128 const vfixup = _mm_and_ps(_mm_castsi128_ps(imask), Impl::c_V4_F32_U32_Fix.V);
         __m128 const vfinal = _mm_add_ps(vresult, vfixup);
         return { vfinal };
 #elif GRAPHYTE_HW_NEON
@@ -2754,7 +2754,7 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128i const partial = _mm_or_si128(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
-        __m128i const result = _mm_andnot_si128(partial, _mm_castps_si128(Impl::VEC4_MASK_NEGATIVE_ONE.V));
+        __m128i const result = _mm_andnot_si128(partial, _mm_castps_si128(Impl::c_V4_U32_Mask_1111.V));
         return { _mm_castsi128_ps(result) };
 #elif GRAPHYTE_HW_NEON
         uint32x4_t const partial = vorrq_u32(
@@ -2828,7 +2828,7 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128i const result = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
-        return { _mm_xor_ps(_mm_castsi128_ps(result), Impl::VEC4_MASK_NEGATIVE_ONE.V) };
+        return { _mm_xor_ps(_mm_castsi128_ps(result), Impl::c_V4_U32_Mask_1111.V) };
 #endif
     }
 
@@ -3129,7 +3129,7 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128i const result = _mm_cmpeq_epi32(_mm_castps_si128(a.V), _mm_castps_si128(b.V));
-        return { _mm_xor_ps(_mm_castsi128_ps(result), Impl::VEC4_MASK_NEGATIVE_ONE.V) };
+        return { _mm_xor_ps(_mm_castsi128_ps(result), Impl::c_V4_U32_Mask_1111.V) };
 #endif
     }
 }
@@ -3339,8 +3339,8 @@ namespace Graphyte::Maths
         } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        __m128 const abs_v = _mm_and_ps(v.V, Impl::VEC4_MASK_ABS.V);
-        __m128 const result = _mm_cmpeq_ps(abs_v, Impl::VEC4_INFINITY.V);
+        __m128 const abs_v = _mm_and_ps(v.V, Impl::c_V4_U32_Mask_MaskAbs.V);
+        __m128 const result = _mm_cmpeq_ps(abs_v, Impl::c_V4_F32_Positive_Infinity.V);
         return { result };
 #endif
     }
@@ -3360,7 +3360,7 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const mask_le = _mm_cmple_ps(v.V, bounds.V);
-        __m128 const neg_bounds = _mm_mul_ps(bounds.V, Impl::VEC4_NEGATIVE_ONE_4.V);
+        __m128 const neg_bounds = _mm_mul_ps(bounds.V, Impl::c_V4_F32_Negative_One.V);
         __m128 const mask_ge = _mm_cmple_ps(neg_bounds, v.V);
         __m128 const result = _mm_and_ps(mask_le, mask_ge);
         return { result };
@@ -3536,8 +3536,8 @@ namespace Graphyte::Maths
             return FloatTraits<float>::IsInf(v.V.F[0]);
         }
 #elif GRAPHYTE_HW_AVX
-        __m128 const abs  = _mm_and_ps(v.V, Impl::VEC4_MASK_ABS.V);
-        __m128 const mask = _mm_cmpeq_ps(abs, Impl::VEC4_INFINITY.V);
+        __m128 const abs  = _mm_and_ps(v.V, Impl::c_V4_U32_Mask_MaskAbs.V);
+        __m128 const mask = _mm_cmpeq_ps(abs, Impl::c_V4_F32_Positive_Infinity.V);
 
         constexpr uint32_t expected = (1u << T::Components) - 1;
 
@@ -3869,7 +3869,7 @@ namespace Graphyte::Maths
         return Clamp(v, zero, one);
 #elif GRAPHYTE_HW_AVX
         __m128 const zero = _mm_setzero_ps();
-        __m128 const one = Impl::VEC4_ONE_4.V;
+        __m128 const one = Impl::c_V4_F32_One.V;
         __m128 const below = _mm_max_ps(v.V, zero);
         __m128 const result = _mm_min_ps(below, one);
         return { result };
@@ -4129,7 +4129,7 @@ namespace Graphyte::Maths
         }
         else if constexpr (T::Components == 3)
         {
-            __m128 const xyz0 = _mm_and_ps(v.V, Impl::VEC4_MASK_SELECT_1110.V);
+            __m128 const xyz0 = _mm_and_ps(v.V, Impl::c_V4_U32_Mask_1110.V);
             __m128 const xy_zz = _mm_hadd_ps(xyz0, xyz0);
             __m128 const result = _mm_hadd_ps(xy_zz, xy_zz);
         }

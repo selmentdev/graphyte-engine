@@ -185,7 +185,7 @@ namespace Graphyte::Maths
         // = [x, vy, vz, 0]
         float32x4_t const r2 = vreinterpretq_f32_u32(vandq_u32(
             vreinterpretq_u32_f32(r1),
-            vreinterpretq_u32_f32(Impl::VEC4_MASK_SELECT_1110.V)));
+            vreinterpretq_u32_f32(Impl::c_V4_U32_Mask_1110.V)));
         return { r2 };
 #elif GRAPHYTE_HW_AVX
         // = [_, vy, vz, _]
@@ -193,7 +193,7 @@ namespace Graphyte::Maths
         // = [x, vy, vz, _]
         __m128 const r1 = _mm_insert_ps(r0, _mm_set_ps1(x), 0x00);
         // = [x, vy, vz, 0]
-        __m128 const r2 = _mm_and_ps(r1, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 const r2 = _mm_and_ps(r1, Impl::c_V4_U32_Mask_1110.V);
         return { r2 };
 #endif
     }
@@ -237,56 +237,56 @@ namespace Graphyte::Maths
     mathinline T mathcall UnitX() noexcept
         requires(T::Components >= 1 && Impl::IsSimdFloat4<T>)
     {
-        return { Impl::VEC4_POSITIVE_UNIT_X.V };
+        return { Impl::c_V4_F32_PositiveUnitX.V };
     }
 
     template <typename T>
     mathinline T mathcall UnitY() noexcept
         requires(T::Components >= 2 && Impl::IsSimdFloat4<T>)
     {
-        return { Impl::VEC4_POSITIVE_UNIT_Y.V };
+        return { Impl::c_V4_F32_PositiveUnitY.V };
     }
 
     template <typename T>
     mathinline T mathcall UnitZ() noexcept
         requires(T::Components >= 3 && Impl::IsSimdFloat4<T>)
     {
-        return { Impl::VEC4_POSITIVE_UNIT_Z.V };
+        return { Impl::c_V4_F32_PositiveUnitZ.V };
     }
 
     template <typename T>
     mathinline T mathcall UnitW() noexcept
         requires(T::Components >= 4 && Impl::IsSimdFloat4<T>)
     {
-        return { Impl::VEC4_POSITIVE_UNIT_W.V };
+        return { Impl::c_V4_F32_PositiveUnitW.V };
     }
 
     template <typename T>
     mathinline T mathcall NegativeUnitX() noexcept
         requires(T::Components >= 1 && Impl::IsSimdFloat4<T>)
     {
-        return { Impl::VEC4_NEGATIVE_UNIT_X.V };
+        return { Impl::c_V4_F32_NegativeUnitX.V };
     }
 
     template <typename T>
     mathinline T mathcall NegativeUnitY() noexcept
         requires(T::Components >= 2 && Impl::IsSimdFloat4<T>)
     {
-        return { Impl::VEC4_NEGATIVE_UNIT_Y.V };
+        return { Impl::c_V4_F32_NegativeUnitY.V };
     }
 
     template <typename T>
     mathinline T mathcall NegativeUnitZ() noexcept
         requires(T::Components >= 3 && Impl::IsSimdFloat4<T>)
     {
-        return { Impl::VEC4_NEGATIVE_UNIT_Z.V };
+        return { Impl::c_V4_F32_NegativeUnitZ.V };
     }
 
     template <typename T>
     mathinline T mathcall NegativeUnitW() noexcept
         requires(T::Components >= 4 && Impl::IsSimdFloat4<T>)
     {
-        return { Impl::VEC4_NEGATIVE_UNIT_W.V };
+        return { Impl::c_V4_F32_NegativeUnitW.V };
     }
 
     template <typename T>
@@ -294,7 +294,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        return { Impl::VEC4_ZERO_4.V };
+        return { Impl::c_V4_F32_Zero.V };
 #elif GRAPHYTE_HW_AVX
         return { _mm_setzero_ps() };
 #elif GRAPHYTE_HW_NEON
@@ -315,7 +315,7 @@ namespace Graphyte::Maths
         } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        return { Impl::VEC4_ONE_4.V };
+        return { Impl::c_V4_F32_One.V };
 #elif GRAPHYTE_HW_NEON
         return { vdupq_n_f32(1.0F) };
 #endif
@@ -334,7 +334,7 @@ namespace Graphyte::Maths
         } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        return { Impl::VEC4_INFINITY.V };
+        return { Impl::c_V4_F32_Positive_Infinity.V };
 #elif GRAPHYTE_HW_NEON
         return { vdupq_n_u32(FloatTraits<float>::Infinity) };
 #endif
@@ -353,7 +353,7 @@ namespace Graphyte::Maths
         } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        return { Impl::VEC4_QNAN.V };
+        return { Impl::c_V4_F32_Positive_QNan.V };
 #elif GRAPHYTE_HW_NEON
         return { vdupq_n_u32(FloatTraits<float>::QNan) };
 #endif
@@ -372,7 +372,7 @@ namespace Graphyte::Maths
         } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        return { Impl::VEC4_EPSILON.V };
+        return { Impl::c_V4_F32_Epsilon.V };
 #elif GRAPHYTE_HW_NEON
         return { vdupq_n_u32(FloatTraits<float>::Epsilon) };
 #endif
@@ -401,7 +401,7 @@ namespace Graphyte::Maths
     mathinline T mathcall E() noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
-        return { Impl::g_Const_E_Vec4.V };
+        return { Impl::c_V4_F32_E.V };
     }
 }
 
@@ -762,7 +762,7 @@ namespace Graphyte::Maths
         constexpr uint32_t expected = (1u << T::Components) - 1;
 
         __m128 const mask_le    = _mm_cmple_ps(v.V, bounds.V);
-        __m128 const neg_bounds = _mm_mul_ps(bounds.V, Impl::VEC4_NEGATIVE_ONE_4.V);
+        __m128 const neg_bounds = _mm_mul_ps(bounds.V, Impl::c_V4_F32_Negative_One.V);
         __m128 const mask_ge    = _mm_cmple_ps(neg_bounds, v.V);
         __m128 const mask       = _mm_and_ps(mask_le, mask_ge);
 
@@ -908,7 +908,7 @@ namespace Graphyte::Maths
         return length;
 #elif GRAPHYTE_HW_AVX
         constexpr int dp_mask       = Impl::avx_mm_dp_mask<T::Components>;
-        __m128 const one            = Impl::VEC4_ONE_4.V;
+        __m128 const one            = Impl::c_V4_F32_One.V;
         __m128 const length_squared = _mm_dp_ps(v.V, v.V, dp_mask);
         __m128 const length         = _mm_sqrt_ps(length_squared);
         __m128 const result         = _mm_div_ps(one, length);
@@ -964,7 +964,7 @@ namespace Graphyte::Maths
         // = | |v| - 1 |
         T const absdiff = Abs(difference);
 
-        return IsLess(absdiff, T{ Impl::VEC4_UNIT_EPSILON.V });
+        return IsLess(absdiff, T{ Impl::c_V4_F32_Unit_Epsilon.V });
     }
 
     template <typename T>
@@ -991,11 +991,11 @@ namespace Graphyte::Maths
 
         __m128 const zero             = _mm_setzero_ps();
         __m128 const mask_length_zero = _mm_cmpneq_ps(zero, length);
-        __m128 const mask_length_inf  = _mm_cmpneq_ps(length_squared, Impl::VEC4_INFINITY.V);
+        __m128 const mask_length_inf  = _mm_cmpneq_ps(length_squared, Impl::c_V4_F32_Positive_Infinity.V);
 
         __m128 const normalized             = _mm_div_ps(v.V, length);
         __m128 const normalized_masked_zero = _mm_and_ps(normalized, mask_length_zero);
-        __m128 const select_qnan            = _mm_andnot_ps(mask_length_inf, Impl::VEC4_QNAN.V);
+        __m128 const select_qnan            = _mm_andnot_ps(mask_length_inf, Impl::c_V4_F32_Positive_QNan.V);
         __m128 const select_inf             = _mm_and_ps(normalized_masked_zero, mask_length_inf);
 
         __m128 const result = _mm_or_ps(select_qnan, select_inf);
@@ -1043,15 +1043,15 @@ namespace Graphyte::Maths
             GX_ASSERT(GetW(min) == GetW(max));
         }
 
-        GX_ASSERT(IsGreaterEqual(min, T{ Impl::VEC4_ZERO_4.V }));
-        GX_ASSERT(IsGreaterEqual(max, T{ Impl::VEC4_ZERO_4.V }));
+        GX_ASSERT(IsGreaterEqual(min, T{ Impl::c_V4_F32_Zero.V }));
+        GX_ASSERT(IsGreaterEqual(max, T{ Impl::c_V4_F32_Zero.V }));
         GX_ASSERT(IsGreaterEqual(max, min));
 
         T const length_squared = LengthSquared(v);
         T const zero           = Zero<T>();
 
         T const rcp_length = InvSqrt(length_squared);
-        auto const mask_inf_length = BitCompareEqual(length_squared, T{ Impl::VEC4_INFINITY.V });
+        auto const mask_inf_length = BitCompareEqual(length_squared, T{ Impl::c_V4_F32_Positive_Infinity.V });
         auto const mask_zero_length = CompareEqual(length_squared, zero);
 
         T const normal = Multiply(v, rcp_length);
@@ -1108,7 +1108,7 @@ namespace Graphyte::Maths
         // r0 = i dot n
         T const i_dot_n = Dot(incident, normal);
 
-        T const one{ Impl::VEC4_ONE_4.V };
+        T const one{ Impl::c_V4_F32_One.V };
 
         // r1 = 1 - (r0 * r0)
         T const r1 = NegateMultiplyAdd(i_dot_n, i_dot_n, one);
@@ -1171,7 +1171,7 @@ namespace Graphyte::Maths
         T const cos_angle = Dot(a, b);
 
         // Clamp to acos range
-        T const cos_angle_clamped = Clamp<T>(cos_angle, T{ Impl::VEC4_NEGATIVE_ONE_4.V }, T{ Impl::VEC4_ONE_4.V });
+        T const cos_angle_clamped = Clamp<T>(cos_angle, T{ Impl::c_V4_F32_Negative_One.V }, T{ Impl::c_V4_F32_One.V });
         T const angle             = Acos<T>(cos_angle_clamped);
 
         return angle;
@@ -1189,7 +1189,7 @@ namespace Graphyte::Maths
         T const cos_angle     = Multiply(a_dot_b, rcp_len_ab_sq);
 
         // Clamp to acos range
-        T const cos_angle_clamped = Clamp(cos_angle, T{ Impl::VEC4_NEGATIVE_ONE_4.V }, T{ Impl::VEC4_ONE_4.V });
+        T const cos_angle_clamped = Clamp(cos_angle, T{ Impl::c_V4_F32_Negative_One.V }, T{ Impl::c_V4_F32_One.V });
         T const angle             = Acos(cos_angle_clamped);
 
         return angle;
@@ -1952,7 +1952,7 @@ namespace Graphyte::Maths
         return { r };
 #elif GRAPHYTE_HW_AVX
         __m128 const partial = _mm_sqrt_ps(v.V);
-        __m128 const result  = _mm_div_ps(Impl::VEC4_ONE_4.V, partial);
+        __m128 const result  = _mm_div_ps(Impl::c_V4_F32_One.V, partial);
         return { result };
 #endif
     }
@@ -2423,13 +2423,13 @@ namespace Graphyte::Maths
         // r0 = t * b
         T const t_mul_b = Multiply(t, b);
         // r1 = 1 - t
-        T const one_minus_t = Subtract(T{ Impl::VEC4_ONE_4.V }, t);
+        T const one_minus_t = Subtract(T{ Impl::c_V4_F32_One.V }, t);
         // (r1 * a) + r0 === ((1 - t) * a) + (t * b)
         T const result = MultiplyAdd(one_minus_t, a, t_mul_b);
         return result;
 #elif GRAPHYTE_HW_AVX
         __m128 const t_mul_b     = _mm_mul_ps(t.V, b.V);
-        __m128 const one_minus_t = _mm_sub_ps(Impl::VEC4_ONE_4.V, t.V);
+        __m128 const one_minus_t = _mm_sub_ps(Impl::c_V4_F32_One.V, t.V);
         __m128 const result      = Impl::avx_fmadd_f32x4(one_minus_t, a.V, t_mul_b);
         return { result };
 #endif
@@ -2517,9 +2517,9 @@ namespace Graphyte::Maths
         __m128 const t3_m = _mm_mul_ps(t3, catmul_t3.V);
 
         __m128 const t2t3_ma = _mm_add_ps(t2_m, t3_m);
-        __m128 const ty      = _mm_and_ps(t.V, Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const ty      = _mm_and_ps(t.V, Impl::c_V4_U32_Mask_0100.V);
         __m128 const t2t3ty  = _mm_add_ps(t2t3_ma, ty);
-        __m128 const tfinal  = _mm_add_ps(t2t3ty, Impl::VEC4_POSITIVE_UNIT_X.V);
+        __m128 const tfinal  = _mm_add_ps(t2t3ty, Impl::c_V4_F32_PositiveUnitX.V);
 
         __m128 const r0 = _mm_permute_ps(tfinal, _MM_SHUFFLE(0, 0, 0, 0));
         __m128 const f0 = _mm_mul_ps(r0, position0.V);
@@ -2701,7 +2701,7 @@ namespace Graphyte::Maths
         result = _mm_add_ps(result, t3);
 
         // final result
-        result = _mm_mul_ps(result, Impl::VEC4_ONE_HALF_4.V);
+        result = _mm_mul_ps(result, Impl::c_V4_F32_One_Half.V);
         return { result };
 #endif
     }
@@ -2807,7 +2807,7 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
 
         // = refraction_index^2 - 1
-        Vector4 const g0 = MultiplyAdd(refraction_index, refraction_index, Vector4{ Impl::VEC4_NEGATIVE_ONE_4.V });
+        Vector4 const g0 = MultiplyAdd(refraction_index, refraction_index, Vector4{ Impl::c_V4_F32_Negative_One.V });
 
         // = c^2 + refraction_index^2 - 1
         Vector4 const g1 = MultiplyAdd(cos_incident_angle, cos_incident_angle, g0);
@@ -2824,19 +2824,19 @@ namespace Graphyte::Maths
 
         // = 0.5f * (g - c)^2 / (g + c)^2
         Vector4 const rcp_s1  = Reciprocal(s1);
-        Vector4 const half_d1 = Multiply(Vector4{ Impl::VEC4_HALF_4.V }, d1);
+        Vector4 const half_d1 = Multiply(Vector4{ Impl::c_V4_F32_One_Half.V }, d1);
         Vector4 const r0      = Multiply(half_d1, rcp_s1);
 
         // = (c * (g + c) - 1)^2
-        Vector4 const ca0 = MultiplyAdd(cos_incident_angle, s0, Vector4{ Impl::VEC4_NEGATIVE_ONE_4.V });
+        Vector4 const ca0 = MultiplyAdd(cos_incident_angle, s0, Vector4{ Impl::c_V4_F32_Negative_One.V });
         Vector4 const ca1 = Multiply(ca0, ca0);
 
         // = (c * (g - c) + 1)^2
-        Vector4 const cb0 = MultiplyAdd(cos_incident_angle, d0, Vector4{ Impl::VEC4_ONE_4.V });
+        Vector4 const cb0 = MultiplyAdd(cos_incident_angle, d0, Vector4{ Impl::c_V4_F32_One.V });
         Vector4 const cb1 = Multiply(cb0, cb0);
         Vector4 const cb2 = Reciprocal(cb1);
 
-        Vector4 const r1 = MultiplyAdd(ca1, cb2, Vector4{ Impl::VEC4_ONE_4.V });
+        Vector4 const r1 = MultiplyAdd(ca1, cb2, Vector4{ Impl::c_V4_F32_One.V });
         Vector4 const r2 = Multiply(r0, r1);
         Vector4 const r3 = Saturate(r2);
 
@@ -2844,7 +2844,7 @@ namespace Graphyte::Maths
 
 #elif GRAPHYTE_HW_AVX
 
-        __m128 const one = Impl::VEC4_ONE_4.V;
+        __m128 const one = Impl::c_V4_F32_One.V;
 
         // NOTE: possible optimization; instead of storing `zero` in register whole time, we may insert it later
         __m128 const zero = _mm_setzero_ps();
@@ -2864,7 +2864,7 @@ namespace Graphyte::Maths
         __m128 const d1 = _mm_mul_ps(d0, d0);
 
         // = 0.5f * (g - c)^2 / (g + c)^2
-        __m128 const half_d1 = _mm_mul_ps(d1, Impl::VEC4_ONE_HALF_4.V);
+        __m128 const half_d1 = _mm_mul_ps(d1, Impl::c_V4_F32_One_Half.V);
         __m128 const r0      = _mm_div_ps(half_d1, s1);
 
         // = (c * (g + c) - 1)^2
@@ -3065,9 +3065,9 @@ namespace Graphyte::Maths
         // flip: m2.y = m1.y * -1
         // m1: (a.x * b.z) - (a.z * b.x)
         // m2: -(a.x * b.z) + (a.z * b.x) = (a.z * b.x) - (a.x * b.z)
-        uint32x4_t const m2 = veorq_u32(vreinterpretq_u32_f32(m1), Impl::VEC4_MASK_FLIP_Y);
+        uint32x4_t const m2 = veorq_u32(vreinterpretq_u32_f32(m1), Impl::c_V4_U32_Sign_0100);
 
-        uint32x4_t const m3 = vandq_u32(m2, Impl::VEC4_MASK_SELECT_1110.V);
+        uint32x4_t const m3 = vandq_u32(m2, Impl::c_V4_U32_Mask_1110.V);
 
         return { vreinterpretq_f32_u32(m3) };
 
@@ -3084,7 +3084,7 @@ namespace Graphyte::Maths
 
         // r0 = m0 - m1
         __m128 const r0     = _mm_sub_ps(m0, m1);
-        __m128 const result = _mm_and_ps(r0, Impl::VEC4_MASK_COMPONENTS_3.V);
+        __m128 const result = _mm_and_ps(r0, Impl::c_V4_U32_Mask_1110.V);
         return { result };
 #endif
     }
@@ -3243,7 +3243,7 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const partial = _mm_permute_ps(v.V, _MM_SHUFFLE(3, 2, 0, 1));
-        __m128 const result  = _mm_mul_ps(partial, Impl::VEC4_NEGATE_X.V);
+        __m128 const result  = _mm_mul_ps(partial, Impl::c_V4_F32_Negate_X.V);
         return { result };
 #endif
     }

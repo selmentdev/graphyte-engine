@@ -42,7 +42,7 @@ namespace Graphyte::Maths
         Vector4 const point1        = MultiplyAdd(Vector4{ cross2.V }, plane2_wwww, point0);
         Vector4 const linepoint1    = Divide(point1, cross0_length);
         Vector4 const linepoint2    = Add(linepoint1, Vector4{ cross0.V });
-        Bool4 const control         = CompareLessEqual(cross0_length, Vector4{ Impl::VEC4_EPSILON.V });
+        Bool4 const control         = CompareLessEqual(cross0_length, Vector4{ Impl::c_V4_F32_Epsilon.V });
 
         out_line1 = Vector3{ Select(linepoint1, Nan<Vector4>(), control).V };
         out_line2 = Vector3{ Select(linepoint2, Nan<Vector4>(), control).V };
@@ -99,17 +99,17 @@ namespace Graphyte::Maths
         __m128 const cmp0 = _mm_setzero_ps();
         __m128 const cmp1 = _mm_sub_ps(cmp0, c0);
         __m128 const cmp2 = _mm_max_ps(cmp1, c0);
-        __m128 const succ = _mm_cmpgt_ps(cmp2, Impl::VEC4_EPSILON.V);
+        __m128 const succ = _mm_cmpgt_ps(cmp2, Impl::c_V4_F32_Epsilon.V);
 
         // check c1 for zero
         __m128 const fail0 = _mm_setzero_ps();
         __m128 const fail1 = _mm_sub_ps(fail0, c1);
         __m128 const fail2 = _mm_max_ps(fail1, c1);
-        __m128 const fail3 = _mm_cmple_ps(fail2, Impl::VEC4_EPSILON.V);
+        __m128 const fail3 = _mm_cmple_ps(fail2, Impl::c_V4_F32_Epsilon.V);
 
         // select inf or nan based on result of comparison
-        __m128 const fail4 = _mm_and_ps(fail3, Impl::VEC4_INFINITY.V);
-        __m128 const fail5 = _mm_andnot_ps(fail3, Impl::VEC4_QNAN.V);
+        __m128 const fail4 = _mm_and_ps(fail3, Impl::c_V4_F32_Positive_Infinity.V);
+        __m128 const fail5 = _mm_andnot_ps(fail3, Impl::c_V4_F32_Positive_QNan.V);
         __m128 const fail  = _mm_or_ps(fail4, fail5);
 
         // compute intersection

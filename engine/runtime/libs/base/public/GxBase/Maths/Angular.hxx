@@ -25,7 +25,7 @@ namespace Graphyte::Maths
     mathinline T mathcall RevolutionsToRadians(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
-        T const multiplier{ Impl::VEC4_PI.V };
+        T const multiplier{ Impl::c_V4_F32_Pi.V };
         T const result = Multiply(value, multiplier);
         return result;
     }

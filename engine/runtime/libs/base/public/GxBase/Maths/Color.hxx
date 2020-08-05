@@ -3,6 +3,23 @@
 #include <GxBase/Maths/Vector.hxx>
 #include <GxBase/KnownColors.hxx>
 
+namespace Graphyte::Maths::Impl
+{
+    // color specific consts
+    mathconst ConstFloat32x4 c_V4_F32_Two{ { { 2.0f, 2.0f, 2.0f, 2.0f, } } };
+    mathconst ConstFloat32x4 c_V4_F32_Four{ { { 4.0f, 4.0f, 4.0f, 4.0f, } } };
+    mathconst ConstFloat32x4 c_V4_F32_Six{ { { 6.0f, 6.0f, 6.0f, 6.0f, } } };
+    mathconst ConstUInt32x4 c_V4_U32_Mask_A8R8G8B8 = { { { 0x00FF0000u, 0x0000FF00u, 0x000000FFu, 0xFF000000u, } } };
+    mathconst ConstUInt32x4 c_V4_U32_Flip_Alpha_A8R8G8B8 = { { { 0x00000000u, 0x00000000u, 0x00000000u, 0x80000000u, } } };
+    mathconst ConstFloat32x4 c_V4_F32_Fix_Alpha_A8R8G8B8 = { { { 0.0f, 0.0f, 0.0f, static_cast<float>(0x80000000u), } } };
+    mathconst ConstFloat32x4 c_V4_F32_Normalize_A8R8G8B8 = { { { 1.0f / (255.0f * static_cast<float>(0x10000u)), 1.0f / (255.0f * static_cast<float>(0x100u)), 1.0f / 255.0f, 1.0f / (255.0f * static_cast<float>(0x1000000u)), } } };
+    mathconst ConstFloat32x4 c_V4_F32_Color_Scale = { { { 255.0f, 255.0f, 255.0f, 255.0f, } } };
+    mathconst ConstFloat32x4 c_V4_F32_Color_Luminance = { { { 0.2125f, 0.7154f, 0.0721f, 0.0f, } } };
+    mathconst ConstFloat32x4 c_V4_F32_Color_MSRGB_Scale = { { { 12.92f, 12.92f, 12.92f, 1.0f, } } };
+    mathconst ConstFloat32x4 c_V4_F32_Color_MSRGB_Alpha = { { { 0.055f, 0.055f, 0.055f, 0.0f, } } };
+    mathconst ConstFloat32x4 c_V4_F32_Color_MSRGB_Alpha_One = { { { 1.055f, 1.055f, 1.055f, 1.0f, } } };
+}
+
 // =================================================================================================
 // Load / store
 
@@ -29,11 +46,11 @@ namespace Graphyte::Maths
         // {c0}[#bgra, #bgra, #bgra, #bgra]
         __m128i const c0 = _mm_set1_epi32(static_cast<int>(source->Value));
         // {c1}[#__r_, #_g__, #b___, #___a]
-        __m128i const c1 = _mm_and_si128(c0, _mm_castps_si128(Impl::VEC4_MASK_A8R8G8B8.V));
-        __m128i const c2 = _mm_xor_si128(c1, _mm_castps_si128(Impl::VEC4_FLIP_A_A8R8G8B8.V));
+        __m128i const c1 = _mm_and_si128(c0, _mm_castps_si128(Impl::c_V4_U32_Mask_A8R8G8B8.V));
+        __m128i const c2 = _mm_xor_si128(c1, _mm_castps_si128(Impl::c_V4_U32_Flip_Alpha_A8R8G8B8.V));
         __m128 const c3 = _mm_cvtepi32_ps(c2);
-        __m128 const c4 = _mm_add_ps(c3, Impl::VEC4_FIX_A_A8R8G8B8.V);
-        __m128 const c5 = _mm_mul_ps(c4, Impl::VEC4_NORMALIZE_A8R8G8B8.V);
+        __m128 const c4 = _mm_add_ps(c3, Impl::c_V4_F32_Fix_Alpha_A8R8G8B8.V);
+        __m128 const c5 = _mm_mul_ps(c4, Impl::c_V4_F32_Normalize_A8R8G8B8.V);
         return { c5 };
 #endif
     }
@@ -46,7 +63,7 @@ namespace Graphyte::Maths
 
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const c0 = Saturate(Vector4{ color.V });
-        Vector4 const c1 = Multiply(c0, Vector4{ Impl::VEC4_UBYTE_MAX.V });
+        Vector4 const c1 = Multiply(c0, Vector4{ Impl::c_V4_F32_U8_Max.V });
         Vector4 const c2 = Round(c1);
 
         Float4A buffer;
@@ -61,10 +78,10 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         // Saturate
         __m128 const color_max = _mm_max_ps(color.V, _mm_setzero_ps());
-        __m128 const color_min = _mm_min_ps(color_max, Impl::VEC4_ONE_4.V);
+        __m128 const color_min = _mm_min_ps(color_max, Impl::c_V4_F32_One.V);
 
         // RGBA -> ARGB
-        __m128 const c0 = _mm_mul_ps(color_min, Impl::VEC4_UBYTE_MAX.V);
+        __m128 const c0 = _mm_mul_ps(color_min, Impl::c_V4_F32_U8_Max.V);
         __m128 const c1 = _mm_permute_ps(c0, _MM_SHUFFLE(3, 0, 1, 2));
         __m128i const c2 = _mm_cvtps_epi32(c1);
         __m128i const c3 = _mm_packs_epi32(c2, c2);
@@ -94,8 +111,8 @@ namespace Graphyte::Maths
         } } };
         return { result.V };
 #elif GRAPHYTE_HW_AVX
-        __m128 const neg_xyz = _mm_xor_ps(v.V, Impl::VEC4_NEGATIVE_ZERO_3.V);
-        __m128 const result = _mm_add_ps(neg_xyz, Impl::VEC4_ONE_3.V);
+        __m128 const neg_xyz = _mm_xor_ps(v.V, Impl::c_V3_F32_Negative_Zero.V);
+        __m128 const result = _mm_add_ps(neg_xyz, Impl::c_V3_F32_One.V);
         return { result };
 #endif
     }
@@ -163,8 +180,8 @@ namespace Graphyte::Maths
         return { result.V };
 #elif GRAPHYTE_HW_AVX
         __m128 const vcontrast = _mm_set_ps1(contrast);
-        __m128 const r0 = _mm_sub_ps(v.V, Impl::VEC4_ONE_HALF_4.V);
-        __m128 const r1 = Impl::avx_fmadd_f32x4(r0, vcontrast, Impl::VEC4_ONE_HALF_4.V);
+        __m128 const r0 = _mm_sub_ps(v.V, Impl::c_V4_F32_One_Half.V);
+        __m128 const r1 = Impl::avx_fmadd_f32x4(r0, vcontrast, Impl::c_V4_F32_One_Half.V);
         __m128 const r2 = _mm_shuffle_ps(r1, v.V, _MM_SHUFFLE(3, 2, 2, 2));
         __m128 const r3 = _mm_shuffle_ps(r1, r2, _MM_SHUFFLE(3, 0, 1, 0));
         return { r3 };
@@ -210,11 +227,11 @@ namespace Graphyte::Maths::Impl
         if (IsLess(t, Vector3{ g_OneSixth.V }))
         {
             Vector3 const vt1 = Subtract(q, p);
-            Vector3 const vt2 = Multiply(Vector3{ Impl::VEC4_SIX_4.V }, t);
+            Vector3 const vt2 = Multiply(Vector3{ Impl::c_V4_F32_Six.V }, t);
             return MultiplyAdd(vt1, vt2, p);
         }
 
-        if (IsLess(t, Vector3{ Impl::VEC4_ONE_HALF_4.V }))
+        if (IsLess(t, Vector3{ Impl::c_V4_F32_One_Half.V }))
         {
             return q;
         }
@@ -222,7 +239,7 @@ namespace Graphyte::Maths::Impl
         if (IsLess(t, Vector3{ g_TwoThirds.V }))
         {
             Vector3 const vt1 = Subtract(q, p);
-            Vector3 const vt2 = Multiply(Vector3{ Impl::VEC4_SIX_4.V }, Subtract(Vector3{ g_TwoThirds.V }, t));
+            Vector3 const vt2 = Multiply(Vector3{ Impl::c_V4_F32_Six.V }, Subtract(Vector3{ g_TwoThirds.V }, t));
             return MultiplyAdd(vt1, vt2, p);
         }
 
@@ -247,11 +264,11 @@ namespace Graphyte::Maths
         m.M.R[0] = m0.V;
         m.M.R[1] = m1.V;
         m.M.R[2] = m2.V;
-        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+        m.M.R[3] = Impl::c_V4_F32_Zero.V;
 
         Vector3 const result = Transform(Vector3{ c.V }, m);
 
-        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
     mathinline Color mathcall YUVToRGB(Color c) noexcept
@@ -260,14 +277,14 @@ namespace Graphyte::Maths
         static constexpr Impl::ConstFloat32x4 m2{ { { 1.140f, -0.581f, 0.0f, 0.0f } } };
 
         Matrix m;
-        m.M.R[0] = Impl::VEC4_ONE_4.V;
+        m.M.R[0] = Impl::c_V4_F32_One.V;
         m.M.R[1] = m1.V;
         m.M.R[2] = m2.V;
-        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+        m.M.R[3] = Impl::c_V4_F32_Zero.V;
 
         Vector3 const result = Transform(Vector3{ c.V }, m);
 
-        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
     mathinline Color mathcall RGBToYUVHD(Color c) noexcept
@@ -280,11 +297,11 @@ namespace Graphyte::Maths
         m.M.R[0] = m0.V;
         m.M.R[1] = m1.V;
         m.M.R[2] = m2.V;
-        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+        m.M.R[3] = Impl::c_V4_F32_Zero.V;
 
         Vector3 const result = Transform(Vector3{ c.V }, m);
 
-        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
     mathinline Color mathcall YUVToRGBHD(Color c) noexcept
@@ -293,14 +310,14 @@ namespace Graphyte::Maths
         static constexpr Impl::ConstFloat32x4 m2{ { { 1.2803f, -0.3806f, 0.0f, 0.0f } } };
 
         Matrix m;
-        m.M.R[0] = Impl::VEC4_ONE_4.V;
+        m.M.R[0] = Impl::c_V4_F32_One.V;
         m.M.R[1] = m1.V;
         m.M.R[2] = m2.V;
-        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+        m.M.R[3] = Impl::c_V4_F32_Zero.V;
 
         Vector3 const result = Transform(Vector3{ c.V }, m);
 
-        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
     mathinline Color mathcall RGBToXYZ(Color c) noexcept
@@ -314,10 +331,10 @@ namespace Graphyte::Maths
         m.M.R[0] = m0.V;
         m.M.R[1] = m1.V;
         m.M.R[2] = m2.V;
-        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+        m.M.R[3] = Impl::c_V4_F32_Zero.V;
 
         Vector3 const result = Multiply(Transform(Vector3{ c.V }, m), Vector3{ scale.V });
-        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
     mathinline Color mathcall XYZToRGB(Color c) noexcept
@@ -331,10 +348,10 @@ namespace Graphyte::Maths
         m.M.R[0] = m0.V;
         m.M.R[1] = m1.V;
         m.M.R[2] = m2.V;
-        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+        m.M.R[3] = Impl::c_V4_F32_Zero.V;
 
         Vector3 const result = Multiply(Transform(Vector3{ c.V }, m), Vector3{ scale.V });
-        return Select(c, Color{ result.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
     mathinline Color mathcall XYZToSRGB(Color c) noexcept
@@ -349,15 +366,15 @@ namespace Graphyte::Maths
         m.M.R[0] = m0.V;
         m.M.R[1] = m1.V;
         m.M.R[2] = m2.V;
-        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+        m.M.R[3] = Impl::c_V4_F32_Zero.V;
 
         Vector4 const lclr{ Transform(Vector3{ c.V }, m).V };
 
         Bool4 const vsel = CompareGreater(lclr, Vector4{ cut.V });
-        Vector4 const vsmall_color = Multiply(lclr, Vector4{ Impl::VEC4_MSRGB_SCALE.V });
-        Vector4 const vlarge_color = Subtract(Multiply(Vector4{ Impl::VEC4_MSRGB_A1.V }, Power(lclr, Vector4{ exp.V })), Vector4{ Impl::VEC4_MSRGB_A.V });
+        Vector4 const vsmall_color = Multiply(lclr, Vector4{ Impl::c_V4_F32_Color_MSRGB_Scale.V });
+        Vector4 const vlarge_color = Subtract(Multiply(Vector4{ Impl::c_V4_F32_Color_MSRGB_Alpha_One.V }, Power(lclr, Vector4{ exp.V })), Vector4{ Impl::c_V4_F32_Color_MSRGB_Alpha.V });
         Vector4 const vclr = Select(vsmall_color, vlarge_color, vsel);
-        return Select(c, Color{ vclr.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        return Select(c, Color{ vclr.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
     mathinline Color mathcall SRGBToXYZ(Color c) noexcept
@@ -369,18 +386,18 @@ namespace Graphyte::Maths
         static constexpr Impl::ConstFloat32x4 exp{ { { 2.4f, 2.4f, 2.4f, 1.0f } } };
 
         Bool4 const vsel = CompareGreater(Vector4{ c.V }, Vector4{ cut.V });
-        Vector4 const vsmall_color = Divide(Vector4{ c.V }, Vector4{ Impl::VEC4_MSRGB_SCALE.V });
-        Vector4 const vlarge_color = Power(Divide(Add(Vector4{ c.V }, Vector4{ Impl::VEC4_MSRGB_A.V }), Vector4{ Impl::VEC4_MSRGB_A1.V }), Vector4{ exp.V });
+        Vector4 const vsmall_color = Divide(Vector4{ c.V }, Vector4{ Impl::c_V4_F32_Color_MSRGB_Scale.V });
+        Vector4 const vlarge_color = Power(Divide(Add(Vector4{ c.V }, Vector4{ Impl::c_V4_F32_Color_MSRGB_Alpha.V }), Vector4{ Impl::c_V4_F32_Color_MSRGB_Alpha_One.V }), Vector4{ exp.V });
         Vector4 const vlclr = Select(vsmall_color, vlarge_color, vsel);
 
         Matrix m;
         m.M.R[0] = m0.V;
         m.M.R[1] = m1.V;
         m.M.R[2] = m2.V;
-        m.M.R[3] = Impl::VEC4_ZERO_4.V;
+        m.M.R[3] = Impl::c_V4_F32_Zero.V;
 
         Color const vclr{ Transform(Vector3{ vlclr.V }, m).V };
-        return Select(c, vclr, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        return Select(c, vclr, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
     mathinline Color mathcall RGBToSRGB(Color c) noexcept
@@ -396,7 +413,7 @@ namespace Graphyte::Maths
         Vector4 const vv1 = Subtract(Multiply(Vector4{ scale.V }, Power(vv, Vector4{ inv_gamma.V })), Vector4{ bias.V });
         Bool4 const vsel = CompareLess(vv, Vector4{ cutoff.V });
         Vector4 vv2 = Select(vv1, vv0, vsel);
-        return Select(c, Color{ vv2.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        return Select(c, Color{ vv2.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
     mathinline Color mathcall SRGBToRGB(Color c) noexcept
@@ -412,6 +429,6 @@ namespace Graphyte::Maths
         Vector4 const vv1 = Power(Multiply(Add(vv, Vector4{ bias.V }), Vector4{ scale.V }), Vector4{ gamma.V });
         Bool4 const vsel = CompareGreater(vv, Vector4{ cutoff.V });
         Vector4 const v01 = Select(vv0, vv1, vsel);
-        return Select(c, Color{ v01.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        return Select(c, Color{ v01.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 }

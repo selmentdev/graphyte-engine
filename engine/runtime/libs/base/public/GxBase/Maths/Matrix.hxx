@@ -185,16 +185,16 @@ namespace Graphyte::Maths
         __m128 const r1 = _mm_permute_ps(t1, _MM_SHUFFLE(1, 1, 0, 2));
 
         // = [r0.xyz, 0]
-        __m128 const m0 = _mm_and_ps(r0, Impl::VEC4_MASK_COMPONENTS_3.V);
+        __m128 const m0 = _mm_and_ps(r0, Impl::c_V4_U32_Mask_1110.V);
         // = [r1.xyz, 0]
-        __m128 const m1 = _mm_and_ps(r1, Impl::VEC4_MASK_COMPONENTS_3.V);
+        __m128 const m1 = _mm_and_ps(r1, Impl::c_V4_U32_Mask_1110.V);
         // = [r2.xyz, 0]
-        __m128 const m2 = _mm_and_ps(r2, Impl::VEC4_MASK_COMPONENTS_3.V);
+        __m128 const m2 = _mm_and_ps(r2, Impl::c_V4_U32_Mask_1110.V);
 
         // = [r2.z, r3.xyz] >> 4 bytes = [r3.xyz]
         __m128i const t3 = _mm_srli_si128(_mm_castps_si128(t2), 32 / 8);
         // = [r3.xyz, 1]
-        __m128 const m3 = _mm_castsi128_ps(_mm_or_si128(t3, _mm_castps_si128(Impl::VEC4_POSITIVE_UNIT_W.V)));
+        __m128 const m3 = _mm_castsi128_ps(_mm_or_si128(t3, _mm_castps_si128(Impl::c_V4_F32_PositiveUnitW.V)));
 
         Matrix result;
         result.M.R[0] = m0;
@@ -297,7 +297,7 @@ namespace Graphyte::Maths
         __m128 const r0 = _mm_load_ps(&source->M[0][0]);
         __m128 const r1 = _mm_load_ps(&source->M[1][0]);
         __m128 const r2 = _mm_load_ps(&source->M[2][0]);
-        __m128 const r3 = Impl::VEC4_POSITIVE_UNIT_W.V;
+        __m128 const r3 = Impl::c_V4_F32_PositiveUnitW.V;
 
         __m128 const t0 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(1, 0, 1, 0));
         __m128 const t2 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(3, 2, 3, 2));
@@ -473,16 +473,16 @@ namespace Graphyte::Maths
         __m128 const r1 = _mm_permute_ps(t1, _MM_SHUFFLE(1, 1, 0, 2));
 
         // = [r0.xyz, 0]
-        __m128 const m0 = _mm_and_ps(r0, Impl::VEC4_MASK_COMPONENTS_3.V);
+        __m128 const m0 = _mm_and_ps(r0, Impl::c_V4_U32_Mask_1110.V);
         // = [r1.xyz, 0]
-        __m128 const m1 = _mm_and_ps(r1, Impl::VEC4_MASK_COMPONENTS_3.V);
+        __m128 const m1 = _mm_and_ps(r1, Impl::c_V4_U32_Mask_1110.V);
         // = [r2.xyz, 0]
-        __m128 const m2 = _mm_and_ps(r2, Impl::VEC4_MASK_COMPONENTS_3.V);
+        __m128 const m2 = _mm_and_ps(r2, Impl::c_V4_U32_Mask_1110.V);
 
         // = [r2.z, r3.xyz] >> 4 bytes = [r3.xyz]
         __m128i const t3 = _mm_srli_si128(_mm_castps_si128(t2), 32 / 8);
         // = [r3.xyz, 1]
-        __m128 const m3 = _mm_castsi128_ps(_mm_or_si128(t3, _mm_castps_si128(Impl::VEC4_POSITIVE_UNIT_W.V)));
+        __m128 const m3 = _mm_castsi128_ps(_mm_or_si128(t3, _mm_castps_si128(Impl::c_V4_F32_PositiveUnitW.V)));
 
         Matrix result;
         result.M.R[0] = m0;
@@ -583,7 +583,7 @@ namespace Graphyte::Maths
         __m128 const r0 = _mm_loadu_ps(&source->M[0][0]);
         __m128 const r1 = _mm_loadu_ps(&source->M[1][0]);
         __m128 const r2 = _mm_loadu_ps(&source->M[2][0]);
-        __m128 const r3 = Impl::VEC4_POSITIVE_UNIT_W.V;
+        __m128 const r3 = Impl::c_V4_F32_PositiveUnitW.V;
 
         __m128 const t0 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(1, 0, 1, 0));
         __m128 const t2 = _mm_shuffle_ps(r0, r1, _MM_SHUFFLE(3, 2, 3, 2));
@@ -684,7 +684,7 @@ namespace Graphyte::Maths
         result.M.R[0] = _mm_movelh_ps(t0, t3);
         result.M.R[1] = _mm_add_ps(t6, t7);
         result.M.R[2] = _mm_shuffle_ps(t1, t2, _MM_SHUFFLE(1, 0, 3, 2));
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
 
         return result;
 #endif
@@ -730,10 +730,10 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
-        result.M.R[0] = Impl::VEC4_QNAN.V;
-        result.M.R[1] = Impl::VEC4_QNAN.V;
-        result.M.R[2] = Impl::VEC4_QNAN.V;
-        result.M.R[3] = Impl::VEC4_QNAN.V;
+        result.M.R[0] = Impl::c_V4_F32_Positive_QNan.V;
+        result.M.R[1] = Impl::c_V4_F32_Positive_QNan.V;
+        result.M.R[2] = Impl::c_V4_F32_Positive_QNan.V;
+        result.M.R[3] = Impl::c_V4_F32_Positive_QNan.V;
         return result;
     }
 
@@ -795,10 +795,10 @@ namespace Graphyte::Maths
     {
         Matrix result;
 
-        result.M.R[0] = Impl::VEC4_INFINITY.V;
-        result.M.R[1] = Impl::VEC4_INFINITY.V;
-        result.M.R[2] = Impl::VEC4_INFINITY.V;
-        result.M.R[3] = Impl::VEC4_INFINITY.V;
+        result.M.R[0] = Impl::c_V4_F32_Positive_Infinity.V;
+        result.M.R[1] = Impl::c_V4_F32_Positive_Infinity.V;
+        result.M.R[2] = Impl::c_V4_F32_Positive_Infinity.V;
+        result.M.R[3] = Impl::c_V4_F32_Positive_Infinity.V;
 
         return result;
     }
@@ -833,14 +833,14 @@ namespace Graphyte::Maths
         __m128 const r2 = m.M.R[2];
         __m128 const r3 = m.M.R[3];
 
-        __m128 const abs = Impl::VEC4_MASK_ABS.V;
+        __m128 const abs = Impl::c_V4_U32_Mask_MaskAbs.V;
 
         __m128 const abs_r0 = _mm_and_ps(r0, abs);
         __m128 const abs_r1 = _mm_and_ps(r1, abs);
         __m128 const abs_r2 = _mm_and_ps(r2, abs);
         __m128 const abs_r3 = _mm_and_ps(r3, abs);
 
-        __m128 const inf = Impl::VEC4_INFINITY.V;
+        __m128 const inf = Impl::c_V4_F32_Positive_Infinity.V;
 
         __m128 const inf_r0 = _mm_cmpeq_ps(abs_r0, inf);
         __m128 const inf_r1 = _mm_cmpeq_ps(abs_r1, inf);
@@ -862,10 +862,10 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
-        result.M.R[0] = Impl::VEC4_POSITIVE_UNIT_X.V;
-        result.M.R[1] = Impl::VEC4_POSITIVE_UNIT_Y.V;
-        result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[0] = Impl::c_V4_F32_PositiveUnitX.V;
+        result.M.R[1] = Impl::c_V4_F32_PositiveUnitY.V;
+        result.M.R[2] = Impl::c_V4_F32_PositiveUnitZ.V;
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
         return result;
     }
 
@@ -910,10 +910,10 @@ namespace Graphyte::Maths
         __m128 const r2 = m.M.R[2];
         __m128 const r3 = m.M.R[3];
 
-        __m128 const m0 = _mm_cmpeq_ps(r0, Impl::VEC4_POSITIVE_UNIT_X.V);
-        __m128 const m1 = _mm_cmpeq_ps(r1, Impl::VEC4_POSITIVE_UNIT_Y.V);
-        __m128 const m2 = _mm_cmpeq_ps(r2, Impl::VEC4_POSITIVE_UNIT_Z.V);
-        __m128 const m3 = _mm_cmpeq_ps(r3, Impl::VEC4_POSITIVE_UNIT_W.V);
+        __m128 const m0 = _mm_cmpeq_ps(r0, Impl::c_V4_F32_PositiveUnitX.V);
+        __m128 const m1 = _mm_cmpeq_ps(r1, Impl::c_V4_F32_PositiveUnitY.V);
+        __m128 const m2 = _mm_cmpeq_ps(r2, Impl::c_V4_F32_PositiveUnitZ.V);
+        __m128 const m3 = _mm_cmpeq_ps(r3, Impl::c_V4_F32_PositiveUnitW.V);
 
         __m128 const m1_0 = _mm_and_ps(m0, m1);
         __m128 const m1_1 = _mm_and_ps(m2, m3);
@@ -987,10 +987,10 @@ namespace Graphyte::Maths
         return { result.V };
 
 #elif GRAPHYTE_HW_NEON
-        uint32x4_t const t0_x = vandq_u32(vreinterpretq_u32_f32(m.M.R[0]), vreinterpretq_u32_f32(Impl::VEC4_MASK_COMPONENT_X.V));
-        uint32x4_t const t0_y = vandq_u32(vreinterpretq_u32_f32(m.M.R[1]), vreinterpretq_u32_f32(Impl::VEC4_MASK_COMPONENT_Y.V));
-        uint32x4_t const t0_z = vandq_u32(vreinterpretq_u32_f32(m.M.R[2]), vreinterpretq_u32_f32(Impl::VEC4_MASK_COMPONENT_Z.V));
-        uint32x4_t const t0_w = vandq_u32(vreinterpretq_u32_f32(m.M.R[3]), vreinterpretq_u32_f32(Impl::VEC4_MASK_COMPONENT_W.V));
+        uint32x4_t const t0_x = vandq_u32(vreinterpretq_u32_f32(m.M.R[0]), vreinterpretq_u32_f32(Impl::c_V4_U32_Mask_1000.V));
+        uint32x4_t const t0_y = vandq_u32(vreinterpretq_u32_f32(m.M.R[1]), vreinterpretq_u32_f32(Impl::c_V4_U32_Mask_0100.V));
+        uint32x4_t const t0_z = vandq_u32(vreinterpretq_u32_f32(m.M.R[2]), vreinterpretq_u32_f32(Impl::c_V4_U32_Mask_0010.V));
+        uint32x4_t const t0_w = vandq_u32(vreinterpretq_u32_f32(m.M.R[3]), vreinterpretq_u32_f32(Impl::c_V4_U32_Mask_0001.V));
 
         uint32x4_t const t1_xy = vorq_u32(t0_x, t0_y);
         uint32x4_t const t1_zw = vorq_u32(t0_z, t0_w);
@@ -1000,10 +1000,10 @@ namespace Graphyte::Maths
         return { vreinterpret_f32_u32(t2_xyzw) };
 
 #elif GRAPHYTE_HW_AVX
-        __m128 const t0_x = _mm_and_ps(m.M.R[0], Impl::VEC4_MASK_COMPONENT_X.V);
-        __m128 const t0_y = _mm_and_ps(m.M.R[1], Impl::VEC4_MASK_COMPONENT_Y.V);
-        __m128 const t0_z = _mm_and_ps(m.M.R[2], Impl::VEC4_MASK_COMPONENT_Z.V);
-        __m128 const t0_w = _mm_and_ps(m.M.R[3], Impl::VEC4_MASK_COMPONENT_W.V);
+        __m128 const t0_x = _mm_and_ps(m.M.R[0], Impl::c_V4_U32_Mask_1000.V);
+        __m128 const t0_y = _mm_and_ps(m.M.R[1], Impl::c_V4_U32_Mask_0100.V);
+        __m128 const t0_z = _mm_and_ps(m.M.R[2], Impl::c_V4_U32_Mask_0010.V);
+        __m128 const t0_w = _mm_and_ps(m.M.R[3], Impl::c_V4_U32_Mask_0001.V);
 
         __m128 const t1_xy = _mm_or_ps(t0_x, t0_y);
         __m128 const t1_zw = _mm_or_ps(t0_z, t0_w);
@@ -1652,10 +1652,10 @@ namespace Graphyte::Maths
         Vector4 const r6 = NegateMultiplyAdd(hd0, hd1, fd1);
 
         Matrix partial;
-        partial.M.R[0] = Select(r0, r1, Bool4{ Impl::VEC4_MASK_SELECT_0101.V }).V;
-        partial.M.R[1] = Select(r2, r3, Bool4{ Impl::VEC4_MASK_SELECT_0101.V }).V;
-        partial.M.R[2] = Select(r4, r5, Bool4{ Impl::VEC4_MASK_SELECT_0101.V }).V;
-        partial.M.R[3] = Select(r6, r7, Bool4{ Impl::VEC4_MASK_SELECT_0101.V }).V;
+        partial.M.R[0] = Select(r0, r1, Bool4{ Impl::c_V4_U32_Mask_0101.V }).V;
+        partial.M.R[1] = Select(r2, r3, Bool4{ Impl::c_V4_U32_Mask_0101.V }).V;
+        partial.M.R[2] = Select(r4, r5, Bool4{ Impl::c_V4_U32_Mask_0101.V }).V;
+        partial.M.R[3] = Select(r6, r7, Bool4{ Impl::c_V4_U32_Mask_0101.V }).V;
 
         Vector4 const det = Dot(Vector4{ partial.M.R[0] }, Vector4{ mt.M.R[0] });
 
@@ -1782,7 +1782,7 @@ namespace Graphyte::Maths
             determinant->V = det;
         }
 
-        __m128 const rcp_det = _mm_div_ps(Impl::VEC4_ONE_4.V, det);
+        __m128 const rcp_det = _mm_div_ps(Impl::c_V4_F32_One.V, det);
 
         Matrix result;
         result.M.R[0] = _mm_mul_ps(r0, rcp_det);
@@ -1836,9 +1836,9 @@ namespace Graphyte::Maths
         constexpr float const DecomposeEpsilon = 0.0001f;
 
         constexpr Impl::NativeFloat32x4 const* canonical_basis[3]{
-            &Impl::VEC4_POSITIVE_UNIT_X.V,
-            &Impl::VEC4_POSITIVE_UNIT_Y.V,
-            &Impl::VEC4_POSITIVE_UNIT_Z.V,
+            &Impl::c_V4_F32_PositiveUnitX.V,
+            &Impl::c_V4_F32_PositiveUnitY.V,
+            &Impl::c_V4_F32_PositiveUnitZ.V,
         };
 
         out_translation.V = m.M.R[3];
@@ -1847,7 +1847,7 @@ namespace Graphyte::Maths
         temp.M.R[0] = m.M.R[0];
         temp.M.R[1] = m.M.R[1];
         temp.M.R[2] = m.M.R[2];
-        temp.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        temp.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
 
         Impl::NativeFloat32x4* basis[3]{
             &temp.M.R[0],
@@ -2026,7 +2026,7 @@ namespace Graphyte::Maths
         Vector4 const i0 = MultiplyAdd(c0, Vector4{ normal.V }, g1);
         Vector4 const i1 = NegateMultiplyAdd(c0, Vector4{ normal.V }, g1);
 
-        Vector4 const r0 = Select(a, h1, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Vector4 const r0 = Select(a, h1, Bool4{ Impl::c_V4_U32_Mask_1110.V });
 
         Vector4 const r1 = Permute<2, 5, 6, 0>(i0, i1);
         Vector4 const r2 = Permute<1, 4, 1, 4>(i0, i1);
@@ -2035,7 +2035,7 @@ namespace Graphyte::Maths
         result.M.R[0] = Permute<0, 4, 5, 3>(r0, r1).V;
         result.M.R[1] = Permute<6, 1, 7, 3>(r0, r1).V;
         result.M.R[2] = Permute<4, 5, 2, 3>(r0, r2).V;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
         return result;
 #elif GRAPHYTE_HW_AVX
         float sin_angle;
@@ -2059,7 +2059,7 @@ namespace Graphyte::Maths
         __m128 const i1 = Impl::avx_fmadd_f32x4(c0, normal.V, g1);
         __m128 const i2 = Impl::avx_fnmadd_f32x4(c0, normal.V, g1);
 
-        __m128 const r0 = _mm_and_ps(i0, Impl::VEC4_MASK_SELECT_1110.V);
+        __m128 const r0 = _mm_and_ps(i0, Impl::c_V4_U32_Mask_1110.V);
 
         __m128 const t0 = _mm_shuffle_ps(i1, i2, _MM_SHUFFLE(2, 1, 2, 0));
         __m128 const r1 = _mm_permute_ps(t0, _MM_SHUFFLE(0, 3, 2, 1));
@@ -2080,7 +2080,7 @@ namespace Graphyte::Maths
 
         __m128 const r5 = _mm_shuffle_ps(r2, r0, _MM_SHUFFLE(3, 2, 1, 0));
         result.M.R[2] = r5;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
 
         return result;
 #endif
@@ -2107,9 +2107,9 @@ namespace Graphyte::Maths
         Vector4 const q0 = Add(q_xyzw, q_xyzw);
         Vector4 const q1 = Multiply(q_xyzw, q0);
 
-        Vector4 const q1_yxx_1 = Permute<1, 0, 0, 7>(q1, Vector4{ Impl::VEC4_ONE_3.V });
-        Vector4 const q1_zzy_1 = Permute<2, 2, 1, 7>(q1, Vector4{ Impl::VEC4_ONE_3.V });
-        Vector4 const o0 = Subtract(Vector4{ Impl::VEC4_ONE_3.V }, q1_yxx_1);
+        Vector4 const q1_yxx_1 = Permute<1, 0, 0, 7>(q1, Vector4{ Impl::c_V3_F32_One.V });
+        Vector4 const q1_zzy_1 = Permute<2, 2, 1, 7>(q1, Vector4{ Impl::c_V3_F32_One.V });
+        Vector4 const o0 = Subtract(Vector4{ Impl::c_V3_F32_One.V }, q1_yxx_1);
         Vector4 const s0 = Subtract(o0, q1_zzy_1);
 
         Vector4 const q_xxyw = Swizzle<0, 0, 1, 3>(q_xyzw);
@@ -2130,7 +2130,7 @@ namespace Graphyte::Maths
         result.M.R[0] = Permute<0, 4, 5, 3>(s0, r2).V;
         result.M.R[1] = Permute<6, 1, 7, 3>(s0, r2).V;
         result.M.R[2] = Permute<4, 5, 2, 3>(s0, r3).V;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
         return result;
 
 #elif GRAPHYTE_HW_AVX
@@ -2140,9 +2140,9 @@ namespace Graphyte::Maths
         __m128 Q1 = _mm_mul_ps(q.V, Q0);
 
         __m128 V0 = _mm_permute_ps(Q1, _MM_SHUFFLE(3, 0, 0, 1));
-        V0 = _mm_and_ps(V0, Impl::VEC4_MASK_SELECT_1110.V);
+        V0 = _mm_and_ps(V0, Impl::c_V4_U32_Mask_1110.V);
         __m128 V1 = _mm_permute_ps(Q1, _MM_SHUFFLE(3, 1, 2, 2));
-        V1 = _mm_and_ps(V1, Impl::VEC4_MASK_SELECT_1110.V);
+        V1 = _mm_and_ps(V1, Impl::c_V4_U32_Mask_1110.V);
         __m128 R0 = _mm_sub_ps(Constant1110.V, V0);
         R0 = _mm_sub_ps(R0, V1);
 
@@ -2174,7 +2174,7 @@ namespace Graphyte::Maths
 
         Q1 = _mm_shuffle_ps(V1, R0, _MM_SHUFFLE(3, 2, 1, 0));
         m.M.R[2] = Q1;
-        m.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        m.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
         return m;
 #endif
     }
@@ -2233,9 +2233,9 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
 
         Matrix result;
-        result.M.R[0] = Impl::VEC4_POSITIVE_UNIT_X.V;
-        result.M.R[1] = Impl::VEC4_POSITIVE_UNIT_Y.V;
-        result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
+        result.M.R[0] = Impl::c_V4_F32_PositiveUnitX.V;
+        result.M.R[1] = Impl::c_V4_F32_PositiveUnitY.V;
+        result.M.R[2] = Impl::c_V4_F32_PositiveUnitZ.V;
         result.M.R[3] = _mm_set_ps(1.0F, z, y, x);
 
         return result;
@@ -2274,13 +2274,13 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX || GRAPHYTE_HW_NEON
 
         Matrix result;
-        result.M.R[0] = Impl::VEC4_POSITIVE_UNIT_X.V;
-        result.M.R[1] = Impl::VEC4_POSITIVE_UNIT_Y.V;
-        result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
+        result.M.R[0] = Impl::c_V4_F32_PositiveUnitX.V;
+        result.M.R[1] = Impl::c_V4_F32_PositiveUnitY.V;
+        result.M.R[2] = Impl::c_V4_F32_PositiveUnitZ.V;
         result.M.R[3] = Select(
-            Vector4{ Impl::VEC4_POSITIVE_UNIT_W.V },
+            Vector4{ Impl::c_V4_F32_PositiveUnitW.V },
             Vector4{ translation.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1110.V })
+            Bool4{ Impl::c_V4_U32_Mask_1110.V })
             .V;
 
         return result;
@@ -2322,7 +2322,7 @@ namespace Graphyte::Maths
         result.M.R[0] = _mm_set_ps(0.0F, 0.0F, 0.0F, x);
         result.M.R[1] = _mm_set_ps(0.0F, 0.0F, y, 0.0F);
         result.M.R[2] = _mm_set_ps(0.0F, z, 0.0F, 0.0F);
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
 
         return result;
 #endif
@@ -2360,10 +2360,10 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
 
         Matrix result;
-        result.M.R[0] = _mm_and_ps(scale.V, Impl::VEC4_MASK_COMPONENT_X.V);
-        result.M.R[1] = _mm_and_ps(scale.V, Impl::VEC4_MASK_COMPONENT_Y.V);
-        result.M.R[2] = _mm_and_ps(scale.V, Impl::VEC4_MASK_COMPONENT_Z.V);
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[0] = _mm_and_ps(scale.V, Impl::c_V4_U32_Mask_1000.V);
+        result.M.R[1] = _mm_and_ps(scale.V, Impl::c_V4_U32_Mask_0100.V);
+        result.M.R[2] = _mm_and_ps(scale.V, Impl::c_V4_U32_Mask_0010.V);
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
 
         return result;
 #endif
@@ -2412,14 +2412,14 @@ namespace Graphyte::Maths
         __m128 const vcos = _mm_shuffle_ps(scos, ssin, _MM_SHUFFLE(3, 0, 0, 3));
 
         Matrix result;
-        result.M.R[0] = Impl::VEC4_POSITIVE_UNIT_X.V;
+        result.M.R[0] = Impl::c_V4_F32_PositiveUnitX.V;
         result.M.R[1] = vcos;
 
         __m128 const temp = _mm_permute_ps(vcos, _MM_SHUFFLE(3, 1, 2, 0));
-        __m128 const vsin = _mm_mul_ps(temp, Impl::VEC4_NEGATE_Y.V);
+        __m128 const vsin = _mm_mul_ps(temp, Impl::c_V4_F32_Negate_Y.V);
 
         result.M.R[2] = vsin;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
 
         return result;
 #endif
@@ -2469,13 +2469,13 @@ namespace Graphyte::Maths
 
         Matrix result;
         result.M.R[2] = vsin;
-        result.M.R[1] = Impl::VEC4_POSITIVE_UNIT_Y.V;
+        result.M.R[1] = Impl::c_V4_F32_PositiveUnitY.V;
 
         __m128 const temp = _mm_permute_ps(vsin, _MM_SHUFFLE(3, 0, 1, 2));
-        __m128 const vcos = _mm_mul_ps(temp, Impl::VEC4_NEGATE_Z.V);
+        __m128 const vcos = _mm_mul_ps(temp, Impl::c_V4_F32_Negate_Z.V);
 
         result.M.R[0] = vcos;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
 
         return result;
 #endif
@@ -2527,11 +2527,11 @@ namespace Graphyte::Maths
         result.M.R[0] = vcos;
 
         __m128 const temp = _mm_permute_ps(vcos, _MM_SHUFFLE(3, 2, 0, 1));
-        __m128 const vsin = _mm_mul_ps(temp, Impl::VEC4_NEGATE_X.V);
+        __m128 const vsin = _mm_mul_ps(temp, Impl::c_V4_F32_Negate_X.V);
 
         result.M.R[1] = vsin;
-        result.M.R[2] = Impl::VEC4_POSITIVE_UNIT_Z.V;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[2] = Impl::c_V4_F32_PositiveUnitZ.V;
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
 
         return result;
 #endif
@@ -2548,9 +2548,9 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Vector3 const v_scaling_origin{ Select(
-            Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
+            Vector4{ Impl::c_V4_U32_Mask_1100.V },
             Vector4{ scaling_origin.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1100.V })
+            Bool4{ Impl::c_V4_U32_Mask_1100.V })
                                             .V };
 
         // Create scanling origin transform
@@ -2563,27 +2563,27 @@ namespace Graphyte::Maths
 
         // Create scaling transform
         Vector3 const v_scaling_xy1{ Select(
-            Vector4{ Impl::VEC4_ONE_4.V },
+            Vector4{ Impl::c_V4_F32_One.V },
             Vector4{ scaling.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1100.V })
+            Bool4{ Impl::c_V4_U32_Mask_1100.V })
                                          .V };
 
         Matrix const m_scaling = CreateScaling<Matrix>(v_scaling_xy1);
 
         // Create rotation origin
         Vector4 const v_rotation_origin = Select(
-            Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
+            Vector4{ Impl::c_V4_U32_Mask_1100.V },
             Vector4{ rotation_origin.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1100.V });
+            Bool4{ Impl::c_V4_U32_Mask_1100.V });
 
         // Create rotation transform
         Matrix const m_rotation = CreateRotationZ<Matrix>(rotation);
 
         // Create translation vector
         Vector4 const v_translation = Select(
-            Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
+            Vector4{ Impl::c_V4_U32_Mask_1100.V },
             Vector4{ translation.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1100.V });
+            Bool4{ Impl::c_V4_U32_Mask_1100.V });
 
         Matrix const m0 = Multiply(m_scaling_origin, m_scaling_orientation_trn);
         Matrix const m1 = Multiply(m0, m_scaling);
@@ -2608,20 +2608,20 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Vector3 const v_scaling{ Select(
-            Vector4{ Impl::VEC4_ONE_4.V },
+            Vector4{ Impl::c_V4_F32_One.V },
             Vector4{ scaling.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1100.V })
+            Bool4{ Impl::c_V4_U32_Mask_1100.V })
                                      .V };
 
         Vector4 const v_rotation_origin = Select(
-            Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
+            Vector4{ Impl::c_V4_U32_Mask_1100.V },
             Vector4{ rotation_origin.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1100.V });
+            Bool4{ Impl::c_V4_U32_Mask_1100.V });
 
         Vector4 const v_translation = Select(
-            Vector4{ Impl::VEC4_MASK_SELECT_1100.V },
+            Vector4{ Impl::c_V4_U32_Mask_1100.V },
             Vector4{ translation.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1100.V });
+            Bool4{ Impl::c_V4_U32_Mask_1100.V });
 
         Matrix const m_rotation = CreateRotationZ<Matrix>(rotation);
 
@@ -2645,21 +2645,21 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Vector3 const v_scaling_origin{ Select(
-            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ Impl::c_V4_U32_Mask_1110.V },
             Vector4{ scaling_origin.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1110.V }).V };
+            Bool4{ Impl::c_V4_U32_Mask_1110.V }).V };
 
         Vector3 const v_scaling_origin_negated = Negate(v_scaling_origin);
 
         Vector4 const v_rotation_origin = Select(
-            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ Impl::c_V4_U32_Mask_1110.V },
             Vector4{ rotation_origin.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+            Bool4{ Impl::c_V4_U32_Mask_1110.V });
 
         Vector4 const v_translation = Select(
-            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ Impl::c_V4_U32_Mask_1110.V },
             Vector4{ translation.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+            Bool4{ Impl::c_V4_U32_Mask_1110.V });
 
         Matrix const m_scaling_origin = CreateTranslation<Matrix>(v_scaling_origin_negated);
         Matrix const m_scaling_orientation = CreateFromQuaternion<Matrix>(scaling_orientation);
@@ -2688,14 +2688,14 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Vector4 const v_rotation_origin = Select(
-            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ Impl::c_V4_U32_Mask_1110.V },
             Vector4{ rotation_origin.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+            Bool4{ Impl::c_V4_U32_Mask_1110.V });
 
         Vector4 const v_translation = Select(
-            Vector4{ Impl::VEC4_MASK_SELECT_1110.V },
+            Vector4{ Impl::c_V4_U32_Mask_1110.V },
             Vector4{ translation.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+            Bool4{ Impl::c_V4_U32_Mask_1110.V });
 
         Matrix const m_rotation = CreateFromQuaternion<Matrix>(rotation);
 
@@ -2737,10 +2737,10 @@ namespace Graphyte::Maths
         Vector4 const d2 = Dot(r2, neg_eye_position);
 
         Matrix result;
-        result.M.R[0] = Select(d0, Vector4{ r0.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V }).V;
-        result.M.R[1] = Select(d1, Vector4{ r1.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V }).V;
-        result.M.R[2] = Select(d2, Vector4{ r2.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V }).V;
-        result.M.R[3] = Impl::VEC4_POSITIVE_UNIT_W.V;
+        result.M.R[0] = Select(d0, Vector4{ r0.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V }).V;
+        result.M.R[1] = Select(d1, Vector4{ r1.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V }).V;
+        result.M.R[2] = Select(d2, Vector4{ r2.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V }).V;
+        result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
 
         return Transpose(result);
     }
@@ -2816,7 +2816,7 @@ namespace Graphyte::Maths
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(z_near_2 / view_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(z_near_2 / view_height, zero, 1);
-        result.M.R[2] = vsetq_lane_f32(range, Impl::VEC4_POSITIVE_UNIT_W.V, 2);
+        result.M.R[2] = vsetq_lane_f32(range, Impl::c_V4_F32_PositiveUnitW.V, 2);
         result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
 #elif GRAPHYTE_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
@@ -2833,10 +2833,10 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, y, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::c_V4_U32_Mask_0100.V);
 
         // [range, -range * z_near, 0, 1]
-        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::c_V4_F32_PositiveUnitW.V, _MM_SHUFFLE(3, 2, 3, 2));
 
         // [0, 0, range, 1]
         __m128 const r2_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 0, 0, 0));
@@ -2893,7 +2893,7 @@ namespace Graphyte::Maths
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(z_near_2 / view_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(z_near_2 / view_height, zero, 1);
-        result.M.R[2] = vsetq_lane_f32(range, Impl::VEC4_NEGATIVE_UNIT_W.V, 2);
+        result.M.R[2] = vsetq_lane_f32(range, Impl::c_V4_F32_NegativeUnitW.V, 2);
         result.M.R[3] = vsetq_lane_f32(range * z_near, zero, 2);
 #elif GRAPHYTE_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
@@ -2910,10 +2910,10 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, y, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::c_V4_U32_Mask_0100.V);
 
         // [range, range * z_near, 0, -1]
-        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_NEGATIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::c_V4_F32_NegativeUnitW.V, _MM_SHUFFLE(3, 2, 3, 2));
 
         // [0, 0, range, 1]
         __m128 const r2_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 0, 0, 0));
@@ -2975,7 +2975,7 @@ namespace Graphyte::Maths
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(height, zero, 1);
-        result.M.R[2] = vsetq_lane_f32(range, Impl::VEC4_POSITIVE_UNIT_W.V, 2);
+        result.M.R[2] = vsetq_lane_f32(range, Impl::c_V4_F32_PositiveUnitW.V, 2);
         result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
 #elif GRAPHYTE_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
@@ -2992,10 +2992,10 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, y, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::c_V4_U32_Mask_0100.V);
 
         // [range, -range * z_near, 0, 1]
-        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::c_V4_F32_PositiveUnitW.V, _MM_SHUFFLE(3, 2, 3, 2));
 
         // [0, 0, range, 1]
         __m128 const r2_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 0, 0, 0));
@@ -3057,7 +3057,7 @@ namespace Graphyte::Maths
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(height, zero, 1);
-        result.M.R[2] = vsetq_lane_f32(range, Impl::VEC4_NEGATIVE_UNIT_W.V, 2);
+        result.M.R[2] = vsetq_lane_f32(range, Impl::c_V4_F32_NegativeUnitW.V, 2);
         result.M.R[3] = vsetq_lane_f32(range * z_near, zero, 2);
 #elif GRAPHYTE_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
@@ -3074,10 +3074,10 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, y, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::c_V4_U32_Mask_0100.V);
 
         // [range, range * z_near, 0, -1]
-        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_NEGATIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::c_V4_F32_NegativeUnitW.V, _MM_SHUFFLE(3, 2, 3, 2));
 
         // [0, 0, range, -1]
         __m128 const r2_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 0, 0, 0));
@@ -3160,7 +3160,7 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, z_near_2 * rcp_height, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::c_V4_U32_Mask_0100.V);
 
         __m128 const r2_zw = Make<Vector4>(
             -(view_left + view_right) * rcp_width,
@@ -3170,7 +3170,7 @@ namespace Graphyte::Maths
             .V;
 
         // [0, 0, -range * z_near, 0]
-        __m128 const r3_z = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Z.V);
+        __m128 const r3_z = _mm_and_ps(values, Impl::c_V4_U32_Mask_0010.V);
 
         result.M.R[0] = r0_x;
         result.M.R[1] = r1_y;
@@ -3247,7 +3247,7 @@ namespace Graphyte::Maths
         __m128 const r0_x = _mm_move_ss(zero, values);
 
         // [0, z_near_2 * rcp_height, 0, 0]
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const r1_y = _mm_and_ps(values, Impl::c_V4_U32_Mask_0100.V);
 
         __m128 const r2_zw = Make<Vector4>(
             (view_left + view_right) * rcp_width,
@@ -3257,7 +3257,7 @@ namespace Graphyte::Maths
             .V;
 
         // [0, 0, range * z_near, 0]
-        __m128 const r3_z = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Z.V);
+        __m128 const r3_z = _mm_and_ps(values, Impl::c_V4_U32_Mask_0010.V);
 
         result.M.R[0] = r0_x;
         result.M.R[1] = r1_y;
@@ -3307,7 +3307,7 @@ namespace Graphyte::Maths
         result.M.R[0] = vsetq_lane_f32(2.0f / view_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(2.0f / view_height, zero, 1);
         result.M.R[2] = vsetq_lane_f32(range, zero, 2);
-        result.M.R[3] = vsetq_lane_f32(-range * z_near, Impl::VEC4_POSITIVE_UNIT_W.V, 2);
+        result.M.R[3] = vsetq_lane_f32(-range * z_near, Impl::c_V4_F32_PositiveUnitW.V, 2);
 #elif GRAPHYTE_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             2.0f / view_width,
@@ -3320,8 +3320,8 @@ namespace Graphyte::Maths
         __m128 const zero = _mm_setzero_ps();
 
         __m128 const r0_x = _mm_move_ss(zero, values);
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
-        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const r1_y = _mm_and_ps(values, Impl::c_V4_U32_Mask_0100.V);
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::c_V4_F32_PositiveUnitW.V, _MM_SHUFFLE(3, 2, 3, 2));
         __m128 const r2_z = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(2, 0, 0, 0));
         __m128 const r3_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 1, 0, 0));
 
@@ -3373,7 +3373,7 @@ namespace Graphyte::Maths
         result.M.R[0] = vsetq_lane_f32(2.0f / view_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(2.0f / view_height, zero, 1);
         result.M.R[2] = vsetq_lane_f32(range, zero, 2);
-        result.M.R[3] = vsetq_lane_f32(range * z_near, Impl::VEC4_POSITIVE_UNIT_W.V, 2);
+        result.M.R[3] = vsetq_lane_f32(range * z_near, Impl::c_V4_F32_PositiveUnitW.V, 2);
 #elif GRAPHYTE_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             2.0f / view_width,
@@ -3386,8 +3386,8 @@ namespace Graphyte::Maths
         __m128 const zero = _mm_setzero_ps();
 
         __m128 const r0_x = _mm_move_ss(zero, values);
-        __m128 const r1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
-        __m128 const values2 = _mm_shuffle_ps(values, Impl::VEC4_POSITIVE_UNIT_W.V, _MM_SHUFFLE(3, 2, 3, 2));
+        __m128 const r1_y = _mm_and_ps(values, Impl::c_V4_U32_Mask_0100.V);
+        __m128 const values2 = _mm_shuffle_ps(values, Impl::c_V4_F32_PositiveUnitW.V, _MM_SHUFFLE(3, 2, 3, 2));
         __m128 const r2_z = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(2, 0, 0, 0));
         __m128 const r3_zw = _mm_shuffle_ps(zero, values2, _MM_SHUFFLE(3, 1, 0, 0));
 
@@ -3470,10 +3470,10 @@ namespace Graphyte::Maths
         __m128 const t0_x = _mm_move_ss(zero, values);
         __m128 const r0_x = _mm_add_ss(t0_x, t0_x);
 
-        __m128 const t1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const t1_y = _mm_and_ps(values, Impl::c_V4_U32_Mask_0100.V);
         __m128 const r1_y = _mm_add_ps(t1_y, t1_y);
 
-        __m128 const r2_z = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Z.V);
+        __m128 const r2_z = _mm_and_ps(values, Impl::c_V4_U32_Mask_0010.V);
 
         __m128 const r3_xyzw = _mm_mul_ps(values, mvalues2.V);
 
@@ -3556,10 +3556,10 @@ namespace Graphyte::Maths
         __m128 const t0_x = _mm_move_ss(zero, values);
         __m128 const r0_x = _mm_add_ss(t0_x, t0_x);
 
-        __m128 const t1_y = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Y.V);
+        __m128 const t1_y = _mm_and_ps(values, Impl::c_V4_U32_Mask_0100.V);
         __m128 const r1_y = _mm_add_ps(t1_y, t1_y);
 
-        __m128 const r2_z = _mm_and_ps(values, Impl::VEC4_MASK_COMPONENT_Z.V);
+        __m128 const r2_z = _mm_and_ps(values, Impl::c_V4_U32_Mask_0010.V);
 
         __m128 const r3_xyzw = _mm_mul_ps(values, mvalues2.V);
 

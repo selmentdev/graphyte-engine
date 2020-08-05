@@ -50,21 +50,21 @@ namespace Graphyte::Maths
     mathinline T mathcall Identity() noexcept
         requires(Impl::IsQuaternion<T>)
     {
-        return { Impl::VEC4_POSITIVE_UNIT_W.V };
+        return { Impl::c_V4_F32_PositiveUnitW.V };
     }
 
     template <typename T>
     mathinline bool mathcall IsIdentity(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
-        return IsEqual(Vector4{ q.V }, Vector4{ Impl::VEC4_POSITIVE_UNIT_W.V });
+        return IsEqual(Vector4{ q.V }, Vector4{ Impl::c_V4_F32_PositiveUnitW.V });
     }
 
     template <typename T>
     mathinline bool mathcall IsIdentity(T q, Vector4 epsilon) noexcept
         requires(Impl::IsQuaternion<T>)
     {
-        return IsEqual(Vector4{ q.V }, Vector4{ Impl::VEC4_POSITIVE_UNIT_W.V }, epsilon);
+        return IsEqual(Vector4{ q.V }, Vector4{ Impl::c_V4_F32_PositiveUnitW.V }, epsilon);
     }
 
     template <typename T>
@@ -147,9 +147,9 @@ namespace Graphyte::Maths
     mathinline Vector3 Rotate(Vector3 v, Quaternion q) noexcept
     {
         Quaternion const a = Select<Quaternion>(
-            Quaternion{ Impl::VEC4_MASK_SELECT_1110.V },
+            Quaternion{ Impl::c_V4_U32_Mask_1110.V },
             Quaternion{ v.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+            Bool4{ Impl::c_V4_U32_Mask_1110.V });
 
         Quaternion const qn   = Conjugate(q);
         Quaternion const qa   = Multiply(q, a);
@@ -160,9 +160,9 @@ namespace Graphyte::Maths
     mathinline Vector3 InverseRotate(Vector3 v, Quaternion q) noexcept
     {
         Quaternion const a = Select<Quaternion>(
-            Quaternion{ Impl::VEC4_MASK_SELECT_1110.V },
+            Quaternion{ Impl::c_V4_U32_Mask_1110.V },
             Quaternion{ v.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+            Bool4{ Impl::c_V4_U32_Mask_1110.V });
 
         Quaternion const qn   = Conjugate(q);
         Quaternion const qna  = Multiply(qn, a);
@@ -185,7 +185,7 @@ namespace Graphyte::Maths
         SinCos(sinlen, coslen, v_len);
 
         Vector4 const r0     = Multiply(Multiply(Vector4{ q.V }, v_rcp_len), sinlen);
-        Vector4 const r1     = Select(coslen, r0, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Vector4 const r1     = Select(coslen, r0, Bool4{ Impl::c_V4_U32_Mask_1110.V });
         Vector4 const w      = SplatW(Vector4{ q.V });
         Vector4 const wexp   = Exp(w);
         Vector4 const result = Multiply(r1, wexp);
@@ -206,8 +206,8 @@ namespace Graphyte::Maths
         __m128 const r_xyzw = _mm_mul_ps(_mm_mul_ps(q.V, v_rcp_len), sinlen);
 
         // {x,y,z,coslen}
-        __m128 const r0 = _mm_and_ps(r_xyzw, Impl::VEC4_MASK_SELECT_1110.V);
-        __m128 const r1 = _mm_andnot_ps(Impl::VEC4_MASK_SELECT_1110.V, coslen);
+        __m128 const r0 = _mm_and_ps(r_xyzw, Impl::c_V4_U32_Mask_1110.V);
+        __m128 const r1 = _mm_andnot_ps(Impl::c_V4_U32_Mask_1110.V, coslen);
         __m128 const r2 = _mm_or_ps(r0, r1);
 
         // w = q.wwww
@@ -239,11 +239,11 @@ namespace Graphyte::Maths
         Vector4 const q_w      = SplatW(Vector4{ q.V });
         Vector4 const q_len_sq = MultiplyAdd(q_w, q_w, v_len_sq);
 
-        Vector4 const s       = Multiply(Acos(Clamp(Multiply(q_w, InvSqrt(q_len_sq)), Vector4{ Impl::VEC4_NEGATIVE_ONE_4.V }, Vector4{ Impl::VEC4_ONE_4.V })), InvSqrt(v_len_sq));
+        Vector4 const s       = Multiply(Acos(Clamp(Multiply(q_w, InvSqrt(q_len_sq)), Vector4{ Impl::c_V4_F32_Negative_One.V }, Vector4{ Impl::c_V4_F32_One.V })), InvSqrt(v_len_sq));
         Vector4 const q_xyz_s = Multiply(qv, s);
         Vector4 const w       = Multiply(Log(q_len_sq), 0.5F);
 
-        Quaternion r0{ Select(w, Vector4{ q_xyz_s.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V }).V };
+        Quaternion r0{ Select(w, Vector4{ q_xyz_s.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V }).V };
         return r0;
 #elif GRAPHYTE_HW_AVX
         __m128 const v_len_sq = _mm_dp_ps(q.V, q.V, 0x7F);
@@ -272,8 +272,8 @@ namespace Graphyte::Maths
         __m128 const w            = _mm_set_ps1(logf(_mm_cvtss_f32(q_len_sq)) * 0.5F);
 #endif
 
-        __m128 const r0 = _mm_and_ps(q_xyz_s, Impl::VEC4_MASK_SELECT_1110.V);
-        __m128 const r1 = _mm_andnot_ps(Impl::VEC4_MASK_SELECT_1110.V, w);
+        __m128 const r0 = _mm_and_ps(q_xyz_s, Impl::c_V4_U32_Mask_1110.V);
+        __m128 const r1 = _mm_andnot_ps(Impl::c_V4_U32_Mask_1110.V, w);
         __m128 const r2 = _mm_or_ps(r0, r1);
         return { r2 };
 #endif
@@ -290,7 +290,7 @@ namespace Graphyte::Maths
             1.0F,
         } } };
 
-        Vector4 const half_angles = Multiply(Vector4{ angles.V }, { Impl::VEC4_ONE_HALF_4.V });
+        Vector4 const half_angles = Multiply(Vector4{ angles.V }, { Impl::c_V4_F32_One_Half.V });
 
         Vector4 sin_angles;
         Vector4 cos_angles;
@@ -326,7 +326,7 @@ namespace Graphyte::Maths
         requires(Impl::IsQuaternion<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
-        Vector4 qv = Select(Vector4{ Impl::VEC4_ONE_4.V }, Vector4{ normal.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Vector4 qv = Select(Vector4{ Impl::c_V4_F32_One.V }, Vector4{ normal.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
 
         float fsin;
         float fcos;
@@ -336,16 +336,16 @@ namespace Graphyte::Maths
         Vector4 const result = Multiply(qv, scale);
         return Quaternion{ result.V };
 #elif GRAPHYTE_HW_AVX
-        __m128 const normal_xyz  = _mm_and_ps(normal.V, Impl::VEC4_MASK_SELECT_1110.V);
-        __m128 const normal_xyz1 = _mm_or_ps(normal_xyz, Impl::VEC4_POSITIVE_UNIT_W.V);
+        __m128 const normal_xyz  = _mm_and_ps(normal.V, Impl::c_V4_U32_Mask_1110.V);
+        __m128 const normal_xyz1 = _mm_or_ps(normal_xyz, Impl::c_V4_F32_PositiveUnitW.V);
         __m128 const scale       = _mm_set_ps1(0.5F * angle);
 
         Vector4 vsin;
         Vector4 vcos;
         SinCos(vsin, vcos, Vector4{ scale });
 
-        __m128 const sin_xyzn = _mm_and_ps(vsin.V, Impl::VEC4_MASK_SELECT_1110.V);
-        __m128 const cos_nnnw = _mm_and_ps(vcos.V, Impl::VEC4_MASK_COMPONENT_W.V);
+        __m128 const sin_xyzn = _mm_and_ps(vsin.V, Impl::c_V4_U32_Mask_1110.V);
+        __m128 const cos_nnnw = _mm_and_ps(vcos.V, Impl::c_V4_U32_Mask_0001.V);
 
         __m128 const sincos_xyzw = _mm_or_ps(sin_xyzn, cos_nnnw);
         __m128 const result      = _mm_mul_ps(normal_xyz1, sincos_xyzw);
@@ -502,7 +502,7 @@ namespace Graphyte::Maths
 
         __m128 const x2y2z2w2_0 = _mm_add_ps(t0_0, t1_0);
         __m128 const x2y2z2w2_1 = _mm_add_ps(t2_0, x2y2z2w2_0);
-        __m128 const x2y2z2w2_2 = _mm_add_ps(x2y2z2w2_1, Impl::VEC4_ONE_4.V);
+        __m128 const x2y2z2w2_2 = _mm_add_ps(x2y2z2w2_1, Impl::c_V4_F32_One.V);
 
         __m128 const t0_1   = _mm_shuffle_ps(r0_xyz, r1_xyz, _MM_SHUFFLE(1, 2, 2, 1));
         __m128 const t1_1_a = _mm_shuffle_ps(r1_xyz, r2_xyz, _MM_SHUFFLE(1, 0, 0, 0));

@@ -13,196 +13,196 @@ namespace Graphyte::Maths
     constexpr T mathcall E() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_E<T>;
+        return Impl::c_S_E<T>;
     }
 
     template <typename T>
     constexpr T mathcall Log2E() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Log2E<T>;
+        return Impl::c_S_Log2E<T>;
     }
 
     template <typename T>
     constexpr T mathcall Log10E() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Log10E<T>;
+        return Impl::c_S_Log10E<T>;
     }
 
     template <typename T>
     constexpr T mathcall Ln2() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Ln2<T>;
+        return Impl::c_S_Ln2<T>;
     }
 
     template <typename T>
     constexpr T mathcall Ln10() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Ln10<T>;
+        return Impl::c_S_Ln10<T>;
     }
 
     template <typename T>
     constexpr T mathcall Pi() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Pi<T>;
+        return Impl::c_S_Pi<T>;
     }
 
     template <typename T>
     constexpr T mathcall Pi2() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Pi2<T>;
+        return Impl::c_S_Pi2<T>;
     }
 
     template <typename T>
     constexpr T mathcall InvPi() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_InvPi<T>;
+        return Impl::c_S_InvPi<T>;
     }
 
     template <typename T>
     constexpr T mathcall InvPi2() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_InvPi2<T>;
+        return Impl::c_S_InvPi2<T>;
     }
 
     template <typename T>
     constexpr T mathcall InvSqrtPi() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_InvSqrtPi<T>;
+        return Impl::c_S_InvSqrtPi<T>;
     }
 
     template <typename T>
     constexpr T mathcall Sqrt2() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Sqrt2<T>;
+        return Impl::c_S_Sqrt2<T>;
     }
 
     template <typename T>
     constexpr T mathcall Sqrt3() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Sqrt3<T>;
+        return Impl::c_S_Sqrt3<T>;
     }
 
     template <typename T>
     constexpr T mathcall Sqrt5() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Sqrt5<T>;
+        return Impl::c_S_Sqrt5<T>;
     }
 
     template <typename T>
     constexpr T mathcall InvSqrt2() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_InvSqrt2<T>;
+        return Impl::c_S_InvSqrt2<T>;
     }
 
     template <typename T>
     constexpr T mathcall InvSqrt3() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_InvSqrt3<T>;
+        return Impl::c_S_InvSqrt3<T>;
     }
 
     template <typename T>
     constexpr T mathcall InvSqrt5() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_InvSqrt5<T>;
+        return Impl::c_S_InvSqrt5<T>;
     }
 
     template <typename T>
     constexpr T mathcall Phi() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Phi<T>;
+        return Impl::c_S_Phi<T>;
     }
 
     template <typename T>
     constexpr T mathcall Gamma() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Gamma<T>;
+        return Impl::c_S_Gamma<T>;
     }
 
     template <typename T>
     constexpr T mathcall PiDiv2() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_PiDiv2<T>;
+        return Impl::c_S_PiDiv2<T>;
     }
 
     template <typename T>
     constexpr T mathcall PiDiv3() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_PiDiv3<T>;
+        return Impl::c_S_PiDiv3<T>;
     }
 
     template <typename T>
     constexpr T mathcall PiDiv4() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_PiDiv4<T>;
+        return Impl::c_S_PiDiv4<T>;
     }
 
     template <typename T>
     constexpr T mathcall PiDiv6() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_PiDiv6<T>;
+        return Impl::c_S_PiDiv6<T>;
     }
 
     template <typename T>
     constexpr T mathcall PiDiv8() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_PiDiv8<T>;
+        return Impl::c_S_PiDiv8<T>;
     }
 
     template <typename T>
     constexpr T mathcall EpsilonAngular() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_EpsilonAngular<T>;
+        return Impl::c_S_EpsilonAngular<T>;
     }
 
     template <typename T>
     constexpr T mathcall EpsilonLow() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_EpsilonLow<T>;
+        return Impl::c_S_EpsilonLow<T>;
     }
 
     template <typename T>
     constexpr T mathcall Epsilon() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_Epsilon<T>;
+        return Impl::c_S_Epsilon<T>;
     }
 
     template <typename T>
     constexpr T mathcall EpsilonHigh() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_EpsilonHigh<T>;
+        return Impl::c_S_EpsilonHigh<T>;
     }
 
     template <typename T>
     constexpr T mathcall RoundingError() noexcept
         requires(std::is_floating_point_v<T>)
     {
-        return Impl::g_Const_RoundingError<T>;
+        return Impl::c_S_RoundingError<T>;
     }
 }
 
@@ -924,7 +924,7 @@ namespace Graphyte::Maths
     mathinline T mathcall Cosine(T a, T b, T t) noexcept
         requires(std::is_floating_point_v<T>)
     {
-        float const t0 = (T(1.0) - Cos(t * Impl::g_Const_Pi<T>)) * T(0.5);
+        float const t0 = (T(1.0) - Cos(t * Impl::c_S_Pi<T>)) * T(0.5);
         return Lerp(a, b, t0);
     }
 
@@ -1213,13 +1213,13 @@ namespace Graphyte::Maths
 
     mathinline float mathcall WrapAngle(float value) noexcept
     {
-        float const raw = value + Maths::Impl::g_Const_Pi<float>;
+        float const raw = value + Maths::Impl::c_S_Pi<float>;
         float abs = Abs(raw);
 
-        float const scaled = static_cast<float>(static_cast<int32_t>(abs / Impl::g_Const_Pi<float>));
+        float const scaled = static_cast<float>(static_cast<int32_t>(abs / Impl::c_S_Pi<float>));
 
-        abs -= Impl::g_Const_Pi<float> * scaled;
-        abs -= Impl::g_Const_Pi<float>;
+        abs -= Impl::c_S_Pi<float> * scaled;
+        abs -= Impl::c_S_Pi<float>;
 
         if (raw < 0.0f)
         {
@@ -1234,8 +1234,8 @@ namespace Graphyte::Maths
         requires(std::is_floating_point_v<T>)
     {
         T const r1 = angle2 - angle1;
-        T const r2 = r1 - Impl::g_Const_Pi2<T>;
-        T const r3 = r1 + Impl::g_Const_Pi2<T>;
+        T const r2 = r1 - Impl::c_S_Pi2<T>;
+        T const r3 = r1 + Impl::c_S_Pi2<T>;
 
         T const a1 = Abs(r1);
         T const a2 = Abs(r2);

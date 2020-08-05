@@ -9,14 +9,14 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         // v4 = {v3, 1}
-        Vector4 const v4_1 = Select(Vector4{ Impl::VEC4_ONE_4.V }, Vector4{ v.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Vector4 const v4_1 = Select(Vector4{ Impl::c_V4_F32_One.V }, Vector4{ v.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
         Vector4 const result = Dot(Vector4{ p.V }, v4_1);
         return result;
 #elif GRAPHYTE_HW_AVX
-        __m128 const mask = Impl::VEC4_MASK_SELECT_1110.V;
+        __m128 const mask = Impl::c_V4_U32_Mask_1110.V;
 
         // select {_,_,_,1}
-        __m128 const one4 = _mm_andnot_ps(mask, Impl::VEC4_ONE_4.V);
+        __m128 const one4 = _mm_andnot_ps(mask, Impl::c_V4_F32_One.V);
         // select {a,b,c,_}
         __m128 const abcn = _mm_and_ps(v.V, mask);
         // select {a,b,c,1}
@@ -59,7 +59,7 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         __m128 const length_sq = _mm_dp_ps(p.V, p.V, 0b0111'1111);
         __m128 const length = _mm_sqrt_ps(length_sq);
-        __m128 const mask = _mm_cmpneq_ps(length_sq, Impl::VEC4_INFINITY.V);
+        __m128 const mask = _mm_cmpneq_ps(length_sq, Impl::c_V4_F32_Positive_Infinity.V);
         __m128 const normalized = _mm_div_ps(p.V, length);
         __m128 const result = _mm_and_ps(normalized, mask);
         return { result };
@@ -109,7 +109,7 @@ namespace Graphyte::Maths
     {
         Vector3 const p_wwww = Dot(point, normal);
         Vector3 const n_wwww = Negate(p_wwww);
-        Vector4 const abcw   = Select(Vector4{ n_wwww.V }, Vector4{ normal.V }, Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+        Vector4 const abcw   = Select(Vector4{ n_wwww.V }, Vector4{ normal.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
         Plane const result{ abcw.V };
         return result;
     }
@@ -128,7 +128,7 @@ namespace Graphyte::Maths
         Vector4 const result = Select(
             plane_distance,
             Vector4{ plane_normal.V },
-            Bool4{ Impl::VEC4_MASK_SELECT_1110.V });
+            Bool4{ Impl::c_V4_U32_Mask_1110.V });
         Plane const plane{ result.V };
         return plane;
     }
@@ -174,7 +174,7 @@ namespace Graphyte::Maths
         Vector4 const p_dddd = SplatW(pp);
 
         Vector4 dot = Dot(vp, light);
-        dot = Select(Vector4{ Impl::VEC4_MASK_SELECT_0001.V }, dot, Bool4{ Impl::VEC4_MASK_SELECT_0001.V });
+        dot = Select(Vector4{ Impl::c_V4_U32_Mask_0001.V }, dot, Bool4{ Impl::c_V4_U32_Mask_0001.V });
 
         Matrix result;
         result.M.R[3] = MultiplyAdd(p_dddd, light, dot).V;
