@@ -443,14 +443,15 @@ namespace Graphyte::Maths
         constexpr uint32_t expected = (1u << T::Components) - 1;
 
         __m128 const mask = _mm_cmpeq_ps(a.V, b.V);
+        uint32_t const result = _mm_movemask_ps(mask);
 
         if constexpr (T::Components == 4)
         {
-            return _mm_movemask_ps(mask) == expected;
+            return result == expected;
         }
         else
         {
-            return (_mm_movemask_ps(mask) & expected) == expected;
+            return (result & expected) == expected;
         }
 #endif
     }
@@ -504,14 +505,15 @@ namespace Graphyte::Maths
         __m128 const mask = _mm_cmple_ps(av, epsilon.V);
 
         constexpr uint32_t expected = (1u << T::Components) - 1;
+        uint32_t const result = _mm_movemask_ps(mask);
 
         if constexpr (T::Components == 4)
         {
-            return _mm_movemask_ps(mask) == expected;
+            return result == expected;
         }
         else
         {
-            return (_mm_movemask_ps(mask) & expected) == expected;
+            return (result & expected) == expected;
         }
 #endif
     }
@@ -546,15 +548,16 @@ namespace Graphyte::Maths
 #elif GRAPHYTE_HW_AVX
         constexpr uint32_t expected = (1u << T::Components) - 1;
 
-        __m128 const mask = _mm_cmpneq_ps(a.V, b.V);
+        __m128 const mask = _mm_cmpeq_ps(a.V, b.V);
+        uint32_t const result = _mm_movemask_ps(mask);
 
         if constexpr (T::Components == 4)
         {
-            return (_mm_movemask_ps(mask) != 0);
+            return result != expected;
         }
         else
         {
-            return (_mm_movemask_ps(mask) & expected) != expected;
+            return (result & expected) != expected;
         }
 #endif
     }
@@ -590,14 +593,15 @@ namespace Graphyte::Maths
         constexpr uint32_t expected = (1u << T::Components) - 1;
 
         __m128 const mask = _mm_cmpgt_ps(a.V, b.V);
+        uint32_t const result = _mm_movemask_ps(mask);
 
         if constexpr (T::Components == 4)
         {
-            return _mm_movemask_ps(mask) == expected;
+            return result == expected;
         }
         else
         {
-            return (_mm_movemask_ps(mask) & expected) == expected;
+            return (result & expected) == expected;
         }
 #endif
     }
@@ -633,14 +637,15 @@ namespace Graphyte::Maths
         constexpr uint32_t expected = (1u << T::Components) - 1;
 
         __m128 const mask = _mm_cmpge_ps(a.V, b.V);
+        uint32_t const result = _mm_movemask_ps(mask);
 
         if constexpr (T::Components == 4)
         {
-            return _mm_movemask_ps(mask) == expected;
+            return result == expected;
         }
         else
         {
-            return (_mm_movemask_ps(mask) & expected) == expected;
+            return (result & expected) == expected;
         }
 #endif
     }
@@ -676,14 +681,15 @@ namespace Graphyte::Maths
         constexpr uint32_t expected = (1u << T::Components) - 1;
 
         __m128 const mask = _mm_cmplt_ps(a.V, b.V);
+        uint32_t const result = _mm_movemask_ps(mask);
 
         if constexpr (T::Components == 4)
         {
-            return _mm_movemask_ps(mask) == expected;
+            return result == expected;
         }
         else
         {
-            return (_mm_movemask_ps(mask) & expected) == expected;
+            return (result & expected) == expected;
         }
 #endif
     }
@@ -719,14 +725,15 @@ namespace Graphyte::Maths
         constexpr uint32_t expected = (1u << T::Components) - 1;
 
         __m128 const mask = _mm_cmple_ps(a.V, b.V);
+        uint32_t const result = _mm_movemask_ps(mask);
 
         if constexpr (T::Components == 4)
         {
-            return _mm_movemask_ps(mask) == expected;
+            return result == expected;
         }
         else
         {
-            return (_mm_movemask_ps(mask) & expected) == expected;
+            return (result & expected) == expected;
         }
 #endif
     }
@@ -765,14 +772,15 @@ namespace Graphyte::Maths
         __m128 const neg_bounds = _mm_mul_ps(bounds.V, Impl::c_V4_F32_Negative_One.V);
         __m128 const mask_ge    = _mm_cmple_ps(neg_bounds, v.V);
         __m128 const mask       = _mm_and_ps(mask_le, mask_ge);
+        uint32_t const result   = _mm_movemask_ps(mask);
 
         if constexpr (T::Components == 4)
         {
-            return _mm_movemask_ps(mask) == expected;
+            return result == expected;
         }
         else
         {
-            return (_mm_movemask_ps(mask) & expected) == expected;
+            return (result & expected) == expected;
         }
 #endif
     }

@@ -1,4 +1,225 @@
 #include <catch2/catch.hpp>
+#include <GxBase/Maths/Vector.hxx>
+
+TEST_CASE("Graphyte::Maths::To")
+{
+    using namespace Graphyte::Maths;
+
+    Vector1 const v1  = Make<Vector1>(1.0f);
+    Vector2 const v2a = Make<Vector2>(1.0f, 2.0f);
+    Vector2 const v2b = Make<Vector2>(3.0f, 4.0f);
+    Vector3 const v3  = Make<Vector3>(1.0f, 2.0f, 3.0f);
+
+    SECTION("f32 | vec3 = vec4")
+    {
+        Vector4 const r = To(-1.0f, v3);
+        REQUIRE(GetX(r) == -1.0f);
+        REQUIRE(GetY(r) == 1.0f);
+        REQUIRE(GetZ(r) == 2.0f);
+        REQUIRE(GetW(r) == 3.0f);
+    }
+
+    SECTION("vec3 | f32 = vec4")
+    {
+        Vector4 const r = To(v3, -1.0f);
+        REQUIRE(GetX(r) == 1.0f);
+        REQUIRE(GetY(r) == 2.0f);
+        REQUIRE(GetZ(r) == 3.0f);
+        REQUIRE(GetW(r) == -1.0f);
+    }
+
+    SECTION("f32 | f32 | vec2 = vec4")
+    {
+        Vector4 const r = To(-1.0f, -2.0f, v2a);
+        REQUIRE(GetX(r) == -1.0f);
+        REQUIRE(GetY(r) == -2.0f);
+        REQUIRE(GetZ(r) == 1.0f);
+        REQUIRE(GetW(r) == 2.0f);
+    }
+
+    SECTION("f32 | vec2 | f32 = vec4")
+    {
+        Vector4 const r = To(-1.0f, v2a, -2.0f);
+        REQUIRE(GetX(r) == -1.0f);
+        REQUIRE(GetY(r) == 1.0f);
+        REQUIRE(GetZ(r) == 2.0f);
+        REQUIRE(GetW(r) == -2.0f);
+    }
+
+    SECTION("vec2 | vec2 = vec4")
+    {
+        Vector4 const r = To(v2a, v2b);
+        REQUIRE(GetX(r) == 1.0f);
+        REQUIRE(GetY(r) == 2.0f);
+        REQUIRE(GetZ(r) == 3.0f);
+        REQUIRE(GetW(r) == 4.0f);
+    }
+
+    SECTION("f32 | vec2 = vec3")
+    {
+        Vector3 const r = To(-1.0f, v2a);
+        REQUIRE(GetX(r) == -1.0f);
+        REQUIRE(GetY(r) == 1.0f);
+        REQUIRE(GetZ(r) == 2.0f);
+        //REQUIRE(GetW(r) == 0.0f);
+    }
+
+    SECTION("vec2 | f32 = vec3")
+    {
+        Vector3 const r = To(v2a, -1.0f);
+        REQUIRE(GetX(r) == 1.0f);
+        REQUIRE(GetY(r) == 2.0f);
+        REQUIRE(GetZ(r) == -1.0f);
+        //REQUIRE(GetW(r) == 0.0f);
+    }
+}
+
+TEST_CASE("Graphyte::Maths / all components / comparisons")
+{
+    using namespace Graphyte::Maths;
+
+    static constexpr float values[4][2]{
+        {
+            -1.0f,
+            -1.0f,
+        },
+        {
+            -1.0f,
+            1.0f,
+        },
+        {
+            1.0f,
+            -1.0f,
+        },
+        {
+            1.0f,
+            1.0f,
+        },
+    };
+
+    for (auto [lx, rx] : values)
+    {
+        INFO("lx: " << lx << ", rx: " << rx);
+
+        Vector1 const v1l = Make<Vector1>(lx);
+        Vector1 const v1r = Make<Vector1>(rx);
+
+        for (auto [ly, ry] : values)
+        {
+            INFO("ly: " << ly << ", ry: " << ry);
+
+            Vector2 const v2l = Make<Vector2>(lx, ly);
+            Vector2 const v2r = Make<Vector2>(rx, ry);
+
+            for (auto [lz, rz] : values)
+            {
+                INFO("lz: " << lz << ", rz: " << rz);
+
+                Vector3 const v3l = Make<Vector3>(lx, ly, lz);
+                Vector3 const v3r = Make<Vector3>(rx, ry, rz);
+
+                for (auto [lw, rw] : values)
+                {
+                    INFO("lw: " << lw << ", rw: " << rw);
+
+                    Vector4 const v4l = Make<Vector4>(lx, ly, lz, lw);
+                    Vector4 const v4r = Make<Vector4>(rx, ry, rz, rw);
+
+                    CHECK(IsEqual(v4l, v4r) == (lx == rx && ly == ry && lz == rz && lw == rw));
+                    CHECK(IsNotEqual(v4l, v4r) == (lx != rx || ly != ry || lz != rz || lw != rw));
+                    CHECK(IsGreater(v4l, v4r) == (lx > rx && ly > ry && lz > rz && lw > rw));
+                    CHECK(IsGreaterEqual(v4l, v4r) == (lx >= rx && ly >= ry && lz >= rz && lw >= rw));
+                    CHECK(IsLess(v4l, v4r) == (lx < rx && ly < ry && lz < rz && lw < rw));
+                    CHECK(IsLessEqual(v4l, v4r) == (lx <= rx && ly <= ry && lz <= rz && lw <= rw));
+                }
+
+                CHECK(IsEqual(v3l, v3r) == (lx == rx && ly == ry && lz == rz));
+                CHECK(IsNotEqual(v3l, v3r) == (lx != rx || ly != ry || lz != rz));
+                CHECK(IsGreater(v3l, v3r) == (lx > rx && ly > ry && lz > rz));
+                CHECK(IsGreaterEqual(v3l, v3r) == (lx >= rx && ly >= ry && lz >= rz));
+                CHECK(IsLess(v3l, v3r) == (lx < rx && ly < ry && lz < rz));
+                CHECK(IsLessEqual(v3l, v3r) == (lx <= rx && ly <= ry && lz <= rz));
+            }
+
+            CHECK(IsEqual(v2l, v2r) == (lx == rx && ly == ry));
+            CHECK(IsNotEqual(v2l, v2r) == (lx != rx || ly != ry));
+            CHECK(IsGreater(v2l, v2r) == (lx > rx && ly > ry));
+            CHECK(IsGreaterEqual(v2l, v2r) == (lx >= rx && ly >= ry));
+            CHECK(IsLess(v2l, v2r) == (lx < rx && ly < ry));
+            CHECK(IsLessEqual(v2l, v2r) == (lx <= rx && ly <= ry));
+        }
+
+        CHECK(IsEqual(v1l, v1r) == (lx == rx));
+        CHECK(IsNotEqual(v1l, v1r) == (lx != rx));
+        CHECK(IsGreater(v1l, v1r) == (lx > rx));
+        CHECK(IsGreaterEqual(v1l, v1r) == (lx >= rx));
+        CHECK(IsLess(v1l, v1r) == (lx < rx));
+        CHECK(IsLessEqual(v1l, v1r) == (lx <= rx));
+    }
+}
+
+TEST_CASE("Graphyte::Maths / dot product")
+{
+    using namespace Graphyte::Maths;
+
+    Vector1 const c1 = Make<Vector1>(1.0f);
+    Vector2 const c2 = Make<Vector2>(1.0f, 2.0f);
+    Vector3 const c3 = Make<Vector3>(1.0f, 2.0f, 3.0f);
+    Vector4 const c4 = Make<Vector4>(1.0f, 2.0f, 3.0f, 4.0f);
+
+    Vector1 const d1 = Dot(c1, c1);
+    CHECK(GetX(d1) == 1.0f);
+
+    
+    Vector2 const d2 = Dot(c2, c2);
+    CHECK(GetX(d2) == 5.0f);
+
+
+    Vector3 const d3 = Dot(c3, c3);
+    CHECK(GetX(d3) == 14.0f);
+
+
+    Vector4 const d4 = Dot(c4, c4);
+    CHECK(GetX(d4) == 30.0f);
+}
+
+TEST_CASE("Graphyte::Maths / lengths")
+{
+    using namespace Graphyte::Maths;
+
+    Vector1 const c1 = Make<Vector1>(2.0f);
+    Vector2 const c2 = Make<Vector2>(0.0f, 2.0f);
+    Vector3 const c3 = Make<Vector3>(0.0f, 0.0f, 2.0f);
+    Vector4 const c4 = Make<Vector4>(0.0f, 0.0f, 0.0f, 2.0f);
+
+    Vector1 const l1 = Length(c1);
+    CHECK(GetX(l1) == 2.0f);
+
+    Vector2 const l2 = Length(c2);
+    CHECK(GetX(l2) == 2.0f);
+
+    Vector3 const l3 = Length(c3);
+    CHECK(GetX(l3) == 2.0f);
+
+    Vector4 const l4 = Length(c4);
+    CHECK(GetX(l4) == 2.0f);
+
+    
+    Vector1 const s1 = LengthSquared(c1);
+    CHECK(GetX(s1) == 4.0f);
+
+    Vector2 const s2 = LengthSquared(c2);
+    CHECK(GetX(s2) == 4.0f);
+
+    Vector3 const s3 = LengthSquared(c3);
+    CHECK(GetX(s3) == 4.0f);
+
+    Vector4 const s4 = LengthSquared(c4);
+    CHECK(GetX(s4) == 4.0f);
+}
+
+
+#if false
 #include <GxBase/Maths.hxx>
 
 
@@ -3590,3 +3811,4 @@ TEST_CASE("Maths / Vector / Rounding")
         CHECK(Remainder(-0.9F, 1.0F) == Approx{ -0.9F });
     }
 }
+#endif
