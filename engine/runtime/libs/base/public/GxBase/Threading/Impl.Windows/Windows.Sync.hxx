@@ -102,7 +102,7 @@ namespace Graphyte::Threading
             EnterCriticalSection(&m_CriticalSection);
         }
 
-        bool TryEnter() noexcept
+        [[nodiscard]] bool TryEnter() noexcept
         {
             return TryEnterCriticalSection(&m_CriticalSection) != FALSE;
         }
@@ -181,12 +181,12 @@ namespace Graphyte::Threading
             WaitForSingleObject(m_Handle, INFINITE);
         }
 
-        bool Wait(uint32_t timeout) noexcept
+        [[nodiscard]] bool Wait(uint32_t timeout) noexcept
         {
             return WaitForSingleObject(m_Handle, timeout) != WAIT_TIMEOUT;
         }
 
-        bool TryWait() noexcept
+        [[nodiscard]] bool TryWait() noexcept
         {
             return WaitForSingleObject(m_Handle, 0) != WAIT_TIMEOUT;
         }
@@ -233,12 +233,12 @@ namespace Graphyte::Threading
             AcquireSRWLockShared(&m_Lock);
         }
 
-        bool TryEnterWriter() noexcept
+        [[nodiscard]] bool TryEnterWriter() noexcept
         {
             return TryAcquireSRWLockExclusive(&m_Lock) != FALSE;
         }
 
-        bool TryEnterReader() noexcept
+        [[nodiscard]] bool TryEnterReader() noexcept
         {
             return TryAcquireSRWLockShared(&m_Lock) != FALSE;
         }

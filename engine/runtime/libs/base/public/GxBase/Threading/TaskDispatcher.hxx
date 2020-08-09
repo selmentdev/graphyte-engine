@@ -51,7 +51,7 @@ namespace Graphyte::Threading
         void Dispatch(std::unique_ptr<BaseTask> task) noexcept;
 
     private:
-        std::unique_ptr<BaseTask> AcquireTask() noexcept;
+        [[nodiscard]] std::unique_ptr<BaseTask> AcquireTask() noexcept;
     };
 
     template <typename TTask>
@@ -80,7 +80,7 @@ namespace Graphyte::Threading
         }
 
         template <typename... TArgs>
-        static std::unique_ptr<Task> Make(TArgs&&... args) noexcept
+        [[nodiscard]] static std::unique_ptr<Task> Make(TArgs&&... args) noexcept
         {
             return std::make_unique<Task>(std::forward<TArgs>(args)...);
         }

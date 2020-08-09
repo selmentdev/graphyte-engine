@@ -11,8 +11,9 @@ namespace Graphyte::Threading
     };
 
     template <typename TLock>
-    class ScopedLock final
+    class [[nodiscard]] ScopedLock final
     {
+    public:
         ScopedLock(const ScopedLock&) = delete;
 
         ScopedLock& operator=(const ScopedLock&) = delete;
@@ -33,8 +34,9 @@ namespace Graphyte::Threading
     };
 
     template <typename TLock>
-    class ScopedReaderLock final
+    class [[nodiscard]] ScopedReaderLock final
     {
+    public:
         ScopedReaderLock(const ScopedReaderLock&) = delete;
 
         ScopedReaderLock& operator=(const ScopedReaderLock&) = delete;
@@ -55,8 +57,9 @@ namespace Graphyte::Threading
     };
 
     template <typename TLock>
-    class ScopedWriterLock final
+    class [[nodiscard]] ScopedWriterLock final
     {
+    public:
         ScopedWriterLock(const ScopedWriterLock&) = delete;
 
         ScopedWriterLock& operator=(const ScopedWriterLock&) = delete;
