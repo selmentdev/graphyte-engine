@@ -2608,7 +2608,7 @@ namespace Graphyte::Maths
 {
     template <typename T>
     mathinline T mathcall True() noexcept
-        requires(Impl::IsSimdUInt4<T>)
+        requires(Impl::IsSimdUInt4<T> || Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2629,7 +2629,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall False() noexcept
-        requires(Impl::IsSimdUInt4<T>)
+        requires(Impl::IsSimdUInt4<T> || Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result = { { { 0.0F,
@@ -2647,7 +2647,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall And(T a, T b) noexcept
-        requires(Impl::IsSimdUInt4<T>)
+        requires(Impl::IsSimdUInt4<T> || Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2671,7 +2671,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall AndNot(T a, T b) noexcept
-        requires(Impl::IsSimdUInt4<T>)
+        requires(Impl::IsSimdUInt4<T> || Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result = { { {
@@ -2694,7 +2694,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Or(T a, T b) noexcept
-        requires(Impl::IsSimdUInt4<T>)
+        requires(Impl::IsSimdUInt4<T> || Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2718,7 +2718,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Xor(T a, T b) noexcept
-        requires(Impl::IsSimdUInt4<T>)
+        requires(Impl::IsSimdUInt4<T> || Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2742,7 +2742,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Nor(T a, T b) noexcept
-        requires(Impl::IsSimdUInt4<T>)
+        requires(Impl::IsSimdUInt4<T> || Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {
@@ -2767,7 +2767,7 @@ namespace Graphyte::Maths
 
     template <typename T>
     mathinline T mathcall Not(T v) noexcept
-        requires(Impl::IsSimdUInt4<T>)
+        requires(Impl::IsSimdUInt4<T> || Impl::IsSimdFloat4<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstUInt32x4 const result{ { {

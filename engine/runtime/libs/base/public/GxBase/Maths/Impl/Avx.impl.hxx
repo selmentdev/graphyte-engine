@@ -310,4 +310,10 @@ namespace Graphyte::Maths::Impl
             return _mm_permute_ps(v, _MM_SHUFFLE(W, Z, Y, X));
         }
     }
+
+    mathinline __m128 mathcall avx_select(__m128 a, __m128 b, __m128 control) noexcept
+    {
+        __m128 const result = _mm_blendv_ps(a, b, control);
+        return result;
+    }
 }

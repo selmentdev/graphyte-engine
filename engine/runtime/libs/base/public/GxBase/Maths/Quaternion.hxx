@@ -12,21 +12,21 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Length(T v) noexcept
+    mathinline Vector4 mathcall Length(T v) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return { Length(Vector4{ v.V }).V };
     }
 
     template <typename T>
-    mathinline T mathcall LengthSquared(T v) noexcept
+    mathinline Vector4 mathcall LengthSquared(T v) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return { LengthSquared(Vector4{ v.V }).V };
     }
 
     template <typename T>
-    mathinline T mathcall ReciprocalLength(T v) noexcept
+    mathinline Vector4 mathcall ReciprocalLength(T v) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return { ReciprocalLength(Vector4{ v.V }).V };
@@ -544,14 +544,118 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, Vector4 t) noexcept;
+    mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, Vector4 t) noexcept
+    {
+        GX_ASSERT(GetX(t) == GetY(t) && GetX(t) == GetZ(t) && GetX(t) == GetW(t));
+
+#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+        static constexpr Impl::ConstFloat32x4 const one_minus_epsilon{ { {
+            1.0f - 0.00001f,
+            1.0f - 0.00001f,
+            1.0f - 0.00001f,
+            1.0f - 0.00001f,
+        } } };
+
+        Vector4 const vcos_omega0{ Dot(q0, q1).V };
+
+        Vector4 const vzero   = Zero<Vector4>();
+        Bool4 const vc0 = CompareLess(vcos_omega0, vzero);
+        Vector4 const vsign   = Select(Vector4{ Impl::c_V4_F32_One.V }, Vector4{ Impl::c_V4_F32_Negative_One.V }, vc0);
+
+        Vector4 const vcos_omega1 = Multiply(vcos_omega0, vsign);
+        Bool4 const vc1     = CompareLess(vcos_omega1, Vector4{ one_minus_epsilon.V });
+
+        Vector4 const vsin_omega_sq = NegateMultiplySubtract(vcos_omega1, vcos_omega1, Vector4{ Impl::c_V4_F32_One.V });
+        Vector4 const vsin_omega    = Sqrt(vsin_omega_sq);
+
+        Vector4 const vomega = Atan2(vsin_omega, vcos_omega1);
+
+        Vector4 const vsign_mask0 = SignMask<Vector4>();
+        Vector4 const vv01a       = ShiftLeft(t, vzero, 2);
+        Vector4 const vsign_mask1 = ShiftLeft(vsign_mask0, vzero, 3);
+        Vector4 const vv01b       = Xor(vv01a, vsign_mask1);
+        Vector4 const vv01c       = Add(Vector4{ Impl::c_V4_F32_PositiveUnitX.V }, vv01b);
+
+        Vector4 const vinv_sin_omega = Reciprocal(vsin_omega);
+
+        Vector4 const vs0a = Multiply(vv01c, vomega);
+        Vector4 const vs0b = Sin(vs0a);
+        Vector4 const vs0c = Multiply(vs0b, vinv_sin_omega);
+
+        Vector4 const vs0d = Select(vv01c, vs0c, vcontrol1);
+
+        Vector4 const vs1a = SplatY(vs0d);
+
+        Vector4 const vs0e = SplatX(vs0d);
+        Vector4 const vs1b = Multiply(vs1a, vsign);
+
+        Vector4 const vresult0 = Multiply(Vector4{ q0.V }, vs0e);
+        Vector4 const vresult1 = MultiplyAdd(Vector4{ q1.V }, vs1b, vresult0);
+
+        return Quaternion{ vresult1.V };
+#elif GRAPHYTE_HW_AVX
+        static constexpr Impl::ConstFloat32x4 const one_minus_epsilon{ { {
+            1.0f - 0.00001f,
+            1.0f - 0.00001f,
+            1.0f - 0.00001f,
+            1.0f - 0.00001f,
+        } } };
+
+        static constexpr Impl::ConstFloat32x4 const sign_mask_2{ { { 0x80000000, 0x00000000, 0x00000000, 0x00000000 } } };
+
+        __m128 const vcos_omega0 = Dot(q0, q1).V;
+
+        __m128 const vzero = _mm_setzero_ps();
+        __m128 const vc0   = _mm_cmplt_ps(vcos_omega0, vzero);
+        __m128 const vsign = _mm_blendv_ps(Impl::c_V4_F32_One.V, Impl::c_V4_F32_Negative_One.V, vc0);
+        __m128 const vcos_omega1 = _mm_mul_ps(vcos_omega0, vsign);
+        __m128 const vc1         = _mm_cmplt_ps(vcos_omega1, one_minus_epsilon.V);
+        __m128 const vsin_omega0 = _mm_mul_ps(vcos_omega1, vcos_omega1);
+        __m128 const vsin_omega1 = _mm_sub_ps(Impl::c_V4_F32_One.V, vsin_omega0);
+        __m128 const vsin_omega2 = _mm_sqrt_ps(vsin_omega1);
+
+        __m128 const vomega = Atan2(Vector4{ vsin_omega2 }, Vector4{ vcos_omega1 }).V;
+        __m128 const v01a   = _mm_permute_ps(t.V, _MM_SHUFFLE(2, 3, 0, 1));
+        __m128 const v01b   = _mm_and_ps(v01a, Impl::c_V4_U32_Mask_1100.V);
+        __m128 const v01c   = _mm_xor_ps(v01b, sign_mask_2.V);
+        __m128 const v01d   = _mm_add_ps(Impl::c_V4_F32_PositiveUnitX.V, v01c);
+
+        __m128 const vs0a = _mm_mul_ps(v01d, vomega);
+        __m128 const vs0b = Sin(Vector4{ vs0a }).V;
+        __m128 const vs0c = _mm_div_ps(vs0b, vsin_omega2);
+        __m128 const vs0d = _mm_blendv_ps(v01d, vs0c, vc1);
+
+        __m128 const vs1a = SplatY(Vector4{v01d}).V;
+        __m128 const vs0e = SplatX(Vector4{v01d}).V;
+
+        __m128 const vs1b = _mm_mul_ps(vs1a, vsign);
+
+        __m128 const vresult0 = _mm_mul_ps(q0.V, vs0e);
+        __m128 const vresult1 = Impl::avx_fmadd_f32x4(q1.V, vs1b, vresult0);
+        return Quaternion{ vresult1 };
+#endif
+    }
 
     mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, float t) noexcept
     {
         return Slerp(q0, q1, Make<Vector4>(t));
     }
 
-    mathinline Quaternion mathcall Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, Vector4 t) noexcept;
+    mathinline Quaternion mathcall Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, Vector4 t) noexcept
+    {
+        GX_ASSERT(GetX(t) == GetY(t) && GetX(t) == GetZ(t) && GetX(t) == GetW(t));
+
+        Vector4 const two{ Impl::SplatConstant(2, 0) };
+
+        Quaternion const q03 = Slerp(q0, q3, t);
+        Quaternion const q12 = Slerp(q1, q2, t);
+
+        Vector4 const t1 = NegateMultiplySubtract(t, t, t);
+        Vector4 const t2 = Multiply(t1, two);
+
+        Quaternion const result = Slerp(q03, q12, t2);
+        return result;
+    }
 
     mathinline Quaternion mathcall Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, float t) noexcept
     {
@@ -559,44 +663,101 @@ namespace Graphyte::Maths
     }
 
     mathinline void mathcall SquadSetup(
-        Quaternion& a,
-        Quaternion& b,
-        Quaternion& c,
+        Quaternion& out_a,
+        Quaternion& out_b,
+        Quaternion& out_c,
         Quaternion q0,
         Quaternion q1,
         Quaternion q2,
-        Quaternion q3) noexcept;
+        Quaternion q3) noexcept
+    {
+        Quaternion const nq2{ Negate(Vector4{ q2.V }).V };
+        Quaternion const nq0{ Negate(Vector4{ q0.V }).V };
+        Quaternion const nq3{ Negate(Vector4{ q3.V }).V };
 
-    mathinline Quaternion mathcall Barycentric(Quaternion q0, Quaternion q1, Quaternion q2, Vector4 f, Vector4 g) noexcept;
+        Vector4 const vls12 = LengthSquared(Quaternion{ Add(Vector4{ q1.V }, Vector4{ q2.V }).V });
+        Vector4 const vld12 = LengthSquared(Quaternion{ Subtract(Vector4{ q1.V }, Vector4{ q2.V }).V });
+
+        Vector4 const vls01 = LengthSquared(Quaternion{ Add(Vector4{ q0.V }, Vector4{ q1.V }).V });
+        Vector4 const vld01 = LengthSquared(Quaternion{ Subtract(Vector4{ q0.V }, Vector4{ q1.V }).V });
+
+        Bool4 const vc1 = CompareLess(vls12, vld12);
+
+        Quaternion const vsq2 = Select(q2, nq2, vc1);
+
+        Vector4 const vls23 = LengthSquared(Quaternion{ Add(Vector4{ vsq2.V }, Vector4{ q3.V }).V });
+        Vector4 const vld23 = LengthSquared(Quaternion{ Subtract(Vector4{ vsq2.V }, Vector4{ q3.V }).V });
+
+        Bool4 const vc0 = CompareLess(vls01, vld01);
+        Bool4 const vc2 = CompareLess(vls23, vld23);
+
+        Quaternion const vsq0 = Select(q0, nq0, vc0);
+        Quaternion const vsq3 = Select(q3, nq3, vc2);
+
+        Quaternion const qinv_q1 = Inverse(q1);
+        Quaternion const qinv_q2 = Inverse(vsq2);
+
+        Quaternion const qln_q0 = Log(Multiply(qinv_q1, vsq0));
+        Quaternion const qln_q1 = Log(Multiply(qinv_q1, vsq2));
+        Quaternion const qln_q2 = Log(Multiply(qinv_q2, q1));
+        Quaternion const qln_q3 = Log(Multiply(qinv_q2, vsq3));
+
+        Vector4 const v_negative_one_quater{ Impl::SplatConstant(-1, 2) };
+
+        Quaternion const qe_q02{ Multiply(Add(Vector4{ qln_q0.V }, Vector4{ qln_q2.V }), v_negative_one_quater).V };
+        Quaternion const qe_q13{ Multiply(Add(Vector4{ qln_q1.V }, Vector4{ qln_q3.V }), v_negative_one_quater).V };
+
+        Quaternion const qexp_q02 = Exp(qe_q02);
+        Quaternion const qexp_q13 = Exp(qe_q13);
+
+        out_a = Multiply(q1, qexp_q02);
+        out_b = Multiply(vsq2, qexp_q13);
+        out_c = vsq2;
+    }
+
+    mathinline Quaternion mathcall Barycentric(Quaternion q0, Quaternion q1, Quaternion q2, Vector4 f, Vector4 g) noexcept
+    {
+        GX_ASSERT(GetX(f) == GetY(f) && GetX(f) == GetZ(f) && GetX(f) == GetW(f));
+        GX_ASSERT(GetX(g) == GetY(g) && GetX(g) == GetZ(g) && GetX(g) == GetW(g));
+
+        Vector4 const epsilon{ Impl::SplatConstant(1, 16) };
+        Vector4 const fg = Add(f, g);
+
+        Quaternion result;
+
+        if (InBounds(fg, epsilon))
+        {
+            result = q0;
+        }
+        else
+        {
+            Quaternion const q01 = Slerp(q0, q1, fg);
+            Quaternion const q02 = Slerp(q0, q2, fg);
+            Vector4 const inv_fg = Reciprocal(fg);
+            Vector4 const vt     = Multiply(g, inv_fg);
+            result               = Slerp(q01, q02, vt);
+        }
+
+        return result;
+    }
 
     mathinline Quaternion mathcall Barycentric(Quaternion q0, Quaternion q1, Quaternion q2, float f, float g) noexcept
     {
-        return Barycentric(q0, q1, q2, Make<Vector4>(f), Make<Vector4>(g));
+        float const fg = f + g;
+
+        Quaternion result;
+
+        if ((fg < 0.00001f) && (fg > -0.00001f))
+        {
+            result = q0;
+        }
+        else
+        {
+            Quaternion const q01 = Slerp(q0, q1, fg);
+            Quaternion const q02 = Slerp(q0, q2, fg);
+            result               = Slerp(q01, q02, g / fg);
+        }
+
+        return result;
     }
 }
-
-#if false
-namespace Graphyte::Maths
-{
-    mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, Vector4 t) noexcept
-    {
-        GX_ASSERT(
-            (GetX(t) == GetY(t)) && (GetX(t) == GetZ(t)) && (GetX(t) == GetW(t)));
-
-#if GRAPHYTE_MATH_NO_INTRINSICS
-        static const ConstFloat32x4 one_minus_epsilon{ { {
-                1.0f - 0.00001f,
-                1.0f - 0.00001f,
-                1.0f - 0.00001f,
-                1.0f - 0.00001f, } } };
-
-        auto v_cos_omega = Dot(q0, q1);
-
-
-#elif GRAPHYTE_HW_AVX
-#else
-#error Not implemented
-#endif
-    }
-}
-#endif

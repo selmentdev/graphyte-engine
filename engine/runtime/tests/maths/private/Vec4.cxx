@@ -158,6 +158,81 @@ TEST_CASE("Graphyte::Maths / all components / comparisons")
     }
 }
 
+TEST_CASE("Graphyte::Maths / near equal")
+{
+    using namespace Graphyte::Maths;
+
+    Vector1 const c1 = Make<Vector1>(1.0f);
+    Vector2 const c2 = Make<Vector2>(1.0f, 2.0f);
+    Vector3 const c3 = Make<Vector3>(1.0f, 2.0f, 3.0f);
+    Vector4 const c4 = Make<Vector4>(1.0f, 2.0f, 3.0f, 4.0f);
+
+    Vector1 const a1 = Make<Vector1>(1.1f);
+    Vector2 const a2 = Make<Vector2>(1.1f, 2.1f);
+    Vector3 const a3 = Make<Vector3>(1.1f, 2.1f, 3.1f);
+    Vector4 const a4 = Make<Vector4>(1.1f, 2.1f, 3.1f, 4.1f);
+
+    Vector1 const ea1 = Replicate<Vector1>(0.2f);
+    Vector2 const ea2 = Replicate<Vector2>(0.2f);
+    Vector3 const ea3 = Replicate<Vector3>(0.2f);
+    Vector4 const ea4 = Replicate<Vector4>(0.2f);
+
+    Vector1 const eb1 = Replicate<Vector1>(0.02f);
+    Vector2 const eb2 = Replicate<Vector2>(0.02f);
+    Vector3 const eb3 = Replicate<Vector3>(0.02f);
+    Vector4 const eb4 = Replicate<Vector4>(0.02f);
+
+    CHECK(IsEqual(c1, c1, ea1));
+    CHECK(IsEqual(c2, c2, ea2));
+    CHECK(IsEqual(c3, c3, ea3));
+    CHECK(IsEqual(c4, c4, ea4));
+
+    CHECK(IsEqual(c1, a1, ea1));
+    CHECK(IsEqual(c2, a2, ea2));
+    CHECK(IsEqual(c3, a3, ea3));
+    CHECK(IsEqual(c4, a4, ea4));
+
+    CHECK(IsEqual(c1, c1, eb1));
+    CHECK(IsEqual(c2, c2, eb2));
+    CHECK(IsEqual(c3, c3, eb3));
+    CHECK(IsEqual(c4, c4, eb4));
+
+    CHECK(!IsEqual(c1, a1, eb1));
+    CHECK(!IsEqual(c2, a2, eb2));
+    CHECK(!IsEqual(c3, a3, eb3));
+    CHECK(!IsEqual(c4, a4, eb4));
+}
+
+TEST_CASE("Graphyte::Maths / in bounds")
+{
+    using namespace Graphyte::Maths;
+
+    Vector1 const c1 = Make<Vector1>(0.2f);
+    Vector2 const c2 = Make<Vector2>(0.2f, 1.0f);
+    Vector3 const c3 = Make<Vector3>(0.2f, 1.0f, -0.5f);
+    Vector4 const c4 = Make<Vector4>(0.2f, 1.0f, -0.5f, -0.2f);
+
+    Vector1 const b1a = Replicate<Vector1>(0.5f);
+    Vector2 const b2a = Replicate<Vector2>(0.5f);
+    Vector3 const b3a = Replicate<Vector3>(0.5f);
+    Vector4 const b4a = Replicate<Vector4>(0.5f);
+
+    Vector1 const b1b = Replicate<Vector1>(1.5f);
+    Vector2 const b2b = Replicate<Vector2>(1.5f);
+    Vector3 const b3b = Replicate<Vector3>(1.5f);
+    Vector4 const b4b = Replicate<Vector4>(1.5f);
+
+    CHECK(InBounds(c1, b1a));
+    CHECK_FALSE(InBounds(c2, b2a));
+    CHECK_FALSE(InBounds(c3, b3a));
+    CHECK_FALSE(InBounds(c4, b4a));
+
+    CHECK(InBounds(c1, b1b));
+    CHECK(InBounds(c2, b2b));
+    CHECK(InBounds(c3, b3b));
+    CHECK(InBounds(c4, b4b));
+}
+
 TEST_CASE("Graphyte::Maths / dot product")
 {
     using namespace Graphyte::Maths;
@@ -216,6 +291,358 @@ TEST_CASE("Graphyte::Maths / lengths")
 
     Vector4 const s4 = LengthSquared(c4);
     CHECK(GetX(s4) == 4.0f);
+
+
+    Vector1 const el1 = LengthEst(c1);
+    CHECK(GetX(el1) == Approx{ 2.0f });
+
+    Vector2 const el2 = LengthEst(c2);
+    CHECK(GetX(el2) == Approx{ 2.0f });
+
+    Vector3 const el3 = LengthEst(c3);
+    CHECK(GetX(el3) == Approx{ 2.0f });
+
+    Vector4 const el4 = LengthEst(c4);
+    CHECK(GetX(el4) == Approx{ 2.0f });
+
+
+    Vector1 const rl1 = ReciprocalLength(c1);
+    CHECK(GetX(rl1) == Approx{ 0.5f });
+
+    Vector2 const rl2 = ReciprocalLength(c2);
+    CHECK(GetX(rl2) == Approx{ 0.5f });
+
+    Vector3 const rl3 = ReciprocalLength(c3);
+    CHECK(GetX(rl3) == Approx{ 0.5f });
+
+    Vector4 const rl4 = ReciprocalLength(c4);
+    CHECK(GetX(rl4) == Approx{ 0.5f });
+
+
+    Vector1 const rle1 = ReciprocalLengthEst(c1);
+    CHECK(GetX(rle1) == Approx{ 0.5f }.margin(0.01f));
+
+    Vector2 const rle2 = ReciprocalLengthEst(c2);
+    CHECK(GetX(rle2) == Approx{ 0.5f }.margin(0.01f));
+
+    Vector3 const rle3 = ReciprocalLengthEst(c3);
+    CHECK(GetX(rle3) == Approx{ 0.5f }.margin(0.01f));
+
+    Vector4 const rle4 = ReciprocalLengthEst(c4);
+    CHECK(GetX(rle4) == Approx{ 0.5f }.margin(0.01f));
+}
+
+TEST_CASE("Graphyte::Maths / normalize")
+{
+    using namespace Graphyte::Maths;
+
+    Vector1 const c1 = Make<Vector1>(2.0f);
+    Vector2 const c2 = Make<Vector2>(0.5f, 2.0f);
+    Vector3 const c3 = Make<Vector3>(0.5f, 0.5f, 2.0f);
+    Vector4 const c4 = Make<Vector4>(0.5f, 0.5f, 0.5f, 2.0f);
+
+    CHECK_FALSE(IsUnit(c1));
+    CHECK_FALSE(IsUnit(c2));
+    CHECK_FALSE(IsUnit(c3));
+    CHECK_FALSE(IsUnit(c4));
+
+    Vector1 const n1 = Normalize(c1);
+    Vector2 const n2 = Normalize(c2);
+    Vector3 const n3 = Normalize(c3);
+    Vector4 const n4 = Normalize(c4);
+
+    CHECK(IsUnit(n1));
+    CHECK(IsUnit(n2));
+    CHECK(IsUnit(n3));
+    CHECK(IsUnit(n4));
+
+    Vector1 const ne1 = NormalizeEst(c1);
+    Vector2 const ne2 = NormalizeEst(c2);
+    Vector3 const ne3 = NormalizeEst(c3);
+    Vector4 const ne4 = NormalizeEst(c4);
+
+    CHECK(GetX(Length(ne1)) == Approx{ 1.0f }.margin(0.01f));
+    CHECK(GetX(Length(ne2)) == Approx{ 1.0f }.margin(0.01f));
+    CHECK(GetX(Length(ne3)) == Approx{ 1.0f }.margin(0.01f));
+    CHECK(GetX(Length(ne4)) == Approx{ 1.0f }.margin(0.01f));
+}
+
+TEST_CASE("Graphyte::Maths / arithmetic")
+{
+    using namespace Graphyte::Maths;
+
+    Vector1 const a1 = Make<Vector1>(1.0f);
+    Vector2 const a2 = Make<Vector2>(1.0f, -1.0f);
+    Vector3 const a3 = Make<Vector3>(1.0f, -1.0f, 0.1f);
+    Vector4 const a4 = Make<Vector4>(1.0f, -1.0f, 0.1f, -0.23f);
+
+    Vector1 const b1 = Make<Vector1>(0.5f);
+    Vector2 const b2 = Make<Vector2>(0.5f, 0.1f);
+    Vector3 const b3 = Make<Vector3>(0.5f, 0.1f, -0.13f);
+    Vector4 const b4 = Make<Vector4>(0.5f, 0.1f, -0.13f, 0.8f);
+
+    Vector1 const c1 = Make<Vector1>(-0.4f);
+    Vector2 const c2 = Make<Vector2>(0.3f, 0.1f);
+    Vector3 const c3 = Make<Vector3>(0.2f, -0.3f, 0.15f);
+    Vector4 const c4 = Make<Vector4>(-0.15f, 0.2f, -0.23f, -0.67f);
+
+    Vector1 const d1 = Make<Vector1>(1.4f);
+    Vector2 const d2 = Make<Vector2>(1.3f, 1.1f);
+    Vector3 const d3 = Make<Vector3>(1.2f, 1.3f, 1.15f);
+    Vector4 const d4 = Make<Vector4>(1.15f, 1.2f, 1.23f, 1.67f);
+
+    SECTION("cos")
+    {
+        CHECK(GetX(Cos(a1)) == Approx{ cos(GetX(a1)) });
+
+        CHECK(GetX(Cos(a2)) == Approx{ cos(GetX(a2)) });
+        CHECK(GetY(Cos(a2)) == Approx{ cos(GetY(a2)) });
+
+        CHECK(GetX(Cos(a3)) == Approx{ cos(GetX(a3)) });
+        CHECK(GetY(Cos(a3)) == Approx{ cos(GetY(a3)) });
+        CHECK(GetZ(Cos(a3)) == Approx{ cos(GetZ(a3)) });
+
+        CHECK(GetX(Cos(a4)) == Approx{ cos(GetX(a4)) });
+        CHECK(GetY(Cos(a4)) == Approx{ cos(GetY(a4)) });
+        CHECK(GetZ(Cos(a4)) == Approx{ cos(GetZ(a4)) });
+        CHECK(GetW(Cos(a4)) == Approx{ cos(GetW(a4)) });
+    }
+
+    SECTION("sin")
+    {
+        CHECK(GetX(Sin(a1)) == Approx{ sin(GetX(a1)) });
+
+        CHECK(GetX(Sin(a2)) == Approx{ sin(GetX(a2)) });
+        CHECK(GetY(Sin(a2)) == Approx{ sin(GetY(a2)) });
+
+        CHECK(GetX(Sin(a3)) == Approx{ sin(GetX(a3)) });
+        CHECK(GetY(Sin(a3)) == Approx{ sin(GetY(a3)) });
+        CHECK(GetZ(Sin(a3)) == Approx{ sin(GetZ(a3)) });
+
+        CHECK(GetX(Sin(a4)) == Approx{ sin(GetX(a4)) });
+        CHECK(GetY(Sin(a4)) == Approx{ sin(GetY(a4)) });
+        CHECK(GetZ(Sin(a4)) == Approx{ sin(GetZ(a4)) });
+        CHECK(GetW(Sin(a4)) == Approx{ sin(GetW(a4)) });
+    }
+
+    SECTION("sincos")
+    {
+        Vector1 rs1{}, rc1{};
+        Vector2 rs2{}, rc2{};
+        Vector3 rs3{}, rc3{};
+        Vector4 rs4{}, rc4{};
+
+        SinCos(rs1, rc1, a1);
+        SinCos(rs2, rc2, a2);
+        SinCos(rs3, rc3, a3);
+        SinCos(rs4, rc4, a4);
+
+        CHECK(GetX(rs1) == Approx{ sin(GetX(a1)) });
+
+        CHECK(GetX(rs2) == Approx{ sin(GetX(a2)) });
+        CHECK(GetY(rs2) == Approx{ sin(GetY(a2)) });
+
+        CHECK(GetX(rs3) == Approx{ sin(GetX(a3)) });
+        CHECK(GetY(rs3) == Approx{ sin(GetY(a3)) });
+        CHECK(GetZ(rs3) == Approx{ sin(GetZ(a3)) });
+
+        CHECK(GetX(rs4) == Approx{ sin(GetX(a4)) });
+        CHECK(GetY(rs4) == Approx{ sin(GetY(a4)) });
+        CHECK(GetZ(rs4) == Approx{ sin(GetZ(a4)) });
+        CHECK(GetW(rs4) == Approx{ sin(GetW(a4)) });
+
+        CHECK(GetX(rc1) == Approx{ cos(GetX(a1)) });
+
+        CHECK(GetX(rc2) == Approx{ cos(GetX(a2)) });
+        CHECK(GetY(rc2) == Approx{ cos(GetY(a2)) });
+
+        CHECK(GetX(rc3) == Approx{ cos(GetX(a3)) });
+        CHECK(GetY(rc3) == Approx{ cos(GetY(a3)) });
+        CHECK(GetZ(rc3) == Approx{ cos(GetZ(a3)) });
+
+        CHECK(GetX(rc4) == Approx{ cos(GetX(a4)) });
+        CHECK(GetY(rc4) == Approx{ cos(GetY(a4)) });
+        CHECK(GetZ(rc4) == Approx{ cos(GetZ(a4)) });
+        CHECK(GetW(rc4) == Approx{ cos(GetW(a4)) });
+    }
+
+    SECTION("tan")
+    {
+        CHECK(GetX(Tan(a1)) == Approx{ tan(GetX(a1)) });
+
+        CHECK(GetX(Tan(a2)) == Approx{ tan(GetX(a2)) });
+        CHECK(GetY(Tan(a2)) == Approx{ tan(GetY(a2)) });
+
+        CHECK(GetX(Tan(a3)) == Approx{ tan(GetX(a3)) });
+        CHECK(GetY(Tan(a3)) == Approx{ tan(GetY(a3)) });
+        CHECK(GetZ(Tan(a3)) == Approx{ tan(GetZ(a3)) });
+
+        CHECK(GetX(Tan(a4)) == Approx{ tan(GetX(a4)) });
+        CHECK(GetY(Tan(a4)) == Approx{ tan(GetY(a4)) });
+        CHECK(GetZ(Tan(a4)) == Approx{ tan(GetZ(a4)) });
+        CHECK(GetW(Tan(a4)) == Approx{ tan(GetW(a4)) });
+    }
+
+    SECTION("asin")
+    {
+        CHECK(GetX(Asin(b1)) == Approx{ asin(GetX(b1)) });
+
+        CHECK(GetX(Asin(b2)) == Approx{ asin(GetX(b2)) });
+        CHECK(GetY(Asin(b2)) == Approx{ asin(GetY(b2)) });
+
+        CHECK(GetX(Asin(b3)) == Approx{ asin(GetX(b3)) });
+        CHECK(GetY(Asin(b3)) == Approx{ asin(GetY(b3)) });
+        CHECK(GetZ(Asin(b3)) == Approx{ asin(GetZ(b3)) });
+
+        CHECK(GetX(Asin(b4)) == Approx{ asin(GetX(b4)) });
+        CHECK(GetY(Asin(b4)) == Approx{ asin(GetY(b4)) });
+        CHECK(GetZ(Asin(b4)) == Approx{ asin(GetZ(b4)) });
+        CHECK(GetW(Asin(b4)) == Approx{ asin(GetW(b4)) });
+    }
+
+    SECTION("acos")
+    {
+        CHECK(GetX(Acos(b1)) == Approx{ acos(GetX(b1)) });
+
+        CHECK(GetX(Acos(b2)) == Approx{ acos(GetX(b2)) });
+        CHECK(GetY(Acos(b2)) == Approx{ acos(GetY(b2)) });
+
+        CHECK(GetX(Acos(b3)) == Approx{ acos(GetX(b3)) });
+        CHECK(GetY(Acos(b3)) == Approx{ acos(GetY(b3)) });
+        CHECK(GetZ(Acos(b3)) == Approx{ acos(GetZ(b3)) });
+
+        CHECK(GetX(Acos(b4)) == Approx{ acos(GetX(b4)) });
+        CHECK(GetY(Acos(b4)) == Approx{ acos(GetY(b4)) });
+        CHECK(GetZ(Acos(b4)) == Approx{ acos(GetZ(b4)) });
+        CHECK(GetW(Acos(b4)) == Approx{ acos(GetW(b4)) });
+    }
+
+    SECTION("atan")
+    {
+        CHECK(GetX(Atan(b1)) == Approx{ atan(GetX(b1)) });
+
+        CHECK(GetX(Atan(b2)) == Approx{ atan(GetX(b2)) });
+        CHECK(GetY(Atan(b2)) == Approx{ atan(GetY(b2)) });
+
+        CHECK(GetX(Atan(b3)) == Approx{ atan(GetX(b3)) });
+        CHECK(GetY(Atan(b3)) == Approx{ atan(GetY(b3)) });
+        CHECK(GetZ(Atan(b3)) == Approx{ atan(GetZ(b3)) });
+
+        CHECK(GetX(Atan(b4)) == Approx{ atan(GetX(b4)) });
+        CHECK(GetY(Atan(b4)) == Approx{ atan(GetY(b4)) });
+        CHECK(GetZ(Atan(b4)) == Approx{ atan(GetZ(b4)) });
+        CHECK(GetW(Atan(b4)) == Approx{ atan(GetW(b4)) });
+    }
+
+    SECTION("atan2")
+    {
+        CHECK(GetX(Atan2(b4, c4)) == Approx{ atan2(GetX(b4), GetX(c4)) });
+        CHECK(GetY(Atan2(b4, c4)) == Approx{ atan2(GetY(b4), GetY(c4)) });
+        CHECK(GetZ(Atan2(b4, c4)) == Approx{ atan2(GetZ(b4), GetZ(c4)) });
+        CHECK(GetW(Atan2(b4, c4)) == Approx{ atan2(GetW(b4), GetW(c4)) });
+    }
+
+    SECTION("sinh")
+    {
+        CHECK(GetX(Sinh(b1)) == Approx{ sinh(GetX(b1)) });
+
+        CHECK(GetX(Sinh(b2)) == Approx{ sinh(GetX(b2)) });
+        CHECK(GetY(Sinh(b2)) == Approx{ sinh(GetY(b2)) });
+
+        CHECK(GetX(Sinh(b3)) == Approx{ sinh(GetX(b3)) });
+        CHECK(GetY(Sinh(b3)) == Approx{ sinh(GetY(b3)) });
+        CHECK(GetZ(Sinh(b3)) == Approx{ sinh(GetZ(b3)) });
+
+        CHECK(GetX(Sinh(b4)) == Approx{ sinh(GetX(b4)) });
+        CHECK(GetY(Sinh(b4)) == Approx{ sinh(GetY(b4)) });
+        CHECK(GetZ(Sinh(b4)) == Approx{ sinh(GetZ(b4)) });
+        CHECK(GetW(Sinh(b4)) == Approx{ sinh(GetW(b4)) });
+    }
+
+    SECTION("cosh")
+    {
+        CHECK(GetX(Cosh(b1)) == Approx{ cosh(GetX(b1)) });
+
+        CHECK(GetX(Cosh(b2)) == Approx{ cosh(GetX(b2)) });
+        CHECK(GetY(Cosh(b2)) == Approx{ cosh(GetY(b2)) });
+
+        CHECK(GetX(Cosh(b3)) == Approx{ cosh(GetX(b3)) });
+        CHECK(GetY(Cosh(b3)) == Approx{ cosh(GetY(b3)) });
+        CHECK(GetZ(Cosh(b3)) == Approx{ cosh(GetZ(b3)) });
+
+        CHECK(GetX(Cosh(b4)) == Approx{ cosh(GetX(b4)) });
+        CHECK(GetY(Cosh(b4)) == Approx{ cosh(GetY(b4)) });
+        CHECK(GetZ(Cosh(b4)) == Approx{ cosh(GetZ(b4)) });
+        CHECK(GetW(Cosh(b4)) == Approx{ cosh(GetW(b4)) });
+    }
+
+    SECTION("tanh")
+    {
+        CHECK(GetX(Tanh(b1)) == Approx{ tanh(GetX(b1)) });
+
+        CHECK(GetX(Tanh(b2)) == Approx{ tanh(GetX(b2)) });
+        CHECK(GetY(Tanh(b2)) == Approx{ tanh(GetY(b2)) });
+
+        CHECK(GetX(Tanh(b3)) == Approx{ tanh(GetX(b3)) });
+        CHECK(GetY(Tanh(b3)) == Approx{ tanh(GetY(b3)) });
+        CHECK(GetZ(Tanh(b3)) == Approx{ tanh(GetZ(b3)) });
+
+        CHECK(GetX(Tanh(b4)) == Approx{ tanh(GetX(b4)) });
+        CHECK(GetY(Tanh(b4)) == Approx{ tanh(GetY(b4)) });
+        CHECK(GetZ(Tanh(b4)) == Approx{ tanh(GetZ(b4)) });
+        CHECK(GetW(Tanh(b4)) == Approx{ tanh(GetW(b4)) });
+    }
+
+    SECTION("asinh")
+    {
+        CHECK(GetX(Asinh(b1)) == Approx{ asinh(GetX(b1)) });
+
+        CHECK(GetX(Asinh(b2)) == Approx{ asinh(GetX(b2)) });
+        CHECK(GetY(Asinh(b2)) == Approx{ asinh(GetY(b2)) });
+
+        CHECK(GetX(Asinh(b3)) == Approx{ asinh(GetX(b3)) });
+        CHECK(GetY(Asinh(b3)) == Approx{ asinh(GetY(b3)) });
+        CHECK(GetZ(Asinh(b3)) == Approx{ asinh(GetZ(b3)) });
+
+        CHECK(GetX(Asinh(b4)) == Approx{ asinh(GetX(b4)) });
+        CHECK(GetY(Asinh(b4)) == Approx{ asinh(GetY(b4)) });
+        CHECK(GetZ(Asinh(b4)) == Approx{ asinh(GetZ(b4)) });
+        CHECK(GetW(Asinh(b4)) == Approx{ asinh(GetW(b4)) });
+    }
+
+    SECTION("acosh")
+    {
+        CHECK(GetX(Acosh(d1)) == Approx{ acosh(GetX(d1)) });
+
+        CHECK(GetX(Acosh(d2)) == Approx{ acosh(GetX(d2)) });
+        CHECK(GetY(Acosh(d2)) == Approx{ acosh(GetY(d2)) });
+
+        CHECK(GetX(Acosh(d3)) == Approx{ acosh(GetX(d3)) });
+        CHECK(GetY(Acosh(d3)) == Approx{ acosh(GetY(d3)) });
+        CHECK(GetZ(Acosh(d3)) == Approx{ acosh(GetZ(d3)) });
+
+        CHECK(GetX(Acosh(d4)) == Approx{ acosh(GetX(d4)) });
+        CHECK(GetY(Acosh(d4)) == Approx{ acosh(GetY(d4)) });
+        CHECK(GetZ(Acosh(d4)) == Approx{ acosh(GetZ(d4)) });
+        CHECK(GetW(Acosh(d4)) == Approx{ acosh(GetW(d4)) });
+    }
+
+    SECTION("atanh")
+    {
+        CHECK(GetX(Atanh(b1)) == Approx{ atanh(GetX(b1)) });
+
+        CHECK(GetX(Atanh(b2)) == Approx{ atanh(GetX(b2)) });
+        CHECK(GetY(Atanh(b2)) == Approx{ atanh(GetY(b2)) });
+
+        CHECK(GetX(Atanh(b3)) == Approx{ atanh(GetX(b3)) });
+        CHECK(GetY(Atanh(b3)) == Approx{ atanh(GetY(b3)) });
+        CHECK(GetZ(Atanh(b3)) == Approx{ atanh(GetZ(b3)) });
+
+        CHECK(GetX(Atanh(b4)) == Approx{ atanh(GetX(b4)) });
+        CHECK(GetY(Atanh(b4)) == Approx{ atanh(GetY(b4)) });
+        CHECK(GetZ(Atanh(b4)) == Approx{ atanh(GetZ(b4)) });
+        CHECK(GetW(Atanh(b4)) == Approx{ atanh(GetW(b4)) });
+    }
 }
 
 
