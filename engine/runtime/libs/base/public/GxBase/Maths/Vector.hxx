@@ -1270,17 +1270,17 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const vsin{ { {
-            sinf(v.F[0]),
-            sinf(v.F[1]),
-            sinf(v.F[2]),
-            sinf(v.F[3]),
+            sinf(v.V.F[0]),
+            sinf(v.V.F[1]),
+            sinf(v.V.F[2]),
+            sinf(v.V.F[3]),
         } } };
 
         Impl::ConstFloat32x4 const vcos{ { {
-            cosf(v.F[0]),
-            cosf(v.F[1]),
-            cosf(v.F[2]),
-            cosf(v.F[3]),
+            cosf(v.V.F[0]),
+            cosf(v.V.F[1]),
+            cosf(v.V.F[2]),
+            cosf(v.V.F[3]),
         } } };
 
         out_sin.V = vsin.V;

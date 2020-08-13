@@ -44,7 +44,7 @@ namespace Graphyte::Graphics::Render
 
             if (SUCCEEDED(D3D12CreateDevice(m_Adapter.Get(), D3D_FEATURE_LEVEL_12_0, __uuidof(ID3D12Device), nullptr)))
             {
-                GX_LOG(LogD3D12Render, Info, "Adapter: (device: {:04x}, vendor: {:04x}, subsys: {:04x})\n",
+                GX_LOG_INFO(LogD3D12Render, "Adapter: (device: {:04x}, vendor: {:04x}, subsys: {:04x})\n",
                     desc.DeviceId,
                     desc.VendorId,
                     desc.SubSysId
@@ -54,9 +54,9 @@ namespace Graphyte::Graphics::Render
                 std::string description{};
                 GX_VERIFY(Text::ConvertString(desc.Description, description, Text::ConversionType::Strict) == Text::ConversionResult::Success);
 
-                GX_LOG(LogD3D12Render, Info, "Adapter: `{}`\n", description);
+                GX_LOG_INFO(LogD3D12Render, "Adapter: `{}`\n", description);
 
-                GX_LOG(LogD3D12Render, Info, "Adapter: SystemMemory: {}, VideoMemory: {}, SharedMemory: {}\n",
+                GX_LOG_INFO(LogD3D12Render, "Adapter: SystemMemory: {}, VideoMemory: {}, SharedMemory: {}\n",
                     static_cast<uint64_t>(desc.DedicatedSystemMemory) >> 20,
                     static_cast<uint64_t>(desc.DedicatedVideoMemory) >> 20,
                     static_cast<uint64_t>(desc.SharedSystemMemory) >> 20
@@ -107,7 +107,7 @@ namespace Graphyte::Graphics::Render
             m_FeatureLevel = feature_level_data.MaxSupportedFeatureLevel;
         }
 
-        GX_LOG(LogD3D12Render, Trace, "Initialized at feature level: {:04x}\n", static_cast<uint32_t>(m_FeatureLevel));
+        GX_LOG_TRACE(LogD3D12Render, "Initialized at feature level: {:04x}\n", static_cast<uint32_t>(m_FeatureLevel));
 
         D3D12_COMMAND_QUEUE_DESC cq_desc{};
         cq_desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;

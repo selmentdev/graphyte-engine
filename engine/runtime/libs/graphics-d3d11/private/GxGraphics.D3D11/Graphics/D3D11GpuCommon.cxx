@@ -53,6 +53,6 @@ namespace Graphyte::Graphics
             D3D11CheckDeviceOutOfMemory(result);
         }
 
-        GX_LOG(LogD3D11Render, Fatal, "{} failed at {}:{} with error {}\n", expression, file, line, error.c_str());
+        GX_LOG_FATAL(LogD3D11Render, "{} failed at {}:{} with error {}\n", expression, file, line, error.c_str());
     }
 }

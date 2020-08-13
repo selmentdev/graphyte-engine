@@ -26,7 +26,7 @@ namespace Graphyte
 
         for (auto& [key, descriptor] : ModuleManager::GInstance->m_Modules)
         {
-            GX_LOG(LogPlatform, Info,
+            GX_LOG_INFO(LogPlatform,
                 "Unloading module: {} ({})\n",
                 descriptor.Name,
                 descriptor.Path);
@@ -134,7 +134,7 @@ namespace Graphyte
                         result->OnLoad();
                         result->OnInitialize();
 
-                        GX_LOG(LogPlatform, Info,
+                        GX_LOG_INFO(LogPlatform,
                             "Loading module: {} ({})\n",
                             name,
                             path);
@@ -237,7 +237,7 @@ namespace Graphyte
 
             ModuleManager::GInstance->m_Modules.erase(it);
 
-            GX_LOG(LogPlatform, Info,
+            GX_LOG_INFO(LogPlatform,
                 "Unloading module: {} ({})\n",
                 descriptor.Name,
                 descriptor.Path);

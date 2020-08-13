@@ -18,7 +18,7 @@ namespace Graphyte::Graphics
         const GLchar* message,
         const void* context) noexcept
     {
-        GX_LOG(LogOpenGLRender, Trace,
+        GX_LOG_TRACE(LogOpenGLRender,
             "{} {} {} {} {} {} {}\n",
             source,
             type,
@@ -147,9 +147,9 @@ namespace Graphyte::Graphics
 
 #endif
 
-        GX_LOG(LogOpenGLRender, Trace, "OpenGL Version:  {}\n", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
-        GX_LOG(LogOpenGLRender, Trace, "OpenGL Vendor:   {}\n", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
-        GX_LOG(LogOpenGLRender, Trace, "OpenGL Renderer: {}\n", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+        GX_LOG_TRACE(LogOpenGLRender, "OpenGL Version:  {}\n", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+        GX_LOG_TRACE(LogOpenGLRender, "OpenGL Vendor:   {}\n", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+        GX_LOG_TRACE(LogOpenGLRender, "OpenGL Renderer: {}\n", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
 
 #if GRAPHYTE_PLATFORM_WINDOWS
 
@@ -165,7 +165,7 @@ namespace Graphyte::Graphics
 #endif
 
 #define LOG_GLAD_EXTENSION(extension) \
-    GX_LOG(LogOpenGLRender, Trace, "{}: {}\n", #extension, extension) \
+    GX_LOG_TRACE(LogOpenGLRender, "{}: {}\n", #extension, extension) \
     GX_ASSERTF(extension != 0, "Extension: `{}` is not supported", #extension)
 
         LOG_GLAD_EXTENSION(GLAD_GL_VERSION_4_5);

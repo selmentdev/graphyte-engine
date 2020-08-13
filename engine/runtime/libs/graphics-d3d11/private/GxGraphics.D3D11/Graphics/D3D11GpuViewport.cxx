@@ -128,7 +128,7 @@ namespace Graphyte::Graphics
                         ? m_FullscreenOutput
                         : nullptr);
 
-                GX_LOG(LogD3D11Render, Info, "SetFullscreenState: {:08x}({})\n", result, m_Fullscreen);
+                GX_LOG_INFO(LogD3D11Render, "SetFullscreenState: {:08x}({})\n", result, m_Fullscreen);
 
                 if (SUCCEEDED(result))
                 {
@@ -136,7 +136,7 @@ namespace Graphyte::Graphics
                 }
                 else
                 {
-                    GX_LOG(LogD3D11Render, Info, "DXGISwapChain::SetFullscreenState ({:08x}). Retrying next frame.\n", result);
+                    GX_LOG_INFO(LogD3D11Render, "DXGISwapChain::SetFullscreenState ({:08x}). Retrying next frame.\n", result);
                 }
             }
         }
@@ -210,7 +210,7 @@ namespace Graphyte::Graphics
         GPU_DX_VALIDATE(swap_chain->QueryInterface(
             &swap_chain1));
 
-        GX_LOG(LogD3D11Render, Trace, "Create viewport\n");
+        GX_LOG_TRACE(LogD3D11Render, "Create viewport\n");
 
         GPU_DX_VALIDATE(m_Factory->MakeWindowAssociation(
             window_handle,
@@ -302,7 +302,7 @@ namespace Graphyte::Graphics
         native->m_Fullscreen = fullscreen;
         native->m_Valid      = false;
 
-        GX_LOG(LogD3D11Render, Trace, "DXGI: begin resize\n");
+        GX_LOG_TRACE(LogD3D11Render, "DXGI: begin resize\n");
 
         //
         // Get closest mode.
@@ -352,7 +352,7 @@ namespace Graphyte::Graphics
         {
             D3D11_TEXTURE2D_DESC desc{};
             back_buffer->GetDesc(&desc);
-            GX_LOG(LogD3D11Render, Trace, "DXGI: {}x{} backbuffer\n", desc.Width, desc.Height);
+            GX_LOG_TRACE(LogD3D11Render, "DXGI: {}x{} backbuffer\n", desc.Width, desc.Height);
         }
 #endif
 
@@ -430,7 +430,7 @@ namespace Graphyte::Graphics
                 &native->m_DepthStencilView));
         }
 
-        GX_LOG(LogD3D11Render, Trace, "DXGI: end resize\n");
+        GX_LOG_TRACE(LogD3D11Render, "DXGI: end resize\n");
     }
 
     void D3D11GpuDevice::BeginDrawViewport(

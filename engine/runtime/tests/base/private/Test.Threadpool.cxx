@@ -160,7 +160,7 @@ TEST_CASE("Threadpool", "[.][performance]")
                     Graphyte::Threading::SleepThread(DELAY);
                 }
 
-                GX_LOG(LogTestThreadpool, Trace, "tazg\n");
+                GX_LOG_TRACE(LogTestThreadpool, "tazg\n");
                 return 0;
             }
         } tazgz[TASKS];

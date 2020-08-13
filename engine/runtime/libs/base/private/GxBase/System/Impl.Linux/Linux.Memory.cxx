@@ -119,7 +119,7 @@ namespace Graphyte::System
         {
             [[maybe_unused]] const auto error = errno;
 
-            GX_LOG(LogPlatform, Error,
+            GX_LOG_ERROR(LogPlatform,
                 "munmap(address = {}, size = {}) failed with errno {} ({})",
                 memory,
                 size,

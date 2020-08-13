@@ -56,7 +56,7 @@ namespace Graphyte::Diagnostics
                 return Status::TryAgain;
 
             default:
-                GX_LOG(LogPlatform, Error, "Unmapped errno: {} -> {}\n",
+                GX_LOG_ERROR(LogPlatform, "Unmapped errno: {} -> {}\n",
                     error,
                     GetMessageFromErrno(error));
                 break;

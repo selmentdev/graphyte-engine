@@ -59,7 +59,7 @@ namespace Graphyte::Graphics::Render
 
         m_SwapChain = static_cast<IDXGISwapChain3*>(swapchain.Get());
 
-        GX_LOG(LogD3D12Render, Trace, "Created viewport\n");
+        GX_LOG_TRACE(LogD3D12Render, "Created viewport\n");
 
         m_RenderSystem->m_Factory->MakeWindowAssociation(m_Handle, DXGI_MWA_NO_WINDOW_CHANGES);
 
@@ -110,7 +110,7 @@ namespace Graphyte::Graphics::Render
 
         //m_IsValid = false;
 
-        GX_LOG(LogD3D12Render, Trace, "DXGI: begin resize\n");
+        GX_LOG_TRACE(LogD3D12Render, "DXGI: begin resize\n");
         if (fullscreen)
         {
             DXGI_MODE_DESC closest = FindCompatibleMode();
@@ -127,7 +127,7 @@ namespace Graphyte::Graphics::Render
             Resize();
             m_SwapChain->SetFullscreenState(FALSE, nullptr);
         }
-        GX_LOG(LogD3D12Render, Trace, "DXGI: end resize\n");
+        GX_LOG_TRACE(LogD3D12Render, "DXGI: end resize\n");
     }
 
     bool D3D12Viewport::Present(int sync_interval) noexcept

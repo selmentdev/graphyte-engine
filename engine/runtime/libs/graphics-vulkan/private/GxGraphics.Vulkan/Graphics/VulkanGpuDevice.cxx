@@ -211,7 +211,7 @@ namespace Graphyte::Graphics
         (void)msg;
         (void)userData;
 
-        GX_LOG(LogVkRender, Trace, "Validation: {}\n", msg);
+        GX_LOG_TRACE(LogVkRender, "Validation: {}\n", msg);
         return VK_FALSE;
     }
 
@@ -357,12 +357,12 @@ namespace Graphyte::Graphics
 
         for (auto const& extension : extensions)
         {
-            GX_LOG(LogVkRender, Trace, "Extension: {}\n", extension);
+            GX_LOG_TRACE(LogVkRender, "Extension: {}\n", extension);
         }
 
         for (auto const& layer : validation_layers)
         {
-            GX_LOG(LogVkRender, Trace, "Layer: {}\n", layer);
+            GX_LOG_TRACE(LogVkRender, "Layer: {}\n", layer);
         }
 
         GPU_VK_VALIDATE(vkCreateInstance(
@@ -420,7 +420,7 @@ namespace Graphyte::Graphics
                 device,
                 &device_features);
 
-            GX_LOG(LogVkRender, Trace,
+            GX_LOG_TRACE(LogVkRender,
                 "Device: ({:04x} {:04x} {}) - {}\n",
                 static_cast<uint32_t>(device_properties.vendorID),
                 static_cast<uint32_t>(device_properties.deviceID),
@@ -429,7 +429,7 @@ namespace Graphyte::Graphics
 
             if (device_properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU && device_features.geometryShader)
             {
-                GX_LOG(LogVkRender, Trace, "Found device: {}\n", device_properties.deviceName);
+                GX_LOG_TRACE(LogVkRender, "Found device: {}\n", device_properties.deviceName);
                 m_PhysicalDevice = device;
                 break;
             }

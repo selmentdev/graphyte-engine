@@ -40,11 +40,11 @@ namespace Graphyte::AssetsPipeline
 
             if (importer.Load(reader, model))
             {
-                GX_LOG(LogMeshProcessor, Info, "Loaded successfully\n");
+                GX_LOG_INFO(LogMeshProcessor, "Loaded successfully\n");
             }
             else
             {
-                GX_LOG(LogMeshProcessor, Error, "Failed to parse `{}`\n", path);
+                GX_LOG_ERROR(LogMeshProcessor, "Failed to parse `{}`\n", path);
             }
 
             auto destination = Graphyte::Storage::GetProjectContentDirectory();

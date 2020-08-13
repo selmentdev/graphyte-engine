@@ -117,7 +117,7 @@ namespace Graphyte::Diagnostics
             }
             else
             {
-                GX_LOG(LogPlatform, Error, "Failed to initialize symbols handler: {}", Diagnostics::GetMessageFromSystemError(error));
+                GX_LOG_ERROR(LogPlatform, "Failed to initialize symbols handler: {}", Diagnostics::GetMessageFromSystemError(error));
                 break;
             }
         }
@@ -135,7 +135,7 @@ namespace Graphyte::Diagnostics
 #endif
 
 
-        GX_LOG(LogPlatform, Info, "Stack trace enabled: {}\n", Impl::GStackTraceSymbolInfo);
+        GX_LOG_INFO(LogPlatform, "Stack trace enabled: {}\n", Impl::GStackTraceSymbolInfo);
 
 
         //
@@ -153,7 +153,7 @@ namespace Graphyte::Diagnostics
 
         if (Impl::GSystemEventLog == nullptr)
         {
-            GX_LOG(LogPlatform, Error, "Cannot open event log: {}\n", Diagnostics::GetMessageFromSystemError());
+            GX_LOG_ERROR(LogPlatform, "Cannot open event log: {}\n", Diagnostics::GetMessageFromSystemError());
         }
 
 #elif GRAPHYTE_PLATFORM_POSIX
@@ -291,7 +291,7 @@ namespace Graphyte::Diagnostics
         // Exiting from application in unusual but expected way.
         //
 
-        GX_LOG(LogPlatform, Warn, "Exiting from application in unusual way: exit = {}\n", exitCode);
+        GX_LOG_WARN(LogPlatform, "Exiting from application in unusual way: exit = {}\n", exitCode);
 
 
         //
@@ -319,7 +319,7 @@ namespace Graphyte::Diagnostics
         // Exiting from application due to fast-fail is unexpected.
         //
 
-        GX_LOG(LogPlatform, Error, "Exiting from application due to fast-fail\n");
+        GX_LOG_ERROR(LogPlatform, "Exiting from application due to fast-fail\n");
 
 
         //

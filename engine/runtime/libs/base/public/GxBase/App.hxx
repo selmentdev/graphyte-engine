@@ -593,7 +593,15 @@ namespace Graphyte::App
         virtual void OnSystemPowerSuspend() noexcept;
         virtual void OnSystemPowerRestore() noexcept;
     };
+}
 
+namespace Graphyte::App::Impl
+{
+    extern IEventHandler* g_EventHandler;
+}
+
+namespace Graphyte::App
+{
     BASE_API IEventHandler* GetEventHandler() noexcept;
 
     BASE_API void SetEventHandler(IEventHandler* eventHandler) noexcept;

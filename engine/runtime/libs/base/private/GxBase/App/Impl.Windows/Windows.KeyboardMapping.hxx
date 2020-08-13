@@ -3,6 +3,7 @@
 
 namespace Graphyte::App::Impl
 {
+    // TODO: constinit
     static constexpr std::array<KeyCode, 256> const c_KeyboardMapping = []() constexpr
     {
         std::array<KeyCode, 256> result{};

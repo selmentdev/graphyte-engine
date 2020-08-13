@@ -269,7 +269,7 @@ namespace Graphyte::AssetsPipeline
 
             if (!FromString(input.Stage, value))
             {
-                GX_LOG(LogShaderCompilerFrontend, Error, "Invalid stage type: {}\n", value);
+                GX_LOG_ERROR(LogShaderCompilerFrontend, "Invalid stage type: {}\n", value);
             }
         }
 
@@ -279,7 +279,7 @@ namespace Graphyte::AssetsPipeline
 
             if (!FromString(input.Platform, value))
             {
-                GX_LOG(LogShaderCompilerFrontend, Error, "Invalid platform type: {}\n", value);
+                GX_LOG_ERROR(LogShaderCompilerFrontend, "Invalid platform type: {}\n", value);
             }
         }
 
@@ -289,7 +289,7 @@ namespace Graphyte::AssetsPipeline
 
             if (!FromString(input.RenderAPI, value))
             {
-                GX_LOG(LogShaderCompilerFrontend, Error, "Invalid render api type: {}\n", value);
+                GX_LOG_ERROR(LogShaderCompilerFrontend, "Invalid render api type: {}\n", value);
             }
         }
 
@@ -299,7 +299,7 @@ namespace Graphyte::AssetsPipeline
 
             if (!FromString(input.Profile, value))
             {
-                GX_LOG(LogShaderCompilerFrontend, Error, "Invalid profile name: {}\n", value);
+                GX_LOG_ERROR(LogShaderCompilerFrontend, "Invalid profile name: {}\n", value);
             }
         }
 
@@ -309,19 +309,19 @@ namespace Graphyte::AssetsPipeline
         {
             if (Storage::ReadText(input.Source, std::string{ path }) != Status::Success)
             {
-                GX_LOG(LogShaderCompilerFrontend, Error, "Cannot read shader file: {}\n", path);
+                GX_LOG_ERROR(LogShaderCompilerFrontend, "Cannot read shader file: {}\n", path);
                 return false;
             }
         }
         else
         {
-            GX_LOG(LogShaderCompilerFrontend, Error, "Shader file not provided\n");
+            GX_LOG_ERROR(LogShaderCompilerFrontend, "Shader file not provided\n");
             return false;
         }
 
         if (outputFilename.empty())
         {
-            GX_LOG(LogShaderCompilerFrontend, Error, "Output file name not provided\n");
+            GX_LOG_ERROR(LogShaderCompilerFrontend, "Output file name not provided\n");
             return false;
         }
 
@@ -338,11 +338,11 @@ namespace Graphyte::AssetsPipeline
 
             if (!backend->Compile(input, output))
             {
-                GX_LOG(LogShaderCompilerFrontend, Error, "Cannot compile shader: `{}`\n", path);
+                GX_LOG_ERROR(LogShaderCompilerFrontend, "Cannot compile shader: `{}`\n", path);
 
                 for (auto&& line : output.Log)
                 {
-                    GX_LOG(LogShaderCompilerFrontend, Info, "`{}`\n", line);
+                    GX_LOG_ERROR(LogShaderCompilerFrontend, "`{}`\n", line);
                 }
 
                 return false;
@@ -369,7 +369,7 @@ namespace Graphyte::AssetsPipeline
 
             if (Storage::IFileSystem::GetPlatformNative().DirectoryTreeCreate(content_path) != Status::Success)
             {
-                GX_LOG(LogShaderCompilerFrontend, Error, "Cannot create directory: `{}`\n", content_path);
+                GX_LOG_ERROR(LogShaderCompilerFrontend, "Cannot create directory: `{}`\n", content_path);
                 return false;
             }
 
@@ -385,7 +385,7 @@ namespace Graphyte::AssetsPipeline
             return false;
         }
 
-        GX_LOG(LogShaderCompilerFrontend, Error, "Cannot compile shader: `{}`\n", path);
+        GX_LOG_ERROR(LogShaderCompilerFrontend, "Cannot compile shader: `{}`\n", path);
         return false;
     }
 

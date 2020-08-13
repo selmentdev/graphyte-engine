@@ -52,7 +52,7 @@ namespace Graphyte::Storage
 
                     if (count != size)
                     {
-                        GX_LOG(LogStorage, Error, "Read failure: request = {}, processed = {}\n", size, count);
+                        GX_LOG_ERROR(LogStorage, "Read failure: request = {}, processed = {}\n", size, count);
                         m_Error = true;
                     }
 
@@ -62,7 +62,7 @@ namespace Graphyte::Storage
 
                 if (!PrecacheImpl(m_Position, std::numeric_limits<int32_t>::max()))
                 {
-                    GX_LOG(LogStorage, Error, "Read failure: precaching failed\n");
+                    GX_LOG_ERROR(LogStorage, "Read failure: precaching failed\n");
                     m_Error = true;
                     return;
                 }
@@ -73,7 +73,7 @@ namespace Graphyte::Storage
 
                 if (copy <= 0)
                 {
-                    GX_LOG(LogStorage, Error, "Read failure: read beyond end of file");
+                    GX_LOG_ERROR(LogStorage, "Read failure: read beyond end of file");
                     m_Error = true;
                 }
 

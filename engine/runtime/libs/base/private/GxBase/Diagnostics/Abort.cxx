@@ -37,7 +37,7 @@ namespace Graphyte::Diagnostics
 
         if (Impl::GIsAborting)
         {
-            GX_LOG(LogPlatform, Error, "Aborting is not reentrant\n");
+            GX_LOG_ERROR(LogPlatform, "Aborting is not reentrant\n");
 
             Diagnostics::FailFast();
         }
@@ -101,7 +101,7 @@ namespace Graphyte::Diagnostics
 
         std::string_view stacktrace{ stacktrace_buffer.data(), stacktrace_buffer.size() };
 
-        GX_LOG(LogPlatform, Error,
+        GX_LOG_ERROR(LogPlatform,
             "Application aborted:\n{}"
             "Stack Trace:\n{}",
             content,

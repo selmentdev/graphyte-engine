@@ -202,7 +202,7 @@ namespace Graphyte::Compression
 #endif
             default:
             {
-                GX_LOG(LogPlatform, Error, "Unknown compression method: {}\n", static_cast<int32_t>(method));
+                GX_LOG_ERROR(LogPlatform, "Unknown compression method: {}\n", static_cast<int32_t>(method));
                 break;
             }
         }
@@ -268,7 +268,7 @@ namespace Graphyte::Compression
 #endif
             default:
             {
-                GX_LOG(LogPlatform, Error, "Unknown compression method: {}\n", static_cast<int32_t>(method));
+                GX_LOG_ERROR(LogPlatform, "Unknown compression method: {}\n", static_cast<int32_t>(method));
                 break;
             }
         }
@@ -320,7 +320,7 @@ namespace Graphyte::Compression
 #endif
             default:
             {
-                GX_LOG(LogPlatform, Error, "Unknown compression method: {}\n", static_cast<int32_t>(method));
+                GX_LOG_ERROR(LogPlatform, "Unknown compression method: {}\n", static_cast<int32_t>(method));
                 break;
             }
         }

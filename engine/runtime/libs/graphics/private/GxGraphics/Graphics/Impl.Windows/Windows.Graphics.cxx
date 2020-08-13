@@ -52,12 +52,12 @@ namespace Graphyte::Graphics::Impl
 
         if (status != Status::Success)
         {
-            GX_LOG(LogPlatform, Fatal, "Failed to setup rendering: {}\n", status);
+            GX_LOG_FATAL(LogPlatform, "Failed to setup rendering: {}\n", status);
         }
 
         if (graphicsModule == nullptr || !graphicsModule->IsSupported())
         {
-            GX_LOG(LogPlatform, Fatal, "Rendering not supported\n");
+            GX_LOG_FATAL(LogPlatform, "Rendering not supported\n");
         }
 
         return graphicsModule->CreateDevice();

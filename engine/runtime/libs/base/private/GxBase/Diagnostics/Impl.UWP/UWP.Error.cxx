@@ -107,7 +107,7 @@ namespace Graphyte::Diagnostics
                 return Status::DirectoryNotEmpty;
 
             default:
-                GX_LOG(LogPlatform, Error, "Unmapped WinAPI GetLastError: {} -> {}\n",
+                GX_LOG_ERROR(LogPlatform, "Unmapped WinAPI GetLastError: {} -> {}\n",
                     error,
                     GetMessageFromSystemError(error));
                 break;

@@ -11,7 +11,7 @@ namespace Graphyte::System
 
         if (pipe(native_handles) == -1)
         {
-            GX_LOG(LogPlatform, Error, "Cannot create pipe: errno = {}, message = `{}`\n", errno, strerror(errno));
+            GX_LOG_ERROR(LogPlatform, "Cannot create pipe: errno = {}, message = `{}`\n", errno, strerror(errno));
 
             return false;
         }
@@ -58,7 +58,7 @@ namespace Graphyte::System
         }
         else
         {
-            GX_LOG(LogPlatform, Error, "Cannot read string from pipe\n");
+            GX_LOG_ERROR(LogPlatform, "Cannot read string from pipe\n");
         }
 
         return result;
@@ -84,7 +84,7 @@ namespace Graphyte::System
         }
         else
         {
-            GX_LOG(LogPlatform, Error, "Cannot read data from pipe\n");
+            GX_LOG_ERROR(LogPlatform, "Cannot read data from pipe\n");
         }
 
         return result;

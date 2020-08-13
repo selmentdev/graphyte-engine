@@ -194,15 +194,15 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
         .SizeLimits = {},
         .Title      = "Hello",
         .Position   = {
-            100,
-            100,
+            0,
+            0,
         },
         .Size = {
-            1280,
-            720,
+            1920,
+            1080,
         },
         //.Mode         = Graphyte::App::WindowMode::Windowed,
-        .Mode         = Graphyte::App::WindowMode::WindowedFullscreen,
+        .Mode         = Graphyte::App::WindowMode::Windowed,
         .SystemBorder = true,
         .CloseButton  = true,
         .Regular      = true,
@@ -212,6 +212,7 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     e.m_Window = window;
 
     window->Show();
+    window->SetWindowMode(Graphyte::App::WindowMode::WindowedFullscreen);
 
     while (!Graphyte::App::IsRequestingExit())
     {

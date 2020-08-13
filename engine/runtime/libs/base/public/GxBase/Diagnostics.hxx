@@ -525,32 +525,42 @@ namespace Graphyte::Diagnostics
 #define GX_DEFINE_LOG_CATEGORY(name) \
     LogCategory##name name { }
 
+#define GRAPHYTE_DIAGNOSTICS_IMPL_GX_LOG(category, level, format, ...) \
+    { \
+        if constexpr (level <= static_cast<::Graphyte::Diagnostics::LogLevel>(LogCategory##category::CompileLevel)) \
+        { \
+            if (category.CanDispatch(level)) \
+            { \
+                ::Graphyte::Diagnostics::LogDispatch(level, category.Name, format, ##__VA_ARGS__); \
+            } \
+        } \
+    }
+
 
 /// @brief Outputs formatted log message.
 ///
 /// @param category Provides log category.
-/// @param level Provides severity level.
-/// @param format
-#define GX_LOG(category, level, format, ...) \
+/// @param format   Provides format string.
+/// @param ...      Provides list of arguments to format.
+#define GX_LOG_FATAL(category, format, ...) \
     { \
-        if constexpr (::Graphyte::Diagnostics::LogLevel::level == ::Graphyte::Diagnostics::LogLevel::Fatal) \
+        if (::Graphyte::Diagnostics::OnAbort("", __func__, __FILE__, __LINE__, format, ##__VA_ARGS__)) \
         { \
-            if (::Graphyte::Diagnostics::OnAbort("", __func__, __FILE__, __LINE__, format, ##__VA_ARGS__)) \
-            { \
-                GX_DEBUG_BREAK(); \
-            } \
-        } \
-        else \
-        { \
-            if constexpr (::Graphyte::Diagnostics::LogLevel::level <= static_cast<::Graphyte::Diagnostics::LogLevel>(LogCategory##category::CompileLevel)) \
-            { \
-                if (category.CanDispatch(::Graphyte::Diagnostics::LogLevel::level)) \
-                { \
-                    ::Graphyte::Diagnostics::LogDispatch(::Graphyte::Diagnostics::LogLevel::level, category.Name, format, ##__VA_ARGS__); \
-                } \
-            } \
+            GX_DEBUG_BREAK(); \
         } \
     }
+
+#define GX_LOG_ERROR(category, format, ...) \
+    GRAPHYTE_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Error, format, ##__VA_ARGS__)
+
+#define GX_LOG_WARN(category, format, ...) \
+    GRAPHYTE_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Warn, format, ##__VA_ARGS__)
+
+#define GX_LOG_INFO(category, format, ...) \
+    GRAPHYTE_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Info, format, ##__VA_ARGS__)
+
+#define GX_LOG_TRACE(category, format, ...) \
+    GRAPHYTE_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Trace, format, ##__VA_ARGS__)
 
 
 // =================================================================================================

@@ -212,7 +212,7 @@ namespace Graphyte::AssetsPipeline
             errors_utf8->GetBufferSize()
         };
 
-        GX_LOG(LogShaderCompilerFrontend, Error, "Errors: `{}`\n", error_log);
+        GX_LOG_ERROR(LogShaderCompilerFrontend, "Errors: `{}`\n", error_log);
 
         return true;
     }

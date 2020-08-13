@@ -70,7 +70,6 @@ namespace Graphyte::App::Impl
 
 namespace Graphyte::App::Impl
 {
-    extern IEventHandler* g_EventHandler;
     ApplicationDescriptor g_ApplicationDescriptor{};
     static ModifierKey g_ModifierKey{};
     bool g_IsRequestingExit{ false };
@@ -462,11 +461,11 @@ namespace Graphyte::App::Impl
     {
         if (message.WParam == VK_F4)
         {
-            GX_LOG(LogPlatform, Trace, "Alt+F4\n");
+            GX_LOG_TRACE(LogPlatform, "Alt+F4\n");
         }
         else if (message.WParam == VK_SPACE)
         {
-            GX_LOG(LogPlatform, Trace, "Alt+Space\n");
+            GX_LOG_TRACE(LogPlatform, "Alt+Space\n");
         }
 
         if (message.WParam != VK_F4 && message.WParam != VK_SPACE)
@@ -646,7 +645,7 @@ namespace Graphyte::App::Impl
             }
             else if (input->header.dwType == RIM_TYPEKEYBOARD)
             {
-                GX_LOG(LogPlatform, Trace, "(kbd: vk: {:x}, msg: {:x}, mc: {:x}, flg: {:x}, ei: {:x})\n",
+                GX_LOG_TRACE(LogPlatform, "(kbd: vk: {:x}, msg: {:x}, mc: {:x}, flg: {:x}, ei: {:x})\n",
                     input->data.keyboard.VKey,
                     input->data.keyboard.Message,
                     input->data.keyboard.MakeCode,
@@ -843,7 +842,7 @@ namespace Graphyte::App::Impl
 
     static void WmDisplayChange([[maybe_unused]] WindowsWindow& window, [[maybe_unused]] Message& message) noexcept
     {
-        GX_LOG(LogPlatform, Trace,
+        GX_LOG_TRACE(LogPlatform,
             "Display changed: bits per pixel = {}, width = {}, height = {}\n",
             static_cast<UINT>(message.WParam),
             static_cast<UINT>(LOWORD(message.LParam)),
@@ -884,19 +883,19 @@ namespace Graphyte::App::Impl
         switch (message.WParam)
         {
             case PBT_APMPOWERSTATUSCHANGE:
-                GX_LOG(LogPlatform, Info, "Power Event: status changed\n");
+                GX_LOG_INFO(LogPlatform, "Power Event: status changed\n");
                 break;
 
             case PBT_APMRESUMEAUTOMATIC:
-                GX_LOG(LogPlatform, Info, "Power Event: resume-automatic\n");
+                GX_LOG_INFO(LogPlatform, "Power Event: resume-automatic\n");
                 break;
 
             case PBT_APMRESUMESUSPEND:
-                GX_LOG(LogPlatform, Info, "Power Event: resume-suspend\n");
+                GX_LOG_INFO(LogPlatform, "Power Event: resume-suspend\n");
                 break;
 
             case PBT_APMSUSPEND:
-                GX_LOG(LogPlatform, Info, "Power Event: suspend\n");
+                GX_LOG_INFO(LogPlatform, "Power Event: suspend\n");
                 break;
         }
 
@@ -1222,7 +1221,7 @@ namespace Graphyte::App
 
     void RequestExit(bool force) noexcept
     {
-        GX_LOG(LogPlatform, Trace, "Application requesting exit\n");
+        GX_LOG_TRACE(LogPlatform, "Application requesting exit\n");
 
         if (force)
         {

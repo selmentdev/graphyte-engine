@@ -103,7 +103,7 @@ namespace Graphyte::Diagnostics
         {
             auto hr = static_cast<HRESULT>(GetLastError());
 
-            GX_LOG(LogPlatform, Error, "Failed to write minidump: {}\n", Diagnostics::GetMessageFromHRESULT(hr));
+            GX_LOG_ERROR(LogPlatform, "Failed to write minidump: {}\n", Diagnostics::GetMessageFromHRESULT(hr));
 
             return Status::Failure;
         }

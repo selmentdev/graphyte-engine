@@ -89,7 +89,7 @@ namespace Graphyte::Graphics
         //
         {
             auto key = Impl::Hash(args.DepthStencilState);
-            GX_LOG(LogD3D11Render, Trace, "[D3D11]: DepthStencilState - {}\n", key);
+            GX_LOG_TRACE(LogD3D11Render, "[D3D11]: DepthStencilState - {}\n", key);
 
             auto it = m_DepthStencilState.find(key);
 
@@ -135,7 +135,7 @@ namespace Graphyte::Graphics
         //
         {
             auto key = Impl::Hash(args.BlendState);
-            GX_LOG(LogD3D11Render, Trace, "[D3D11]: BlendState - {}\n", key);
+            GX_LOG_TRACE(LogD3D11Render, "[D3D11]: BlendState - {}\n", key);
 
             auto it = m_BlendState.find(key);
 
@@ -207,7 +207,7 @@ namespace Graphyte::Graphics
         //
         {
             auto key = Impl::Hash(args.RasterizerState);
-            GX_LOG(LogD3D11Render, Trace, "[D3D11]: RasterizerState - {}\n", key);
+            GX_LOG_TRACE(LogD3D11Render, "[D3D11]: RasterizerState - {}\n", key);
 
             auto it = m_RasterizerState.find(key);
 

@@ -49,7 +49,7 @@ namespace Graphyte::System
 
         if (exp_result != 0)
         {
-            GX_LOG(LogPlatform, Error, "Failed to expand command line: {}\n", exp_result);
+            GX_LOG_ERROR(LogPlatform, "Failed to expand command line: {}\n", exp_result);
             return {};
         }
 
@@ -138,7 +138,7 @@ namespace Graphyte::System
 
         if (spawn_result != 0)
         {
-            GX_LOG(LogPlatform, Error, "posix_spawn: {}, pid: {}\n", spawn_result, process_id);
+            GX_LOG_ERROR(LogPlatform, "posix_spawn: {}, pid: {}\n", spawn_result, process_id);
         }
 
         wordfree(&exp_status);
@@ -195,7 +195,7 @@ namespace Graphyte::System
                         //
                         // Wait failed due to other reasons.
                         //
-                        GX_LOG(LogPlatform, Error,
+                        GX_LOG_ERROR(LogPlatform,
                             "Wait for process failed: {} ({}: `{}`)\n",
                             handle.ProcessID,
                             error,
@@ -250,7 +250,7 @@ namespace Graphyte::System
                 }
                 else if (error != EINTR)
                 {
-                    GX_LOG(LogPlatform, Error, "Failed to wait for process: {}\n", strerror(error));
+                    GX_LOG_ERROR(LogPlatform, "Failed to wait for process: {}\n", strerror(error));
                     exit_code = -1;
                     return false;
                 }
@@ -270,7 +270,7 @@ namespace Graphyte::System
     {
         if (tree)
         {
-            GX_LOG(LogPlatform, Error, "Killing process children is not supported right now\n");
+            GX_LOG_ERROR(LogPlatform, "Killing process children is not supported right now\n");
         }
 
         kill(handle.ProcessID, SIGTERM);
@@ -348,7 +348,7 @@ namespace Graphyte::System
                 out_stderr->clear();
             }
 
-            GX_LOG(LogPlatform, Error, "Cannot create process: `{}`\n", path);
+            GX_LOG_ERROR(LogPlatform, "Cannot create process: `{}`\n", path);
 
             result.ExitCode   = 0;
             result.StatusCode = Diagnostics::GetStatusFromErrno(errno);

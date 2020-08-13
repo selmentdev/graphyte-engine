@@ -176,7 +176,7 @@ namespace Graphyte::Maths
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector3 const q_xyz{ q.V };
-        Vector4 const q_dot     = Dot(q_xyz, q_xyz);
+        Vector4 const q_dot{ Dot(q_xyz, q_xyz).V };
         Vector4 const v_rcp_len = InvSqrt(q_dot);
         Vector4 const v_len     = Reciprocal(v_rcp_len);
 
@@ -234,7 +234,7 @@ namespace Graphyte::Maths
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const qv{ q.V };
         Vector3 const q_xyz{ qv.V };
-        Vector4 const v_len_sq = Dot(q_xyz, q_xyz);
+        Vector4 const v_len_sq{ Dot(q_xyz, q_xyz).V };
 
         Vector4 const q_w      = SplatW(Vector4{ q.V });
         Vector4 const q_len_sq = MultiplyAdd(q_w, q_w, v_len_sq);
@@ -582,7 +582,7 @@ namespace Graphyte::Maths
         Vector4 const vs0b = Sin(vs0a);
         Vector4 const vs0c = Multiply(vs0b, vinv_sin_omega);
 
-        Vector4 const vs0d = Select(vv01c, vs0c, vcontrol1);
+        Vector4 const vs0d = Select(vv01c, vs0c, vc1);
 
         Vector4 const vs1a = SplatY(vs0d);
 

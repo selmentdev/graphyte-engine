@@ -86,7 +86,7 @@ namespace Graphyte::AssetsPipeline
 
         if (Storage::IFileSystem::GetPlatformNative().DirectoryTreeCreate(temp_directory) != Status::Success)
         {
-            GX_LOG(LogShaderCompilerFrontend, Error, "Cannot create directory: `{}`\n", temp_directory);
+            GX_LOG_ERROR(LogShaderCompilerFrontend, "Cannot create directory: `{}`\n", temp_directory);
             return false;
         }
 
@@ -102,7 +102,7 @@ namespace Graphyte::AssetsPipeline
 
         if (Storage::WriteText(input.Source, source_temp) != Status::Success)
         {
-            GX_LOG(LogShaderCompilerFrontend, Error, "Cannot write source file: `{}`\n", source_temp);
+            GX_LOG_ERROR(LogShaderCompilerFrontend, "Cannot write source file: `{}`\n", source_temp);
             return false;
         }
 
@@ -138,7 +138,7 @@ namespace Graphyte::AssetsPipeline
                 output.Log.emplace_back(line);
             }
 
-            GX_LOG(LogShaderCompilerFrontend, Error, "Exit code: {}\n", exit_code);
+            GX_LOG_ERROR(LogShaderCompilerFrontend, "Exit code: {}\n", exit_code);
 
             output.Success = success;
 
@@ -148,7 +148,7 @@ namespace Graphyte::AssetsPipeline
                 {
                     for (auto&& line : Split(std_output, '\n'))
                     {
-                        GX_LOG(LogShaderCompilerFrontend, Error, "{}\n", line);
+                        GX_LOG_ERROR(LogShaderCompilerFrontend, "{}\n", line);
                     }
 
                     return true;
@@ -160,7 +160,7 @@ namespace Graphyte::AssetsPipeline
             }
         }
 
-        GX_LOG(LogShaderCompilerFrontend, Error, "Vulkan compiler not found!\n");
+        GX_LOG_ERROR(LogShaderCompilerFrontend, "Vulkan compiler not found!\n");
         return false;
     }
 }

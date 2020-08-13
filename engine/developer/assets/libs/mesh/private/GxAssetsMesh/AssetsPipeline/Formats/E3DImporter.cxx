@@ -27,7 +27,7 @@ namespace Graphyte::AssetsPipeline::Meshes
             {
                 case Chunks::SUB0:
                 {
-                    GX_LOG(LogMeshProcessor, Info, "Submodel: {:c}{:c}{:c}{:c} {}\n",
+                    GX_LOG_INFO(LogMeshProcessor, "Submodel: {:c}{:c}{:c}{:c} {}\n",
                         chunkHeader.FourCC[0],
                         chunkHeader.FourCC[1],
                         chunkHeader.FourCC[2],
@@ -40,25 +40,25 @@ namespace Graphyte::AssetsPipeline::Meshes
                     GX_ASSERT((static_cast<size_t>(payloadSize) % sizeof(submodel)) == 0);
 
 
-                    GX_LOG(LogMeshProcessor, Info, "Submodels: count = {}\n", count);
+                    GX_LOG_INFO(LogMeshProcessor, "Submodels: count = {}\n", count);
 
                     for (size_t i = 0; i < count; ++i)
                     {
                         archive.Serialize(&submodel, sizeof(submodel));
                         submodels.push_back(submodel);
 
-                        GX_LOG(LogMeshProcessor, Info, "- submodel:   {}\n", i);
-                        GX_LOG(LogMeshProcessor, Info, "  - texture:  {}\n", submodel.TextureIndex);
-                        GX_LOG(LogMeshProcessor, Info, "  - type:     {}\n", static_cast<uint32_t>(submodel.Type));
-                        GX_LOG(LogMeshProcessor, Info, "  - vertices: [{}:{})\n", submodel.FirstVertexIndex, submodel.VerticesCount);
-                        GX_LOG(LogMeshProcessor, Info, "  - name:     {}\n", submodel.NameIndex);
+                        GX_LOG_INFO(LogMeshProcessor, "- submodel:   {}\n", i);
+                        GX_LOG_INFO(LogMeshProcessor, "  - texture:  {}\n", submodel.TextureIndex);
+                        GX_LOG_INFO(LogMeshProcessor, "  - type:     {}\n", static_cast<uint32_t>(submodel.Type));
+                        GX_LOG_INFO(LogMeshProcessor, "  - vertices: [{}:{})\n", submodel.FirstVertexIndex, submodel.VerticesCount);
+                        GX_LOG_INFO(LogMeshProcessor, "  - name:     {}\n", submodel.NameIndex);
                     }
 
                     break;
                 }
                 case Chunks::TRA0:
                 {
-                    GX_LOG(LogMeshProcessor, Info, "Transform Matrices: Float4x4A\n");
+                    GX_LOG_INFO(LogMeshProcessor, "Transform Matrices: Float4x4A\n");
                     size_t count = static_cast<size_t>((chunkHeader.Size - sizeof(chunkHeader)) / sizeof(Float4x4));
 
                     for (size_t i = 0; i < count; ++i)
@@ -71,12 +71,12 @@ namespace Graphyte::AssetsPipeline::Meshes
                 }
                 case Chunks::TRA1:
                 {
-                    GX_LOG(LogMeshProcessor, Info, "Transform Matrices: double4x4\n");
+                    GX_LOG_INFO(LogMeshProcessor, "Transform Matrices: double4x4\n");
                     break;
                 }
                 case Chunks::TEX0:
                 {
-                    GX_LOG(LogMeshProcessor, Info, "Materials\n");
+                    GX_LOG_INFO(LogMeshProcessor, "Materials\n");
                     std::string buffer{};
 
                     size_t bytes = chunkHeader.Size - sizeof(chunkHeader);
@@ -99,14 +99,14 @@ namespace Graphyte::AssetsPipeline::Meshes
 
                     for (size_t i = 0; i < materials.size(); ++i)
                     {
-                        GX_LOG(LogMeshProcessor, Info, "- {}: `{}`\n", i, materials[i]);
+                        GX_LOG_INFO(LogMeshProcessor, "- {}: `{}`\n", i, materials[i]);
                     }
 
                     break;
                 }
                 case Chunks::NAM0:
                 {
-                    GX_LOG(LogMeshProcessor, Info, "Submodel names\n");
+                    GX_LOG_INFO(LogMeshProcessor, "Submodel names\n");
                     std::string buffer{};
 
                     size_t bytes = chunkHeader.Size - sizeof(chunkHeader);
@@ -129,14 +129,14 @@ namespace Graphyte::AssetsPipeline::Meshes
 
                     for (size_t i = 0; i < submodel_names.size(); ++i)
                     {
-                        GX_LOG(LogMeshProcessor, Info, "- {}: `{}`\n", i, submodel_names[i]);
+                        GX_LOG_INFO(LogMeshProcessor, "- {}: `{}`\n", i, submodel_names[i]);
                     }
 
                     break;
                 }
                 case Chunks::VNT0:
                 {
-                    GX_LOG(LogMeshProcessor, Info, "Vertices\n");
+                    GX_LOG_INFO(LogMeshProcessor, "Vertices\n");
                     int64_t payloadSize = chunkHeader.Size - sizeof(chunkHeader);
                     size_t count        = static_cast<size_t>(payloadSize) / sizeof(Vertex);
                     GX_ASSERT((static_cast<size_t>(payloadSize) % sizeof(Vertex)) == 0);
@@ -153,7 +153,7 @@ namespace Graphyte::AssetsPipeline::Meshes
                 default:
                 case Chunks::E3D0:
                 {
-                    GX_LOG(LogMeshProcessor, Error, "Unknown chunk: {:c}{:c}{:c}{:c} {}\n",
+                    GX_LOG_ERROR(LogMeshProcessor, "Unknown chunk: {:c}{:c}{:c}{:c} {}\n",
                         chunkHeader.FourCC[0],
                         chunkHeader.FourCC[1],
                         chunkHeader.FourCC[2],

@@ -93,7 +93,7 @@ namespace Graphyte::Graphics
             dxgi_device->GetGPUThreadPriority(
                 &gpu_thread_priority);
 
-            GX_LOG(LogD3D11Render, Trace, "GPU Thread priority: {}\n", gpu_thread_priority);
+            GX_LOG_TRACE(LogD3D11Render, "GPU Thread priority: {}\n", gpu_thread_priority);
         }
 
         //
@@ -107,7 +107,7 @@ namespace Graphyte::Graphics
             DXGI_ADAPTER_DESC1 desc{};
             GPU_DX_VALIDATE(m_Adapter->GetDesc1(&desc));
 
-            GX_LOG(LogD3D11Render, Info, "Adapter: (device: {:04x}, vendor: {:04x}, subsys: {:04x})\n",
+            GX_LOG_INFO(LogD3D11Render, "Adapter: (device: {:04x}, vendor: {:04x}, subsys: {:04x})\n",
                 desc.DeviceId,
                 desc.VendorId,
                 desc.SubSysId);
@@ -115,9 +115,9 @@ namespace Graphyte::Graphics
 
             std::string description = System::Impl::NarrowString(desc.Description);
 
-            GX_LOG(LogD3D11Render, Info, "Adapter: `{}`\n", description);
+            GX_LOG_INFO(LogD3D11Render, "Adapter: `{}`\n", description);
 
-            GX_LOG(LogD3D11Render, Info, "Adapter: SystemMemory: {}, VideoMemory: {}, SharedMemory: {}\n",
+            GX_LOG_INFO(LogD3D11Render, "Adapter: SystemMemory: {}, VideoMemory: {}, SharedMemory: {}\n",
                 static_cast<uint64_t>(desc.DedicatedSystemMemory) >> 20,
                 static_cast<uint64_t>(desc.DedicatedVideoMemory) >> 20,
                 static_cast<uint64_t>(desc.SharedSystemMemory) >> 20);
@@ -136,157 +136,157 @@ namespace Graphyte::Graphics
         D3D11_FEATURE_DATA_THREADING featureThreading{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_THREADING, &featureThreading, sizeof(featureThreading))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureThreading.DriverCommandLists: {}\n", !!featureThreading.DriverCommandLists);
-            GX_LOG(LogD3D11Render, Info, "- FeatureThreading.DriverConcurrentCreates: {}\n", !!featureThreading.DriverConcurrentCreates);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureThreading.DriverCommandLists: {}\n", !!featureThreading.DriverCommandLists);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureThreading.DriverConcurrentCreates: {}\n", !!featureThreading.DriverConcurrentCreates);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_THREADING is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_THREADING is not supported\n");
         }
 
         D3D11_FEATURE_DATA_D3D11_OPTIONS1 featureOptions1{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS1, &featureOptions1, sizeof(featureOptions1))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions1.TiledResourcesTier: {}\n", featureOptions1.TiledResourcesTier);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions1.MinMaxFiltering: {}\n", !!featureOptions1.MinMaxFiltering);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions1.ClearViewAlsoSupportsDepthOnlyFormats: {}\n", !!featureOptions1.ClearViewAlsoSupportsDepthOnlyFormats);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions1.MapOnDefaultBuffers: {}\n", !!featureOptions1.MapOnDefaultBuffers);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions1.TiledResourcesTier: {}\n", featureOptions1.TiledResourcesTier);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions1.MinMaxFiltering: {}\n", !!featureOptions1.MinMaxFiltering);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions1.ClearViewAlsoSupportsDepthOnlyFormats: {}\n", !!featureOptions1.ClearViewAlsoSupportsDepthOnlyFormats);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions1.MapOnDefaultBuffers: {}\n", !!featureOptions1.MapOnDefaultBuffers);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_D3D11_OPTIONS1 is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_D3D11_OPTIONS1 is not supported\n");
         }
 
         D3D11_FEATURE_DATA_DOUBLES featureDoubles{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_DOUBLES, &featureDoubles, sizeof(featureDoubles))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureDoubles.DoublePrecisionFloatShaderOps: {}\n", featureDoubles.DoublePrecisionFloatShaderOps);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureDoubles.DoublePrecisionFloatShaderOps: {}\n", featureDoubles.DoublePrecisionFloatShaderOps);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_DOUBLES is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_DOUBLES is not supported\n");
         }
 
         D3D11_FEATURE_DATA_D3D11_OPTIONS featureOptions{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS, &featureOptions, sizeof(featureOptions))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.OutputMergerLogicOp: {}\n", !!featureOptions.OutputMergerLogicOp);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.UAVOnlyRenderingForcedSampleCount: {}\n", !!featureOptions.UAVOnlyRenderingForcedSampleCount);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.DiscardAPIsSeenByDriver: {}\n", !!featureOptions.DiscardAPIsSeenByDriver);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.FlagsForUpdateAndCopySeenByDriver: {}\n", !!featureOptions.FlagsForUpdateAndCopySeenByDriver);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.ClearView: {}\n", !!featureOptions.ClearView);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.CopyWithOverlap: {}\n", !!featureOptions.CopyWithOverlap);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.ConstantBufferPartialUpdate: {}\n", !!featureOptions.ConstantBufferPartialUpdate);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.ConstantBufferOffsetting: {}\n", !!featureOptions.ConstantBufferOffsetting);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.MapNoOverwriteOnDynamicConstantBuffer: {}\n", !!featureOptions.MapNoOverwriteOnDynamicConstantBuffer);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.MapNoOverwriteOnDynamicBufferSRV: {}\n", !!featureOptions.MapNoOverwriteOnDynamicBufferSRV);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.MultisampleRTVWithForcedSampleCountOne: {}\n", !!featureOptions.MultisampleRTVWithForcedSampleCountOne);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.SAD4ShaderInstructions: {}\n", !!featureOptions.SAD4ShaderInstructions);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.ExtendedDoublesShaderInstructions: {}\n", !!featureOptions.ExtendedDoublesShaderInstructions);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions.ExtendedResourceSharing: {}\n", !!featureOptions.ExtendedResourceSharing);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.OutputMergerLogicOp: {}\n", !!featureOptions.OutputMergerLogicOp);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.UAVOnlyRenderingForcedSampleCount: {}\n", !!featureOptions.UAVOnlyRenderingForcedSampleCount);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.DiscardAPIsSeenByDriver: {}\n", !!featureOptions.DiscardAPIsSeenByDriver);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.FlagsForUpdateAndCopySeenByDriver: {}\n", !!featureOptions.FlagsForUpdateAndCopySeenByDriver);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.ClearView: {}\n", !!featureOptions.ClearView);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.CopyWithOverlap: {}\n", !!featureOptions.CopyWithOverlap);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.ConstantBufferPartialUpdate: {}\n", !!featureOptions.ConstantBufferPartialUpdate);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.ConstantBufferOffsetting: {}\n", !!featureOptions.ConstantBufferOffsetting);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.MapNoOverwriteOnDynamicConstantBuffer: {}\n", !!featureOptions.MapNoOverwriteOnDynamicConstantBuffer);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.MapNoOverwriteOnDynamicBufferSRV: {}\n", !!featureOptions.MapNoOverwriteOnDynamicBufferSRV);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.MultisampleRTVWithForcedSampleCountOne: {}\n", !!featureOptions.MultisampleRTVWithForcedSampleCountOne);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.SAD4ShaderInstructions: {}\n", !!featureOptions.SAD4ShaderInstructions);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.ExtendedDoublesShaderInstructions: {}\n", !!featureOptions.ExtendedDoublesShaderInstructions);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions.ExtendedResourceSharing: {}\n", !!featureOptions.ExtendedResourceSharing);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_D3D11_OPTIONS is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_D3D11_OPTIONS is not supported\n");
         }
 
         D3D11_FEATURE_DATA_ARCHITECTURE_INFO featureArchitectureInfo{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_ARCHITECTURE_INFO, &featureArchitectureInfo, sizeof(featureArchitectureInfo))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureArchitectureInfo.TileBasedDeferredRenderer: {}\n", !!featureArchitectureInfo.TileBasedDeferredRenderer);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureArchitectureInfo.TileBasedDeferredRenderer: {}\n", !!featureArchitectureInfo.TileBasedDeferredRenderer);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_ARCHITECTURE_INFO is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_ARCHITECTURE_INFO is not supported\n");
         }
 
         D3D11_FEATURE_DATA_SHADER_MIN_PRECISION_SUPPORT featureShaderMinPrecision{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_SHADER_MIN_PRECISION_SUPPORT, &featureShaderMinPrecision, sizeof(featureShaderMinPrecision))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureShaderMinPrecision.PixelShaderMinPrecision: {}\n", featureShaderMinPrecision.PixelShaderMinPrecision);
-            GX_LOG(LogD3D11Render, Info, "- FeatureShaderMinPrecision.AllOtherShaderStagesMinPrecision: {}\n", featureShaderMinPrecision.AllOtherShaderStagesMinPrecision);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureShaderMinPrecision.PixelShaderMinPrecision: {}\n", featureShaderMinPrecision.PixelShaderMinPrecision);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureShaderMinPrecision.AllOtherShaderStagesMinPrecision: {}\n", featureShaderMinPrecision.AllOtherShaderStagesMinPrecision);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_SHADER_MIN_PRECISION_SUPPORT is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_SHADER_MIN_PRECISION_SUPPORT is not supported\n");
         }
 
         D3D11_FEATURE_DATA_MARKER_SUPPORT featureMarkerSupport{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_MARKER_SUPPORT, &featureMarkerSupport, sizeof(featureMarkerSupport))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureMarkerSupport.Profile: {}\n", !!featureMarkerSupport.Profile);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureMarkerSupport.Profile: {}\n", !!featureMarkerSupport.Profile);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_MARKER_SUPPORT is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_MARKER_SUPPORT is not supported\n");
         }
 
         D3D11_FEATURE_DATA_D3D11_OPTIONS2 featureOptions2{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS2, &featureOptions2, sizeof(featureOptions2))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions2.PSSpecifiedStencilRefSupported: {}\n", !!featureOptions2.PSSpecifiedStencilRefSupported);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions2.TypedUAVLoadAdditionalFormats: {}\n", !!featureOptions2.TypedUAVLoadAdditionalFormats);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions2.ROVsSupported: {}\n", !!featureOptions2.ROVsSupported);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions2.ConservativeRasterizationTier: {}\n", (uint32_t)featureOptions2.ConservativeRasterizationTier);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions2.TiledResourcesTier: {}\n", (uint32_t)featureOptions2.TiledResourcesTier);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions2.MapOnDefaultTextures: {}\n", !!featureOptions2.MapOnDefaultTextures);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions2.StandardSwizzle: {}\n", !!featureOptions2.StandardSwizzle);
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions2.UnifiedMemoryArchitecture: {}\n", !!featureOptions2.UnifiedMemoryArchitecture);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions2.PSSpecifiedStencilRefSupported: {}\n", !!featureOptions2.PSSpecifiedStencilRefSupported);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions2.TypedUAVLoadAdditionalFormats: {}\n", !!featureOptions2.TypedUAVLoadAdditionalFormats);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions2.ROVsSupported: {}\n", !!featureOptions2.ROVsSupported);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions2.ConservativeRasterizationTier: {}\n", (uint32_t)featureOptions2.ConservativeRasterizationTier);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions2.TiledResourcesTier: {}\n", (uint32_t)featureOptions2.TiledResourcesTier);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions2.MapOnDefaultTextures: {}\n", !!featureOptions2.MapOnDefaultTextures);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions2.StandardSwizzle: {}\n", !!featureOptions2.StandardSwizzle);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions2.UnifiedMemoryArchitecture: {}\n", !!featureOptions2.UnifiedMemoryArchitecture);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_D3D11_OPTIONS2 is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_D3D11_OPTIONS2 is not supported\n");
         }
 
         D3D11_FEATURE_DATA_D3D11_OPTIONS3 featureOptions3{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS3, &featureOptions3, sizeof(featureOptions3))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions3.VPAndRTArrayIndexFromAnyShaderFeedingRasterizer: {}\n", !!featureOptions3.VPAndRTArrayIndexFromAnyShaderFeedingRasterizer);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions3.VPAndRTArrayIndexFromAnyShaderFeedingRasterizer: {}\n", !!featureOptions3.VPAndRTArrayIndexFromAnyShaderFeedingRasterizer);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_D3D11_OPTIONS3 is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_D3D11_OPTIONS3 is not supported\n");
         }
 
         D3D11_FEATURE_DATA_GPU_VIRTUAL_ADDRESS_SUPPORT featureGpuVirtualAddressSupport{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT, &featureGpuVirtualAddressSupport, sizeof(featureGpuVirtualAddressSupport))))
         {
-            GX_LOG(LogD3D11Render, Info, "- GpuVirtualAddress.MaxGPUVirtualAddressBitsPerResource: {}\n", featureGpuVirtualAddressSupport.MaxGPUVirtualAddressBitsPerResource);
-            GX_LOG(LogD3D11Render, Info, "- GpuVirtualAddress.MaxGPUVirtualAddressBitsPerProcess: {}\n", featureGpuVirtualAddressSupport.MaxGPUVirtualAddressBitsPerProcess);
+            GX_LOG_INFO(LogD3D11Render, "- GpuVirtualAddress.MaxGPUVirtualAddressBitsPerResource: {}\n", featureGpuVirtualAddressSupport.MaxGPUVirtualAddressBitsPerResource);
+            GX_LOG_INFO(LogD3D11Render, "- GpuVirtualAddress.MaxGPUVirtualAddressBitsPerProcess: {}\n", featureGpuVirtualAddressSupport.MaxGPUVirtualAddressBitsPerProcess);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_GPU_VIRTUAL_ADDRESS_SUPPORT is not supported\n");
         }
 
         D3D11_FEATURE_DATA_D3D11_OPTIONS4 featureOptions4{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS4, &featureOptions4, sizeof(featureOptions4))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions4.ExtendedNV12SharedTextureSupported: {}\n", !!featureOptions4.ExtendedNV12SharedTextureSupported);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions4.ExtendedNV12SharedTextureSupported: {}\n", !!featureOptions4.ExtendedNV12SharedTextureSupported);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_D3D11_OPTIONS4 is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_D3D11_OPTIONS4 is not supported\n");
         }
 
         D3D11_FEATURE_DATA_SHADER_CACHE featureShaderCache{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_SHADER_CACHE, &featureShaderCache, sizeof(featureShaderCache))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureShaderCache.SupportFlags: {:x}\n", featureShaderCache.SupportFlags);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureShaderCache.SupportFlags: {:x}\n", featureShaderCache.SupportFlags);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_SHADER_CACHE is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_SHADER_CACHE is not supported\n");
         }
 
         D3D11_FEATURE_DATA_D3D11_OPTIONS5 featureOptions5{};
         if (SUCCEEDED(m_Device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS5, &featureOptions5, sizeof(featureOptions5))))
         {
-            GX_LOG(LogD3D11Render, Info, "- FeatureOptions5.SharedResourceTier: {}\n", !!featureOptions5.SharedResourceTier);
+            GX_LOG_INFO(LogD3D11Render, "- FeatureOptions5.SharedResourceTier: {}\n", !!featureOptions5.SharedResourceTier);
         }
         else
         {
-            GX_LOG(LogD3D11Render, Info, "D3D11_FEATURE_D3D11_OPTIONS5 is not supported\n");
+            GX_LOG_INFO(LogD3D11Render, "D3D11_FEATURE_D3D11_OPTIONS5 is not supported\n");
         }
 
 
@@ -364,7 +364,7 @@ namespace Graphyte::Graphics
 
         this->ReleaseDeferredResources();
 
-        GX_LOG(LogD3D11Render, Trace, "Shutting down D3D11 render device\n");
+        GX_LOG_TRACE(LogD3D11Render, "Shutting down D3D11 render device\n");
 
         this->m_Context->ClearState();
         this->m_Context->Flush();
@@ -446,7 +446,7 @@ namespace Graphyte::Graphics
                         D3D11_MESSAGE* m = reinterpret_cast<D3D11_MESSAGE*>(data.data());
                         if (SUCCEEDED(info->GetMessage(i, m, &length)))
                         {
-                            GX_LOG(LogD3D11Render, Trace, "D3D11-DEBUG: {}}\n", m->pDescription);
+                            GX_LOG_TRACE(LogD3D11Render, "D3D11-DEBUG: {}}\n", m->pDescription);
                         }
                     }
                 }

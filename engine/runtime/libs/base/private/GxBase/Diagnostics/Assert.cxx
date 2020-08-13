@@ -43,7 +43,7 @@ namespace Graphyte::Diagnostics
 
         if (Impl::GIsAsserting)
         {
-            GX_LOG(LogPlatform, Error, "Assertion is not reentrant\n");
+            GX_LOG_ERROR(LogPlatform, "Assertion is not reentrant\n");
 
             Diagnostics::FailFast();
         }
@@ -113,11 +113,11 @@ namespace Graphyte::Diagnostics
 
         std::string_view stacktrace{ stacktrace_buffer.data(), stacktrace_buffer.size() };
 
-        GX_LOG(LogPlatform, Error,
+        GX_LOG_ERROR(LogPlatform,
             "Assertion failed:\n{}",
             content);
 
-        GX_LOG(LogPlatform, Error,
+        GX_LOG_ERROR(LogPlatform,
             "Stack Trace:\n{}",
             stacktrace);
 

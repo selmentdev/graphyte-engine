@@ -30,13 +30,13 @@ namespace Graphyte::System::Impl
         SDL_version linked_version{};
         SDL_GetVersion(&linked_version);
 
-        GX_LOG(LogPlatform, Info, "SDL Version linked: {}.{}.{}\n",
+        GX_LOG_INFO(LogPlatform, "SDL Version linked: {}.{}.{}\n",
             linked_version.major, linked_version.minor, linked_version.patch);
 
         SDL_version compiled_version{};
         SDL_VERSION(&compiled_version);
 
-        GX_LOG(LogPlatform, Info, "SDL Version compiled: {}.{}.{}\n",
+        GX_LOG_INFO(LogPlatform, "SDL Version compiled: {}.{}.{}\n",
             compiled_version.major, compiled_version.minor, compiled_version.patch);
     }
 

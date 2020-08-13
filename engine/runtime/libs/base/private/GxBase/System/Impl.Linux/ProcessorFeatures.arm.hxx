@@ -14,7 +14,7 @@ namespace Graphyte::System::Impl
         uint64_t hwcap                   = getauxval(AT_HWCAP);
         [[maybe_unused]] uint64_t hwcap2 = getauxval(AT_HWCAP2);
 
-        GX_LOG(LogPlatform, Trace, "HWCAP: {:016x}, HWCAP2: {:016x}\n", hwcap, hwcap2);
+        GX_LOG_TRACE(LogPlatform, "HWCAP: {:016x}, HWCAP2: {:016x}\n", hwcap, hwcap2);
 
 
         if ((hwcap & HWCAP_AES) != 0)

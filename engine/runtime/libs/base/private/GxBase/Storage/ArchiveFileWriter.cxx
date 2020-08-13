@@ -36,7 +36,7 @@ namespace Graphyte::Storage
 
             if (m_Stream->Write({ reinterpret_cast<std::byte*>(buffer), size }, processed) != Status::Success)
             {
-                GX_LOG(LogStorage, Error, "Write failure: request = {}, processed = {}\n", size, processed);
+                GX_LOG_ERROR(LogStorage, "Write failure: request = {}, processed = {}\n", size, processed);
                 m_Error = true;
             }
         }
@@ -83,7 +83,7 @@ namespace Graphyte::Storage
         Flush();
         if (m_Stream->SetPosition(value) != Status::Success)
         {
-            GX_LOG(LogStorage, Error, "Set position failed: position = {}\n", value);
+            GX_LOG_ERROR(LogStorage, "Set position failed: position = {}\n", value);
             m_Error = true;
         }
 
@@ -101,7 +101,7 @@ namespace Graphyte::Storage
 
             if (m_Stream->Write({ &m_Buffer[0], m_BufferCount }, processed) != Status::Success)
             {
-                GX_LOG(LogStorage, Error, "Flush failure\n");
+                GX_LOG_ERROR(LogStorage, "Flush failure\n");
                 m_Error = true;
             }
 

@@ -235,44 +235,44 @@ namespace Graphyte::Launch
         std::string engine_version{};
         Converter<Version>::ToString(engine_version, System::GetBuildVersion());
 
-        GX_LOG(LogInit, Info, "Engine version: {}\n", engine_version);
-        GX_LOG(LogInit, Info, "Build-ID: {}-{}\n",
+        GX_LOG_INFO(LogInit, "Engine version: {}\n", engine_version);
+        GX_LOG_INFO(LogInit, "Build-ID: {}-{}\n",
             System::GetBuildBranch(),
             System::GetBuildCommit());
-        GX_LOG(LogInit, Info, "System version: {}\n", System::GetSystemVersion());
-        GX_LOG(LogInit, Info, "Process ID: {}\n", Graphyte::System::Process::GetCurrent());
+        GX_LOG_INFO(LogInit, "System version: {}\n", System::GetSystemVersion());
+        GX_LOG_INFO(LogInit, "Process ID: {}\n", Graphyte::System::Process::GetCurrent());
 
         std::string linktime{};
         ToString(linktime, Graphyte::System::Process::GetLinkTime());
 
-        GX_LOG(LogInit, Info, "Link time: {}\n", linktime);
+        GX_LOG_INFO(LogInit, "Link time: {}\n", linktime);
 
         std::string launchtime{};
         ToString(launchtime, Graphyte::DateTime::Now());
-        GX_LOG(LogInit, Info, "Launch time: {}\n", launchtime);
+        GX_LOG_INFO(LogInit, "Launch time: {}\n", launchtime);
 
 
         auto const& memory_properties = System::GetMemoryProperties();
-        GX_LOG(LogInit, Info, "Memory (virtual: {} MiB, physical: {} MiB, pagefile: {} MiB, pagesize: {})\n",
+        GX_LOG_INFO(LogInit, "Memory (virtual: {} MiB, physical: {} MiB, pagefile: {} MiB, pagesize: {})\n",
             memory_properties.TotalVirtual >> 20,
             memory_properties.TotalPhysical >> 20,
             memory_properties.TotalPagefile >> 20,
             memory_properties.PageSize);
 
-        GX_LOG(LogInit, Info, "CPU: {} {}\n",
+        GX_LOG_INFO(LogInit, "CPU: {} {}\n",
             System::GetProcessorVendor(),
             System::GetProcessorBrand());
 
-        GX_LOG(LogInit, Info, "CPU Cores (logical: {}, physical: {})\n",
+        GX_LOG_INFO(LogInit, "CPU Cores (logical: {}, physical: {})\n",
             System::GetLogicalCores(),
             System::GetPhysicalCores());
 
-        GX_LOG(LogInit, Info, "CPU Features: {}\n", GetProcessorFeaturesAsString());
+        GX_LOG_INFO(LogInit, "CPU Features: {}\n", GetProcessorFeaturesAsString());
 
         System::DisplayMetrics metrics{};
         if (System::GetDisplayMetrics(metrics) == Status::Success)
         {
-            GX_LOG(LogInit, Info, "Display: [{}, {}, {}, {}]\n",
+            GX_LOG_INFO(LogInit, "Display: [{}, {}, {}, {}]\n",
                 metrics.VirtualDisplayRect.Left,
                 metrics.VirtualDisplayRect.Top,
                 metrics.VirtualDisplayRect.Width,
@@ -281,7 +281,7 @@ namespace Graphyte::Launch
             for (size_t i = 0; i < metrics.Displays.size(); ++i)
             {
                 auto const& display = metrics.Displays[i];
-                GX_LOG(LogInit, Info, " - {} - {} {} [{}, {}, {}, {}]\n",
+                GX_LOG_INFO(LogInit, " - {} - {} {} [{}, {}, {}, {}]\n",
                     i,
                     display.Name,
                     display.Primary ? "primary" : "secondary",

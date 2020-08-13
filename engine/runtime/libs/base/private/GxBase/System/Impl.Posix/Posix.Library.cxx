@@ -35,7 +35,7 @@ namespace Graphyte::System
         }
 
         auto const error = errno;
-        GX_LOG(LogPlatform, Error, "Failed to unload library. Errno = {}, `{}`",
+        GX_LOG_ERROR(LogPlatform, "Failed to unload library. Errno = {}, `{}`",
             error,
             dlerror());
 

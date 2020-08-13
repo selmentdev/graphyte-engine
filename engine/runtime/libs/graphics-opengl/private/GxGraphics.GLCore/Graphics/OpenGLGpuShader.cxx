@@ -98,7 +98,7 @@ namespace Graphyte::Graphics
             {
                 log += errorLog[i];
             }
-            GX_LOG(LogOpenGLRender, Trace, "{}\n", log);
+            GX_LOG_TRACE(LogOpenGLRender, "{}\n", log);
 
             GPU_GL_VALIDATE(glDeleteShader(
                 resource));
