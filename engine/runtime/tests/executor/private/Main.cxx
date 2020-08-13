@@ -5,12 +5,12 @@
 
 #include <GxLaunch/Launch/Main.hxx>
 
-Graphyte::Application::ApplicationDescriptor GraphyteApp{
-    "Graphyte Engine Unit Test",
-    "unittest",
-    "Graphyte",
-    Graphyte::Application::ApplicationType::UnitTest,
-    Graphyte::Version{ 1, 0, 0, 0 }
+Graphyte::App::ApplicationDescriptor GraphyteApp{
+    .Name       = "Graphyte Engine Unit Test",
+    .Id         = "unittest",
+    .Company    = "Graphyte",
+    .Type       = Graphyte::App::ApplicationType::UnitTest,
+    .AppVersion = Graphyte::Version{ 1, 0, 0, 0 }
 };
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP

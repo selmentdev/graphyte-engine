@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 #include <GxBase/Storage/IFileSystem.hxx>
 #include <GxBase/Storage/Path.hxx>
-#include <GxBase/Application.hxx>
+#include <GxBase/App.hxx>
 #include <GxBase/System.hxx>
 #include <GxBase/Storage/FileManager.hxx>
 //#include <Graphyte/Crypto/HashAlgorithm.hxx>

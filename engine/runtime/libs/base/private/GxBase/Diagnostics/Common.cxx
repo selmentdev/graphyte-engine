@@ -1,6 +1,6 @@
 #include <GxBase/Diagnostics.hxx>
 #include <GxBase/System.hxx>
-#include <GxBase/Application.hxx>
+#include <GxBase/App.hxx>
 #include <GxBase/CommandLine.hxx>
 #include <GxBase/Storage/IFileSystem.hxx>
 #include <GxBase/Storage/Path.hxx>
@@ -167,7 +167,7 @@ namespace Graphyte::Diagnostics
         // Check if we want to output log to terminal.
         //
 
-        if (Application::GetDescriptor().Type == Application::ApplicationType::ConsoleTool)
+        if (App::GetDescriptor().Type == App::ApplicationType::ConsoleTool)
         {
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
             if (_isatty(_fileno(stdout)))

@@ -1,6 +1,6 @@
 #include <GxBase/Diagnostics.hxx>
 #include <GxBase/System/Impl.Windows/Windows.Helpers.hxx>
-#include <GxBase/Application.hxx>
+#include <GxBase/App.hxx>
 
 namespace Graphyte::Launch::Impl::Windows
 {
@@ -48,10 +48,9 @@ namespace Graphyte::Launch::Impl::Windows
     static BOOL WINAPI OnConsoleCtrlC(
         [[maybe_unused]] DWORD ctrl_type) noexcept
     {
-        if (Graphyte::Application::IsRequestingExit() == false)
+        if (Graphyte::App::IsRequestingExit() == false)
         {
-            PostQuitMessage(0);
-            Graphyte::Application::RequestExit(true);
+            Graphyte::App::RequestExit(true);
         }
         else
         {
@@ -122,7 +121,7 @@ namespace Graphyte::Launch
 
         _set_invalid_parameter_handler(Impl::Windows::OnInvalidParam);
 
-        if (Graphyte::Application::Impl::GApplicationDescriptor.Type == Graphyte::Application::ApplicationType::Game)
+        if (Graphyte::App::Impl::g_ApplicationDescriptor.Type == Graphyte::App::ApplicationType::Game)
         {
             if (SetConsoleCtrlHandler(Impl::Windows::OnConsoleCtrlC, TRUE) == FALSE)
             {

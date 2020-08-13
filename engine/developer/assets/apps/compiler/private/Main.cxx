@@ -7,12 +7,12 @@ GX_DEFINE_LOG_CATEGORY(LogAssetsCompiler);
 
 #include <GxLaunch/Launch/Main.hxx>
 
-Graphyte::Application::ApplicationDescriptor GraphyteApp{
-    "Graphyte Assets Compiler",
-    "assets.compiler",
-    "Graphyte",
-    Graphyte::Application::ApplicationType::ConsoleTool,
-    Graphyte::Version{ 1, 0, 0, 0 }
+Graphyte::App::ApplicationDescriptor GraphyteApp{
+    .Name       = "Graphyte Assets Compiler",
+    .Id         = "assets.compiler",
+    .Company    = "Graphyte",
+    .Type       = Graphyte::App::ApplicationType::ConsoleTool,
+    .AppVersion = Graphyte::Version{ 1, 0, 0, 0 },
 };
 
 #include <GxBase/Status.hxx>

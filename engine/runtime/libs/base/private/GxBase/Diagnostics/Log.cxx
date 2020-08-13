@@ -1,6 +1,6 @@
 #include <GxBase/Diagnostics.hxx>
 #include <GxBase/Span.hxx>
-#include <GxBase/Application.hxx>
+#include <GxBase/App.hxx>
 
 #include "Diagnostics.Impl.hxx"
 
@@ -55,7 +55,7 @@ namespace Graphyte::Diagnostics
                 //
 
                 bool const is_error    = (level == LogLevel::Error || level == LogLevel::Fatal);
-                bool const is_terminal = Application::GetDescriptor().Type == Application::ApplicationType::ConsoleTool;
+                bool const is_terminal = App::GetDescriptor().Type == App::ApplicationType::ConsoleTool;
 
                 if (Impl::GLogOutputTerminal && is_error && is_terminal)
                 {

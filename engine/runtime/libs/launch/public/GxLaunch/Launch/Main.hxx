@@ -1,5 +1,5 @@
 #pragma once
-#include <GxBase/Application.hxx>
+#include <GxBase/App.hxx>
 
 
 // =================================================================================================

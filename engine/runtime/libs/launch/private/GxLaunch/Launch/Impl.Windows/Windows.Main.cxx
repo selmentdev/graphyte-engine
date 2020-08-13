@@ -1,4 +1,4 @@
-#include <GxBase/Application.hxx>
+#include <GxBase/App.hxx>
 #include <GxBase/System/Impl.Windows/Windows.Helpers.hxx>
 
 
@@ -7,7 +7,7 @@
 // Application descriptor defined in app project.
 //
 
-extern Graphyte::Application::ApplicationDescriptor GraphyteApp;
+extern Graphyte::App::ApplicationDescriptor GraphyteApp;
 
 
 // =================================================================================================
@@ -67,7 +67,7 @@ namespace Graphyte::Launch::Impl::Windows
             }
         }
 
-        Graphyte::Application::Impl::GIsFirstInstance = first;
+        Graphyte::App::Impl::g_IsFirstInstance = first;
     }
 
     void ReleaseSingleInstance() noexcept
@@ -93,7 +93,7 @@ namespace Graphyte::Launch
     {
         System::Impl::GInstanceHandle = GetModuleHandleW(nullptr);
 
-        Graphyte::Application::Impl::GApplicationDescriptor = GraphyteApp;
+        Graphyte::App::Impl::g_ApplicationDescriptor = GraphyteApp;
 
         SetProcessDPIAware();
 
@@ -116,7 +116,7 @@ namespace Graphyte::Launch
             }
             __except (Diagnostics::OnCrash(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
             {
-                Graphyte::Application::RequestExit(true);
+                Graphyte::App::RequestExit(true);
             }
         }
 #endif

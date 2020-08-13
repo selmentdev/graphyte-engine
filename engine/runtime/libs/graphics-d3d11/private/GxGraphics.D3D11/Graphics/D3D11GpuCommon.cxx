@@ -1,4 +1,4 @@
-#include <GxBase/Application.hxx>
+#include <GxBase/App.hxx>
 
 #include "D3D11GpuCommon.hxx"
 

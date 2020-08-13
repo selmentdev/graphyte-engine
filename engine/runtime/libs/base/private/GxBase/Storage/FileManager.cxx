@@ -1,6 +1,6 @@
 #include <GxBase/Storage/FileManager.hxx>
 #include <GxBase/Storage/IFileSystem.hxx>
-#include <GxBase/Application.hxx>
+#include <GxBase/App.hxx>
 #include <GxBase/System.hxx>
 #include <GxBase/Storage/Path.hxx>
 #include <GxBase/Storage/ArchiveFileReader.hxx>
@@ -161,8 +161,8 @@ namespace Graphyte::Storage
         std::string result = System::GetUserSettingsDirectory();
 
         Storage::NormalizePath(result);
-        Storage::AppendPath(result, Application::GetDescriptor().Company);
-        Storage::AppendPath(result, Application::GetDescriptor().Name);
+        Storage::AppendPath(result, App::GetDescriptor().Company);
+        Storage::AppendPath(result, App::GetDescriptor().Name);
         Storage::AddDirectorySeparator(result);
 
         return result;
@@ -173,8 +173,8 @@ namespace Graphyte::Storage
         std::string result = System::GetApplicationCommonDataDirectory();
 
         Storage::NormalizePath(result);
-        Storage::AppendPath(result, Application::GetDescriptor().Company);
-        Storage::AppendPath(result, Application::GetDescriptor().Name);
+        Storage::AppendPath(result, App::GetDescriptor().Company);
+        Storage::AppendPath(result, App::GetDescriptor().Name);
         Storage::AddDirectorySeparator(result);
 
         return result;

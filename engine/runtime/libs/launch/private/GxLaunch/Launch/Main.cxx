@@ -2,7 +2,7 @@
 #include <GxBase/CommandLine.hxx>
 #include <GxBase/Threading/TaskDispatcher.hxx>
 #include <GxBase/System.hxx>
-#include <GxBase/Application.hxx>
+#include <GxBase/App.hxx>
 #include <GxBase/Diagnostics/Profiler.hxx>
 #include <GxBase/Modules.hxx>
 #include <GxBase/Network.hxx>
@@ -320,7 +320,7 @@ namespace Graphyte::Launch
 
         Diagnostics::Profiler::Initialize();
 
-        Application::Initialize();
+        App::Initialize();
 
         ModuleManager::Initialize();
 
@@ -351,7 +351,7 @@ namespace Graphyte::Launch
 
         ModuleManager::Finalize();
 
-        Application::Finalize();
+        App::Finalize();
 
         System::Finalize();
 
