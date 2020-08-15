@@ -50,7 +50,7 @@ namespace Graphyte::Launch::Impl::Windows
     {
         if (Graphyte::App::IsRequestingExit() == false)
         {
-            Graphyte::App::RequestExit(true);
+            Graphyte::App::RequestExit();
         }
         else
         {

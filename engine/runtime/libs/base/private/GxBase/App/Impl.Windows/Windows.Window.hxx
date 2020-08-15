@@ -9,197 +9,110 @@
 
 namespace Graphyte::App::Impl
 {
-    class WindowsWindow final : public Window
+    class NativeWindow final : public Window
     {
     private:
+        static constexpr DWORD GetStyle(WindowType type, WindowMode mode) noexcept
+        {
+            DWORD result{};
+
+            switch (type)
+            {
+                case WindowType::Game:
+                    switch (mode)
+                    {
+                        case WindowMode::Windowed:
+                            result |= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_BORDER;
+                            break;
+                        case WindowMode::Fullscreen:
+                        case WindowMode::WindowedFullscreen:
+                            result |= WS_BORDER;
+                            break;
+                    }
+                    break;
+
+                case WindowType::Viewport:
+                    result |= WS_CHILD;
+
+                case WindowType::Form:
+                    result |= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_BORDER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME;
+                    break;
+
+                case WindowType::Dialog:
+                    result |= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_BORDER;
+                    break;
+            }
+
+            return result;
+        }
+
+        static constexpr DWORD GetExStyle(WindowType type, [[maybe_unused]] WindowMode mode) noexcept
+        {
+            DWORD result{};
+
+            switch (type)
+            {
+                case WindowType::Game:
+                    // Game window covers taskbar?
+                    //result |= WS_EX_TOPMOST;
+                    break;
+                case WindowType::Viewport:
+                    // Viewport window is a window embedded with external window.
+                    // Input is handled by parent window.
+                    result |= WS_EX_TRANSPARENT;
+                    break;
+                case WindowType::Form:
+                    // Form window is visible on taskbar.
+                    result |= WS_EX_APPWINDOW;
+                    break;
+                case WindowType::Dialog:
+                    // Dialog window is not visible on taskbar.
+                    //result |= WS_EX_TOOLWINDOW;
+                    break;
+            }
+
+            return result;
+        }
+
+    private:
         WINDOWPLACEMENT m_PreFullscreenPlacement{};
-        HWND m_Hwnd{};
-        float m_AspectRatio{ 1.0f };
-        int32_t m_ClientWidth{};
-        int32_t m_ClientHeight{};
-        bool m_IsVisible{ false };
-        bool m_IsInitMinimized{ false };
-        bool m_isInitMaximized{ false };
-        bool m_IsFirstTimeVisible{ false };
+        WindowSizeLimits m_SizeLimits{};
+        HWND m_Hwnd{ nullptr };
+        WindowType m_Type{ WindowType::Game };
+        WindowMode m_Mode{ WindowMode::Windowed };
+        float m_DpiScale{ 1.0f };
 
     public:
-        WindowsWindow() noexcept = default;
-
-        virtual ~WindowsWindow() noexcept
+        virtual ~NativeWindow() noexcept
         {
             GX_ASSERT(this->m_Hwnd == nullptr);
         }
 
-        void Create(WindowDescriptor const& descriptor) noexcept
+        void Create(WindowType type) noexcept
         {
-            this->m_Descriptor = descriptor;
+            this->m_Type = type;
+            this->m_Mode = WindowMode::Windowed;
 
-            std::wstring wtitle = System::Impl::WidenString(descriptor.Title);
-
-            DWORD dwStyle{};
-            DWORD dwStyleEx{};
-
-            System::Rect rcClient{
-                .Left   = descriptor.Position.Left,
-                .Top    = descriptor.Position.Top,
-                .Width  = descriptor.Size.Width,
-                .Height = descriptor.Size.Height,
-            };
-
-            System::Rect rcWindow = rcClient;
-
-            if (descriptor.SystemBorder)
-            {
-                dwStyle   = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION;
-                dwStyleEx = WS_EX_APPWINDOW;
-
-                if (descriptor.Regular)
-                {
-                    if (descriptor.MaximizeButton)
-                    {
-                        dwStyle |= WS_MAXIMIZEBOX;
-                    }
-
-                    if (descriptor.MinimizeButton)
-                    {
-                        dwStyle |= WS_MINIMIZEBOX;
-                    }
-
-                    if (descriptor.Resizable)
-                    {
-                        dwStyle |= WS_THICKFRAME;
-                    }
-                    else
-                    {
-                        dwStyle |= WS_BORDER;
-                    }
-                }
-                else
-                {
-                    dwStyle |= WS_POPUP | WS_BORDER;
-                }
-
-                RECT rcBorder{};
-                AdjustWindowRectEx(&rcBorder, dwStyle, FALSE, dwStyleEx);
-
-                rcWindow.Left += rcBorder.left;
-                rcWindow.Top += rcBorder.top;
-
-                rcWindow.Width += (rcBorder.right - rcBorder.left);
-                rcWindow.Height += (rcBorder.bottom - rcBorder.top);
-            }
-            else
-            {
-                dwStyleEx = WS_EX_WINDOWEDGE;
-                dwStyle   = WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-
-                if (descriptor.Taskbar)
-                {
-                    dwStyleEx |= WS_EX_APPWINDOW;
-                }
-                else
-                {
-                    dwStyleEx |= WS_EX_TOOLWINDOW;
-                }
-
-                if (descriptor.Topmost)
-                {
-                    dwStyleEx |= WS_EX_TOPMOST;
-                }
-
-                if (!descriptor.AcceptInput)
-                {
-                    dwStyleEx |= WS_EX_TRANSPARENT;
-                }
-            }
-
-
-            m_Hwnd = CreateWindowExW(
-                dwStyleEx,
+            this->m_Hwnd = CreateWindowExW(
+                GetExStyle(this->m_Type, this->m_Mode),
                 L"GraphyteWindow",
-                wtitle.c_str(),
-                dwStyle,
-                rcWindow.Left,
-                rcWindow.Top,
-                rcWindow.Width,
-                rcWindow.Height,
+                L"Graphyte Window",
+                GetStyle(this->m_Type, this->m_Mode),
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
+                CW_USEDEFAULT,
                 nullptr,
                 nullptr,
                 System::Impl::GInstanceHandle,
                 reinterpret_cast<LPVOID>(this));
 
-            GX_ASSERTF(this->m_Hwnd != nullptr, "Cannot create window: {}", GetLastError());
-
-            SetPlacement(rcClient);
-
-            if (!descriptor.SystemBorder)
-            {
-                DWMNCRENDERINGPOLICY const dwmRenderingPolicy = DWMNCRP_DISABLED;
-
-                if (FAILED(DwmSetWindowAttribute(this->m_Hwnd, DWMWA_NCRENDERING_POLICY, &dwmRenderingPolicy, sizeof(dwmRenderingPolicy))))
-                {
-                    GX_ABORT("Failed to set DWM window rendering policy");
-                }
-
-                BOOL const dwmAllowNcPaint{ FALSE };
-
-                if (FAILED(DwmSetWindowAttribute(this->m_Hwnd, DWMWA_ALLOW_NCPAINT, &dwmAllowNcPaint, sizeof(dwmAllowNcPaint))))
-                {
-                    GX_ABORT("Failed to set DWM window NC paint");
-                }
-
-                MARGINS margins{
-                    -1,
-                    -1,
-                    -1,
-                    -1,
-                };
-                if (FAILED(DwmExtendFrameIntoClientArea(this->m_Hwnd, &margins)))
-                {
-                    GX_ABORT("Failed to extend DWM frame into client area");
-                }
-            }
-
-            if (descriptor.Regular && !descriptor.SystemBorder)
-            {
-                dwStyle |= WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
-
-                if (descriptor.MaximizeButton)
-                {
-                    dwStyle |= WS_MAXIMIZEBOX;
-                }
-
-                if (descriptor.MinimizeButton)
-                {
-                    dwStyle |= WS_MINIMIZEBOX;
-                }
-
-                if (descriptor.Resizable)
-                {
-                    dwStyle |= WS_THICKFRAME;
-                }
-
-                if (SetWindowLongW(this->m_Hwnd, GWL_STYLE, static_cast<LONG>(dwStyle)) == 0)
-                {
-                    GX_ABORT("Cannot set window style");
-                }
-
-                UINT swpFlags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED;
-
-                SetWindowPos(this->m_Hwnd, nullptr, 0, 0, 0, 0, swpFlags);
-            }
-            else if (descriptor.SystemBorder)
-            {
-                if (!descriptor.CloseButton)
-                {
-                    EnableMenuItem(GetSystemMenu(this->m_Hwnd, FALSE), SC_CLOSE, MF_GRAYED);
-                }
-            }
+            ShowWindow(this->m_Hwnd, SW_SHOWNORMAL);
         }
 
         void Destroy() noexcept
         {
-            if (DestroyWindow(this->m_Hwnd) == FALSE)
+            if (::DestroyWindow(this->m_Hwnd) == FALSE)
             {
                 GX_ABORT("Failed to destroy window");
             }
@@ -207,350 +120,110 @@ namespace Graphyte::App::Impl
             this->m_Hwnd = nullptr;
         }
 
-    public:
-        virtual void Move(System::Point location) noexcept override
-        {
-            if (this->m_Descriptor.SystemBorder)
-            {
-                // Adjust window position to match location with client window area
-                DWORD dwStyle   = static_cast<DWORD>(GetWindowLongW(this->m_Hwnd, GWL_STYLE));
-                DWORD dwStyleEx = static_cast<DWORD>(GetWindowLongW(this->m_Hwnd, GWL_EXSTYLE));
-
-                RECT rc{};
-
-                AdjustWindowRectEx(&rc, dwStyle, FALSE, dwStyleEx);
-
-                location.Left += rc.left;
-                location.Top += rc.top;
-            }
-
-            SetWindowPos(this->m_Hwnd, nullptr, location.Left, location.Top, 0, 0,
-                SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
-        }
-
-        virtual void Resize(System::Size size) noexcept override
-        {
-            (void)size;
-        }
-
-        virtual void Focus() noexcept override
+        virtual bool Focus() noexcept override
         {
             if (GetFocus() != this->m_Hwnd)
             {
                 SetFocus(this->m_Hwnd);
+
+                return true;
             }
+
+            return false;
         }
 
-        virtual void BringToFront(bool force) noexcept override
+        virtual bool BringToFront(bool force) noexcept override
         {
-            if (this->m_Descriptor.Regular)
+            if (this->m_Mode == WindowMode::Windowed && this->m_Type != WindowType::Viewport)
             {
+                // Only windowed, non-child windows can be brought to front
+
                 if (IsIconic(this->m_Hwnd))
                 {
+                    // Restore minimized window.
                     ShowWindow(this->m_Hwnd, SW_RESTORE);
                 }
                 else
                 {
+                    // Activate non-minimized window
                     SetActiveWindow(this->m_Hwnd);
                 }
-            }
-            else
-            {
-                HWND hInsertAfter = HWND_TOP;
-                UINT flags        = SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER;
 
-                if (!force)
+                if (force)
                 {
-                    flags |= SWP_NOACTIVATE;
-                }
-
-                if (this->m_Descriptor.Topmost)
-                {
-                    hInsertAfter = HWND_TOPMOST;
-                }
-
-                SetWindowPos(this->m_Hwnd, hInsertAfter, 0, 0, 0, 0, flags);
-            }
-
-            if (force)
-            {
-                BringWindowToTop(this->m_Hwnd);
-            }
-            else
-            {
-                ShowWindow(this->m_Hwnd, SW_SHOW);
-            }
-        }
-
-        virtual void Minimize() noexcept override
-        {
-            if (!this->m_IsFirstTimeVisible)
-            {
-                ShowWindow(this->m_Hwnd, SW_MINIMIZE);
-            }
-            else
-            {
-                this->m_IsInitMinimized = true;
-                this->m_isInitMaximized = false;
-            }
-        }
-
-        virtual void Maximize() noexcept override
-        {
-            if (!this->m_IsFirstTimeVisible)
-            {
-                ShowWindow(this->m_Hwnd, SW_MAXIMIZE);
-            }
-            else
-            {
-                this->m_IsInitMinimized = false;
-                this->m_isInitMaximized = true;
-            }
-        }
-
-        virtual void Restore() noexcept override
-        {
-            if (!this->m_IsFirstTimeVisible)
-            {
-                ShowWindow(this->m_Hwnd, SW_RESTORE);
-            }
-            else
-            {
-                this->m_IsInitMinimized = false;
-                this->m_isInitMaximized = false;
-            }
-        }
-
-        virtual void Show() noexcept override
-        {
-            if (!this->m_IsVisible)
-            {
-                this->m_IsVisible = true;
-
-                int showCommand = SW_SHOW;
-
-                if (this->m_IsFirstTimeVisible)
-                {
-                    this->m_IsFirstTimeVisible = false;
-
-                    if (this->m_IsInitMinimized)
-                    {
-                        showCommand = SW_MINIMIZE;
-                    }
-                    else
-                    {
-                        showCommand = SW_SHOWMAXIMIZED;
-                    }
-                }
-
-                ShowWindow(this->m_Hwnd, showCommand);
-            }
-        }
-
-        virtual void Hide() noexcept override
-        {
-            if (this->m_IsVisible)
-            {
-                this->m_IsVisible = false;
-                ShowWindow(this->m_Hwnd, SW_HIDE);
-            }
-        }
-
-        virtual void Enable() noexcept override
-        {
-            EnableWindow(this->m_Hwnd, TRUE);
-        }
-
-        virtual void Disable() noexcept override
-        {
-            EnableWindow(this->m_Hwnd, FALSE);
-        }
-
-        virtual void SetWindowMode(WindowMode value) noexcept override
-        {
-            WindowMode const previousMode = this->m_Descriptor.Mode;
-
-            if (previousMode != value)
-            {
-                this->m_Descriptor.Mode = value;
-
-                bool const exclusiveFullscreen = (value == WindowMode::Fullscreen);
-
-                DWORD dwStyle                 = static_cast<DWORD>(GetWindowLongW(this->m_Hwnd, GWL_STYLE));
-                DWORD const dwFullscreenStyle = WS_POPUP;
-                DWORD dwWindowedStyle         = WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION;
-
-                if (this->m_Descriptor.Regular)
-                {
-                    if (this->m_Descriptor.MinimizeButton)
-                    {
-                        dwWindowedStyle |= WS_MINIMIZEBOX;
-                    }
-
-                    if (this->m_Descriptor.MaximizeButton)
-                    {
-                        dwWindowedStyle |= WS_MAXIMIZEBOX;
-                    }
-
-                    if (this->m_Descriptor.Resizable)
-                    {
-                        dwWindowedStyle |= WS_THICKFRAME;
-                    }
-                    else
-                    {
-                        dwWindowedStyle |= WS_BORDER;
-                    }
+                    BringWindowToTop(this->m_Hwnd);
                 }
                 else
                 {
-                    dwWindowedStyle |= WS_POPUP | WS_BORDER;
+                    ShowWindow(this->m_Hwnd, SW_SHOW);
                 }
 
-                if (value == WindowMode::Fullscreen || value == WindowMode::WindowedFullscreen)
-                {
-                    if (previousMode == WindowMode::Windowed)
-                    {
-                        this->m_PreFullscreenPlacement.length = sizeof(WINDOWPLACEMENT);
-                        GetWindowPlacement(this->m_Hwnd, &m_PreFullscreenPlacement);
-                    }
-
-                    dwStyle &= ~dwWindowedStyle;
-                    dwStyle |= dwFullscreenStyle;
-
-                    SetWindowLongW(this->m_Hwnd, GWL_STYLE, static_cast<LONG>(dwStyle));
-
-                    SetWindowPos(this->m_Hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-
-                    if (!exclusiveFullscreen)
-                    {
-                        ShowWindow(this->m_Hwnd, SW_RESTORE);
-                    }
-
-                    RECT rcClient{};
-
-                    GetClientRect(this->m_Hwnd, &rcClient);
-
-                    DWORD targetMonitor = static_cast<DWORD>(exclusiveFullscreen
-                                                                 ? MONITOR_DEFAULTTOPRIMARY
-                                                                 : MONITOR_DEFAULTTONEAREST);
-
-                    HMONITOR hMonitor = MonitorFromWindow(this->m_Hwnd, targetMonitor);
-
-                    MONITORINFO mi{
-                        .cbSize = sizeof(mi),
-                    };
-
-                    GetMonitorInfoW(hMonitor, &mi);
-
-                    LONG const monitorWidth  = (mi.rcMonitor.right - mi.rcMonitor.left);
-                    LONG const monitorHeight = (mi.rcMonitor.bottom - mi.rcMonitor.top);
-
-                    LONG const targetWidth = exclusiveFullscreen
-                                                 ? std::min(monitorWidth, rcClient.right - rcClient.left)
-                                                 : monitorWidth;
-
-                    LONG const targetHeight = exclusiveFullscreen
-                                                  ? std::min(monitorHeight, rcClient.bottom - rcClient.top)
-                                                  : monitorHeight;
-
-                    SetPlacement(
-                        System::Rect{
-                            .Left   = mi.rcMonitor.left,
-                            .Top    = mi.rcMonitor.top,
-                            .Width  = targetWidth,
-                            .Height = targetHeight,
-                        });
-                }
-                else
-                {
-                    dwStyle &= ~dwFullscreenStyle;
-                    dwStyle |= dwWindowedStyle;
-
-                    SetWindowLongW(this->m_Hwnd, GWL_STYLE, static_cast<LONG>(dwStyle));
-
-                    SetWindowPos(this->m_Hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-
-                    if (this->m_PreFullscreenPlacement.length != 0)
-                    {
-                        SetWindowPlacement(this->m_Hwnd, &this->m_PreFullscreenPlacement);
-                    }
-                }
+                return true;
             }
+
+            return false;
         }
 
-        virtual void SetCaption(std::string_view caption) noexcept override
+        virtual bool Show() noexcept override
         {
-            std::wstring wcaption = System::Impl::WidenString(caption);
-            SetWindowTextW(this->m_Hwnd, wcaption.c_str());
+            return ShowWindow(this->m_Hwnd, SW_SHOW) != FALSE;
         }
 
-        virtual void SetPlacement(System::Rect placement) noexcept override
+        virtual bool Hide() noexcept override
         {
-            WINDOWINFO wi{
-                .cbSize = sizeof(wi),
-            };
-
-            GetWindowInfo(this->m_Hwnd, &wi);
-
-            this->m_AspectRatio = static_cast<float>(placement.Width) / static_cast<float>(placement.Height);
-
-            if (this->m_Descriptor.SystemBorder)
-            {
-                RECT rcBorder{};
-                AdjustWindowRectEx(&rcBorder, wi.dwStyle, FALSE, wi.dwExStyle);
-
-                placement.Left += rcBorder.left;
-                placement.Top += rcBorder.top;
-                placement.Width += rcBorder.right - rcBorder.left;
-                placement.Height += rcBorder.bottom - rcBorder.top;
-            }
-
-            this->m_ClientWidth  = placement.Width;
-            this->m_ClientHeight = placement.Height;
-
-            if (this->IsMaximized())
-            {
-                this->Restore();
-            }
-
-            UINT flags = SWP_NOZORDER | SWP_NOACTIVATE;
-
-            if (this->m_Descriptor.Mode == WindowMode::Fullscreen)
-            {
-                flags |= SWP_NOSENDCHANGING;
-            }
-
-            SetWindowPos(
-                this->m_Hwnd,
-                nullptr,
-                placement.Left,
-                placement.Top,
-                placement.Width,
-                placement.Height,
-                flags);
+            return ShowWindow(this->m_Hwnd, SW_HIDE) != FALSE;
         }
 
-        virtual bool IsMaximized() const noexcept override
+        virtual bool Enable() noexcept override
         {
-            bool const result = !!IsZoomed(this->m_Hwnd);
-            return result;
+            return EnableWindow(this->m_Hwnd, TRUE) != FALSE;
+        }
+
+        virtual bool Disable() noexcept override
+        {
+            return EnableWindow(this->m_Hwnd, FALSE) != FALSE;
+        }
+
+        virtual bool Minimize() noexcept override
+        {
+            if (this->m_Mode == WindowMode::Windowed)
+            {
+                return ShowWindow(this->m_Hwnd, SW_MINIMIZE) != FALSE;
+            }
+
+            return false;
+        }
+
+        virtual bool Maximize() noexcept override
+        {
+            if (this->m_Type == WindowType::Form)
+            {
+                // Only form window can be maximized
+                return ShowWindow(this->m_Hwnd, SW_MAXIMIZE) != FALSE;
+            }
+
+            return false;
+        }
+
+        virtual bool Restore() noexcept override
+        {
+            if (this->m_Type == WindowType::Form)
+            {
+                // Only form window can be restored
+                return ShowWindow(this->m_Hwnd, SW_RESTORE) != FALSE;
+            }
+
+            return false;
         }
 
         virtual bool IsMinimized() const noexcept override
         {
-            bool const result = !!IsIconic(this->m_Hwnd);
-            return result;
+            return IsIconic(this->m_Hwnd) != FALSE;
         }
 
-        virtual bool IsVisible() const noexcept override
+        virtual bool IsMaximized() const noexcept override
         {
-            return this->m_IsVisible;
-        }
-
-        virtual bool IsEnabled() const noexcept override
-        {
-            bool const result = !!IsWindowEnabled(this->m_Hwnd);
-            return result;
+            return IsZoomed(this->m_Hwnd) != FALSE;
         }
 
         virtual bool IsFocused() const noexcept override
@@ -559,45 +232,110 @@ namespace Graphyte::App::Impl
             return result;
         }
 
+        virtual bool IsEnabled() const noexcept override
+        {
+            return IsWindowEnabled(this->m_Hwnd) != FALSE;
+        }
+
+        virtual bool IsVisible() const noexcept override
+        {
+            return IsWindowVisible(this->m_Hwnd) != FALSE;
+        }
+
+        virtual bool SetMode(WindowMode value) noexcept override
+        {
+            if (this->m_Mode != value && this->m_Type == WindowType::Game)
+            {
+                DWORD const dwStyle   = GetStyle(this->m_Type, value);
+                DWORD const dwExStyle = GetExStyle(this->m_Type, value);
+
+                if (this->m_Mode == WindowMode::Windowed)
+                {
+                    // Store window placement for going back to windowed mode.
+                    this->m_PreFullscreenPlacement.length = sizeof(WINDOWPLACEMENT);
+                    GetWindowPlacement(this->m_Hwnd, &this->m_PreFullscreenPlacement);
+                }
+
+                // Set new styles
+                SetWindowLongW(this->m_Hwnd, GWL_STYLE, static_cast<LONG>(dwStyle));
+                SetWindowLongW(this->m_Hwnd, GWL_EXSTYLE, static_cast<LONG>(dwExStyle));
+
+                // Update parts of window
+                SetWindowPos(this->m_Hwnd, nullptr, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+
+                // Restore window state
+                ShowWindow(this->m_Hwnd, SW_RESTORE);
+
+                if (value == WindowMode::Fullscreen || value == WindowMode::WindowedFullscreen)
+                {
+                    // Get hint of which device we are adjusting
+                    bool const exclusive = (value == WindowMode::Fullscreen);
+
+                    HMONITOR hMonitor = MonitorFromWindow(
+                        this->m_Hwnd,
+                        exclusive ? MONITOR_DEFAULTTOPRIMARY : MONITOR_DEFAULTTONEAREST);
+
+                    MONITORINFO mi{
+                        .cbSize = sizeof(mi),
+                    };
+
+                    GetMonitorInfoW(hMonitor, &mi);
+
+
+                    // Adjust window to match border size
+                    RECT rcBorder{};
+                    AdjustWindowRectEx(&rcBorder, dwStyle, FALSE, dwExStyle);
+
+                    SetWindowPos(
+                        this->m_Hwnd,
+                        nullptr,
+                        (mi.rcMonitor.left + rcBorder.left),
+                        (mi.rcMonitor.top + rcBorder.top),
+                        (mi.rcMonitor.right - mi.rcMonitor.left) + (rcBorder.right - rcBorder.left),
+                        (mi.rcMonitor.bottom - mi.rcMonitor.top) + (rcBorder.bottom - rcBorder.top),
+                        SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
+                }
+                else
+                {
+                    // Going to windowed mode.
+
+                    if (this->m_PreFullscreenPlacement.length != 0)
+                    {
+                        // Restore placement from before window went fullscreen.
+                        SetWindowPlacement(this->m_Hwnd, &this->m_PreFullscreenPlacement);
+                    }
+                }
+
+                this->m_Mode = value;
+
+                return true;
+            }
+            else
+            {
+                GX_LOG_WARN(LogNativeApp, "Cannot change mode of non-game window\n");
+            }
+
+            return false;
+        }
+
+        virtual WindowMode GetMode() const noexcept override
+        {
+            return this->m_Mode;
+        }
+
+        virtual WindowType GetType() const noexcept override
+        {
+            return this->m_Type;
+        }
+
         virtual void* GetNativeHandle() const noexcept override
         {
             return reinterpret_cast<void*>(this->m_Hwnd);
         }
 
-        virtual bool GetFullscreenRect(System::Rect& out_rect) noexcept override
-        {
-            // For exclusive fullscreen, get default primary monitor desktop rectangle.
-            // This works for all rendering APIs, as we rely on system defaults.
-            //
-            // Windowed / FullscreenWindowed is specific for current monitor on window is being
-            // displayed.
-
-            bool const exclusive_fullscreen = (this->m_Descriptor.Mode == WindowMode::Fullscreen);
-
-            DWORD const flags = exclusive_fullscreen
-                                    ? MONITOR_DEFAULTTOPRIMARY
-                                    : MONITOR_DEFAULTTONEAREST;
-
-            HMONITOR hMonitor = MonitorFromWindow(this->m_Hwnd, flags);
-
-            MONITORINFO mi{
-                .cbSize = sizeof(mi),
-            };
-
-            GetMonitorInfoW(hMonitor, &mi);
-
-            out_rect.Left   = mi.rcMonitor.left;
-            out_rect.Top    = mi.rcMonitor.top;
-            out_rect.Width  = mi.rcMonitor.right - mi.rcMonitor.left;
-            out_rect.Height = mi.rcMonitor.bottom - mi.rcMonitor.top;
-
-            return true;
-        }
-
-        virtual System::Size GetViewportSize() const noexcept override
+        virtual System::Size GetClientSize() const noexcept override
         {
             RECT rcClient{};
-
             GetClientRect(this->m_Hwnd, &rcClient);
 
             return System::Size{
@@ -606,14 +344,172 @@ namespace Graphyte::App::Impl
             };
         }
 
-        virtual bool IsPointInside(System::Point value) noexcept override
+        virtual bool GetFullscreenPlacement(System::Rect& out_value) noexcept override
         {
-            RECT rcWindow{};
+            // For exclusive fullscreen, get default primary monitor desktop rectangle.
+            // This works for all rendering APIs, as we rely on system defaults.
+            //
+            // Windowed / FullscreenWindowed is specific for current monitor on window is being
+            // displayed.
 
-            GetWindowRect(this->m_Hwnd, &rcWindow);
+            bool const exclusive = (this->m_Mode == WindowMode::Fullscreen);
 
-            bool const result = !!PtInRect(&rcWindow, POINT{ .x = value.Left, .y = value.Top });
-            return result;
+            HMONITOR hMonitor = MonitorFromWindow(
+                this->m_Hwnd,
+                exclusive ? MONITOR_DEFAULTTOPRIMARY : MONITOR_DEFAULTTONEAREST);
+
+            MONITORINFO mi{ .cbSize = sizeof(mi) };
+
+            if (GetMonitorInfoW(hMonitor, &mi) != FALSE)
+            {
+                out_value = System::Rect{
+                    .Left   = mi.rcMonitor.left,
+                    .Top    = mi.rcMonitor.top,
+                    .Width  = mi.rcMonitor.right - mi.rcMonitor.left,
+                    .Height = mi.rcMonitor.bottom - mi.rcMonitor.top,
+                };
+
+                return true;
+            }
+
+            return false;
+        }
+
+        virtual bool SetCaption(std::string_view value) noexcept override
+        {
+            std::wstring wtitle = System::Impl::WidenString(value);
+
+            return SetWindowTextW(this->m_Hwnd, wtitle.c_str()) != FALSE;
+        }
+
+        virtual bool GetPlacement(System::Rect& out_value) noexcept override
+        {
+            (void)out_value;
+            return false;
+        }
+
+        virtual bool SetPlacement(System::Rect value) noexcept override
+        {
+            if (this->m_Mode == WindowMode::Windowed)
+            {
+                // Only windowed window can be placed anywhere.
+                // Fullscreen window is associated with monitor.
+
+                WINDOWINFO wi{ .cbSize = sizeof(wi) };
+
+                GetWindowInfo(this->m_Hwnd, &wi);
+
+                RECT rcBorder{};
+                AdjustWindowRectEx(&rcBorder, wi.dwStyle, FALSE, wi.dwExStyle);
+
+                value.Left += rcBorder.left;
+                value.Top += rcBorder.top;
+                value.Width += (rcBorder.right - rcBorder.left);
+                value.Height += (rcBorder.bottom - rcBorder.top);
+
+                if (this->IsMaximized())
+                {
+                    this->Restore();
+                }
+
+                SetWindowPos(
+                    this->m_Hwnd,
+                    nullptr,
+                    value.Left,
+                    value.Top,
+                    value.Width,
+                    value.Height,
+                    SWP_NOACTIVATE | SWP_NOZORDER);
+                return true;
+            }
+
+            return false;
+        }
+
+        virtual bool SetLocation(System::Point value) noexcept override
+        {
+            if (this->m_Mode == WindowMode::Windowed)
+            {
+                DWORD dwStyle   = static_cast<DWORD>(GetWindowLongW(this->m_Hwnd, GWL_STYLE));
+                DWORD dwExStyle = static_cast<DWORD>(GetWindowLongW(this->m_Hwnd, GWL_EXSTYLE));
+
+                RECT rcBorder{};
+                AdjustWindowRectEx(&rcBorder, dwStyle, FALSE, dwExStyle);
+
+                value.Left += rcBorder.left;
+                value.Top += rcBorder.top;
+
+                SetWindowPos(
+                    this->m_Hwnd,
+                    nullptr,
+                    value.Left,
+                    value.Top,
+                    0,
+                    0,
+                    SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        virtual bool SetSize(System::Size value) noexcept override
+        {
+            if (this->m_Mode == WindowMode::Windowed)
+            {
+                DWORD dwStyle   = static_cast<DWORD>(GetWindowLongW(this->m_Hwnd, GWL_STYLE));
+                DWORD dwExStyle = static_cast<DWORD>(GetWindowLongW(this->m_Hwnd, GWL_EXSTYLE));
+
+                RECT rcBorder{};
+                AdjustWindowRectEx(&rcBorder, dwStyle, FALSE, dwExStyle);
+
+                value.Width += (rcBorder.right - rcBorder.left);
+                value.Height += (rcBorder.bottom - rcBorder.top);
+
+                SetWindowPos(
+                    this->m_Hwnd,
+                    nullptr,
+                    0,
+                    0,
+                    value.Width,
+                    value.Height,
+                    SWP_NOACTIVATE | SWP_NOREPOSITION | SWP_NOZORDER);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        virtual float GetDpiScale() const noexcept override
+        {
+            return this->m_DpiScale;
+        }
+
+        virtual void SetDpiScale(float value) noexcept override
+        {
+            this->m_DpiScale = value;
+        }
+
+        virtual void SetSizeLimits(WindowSizeLimits const& limits) noexcept override
+        {
+            if (this->m_Type == WindowType::Form)
+            {
+                this->m_SizeLimits = limits;
+
+                // Let DWM to adjust current size to new limits.
+                SetWindowPos(
+                    this->m_Hwnd,
+                    nullptr,
+                    0, 0, 0, 0,
+                    SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOMOVE | SWP_FRAMECHANGED);
+            }
+        }
+
+        virtual WindowSizeLimits const& GetSizeLimits() const noexcept override
+        {
+            return this->m_SizeLimits;
         }
 
         HWND GetHandle() const noexcept

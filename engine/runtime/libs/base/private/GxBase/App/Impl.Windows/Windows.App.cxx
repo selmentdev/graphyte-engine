@@ -7,29 +7,52 @@
 #include "Windows.XInput.hxx"
 
 #include <ShellScalingApi.h>
-
 #include <windowsx.h>
 #undef IsMaximized
 #undef IsMinimized
+
+// =================================================================================================
+// Logging category.
+
+namespace Graphyte::App
+{
+    GX_DEFINE_LOG_CATEGORY(LogNativeApp);
+}
+
+
+// -------------------------------------------------------------------------------------------------
+// XInput support
 
 namespace Graphyte::App::Impl
 {
     static WindowsXInputDevice g_XInputDevice{};
 }
 
+
+// -------------------------------------------------------------------------------------------------
+// Application variables
+
 namespace Graphyte::App::Impl
 {
-    static STICKYKEYS g_StartupStickyKeys{
-        .cbSize = sizeof(STICKYKEYS),
-    };
+    ApplicationDescriptor g_ApplicationDescriptor{};
+    bool g_IsRequestingExit{ false };
+    bool g_IsFirstInstance{ false };
 
-    static TOGGLEKEYS g_StartupToggleKeys{
-        .cbSize = sizeof(TOGGLEKEYS),
-    };
+    static ModifierKey g_ModifierKey{};
+    static bool g_IsMouseAttached{ false };
+    static bool g_UseHighPrecisionMouse{ false };
+    static bool g_ClickWindowActivate{ false };
+}
 
-    static FILTERKEYS g_StartupFilterKeys{
-        .cbSize = sizeof(FILTERKEYS),
-    };
+
+// -------------------------------------------------------------------------------------------------
+// Accessibility features
+
+namespace Graphyte::App::Impl
+{
+    static STICKYKEYS g_StartupStickyKeys{};
+    static TOGGLEKEYS g_StartupToggleKeys{};
+    static FILTERKEYS g_StartupFilterKeys{};
 
     void EnableAccessibilityKeys(bool enable) noexcept
     {
@@ -68,19 +91,33 @@ namespace Graphyte::App::Impl
     }
 }
 
-namespace Graphyte::App::Impl
-{
-    ApplicationDescriptor g_ApplicationDescriptor{};
-    static ModifierKey g_ModifierKey{};
-    bool g_IsRequestingExit{ false };
-    bool g_IsFirstInstance{ false };
-    static bool g_ApplicationActivateByMouse{ false };
-    static bool g_IsMouseAttached{ false };
-    static bool g_UseHighPrecisionMouse{ false };
-}
+
+// -------------------------------------------------------------------------------------------------
+// Input support
 
 namespace Graphyte::App::Impl
 {
+    static void FixupShiftKeyReleaseEvents(UINT vk, ModifierKey modifier, KeyCode key) noexcept
+    {
+        // Check if shift key was pressed last time
+        if (Flags::Has(g_ModifierKey, modifier))
+        {
+            // And if it was released in mean time.
+            if ((GetKeyState(vk) & 0x8000) == 0)
+            {
+                // Emit release event.
+                g_ModifierKey &= ~modifier;
+
+                g_EventHandler->OnKeyUp(KeyEvent{
+                    .Modifiers = g_ModifierKey,
+                    .Key       = key,
+                    .Character = {},
+                    .Repeat    = false,
+                });
+            }
+        }
+    }
+
     static void UpdateModifierKeys() noexcept
     {
         ModifierKey modifiers{};
@@ -228,7 +265,7 @@ namespace Graphyte::App::Impl
         return result != FALSE;
     }
 
-    /*static */ void EnableRawInputKeyboard(WindowsWindow& window, bool enable, bool enforce) noexcept
+    /*static */ void EnableRawInputKeyboard(NativeWindow& window, bool enable, bool enforce) noexcept
     {
         EnableRawInputDevice(
             window.GetHandle(),
@@ -238,7 +275,7 @@ namespace Graphyte::App::Impl
             UsageId_Keyboard);
     }
 
-    static void EnableRawInputMouse(WindowsWindow& window, bool enable, bool enforce) noexcept
+    static void EnableRawInputMouse(NativeWindow& window, bool enable, bool enforce) noexcept
     {
         g_UseHighPrecisionMouse = EnableRawInputDevice(
             window.GetHandle(),
@@ -249,116 +286,82 @@ namespace Graphyte::App::Impl
     }
 }
 
-namespace Graphyte::App::Impl
-{
-    struct Message final
-    {
-        HWND HWnd;
-        UINT Msg;
-        WPARAM WParam;
-        LPARAM LParam;
-        LRESULT Result;
-    };
-
-    static void BaseWindowProc(Message& m) noexcept
-    {
-        m.Result = ::DefWindowProcW(
-            m.HWnd,
-            m.Msg,
-            m.WParam,
-            m.LParam);
-    }
-}
-
 
 // -------------------------------------------------------------------------------------------------
-// Message handlers
+// Window message handling
 
 namespace Graphyte::App::Impl
 {
-    static void WmChar([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static void WmChar(WPARAM wparam, LPARAM lparam) noexcept
     {
-        char32_t const character = static_cast<char32_t>(message.WParam);
-        bool const repeat        = (message.LParam & 0x40000000) != 0;
+        char32_t const character = static_cast<char32_t>(wparam);
+        bool const repeat        = (lparam & 0x40000000) != 0;
 
-        Impl::g_EventHandler->OnKeyChar(CharEvent{
+        g_EventHandler->OnKeyChar({
             .Modifiers = g_ModifierKey,
             .Character = character,
             .Repeat    = repeat,
         });
     }
 
-    static void WmSysChar([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static LRESULT WmKeyDown(WPARAM wparam, LPARAM lparam) noexcept
     {
-        bool const is_alt_space = ((HIWORD(message.LParam) & 0x2000) != 0) && (message.WParam == VK_SPACE);
+        bool repeat = (lparam & 0x40000000) != 0;
 
-        if (is_alt_space)
-        {
-            // Allow Alt+Space in order to show window system menu
-            BaseWindowProc(message);
-        }
-    }
+        UINT vk  = static_cast<UINT>(wparam);
+        UINT key = vk;
 
-    static void WmKeyDown([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
-    {
-        bool repeat = (message.LParam & 0x40000000) != 0;
-
-        UINT winkey = static_cast<UINT>(message.WParam);
-        UINT key    = winkey;
-
-        switch (winkey)
+        switch (vk)
         {
             case VK_MENU:
-            {
-                bool const is_left = ((message.LParam & 0x1000000) == 0);
+                if ((lparam & 0x1000000) == 0)
+                {
+                    key    = VK_LMENU;
+                    repeat = Flags::Has(g_ModifierKey, ModifierKey::LeftAlt);
+                    g_ModifierKey |= ModifierKey::LeftAlt;
+                }
+                else
+                {
+                    key    = VK_RMENU;
+                    repeat = Flags::Has(g_ModifierKey, ModifierKey::RightAlt);
+                    g_ModifierKey |= ModifierKey::RightAlt;
+                }
 
-                ModifierKey const modifier = is_left
-                                                 ? ModifierKey::LeftAlt
-                                                 : ModifierKey::RightAlt;
-
-                key = (is_left) ? VK_LMENU : VK_RMENU;
-
-                repeat = Flags::Has(g_ModifierKey, modifier);
-
-                g_ModifierKey |= modifier;
                 break;
-            }
 
             case VK_CONTROL:
-            {
-                bool const is_left = ((message.LParam & 0x1000000) == 0);
+                if ((lparam & 0x1000000) == 0)
+                {
+                    key    = VK_LCONTROL;
+                    repeat = Flags::Has(g_ModifierKey, ModifierKey::LeftControl);
+                    g_ModifierKey |= ModifierKey::LeftControl;
+                }
+                else
+                {
+                    key    = VK_RCONTROL;
+                    repeat = Flags::Has(g_ModifierKey, ModifierKey::RightControl);
+                    g_ModifierKey |= ModifierKey::RightControl;
+                }
 
-                ModifierKey const modifier = is_left
-                                                 ? ModifierKey::LeftControl
-                                                 : ModifierKey::RightControl;
-
-                key = (is_left) ? VK_LCONTROL : VK_RCONTROL;
-
-                repeat = Flags::Has(g_ModifierKey, modifier);
-
-                g_ModifierKey |= modifier;
                 break;
-            }
 
             case VK_SHIFT:
-            {
-                key = MapVirtualKeyW(static_cast<UINT8>(message.LParam >> 16), MAPVK_VSC_TO_VK_EX);
+                key = MapVirtualKeyW((lparam >> 16) & 0xFF, MAPVK_VSC_TO_VK_EX);
+                if (key == VK_LSHIFT)
+                {
+                    repeat = Flags::Has(g_ModifierKey, ModifierKey::LeftShift);
+                    g_ModifierKey |= ModifierKey::LeftShift;
+                }
+                else
+                {
+                    repeat = Flags::Has(g_ModifierKey, ModifierKey::LeftShift);
+                    g_ModifierKey |= ModifierKey::LeftShift;
+                }
 
-                bool const is_left = (key == VK_LSHIFT);
-
-                ModifierKey const modifier = is_left
-                                                 ? ModifierKey::LeftShift
-                                                 : ModifierKey::RightShift;
-
-                repeat = Flags::Has(g_ModifierKey, modifier);
-
-                g_ModifierKey |= modifier;
                 break;
-            }
 
             case VK_CAPITAL:
-            {
-                if ((GetKeyState(VK_CAPITAL) & 0x1) != 0)
+                if ((GetKeyState(VK_CAPITAL) & 0x0001) != 0)
                 {
                     g_ModifierKey |= ModifierKey::CapsLock;
                 }
@@ -366,74 +369,78 @@ namespace Graphyte::App::Impl
                 {
                     g_ModifierKey &= ~ModifierKey::CapsLock;
                 }
+
                 break;
-            }
+
+            default:
+                break;
         }
 
-        char32_t const character = MapVirtualKeyW(key, MAPVK_VK_TO_CHAR);
+        char32_t character = MapVirtualKeyW(vk, MAPVK_VK_TO_CHAR);
 
-        KeyCode const keycode = Impl::TranslateKeyCode(key);
+        KeyCode const keycode = TranslateKeyCode(key);
 
-        Impl::g_EventHandler->OnKeyDown(KeyEvent{
+        g_EventHandler->OnKeyDown(KeyEvent{
             .Modifiers = g_ModifierKey,
             .Key       = keycode,
             .Character = character,
             .Repeat    = repeat,
         });
+
+        return 0;
     }
 
-    static void WmKeyUp([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static LRESULT WmKeyUp(WPARAM wparam, LPARAM lparam) noexcept
     {
-        UINT winkey = static_cast<UINT>(message.WParam);
-        UINT key    = winkey;
+        UINT vk  = static_cast<UINT>(wparam);
+        UINT key = vk;
 
-        switch (winkey)
+        switch (vk)
         {
             case VK_MENU:
-            {
-                bool const is_left = ((message.LParam & 0x1000000) == 0);
+                if ((lparam & 0x1000000) == 0)
+                {
+                    key = VK_LMENU;
+                    g_ModifierKey &= ~ModifierKey::LeftAlt;
+                }
+                else
+                {
+                    key = VK_RMENU;
+                    g_ModifierKey &= ~ModifierKey::RightAlt;
+                }
 
-                ModifierKey const modifier = is_left
-                                                 ? ModifierKey::LeftAlt
-                                                 : ModifierKey::RightAlt;
-
-                key = (is_left) ? VK_LMENU : VK_RMENU;
-
-                g_ModifierKey &= ~modifier;
                 break;
-            }
 
             case VK_CONTROL:
-            {
-                bool const is_left = ((message.LParam & 0x1000000) == 0);
+                if ((lparam & 0x1000000) == 0)
+                {
+                    key = VK_LCONTROL;
+                    g_ModifierKey &= ~ModifierKey::LeftControl;
+                }
+                else
+                {
+                    key = VK_RCONTROL;
+                    g_ModifierKey &= ~ModifierKey::RightControl;
+                }
 
-                ModifierKey const modifier = is_left
-                                                 ? ModifierKey::LeftControl
-                                                 : ModifierKey::RightControl;
-
-                key = (is_left) ? VK_LCONTROL : VK_RCONTROL;
-
-                g_ModifierKey &= ~modifier;
                 break;
-            }
 
             case VK_SHIFT:
-            {
-                key = MapVirtualKeyW(static_cast<UINT8>(message.LParam >> 16), MAPVK_VSC_TO_VK_EX);
+                key = MapVirtualKeyW((lparam >> 16) & 0xFFu, MAPVK_VSC_TO_VK_EX);
 
-                bool const is_left = (key == VK_LSHIFT);
+                if (key == VK_LSHIFT)
+                {
+                    g_ModifierKey &= ~ModifierKey::LeftShift;
+                }
+                else
+                {
+                    g_ModifierKey &= ~ModifierKey::RightShift;
+                }
 
-                ModifierKey const modifier = is_left
-                                                 ? ModifierKey::LeftShift
-                                                 : ModifierKey::RightShift;
-
-                g_ModifierKey |= modifier;
                 break;
-            }
 
             case VK_CAPITAL:
-            {
-                if ((GetKeyState(VK_CAPITAL) & 0x1) != 0)
+                if ((GetKeyState(VK_CAPITAL) & 0x0001) != 0)
                 {
                     g_ModifierKey |= ModifierKey::CapsLock;
                 }
@@ -441,133 +448,106 @@ namespace Graphyte::App::Impl
                 {
                     g_ModifierKey &= ~ModifierKey::CapsLock;
                 }
+
                 break;
-            }
+
+            default:
+                break;
         }
 
-        char32_t const character = MapVirtualKeyW(key, MAPVK_VK_TO_CHAR);
+        char32_t character = MapVirtualKeyW(vk, MAPVK_VK_TO_CHAR);
 
-        KeyCode const keycode = Impl::TranslateKeyCode(key);
+        KeyCode const keycode = TranslateKeyCode(key);
 
-        Impl::g_EventHandler->OnKeyUp(KeyEvent{
+        g_EventHandler->OnKeyUp(KeyEvent{
             .Modifiers = g_ModifierKey,
             .Key       = keycode,
             .Character = character,
             .Repeat    = false,
         });
+
+        return 0;
     }
 
-    static void WmSysKeyDown(WindowsWindow& window, Message& message) noexcept
+    static void WmMouseButton(NativeWindow& window, HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) noexcept
     {
-        if (message.WParam == VK_F4)
-        {
-            GX_LOG_TRACE(LogPlatform, "Alt+F4\n");
-        }
-        else if (message.WParam == VK_SPACE)
-        {
-            GX_LOG_TRACE(LogPlatform, "Alt+Space\n");
-        }
+        POINT cursor{
+            .x = GET_X_LPARAM(lparam),
+            .y = GET_Y_LPARAM(lparam),
+        };
 
-        if (message.WParam != VK_F4 && message.WParam != VK_SPACE)
-        {
-            WmKeyDown(window, message);
-        }
-        else
-        {
-            BaseWindowProc(message);
-        }
-    }
+        ClientToScreen(hwnd, &cursor);
 
-    static void WmMouseButton(WindowsWindow& window, Message& message) noexcept
-    {
+        bool const doubleClick = [=]() {
+            switch (msg)
+            {
+                case WM_LBUTTONDBLCLK:
+                case WM_MBUTTONDBLCLK:
+                case WM_RBUTTONDBLCLK:
+                case WM_XBUTTONDBLCLK:
+                    return true;
+            }
+
+            return false;
+        }();
+
+        bool const upClick = [=]() {
+            switch (msg)
+            {
+                case WM_LBUTTONUP:
+                case WM_MBUTTONUP:
+                case WM_RBUTTONUP:
+                case WM_XBUTTONUP:
+                    return true;
+            }
+
+            return false;
+        }();
+
+        MouseButton const button = [=]() {
+            switch (msg)
+            {
+                case WM_LBUTTONDBLCLK:
+                case WM_LBUTTONUP:
+                case WM_LBUTTONDOWN:
+                    return MouseButton::Left;
+
+                case WM_MBUTTONDBLCLK:
+                case WM_MBUTTONUP:
+                case WM_MBUTTONDOWN:
+                    return MouseButton::Middle;
+
+                case WM_RBUTTONDBLCLK:
+                case WM_RBUTTONUP:
+                case WM_RBUTTONDOWN:
+                    return MouseButton::Right;
+
+                case WM_XBUTTONDBLCLK:
+                case WM_XBUTTONUP:
+                case WM_XBUTTONDOWN:
+                    return (GET_XBUTTON_WPARAM(wparam) & XBUTTON1)
+                               ? MouseButton::Thumb1
+                               : MouseButton::Thumb2;
+            }
+
+            GX_ABORT("Wrong message button type!");
+            return MouseButton::Invalid;
+        }();
+
         MouseButtonEvent event{
             .Modifiers = g_ModifierKey,
+            .Button    = button,
+            .Position  = {
+                .X = static_cast<float>(cursor.x),
+                .Y = static_cast<float>(cursor.y),
+            },
         };
 
-        POINT cursor{
-            .x = GET_X_LPARAM(message.LParam),
-            .y = GET_Y_LPARAM(message.LParam),
-        };
-
-        ClientToScreen(message.HWnd, &cursor);
-
-        event.Position.X = static_cast<float>(cursor.x);
-        event.Position.Y = static_cast<float>(cursor.y);
-
-        bool double_click{ false };
-        bool is_up{ false };
-
-        switch (message.Msg)
-        {
-            case WM_LBUTTONDBLCLK:
-                double_click = true;
-                event.Button = MouseButton::Left;
-                break;
-
-            case WM_LBUTTONUP:
-                is_up        = true;
-                event.Button = MouseButton::Left;
-                break;
-
-            case WM_LBUTTONDOWN:
-                event.Button = MouseButton::Left;
-                break;
-
-            case WM_MBUTTONDBLCLK:
-                double_click = true;
-                event.Button = MouseButton::Middle;
-                break;
-
-            case WM_MBUTTONUP:
-                is_up        = true;
-                event.Button = MouseButton::Middle;
-                break;
-
-            case WM_MBUTTONDOWN:
-                event.Button = MouseButton::Middle;
-                break;
-
-            case WM_RBUTTONDBLCLK:
-                double_click = true;
-                event.Button = MouseButton::Right;
-                break;
-
-            case WM_RBUTTONUP:
-                is_up        = true;
-                event.Button = MouseButton::Right;
-                break;
-
-            case WM_RBUTTONDOWN:
-                event.Button = MouseButton::Right;
-                break;
-
-            case WM_XBUTTONDBLCLK:
-                double_click = true;
-                event.Button = (GET_XBUTTON_WPARAM(message.WParam) & XBUTTON1)
-                                   ? MouseButton::Thumb1
-                                   : MouseButton::Thumb2;
-                break;
-
-            case WM_XBUTTONUP:
-                is_up        = true;
-                event.Button = (GET_XBUTTON_WPARAM(message.WParam) & XBUTTON1)
-                                   ? MouseButton::Thumb1
-                                   : MouseButton::Thumb2;
-                break;
-
-            case WM_XBUTTONDOWN:
-                is_up        = true;
-                event.Button = (GET_XBUTTON_WPARAM(message.WParam) & XBUTTON1)
-                                   ? MouseButton::Thumb1
-                                   : MouseButton::Thumb2;
-                break;
-        }
-
-        if (is_up)
+        if (upClick)
         {
             g_EventHandler->OnMouseUp(window, event);
         }
-        else if (double_click)
+        else if (doubleClick)
         {
             g_EventHandler->OnMouseDoubleClick(window, event);
         }
@@ -577,75 +557,65 @@ namespace Graphyte::App::Impl
         }
     }
 
-    static void WmMouseMove([[maybe_unused]] WindowsWindow& window, [[maybe_unused]] Message& message) noexcept
+    static void WmMouseMove() noexcept
     {
         if (!g_UseHighPrecisionMouse)
         {
-            // Raw input uses relative cursor position change - emit event with absolute mouse movement.
             g_EventHandler->OnMouseMove();
         }
     }
 
-    static void WmMouseWheel([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static void WmMouseWheel(WPARAM wparam) noexcept
     {
         constexpr float const spin = 1.0f / 120.0f;
-        float const wheel_delta    = static_cast<float>(GET_WHEEL_DELTA_WPARAM(message.WParam));
 
-        Float2 const position{};
+        float const wheelDelta = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wparam));
 
-        // TODO: Is position required here?
+        GX_LOG_TRACE(LogNativeApp, "WM_MOUSEWHEEL {}\n", wheelDelta * spin);
+
         g_EventHandler->OnMouseWheel(MouseWheelEvent{
             .Modifiers = g_ModifierKey,
-            .Delta     = wheel_delta * spin,
-            .Position  = {
-                .X = static_cast<float>(GET_X_LPARAM(message.LParam)),
-                .Y = static_cast<float>(GET_Y_LPARAM(message.LParam)),
-
-            },
+            .Delta     = wheelDelta * spin,
         });
     }
 
-    static void WmInput([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static bool WmInput(LPARAM lparam) noexcept
     {
-        HRAWINPUT deviceHandle = reinterpret_cast<HRAWINPUT>(message.LParam);
+        HRAWINPUT handle = reinterpret_cast<HRAWINPUT>(lparam);
 
         UINT size{};
-        GetRawInputData(deviceHandle, RID_INPUT, nullptr, &size, sizeof(RAWINPUTHEADER));
+        GetRawInputData(handle, RID_INPUT, nullptr, &size, sizeof(RAWINPUTHEADER));
 
-        std::vector<uint8_t> buffer{};
-        buffer.resize(size);
+        auto buffer = std::make_unique<uint8_t[]>(size);
 
-        if (GetRawInputData(deviceHandle, RID_INPUT, std::data(buffer), &size, sizeof(RAWINPUTHEADER)) == size)
+        if (GetRawInputData(handle, RID_INPUT, buffer.get(), &size, sizeof(RAWINPUTHEADER)) == size)
         {
-            RAWINPUT* input = reinterpret_cast<RAWINPUT*>(std::data(buffer));
+            RAWINPUT* input = reinterpret_cast<RAWINPUT*>(buffer.get());
 
             if (input->header.dwType == RIM_TYPEMOUSE)
             {
-                bool const is_absolute = (input->data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE) == MOUSE_MOVE_ABSOLUTE;
+                bool const relative = ((input->data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE) == 0);
 
-                if (is_absolute)
+                if (relative)
                 {
-                    g_EventHandler->OnMouseMove();
-                }
-                else
-                {
-                    MouseMoveEvent const event{
+                    g_EventHandler->OnMouseMove(MouseMoveEvent{
                         .Modifiers = g_ModifierKey,
-                        .Position  = {
+                        .Relative  = {
                             .X = static_cast<float>(input->data.mouse.lLastX),
                             .Y = static_cast<float>(input->data.mouse.lLastY),
                         },
-                    };
-
-                    g_EventHandler->OnMouseMove(event);
+                    });
+                }
+                else
+                {
+                    g_EventHandler->OnMouseMove();
                 }
 
-                message.Result = TRUE;
-                return;
+                return true;
             }
             else if (input->header.dwType == RIM_TYPEKEYBOARD)
             {
-                GX_LOG_TRACE(LogPlatform, "(kbd: vk: {:x}, msg: {:x}, mc: {:x}, flg: {:x}, ei: {:x})\n",
+                GX_LOG_TRACE(LogNativeApp, "(kbd: vk: {:x}, msg: {:x}, mc: {:x}, flg: {:x}, ei: {:x})\n",
                     input->data.keyboard.VKey,
                     input->data.keyboard.Message,
                     input->data.keyboard.MakeCode,
@@ -654,340 +624,303 @@ namespace Graphyte::App::Impl
             }
         }
 
-        BaseWindowProc(message);
+        return false;
     }
 
-    static void WmNcCalcSize([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static LRESULT WmNcCalcSize(NativeWindow& window, HWND hwnd, WPARAM wparam, LPARAM lparam) noexcept
     {
-        WindowDescriptor const& descriptor = window.GetDescriptor();
-
-        if (message.WParam != 0 && !descriptor.SystemBorder && window.IsMaximized())
+        if (wparam != 0 && window.GetType() == WindowType::Game && window.GetMode() != WindowMode::Windowed && window.IsMaximized())
         {
-            WINDOWINFO wi{
-                .cbSize = sizeof(WINDOWINFO),
-            };
+            // Maximized fullscreen borderless game window has visible border in multiple displays
+            // scenario. Limit this by adjusting window placement to just fit display - we are still
+            // render over whole area anyway.
 
-            GetWindowInfo(message.HWnd, &wi);
+            WINDOWINFO wi{ .cbSize = sizeof(wi) };
+            GetWindowInfo(hwnd, &wi);
 
-            NCCALCSIZE_PARAMS& calcsize = *reinterpret_cast<NCCALCSIZE_PARAMS*>(message.LParam);
+            NCCALCSIZE_PARAMS& params = *reinterpret_cast<LPNCCALCSIZE_PARAMS>(lparam);
+            params.rgrc[0].left += wi.cxWindowBorders;
+            params.rgrc[0].top += wi.cyWindowBorders;
+            params.rgrc[0].right -= wi.cxWindowBorders;
+            params.rgrc[0].bottom -= wi.cyWindowBorders;
 
-            calcsize.rgrc[0].left += wi.cxWindowBorders;
-            calcsize.rgrc[0].top += wi.cxWindowBorders;
-            calcsize.rgrc[0].right -= wi.cxWindowBorders;
-            calcsize.rgrc[0].bottom -= wi.cxWindowBorders;
+            params.rgrc[1] = params.rgrc[0];
 
-            calcsize.rgrc[1] = calcsize.rgrc[0];
+            params.lppos->x += wi.cxWindowBorders;
+            params.lppos->y += wi.cyWindowBorders;
+            params.lppos->cx -= 2 * wi.cxWindowBorders;
+            params.lppos->cy -= 2 * wi.cyWindowBorders;
 
-            calcsize.lppos->x += wi.cxWindowBorders;
-            calcsize.lppos->y += wi.cxWindowBorders;
-            calcsize.lppos->cx -= 2 * wi.cxWindowBorders;
-            calcsize.lppos->cy -= 2 * wi.cxWindowBorders;
-
-            message.Result = WVR_VALIDRECTS;
+            return WVR_VALIDRECTS;
         }
-        else
-        {
-            BaseWindowProc(message);
-        }
+
+        return DefWindowProcW(hwnd, WM_NCCALCSIZE, wparam, lparam);
     }
 
-    static void WmSize(WindowsWindow& window, Message& message) noexcept
+    static LRESULT WmClose(NativeWindow& window) noexcept
     {
-        int32_t const new_w = GET_X_LPARAM(message.LParam);
-        int32_t const new_h = GET_Y_LPARAM(message.LParam);
+        GX_LOG_TRACE(LogNativeApp, "WM_CLOSE\n");
 
-        bool const was_minimized = (message.WParam == SIZE_MINIMIZED);
-        bool const is_fullscreen = (window.GetWindowMode() == WindowMode::Fullscreen);
+        g_EventHandler->OnWindowClose(window);
+        return 0;
+    }
 
-        if (!is_fullscreen)
+    static void WmSize(NativeWindow& window, WPARAM wparam, LPARAM lparam) noexcept
+    {
+        bool const exclusive = (window.GetMode() == WindowMode::Fullscreen);
+        int32_t const cx     = GET_X_LPARAM(lparam);
+        int32_t const cy     = GET_Y_LPARAM(lparam);
+
+        GX_LOG_TRACE(LogNativeApp, "WM_SIZE (cx: {}, cy: {})\n", cx, cy);
+
+        if constexpr (true)
         {
+            [[maybe_unused]] auto const viewport = window.GetClientSize();
+            GX_LOG_TRACE(LogNativeApp, "WM_SIZE (client: cx: {}, cy: {})\n", viewport.Width, viewport.Height);
+        }
+
+        if (!exclusive)
+        {
+
+            bool const minimized = (wparam == SIZE_MINIMIZED);
+
             g_EventHandler->OnWindowSizeChanged(
                 window,
                 Float2{
-                    .X = static_cast<float>(new_w),
-                    .Y = static_cast<float>(new_h),
+                    .X = static_cast<float>(cx),
+                    .Y = static_cast<float>(cy),
                 },
-                was_minimized);
+                minimized);
         }
     }
 
-    static void WmEnterSizeMove(WindowsWindow& window, Message& message) noexcept
+    static void WmEnterSizeMove(NativeWindow& window) noexcept
     {
-        Impl::g_EventHandler->OnWindowSizingBegin(window);
-        BaseWindowProc(message);
+        g_EventHandler->OnWindowSizingBegin(window);
     }
 
-    static void WmExitSizeMove(WindowsWindow& window, Message& message) noexcept
+    static void WmExitSizeMove(NativeWindow& window) noexcept
     {
-        Impl::g_EventHandler->OnWindowSizingEnd(window);
-        BaseWindowProc(message);
+        g_EventHandler->OnWindowSizingEnd(window);
     }
 
-    static void WmMove(WindowsWindow& window, Message& message) noexcept
+    static void WmMove(NativeWindow& window, LPARAM lparam) noexcept
     {
-        LONG const new_x = GET_X_LPARAM(message.LParam);
-        LONG const new_y = GET_Y_LPARAM(message.LParam);
+        LONG const x = GET_X_LPARAM(lparam);
+        LONG const y = GET_Y_LPARAM(lparam);
 
-        if (new_x != -32000 && new_y != -32000)
+        if (x != -32000 && y != -32000)
         {
+            GX_LOG_TRACE(LogNativeApp, "WM_MOVE (x: {}, y: {})\n", x, y);
+
             g_EventHandler->OnWindowMoved(window,
                 Float2{
-                    .X = static_cast<float>(new_x),
-                    .Y = static_cast<float>(new_y),
+                    .X = static_cast<float>(x),
+                    .Y = static_cast<float>(y),
                 });
-        }
-        else
-        {
-            BaseWindowProc(message);
         }
     }
 
-    static void WmActivate(WindowsWindow& window, Message& message) noexcept
+    static void WmActivate(NativeWindow& window, WPARAM wparam) noexcept
     {
+        WORD const flags = LOWORD(wparam);
+
         WindowActivation activation = WindowActivation::Deactivate;
 
-        WORD const flags = LOWORD(message.WParam);
-
-        if (flags & WA_ACTIVE)
+        if ((flags & WA_ACTIVE) != 0)
         {
-            activation = g_ApplicationActivateByMouse
-                             ? WindowActivation::InputActivate
-                             : WindowActivation::Activate;
+            activation = g_ClickWindowActivate ? WindowActivation::ClickActivate : WindowActivation::Activate;
         }
-        else if (flags & WA_CLICKACTIVE)
+        else if ((flags & WA_CLICKACTIVE) != 0)
         {
-            activation = WindowActivation::InputActivate;
+            activation = WindowActivation::ClickActivate;
         }
 
-        g_ApplicationActivateByMouse = false;
+        g_ClickWindowActivate = false;
 
         UpdateModifierKeys();
         g_EventHandler->OnWindowActivate(window, activation);
     }
 
-    static void WmMouseActivate([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static void WmMouseActivate(LPARAM lparam) noexcept
     {
-        Impl::g_ApplicationActivateByMouse = (LOWORD(message.LParam) & HTCLIENT) == 0;
-
-        BaseWindowProc(message);
+        g_ClickWindowActivate = ((LOWORD(lparam) & HTCLIENT) == 0);
     }
-
-    static void WmActivateApp([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static void WmActivateApp(WPARAM wparam) noexcept
     {
         UpdateModifierKeys();
 
-        bool const activated = (message.WParam != 0);
-
-        Impl::g_EventHandler->OnApplicationActivated(activated);
-        BaseWindowProc(message);
+        bool const activated = (wparam != 0);
+        g_EventHandler->OnApplicationActivated(activated);
     }
 
-    static void WmEraseBackground([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static void WmDisplayChange(WPARAM wparam, LPARAM lparam) noexcept
     {
-        message.Result = TRUE;
-        BaseWindowProc(message);
+        GX_LOG_TRACE(LogNativeApp,
+            "Display changed: {}x{}x{}\n",
+            static_cast<UINT>(wparam),
+            static_cast<UINT>(LOWORD(lparam)),
+            static_cast<UINT>(HIWORD(lparam)));
     }
 
-    static void WmNcPaint(WindowsWindow& window, Message& message) noexcept
+    static void WmGetMinMaxInfo(NativeWindow& window, LPARAM lparam) noexcept
     {
-        if (window.GetDescriptor().SystemBorder)
+        WindowSizeLimits const& limits = window.GetSizeLimits();
+
+        if (limits.Min.has_value() || limits.Max.has_value())
         {
-            // Only render border for windows with system borders.
-            BaseWindowProc(message);
-        }
-    }
+            MINMAXINFO& minmax = *reinterpret_cast<MINMAXINFO*>(lparam);
 
-    static void WmClose(WindowsWindow& window, [[maybe_unused]] Message& message) noexcept
-    {
-        g_EventHandler->OnWindowClose(window);
-    }
+            System::Size minSize = limits.Min.value_or(
+                System::Size{
+                    .Width  = minmax.ptMinTrackSize.x,
+                    .Height = minmax.ptMinTrackSize.y,
+                });
 
-    static void WmGetMinMaxInfo(WindowsWindow& window, Message& message) noexcept
-    {
-        MINMAXINFO& minmax = *reinterpret_cast<MINMAXINFO*>(message.LParam);
+            System::Size maxSize = limits.Max.value_or(
+                System::Size{
+                    .Width  = minmax.ptMaxTrackSize.x,
+                    .Height = minmax.ptMaxTrackSize.y,
+                });
 
-        WindowDescriptor const& descriptor = window.GetDescriptor();
-
-        System::Size minSize = descriptor.SizeLimits.MinSize.value_or(
-            System::Size{
-                .Width  = minmax.ptMinTrackSize.x,
-                .Height = minmax.ptMinTrackSize.y,
-            });
-
-        System::Size maxSize = descriptor.SizeLimits.MaxSize.value_or(
-            System::Size{
-                .Width  = minmax.ptMaxTrackSize.x,
-                .Height = minmax.ptMaxTrackSize.y,
-            });
-
-        if (window.GetDescriptor().SystemBorder)
-        {
-            DWORD dwStyle   = static_cast<DWORD>(GetWindowLongW(message.HWnd, GWL_STYLE));
-            DWORD dwExStyle = static_cast<DWORD>(GetWindowLongW(message.HWnd, GWL_EXSTYLE));
+            DWORD const dwStyle   = static_cast<DWORD>(GetWindowLongW(window.GetHandle(), GWL_STYLE));
+            DWORD const dwExStyle = static_cast<DWORD>(GetWindowLongW(window.GetHandle(), GWL_EXSTYLE));
 
             RECT rcBorder{};
-
             AdjustWindowRectEx(&rcBorder, dwStyle, FALSE, dwExStyle);
-
             maxSize.Width += (rcBorder.right - rcBorder.left);
             maxSize.Height += (rcBorder.bottom - rcBorder.top);
+
+            minmax.ptMinTrackSize.x = minSize.Width;
+            minmax.ptMinTrackSize.y = minSize.Height;
+            minmax.ptMaxTrackSize.x = maxSize.Width;
+            minmax.ptMaxTrackSize.y = maxSize.Height;
         }
-
-        minmax.ptMinTrackSize.x = minSize.Width;
-        minmax.ptMinTrackSize.y = minSize.Height;
-
-        minmax.ptMaxTrackSize.x = maxSize.Width;
-        minmax.ptMaxTrackSize.y = maxSize.Height;
     }
 
-    static void WmDisplayChange([[maybe_unused]] WindowsWindow& window, [[maybe_unused]] Message& message) noexcept
+    static void WmDpiChanged(NativeWindow& window, HWND hwnd, WPARAM wparam, LPARAM lparam) noexcept
     {
-        GX_LOG_TRACE(LogPlatform,
-            "Display changed: bits per pixel = {}, width = {}, height = {}\n",
-            static_cast<UINT>(message.WParam),
-            static_cast<UINT>(LOWORD(message.LParam)),
-            static_cast<UINT>(HIWORD(message.LParam)));
+        GX_LOG_TRACE(LogNativeApp, "WM_DPICHANGED\n");
 
-        BaseWindowProc(message);
-    }
+        window.SetDpiScale(static_cast<float>(LOWORD(wparam)) / 96.0f);
 
-    static void WmDpiChanged(WindowsWindow& window, Message& message) noexcept
-    {
-        window.SetDpiScale(static_cast<float>(LOWORD(message.WParam)) / 96.0f);
-
-        RECT const& rect = *reinterpret_cast<LPRECT>(message.LParam);
+        RECT const& rc = *reinterpret_cast<LPRECT>(lparam);
 
         SetWindowPos(
-            message.HWnd,
+            hwnd,
             nullptr,
-            rect.left,
-            rect.top,
-            rect.right - rect.left,
-            rect.bottom - rect.top,
+            rc.left,
+            rc.top,
+            rc.right - rc.left,
+            rc.bottom - rc.top,
             SWP_NOZORDER | SWP_NOACTIVATE);
 
-        Impl::g_EventHandler->OnWindowDpiChanged(window);
-
-        BaseWindowProc(message);
+        g_EventHandler->OnWindowDpiChanged(window);
     }
 
-    static void WmDeviceChange([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static void WmDeviceChange() noexcept
     {
+        GX_LOG_TRACE(LogNativeApp, "WM_DEVICECHANGE\n");
+
+        g_XInputDevice.RequestUpdate();
         QueryInputDevices();
-
-        BaseWindowProc(message);
     }
 
-    static void WmPowerBroadcast([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static void WmPowerBroadcast(WPARAM wparam) noexcept
     {
-        switch (message.WParam)
+        switch (wparam)
         {
-            case PBT_APMPOWERSTATUSCHANGE:
-                GX_LOG_INFO(LogPlatform, "Power Event: status changed\n");
-                break;
-
             case PBT_APMRESUMEAUTOMATIC:
-                GX_LOG_INFO(LogPlatform, "Power Event: resume-automatic\n");
+                GX_LOG_TRACE(LogNativeApp, "Power Event: resume-automatic\n");
+                g_EventHandler->OnSystemPowerRestore();
                 break;
 
             case PBT_APMRESUMESUSPEND:
-                GX_LOG_INFO(LogPlatform, "Power Event: resume-suspend\n");
+                GX_LOG_TRACE(LogNativeApp, "Power Event: resume-suspend\n");
+                g_EventHandler->OnSystemPowerRestore();
                 break;
 
             case PBT_APMSUSPEND:
-                GX_LOG_INFO(LogPlatform, "Power Event: suspend\n");
+                GX_LOG_TRACE(LogNativeApp, "Power Event: suspend\n");
+                g_EventHandler->OnSystemPowerSuspend();
                 break;
         }
-
-        message.Result = TRUE;
     }
 
-    static void WmEndSession([[maybe_unused]] WindowsWindow& window, Message& message) noexcept
+    static void WmEndSession(LPARAM lparam) noexcept
     {
-        ShutdownReason reason = ShutdownReason::LogOff;
+        ShutdownReason reason{};
 
-        switch (message.LParam)
+        switch (lparam)
         {
             case ENDSESSION_CLOSEAPP:
                 reason = ShutdownReason::CloseApplication;
                 break;
-
             case ENDSESSION_CRITICAL:
                 reason = ShutdownReason::Critical;
                 break;
-
             case ENDSESSION_LOGOFF:
                 reason = ShutdownReason::LogOff;
                 break;
         }
 
-        Impl::g_EventHandler->OnApplicationShutdown(reason);
-
-        message.Result = 0;
+        g_EventHandler->OnSystemPowerShutdown(reason);
     }
-}
 
-
-// -------------------------------------------------------------------------------------------------
-// Window procedure
-
-namespace Graphyte::App::Impl
-{
-    static LRESULT CALLBACK HandleMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) noexcept
+    static LRESULT CALLBACK WinHandleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) noexcept
     {
-        GX_ABORT_UNLESS(g_EventHandler != nullptr, "Event handler not set");
+        // Event handler is required in order to proceed.
+        GX_ASSERT(g_EventHandler != nullptr);
 
-        Impl::WindowsWindow* window = reinterpret_cast<Impl::WindowsWindow*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
+
+        // Set pointer to window in HWND storage.
+        NativeWindow* window = reinterpret_cast<NativeWindow*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
 
         if (window == nullptr)
         {
-            if (uMsg == WM_GETMINMAXINFO)
+            if (msg == WM_GETMINMAXINFO)
             {
                 return 0;
             }
 
-            GX_ASSERTF(uMsg == WM_NCCREATE, "Invalid message: got {}", uMsg);
+            GX_ASSERT(msg == WM_NCCREATE);
 
-            // Cache window pointer in HWND userdata
-            VOID* native_window = reinterpret_cast<CREATESTRUCTW*>(lParam)->lpCreateParams;
+            window = reinterpret_cast<NativeWindow*>(reinterpret_cast<CREATESTRUCTW*>(lparam)->lpCreateParams);
 
-            SetWindowLongPtrW(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(native_window));
-
-            window = reinterpret_cast<Impl::WindowsWindow*>(native_window);
+            SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
         }
 
         GX_ASSERT(window != nullptr);
 
-        Impl::Message message{
-            .HWnd   = hWnd,
-            .Msg    = uMsg,
-            .WParam = wParam,
-            .LParam = lParam,
-            .Result = 0,
-        };
-
-        switch (uMsg)
+        // Process supported messages
+        switch (msg)
         {
             case WM_CHAR:
-                WmChar(*window, message);
-                break;
+                WmChar(wparam, lparam);
+                return 0;
 
-            case WM_SYSCHAR:
-                WmSysChar(*window, message);
-                break;
+                //case WM_SYSCHAR:
+                //    if ((HIWORD(lparam) & 0x2000) != 0 && wparam == VK_SPACE)
+                //    {
+                //        break;
+                //    }
+
 
             case WM_SYSKEYDOWN:
-                WmSysKeyDown(*window, message);
-                break;
+                // Allow Alt+F4 or Alt+Space to be processed by default handler
+                if (wparam == VK_F4 || wparam == VK_SPACE)
+                {
+                    break;
+                }
+
+                [[fallthrough]];
 
             case WM_KEYDOWN:
-                WmKeyDown(*window, message);
-                break;
+                return WmKeyDown(wparam, lparam);
 
             case WM_SYSKEYUP:
             case WM_KEYUP:
-                WmKeyUp(*window, message);
-                break;
+                return WmKeyUp(wparam, lparam);
 
             case WM_LBUTTONDOWN:
             case WM_LBUTTONUP:
@@ -1001,161 +934,156 @@ namespace Graphyte::App::Impl
             case WM_XBUTTONDOWN:
             case WM_XBUTTONUP:
             case WM_XBUTTONDBLCLK:
-                WmMouseButton(*window, message);
+                WmMouseButton(*window, hwnd, msg, wparam, lparam);
                 break;
 
+            case WM_NCMOUSEMOVE:
             case WM_MOUSEMOVE:
-                WmMouseMove(*window, message);
+                WmMouseMove();
                 break;
 
             case WM_MOUSEWHEEL:
-                WmMouseWheel(*window, message);
+                WmMouseWheel(wparam);
                 break;
 
             case WM_INPUT:
-                WmInput(*window, message);
+                if (WmInput(lparam))
+                {
+                    return TRUE;
+                }
+
                 break;
 
             case WM_NCCALCSIZE:
-                WmNcCalcSize(*window, message);
-                break;
+                return WmNcCalcSize(*window, hwnd, wparam, lparam);
 
-            case WM_SIZE:
-                WmSize(*window, message);
-                break;
-
-            case WM_ENTERSIZEMOVE:
-                WmEnterSizeMove(*window, message);
-                break;
-
-            case WM_EXITSIZEMOVE:
-                WmExitSizeMove(*window, message);
-                break;
-
-            case WM_MOVE:
-                WmMove(*window, message);
-                break;
-
-            case WM_ACTIVATE:
-                WmActivate(*window, message);
-                break;
-
-            case WM_MOUSEACTIVATE:
-                WmMouseActivate(*window, message);
-                break;
-
-            case WM_ACTIVATEAPP:
-                WmActivateApp(*window, message);
-                break;
-
-            case WM_ERASEBKGND:
-                WmEraseBackground(*window, message);
+            case WM_NCACTIVATE:
+                if (window->GetMode() != WindowMode::Windowed)
+                {
+                    return TRUE;
+                }
                 break;
 
             case WM_NCPAINT:
-                WmNcPaint(*window, message);
+                if (window->GetMode() != WindowMode::Windowed)
+                {
+                    // Don't repaint non-client area for fullscreen window.
+                    return 0;
+                }
+
                 break;
 
             case WM_CLOSE:
-                WmClose(*window, message);
+                return WmClose(*window);
+
+            case WM_SIZE:
+                WmSize(*window, wparam, lparam);
                 break;
+
+            case WM_ENTERSIZEMOVE:
+                WmEnterSizeMove(*window);
+                break;
+
+            case WM_EXITSIZEMOVE:
+                WmExitSizeMove(*window);
+                break;
+
+            case WM_MOVE:
+                WmMove(*window, lparam);
+                break;
+
+            case WM_ACTIVATE:
+                WmActivate(*window, wparam);
+                break;
+            case WM_MOUSEACTIVATE:
+                WmMouseActivate(lparam);
+                break;
+
+            case WM_ACTIVATEAPP:
+                WmActivateApp(wparam);
+                break;
+
+            case WM_ERASEBKGND:
+                // There is no need to erase backogrund in rendering window
+                return 0;
 
             case WM_GETMINMAXINFO:
-                WmGetMinMaxInfo(*window, message);
-                break;
+                WmGetMinMaxInfo(*window, lparam);
+                return 0;
 
             case WM_DISPLAYCHANGE:
-                WmDisplayChange(*window, message);
+                WmDisplayChange(wparam, lparam);
                 break;
 
             case WM_DPICHANGED:
-                WmDpiChanged(*window, message);
+                WmDpiChanged(*window, hwnd, wparam, lparam);
                 break;
 
             case WM_GETDLGCODE:
-                message.Result = DLGC_WANTALLKEYS;
-                break;
+                return DLGC_WANTALLKEYS;
 
             case WM_DEVICECHANGE:
-                WmDeviceChange(*window, message);
+                WmDeviceChange();
                 break;
 
             case WM_POWERBROADCAST:
-                WmPowerBroadcast(*window, message);
-                break;
+                WmPowerBroadcast(wparam);
+                return TRUE;
 
             case WM_ENDSESSION:
-                WmEndSession(*window, message);
-                break;
-
-            default:
-                message.Result = DefWindowProcW(hWnd, uMsg, wParam, lParam);
+                WmEndSession(lparam);
+                return 0;
         }
 
-        return message.Result;
+        return DefWindowProcW(hwnd, msg, wparam, lparam);
     }
 }
 
 
 // -------------------------------------------------------------------------------------------------
-// Application initialization
+// Window support
 
 namespace Graphyte::App::Impl
 {
     static void RegisterWindow(HINSTANCE instance, HICON icon) noexcept
     {
-        WNDCLASSEXW wc{
-            .cbSize        = sizeof(wc),
+        GX_LOG_TRACE(LogNativeApp, "Registering window class\n");
+
+        WNDCLASSEX wcex{
+            .cbSize        = sizeof(wcex),
             .style         = CS_DBLCLKS | CS_OWNDC,
-            .lpfnWndProc   = HandleMessage,
+            .lpfnWndProc   = WinHandleMessage,
             .cbClsExtra    = 0,
             .cbWndExtra    = 0,
             .hInstance     = instance,
-            .hIcon         = icon,
-            .hCursor       = LoadCursorW(nullptr, (LPCWSTR)IDC_ARROW),
-            .hbrBackground = nullptr,
+            .hCursor       = LoadCursorW(nullptr, IDC_ARROW),
+            .hbrBackground = GetSysColorBrush(COLOR_WINDOW),
             .lpszMenuName  = nullptr,
             .lpszClassName = L"GraphyteWindow",
             .hIconSm       = icon,
         };
 
-        ATOM const result = RegisterClassExW(&wc);
-
+        ATOM const result = RegisterClassExW(&wcex);
 
         GX_ABORT_UNLESS(result != 0, "Cannot register window class");
-    }
-
-    static void FixupShiftKeyReleaseEvents(UINT vk, ModifierKey modifier, KeyCode key) noexcept
-    {
-        // Check if shift key was pressed last time
-        if (Flags::Has(g_ModifierKey, modifier))
-        {
-            // And if it was released in mean time.
-            if ((GetKeyState(vk) & 0x8000) == 0)
-            {
-                // Emit release event.
-                g_ModifierKey &= ~modifier;
-
-                g_EventHandler->OnKeyUp(KeyEvent{
-                    .Modifiers = g_ModifierKey,
-                    .Key       = key,
-                    .Character = {},
-                    .Repeat    = false,
-                });
-            }
-        }
     }
 }
 
 
 // -------------------------------------------------------------------------------------------------
-// Public API
+// Application public API
 
 namespace Graphyte::App
 {
     void Initialize() noexcept
     {
+        GX_LOG_TRACE(LogNativeApp, "Initialize application\n");
+
         // Capture initial accessibility settings.
+        Impl::g_StartupStickyKeys.cbSize = sizeof(STICKYKEYS);
+        Impl::g_StartupToggleKeys.cbSize = sizeof(TOGGLEKEYS);
+        Impl::g_StartupFilterKeys.cbSize = sizeof(FILTERKEYS);
+
         SystemParametersInfoW(SPI_GETSTICKYKEYS, sizeof(STICKYKEYS), &Impl::g_StartupStickyKeys, 0);
         SystemParametersInfoW(SPI_GETSTICKYKEYS, sizeof(TOGGLEKEYS), &Impl::g_StartupToggleKeys, 0);
         SystemParametersInfoW(SPI_GETSTICKYKEYS, sizeof(FILTERKEYS), &Impl::g_StartupFilterKeys, 0);
@@ -1171,8 +1099,6 @@ namespace Graphyte::App
         HICON icon = LoadIconW(instance, MAKEINTRESOURCEW(System::Impl::IDI_MAIN_ICON));
         Impl::RegisterWindow(instance, icon);
 
-        // Lookup for any input devices available.
-        // This excludes XInput devices, which are discovered at runtime.
         Impl::QueryInputDevices();
     }
 
@@ -1181,20 +1107,20 @@ namespace Graphyte::App
         // Nothing to do right now.
     }
 
-    void Tick(float delta_time) noexcept
+    void Tick(float deltaTime) noexcept
     {
         // NOTE: Messages are pulled before other devices, so gamepad takes priority on input
         //       processing.
-        PumpMessages(delta_time);
-        PollInput(delta_time);
+        ProcessMessages(deltaTime);
+        PollInput(deltaTime);
     }
 
-    void PollInput([[maybe_unused]] float delta_time) noexcept
+    void PollInput(float deltaTime) noexcept
     {
-        Impl::g_XInputDevice.Poll(delta_time);
+        Impl::g_XInputDevice.Poll(deltaTime);
     }
 
-    void PumpMessages([[maybe_unused]] float delta_time) noexcept
+    void ProcessMessages([[maybe_unused]] float deltaTime) noexcept
     {
         // Pump incoming messages from queue.
         MSG m{};
@@ -1213,56 +1139,34 @@ namespace Graphyte::App
 
     bool IsForeground() noexcept
     {
-        DWORD process_id{};
-
-        GetWindowThreadProcessId(GetForegroundWindow(), &process_id);
-        return process_id == GetCurrentProcessId();
+        DWORD dwProcessId{};
+        GetWindowThreadProcessId(GetForegroundWindow(), &dwProcessId);
+        return dwProcessId == GetCurrentProcessId();
     }
 
-    void RequestExit(bool force) noexcept
+    void RequestExit() noexcept
     {
-        GX_LOG_TRACE(LogPlatform, "Application requesting exit\n");
+        GX_LOG_TRACE(LogNativeApp, "Application requesting exit\n");
 
-        if (force)
-        {
-            // BUG: This function is not handled when messages are being passed around.
-            PostQuitMessage(0);
-        }
-        else
-        {
-            Impl::g_IsRequestingExit = true;
-        }
+        Impl::g_IsRequestingExit = true;
     }
-}
 
-
-// -------------------------------------------------------------------------------------------------
-// Window API
-
-namespace Graphyte::App
-{
-    Window* MakeWindow(WindowDescriptor const& descriptor) noexcept
+    Window* MakeWindow(WindowType type) noexcept
     {
-        Impl::WindowsWindow* window = new Impl::WindowsWindow();
-        window->Create(descriptor);
+        GX_LOG_TRACE(LogNativeApp, "Make new window\n");
 
-        Impl::EnableRawInputMouse(*window, true, false);
-        //Impl::EnableRawInputKeyboard(*window, true, false);
-
-        return window;
+        Impl::NativeWindow* native = new Impl::NativeWindow();
+        native->Create(type);
+        Impl::EnableRawInputMouse(*native, true, false);
+        return native;
     }
 
     void DestroyWindow(Window* window) noexcept
     {
-        Impl::WindowsWindow* native_window = static_cast<Impl::WindowsWindow*>(window);
+        GX_LOG_TRACE(LogNativeApp, "Destroy window\n");
 
-        GX_ASSERT(native_window != nullptr);
-
-        if (native_window != nullptr)
-        {
-            native_window->Destroy();
-
-            delete native_window;
-        }
+        Impl::NativeWindow* native = static_cast<Impl::NativeWindow*>(window);
+        native->Destroy();
+        delete native;
     }
 }

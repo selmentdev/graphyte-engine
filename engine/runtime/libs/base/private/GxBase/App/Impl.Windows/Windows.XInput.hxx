@@ -87,6 +87,11 @@ namespace Graphyte::App::Impl
         }
 
     public:
+        void RequestUpdate() noexcept
+        {
+            this->m_NeedsUpdate = true;
+        }
+
         void Poll([[maybe_unused]] float deltaTime) noexcept
         {
             bool connected[MaxControllers];
@@ -241,6 +246,8 @@ namespace Graphyte::App::Impl
                     }
                 }
             }
+
+            this->m_NeedsUpdate = true;
         }
     };
 }

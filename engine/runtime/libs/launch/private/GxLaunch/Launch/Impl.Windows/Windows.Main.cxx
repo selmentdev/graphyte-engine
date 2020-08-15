@@ -116,7 +116,7 @@ namespace Graphyte::Launch
             }
             __except (Diagnostics::OnCrash(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)
             {
-                Graphyte::App::RequestExit(true);
+                Graphyte::App::RequestExit();
             }
         }
 #endif

@@ -5,11 +5,20 @@
 #include <GxBase/Types.hxx>
 
 // =================================================================================================
-// Application implementation
+// Logging category.
 
 namespace Graphyte::App
 {
-    enum class ApplicationType : uint32_t
+    GX_DECLARE_LOG_CATEGORY(LogNativeApp, Trace, Trace);
+}
+
+
+// =================================================================================================
+// Application types
+
+namespace Graphyte::App
+{
+    enum class ApplicationType
     {
         Game,
         UnitTest,
@@ -25,61 +34,7 @@ namespace Graphyte::App
         ApplicationType Type;
         Version AppVersion;
     };
-}
 
-namespace Graphyte::App::Impl
-{
-    extern BASE_API bool g_IsRequestingExit;
-    extern BASE_API bool g_IsFirstInstance;
-    extern BASE_API ApplicationDescriptor g_ApplicationDescriptor;
-
-
-    BASE_API void EnableAccessibilityKeys(bool enable) noexcept;
-}
-
-namespace Graphyte::App
-{
-    inline ApplicationDescriptor const& GetDescriptor() noexcept
-    {
-        return Impl::g_ApplicationDescriptor;
-    }
-
-    /// @brief Initialize application.
-    BASE_API void Initialize() noexcept;
-
-    /// @brief Finalize application.
-    BASE_API void Finalize() noexcept;
-
-    /// @brief Ticks application
-    /// @param delta_time Provides delta time since last frame.
-    /// @remarks Pumps messages since last tick, handles incoming events, pools input devices.
-    BASE_API void Tick(float delta_time) noexcept;
-
-    BASE_API void PollInput(float delta_time) noexcept;
-
-    BASE_API void PumpMessages(float delta_time) noexcept;
-
-    BASE_API bool IsForeground() noexcept;
-
-    inline bool IsRequestingExit() noexcept
-    {
-        return Impl::g_IsRequestingExit;
-    }
-
-    inline bool IsFirstInstance() noexcept
-    {
-        return Impl::g_IsFirstInstance;
-    }
-
-    BASE_API void RequestExit(bool force) noexcept;
-}
-
-
-// =================================================================================================
-// System types
-
-namespace Graphyte::App
-{
     enum class ShutdownReason
     {
         LogOff,
@@ -94,7 +49,7 @@ namespace Graphyte::App
 
 namespace Graphyte::App
 {
-    enum class ModifierKey
+    enum class ModifierKey : uint16_t
     {
         None         = 0,
         LeftAlt      = 1 << 0,
@@ -113,7 +68,7 @@ namespace Graphyte::App
     };
     GX_ENUM_CLASS_FLAGS(ModifierKey);
 
-    enum class MouseButton
+    enum class MouseButton : uint8_t
     {
         Invalid = 0,
         Left    = 1,
@@ -123,7 +78,7 @@ namespace Graphyte::App
         Thumb2  = 5,
     };
 
-    enum class GamepadKey
+    enum class GamepadKey : uint8_t
     {
         Invalid               = 0,
         LeftAnalogX           = 1,
@@ -160,7 +115,7 @@ namespace Graphyte::App
         RightStickLeft        = 32,
     };
 
-    enum class KeyCode
+    enum class KeyCode : uint8_t
     {
         None,
         Backspace,
@@ -309,14 +264,7 @@ namespace Graphyte::App
         MediaStop,
         MediaPlayPause,
     };
-}
 
-
-// =================================================================================================
-// Input event types
-
-namespace Graphyte::App
-{
     // Keyboard events
     struct CharEvent final
     {
@@ -345,13 +293,11 @@ namespace Graphyte::App
     {
         ModifierKey Modifiers;
         float Delta;
-        Float2 Position;
     };
 
     struct MouseMoveEvent final
     {
         ModifierKey Modifiers;
-        Float2 Position;
         Float2 Relative;
     };
 
@@ -370,6 +316,7 @@ namespace Graphyte::App
         bool Repeat;
     };
 
+    // Motion events
     struct MotionEvent final
     {
         Float2 Tilt;
@@ -381,228 +328,213 @@ namespace Graphyte::App
 
 
 // =================================================================================================
-// Application window
+// Window types
 
 namespace Graphyte::App
 {
-    /// @brief Specifies window mode.
+    enum class WindowType
+    {
+        /// @brief Typical game window. Has enabled fullscreen / windowed mode.
+        Game,
+
+        /// @brief Rendering window which can be embedded in application.
+        Viewport,
+
+        /// @brief Sizable window with min/max/close buttons.
+        Form,
+
+        /// @brief Non sizable dialog with just close button.
+        Dialog,
+    };
+
     enum class WindowMode
     {
-        /// @brief Window covering desktop exclusively.
+        /// @brief Non-sizable desktop window with close button.
+        /// Initial state of created window.
+        /// Can be rendered on any display.
+        Windowed,
+
+        /// @brief Fullscreen window adjusted to current display size,
+        /// without borders. Defaults to primary system display device.
         Fullscreen,
 
-        /// @brief Desktop window covering whole screen.
+        /// @brief Fullscreen window adjusted to current display size,
+        /// without borders. Defaults to nearest system display device.
         WindowedFullscreen,
-
-        /// @brief Regular desktop window.
-        Windowed,
     };
 
-    /// @brief Specifies window activation method.
     enum class WindowActivation
     {
-        /// @brief Window was activated by normal interaction.
         Activate,
-
-        /// @brief Window was activated by user action.
-        InputActivate,
-
-        /// @brief Window was deactivated
         Deactivate,
+        ClickActivate,
     };
 
-    /// @brief Specifies window action.
-    enum class WindowAction
+    struct WindowSizeLimits final
     {
-        NonClientClick,
-        Maximize,
-        Minimize,
-        Restore,
-        WindowMenu,
+        std::optional<System::Size> Min;
+        std::optional<System::Size> Max;
     };
 
-    /// @brief Specifies window limits
-    struct WindowLimits final
-    {
-        /// @brief Provides minimum size of window.
-        std::optional<System::Size> MinSize;
-
-        /// @brief Provides maximum size of window.
-        std::optional<System::Size> MaxSize;
-    };
-
-    struct WindowDescriptor final
-    {
-        /// @brief Initial window size limits.
-        WindowLimits SizeLimits;
-
-        /// @brief Window title.
-        std::string Title;
-
-        /// @brief Window position.
-        System::Point Position;
-
-        /// @brief Window size.
-        System::Size Size;
-
-        /// @brief Window mode.
-        WindowMode Mode;
-
-        bool SystemBorder : 1;
-        bool CloseButton : 1;
-        bool Regular : 1;
-        bool Taskbar : 1;
-        bool Topmost : 1;
-        bool AcceptInput : 1;
-        bool Resizable : 1;
-        bool MaximizeButton : 1;
-        bool MinimizeButton : 1;
-    };
-
-    class BASE_API Window
+    class Window
     {
     protected:
-        WindowDescriptor m_Descriptor{};
-        float m_DpiScale;
-
-    public:
-        Window() noexcept = default;
-
         virtual ~Window() noexcept = default;
 
-        Window(Window const&) = delete;
-
-        Window& operator=(Window const&) = delete;
-
     public:
-        virtual void Move(System::Point location) noexcept = 0;
+        virtual bool Focus() noexcept = 0;
 
-        virtual void Resize(System::Size size) noexcept = 0;
+        virtual bool BringToFront(bool force) noexcept = 0;
 
-        virtual void Focus() noexcept = 0;
+        virtual bool Show() noexcept = 0;
 
-        virtual void BringToFront(bool force) noexcept = 0;
+        virtual bool Hide() noexcept = 0;
 
-        virtual void Minimize() noexcept = 0;
+        virtual bool Enable() noexcept = 0;
 
-        virtual void Maximize() noexcept = 0;
+        virtual bool Disable() noexcept = 0;
 
-        virtual void Restore() noexcept = 0;
+        virtual bool Minimize() noexcept = 0;
 
-        virtual void Show() noexcept = 0;
+        virtual bool Maximize() noexcept = 0;
 
-        virtual void Hide() noexcept = 0;
-
-        virtual void Enable() noexcept = 0;
-
-        virtual void Disable() noexcept = 0;
-
-        virtual void SetWindowMode(WindowMode value) noexcept = 0;
-
-        WindowMode GetWindowMode() const noexcept
-        {
-            return this->m_Descriptor.Mode;
-        }
-
-        virtual void SetCaption(std::string_view caption) noexcept = 0;
-
-        virtual void SetPlacement(System::Rect placement) noexcept = 0;
-
-        virtual bool IsMaximized() const noexcept = 0;
+        virtual bool Restore() noexcept = 0;
 
         virtual bool IsMinimized() const noexcept = 0;
 
-        virtual bool IsVisible() const noexcept = 0;
-
-        virtual bool IsEnabled() const noexcept = 0;
+        virtual bool IsMaximized() const noexcept = 0;
 
         virtual bool IsFocused() const noexcept = 0;
 
+        virtual bool IsEnabled() const noexcept = 0;
+
+        virtual bool IsVisible() const noexcept = 0;
+
+        virtual bool SetMode(WindowMode value) noexcept = 0;
+
+        virtual WindowMode GetMode() const noexcept = 0;
+
+        virtual WindowType GetType() const noexcept = 0;
+
         virtual void* GetNativeHandle() const noexcept = 0;
 
-        
-        virtual bool GetFullscreenRect(System::Rect& out_rect) noexcept = 0;
+        virtual System::Size GetClientSize() const noexcept = 0;
 
-        virtual System::Size GetViewportSize() const noexcept = 0;
+        virtual bool GetFullscreenPlacement(System::Rect& out_value) noexcept = 0;
 
-        virtual bool IsPointInside(System::Point value) noexcept = 0;
+        virtual bool SetCaption(std::string_view value) noexcept = 0;
 
-    public:
-        WindowDescriptor const& GetDescriptor() const noexcept
-        {
-            return this->m_Descriptor;
-        }
+        virtual bool GetPlacement(System::Rect& out_value) noexcept = 0;
 
-        void SetDpiScale(float scale) noexcept
-        {
-            this->m_DpiScale = scale;
-        }
+        virtual bool SetPlacement(System::Rect value) noexcept = 0;
 
-        float GetDpiScale() const noexcept
-        {
-            return this->m_DpiScale;
-        }
+        virtual bool SetLocation(System::Point value) noexcept = 0;
+
+        virtual bool SetSize(System::Size value) noexcept = 0;
+
+        virtual float GetDpiScale() const noexcept = 0;
+
+        virtual void SetDpiScale(float value) noexcept = 0;
+
+        virtual void SetSizeLimits(WindowSizeLimits const& limits) noexcept = 0;
+
+        virtual WindowSizeLimits const& GetSizeLimits() const noexcept = 0;
     };
-
-    BASE_API Window* MakeWindow(WindowDescriptor const& descriptor) noexcept;
-
-    BASE_API void DestroyWindow(Window* window) noexcept;
 }
 
+
 // =================================================================================================
-// Event handling
+// Event handling types
 
 namespace Graphyte::App
 {
     class BASE_API IEventHandler
     {
     public:
-        virtual ~IEventHandler() noexcept;
+        virtual ~IEventHandler() noexcept = 0;
 
     public:
         virtual void OnKeyChar(CharEvent const& event) noexcept;
         virtual void OnKeyDown(KeyEvent const& event) noexcept;
         virtual void OnKeyUp(KeyEvent const& event) noexcept;
-
         virtual void OnMouseDown(Window& window, MouseButtonEvent const& event) noexcept;
         virtual void OnMouseUp(Window& window, MouseButtonEvent const& event) noexcept;
         virtual void OnMouseDoubleClick(Window& window, MouseButtonEvent const& event) noexcept;
         virtual void OnMouseWheel(MouseWheelEvent const& event) noexcept;
         virtual void OnMouseMove() noexcept;
         virtual void OnMouseMove(MouseMoveEvent const& event) noexcept;
-
         virtual void OnControllerAnalog(GamepadAnalogEvent const& event) noexcept;
         virtual void OnControllerButtonPressed(GamepadButtonEvent const& event) noexcept;
         virtual void OnControllerButtonReleased(GamepadButtonEvent const& event) noexcept;
-
         virtual void OnWindowSizeChanged(Window& window, Float2 size, bool minimized) noexcept;
-        virtual void OnWindowPaint(Window& window) noexcept;
-        virtual void OnWindowSizeLimits(Window& window, WindowLimits& limits) noexcept;
-        virtual void OnWindowSizing(Window& window) noexcept;
         virtual void OnWindowSizingBegin(Window& window) noexcept;
         virtual void OnWindowSizingEnd(Window& window) noexcept;
         virtual void OnWindowDpiChanged(Window& window) noexcept;
         virtual void OnWindowMoved(Window& window, Float2 position) noexcept;
         virtual void OnWindowClose(Window& window) noexcept;
         virtual void OnWindowActivate(Window& window, WindowActivation activation) noexcept;
-        //virtual void OnWindowAction(Window& window, WindowAction action) noexcept;
-
         virtual void OnApplicationActivated(bool active) noexcept;
-        virtual void OnApplicationShutdown(ShutdownReason reason) noexcept;
-
+        virtual void OnSystemPowerShutdown(ShutdownReason reason) noexcept;
         virtual void OnSystemPowerSuspend() noexcept;
         virtual void OnSystemPowerRestore() noexcept;
     };
 }
 
+
+// =================================================================================================
+// External variables
+
 namespace Graphyte::App::Impl
 {
-    extern IEventHandler* g_EventHandler;
+    extern BASE_API bool g_IsRequestingExit;
+    extern BASE_API bool g_IsFirstInstance;
+    extern BASE_API ApplicationDescriptor g_ApplicationDescriptor;
+    extern BASE_API IEventHandler* g_EventHandler;
 }
+
+
+// =================================================================================================
+// Application API
 
 namespace Graphyte::App
 {
-    BASE_API IEventHandler* GetEventHandler() noexcept;
+    inline ApplicationDescriptor const& GetDescriptor() noexcept
+    {
+        return Impl::g_ApplicationDescriptor;
+    }
+
+    inline bool IsRequestingExit() noexcept
+    {
+        return Impl::g_IsRequestingExit;
+    }
+
+    inline bool IsFirstInstance() noexcept
+    {
+        return Impl::g_IsFirstInstance;
+    }
+
+    inline IEventHandler* GetEventHandler() noexcept
+    {
+        return Impl::g_EventHandler;
+    }
 
     BASE_API void SetEventHandler(IEventHandler* eventHandler) noexcept;
+
+    BASE_API void Initialize() noexcept;
+
+    BASE_API void Finalize() noexcept;
+
+    BASE_API void Tick(float deltaTime) noexcept;
+
+    BASE_API void PollInput(float deltaTime) noexcept;
+
+    BASE_API void ProcessMessages(float deltaTime) noexcept;
+
+    BASE_API bool IsForeground() noexcept;
+
+    BASE_API void RequestExit() noexcept;
+
+    BASE_API Window* MakeWindow(WindowType type) noexcept;
+
+    BASE_API void DestroyWindow(Window* window) noexcept;
 }

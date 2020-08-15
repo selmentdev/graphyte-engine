@@ -69,19 +69,6 @@ namespace Graphyte::App
         (void)size;
         (void)minimized;
     }
-    void IEventHandler::OnWindowPaint(Graphyte::App::Window& window) noexcept
-    {
-        (void)window;
-    }
-    void IEventHandler::OnWindowSizeLimits(Graphyte::App::Window& window, Graphyte::App::WindowLimits& limits) noexcept
-    {
-        (void)window;
-        (void)limits;
-    }
-    void IEventHandler::OnWindowSizing(Graphyte::App::Window& window) noexcept
-    {
-        (void)window;
-    }
     void IEventHandler::OnWindowSizingBegin(Graphyte::App::Window& window) noexcept
     {
         (void)window;
@@ -113,7 +100,7 @@ namespace Graphyte::App
     {
         (void)active;
     }
-    void IEventHandler::OnApplicationShutdown(Graphyte::App::ShutdownReason reason) noexcept
+    void IEventHandler::OnSystemPowerShutdown(Graphyte::App::ShutdownReason reason) noexcept
     {
         (void)reason;
     }
@@ -128,11 +115,6 @@ namespace Graphyte::App
 
 namespace Graphyte::App
 {
-    IEventHandler* GetEventHandler() noexcept
-    {
-        return Impl::g_EventHandler;
-    }
-
     void SetEventHandler(IEventHandler* eventHandler) noexcept
     {
         Impl::g_EventHandler = eventHandler;

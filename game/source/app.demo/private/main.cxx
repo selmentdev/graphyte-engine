@@ -34,149 +34,44 @@ public:
     Graphyte::App::Window* m_Window;
 
 public:
-    virtual void OnKeyChar(Graphyte::App::CharEvent const& event) noexcept override
-    {
-        (void)event;
-    }
-
     virtual void OnKeyDown(Graphyte::App::KeyEvent const& event) noexcept override
     {
         if (event.Key == Graphyte::App::KeyCode::F1)
         {
-            this->m_Window->SetWindowMode(Graphyte::App::WindowMode::Fullscreen);
+            this->m_Window->SetMode(Graphyte::App::WindowMode::Fullscreen);
         }
         else if (event.Key == Graphyte::App::KeyCode::F2)
         {
-            this->m_Window->SetWindowMode(Graphyte::App::WindowMode::Windowed);
+            this->m_Window->SetMode(Graphyte::App::WindowMode::Windowed);
         }
         else if (event.Key == Graphyte::App::KeyCode::F3)
         {
-            this->m_Window->SetWindowMode(Graphyte::App::WindowMode::WindowedFullscreen);
+            this->m_Window->SetMode(Graphyte::App::WindowMode::WindowedFullscreen);
         }
-
-        (void)event;
-    }
-    virtual void OnKeyUp(Graphyte::App::KeyEvent const& event) noexcept override
-    {
-        (void)event;
-    }
-
-    virtual void OnMouseDown(Graphyte::App::Window& window, Graphyte::App::MouseButtonEvent const& event) noexcept override
-    {
-        (void)window;
-        (void)event;
-    }
-    virtual void OnMouseUp(Graphyte::App::Window& window, Graphyte::App::MouseButtonEvent const& event) noexcept override
-    {
-        (void)window;
-        (void)event;
-    }
-    virtual void OnMouseDoubleClick(Graphyte::App::Window& window, Graphyte::App::MouseButtonEvent const& event) noexcept override
-    {
-        (void)window;
-        (void)event;
-    }
-    virtual void OnMouseWheel(Graphyte::App::MouseWheelEvent const& event) noexcept override
-    {
-        (void)event;
-    }
-    virtual void OnMouseMove() noexcept override
-    {
-    }
-    virtual void OnMouseMove(Graphyte::App::MouseMoveEvent const& event) noexcept override
-    {
-        (void)event;
-    }
-
-    virtual void OnControllerAnalog(Graphyte::App::GamepadAnalogEvent const& event) noexcept override
-    {
-        (void)event;
     }
     virtual void OnControllerButtonPressed(Graphyte::App::GamepadButtonEvent const& event) noexcept override
     {
         if (event.Key == Graphyte::App::GamepadKey::DPadLeft)
         {
-            this->m_Window->SetWindowMode(Graphyte::App::WindowMode::Fullscreen);
+            this->m_Window->SetMode(Graphyte::App::WindowMode::Fullscreen);
         }
         else if (event.Key == Graphyte::App::GamepadKey::DPadUp)
         {
-            this->m_Window->SetWindowMode(Graphyte::App::WindowMode::Windowed);
+            this->m_Window->SetMode(Graphyte::App::WindowMode::Windowed);
         }
         else if (event.Key == Graphyte::App::GamepadKey::DPadRight)
         {
-            this->m_Window->SetWindowMode(Graphyte::App::WindowMode::WindowedFullscreen);
+            this->m_Window->SetMode(Graphyte::App::WindowMode::WindowedFullscreen);
         }
         else if (event.Key == Graphyte::App::GamepadKey::DPadDown)
         {
-            Graphyte::App::RequestExit(true);
+            Graphyte::App::RequestExit();
         }
-    }
-    virtual void OnControllerButtonReleased(Graphyte::App::GamepadButtonEvent const& event) noexcept override
-    {
-        (void)event;
-    }
-
-    virtual void OnWindowSizeChanged(Graphyte::App::Window& window, Graphyte::Float2 size, bool minimized) noexcept override
-    {
-        (void)window;
-        (void)size;
-        (void)minimized;
-    }
-    virtual void OnWindowPaint(Graphyte::App::Window& window) noexcept override
-    {
-        (void)window;
-    }
-    virtual void OnWindowSizeLimits(Graphyte::App::Window& window, Graphyte::App::WindowLimits& limits) noexcept override
-    {
-        (void)window;
-        (void)limits;
-    }
-    virtual void OnWindowSizing(Graphyte::App::Window& window) noexcept override
-    {
-        (void)window;
-    }
-    virtual void OnWindowSizingBegin(Graphyte::App::Window& window) noexcept override
-    {
-        (void)window;
-    }
-    virtual void OnWindowSizingEnd(Graphyte::App::Window& window) noexcept override
-    {
-        (void)window;
-    }
-    virtual void OnWindowDpiChanged(Graphyte::App::Window& window) noexcept override
-    {
-        (void)window;
-    }
-    virtual void OnWindowMoved(Graphyte::App::Window& window, Graphyte::Float2 position) noexcept override
-    {
-        (void)window;
-        (void)position;
     }
     virtual void OnWindowClose(Graphyte::App::Window& window) noexcept override
     {
         (void)window;
-        Graphyte::App::RequestExit(false);
-    }
-    virtual void OnWindowActivate(Graphyte::App::Window& window, Graphyte::App::WindowActivation activation) noexcept override
-    {
-        (void)window;
-        (void)activation;
-    }
-
-    virtual void OnApplicationActivated(bool active) noexcept override
-    {
-        (void)active;
-    }
-    virtual void OnApplicationShutdown(Graphyte::App::ShutdownReason reason) noexcept override
-    {
-        (void)reason;
-    }
-
-    virtual void OnSystemPowerSuspend() noexcept override
-    {
-    }
-    virtual void OnSystemPowerRestore() noexcept override
-    {
+        Graphyte::App::RequestExit();
     }
 };
 
@@ -190,29 +85,16 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     EventHandler e{};
     Graphyte::App::SetEventHandler(&e);
 
-    auto window = Graphyte::App::MakeWindow(Graphyte::App::WindowDescriptor{
-        .SizeLimits = {},
-        .Title      = "Hello",
-        .Position   = {
-            0,
-            0,
-        },
-        .Size = {
-            1920,
-            1080,
-        },
-        //.Mode         = Graphyte::App::WindowMode::Windowed,
-        .Mode         = Graphyte::App::WindowMode::Windowed,
-        .SystemBorder = true,
-        .CloseButton  = true,
-        .Regular      = true,
-        .Resizable    = true,
-    });
+    auto window = Graphyte::App::MakeWindow(Graphyte::App::WindowType::Game);
 
     e.m_Window = window;
 
-    window->Show();
-    window->SetWindowMode(Graphyte::App::WindowMode::WindowedFullscreen);
+    window->SetMode(Graphyte::App::WindowMode::WindowedFullscreen);
+    window->SetCaption("Game");
+    window->SetSizeLimits(Graphyte::App::WindowSizeLimits{
+        .Min = std::nullopt,
+        .Max = Graphyte::System::Size{ 1024, 768 },
+    });
 
     while (!Graphyte::App::IsRequestingExit())
     {
@@ -221,7 +103,6 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     }
 
     Graphyte::App::DestroyWindow(window);
-
 
     return 0;
 }
