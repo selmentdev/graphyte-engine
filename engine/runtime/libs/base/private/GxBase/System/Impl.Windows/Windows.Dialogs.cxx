@@ -8,7 +8,7 @@ namespace Graphyte::System::Impl
 {
     HRESULT SetDialogFilters(
         IFileDialog& dialog,
-        notstd::span<FileDialogFilter> filters) noexcept
+        std::span<FileDialogFilter> filters) noexcept
     {
         std::vector<std::pair<std::wstring, std::wstring>> wfilters{};
         wfilters.reserve(filters.size());
@@ -114,7 +114,7 @@ namespace Graphyte::System
 {
     BASE_API Status OpenFile(
         std::string& out_path,
-        notstd::span<FileDialogFilter> filters,
+        std::span<FileDialogFilter> filters,
         std::string_view title) noexcept
     {
         Microsoft::WRL::ComPtr<IFileOpenDialog> dialog{};
@@ -150,7 +150,7 @@ namespace Graphyte::System
 
     BASE_API Status OpenFile(
         std::vector<std::string>& out_paths,
-        notstd::span<FileDialogFilter> filters,
+        std::span<FileDialogFilter> filters,
         std::string_view title) noexcept
     {
         Microsoft::WRL::ComPtr<IFileOpenDialog> dialog{};
@@ -195,7 +195,7 @@ namespace Graphyte::System
 
     BASE_API Status SaveFile(
         std::string& out_path,
-        notstd::span<FileDialogFilter> filters,
+        std::span<FileDialogFilter> filters,
         std::string_view title) noexcept
     {
         Microsoft::WRL::ComPtr<IFileSaveDialog> dialog{};

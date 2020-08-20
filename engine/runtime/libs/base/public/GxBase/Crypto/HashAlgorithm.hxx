@@ -1,6 +1,5 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
-#include <GxBase/Span.hxx>
 
 /// @todo Scrap this implementation. We need specific algorithms available as always compiled API.
 namespace Graphyte::Crypto
@@ -46,7 +45,7 @@ namespace Graphyte::Crypto
         BASE_API static bool ComputeHash(
             HashType hashType,
             std::vector<std::byte>& output,
-            notstd::span<const std::byte> input) noexcept;
+            std::span<const std::byte> input) noexcept;
 
     public:
         /// @brief Initializes hashing.
@@ -60,7 +59,7 @@ namespace Graphyte::Crypto
         ///
         /// @return \c true when successful, \c false otherwise.
         virtual bool Update(
-            notstd::span<const std::byte> data) noexcept = 0;
+            std::span<const std::byte> data) noexcept = 0;
 
         /// @brief Finishes hashing and returns hash.
         ///

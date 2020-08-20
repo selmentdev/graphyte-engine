@@ -3,7 +3,7 @@
 
 namespace Graphyte::CommandLine::Impl
 {
-    static notstd::span<const char*> GCommandLineArgs;
+    static std::span<const char* const> g_CommandLineArgs;
 
     auto SplitCommandLineNameValue(
         std::string_view value) noexcept -> std::pair<std::string_view, std::optional<std::string_view>>
@@ -27,21 +27,21 @@ namespace Graphyte::CommandLine
     extern BASE_API void Initialize(size_t argc, const char** argv) noexcept
     {
         GX_ASSERT(argv != nullptr);
-        GX_ASSERT(Impl::GCommandLineArgs.empty());
+        GX_ASSERT(Impl::g_CommandLineArgs.empty());
 
-        Impl::GCommandLineArgs = notstd::span<const char*>(argv, argc);
+        Impl::g_CommandLineArgs = std::span<const char* const>(argv, argc);
     }
 
     extern BASE_API void Finalize() noexcept
     {
-        GX_ASSERT(!Impl::GCommandLineArgs.empty());
+        GX_ASSERT(!Impl::g_CommandLineArgs.empty());
 
-        Impl::GCommandLineArgs = {};
+        Impl::g_CommandLineArgs = {};
     }
 
     extern BASE_API std::optional<std::string_view> Get(std::string_view name) noexcept
     {
-        for (auto const item : Impl::GCommandLineArgs)
+        for (auto const item : Impl::g_CommandLineArgs)
         {
             std::string_view line = item;
 
@@ -56,6 +56,6 @@ namespace Graphyte::CommandLine
 
     extern BASE_API CommandLine::Enumerator GetEnumerator() noexcept
     {
-        return Enumerator{ Impl::GCommandLineArgs };
+        return Enumerator{ Impl::g_CommandLineArgs };
     }
 }

@@ -1,7 +1,5 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
-#include <GxBase/Span.hxx>
-#include <fmt/format.h>
 
 namespace Graphyte
 {
@@ -177,5 +175,5 @@ namespace Graphyte
 
     BASE_API bool HexStringFromByteStream(
         std::string& output,
-        notstd::span<const std::byte> input) noexcept;
+        std::span<const std::byte> input) noexcept;
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
-#include <GxBase/Span.hxx>
 
 namespace Graphyte::System
 {

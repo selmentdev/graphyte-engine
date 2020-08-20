@@ -174,7 +174,7 @@ namespace Graphyte::Storage
         }
 
         virtual Status Read(
-            notstd::span<std::byte> buffer,
+            std::span<std::byte> buffer,
             size_t& processed) noexcept final override
         {
             GX_ASSERT(this->IsValidHandle());
@@ -230,7 +230,7 @@ namespace Graphyte::Storage
 
                     processed += to_copy;
 
-                    buffer.remove_prefix(to_copy);
+                    buffer = buffer.subspan(to_copy);
 
                     GX_ASSERT(m_Position <= m_Size);
 
@@ -260,7 +260,7 @@ namespace Graphyte::Storage
         }
 
         virtual Status Write(
-            [[maybe_unused]] notstd::span<const std::byte> buffer,
+            [[maybe_unused]] std::span<const std::byte> buffer,
             [[maybe_unused]] size_t& processed) noexcept final override
         {
             GX_ASSERT(this->IsValidHandle());

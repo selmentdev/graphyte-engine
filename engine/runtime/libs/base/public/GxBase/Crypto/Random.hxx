@@ -1,7 +1,6 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Status.hxx>
-#include <GxBase/Span.hxx>
 
 namespace Graphyte::Crypto
 {
@@ -11,5 +10,5 @@ namespace Graphyte::Crypto
     ///
     /// @return The status code.
     BASE_API Status GetRandomBytes(
-        notstd::span<std::byte> buffer) noexcept;
+        std::span<std::byte> buffer) noexcept;
 }

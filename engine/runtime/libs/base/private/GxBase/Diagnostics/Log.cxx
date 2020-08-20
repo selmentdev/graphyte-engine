@@ -1,5 +1,4 @@
 #include <GxBase/Diagnostics.hxx>
-#include <GxBase/Span.hxx>
 #include <GxBase/App.hxx>
 
 #include "Diagnostics.Impl.hxx"

@@ -54,7 +54,7 @@ namespace Graphyte
     }
 
     ConsoleCommandResult ConsoleCommand::Execute(
-        notstd::span<std::string_view> params) noexcept
+        std::span<std::string_view> params) noexcept
     {
         return this->m_Action(params);
     }
@@ -135,14 +135,14 @@ namespace Graphyte
         std::string_view command,
         std::string_view params) noexcept
     {
-        notstd::span<std::string_view> params_view{ &params, 1 };
+        std::span<std::string_view> params_view{ &params, 1 };
 
         return Execute(command, params_view);
     }
 
     ConsoleCommandResult Console::Execute(
         std::string_view command,
-        notstd::span<std::string_view> params) noexcept
+        std::span<std::string_view> params) noexcept
     {
         if (auto item = FindCommand(command); item != nullptr)
         {

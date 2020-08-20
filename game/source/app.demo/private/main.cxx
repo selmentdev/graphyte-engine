@@ -27,6 +27,7 @@ Graphyte::App::ApplicationDescriptor GraphyteApp{
 #include <GxBase/Maths/Color.hxx>
 #include <GxBase/App.hxx>
 #include <GxBase/Flags.hxx>
+#include <GxBase/Stopwatch.hxx>
 
 class EventHandler : public Graphyte::App::IEventHandler
 {
@@ -96,10 +97,16 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
         .Max = Graphyte::System::Size{ 1024, 768 },
     });
 
+    Graphyte::Diagnostics::Stopwatch sw{};
+    sw.Start();
+
     while (!Graphyte::App::IsRequestingExit())
     {
         Graphyte::Threading::SleepThread(16);
         Graphyte::App::Tick(0.016f);
+        double const elapsed = sw.GetElapsedTime<double>();
+        window->SetCaption(fmt::format("Frame: {:.18}", elapsed));
+        sw.Restart();
     }
 
     Graphyte::App::DestroyWindow(window);

@@ -44,7 +44,7 @@ TEST_CASE("File stream reading and writing")
                 std::byte{ 41 }, std::byte{ 42 }, std::byte{ 43 }, std::byte{ 44 }, std::byte{ 45 }, std::byte{ 46 }, std::byte{ 47 }, std::byte{ 48 },
                 // clang-format on
             } };
-            auto original_buffer_view = notstd::as_bytes(notstd::span<const std::byte>{ original_buffer });
+            auto original_buffer_view = std::as_bytes(std::span<const std::byte>{ original_buffer });
 
             SECTION("Small files check")
             {
@@ -84,7 +84,7 @@ TEST_CASE("File stream reading and writing")
                     REQUIRE(file->GetSize() == 32);
 
                     std::array<std::byte, 32> read_buffer{};
-                    auto read_buffer_view = notstd::as_writable_bytes(notstd::span<std::byte>{ read_buffer });
+                    auto read_buffer_view = std::as_writable_bytes(std::span<std::byte>{ read_buffer });
 
                     //
                     // Read data first time.
@@ -123,7 +123,7 @@ TEST_CASE("File stream reading and writing")
                         REQUIRE(file->GetPosition() == 16);
 
                         std::array<std::byte, 32> partial_buffer{};
-                        auto partial_buffer_view = notstd::as_writable_bytes(notstd::span<std::byte>{ partial_buffer });
+                        auto partial_buffer_view = std::as_writable_bytes(std::span<std::byte>{ partial_buffer });
 
 
                         //
@@ -172,8 +172,7 @@ TEST_CASE("File stream reading and writing")
                     REQUIRE(file->GetPosition() == static_cast<int64_t>(Count * original_buffer_view.size()));
                     REQUIRE(file->GetPosition() == file->GetSize());
 
-                    auto copy = original_buffer_view;
-                    copy.remove_suffix(16);
+                    auto copy = original_buffer_view.first(original_buffer_view.size() - 16);
 
                     size_t processed{};
                     REQUIRE(file->Write(copy, processed) == Status::Success);
@@ -195,7 +194,7 @@ TEST_CASE("File stream reading and writing")
                     for (size_t i = 0; i < Count; ++i)
                     {
                         std::array<std::byte, 32> read_buffer{};
-                        auto read_buffer_view = notstd::as_writable_bytes(notstd::span<std::byte>{ read_buffer });
+                        auto read_buffer_view = std::as_writable_bytes(std::span<std::byte>{ read_buffer });
 
                         size_t processed{};
                         REQUIRE(file->Read(read_buffer_view, processed) == Status::Success);
@@ -208,7 +207,7 @@ TEST_CASE("File stream reading and writing")
                     }
 
                     std::array<std::byte, 32> read_buffer{};
-                    auto partial_buffer_view = notstd::as_writable_bytes(notstd::span<std::byte>{ read_buffer });
+                    auto partial_buffer_view = std::as_writable_bytes(std::span<std::byte>{ read_buffer });
 
                     size_t processed{};
                     REQUIRE(file->Read(partial_buffer_view, processed) == Status::EndOfStream);
@@ -253,7 +252,7 @@ TEST_CASE("Reading large files byte by byte; checking file consistency")
         for (uint64_t i = 0; i < Count; ++i)
         {
             auto buffer = static_cast<std::byte>(i);
-            notstd::span<const std::byte> buffer_view{ &buffer, 1 };
+            std::span<const std::byte> buffer_view{ &buffer, 1 };
 
             size_t processed{};
             REQUIRE(file->Write(buffer_view, processed) == Status::Success);
@@ -277,7 +276,7 @@ TEST_CASE("Reading large files byte by byte; checking file consistency")
         REQUIRE(Storage::OpenRead(file, temp_file) == Status::Success);
 
         std::array<std::byte, 187> buffer{};
-        notstd::span<std::byte> buffer_view{ buffer };
+        std::span<std::byte> buffer_view{ buffer };
 
         auto remainder = Count % buffer.size();
 

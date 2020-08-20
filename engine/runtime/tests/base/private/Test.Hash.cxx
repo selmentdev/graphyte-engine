@@ -9,7 +9,7 @@ TEST_CASE("Crc hashes")
         { 0, 1, 2, 3, 4, 5, 6, 7 }
     };
 
-    auto const view = notstd::as_bytes(notstd::span<std::uint8_t>{ buffer });
+    auto const view = std::as_bytes(std::span<std::uint8_t>{ buffer });
 
     SECTION("Crc32")
     {
@@ -123,7 +123,7 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA1,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{ sv })));
+                std::as_bytes(std::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
@@ -153,7 +153,7 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA1,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{ sv })));
+                std::as_bytes(std::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
@@ -186,7 +186,7 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA1,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{ sv })));
+                std::as_bytes(std::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
@@ -222,7 +222,7 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA256,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{ sv })));
+                std::as_bytes(std::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
@@ -255,7 +255,7 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA256,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{ sv })));
+                std::as_bytes(std::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
@@ -292,7 +292,7 @@ TEST_CASE("Hashing functions")
                 REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                     Graphyte::Crypto::HashType::SHA256,
                     hash,
-                    notstd::as_bytes(notstd::span<const char>{ sv })));
+                    std::as_bytes(std::span<const char>{ sv })));
 
                 REQUIRE(std::equal(
                     std::begin(hash),
@@ -362,7 +362,7 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA512,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{ sv })));
+                std::as_bytes(std::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
@@ -403,7 +403,7 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA512,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{ sv })));
+                std::as_bytes(std::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),
@@ -447,7 +447,7 @@ TEST_CASE("Hashing functions")
             REQUIRE(Graphyte::Crypto::HashAlgorithm::ComputeHash(
                 Graphyte::Crypto::HashType::SHA512,
                 hash,
-                notstd::as_bytes(notstd::span<const char>{ sv })));
+                std::as_bytes(std::span<const char>{ sv })));
 
             REQUIRE(std::equal(
                 std::begin(hash),

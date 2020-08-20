@@ -36,9 +36,18 @@ namespace Graphyte::System
 
     BASE_API uint64_t GetTimestampResolution() noexcept
     {
-        LARGE_INTEGER li{};
-        QueryPerformanceFrequency(&li);
-        return System::TypeConverter<LARGE_INTEGER>::ConvertUInt64(li);
+        static std::atomic<uint64_t> g_TimestampResolutionFrequency{};
+
+        uint64_t const value = g_TimestampResolutionFrequency.load(std::memory_order_relaxed);
+
+        if (value == 0)
+        {
+            LARGE_INTEGER li{};
+            QueryPerformanceFrequency(&li);
+            g_TimestampResolutionFrequency.store(static_cast<uint64_t>(li.QuadPart), std::memory_order_relaxed);
+        }
+
+        return value;
     }
 
     BASE_API uint64_t GetTimestamp() noexcept

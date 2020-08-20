@@ -19,7 +19,7 @@ TEST_CASE("Performance Counter Frequency", "[.][performance]")
     }
     watch.Stop();
 
-    auto elapsed = watch.GetElapsedTime();
+    double const elapsed = watch.GetElapsedTime<double>();
 
     REQUIRE(elapsed == Approx(seconds).margin(0.1));
 }

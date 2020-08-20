@@ -239,7 +239,7 @@ TEST_CASE("Random Generator")
 
         std::array<uint64_t, 8> buffer{};
 
-        Generate(state, notstd::as_writable_bytes(notstd::span<uint64_t>{ buffer }));
+        Generate(state, std::as_writable_bytes(std::span<uint64_t>{ buffer }));
 
         CHECK(buffer[0] == 0x99EC5F36CB75F2B4u);
         CHECK(buffer[1] == 0xBF6E1F784956452Au);

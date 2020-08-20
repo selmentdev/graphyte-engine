@@ -37,10 +37,11 @@ namespace Graphyte::Diagnostics
             return this->m_Elapsed;
         }
 
-        double GetElapsedTime() const noexcept
+        template <typename T>
+        T GetElapsedTime() const noexcept
+            requires(std::is_floating_point_v<T>)
         {
-            return static_cast<double>(this->m_Elapsed)
-                   / static_cast<double>(m_Resolution);
+            return static_cast<T>(this->m_Elapsed) / static_cast<T>(m_Resolution);
         }
 
     public:

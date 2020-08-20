@@ -2,17 +2,6 @@
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Status.hxx>
 
-// =================================================================================================
-//
-// fwd. decl.
-//
-
-namespace notstd
-{
-    template <typename T>
-    class span;
-}
-
 
 // =================================================================================================
 //
@@ -350,7 +339,7 @@ namespace Graphyte::Diagnostics
     ///
     /// @return The string representation of stack trace.
     BASE_API std::string ToString(
-        notstd::span<const StackFrame> frames,
+        std::span<const StackFrame> frames,
         StackFrameFormat format = StackFrameFormat::Standard) noexcept;
 
 

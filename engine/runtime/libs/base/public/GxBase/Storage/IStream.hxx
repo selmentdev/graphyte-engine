@@ -1,7 +1,6 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Status.hxx>
-#include <GxBase/Span.hxx>
 
 namespace Graphyte::Storage
 {
@@ -35,7 +34,7 @@ namespace Graphyte::Storage
         ///
         /// @return The status code.
         virtual Status Read(
-            notstd::span<std::byte> buffer,
+            std::span<std::byte> buffer,
             size_t& processed) noexcept = 0;
 
         /// @brief Writes data from buffer.
@@ -45,7 +44,7 @@ namespace Graphyte::Storage
         ///
         /// @return The status code.
         virtual Status Write(
-            notstd::span<const std::byte> buffer,
+            std::span<const std::byte> buffer,
             size_t& processed) noexcept = 0;
 
         /// @brief Gets size of stream.

@@ -3,7 +3,7 @@
 
 namespace Graphyte::Storage
 {
-    // TODO: This can use notstd::span as buffer reference to point at any memory range
+    // TODO: This can use std::span as buffer reference to point at any memory range
     class BASE_API ArchiveMemoryReader final : public Archive
     {
     private:

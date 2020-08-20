@@ -34,7 +34,7 @@ TEST_CASE("gen-1d.dds")
         0xc8, 0x33, 0x6f, 0x2c
     };
 
-    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    auto const source_view = std::as_bytes(std::span<const unsigned char>{ source });
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
@@ -121,7 +121,7 @@ TEST_CASE("gen-1d-array.dds")
         0x1d, 0xa5, 0xf5, 0x89
     };
 
-    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    auto const source_view = std::as_bytes(std::span<const unsigned char>{ source });
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
@@ -311,7 +311,7 @@ TEST_CASE("gen-2d.dds")
         0x78, 0xec, 0xeb, 0x8b, 0x00, 0xc4, 0x51, 0xb7, 0xbf, 0xba, 0x4c, 0xcd
     };
 
-    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    auto const source_view = std::as_bytes(std::span<const unsigned char>{ source });
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
@@ -394,7 +394,7 @@ TEST_CASE("gen-2d-array.dds")
         0xc7, 0xff, 0x14, 0x41, 0xd1, 0xa6, 0x2e, 0x07
     };
 
-    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    auto const source_view = std::as_bytes(std::span<const unsigned char>{ source });
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
@@ -523,7 +523,7 @@ TEST_CASE("gen-2d-cube.dds")
         0x3b, 0x72, 0xaa, 0x97
     };
 
-    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    auto const source_view = std::as_bytes(std::span<const unsigned char>{ source });
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
@@ -810,7 +810,7 @@ TEST_CASE("gen-2d-cube-array.dds")
         0x50, 0x3e, 0xf0, 0x8e
     };
 
-    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    auto const source_view = std::as_bytes(std::span<const unsigned char>{ source });
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
@@ -1308,7 +1308,7 @@ TEST_CASE("gen-3d.dds")
         // clang-format on
     };
 
-    auto const source_view = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    auto const source_view = std::as_bytes(std::span<const unsigned char>{ source });
     std::vector<std::byte> contents(std::begin(source_view), std::end(source_view));
 
     ArchiveMemoryReader reader{ contents };
@@ -1448,7 +1448,7 @@ TEST_CASE("image generation")
         // clang-format on
     };
 
-    auto const source_view_bytes = notstd::as_bytes(notstd::span<const unsigned char>{ source });
+    auto const source_view_bytes = std::as_bytes(std::span<const unsigned char>{ source });
 
     REQUIRE(std::equal(
         std::begin(buffer),

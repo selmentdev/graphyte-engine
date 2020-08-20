@@ -79,7 +79,7 @@ namespace Graphyte::Crypto
         }
 
         virtual bool Update(
-            notstd::span<const std::byte> data) noexcept override
+            std::span<const std::byte> data) noexcept override
         {
             GX_ASSERT(m_Info != nullptr);
 
@@ -150,7 +150,7 @@ namespace Graphyte::Crypto
     bool HashAlgorithm::ComputeHash(
         [[maybe_unused]] HashType hashType,
         [[maybe_unused]] std::vector<std::byte>& output,
-        [[maybe_unused]] notstd::span<const std::byte> input) noexcept
+        [[maybe_unused]] std::span<const std::byte> input) noexcept
     {
 #if GRAPHYTE_PLATFORM_UWP
 

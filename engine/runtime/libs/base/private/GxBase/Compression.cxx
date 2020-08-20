@@ -331,7 +331,7 @@ namespace Graphyte::Compression
     bool CompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        notstd::span<const std::byte> input) noexcept
+        std::span<const std::byte> input) noexcept
     {
         if (input.empty())
         {
@@ -365,7 +365,7 @@ namespace Graphyte::Compression
     bool DecompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        notstd::span<const std::byte> input) noexcept
+        std::span<const std::byte> input) noexcept
     {
         if (input.empty())
         {

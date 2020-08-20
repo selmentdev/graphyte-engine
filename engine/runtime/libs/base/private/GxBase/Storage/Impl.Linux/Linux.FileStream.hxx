@@ -20,7 +20,7 @@ namespace Graphyte::Storage
             return m_Handle != -1;
         }
 
-        int64_t ReadImpl(notstd::span<std::byte> buffer) noexcept;
+        int64_t ReadImpl(std::span<std::byte> buffer) noexcept;
 
     public:
         LinuxFileStream(int32_t handle, const char* name, bool writing) noexcept;
@@ -30,11 +30,11 @@ namespace Graphyte::Storage
         virtual Status Flush() noexcept override;
 
         virtual Status Read(
-            notstd::span<std::byte> buffer,
+            std::span<std::byte> buffer,
             size_t& processed) noexcept override;
 
         virtual Status Write(
-            notstd::span<const std::byte> buffer,
+            std::span<const std::byte> buffer,
             size_t& processed) noexcept override;
 
         virtual int64_t GetSize() noexcept override;

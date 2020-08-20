@@ -1,7 +1,6 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Flags.hxx>
-#include <GxBase/Span.hxx>
 #include <GxBase/IntrusiveList.hxx>
 #include <GxBase/Delegate.hxx>
 #include <GxBase/Converter.hxx>
@@ -70,7 +69,7 @@ namespace Graphyte
         IntrusiveListNode<IConsoleCommand> ListEntry;
 
         virtual ConsoleCommandResult Execute(
-            notstd::span<std::string_view> params) noexcept = 0;
+            std::span<std::string_view> params) noexcept = 0;
     };
 }
 
@@ -198,7 +197,7 @@ namespace Graphyte
     ///
     /// @return The command execution status.
     using ConsoleCommandDelegate = std::function<ConsoleCommandResult(
-        notstd::span<std::string_view> params)>;
+        std::span<std::string_view> params)>;
 
     class BASE_API ConsoleCommand final : public IConsoleCommand
     {
@@ -238,7 +237,7 @@ namespace Graphyte
         }
 
         virtual ConsoleCommandResult Execute(
-            notstd::span<std::string_view> params) noexcept final override;
+            std::span<std::string_view> params) noexcept final override;
     };
 }
 
@@ -286,7 +285,7 @@ namespace Graphyte
 
         BASE_API static ConsoleCommandResult Execute(
             std::string_view command,
-            notstd::span<std::string_view> params) noexcept;
+            std::span<std::string_view> params) noexcept;
 
     public:
         /// @brief Enumerates all registered variables.

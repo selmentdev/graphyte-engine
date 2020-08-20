@@ -46,7 +46,7 @@ namespace Graphyte::Storage
     }
 
     Status LinuxFileStream::Read(
-        notstd::span<std::byte> buffer,
+        std::span<std::byte> buffer,
         size_t& processed) noexcept
     {
         GX_ASSERT(IsValid());
@@ -92,7 +92,7 @@ namespace Graphyte::Storage
     }
 
     Status LinuxFileStream::Write(
-        notstd::span<const std::byte> buffer,
+        std::span<const std::byte> buffer,
         size_t& processed) noexcept
     {
         GX_ASSERT(IsValid());

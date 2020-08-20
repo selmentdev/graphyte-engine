@@ -1,6 +1,5 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
-#include <GxBase/Span.hxx>
 
 namespace Graphyte::Compression
 {
@@ -61,12 +60,12 @@ namespace Graphyte::Compression
     extern BASE_API bool CompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        notstd::span<const std::byte> input) noexcept;
+        std::span<const std::byte> input) noexcept;
 
     extern BASE_API bool DecompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
-        notstd::span<const std::byte> input) noexcept;
+        std::span<const std::byte> input) noexcept;
 
     extern BASE_API bool CompressString(
         CompressionMethod method,
@@ -93,7 +92,7 @@ namespace Graphyte::Compression
         return Compression::CompressBlock(
             method,
             output,
-            notstd::span<const std::byte>(input));
+            std::span<const std::byte>(input));
     }
 
     /// @brief Decompresses byte vector.
@@ -112,6 +111,6 @@ namespace Graphyte::Compression
         return Compression::DecompressBlock(
             method,
             output,
-            notstd::span<const std::byte>(input));
+            std::span<const std::byte>(input));
     }
 }

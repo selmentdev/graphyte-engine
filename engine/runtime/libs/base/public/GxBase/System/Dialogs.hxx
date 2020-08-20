@@ -1,6 +1,5 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
-#include <GxBase/Span.hxx>
 #include <GxBase/Status.hxx>
 
 namespace Graphyte::System
@@ -13,16 +12,16 @@ namespace Graphyte::System
 
     BASE_API Status OpenFile(
         std::string& out_path,
-        notstd::span<FileDialogFilter> filters = {},
+        std::span<FileDialogFilter> filters = {},
         std::string_view title                 = {}) noexcept;
 
     BASE_API Status OpenFile(
         std::vector<std::string>& out_paths,
-        notstd::span<FileDialogFilter> filters = {},
+        std::span<FileDialogFilter> filters = {},
         std::string_view title                 = {}) noexcept;
 
     BASE_API Status SaveFile(
         std::string& out_path,
-        notstd::span<FileDialogFilter> filters = {},
+        std::span<FileDialogFilter> filters = {},
         std::string_view title                 = {}) noexcept;
 }

@@ -11,7 +11,7 @@ namespace Graphyte::System
 {
     BASE_API Status OpenFile(
         std::string& out_path,
-        notstd::span<FileDialogFilter> filters,
+        std::span<FileDialogFilter> filters,
         std::string_view title) noexcept
     {
         (void)out_path;
@@ -22,7 +22,7 @@ namespace Graphyte::System
 
     BASE_API Status OpenFile(
         std::vector<std::string>& out_paths,
-        notstd::span<FileDialogFilter> filters,
+        std::span<FileDialogFilter> filters,
         std::string_view title) noexcept
     {
         //winrt::Windows::Storage::Pickers::FileOpenPicker picker{};
@@ -34,7 +34,6 @@ namespace Graphyte::System
         //    out_paths.emplace_back(Graphyte::System::Impl::NarrowString(item.Path().c_str()));
         //}
 
-
         (void)out_paths;
         (void)filters;
         (void)title;
@@ -43,7 +42,7 @@ namespace Graphyte::System
 
     BASE_API Status SaveFile(
         std::string& out_path,
-        notstd::span<FileDialogFilter> filters,
+        std::span<FileDialogFilter> filters,
         std::string_view title) noexcept
     {
         (void)out_path;

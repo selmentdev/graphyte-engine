@@ -1,8 +1,6 @@
 #include <GxBase/System.hxx>
 #include "../Platform.impl.hxx"
 
-#include <GxBase/Span.hxx>
-
 #include <SDL2/SDL.h>
 
 namespace Graphyte::System::Impl
@@ -65,7 +63,7 @@ namespace Graphyte::System::Impl
         }
     };
 
-    static notstd::span<const SDL_MessageBoxButtonData> GetMessageButtons(
+    static std::span<const SDL_MessageBoxButtonData> GetMessageButtons(
         MessageDialogType type) noexcept
     {
         switch (type)

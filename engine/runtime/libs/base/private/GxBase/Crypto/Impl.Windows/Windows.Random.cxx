@@ -4,7 +4,7 @@
 
 namespace Graphyte::Crypto
 {
-    BASE_API Status GetRandomBytes(notstd::span<std::byte> buffer) noexcept
+    BASE_API Status GetRandomBytes(std::span<std::byte> buffer) noexcept
     {
         if (!buffer.empty())
         {

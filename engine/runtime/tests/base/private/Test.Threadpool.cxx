@@ -180,7 +180,7 @@ TEST_CASE("Threadpool", "[.][performance]")
             watch.Stop();
 
             [[maybe_unused]] double const sequential = static_cast<double>(TASKS * DELAY * COUNT) * 0.001;
-            [[maybe_unused]] double const parallel   = watch.GetElapsedTime();
+            [[maybe_unused]] double const parallel   = watch.GetElapsedTime<double>();
             [[maybe_unused]] double const speedup    = sequential / parallel;
 
             //GX_DEBUGF("Expected duration: {}\n", sequential);

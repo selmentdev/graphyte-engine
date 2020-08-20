@@ -899,13 +899,6 @@ namespace Graphyte::App::Impl
                 WmChar(wparam, lparam);
                 return 0;
 
-                //case WM_SYSCHAR:
-                //    if ((HIWORD(lparam) & 0x2000) != 0 && wparam == VK_SPACE)
-                //    {
-                //        break;
-                //    }
-
-
             case WM_SYSKEYDOWN:
                 // Allow Alt+F4 or Alt+Space to be processed by default handler
                 if (wparam == VK_F4 || wparam == VK_SPACE)

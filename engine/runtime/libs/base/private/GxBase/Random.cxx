@@ -30,14 +30,14 @@ namespace Graphyte::Random
         state.State[3] = Impl::SplitMix64(seed);
     }
 
-    void Generate(RandomState& state, notstd::span<std::byte> buffer) noexcept
+    void Generate(RandomState& state, std::span<std::byte> buffer) noexcept
     {
         while (buffer.size() >= sizeof(uint64_t))
         {
             uint64_t const sample = NextUInt64(state);
             memcpy(buffer.data(), &sample, sizeof(uint64_t));
 
-            buffer.remove_prefix(sizeof(uint64_t));
+            buffer = buffer.subspan(sizeof(uint64_t));
         }
 
         if (!buffer.empty())
@@ -413,7 +413,7 @@ namespace Graphyte::Random::Impl
 
 namespace Graphyte::Random
 {
-    void GenerateReadableString(RandomState& state, notstd::span<char> characters) noexcept
+    void GenerateReadableString(RandomState& state, std::span<char> characters) noexcept
     {
         if (!characters.empty())
         {
@@ -436,7 +436,7 @@ namespace Graphyte::Random
                     characters[i] = Impl::GBase32Chars[static_cast<size_t>(random.bytes[i] & 0x1Fu)];
                 }
 
-                characters.remove_prefix(8);
+                characters = characters.subspan(8);
             }
 
             if (!characters.empty())

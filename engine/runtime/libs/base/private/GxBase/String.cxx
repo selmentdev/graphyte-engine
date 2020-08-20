@@ -206,7 +206,7 @@ namespace Graphyte
 
     BASE_API bool HexStringFromByteStream(
         std::string& output,
-        notstd::span<const std::byte> input) noexcept
+        std::span<const std::byte> input) noexcept
     {
         std::array<char, 2> buffer{};
 

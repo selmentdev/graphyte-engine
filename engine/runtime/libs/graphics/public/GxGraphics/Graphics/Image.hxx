@@ -2,7 +2,6 @@
 #include <GxGraphics/Graphics.module.hxx>
 #include <GxBase/Diagnostics.hxx>
 #include <GxGraphics/Graphics/PixelFormat.hxx>
-#include <GxBase/Span.hxx>
 
 namespace Graphyte::Graphics
 {
@@ -78,7 +77,7 @@ namespace Graphyte::Graphics
         uint32_t MipLevel;
 
         template <typename TPixel>
-        notstd::span<TPixel> GetPixels(
+        std::span<TPixel> GetPixels(
             size_t line,
             size_t slice = 0) noexcept
         {
@@ -88,7 +87,7 @@ namespace Graphyte::Graphics
         }
 
         template <typename TPixel>
-        notstd::span<TPixel const> GetPixels(
+        std::span<TPixel const> GetPixels(
             size_t line,
             size_t slice = 0) const noexcept
         {
@@ -194,12 +193,12 @@ namespace Graphyte::Graphics
         }
 
     public:
-        notstd::span<ImagePixels const> GetSubresources() const noexcept
+        std::span<ImagePixels const> GetSubresources() const noexcept
         {
             return { &m_Subresources[0], m_SubresourcesCount };
         }
 
-        notstd::span<ImagePixels> GetSubresources() noexcept
+        std::span<ImagePixels> GetSubresources() noexcept
         {
             return { &m_Subresources[0], m_SubresourcesCount };
         }

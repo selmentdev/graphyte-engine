@@ -1,6 +1,5 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
-#include <GxBase/Span.hxx>
 
 namespace Graphyte::CommandLine::Impl
 {
@@ -13,7 +12,7 @@ namespace Graphyte::CommandLine
     class Enumerator final
     {
     private:
-        notstd::span<const char*> m_Args{};
+        std::span<const char* const> m_Args{};
         std::size_t m_Index{};
 
     public:
@@ -21,7 +20,7 @@ namespace Graphyte::CommandLine
         std::optional<std::string_view> Value{};
 
     public:
-        Enumerator(notstd::span<const char*> args) noexcept
+        Enumerator(std::span<const char* const> args) noexcept
             : m_Args{ args }
             , m_Index{ 0 }
         {

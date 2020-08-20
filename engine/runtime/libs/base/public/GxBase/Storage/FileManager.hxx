@@ -3,7 +3,6 @@
 #include <GxBase/Storage/Archive.hxx>
 #include <GxBase/Storage/IStream.hxx>
 #include <GxBase/Status.hxx>
-#include <GxBase/Span.hxx>
 
 namespace Graphyte::Storage
 {
@@ -86,6 +85,6 @@ namespace Graphyte::Storage
         const std::string& path) noexcept;
 
     extern BASE_API Status WriteBinary(
-        notstd::span<const std::byte> content,
+        std::span<const std::byte> content,
         const std::string& path) noexcept;
 }

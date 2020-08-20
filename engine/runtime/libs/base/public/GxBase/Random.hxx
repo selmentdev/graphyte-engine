@@ -1,7 +1,6 @@
 #pragma once
 #include <GxBase/Base.module.hxx>
 #include <GxBase/Types.hxx>
-#include <GxBase/Span.hxx>
 #include <GxBase/Maths/Vector.hxx>
 
 namespace Graphyte::Random::Impl
@@ -25,7 +24,7 @@ namespace Graphyte::Random
     /// ```
     extern BASE_API void Initialize(RandomState& state, uint64_t seed) noexcept;
 
-    extern BASE_API void Generate(RandomState& state, notstd::span<std::byte> buffer) noexcept;
+    extern BASE_API void Generate(RandomState& state, std::span<std::byte> buffer) noexcept;
 
     /// Skips 2^128 generations.
     ///
@@ -81,5 +80,5 @@ namespace Graphyte::Random
     extern BASE_API Float3 NextFloat3(RandomState& state) noexcept;
     extern BASE_API Float2 NextFloat2(RandomState& state) noexcept;
 
-    extern BASE_API void GenerateReadableString(RandomState& state, notstd::span<char> characters) noexcept;
+    extern BASE_API void GenerateReadableString(RandomState& state, std::span<char> characters) noexcept;
 }

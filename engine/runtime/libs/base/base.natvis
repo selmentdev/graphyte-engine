@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-    <Type Name="notstd::span&lt;*&gt;">
-        <DisplayString>{{ size={m_Size} }}</DisplayString>
-        <Expand>
-            <Item Name="[size]" ExcludeView="simple">m_Size</Item>
-            <ArrayItems>
-                <Size>m_Size</Size>
-                <ValuePointer>m_Data</ValuePointer>
-            </ArrayItems>
-        </Expand>
-    </Type>
     <Type Name="notstd::fixed_vector&lt;*,*&gt;">
         <DisplayString>{{ size={m_Size} }}</DisplayString>
         <Expand>

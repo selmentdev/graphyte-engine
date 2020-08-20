@@ -154,6 +154,14 @@
 #include <concepts>
 #endif
 
+#if __has_include(<ranges>)
+#include <ranges>
+#endif
+
+#if __has_include(<coroutines>)
+#include <coroutines>
+#endif
+
 //
 // C Library Headers.
 //

@@ -689,6 +689,6 @@ TEST_CASE("Sleeping threads", "[.][performance]")
     thread.Start(&runnable, "Runnable");
     thread.Stop(true);
     watch.Stop();
-    auto elapsed = watch.GetElapsedTime();
+    double const elapsed = watch.GetElapsedTime<double>();
     REQUIRE(elapsed >= 1.0);
 }

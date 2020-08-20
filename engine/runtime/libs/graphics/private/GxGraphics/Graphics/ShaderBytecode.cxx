@@ -1,6 +1,5 @@
 #include <GxGraphics/Graphics/ShaderBytecode.hxx>
 #include <GxBase/Hash/XXHash.hxx>
-#include <GxBase/Span.hxx>
 #include <GxBase/Compression.hxx>
 #include <GxBase/Storage/BinaryFormat.hxx>
 
