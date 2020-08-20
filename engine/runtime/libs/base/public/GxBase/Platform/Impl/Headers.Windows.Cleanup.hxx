@@ -201,7 +201,6 @@
 #undef PostAppMessage
 #undef DefWindowProc
 #undef CallWindowProc
-#undef CallWindowProc
 #undef RegisterClass
 #undef UnregisterClass
 #undef GetClassInfo

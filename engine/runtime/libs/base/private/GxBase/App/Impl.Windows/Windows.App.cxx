@@ -7,9 +7,9 @@
 #include "Windows.XInput.hxx"
 
 #include <ShellScalingApi.h>
-#include <windowsx.h>
-#undef IsMaximized
-#undef IsMinimized
+//#include <windowsx.h>
+//#undef IsMaximized
+//#undef IsMinimized
 
 // =================================================================================================
 // Logging category.
@@ -472,8 +472,8 @@ namespace Graphyte::App::Impl
     static void WmMouseButton(NativeWindow& window, HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) noexcept
     {
         POINT cursor{
-            .x = GET_X_LPARAM(lparam),
-            .y = GET_Y_LPARAM(lparam),
+            .x = LOWORD(lparam),
+            .y = HIWORD(lparam),
         };
 
         ClientToScreen(hwnd, &cursor);
@@ -567,7 +567,7 @@ namespace Graphyte::App::Impl
 
     static void WmMouseWheel(WPARAM wparam) noexcept
     {
-        constexpr float const spin = 1.0f / 120.0f;
+        constexpr float const spin = 1.0f / static_cast<float>(WHEEL_DELTA);
 
         float const wheelDelta = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wparam));
 
@@ -668,8 +668,8 @@ namespace Graphyte::App::Impl
     static void WmSize(NativeWindow& window, WPARAM wparam, LPARAM lparam) noexcept
     {
         bool const exclusive = (window.GetMode() == WindowMode::Fullscreen);
-        int32_t const cx     = GET_X_LPARAM(lparam);
-        int32_t const cy     = GET_Y_LPARAM(lparam);
+        int32_t const cx     = LOWORD(lparam);
+        int32_t const cy     = HIWORD(lparam);
 
         GX_LOG_TRACE(LogNativeApp, "WM_SIZE (cx: {}, cy: {})\n", cx, cy);
 
@@ -706,8 +706,8 @@ namespace Graphyte::App::Impl
 
     static void WmMove(NativeWindow& window, LPARAM lparam) noexcept
     {
-        LONG const x = GET_X_LPARAM(lparam);
-        LONG const y = GET_Y_LPARAM(lparam);
+        LONG const x = LOWORD(lparam);
+        LONG const y = HIWORD(lparam);
 
         if (x != -32000 && y != -32000)
         {
