@@ -53,8 +53,12 @@ def get_msvc_compiler_info():
         toolkit : str = _VS_AVAILABLE_TOOLKITS[version]
         # check if Microsoft.VCRedistVersion.default.txt exists; else as is
 
-        default_tools : str = os.path.join(path, 'VC', 'Auxiliary', 'Build', f'Microsoft.VCToolsVersion.{toolkit}.default.txt')
-        with open(default_tools, 'r') as file:
+        prefix_path : str = os.path.join(path, 'VC', 'Auxiliary', 'Build')
+        default_path : str = os.path.join(prefix_path, 'Microsoft.VCToolsVersion.default.txt')
+        version_path : str = os.path.join(prefix_path, 'VC', 'Auxiliary', 'Build', f'Microsoft.VCToolsVersion.{toolkit}.default.txt')
+        selected_path : str = version_path if os.path.isfile(version_path) else default_path
+
+        with open(selected_path, 'r') as file:
             tools = file.read().splitlines()[0]
 
         return {
