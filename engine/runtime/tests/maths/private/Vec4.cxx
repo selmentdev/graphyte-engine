@@ -1,6 +1,962 @@
 #include <catch2/catch.hpp>
 #include <GxBase/Maths/Vector.hxx>
 
+
+TEST_CASE("Graphyte::Maths / select control")
+{
+    using namespace Graphyte::Maths;
+
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 0, 0, 0);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0x00000000);
+    }
+
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 0, 0, 1);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 0, 1, 0);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 0, 1, 1);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 1, 0, 0);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 1, 0, 1);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 1, 1, 0);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 1, 1, 1);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 0, 0, 0);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 0, 0, 1);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 0, 1, 0);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 0, 1, 1);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 1, 0, 0);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 1, 0, 1);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 1, 1, 0);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 1, 1, 1);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+}
+
+TEST_CASE("Graphyte::Maths / ")
+{
+    using namespace Graphyte::Maths;
+    Vector4 const c1 = Make<Vector4>(1.0f, 2.0f, 3.0f, 4.0f);
+    Vector4 const c2 = Make<Vector4>(5.0f, 6.0f, 7.0f, 8.0f);
+
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 0, 0, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 0, 0, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 0, 1, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 0, 1, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 1, 0, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 1, 0, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 1, 1, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 1, 1, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 0, 0, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 0, 0, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 0, 1, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 0, 1, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 1, 0, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 1, 0, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 1, 1, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 1, 1, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+}
+
+TEST_CASE("Graphyte::Maths / vector permute")
+{
+    using namespace Graphyte::Maths;
+    Vector4 const c1 = Make<Vector4>(0.0f, 1.0f, 2.0f, 3.0f);
+    Vector4 const c2 = Make<Vector4>(4.0f, 5.0f, 6.0f, 7.0f);
+
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 0, 0, 0, 0);
+        Vector4 const s2 = Permute<0, 0, 0, 0>(c1, c2);
+
+        CHECK(GetX(s1) == 0.0f);
+        CHECK(GetY(s1) == 0.0f);
+        CHECK(GetZ(s1) == 0.0f);
+        CHECK(GetW(s1) == 0.0f);
+
+        CHECK(GetX(s2) == 0.0f);
+        CHECK(GetY(s2) == 0.0f);
+        CHECK(GetZ(s2) == 0.0f);
+        CHECK(GetW(s2) == 0.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 2, 1, 3, 7);
+        Vector4 const s2 = Permute<2, 1, 3, 7>(c1, c2);
+
+        CHECK(GetX(s1) == 2.0f);
+        CHECK(GetY(s1) == 1.0f);
+        CHECK(GetZ(s1) == 3.0f);
+        CHECK(GetW(s1) == 7.0f);
+
+        CHECK(GetX(s2) == 2.0f);
+        CHECK(GetY(s2) == 1.0f);
+        CHECK(GetZ(s2) == 3.0f);
+        CHECK(GetW(s2) == 7.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 3, 1, 3, 2);
+        Vector4 const s2 = Permute<3, 1, 3, 2>(c1, c2);
+
+        CHECK(GetX(s1) == 3.0f);
+        CHECK(GetY(s1) == 1.0f);
+        CHECK(GetZ(s1) == 3.0f);
+        CHECK(GetW(s1) == 2.0f);
+
+        CHECK(GetX(s2) == 3.0f);
+        CHECK(GetY(s2) == 1.0f);
+        CHECK(GetZ(s2) == 3.0f);
+        CHECK(GetW(s2) == 2.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 1, 2, 3, 4);
+        Vector4 const s2 = Permute<1, 2, 3, 4>(c1, c2);
+
+        CHECK(GetX(s1) == 1.0f);
+        CHECK(GetY(s1) == 2.0f);
+        CHECK(GetZ(s1) == 3.0f);
+        CHECK(GetW(s1) == 4.0f);
+
+        CHECK(GetX(s2) == 1.0f);
+        CHECK(GetY(s2) == 2.0f);
+        CHECK(GetZ(s2) == 3.0f);
+        CHECK(GetW(s2) == 4.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 7, 7, 7, 6);
+        Vector4 const s2 = Permute<7, 7, 7, 6>(c1, c2);
+
+        CHECK(GetX(s1) == 7.0f);
+        CHECK(GetY(s1) == 7.0f);
+        CHECK(GetZ(s1) == 7.0f);
+        CHECK(GetW(s1) == 6.0f);
+
+        CHECK(GetX(s2) == 7.0f);
+        CHECK(GetY(s2) == 7.0f);
+        CHECK(GetZ(s2) == 7.0f);
+        CHECK(GetW(s2) == 6.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 0, 3, 1, 2);
+        Vector4 const s2 = Permute<0, 3, 1, 2>(c1, c2);
+
+        CHECK(GetX(s1) == 0.0f);
+        CHECK(GetY(s1) == 3.0f);
+        CHECK(GetZ(s1) == 1.0f);
+        CHECK(GetW(s1) == 2.0f);
+
+        CHECK(GetX(s2) == 0.0f);
+        CHECK(GetY(s2) == 3.0f);
+        CHECK(GetZ(s2) == 1.0f);
+        CHECK(GetW(s2) == 2.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 0, 1, 0, 3);
+        Vector4 const s2 = Permute<0, 1, 0, 3>(c1, c2);
+
+        CHECK(GetX(s1) == 0.0f);
+        CHECK(GetY(s1) == 1.0f);
+        CHECK(GetZ(s1) == 0.0f);
+        CHECK(GetW(s1) == 3.0f);
+
+        CHECK(GetX(s2) == 0.0f);
+        CHECK(GetY(s2) == 1.0f);
+        CHECK(GetZ(s2) == 0.0f);
+        CHECK(GetW(s2) == 3.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 0, 0, 0, 1);
+        Vector4 const s2 = Permute<0, 0, 0, 1>(c1, c2);
+
+        CHECK(GetX(s1) == 0.0f);
+        CHECK(GetY(s1) == 0.0f);
+        CHECK(GetZ(s1) == 0.0f);
+        CHECK(GetW(s1) == 1.0f);
+
+        CHECK(GetX(s2) == 0.0f);
+        CHECK(GetY(s2) == 0.0f);
+        CHECK(GetZ(s2) == 0.0f);
+        CHECK(GetW(s2) == 1.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 7, 0, 1, 4);
+        Vector4 const s2 = Permute<7, 0, 1, 4>(c1, c2);
+
+        CHECK(GetX(s1) == 7.0f);
+        CHECK(GetY(s1) == 0.0f);
+        CHECK(GetZ(s1) == 1.0f);
+        CHECK(GetW(s1) == 4.0f);
+
+        CHECK(GetX(s2) == 7.0f);
+        CHECK(GetY(s2) == 0.0f);
+        CHECK(GetZ(s2) == 1.0f);
+        CHECK(GetW(s2) == 4.0f);
+    }
+}
+
+TEST_CASE("Graphyte::Maths / swizzle")
+{
+    using namespace Graphyte::Maths;
+
+    Vector4 const c = Make<Vector4>(0.0f, 1.0f, 2.0f, 3.0f);
+
+    {
+        Vector4 const s0000 = Swizzle(c, 0, 0, 0, 0);
+        Vector4 const s0001 = Swizzle(c, 0, 0, 0, 1);
+        Vector4 const s0002 = Swizzle(c, 0, 0, 0, 2);
+        Vector4 const s0003 = Swizzle(c, 0, 0, 0, 3);
+        Vector4 const s0010 = Swizzle(c, 0, 0, 1, 0);
+        Vector4 const s0011 = Swizzle(c, 0, 0, 1, 1);
+        Vector4 const s0012 = Swizzle(c, 0, 0, 1, 2);
+        Vector4 const s0013 = Swizzle(c, 0, 0, 1, 3);
+        Vector4 const s0020 = Swizzle(c, 0, 0, 2, 0);
+        Vector4 const s0021 = Swizzle(c, 0, 0, 2, 1);
+        Vector4 const s0022 = Swizzle(c, 0, 0, 2, 2);
+        Vector4 const s0023 = Swizzle(c, 0, 0, 2, 3);
+        Vector4 const s0030 = Swizzle(c, 0, 0, 3, 0);
+        Vector4 const s0031 = Swizzle(c, 0, 0, 3, 1);
+        Vector4 const s0032 = Swizzle(c, 0, 0, 3, 2);
+        Vector4 const s0033 = Swizzle(c, 0, 0, 3, 3);
+        Vector4 const s0100 = Swizzle(c, 0, 1, 0, 0);
+        Vector4 const s0101 = Swizzle(c, 0, 1, 0, 1);
+        Vector4 const s0102 = Swizzle(c, 0, 1, 0, 2);
+        Vector4 const s0103 = Swizzle(c, 0, 1, 0, 3);
+        Vector4 const s0110 = Swizzle(c, 0, 1, 1, 0);
+        Vector4 const s0111 = Swizzle(c, 0, 1, 1, 1);
+        Vector4 const s0112 = Swizzle(c, 0, 1, 1, 2);
+        Vector4 const s0113 = Swizzle(c, 0, 1, 1, 3);
+        Vector4 const s0120 = Swizzle(c, 0, 1, 2, 0);
+        Vector4 const s0121 = Swizzle(c, 0, 1, 2, 1);
+        Vector4 const s0122 = Swizzle(c, 0, 1, 2, 2);
+        Vector4 const s0123 = Swizzle(c, 0, 1, 2, 3);
+        Vector4 const s0130 = Swizzle(c, 0, 1, 3, 0);
+        Vector4 const s0131 = Swizzle(c, 0, 1, 3, 1);
+        Vector4 const s0132 = Swizzle(c, 0, 1, 3, 2);
+        Vector4 const s0133 = Swizzle(c, 0, 1, 3, 3);
+        Vector4 const s0200 = Swizzle(c, 0, 2, 0, 0);
+        Vector4 const s0201 = Swizzle(c, 0, 2, 0, 1);
+        Vector4 const s0202 = Swizzle(c, 0, 2, 0, 2);
+        Vector4 const s0203 = Swizzle(c, 0, 2, 0, 3);
+        Vector4 const s0210 = Swizzle(c, 0, 2, 1, 0);
+        Vector4 const s0211 = Swizzle(c, 0, 2, 1, 1);
+        Vector4 const s0212 = Swizzle(c, 0, 2, 1, 2);
+        Vector4 const s0213 = Swizzle(c, 0, 2, 1, 3);
+        Vector4 const s0220 = Swizzle(c, 0, 2, 2, 0);
+        Vector4 const s0221 = Swizzle(c, 0, 2, 2, 1);
+        Vector4 const s0222 = Swizzle(c, 0, 2, 2, 2);
+        Vector4 const s0223 = Swizzle(c, 0, 2, 2, 3);
+        Vector4 const s0230 = Swizzle(c, 0, 2, 3, 0);
+        Vector4 const s0231 = Swizzle(c, 0, 2, 3, 1);
+        Vector4 const s0232 = Swizzle(c, 0, 2, 3, 2);
+        Vector4 const s0233 = Swizzle(c, 0, 2, 3, 3);
+        Vector4 const s0300 = Swizzle(c, 0, 3, 0, 0);
+        Vector4 const s0301 = Swizzle(c, 0, 3, 0, 1);
+        Vector4 const s0302 = Swizzle(c, 0, 3, 0, 2);
+        Vector4 const s0303 = Swizzle(c, 0, 3, 0, 3);
+        Vector4 const s0310 = Swizzle(c, 0, 3, 1, 0);
+        Vector4 const s0311 = Swizzle(c, 0, 3, 1, 1);
+        Vector4 const s0312 = Swizzle(c, 0, 3, 1, 2);
+        Vector4 const s0313 = Swizzle(c, 0, 3, 1, 3);
+        Vector4 const s0320 = Swizzle(c, 0, 3, 2, 0);
+        Vector4 const s0321 = Swizzle(c, 0, 3, 2, 1);
+        Vector4 const s0322 = Swizzle(c, 0, 3, 2, 2);
+        Vector4 const s0323 = Swizzle(c, 0, 3, 2, 3);
+        Vector4 const s0330 = Swizzle(c, 0, 3, 3, 0);
+        Vector4 const s0331 = Swizzle(c, 0, 3, 3, 1);
+        Vector4 const s0332 = Swizzle(c, 0, 3, 3, 2);
+        Vector4 const s0333 = Swizzle(c, 0, 3, 3, 3);
+        Vector4 const s1000 = Swizzle(c, 1, 0, 0, 0);
+        Vector4 const s1001 = Swizzle(c, 1, 0, 0, 1);
+        Vector4 const s1002 = Swizzle(c, 1, 0, 0, 2);
+        Vector4 const s1003 = Swizzle(c, 1, 0, 0, 3);
+        Vector4 const s1010 = Swizzle(c, 1, 0, 1, 0);
+        Vector4 const s1011 = Swizzle(c, 1, 0, 1, 1);
+        Vector4 const s1012 = Swizzle(c, 1, 0, 1, 2);
+        Vector4 const s1013 = Swizzle(c, 1, 0, 1, 3);
+        Vector4 const s1020 = Swizzle(c, 1, 0, 2, 0);
+        Vector4 const s1021 = Swizzle(c, 1, 0, 2, 1);
+        Vector4 const s1022 = Swizzle(c, 1, 0, 2, 2);
+        Vector4 const s1023 = Swizzle(c, 1, 0, 2, 3);
+        Vector4 const s1030 = Swizzle(c, 1, 0, 3, 0);
+        Vector4 const s1031 = Swizzle(c, 1, 0, 3, 1);
+        Vector4 const s1032 = Swizzle(c, 1, 0, 3, 2);
+        Vector4 const s1033 = Swizzle(c, 1, 0, 3, 3);
+        Vector4 const s1100 = Swizzle(c, 1, 1, 0, 0);
+        Vector4 const s1101 = Swizzle(c, 1, 1, 0, 1);
+        Vector4 const s1102 = Swizzle(c, 1, 1, 0, 2);
+        Vector4 const s1103 = Swizzle(c, 1, 1, 0, 3);
+        Vector4 const s1110 = Swizzle(c, 1, 1, 1, 0);
+        Vector4 const s1111 = Swizzle(c, 1, 1, 1, 1);
+        Vector4 const s1112 = Swizzle(c, 1, 1, 1, 2);
+        Vector4 const s1113 = Swizzle(c, 1, 1, 1, 3);
+        Vector4 const s1120 = Swizzle(c, 1, 1, 2, 0);
+        Vector4 const s1121 = Swizzle(c, 1, 1, 2, 1);
+        Vector4 const s1122 = Swizzle(c, 1, 1, 2, 2);
+        Vector4 const s1123 = Swizzle(c, 1, 1, 2, 3);
+        Vector4 const s1130 = Swizzle(c, 1, 1, 3, 0);
+        Vector4 const s1131 = Swizzle(c, 1, 1, 3, 1);
+        Vector4 const s1132 = Swizzle(c, 1, 1, 3, 2);
+        Vector4 const s1133 = Swizzle(c, 1, 1, 3, 3);
+        Vector4 const s1200 = Swizzle(c, 1, 2, 0, 0);
+        Vector4 const s1201 = Swizzle(c, 1, 2, 0, 1);
+        Vector4 const s1202 = Swizzle(c, 1, 2, 0, 2);
+        Vector4 const s1203 = Swizzle(c, 1, 2, 0, 3);
+        Vector4 const s1210 = Swizzle(c, 1, 2, 1, 0);
+        Vector4 const s1211 = Swizzle(c, 1, 2, 1, 1);
+        Vector4 const s1212 = Swizzle(c, 1, 2, 1, 2);
+        Vector4 const s1213 = Swizzle(c, 1, 2, 1, 3);
+        Vector4 const s1220 = Swizzle(c, 1, 2, 2, 0);
+        Vector4 const s1221 = Swizzle(c, 1, 2, 2, 1);
+        Vector4 const s1222 = Swizzle(c, 1, 2, 2, 2);
+        Vector4 const s1223 = Swizzle(c, 1, 2, 2, 3);
+        Vector4 const s1230 = Swizzle(c, 1, 2, 3, 0);
+        Vector4 const s1231 = Swizzle(c, 1, 2, 3, 1);
+        Vector4 const s1232 = Swizzle(c, 1, 2, 3, 2);
+        Vector4 const s1233 = Swizzle(c, 1, 2, 3, 3);
+        Vector4 const s1300 = Swizzle(c, 1, 3, 0, 0);
+        Vector4 const s1301 = Swizzle(c, 1, 3, 0, 1);
+        Vector4 const s1302 = Swizzle(c, 1, 3, 0, 2);
+        Vector4 const s1303 = Swizzle(c, 1, 3, 0, 3);
+        Vector4 const s1310 = Swizzle(c, 1, 3, 1, 0);
+        Vector4 const s1311 = Swizzle(c, 1, 3, 1, 1);
+        Vector4 const s1312 = Swizzle(c, 1, 3, 1, 2);
+        Vector4 const s1313 = Swizzle(c, 1, 3, 1, 3);
+        Vector4 const s1320 = Swizzle(c, 1, 3, 2, 0);
+        Vector4 const s1321 = Swizzle(c, 1, 3, 2, 1);
+        Vector4 const s1322 = Swizzle(c, 1, 3, 2, 2);
+        Vector4 const s1323 = Swizzle(c, 1, 3, 2, 3);
+        Vector4 const s1330 = Swizzle(c, 1, 3, 3, 0);
+        Vector4 const s1331 = Swizzle(c, 1, 3, 3, 1);
+        Vector4 const s1332 = Swizzle(c, 1, 3, 3, 2);
+        Vector4 const s1333 = Swizzle(c, 1, 3, 3, 3);
+        Vector4 const s2000 = Swizzle(c, 2, 0, 0, 0);
+        Vector4 const s2001 = Swizzle(c, 2, 0, 0, 1);
+        Vector4 const s2002 = Swizzle(c, 2, 0, 0, 2);
+        Vector4 const s2003 = Swizzle(c, 2, 0, 0, 3);
+        Vector4 const s2010 = Swizzle(c, 2, 0, 1, 0);
+        Vector4 const s2011 = Swizzle(c, 2, 0, 1, 1);
+        Vector4 const s2012 = Swizzle(c, 2, 0, 1, 2);
+        Vector4 const s2013 = Swizzle(c, 2, 0, 1, 3);
+        Vector4 const s2020 = Swizzle(c, 2, 0, 2, 0);
+        Vector4 const s2021 = Swizzle(c, 2, 0, 2, 1);
+        Vector4 const s2022 = Swizzle(c, 2, 0, 2, 2);
+        Vector4 const s2023 = Swizzle(c, 2, 0, 2, 3);
+        Vector4 const s2030 = Swizzle(c, 2, 0, 3, 0);
+        Vector4 const s2031 = Swizzle(c, 2, 0, 3, 1);
+        Vector4 const s2032 = Swizzle(c, 2, 0, 3, 2);
+        Vector4 const s2033 = Swizzle(c, 2, 0, 3, 3);
+        Vector4 const s2100 = Swizzle(c, 2, 1, 0, 0);
+        Vector4 const s2101 = Swizzle(c, 2, 1, 0, 1);
+        Vector4 const s2102 = Swizzle(c, 2, 1, 0, 2);
+        Vector4 const s2103 = Swizzle(c, 2, 1, 0, 3);
+        Vector4 const s2110 = Swizzle(c, 2, 1, 1, 0);
+        Vector4 const s2111 = Swizzle(c, 2, 1, 1, 1);
+        Vector4 const s2112 = Swizzle(c, 2, 1, 1, 2);
+        Vector4 const s2113 = Swizzle(c, 2, 1, 1, 3);
+        Vector4 const s2120 = Swizzle(c, 2, 1, 2, 0);
+        Vector4 const s2121 = Swizzle(c, 2, 1, 2, 1);
+        Vector4 const s2122 = Swizzle(c, 2, 1, 2, 2);
+        Vector4 const s2123 = Swizzle(c, 2, 1, 2, 3);
+        Vector4 const s2130 = Swizzle(c, 2, 1, 3, 0);
+        Vector4 const s2131 = Swizzle(c, 2, 1, 3, 1);
+        Vector4 const s2132 = Swizzle(c, 2, 1, 3, 2);
+        Vector4 const s2133 = Swizzle(c, 2, 1, 3, 3);
+        Vector4 const s2200 = Swizzle(c, 2, 2, 0, 0);
+        Vector4 const s2201 = Swizzle(c, 2, 2, 0, 1);
+        Vector4 const s2202 = Swizzle(c, 2, 2, 0, 2);
+        Vector4 const s2203 = Swizzle(c, 2, 2, 0, 3);
+        Vector4 const s2210 = Swizzle(c, 2, 2, 1, 0);
+        Vector4 const s2211 = Swizzle(c, 2, 2, 1, 1);
+        Vector4 const s2212 = Swizzle(c, 2, 2, 1, 2);
+        Vector4 const s2213 = Swizzle(c, 2, 2, 1, 3);
+        Vector4 const s2220 = Swizzle(c, 2, 2, 2, 0);
+        Vector4 const s2221 = Swizzle(c, 2, 2, 2, 1);
+        Vector4 const s2222 = Swizzle(c, 2, 2, 2, 2);
+        Vector4 const s2223 = Swizzle(c, 2, 2, 2, 3);
+        Vector4 const s2230 = Swizzle(c, 2, 2, 3, 0);
+        Vector4 const s2231 = Swizzle(c, 2, 2, 3, 1);
+        Vector4 const s2232 = Swizzle(c, 2, 2, 3, 2);
+        Vector4 const s2233 = Swizzle(c, 2, 2, 3, 3);
+        Vector4 const s2300 = Swizzle(c, 2, 3, 0, 0);
+        Vector4 const s2301 = Swizzle(c, 2, 3, 0, 1);
+        Vector4 const s2302 = Swizzle(c, 2, 3, 0, 2);
+        Vector4 const s2303 = Swizzle(c, 2, 3, 0, 3);
+        Vector4 const s2310 = Swizzle(c, 2, 3, 1, 0);
+        Vector4 const s2311 = Swizzle(c, 2, 3, 1, 1);
+        Vector4 const s2312 = Swizzle(c, 2, 3, 1, 2);
+        Vector4 const s2313 = Swizzle(c, 2, 3, 1, 3);
+        Vector4 const s2320 = Swizzle(c, 2, 3, 2, 0);
+        Vector4 const s2321 = Swizzle(c, 2, 3, 2, 1);
+        Vector4 const s2322 = Swizzle(c, 2, 3, 2, 2);
+        Vector4 const s2323 = Swizzle(c, 2, 3, 2, 3);
+        Vector4 const s2330 = Swizzle(c, 2, 3, 3, 0);
+        Vector4 const s2331 = Swizzle(c, 2, 3, 3, 1);
+        Vector4 const s2332 = Swizzle(c, 2, 3, 3, 2);
+        Vector4 const s2333 = Swizzle(c, 2, 3, 3, 3);
+        Vector4 const s3000 = Swizzle(c, 3, 0, 0, 0);
+        Vector4 const s3001 = Swizzle(c, 3, 0, 0, 1);
+        Vector4 const s3002 = Swizzle(c, 3, 0, 0, 2);
+        Vector4 const s3003 = Swizzle(c, 3, 0, 0, 3);
+        Vector4 const s3010 = Swizzle(c, 3, 0, 1, 0);
+        Vector4 const s3011 = Swizzle(c, 3, 0, 1, 1);
+        Vector4 const s3012 = Swizzle(c, 3, 0, 1, 2);
+        Vector4 const s3013 = Swizzle(c, 3, 0, 1, 3);
+        Vector4 const s3020 = Swizzle(c, 3, 0, 2, 0);
+        Vector4 const s3021 = Swizzle(c, 3, 0, 2, 1);
+        Vector4 const s3022 = Swizzle(c, 3, 0, 2, 2);
+        Vector4 const s3023 = Swizzle(c, 3, 0, 2, 3);
+        Vector4 const s3030 = Swizzle(c, 3, 0, 3, 0);
+        Vector4 const s3031 = Swizzle(c, 3, 0, 3, 1);
+        Vector4 const s3032 = Swizzle(c, 3, 0, 3, 2);
+        Vector4 const s3033 = Swizzle(c, 3, 0, 3, 3);
+        Vector4 const s3100 = Swizzle(c, 3, 1, 0, 0);
+        Vector4 const s3101 = Swizzle(c, 3, 1, 0, 1);
+        Vector4 const s3102 = Swizzle(c, 3, 1, 0, 2);
+        Vector4 const s3103 = Swizzle(c, 3, 1, 0, 3);
+        Vector4 const s3110 = Swizzle(c, 3, 1, 1, 0);
+        Vector4 const s3111 = Swizzle(c, 3, 1, 1, 1);
+        Vector4 const s3112 = Swizzle(c, 3, 1, 1, 2);
+        Vector4 const s3113 = Swizzle(c, 3, 1, 1, 3);
+        Vector4 const s3120 = Swizzle(c, 3, 1, 2, 0);
+        Vector4 const s3121 = Swizzle(c, 3, 1, 2, 1);
+        Vector4 const s3122 = Swizzle(c, 3, 1, 2, 2);
+        Vector4 const s3123 = Swizzle(c, 3, 1, 2, 3);
+        Vector4 const s3130 = Swizzle(c, 3, 1, 3, 0);
+        Vector4 const s3131 = Swizzle(c, 3, 1, 3, 1);
+        Vector4 const s3132 = Swizzle(c, 3, 1, 3, 2);
+        Vector4 const s3133 = Swizzle(c, 3, 1, 3, 3);
+        Vector4 const s3200 = Swizzle(c, 3, 2, 0, 0);
+        Vector4 const s3201 = Swizzle(c, 3, 2, 0, 1);
+        Vector4 const s3202 = Swizzle(c, 3, 2, 0, 2);
+        Vector4 const s3203 = Swizzle(c, 3, 2, 0, 3);
+        Vector4 const s3210 = Swizzle(c, 3, 2, 1, 0);
+        Vector4 const s3211 = Swizzle(c, 3, 2, 1, 1);
+        Vector4 const s3212 = Swizzle(c, 3, 2, 1, 2);
+        Vector4 const s3213 = Swizzle(c, 3, 2, 1, 3);
+        Vector4 const s3220 = Swizzle(c, 3, 2, 2, 0);
+        Vector4 const s3221 = Swizzle(c, 3, 2, 2, 1);
+        Vector4 const s3222 = Swizzle(c, 3, 2, 2, 2);
+        Vector4 const s3223 = Swizzle(c, 3, 2, 2, 3);
+        Vector4 const s3230 = Swizzle(c, 3, 2, 3, 0);
+        Vector4 const s3231 = Swizzle(c, 3, 2, 3, 1);
+        Vector4 const s3232 = Swizzle(c, 3, 2, 3, 2);
+        Vector4 const s3233 = Swizzle(c, 3, 2, 3, 3);
+        Vector4 const s3300 = Swizzle(c, 3, 3, 0, 0);
+        Vector4 const s3301 = Swizzle(c, 3, 3, 0, 1);
+        Vector4 const s3302 = Swizzle(c, 3, 3, 0, 2);
+        Vector4 const s3303 = Swizzle(c, 3, 3, 0, 3);
+        Vector4 const s3310 = Swizzle(c, 3, 3, 1, 0);
+        Vector4 const s3311 = Swizzle(c, 3, 3, 1, 1);
+        Vector4 const s3312 = Swizzle(c, 3, 3, 1, 2);
+        Vector4 const s3313 = Swizzle(c, 3, 3, 1, 3);
+        Vector4 const s3320 = Swizzle(c, 3, 3, 2, 0);
+        Vector4 const s3321 = Swizzle(c, 3, 3, 2, 1);
+        Vector4 const s3322 = Swizzle(c, 3, 3, 2, 2);
+        Vector4 const s3323 = Swizzle(c, 3, 3, 2, 3);
+        Vector4 const s3330 = Swizzle(c, 3, 3, 3, 0);
+        Vector4 const s3331 = Swizzle(c, 3, 3, 3, 1);
+        Vector4 const s3332 = Swizzle(c, 3, 3, 3, 2);
+        Vector4 const s3333 = Swizzle(c, 3, 3, 3, 3);
+
+        // clang-format off
+        CHECK(GetX(s0000) == 0.0f); CHECK(GetX(s0000) == 0.0f); CHECK(GetZ(s0000) == 0.0f); CHECK(GetW(s0000) == 0.0f);
+        CHECK(GetX(s0001) == 0.0f); CHECK(GetX(s0001) == 0.0f); CHECK(GetZ(s0001) == 0.0f); CHECK(GetW(s0001) == 1.0f);
+        CHECK(GetX(s0002) == 0.0f); CHECK(GetX(s0002) == 0.0f); CHECK(GetZ(s0002) == 0.0f); CHECK(GetW(s0002) == 2.0f);
+        CHECK(GetX(s0003) == 0.0f); CHECK(GetX(s0003) == 0.0f); CHECK(GetZ(s0003) == 0.0f); CHECK(GetW(s0003) == 3.0f);
+        CHECK(GetX(s0010) == 0.0f); CHECK(GetX(s0010) == 0.0f); CHECK(GetZ(s0010) == 0.0f); CHECK(GetW(s0010) == 0.0f);
+        CHECK(GetX(s0011) == 0.0f); CHECK(GetX(s0011) == 0.0f); CHECK(GetZ(s0011) == 0.0f); CHECK(GetW(s0011) == 1.0f);
+        CHECK(GetX(s0012) == 0.0f); CHECK(GetX(s0012) == 0.0f); CHECK(GetZ(s0012) == 0.0f); CHECK(GetW(s0012) == 2.0f);
+        CHECK(GetX(s0013) == 0.0f); CHECK(GetX(s0013) == 0.0f); CHECK(GetZ(s0013) == 0.0f); CHECK(GetW(s0013) == 3.0f);
+        CHECK(GetX(s0020) == 0.0f); CHECK(GetX(s0020) == 0.0f); CHECK(GetZ(s0020) == 0.0f); CHECK(GetW(s0020) == 0.0f);
+        CHECK(GetX(s0021) == 0.0f); CHECK(GetX(s0021) == 0.0f); CHECK(GetZ(s0021) == 0.0f); CHECK(GetW(s0021) == 1.0f);
+        CHECK(GetX(s0022) == 0.0f); CHECK(GetX(s0022) == 0.0f); CHECK(GetZ(s0022) == 0.0f); CHECK(GetW(s0022) == 2.0f);
+        CHECK(GetX(s0023) == 0.0f); CHECK(GetX(s0023) == 0.0f); CHECK(GetZ(s0023) == 0.0f); CHECK(GetW(s0023) == 3.0f);
+        CHECK(GetX(s0030) == 0.0f); CHECK(GetX(s0030) == 0.0f); CHECK(GetZ(s0030) == 0.0f); CHECK(GetW(s0030) == 0.0f);
+        CHECK(GetX(s0031) == 0.0f); CHECK(GetX(s0031) == 0.0f); CHECK(GetZ(s0031) == 0.0f); CHECK(GetW(s0031) == 1.0f);
+        CHECK(GetX(s0032) == 0.0f); CHECK(GetX(s0032) == 0.0f); CHECK(GetZ(s0032) == 0.0f); CHECK(GetW(s0032) == 2.0f);
+        CHECK(GetX(s0033) == 0.0f); CHECK(GetX(s0033) == 0.0f); CHECK(GetZ(s0033) == 0.0f); CHECK(GetW(s0033) == 3.0f);
+        CHECK(GetX(s0100) == 0.0f); CHECK(GetX(s0100) == 0.0f); CHECK(GetZ(s0100) == 0.0f); CHECK(GetW(s0100) == 0.0f);
+        CHECK(GetX(s0101) == 0.0f); CHECK(GetX(s0101) == 0.0f); CHECK(GetZ(s0101) == 0.0f); CHECK(GetW(s0101) == 1.0f);
+        CHECK(GetX(s0102) == 0.0f); CHECK(GetX(s0102) == 0.0f); CHECK(GetZ(s0102) == 0.0f); CHECK(GetW(s0102) == 2.0f);
+        CHECK(GetX(s0103) == 0.0f); CHECK(GetX(s0103) == 0.0f); CHECK(GetZ(s0103) == 0.0f); CHECK(GetW(s0103) == 3.0f);
+        CHECK(GetX(s0110) == 0.0f); CHECK(GetX(s0110) == 0.0f); CHECK(GetZ(s0110) == 0.0f); CHECK(GetW(s0110) == 0.0f);
+        CHECK(GetX(s0111) == 0.0f); CHECK(GetX(s0111) == 0.0f); CHECK(GetZ(s0111) == 0.0f); CHECK(GetW(s0111) == 1.0f);
+        CHECK(GetX(s0112) == 0.0f); CHECK(GetX(s0112) == 0.0f); CHECK(GetZ(s0112) == 0.0f); CHECK(GetW(s0112) == 2.0f);
+        CHECK(GetX(s0113) == 0.0f); CHECK(GetX(s0113) == 0.0f); CHECK(GetZ(s0113) == 0.0f); CHECK(GetW(s0113) == 3.0f);
+        CHECK(GetX(s0120) == 0.0f); CHECK(GetX(s0120) == 0.0f); CHECK(GetZ(s0120) == 0.0f); CHECK(GetW(s0120) == 0.0f);
+        CHECK(GetX(s0121) == 0.0f); CHECK(GetX(s0121) == 0.0f); CHECK(GetZ(s0121) == 0.0f); CHECK(GetW(s0121) == 1.0f);
+        CHECK(GetX(s0122) == 0.0f); CHECK(GetX(s0122) == 0.0f); CHECK(GetZ(s0122) == 0.0f); CHECK(GetW(s0122) == 2.0f);
+        CHECK(GetX(s0123) == 0.0f); CHECK(GetX(s0123) == 0.0f); CHECK(GetZ(s0123) == 0.0f); CHECK(GetW(s0123) == 3.0f);
+        CHECK(GetX(s0130) == 0.0f); CHECK(GetX(s0130) == 0.0f); CHECK(GetZ(s0130) == 0.0f); CHECK(GetW(s0130) == 0.0f);
+        CHECK(GetX(s0131) == 0.0f); CHECK(GetX(s0131) == 0.0f); CHECK(GetZ(s0131) == 0.0f); CHECK(GetW(s0131) == 1.0f);
+        CHECK(GetX(s0132) == 0.0f); CHECK(GetX(s0132) == 0.0f); CHECK(GetZ(s0132) == 0.0f); CHECK(GetW(s0132) == 2.0f);
+        CHECK(GetX(s0133) == 0.0f); CHECK(GetX(s0133) == 0.0f); CHECK(GetZ(s0133) == 0.0f); CHECK(GetW(s0133) == 3.0f);
+        CHECK(GetX(s0200) == 0.0f); CHECK(GetX(s0200) == 0.0f); CHECK(GetZ(s0200) == 0.0f); CHECK(GetW(s0200) == 0.0f);
+        CHECK(GetX(s0201) == 0.0f); CHECK(GetX(s0201) == 0.0f); CHECK(GetZ(s0201) == 0.0f); CHECK(GetW(s0201) == 1.0f);
+        CHECK(GetX(s0202) == 0.0f); CHECK(GetX(s0202) == 0.0f); CHECK(GetZ(s0202) == 0.0f); CHECK(GetW(s0202) == 2.0f);
+        CHECK(GetX(s0203) == 0.0f); CHECK(GetX(s0203) == 0.0f); CHECK(GetZ(s0203) == 0.0f); CHECK(GetW(s0203) == 3.0f);
+        CHECK(GetX(s0210) == 0.0f); CHECK(GetX(s0210) == 0.0f); CHECK(GetZ(s0210) == 0.0f); CHECK(GetW(s0210) == 0.0f);
+        CHECK(GetX(s0211) == 0.0f); CHECK(GetX(s0211) == 0.0f); CHECK(GetZ(s0211) == 0.0f); CHECK(GetW(s0211) == 1.0f);
+        CHECK(GetX(s0212) == 0.0f); CHECK(GetX(s0212) == 0.0f); CHECK(GetZ(s0212) == 0.0f); CHECK(GetW(s0212) == 2.0f);
+        CHECK(GetX(s0213) == 0.0f); CHECK(GetX(s0213) == 0.0f); CHECK(GetZ(s0213) == 0.0f); CHECK(GetW(s0213) == 3.0f);
+        CHECK(GetX(s0220) == 0.0f); CHECK(GetX(s0220) == 0.0f); CHECK(GetZ(s0220) == 0.0f); CHECK(GetW(s0220) == 0.0f);
+        CHECK(GetX(s0221) == 0.0f); CHECK(GetX(s0221) == 0.0f); CHECK(GetZ(s0221) == 0.0f); CHECK(GetW(s0221) == 1.0f);
+        CHECK(GetX(s0222) == 0.0f); CHECK(GetX(s0222) == 0.0f); CHECK(GetZ(s0222) == 0.0f); CHECK(GetW(s0222) == 2.0f);
+        CHECK(GetX(s0223) == 0.0f); CHECK(GetX(s0223) == 0.0f); CHECK(GetZ(s0223) == 0.0f); CHECK(GetW(s0223) == 3.0f);
+        CHECK(GetX(s0230) == 0.0f); CHECK(GetX(s0230) == 0.0f); CHECK(GetZ(s0230) == 0.0f); CHECK(GetW(s0230) == 0.0f);
+        CHECK(GetX(s0231) == 0.0f); CHECK(GetX(s0231) == 0.0f); CHECK(GetZ(s0231) == 0.0f); CHECK(GetW(s0231) == 1.0f);
+        CHECK(GetX(s0232) == 0.0f); CHECK(GetX(s0232) == 0.0f); CHECK(GetZ(s0232) == 0.0f); CHECK(GetW(s0232) == 2.0f);
+        CHECK(GetX(s0233) == 0.0f); CHECK(GetX(s0233) == 0.0f); CHECK(GetZ(s0233) == 0.0f); CHECK(GetW(s0233) == 3.0f);
+        CHECK(GetX(s0300) == 0.0f); CHECK(GetX(s0300) == 0.0f); CHECK(GetZ(s0300) == 0.0f); CHECK(GetW(s0300) == 0.0f);
+        CHECK(GetX(s0301) == 0.0f); CHECK(GetX(s0301) == 0.0f); CHECK(GetZ(s0301) == 0.0f); CHECK(GetW(s0301) == 1.0f);
+        CHECK(GetX(s0302) == 0.0f); CHECK(GetX(s0302) == 0.0f); CHECK(GetZ(s0302) == 0.0f); CHECK(GetW(s0302) == 2.0f);
+        CHECK(GetX(s0303) == 0.0f); CHECK(GetX(s0303) == 0.0f); CHECK(GetZ(s0303) == 0.0f); CHECK(GetW(s0303) == 3.0f);
+        CHECK(GetX(s0310) == 0.0f); CHECK(GetX(s0310) == 0.0f); CHECK(GetZ(s0310) == 0.0f); CHECK(GetW(s0310) == 0.0f);
+        CHECK(GetX(s0311) == 0.0f); CHECK(GetX(s0311) == 0.0f); CHECK(GetZ(s0311) == 0.0f); CHECK(GetW(s0311) == 1.0f);
+        CHECK(GetX(s0312) == 0.0f); CHECK(GetX(s0312) == 0.0f); CHECK(GetZ(s0312) == 0.0f); CHECK(GetW(s0312) == 2.0f);
+        CHECK(GetX(s0313) == 0.0f); CHECK(GetX(s0313) == 0.0f); CHECK(GetZ(s0313) == 0.0f); CHECK(GetW(s0313) == 3.0f);
+        CHECK(GetX(s0320) == 0.0f); CHECK(GetX(s0320) == 0.0f); CHECK(GetZ(s0320) == 0.0f); CHECK(GetW(s0320) == 0.0f);
+        CHECK(GetX(s0321) == 0.0f); CHECK(GetX(s0321) == 0.0f); CHECK(GetZ(s0321) == 0.0f); CHECK(GetW(s0321) == 1.0f);
+        CHECK(GetX(s0322) == 0.0f); CHECK(GetX(s0322) == 0.0f); CHECK(GetZ(s0322) == 0.0f); CHECK(GetW(s0322) == 2.0f);
+        CHECK(GetX(s0323) == 0.0f); CHECK(GetX(s0323) == 0.0f); CHECK(GetZ(s0323) == 0.0f); CHECK(GetW(s0323) == 3.0f);
+        CHECK(GetX(s0330) == 0.0f); CHECK(GetX(s0330) == 0.0f); CHECK(GetZ(s0330) == 0.0f); CHECK(GetW(s0330) == 0.0f);
+        CHECK(GetX(s0331) == 0.0f); CHECK(GetX(s0331) == 0.0f); CHECK(GetZ(s0331) == 0.0f); CHECK(GetW(s0331) == 1.0f);
+        CHECK(GetX(s0332) == 0.0f); CHECK(GetX(s0332) == 0.0f); CHECK(GetZ(s0332) == 0.0f); CHECK(GetW(s0332) == 2.0f);
+        CHECK(GetX(s0333) == 0.0f); CHECK(GetX(s0333) == 0.0f); CHECK(GetZ(s0333) == 0.0f); CHECK(GetW(s0333) == 3.0f);
+        
+        CHECK(GetX(s1000) == 1.0f); CHECK(GetX(s1000) == 0.0f); CHECK(GetZ(s1000) == 0.0f); CHECK(GetW(s1000) == 0.0f);
+        CHECK(GetX(s1001) == 1.0f); CHECK(GetX(s1001) == 0.0f); CHECK(GetZ(s1001) == 0.0f); CHECK(GetW(s1001) == 1.0f);
+        CHECK(GetX(s1002) == 1.0f); CHECK(GetX(s1002) == 0.0f); CHECK(GetZ(s1002) == 0.0f); CHECK(GetW(s1002) == 2.0f);
+        CHECK(GetX(s1003) == 1.0f); CHECK(GetX(s1003) == 0.0f); CHECK(GetZ(s1003) == 0.0f); CHECK(GetW(s1003) == 3.0f);
+        CHECK(GetX(s1010) == 1.0f); CHECK(GetX(s1010) == 0.0f); CHECK(GetZ(s1010) == 0.0f); CHECK(GetW(s1010) == 0.0f);
+        CHECK(GetX(s1011) == 1.0f); CHECK(GetX(s1011) == 0.0f); CHECK(GetZ(s1011) == 0.0f); CHECK(GetW(s1011) == 1.0f);
+        CHECK(GetX(s1012) == 1.0f); CHECK(GetX(s1012) == 0.0f); CHECK(GetZ(s1012) == 0.0f); CHECK(GetW(s1012) == 2.0f);
+        CHECK(GetX(s1013) == 1.0f); CHECK(GetX(s1013) == 0.0f); CHECK(GetZ(s1013) == 0.0f); CHECK(GetW(s1013) == 3.0f);
+        CHECK(GetX(s1020) == 1.0f); CHECK(GetX(s1020) == 0.0f); CHECK(GetZ(s1020) == 0.0f); CHECK(GetW(s1020) == 0.0f);
+        CHECK(GetX(s1021) == 1.0f); CHECK(GetX(s1021) == 0.0f); CHECK(GetZ(s1021) == 0.0f); CHECK(GetW(s1021) == 1.0f);
+        CHECK(GetX(s1022) == 1.0f); CHECK(GetX(s1022) == 0.0f); CHECK(GetZ(s1022) == 0.0f); CHECK(GetW(s1022) == 2.0f);
+        CHECK(GetX(s1023) == 1.0f); CHECK(GetX(s1023) == 0.0f); CHECK(GetZ(s1023) == 0.0f); CHECK(GetW(s1023) == 3.0f);
+        CHECK(GetX(s1030) == 1.0f); CHECK(GetX(s1030) == 0.0f); CHECK(GetZ(s1030) == 0.0f); CHECK(GetW(s1030) == 0.0f);
+        CHECK(GetX(s1031) == 1.0f); CHECK(GetX(s1031) == 0.0f); CHECK(GetZ(s1031) == 0.0f); CHECK(GetW(s1031) == 1.0f);
+        CHECK(GetX(s1032) == 1.0f); CHECK(GetX(s1032) == 0.0f); CHECK(GetZ(s1032) == 0.0f); CHECK(GetW(s1032) == 2.0f);
+        CHECK(GetX(s1033) == 1.0f); CHECK(GetX(s1033) == 0.0f); CHECK(GetZ(s1033) == 0.0f); CHECK(GetW(s1033) == 3.0f);
+        CHECK(GetX(s1100) == 1.0f); CHECK(GetX(s1100) == 0.0f); CHECK(GetZ(s1100) == 0.0f); CHECK(GetW(s1100) == 0.0f);
+        CHECK(GetX(s1101) == 1.0f); CHECK(GetX(s1101) == 0.0f); CHECK(GetZ(s1101) == 0.0f); CHECK(GetW(s1101) == 1.0f);
+        CHECK(GetX(s1102) == 1.0f); CHECK(GetX(s1102) == 0.0f); CHECK(GetZ(s1102) == 0.0f); CHECK(GetW(s1102) == 2.0f);
+        CHECK(GetX(s1103) == 1.0f); CHECK(GetX(s1103) == 0.0f); CHECK(GetZ(s1103) == 0.0f); CHECK(GetW(s1103) == 3.0f);
+        CHECK(GetX(s1110) == 1.0f); CHECK(GetX(s1110) == 0.0f); CHECK(GetZ(s1110) == 0.0f); CHECK(GetW(s1110) == 0.0f);
+        CHECK(GetX(s1111) == 1.0f); CHECK(GetX(s1111) == 0.0f); CHECK(GetZ(s1111) == 0.0f); CHECK(GetW(s1111) == 1.0f);
+        CHECK(GetX(s1112) == 1.0f); CHECK(GetX(s1112) == 0.0f); CHECK(GetZ(s1112) == 0.0f); CHECK(GetW(s1112) == 2.0f);
+        CHECK(GetX(s1113) == 1.0f); CHECK(GetX(s1113) == 0.0f); CHECK(GetZ(s1113) == 0.0f); CHECK(GetW(s1113) == 3.0f);
+        CHECK(GetX(s1120) == 1.0f); CHECK(GetX(s1120) == 0.0f); CHECK(GetZ(s1120) == 0.0f); CHECK(GetW(s1120) == 0.0f);
+        CHECK(GetX(s1121) == 1.0f); CHECK(GetX(s1121) == 0.0f); CHECK(GetZ(s1121) == 0.0f); CHECK(GetW(s1121) == 1.0f);
+        CHECK(GetX(s1122) == 1.0f); CHECK(GetX(s1122) == 0.0f); CHECK(GetZ(s1122) == 0.0f); CHECK(GetW(s1122) == 2.0f);
+        CHECK(GetX(s1123) == 1.0f); CHECK(GetX(s1123) == 0.0f); CHECK(GetZ(s1123) == 0.0f); CHECK(GetW(s1123) == 3.0f);
+        CHECK(GetX(s1130) == 1.0f); CHECK(GetX(s1130) == 0.0f); CHECK(GetZ(s1130) == 0.0f); CHECK(GetW(s1130) == 0.0f);
+        CHECK(GetX(s1131) == 1.0f); CHECK(GetX(s1131) == 0.0f); CHECK(GetZ(s1131) == 0.0f); CHECK(GetW(s1131) == 1.0f);
+        CHECK(GetX(s1132) == 1.0f); CHECK(GetX(s1132) == 0.0f); CHECK(GetZ(s1132) == 0.0f); CHECK(GetW(s1132) == 2.0f);
+        CHECK(GetX(s1133) == 1.0f); CHECK(GetX(s1133) == 0.0f); CHECK(GetZ(s1133) == 0.0f); CHECK(GetW(s1133) == 3.0f);
+        CHECK(GetX(s1200) == 1.0f); CHECK(GetX(s1200) == 0.0f); CHECK(GetZ(s1200) == 0.0f); CHECK(GetW(s1200) == 0.0f);
+        CHECK(GetX(s1201) == 1.0f); CHECK(GetX(s1201) == 0.0f); CHECK(GetZ(s1201) == 0.0f); CHECK(GetW(s1201) == 1.0f);
+        CHECK(GetX(s1202) == 1.0f); CHECK(GetX(s1202) == 0.0f); CHECK(GetZ(s1202) == 0.0f); CHECK(GetW(s1202) == 2.0f);
+        CHECK(GetX(s1203) == 1.0f); CHECK(GetX(s1203) == 0.0f); CHECK(GetZ(s1203) == 0.0f); CHECK(GetW(s1203) == 3.0f);
+        CHECK(GetX(s1210) == 1.0f); CHECK(GetX(s1210) == 0.0f); CHECK(GetZ(s1210) == 0.0f); CHECK(GetW(s1210) == 0.0f);
+        CHECK(GetX(s1211) == 1.0f); CHECK(GetX(s1211) == 0.0f); CHECK(GetZ(s1211) == 0.0f); CHECK(GetW(s1211) == 1.0f);
+        CHECK(GetX(s1212) == 1.0f); CHECK(GetX(s1212) == 0.0f); CHECK(GetZ(s1212) == 0.0f); CHECK(GetW(s1212) == 2.0f);
+        CHECK(GetX(s1213) == 1.0f); CHECK(GetX(s1213) == 0.0f); CHECK(GetZ(s1213) == 0.0f); CHECK(GetW(s1213) == 3.0f);
+        CHECK(GetX(s1220) == 1.0f); CHECK(GetX(s1220) == 0.0f); CHECK(GetZ(s1220) == 0.0f); CHECK(GetW(s1220) == 0.0f);
+        CHECK(GetX(s1221) == 1.0f); CHECK(GetX(s1221) == 0.0f); CHECK(GetZ(s1221) == 0.0f); CHECK(GetW(s1221) == 1.0f);
+        CHECK(GetX(s1222) == 1.0f); CHECK(GetX(s1222) == 0.0f); CHECK(GetZ(s1222) == 0.0f); CHECK(GetW(s1222) == 2.0f);
+        CHECK(GetX(s1223) == 1.0f); CHECK(GetX(s1223) == 0.0f); CHECK(GetZ(s1223) == 0.0f); CHECK(GetW(s1223) == 3.0f);
+        CHECK(GetX(s1230) == 1.0f); CHECK(GetX(s1230) == 0.0f); CHECK(GetZ(s1230) == 0.0f); CHECK(GetW(s1230) == 0.0f);
+        CHECK(GetX(s1231) == 1.0f); CHECK(GetX(s1231) == 0.0f); CHECK(GetZ(s1231) == 0.0f); CHECK(GetW(s1231) == 1.0f);
+        CHECK(GetX(s1232) == 1.0f); CHECK(GetX(s1232) == 0.0f); CHECK(GetZ(s1232) == 0.0f); CHECK(GetW(s1232) == 2.0f);
+        CHECK(GetX(s1233) == 1.0f); CHECK(GetX(s1233) == 0.0f); CHECK(GetZ(s1233) == 0.0f); CHECK(GetW(s1233) == 3.0f);
+        CHECK(GetX(s1300) == 1.0f); CHECK(GetX(s1300) == 0.0f); CHECK(GetZ(s1300) == 0.0f); CHECK(GetW(s1300) == 0.0f);
+        CHECK(GetX(s1301) == 1.0f); CHECK(GetX(s1301) == 0.0f); CHECK(GetZ(s1301) == 0.0f); CHECK(GetW(s1301) == 1.0f);
+        CHECK(GetX(s1302) == 1.0f); CHECK(GetX(s1302) == 0.0f); CHECK(GetZ(s1302) == 0.0f); CHECK(GetW(s1302) == 2.0f);
+        CHECK(GetX(s1303) == 1.0f); CHECK(GetX(s1303) == 0.0f); CHECK(GetZ(s1303) == 0.0f); CHECK(GetW(s1303) == 3.0f);
+        CHECK(GetX(s1310) == 1.0f); CHECK(GetX(s1310) == 0.0f); CHECK(GetZ(s1310) == 0.0f); CHECK(GetW(s1310) == 0.0f);
+        CHECK(GetX(s1311) == 1.0f); CHECK(GetX(s1311) == 0.0f); CHECK(GetZ(s1311) == 0.0f); CHECK(GetW(s1311) == 1.0f);
+        CHECK(GetX(s1312) == 1.0f); CHECK(GetX(s1312) == 0.0f); CHECK(GetZ(s1312) == 0.0f); CHECK(GetW(s1312) == 2.0f);
+        CHECK(GetX(s1313) == 1.0f); CHECK(GetX(s1313) == 0.0f); CHECK(GetZ(s1313) == 0.0f); CHECK(GetW(s1313) == 3.0f);
+        CHECK(GetX(s1320) == 1.0f); CHECK(GetX(s1320) == 0.0f); CHECK(GetZ(s1320) == 0.0f); CHECK(GetW(s1320) == 0.0f);
+        CHECK(GetX(s1321) == 1.0f); CHECK(GetX(s1321) == 0.0f); CHECK(GetZ(s1321) == 0.0f); CHECK(GetW(s1321) == 1.0f);
+        CHECK(GetX(s1322) == 1.0f); CHECK(GetX(s1322) == 0.0f); CHECK(GetZ(s1322) == 0.0f); CHECK(GetW(s1322) == 2.0f);
+        CHECK(GetX(s1323) == 1.0f); CHECK(GetX(s1323) == 0.0f); CHECK(GetZ(s1323) == 0.0f); CHECK(GetW(s1323) == 3.0f);
+        CHECK(GetX(s1330) == 1.0f); CHECK(GetX(s1330) == 0.0f); CHECK(GetZ(s1330) == 0.0f); CHECK(GetW(s1330) == 0.0f);
+        CHECK(GetX(s1331) == 1.0f); CHECK(GetX(s1331) == 0.0f); CHECK(GetZ(s1331) == 0.0f); CHECK(GetW(s1331) == 1.0f);
+        CHECK(GetX(s1332) == 1.0f); CHECK(GetX(s1332) == 0.0f); CHECK(GetZ(s1332) == 0.0f); CHECK(GetW(s1332) == 2.0f);
+        CHECK(GetX(s1333) == 1.0f); CHECK(GetX(s1333) == 0.0f); CHECK(GetZ(s1333) == 0.0f); CHECK(GetW(s1333) == 3.0f);
+        
+        CHECK(GetX(s2000) == 2.0f); CHECK(GetX(s2000) == 0.0f); CHECK(GetZ(s2000) == 0.0f); CHECK(GetW(s2000) == 0.0f);
+        CHECK(GetX(s2001) == 2.0f); CHECK(GetX(s2001) == 0.0f); CHECK(GetZ(s2001) == 0.0f); CHECK(GetW(s2001) == 1.0f);
+        CHECK(GetX(s2002) == 2.0f); CHECK(GetX(s2002) == 0.0f); CHECK(GetZ(s2002) == 0.0f); CHECK(GetW(s2002) == 2.0f);
+        CHECK(GetX(s2003) == 2.0f); CHECK(GetX(s2003) == 0.0f); CHECK(GetZ(s2003) == 0.0f); CHECK(GetW(s2003) == 3.0f);
+        CHECK(GetX(s2010) == 2.0f); CHECK(GetX(s2010) == 0.0f); CHECK(GetZ(s2010) == 0.0f); CHECK(GetW(s2010) == 0.0f);
+        CHECK(GetX(s2011) == 2.0f); CHECK(GetX(s2011) == 0.0f); CHECK(GetZ(s2011) == 0.0f); CHECK(GetW(s2011) == 1.0f);
+        CHECK(GetX(s2012) == 2.0f); CHECK(GetX(s2012) == 0.0f); CHECK(GetZ(s2012) == 0.0f); CHECK(GetW(s2012) == 2.0f);
+        CHECK(GetX(s2013) == 2.0f); CHECK(GetX(s2013) == 0.0f); CHECK(GetZ(s2013) == 0.0f); CHECK(GetW(s2013) == 3.0f);
+        CHECK(GetX(s2020) == 2.0f); CHECK(GetX(s2020) == 0.0f); CHECK(GetZ(s2020) == 0.0f); CHECK(GetW(s2020) == 0.0f);
+        CHECK(GetX(s2021) == 2.0f); CHECK(GetX(s2021) == 0.0f); CHECK(GetZ(s2021) == 0.0f); CHECK(GetW(s2021) == 1.0f);
+        CHECK(GetX(s2022) == 2.0f); CHECK(GetX(s2022) == 0.0f); CHECK(GetZ(s2022) == 0.0f); CHECK(GetW(s2022) == 2.0f);
+        CHECK(GetX(s2023) == 2.0f); CHECK(GetX(s2023) == 0.0f); CHECK(GetZ(s2023) == 0.0f); CHECK(GetW(s2023) == 3.0f);
+        CHECK(GetX(s2030) == 2.0f); CHECK(GetX(s2030) == 0.0f); CHECK(GetZ(s2030) == 0.0f); CHECK(GetW(s2030) == 0.0f);
+        CHECK(GetX(s2031) == 2.0f); CHECK(GetX(s2031) == 0.0f); CHECK(GetZ(s2031) == 0.0f); CHECK(GetW(s2031) == 1.0f);
+        CHECK(GetX(s2032) == 2.0f); CHECK(GetX(s2032) == 0.0f); CHECK(GetZ(s2032) == 0.0f); CHECK(GetW(s2032) == 2.0f);
+        CHECK(GetX(s2033) == 2.0f); CHECK(GetX(s2033) == 0.0f); CHECK(GetZ(s2033) == 0.0f); CHECK(GetW(s2033) == 3.0f);
+        CHECK(GetX(s2100) == 2.0f); CHECK(GetX(s2100) == 0.0f); CHECK(GetZ(s2100) == 0.0f); CHECK(GetW(s2100) == 0.0f);
+        CHECK(GetX(s2101) == 2.0f); CHECK(GetX(s2101) == 0.0f); CHECK(GetZ(s2101) == 0.0f); CHECK(GetW(s2101) == 1.0f);
+        CHECK(GetX(s2102) == 2.0f); CHECK(GetX(s2102) == 0.0f); CHECK(GetZ(s2102) == 0.0f); CHECK(GetW(s2102) == 2.0f);
+        CHECK(GetX(s2103) == 2.0f); CHECK(GetX(s2103) == 0.0f); CHECK(GetZ(s2103) == 0.0f); CHECK(GetW(s2103) == 3.0f);
+        CHECK(GetX(s2110) == 2.0f); CHECK(GetX(s2110) == 0.0f); CHECK(GetZ(s2110) == 0.0f); CHECK(GetW(s2110) == 0.0f);
+        CHECK(GetX(s2111) == 2.0f); CHECK(GetX(s2111) == 0.0f); CHECK(GetZ(s2111) == 0.0f); CHECK(GetW(s2111) == 1.0f);
+        CHECK(GetX(s2112) == 2.0f); CHECK(GetX(s2112) == 0.0f); CHECK(GetZ(s2112) == 0.0f); CHECK(GetW(s2112) == 2.0f);
+        CHECK(GetX(s2113) == 2.0f); CHECK(GetX(s2113) == 0.0f); CHECK(GetZ(s2113) == 0.0f); CHECK(GetW(s2113) == 3.0f);
+        CHECK(GetX(s2120) == 2.0f); CHECK(GetX(s2120) == 0.0f); CHECK(GetZ(s2120) == 0.0f); CHECK(GetW(s2120) == 0.0f);
+        CHECK(GetX(s2121) == 2.0f); CHECK(GetX(s2121) == 0.0f); CHECK(GetZ(s2121) == 0.0f); CHECK(GetW(s2121) == 1.0f);
+        CHECK(GetX(s2122) == 2.0f); CHECK(GetX(s2122) == 0.0f); CHECK(GetZ(s2122) == 0.0f); CHECK(GetW(s2122) == 2.0f);
+        CHECK(GetX(s2123) == 2.0f); CHECK(GetX(s2123) == 0.0f); CHECK(GetZ(s2123) == 0.0f); CHECK(GetW(s2123) == 3.0f);
+        CHECK(GetX(s2130) == 2.0f); CHECK(GetX(s2130) == 0.0f); CHECK(GetZ(s2130) == 0.0f); CHECK(GetW(s2130) == 0.0f);
+        CHECK(GetX(s2131) == 2.0f); CHECK(GetX(s2131) == 0.0f); CHECK(GetZ(s2131) == 0.0f); CHECK(GetW(s2131) == 1.0f);
+        CHECK(GetX(s2132) == 2.0f); CHECK(GetX(s2132) == 0.0f); CHECK(GetZ(s2132) == 0.0f); CHECK(GetW(s2132) == 2.0f);
+        CHECK(GetX(s2133) == 2.0f); CHECK(GetX(s2133) == 0.0f); CHECK(GetZ(s2133) == 0.0f); CHECK(GetW(s2133) == 3.0f);
+        CHECK(GetX(s2200) == 2.0f); CHECK(GetX(s2200) == 0.0f); CHECK(GetZ(s2200) == 0.0f); CHECK(GetW(s2200) == 0.0f);
+        CHECK(GetX(s2201) == 2.0f); CHECK(GetX(s2201) == 0.0f); CHECK(GetZ(s2201) == 0.0f); CHECK(GetW(s2201) == 1.0f);
+        CHECK(GetX(s2202) == 2.0f); CHECK(GetX(s2202) == 0.0f); CHECK(GetZ(s2202) == 0.0f); CHECK(GetW(s2202) == 2.0f);
+        CHECK(GetX(s2203) == 2.0f); CHECK(GetX(s2203) == 0.0f); CHECK(GetZ(s2203) == 0.0f); CHECK(GetW(s2203) == 3.0f);
+        CHECK(GetX(s2210) == 2.0f); CHECK(GetX(s2210) == 0.0f); CHECK(GetZ(s2210) == 0.0f); CHECK(GetW(s2210) == 0.0f);
+        CHECK(GetX(s2211) == 2.0f); CHECK(GetX(s2211) == 0.0f); CHECK(GetZ(s2211) == 0.0f); CHECK(GetW(s2211) == 1.0f);
+        CHECK(GetX(s2212) == 2.0f); CHECK(GetX(s2212) == 0.0f); CHECK(GetZ(s2212) == 0.0f); CHECK(GetW(s2212) == 2.0f);
+        CHECK(GetX(s2213) == 2.0f); CHECK(GetX(s2213) == 0.0f); CHECK(GetZ(s2213) == 0.0f); CHECK(GetW(s2213) == 3.0f);
+        CHECK(GetX(s2220) == 2.0f); CHECK(GetX(s2220) == 0.0f); CHECK(GetZ(s2220) == 0.0f); CHECK(GetW(s2220) == 0.0f);
+        CHECK(GetX(s2221) == 2.0f); CHECK(GetX(s2221) == 0.0f); CHECK(GetZ(s2221) == 0.0f); CHECK(GetW(s2221) == 1.0f);
+        CHECK(GetX(s2222) == 2.0f); CHECK(GetX(s2222) == 0.0f); CHECK(GetZ(s2222) == 0.0f); CHECK(GetW(s2222) == 2.0f);
+        CHECK(GetX(s2223) == 2.0f); CHECK(GetX(s2223) == 0.0f); CHECK(GetZ(s2223) == 0.0f); CHECK(GetW(s2223) == 3.0f);
+        CHECK(GetX(s2230) == 2.0f); CHECK(GetX(s2230) == 0.0f); CHECK(GetZ(s2230) == 0.0f); CHECK(GetW(s2230) == 0.0f);
+        CHECK(GetX(s2231) == 2.0f); CHECK(GetX(s2231) == 0.0f); CHECK(GetZ(s2231) == 0.0f); CHECK(GetW(s2231) == 1.0f);
+        CHECK(GetX(s2232) == 2.0f); CHECK(GetX(s2232) == 0.0f); CHECK(GetZ(s2232) == 0.0f); CHECK(GetW(s2232) == 2.0f);
+        CHECK(GetX(s2233) == 2.0f); CHECK(GetX(s2233) == 0.0f); CHECK(GetZ(s2233) == 0.0f); CHECK(GetW(s2233) == 3.0f);
+        CHECK(GetX(s2300) == 2.0f); CHECK(GetX(s2300) == 0.0f); CHECK(GetZ(s2300) == 0.0f); CHECK(GetW(s2300) == 0.0f);
+        CHECK(GetX(s2301) == 2.0f); CHECK(GetX(s2301) == 0.0f); CHECK(GetZ(s2301) == 0.0f); CHECK(GetW(s2301) == 1.0f);
+        CHECK(GetX(s2302) == 2.0f); CHECK(GetX(s2302) == 0.0f); CHECK(GetZ(s2302) == 0.0f); CHECK(GetW(s2302) == 2.0f);
+        CHECK(GetX(s2303) == 2.0f); CHECK(GetX(s2303) == 0.0f); CHECK(GetZ(s2303) == 0.0f); CHECK(GetW(s2303) == 3.0f);
+        CHECK(GetX(s2310) == 2.0f); CHECK(GetX(s2310) == 0.0f); CHECK(GetZ(s2310) == 0.0f); CHECK(GetW(s2310) == 0.0f);
+        CHECK(GetX(s2311) == 2.0f); CHECK(GetX(s2311) == 0.0f); CHECK(GetZ(s2311) == 0.0f); CHECK(GetW(s2311) == 1.0f);
+        CHECK(GetX(s2312) == 2.0f); CHECK(GetX(s2312) == 0.0f); CHECK(GetZ(s2312) == 0.0f); CHECK(GetW(s2312) == 2.0f);
+        CHECK(GetX(s2313) == 2.0f); CHECK(GetX(s2313) == 0.0f); CHECK(GetZ(s2313) == 0.0f); CHECK(GetW(s2313) == 3.0f);
+        CHECK(GetX(s2320) == 2.0f); CHECK(GetX(s2320) == 0.0f); CHECK(GetZ(s2320) == 0.0f); CHECK(GetW(s2320) == 0.0f);
+        CHECK(GetX(s2321) == 2.0f); CHECK(GetX(s2321) == 0.0f); CHECK(GetZ(s2321) == 0.0f); CHECK(GetW(s2321) == 1.0f);
+        CHECK(GetX(s2322) == 2.0f); CHECK(GetX(s2322) == 0.0f); CHECK(GetZ(s2322) == 0.0f); CHECK(GetW(s2322) == 2.0f);
+        CHECK(GetX(s2323) == 2.0f); CHECK(GetX(s2323) == 0.0f); CHECK(GetZ(s2323) == 0.0f); CHECK(GetW(s2323) == 3.0f);
+        CHECK(GetX(s2330) == 2.0f); CHECK(GetX(s2330) == 0.0f); CHECK(GetZ(s2330) == 0.0f); CHECK(GetW(s2330) == 0.0f);
+        CHECK(GetX(s2331) == 2.0f); CHECK(GetX(s2331) == 0.0f); CHECK(GetZ(s2331) == 0.0f); CHECK(GetW(s2331) == 1.0f);
+        CHECK(GetX(s2332) == 2.0f); CHECK(GetX(s2332) == 0.0f); CHECK(GetZ(s2332) == 0.0f); CHECK(GetW(s2332) == 2.0f);
+        CHECK(GetX(s2333) == 2.0f); CHECK(GetX(s2333) == 0.0f); CHECK(GetZ(s2333) == 0.0f); CHECK(GetW(s2333) == 3.0f);
+        
+        CHECK(GetX(s3000) == 3.0f); CHECK(GetX(s3000) == 0.0f); CHECK(GetZ(s3000) == 0.0f); CHECK(GetW(s3000) == 0.0f);
+        CHECK(GetX(s3001) == 3.0f); CHECK(GetX(s3001) == 0.0f); CHECK(GetZ(s3001) == 0.0f); CHECK(GetW(s3001) == 1.0f);
+        CHECK(GetX(s3002) == 3.0f); CHECK(GetX(s3002) == 0.0f); CHECK(GetZ(s3002) == 0.0f); CHECK(GetW(s3002) == 2.0f);
+        CHECK(GetX(s3003) == 3.0f); CHECK(GetX(s3003) == 0.0f); CHECK(GetZ(s3003) == 0.0f); CHECK(GetW(s3003) == 3.0f);
+        CHECK(GetX(s3010) == 3.0f); CHECK(GetX(s3010) == 0.0f); CHECK(GetZ(s3010) == 0.0f); CHECK(GetW(s3010) == 0.0f);
+        CHECK(GetX(s3011) == 3.0f); CHECK(GetX(s3011) == 0.0f); CHECK(GetZ(s3011) == 0.0f); CHECK(GetW(s3011) == 1.0f);
+        CHECK(GetX(s3012) == 3.0f); CHECK(GetX(s3012) == 0.0f); CHECK(GetZ(s3012) == 0.0f); CHECK(GetW(s3012) == 2.0f);
+        CHECK(GetX(s3013) == 3.0f); CHECK(GetX(s3013) == 0.0f); CHECK(GetZ(s3013) == 0.0f); CHECK(GetW(s3013) == 3.0f);
+        CHECK(GetX(s3020) == 3.0f); CHECK(GetX(s3020) == 0.0f); CHECK(GetZ(s3020) == 0.0f); CHECK(GetW(s3020) == 0.0f);
+        CHECK(GetX(s3021) == 3.0f); CHECK(GetX(s3021) == 0.0f); CHECK(GetZ(s3021) == 0.0f); CHECK(GetW(s3021) == 1.0f);
+        CHECK(GetX(s3022) == 3.0f); CHECK(GetX(s3022) == 0.0f); CHECK(GetZ(s3022) == 0.0f); CHECK(GetW(s3022) == 2.0f);
+        CHECK(GetX(s3023) == 3.0f); CHECK(GetX(s3023) == 0.0f); CHECK(GetZ(s3023) == 0.0f); CHECK(GetW(s3023) == 3.0f);
+        CHECK(GetX(s3030) == 3.0f); CHECK(GetX(s3030) == 0.0f); CHECK(GetZ(s3030) == 0.0f); CHECK(GetW(s3030) == 0.0f);
+        CHECK(GetX(s3031) == 3.0f); CHECK(GetX(s3031) == 0.0f); CHECK(GetZ(s3031) == 0.0f); CHECK(GetW(s3031) == 1.0f);
+        CHECK(GetX(s3032) == 3.0f); CHECK(GetX(s3032) == 0.0f); CHECK(GetZ(s3032) == 0.0f); CHECK(GetW(s3032) == 2.0f);
+        CHECK(GetX(s3033) == 3.0f); CHECK(GetX(s3033) == 0.0f); CHECK(GetZ(s3033) == 0.0f); CHECK(GetW(s3033) == 3.0f);
+        CHECK(GetX(s3100) == 3.0f); CHECK(GetX(s3100) == 0.0f); CHECK(GetZ(s3100) == 0.0f); CHECK(GetW(s3100) == 0.0f);
+        CHECK(GetX(s3101) == 3.0f); CHECK(GetX(s3101) == 0.0f); CHECK(GetZ(s3101) == 0.0f); CHECK(GetW(s3101) == 1.0f);
+        CHECK(GetX(s3102) == 3.0f); CHECK(GetX(s3102) == 0.0f); CHECK(GetZ(s3102) == 0.0f); CHECK(GetW(s3102) == 2.0f);
+        CHECK(GetX(s3103) == 3.0f); CHECK(GetX(s3103) == 0.0f); CHECK(GetZ(s3103) == 0.0f); CHECK(GetW(s3103) == 3.0f);
+        CHECK(GetX(s3110) == 3.0f); CHECK(GetX(s3110) == 0.0f); CHECK(GetZ(s3110) == 0.0f); CHECK(GetW(s3110) == 0.0f);
+        CHECK(GetX(s3111) == 3.0f); CHECK(GetX(s3111) == 0.0f); CHECK(GetZ(s3111) == 0.0f); CHECK(GetW(s3111) == 1.0f);
+        CHECK(GetX(s3112) == 3.0f); CHECK(GetX(s3112) == 0.0f); CHECK(GetZ(s3112) == 0.0f); CHECK(GetW(s3112) == 2.0f);
+        CHECK(GetX(s3113) == 3.0f); CHECK(GetX(s3113) == 0.0f); CHECK(GetZ(s3113) == 0.0f); CHECK(GetW(s3113) == 3.0f);
+        CHECK(GetX(s3120) == 3.0f); CHECK(GetX(s3120) == 0.0f); CHECK(GetZ(s3120) == 0.0f); CHECK(GetW(s3120) == 0.0f);
+        CHECK(GetX(s3121) == 3.0f); CHECK(GetX(s3121) == 0.0f); CHECK(GetZ(s3121) == 0.0f); CHECK(GetW(s3121) == 1.0f);
+        CHECK(GetX(s3122) == 3.0f); CHECK(GetX(s3122) == 0.0f); CHECK(GetZ(s3122) == 0.0f); CHECK(GetW(s3122) == 2.0f);
+        CHECK(GetX(s3123) == 3.0f); CHECK(GetX(s3123) == 0.0f); CHECK(GetZ(s3123) == 0.0f); CHECK(GetW(s3123) == 3.0f);
+        CHECK(GetX(s3130) == 3.0f); CHECK(GetX(s3130) == 0.0f); CHECK(GetZ(s3130) == 0.0f); CHECK(GetW(s3130) == 0.0f);
+        CHECK(GetX(s3131) == 3.0f); CHECK(GetX(s3131) == 0.0f); CHECK(GetZ(s3131) == 0.0f); CHECK(GetW(s3131) == 1.0f);
+        CHECK(GetX(s3132) == 3.0f); CHECK(GetX(s3132) == 0.0f); CHECK(GetZ(s3132) == 0.0f); CHECK(GetW(s3132) == 2.0f);
+        CHECK(GetX(s3133) == 3.0f); CHECK(GetX(s3133) == 0.0f); CHECK(GetZ(s3133) == 0.0f); CHECK(GetW(s3133) == 3.0f);
+        CHECK(GetX(s3200) == 3.0f); CHECK(GetX(s3200) == 0.0f); CHECK(GetZ(s3200) == 0.0f); CHECK(GetW(s3200) == 0.0f);
+        CHECK(GetX(s3201) == 3.0f); CHECK(GetX(s3201) == 0.0f); CHECK(GetZ(s3201) == 0.0f); CHECK(GetW(s3201) == 1.0f);
+        CHECK(GetX(s3202) == 3.0f); CHECK(GetX(s3202) == 0.0f); CHECK(GetZ(s3202) == 0.0f); CHECK(GetW(s3202) == 2.0f);
+        CHECK(GetX(s3203) == 3.0f); CHECK(GetX(s3203) == 0.0f); CHECK(GetZ(s3203) == 0.0f); CHECK(GetW(s3203) == 3.0f);
+        CHECK(GetX(s3210) == 3.0f); CHECK(GetX(s3210) == 0.0f); CHECK(GetZ(s3210) == 0.0f); CHECK(GetW(s3210) == 0.0f);
+        CHECK(GetX(s3211) == 3.0f); CHECK(GetX(s3211) == 0.0f); CHECK(GetZ(s3211) == 0.0f); CHECK(GetW(s3211) == 1.0f);
+        CHECK(GetX(s3212) == 3.0f); CHECK(GetX(s3212) == 0.0f); CHECK(GetZ(s3212) == 0.0f); CHECK(GetW(s3212) == 2.0f);
+        CHECK(GetX(s3213) == 3.0f); CHECK(GetX(s3213) == 0.0f); CHECK(GetZ(s3213) == 0.0f); CHECK(GetW(s3213) == 3.0f);
+        CHECK(GetX(s3220) == 3.0f); CHECK(GetX(s3220) == 0.0f); CHECK(GetZ(s3220) == 0.0f); CHECK(GetW(s3220) == 0.0f);
+        CHECK(GetX(s3221) == 3.0f); CHECK(GetX(s3221) == 0.0f); CHECK(GetZ(s3221) == 0.0f); CHECK(GetW(s3221) == 1.0f);
+        CHECK(GetX(s3222) == 3.0f); CHECK(GetX(s3222) == 0.0f); CHECK(GetZ(s3222) == 0.0f); CHECK(GetW(s3222) == 2.0f);
+        CHECK(GetX(s3223) == 3.0f); CHECK(GetX(s3223) == 0.0f); CHECK(GetZ(s3223) == 0.0f); CHECK(GetW(s3223) == 3.0f);
+        CHECK(GetX(s3230) == 3.0f); CHECK(GetX(s3230) == 0.0f); CHECK(GetZ(s3230) == 0.0f); CHECK(GetW(s3230) == 0.0f);
+        CHECK(GetX(s3231) == 3.0f); CHECK(GetX(s3231) == 0.0f); CHECK(GetZ(s3231) == 0.0f); CHECK(GetW(s3231) == 1.0f);
+        CHECK(GetX(s3232) == 3.0f); CHECK(GetX(s3232) == 0.0f); CHECK(GetZ(s3232) == 0.0f); CHECK(GetW(s3232) == 2.0f);
+        CHECK(GetX(s3233) == 3.0f); CHECK(GetX(s3233) == 0.0f); CHECK(GetZ(s3233) == 0.0f); CHECK(GetW(s3233) == 3.0f);
+        CHECK(GetX(s3300) == 3.0f); CHECK(GetX(s3300) == 0.0f); CHECK(GetZ(s3300) == 0.0f); CHECK(GetW(s3300) == 0.0f);
+        CHECK(GetX(s3301) == 3.0f); CHECK(GetX(s3301) == 0.0f); CHECK(GetZ(s3301) == 0.0f); CHECK(GetW(s3301) == 1.0f);
+        CHECK(GetX(s3302) == 3.0f); CHECK(GetX(s3302) == 0.0f); CHECK(GetZ(s3302) == 0.0f); CHECK(GetW(s3302) == 2.0f);
+        CHECK(GetX(s3303) == 3.0f); CHECK(GetX(s3303) == 0.0f); CHECK(GetZ(s3303) == 0.0f); CHECK(GetW(s3303) == 3.0f);
+        CHECK(GetX(s3310) == 3.0f); CHECK(GetX(s3310) == 0.0f); CHECK(GetZ(s3310) == 0.0f); CHECK(GetW(s3310) == 0.0f);
+        CHECK(GetX(s3311) == 3.0f); CHECK(GetX(s3311) == 0.0f); CHECK(GetZ(s3311) == 0.0f); CHECK(GetW(s3311) == 1.0f);
+        CHECK(GetX(s3312) == 3.0f); CHECK(GetX(s3312) == 0.0f); CHECK(GetZ(s3312) == 0.0f); CHECK(GetW(s3312) == 2.0f);
+        CHECK(GetX(s3313) == 3.0f); CHECK(GetX(s3313) == 0.0f); CHECK(GetZ(s3313) == 0.0f); CHECK(GetW(s3313) == 3.0f);
+        CHECK(GetX(s3320) == 3.0f); CHECK(GetX(s3320) == 0.0f); CHECK(GetZ(s3320) == 0.0f); CHECK(GetW(s3320) == 0.0f);
+        CHECK(GetX(s3321) == 3.0f); CHECK(GetX(s3321) == 0.0f); CHECK(GetZ(s3321) == 0.0f); CHECK(GetW(s3321) == 1.0f);
+        CHECK(GetX(s3322) == 3.0f); CHECK(GetX(s3322) == 0.0f); CHECK(GetZ(s3322) == 0.0f); CHECK(GetW(s3322) == 2.0f);
+        CHECK(GetX(s3323) == 3.0f); CHECK(GetX(s3323) == 0.0f); CHECK(GetZ(s3323) == 0.0f); CHECK(GetW(s3323) == 3.0f);
+        CHECK(GetX(s3330) == 3.0f); CHECK(GetX(s3330) == 0.0f); CHECK(GetZ(s3330) == 0.0f); CHECK(GetW(s3330) == 0.0f);
+        CHECK(GetX(s3331) == 3.0f); CHECK(GetX(s3331) == 0.0f); CHECK(GetZ(s3331) == 0.0f); CHECK(GetW(s3331) == 1.0f);
+        CHECK(GetX(s3332) == 3.0f); CHECK(GetX(s3332) == 0.0f); CHECK(GetZ(s3332) == 0.0f); CHECK(GetW(s3332) == 2.0f);
+        CHECK(GetX(s3333) == 3.0f); CHECK(GetX(s3333) == 0.0f); CHECK(GetZ(s3333) == 0.0f); CHECK(GetW(s3333) == 3.0f);
+
+        // clang-format on
+    }
+}
+
+//TEST_CASE("Graphyte::Maths / ")
+//{
+//}
+//
+//TEST_CASE("Graphyte::Maths / ")
+//{
+//}
+//
+//TEST_CASE("Graphyte::Maths / ")
+//{
+//}
+
 TEST_CASE("Graphyte::Maths::To")
 {
     using namespace Graphyte::Maths;
@@ -238,14 +1194,14 @@ TEST_CASE("Graphyte::Maths / dot product")
     using namespace Graphyte::Maths;
 
     Vector1 const c1 = Make<Vector1>(1.0f);
-    Vector2 const c2 = Make<Vector2>(1.0f, 2.0f);
-    Vector3 const c3 = Make<Vector3>(1.0f, 2.0f, 3.0f);
-    Vector4 const c4 = Make<Vector4>(1.0f, 2.0f, 3.0f, 4.0f);
+    Vector2 const c2 = Make<Vector2>(1.0f, -2.0f);
+    Vector3 const c3 = Make<Vector3>(-1.0f, 2.0f, -3.0f);
+    Vector4 const c4 = Make<Vector4>(1.0f, -2.0f, 3.0f, -4.0f);
 
     Vector1 const d1 = Dot(c1, c1);
     CHECK(GetX(d1) == 1.0f);
 
-    
+
     Vector2 const d2 = Dot(c2, c2);
     CHECK(GetX(d2) == 5.0f);
 
@@ -279,7 +1235,7 @@ TEST_CASE("Graphyte::Maths / lengths")
     Vector4 const l4 = Length(c4);
     CHECK(GetX(l4) == 2.0f);
 
-    
+
     Vector1 const s1 = LengthSquared(c1);
     CHECK(GetX(s1) == 4.0f);
 
@@ -367,7 +1323,31 @@ TEST_CASE("Graphyte::Maths / normalize")
     CHECK(GetX(Length(ne4)) == Approx{ 1.0f }.margin(0.01f));
 }
 
-TEST_CASE("Graphyte::Maths / arithmetic")
+TEST_CASE("Graphyte::Maths / clamp length")
+{
+}
+
+TEST_CASE("Graphyte::Maths / reflect")
+{
+}
+
+TEST_CASE("Graphyte::Maths / refract")
+{
+}
+
+TEST_CASE("Graphyte::Maths / face forward")
+{
+}
+
+TEST_CASE("Graphyte::Maths / angle between normals")
+{
+}
+
+TEST_CASE("Graphyte::Maths / angle between vectors")
+{
+}
+
+TEST_CASE("Graphyte::Maths / trigonometric functions")
 {
     using namespace Graphyte::Maths;
 
@@ -645,6 +1625,343 @@ TEST_CASE("Graphyte::Maths / arithmetic")
     }
 }
 
+TEST_CASE("Graphyte::Maths / log exp pow hypot sqrt invsqrt cbrt invcbrt")
+{
+    SECTION("Log")
+    {
+    }
+
+    SECTION("Log with base")
+    {
+    }
+
+    SECTION("Log 10")
+    {
+    }
+
+    SECTION("Log 2")
+    {
+    }
+
+    SECTION("Exp")
+    {
+    }
+
+    SECTION("Exp 10")
+    {
+    }
+
+    SECTION("Exp 2")
+    {
+    }
+
+    SECTION("Power")
+    {
+    }
+
+    SECTION("Hypot")
+    {
+    }
+
+    SECTION("Sqrt")
+    {
+    }
+
+    SECTION("SqrtEst")
+    {
+    }
+
+    SECTION("1 / Sqrt")
+    {
+    }
+
+    SECTION("1 / SqrtEst")
+    {
+    }
+
+    SECTION("Cbrt")
+    {
+    }
+
+    SECTION("1 / Cbrt")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / arithmetic")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Abs")
+    {
+        Vector1 const r1_a1 = Abs(Make<Vector1>(1.0f));
+        CHECK(GetX(r1_a1) == Approx{ 1.0f }.margin(0.01f));
+
+        Vector1 const r1_a2 = Abs(Make<Vector1>(-1.0f));
+        CHECK(GetX(r1_a2) == Approx{ 1.0f }.margin(0.01f));
+
+        Vector2 const r2 = Abs(Make<Vector2>(1.0f, -10.0f));
+        CHECK(GetX(r2) == Approx{ 1.0f }.margin(0.01f));
+        CHECK(GetY(r2) == Approx{ 10.0f }.margin(0.01f));
+
+        Vector3 const r3 = Abs(Make<Vector3>(1.0f, -10.0f, 0.1f));
+        CHECK(GetX(r3) == Approx{ 1.0f }.margin(0.01f));
+        CHECK(GetY(r3) == Approx{ 10.0f }.margin(0.01f));
+        CHECK(GetZ(r3) == Approx{ 0.1f }.margin(0.01f));
+
+        Vector4 const r4 = Abs(Make<Vector4>(1.0f, -10.0f, 0.1f, -0.01f));
+        CHECK(GetX(r4) == Approx{ 1.0f }.margin(0.01f));
+        CHECK(GetY(r4) == Approx{ 10.0f }.margin(0.01f));
+        CHECK(GetZ(r4) == Approx{ 0.1f }.margin(0.01f));
+        CHECK(GetW(r4) == Approx{ 0.01f }.margin(0.01f));
+    }
+
+    SECTION("Negate")
+    {
+        Vector1 const r1a1 = Negate(Make<Vector1>(1.0f));
+        CHECK(GetX(r1a1) == Approx{ -1.0f }.margin(0.01f));
+
+        Vector1 const r1a2 = Negate(Make<Vector1>(-1.0f));
+        CHECK(GetX(r1a2) == Approx{ 1.0f }.margin(0.01f));
+
+        Vector2 const r2a1 = Negate(Make<Vector2>(1.0f, -2.0f));
+        CHECK(GetX(r2a1) == Approx{ -1.0f }.margin(0.01f));
+        CHECK(GetY(r2a1) == Approx{ 2.0f }.margin(0.01f));
+
+        Vector2 const r2a2 = Negate(Make<Vector2>(-2.0f, 1.0f));
+        CHECK(GetX(r2a2) == Approx{ 2.0f }.margin(0.01f));
+        CHECK(GetY(r2a2) == Approx{ -1.0f }.margin(0.01f));
+
+        Vector3 const r3a1 = Negate(Make<Vector3>(-1.0f, 2.0f, -3.0f));
+        CHECK(GetX(r3a1) == Approx{ 1.0f }.margin(0.01f));
+        CHECK(GetY(r3a1) == Approx{ -2.0f }.margin(0.01f));
+        CHECK(GetZ(r3a1) == Approx{ 3.0f }.margin(0.01f));
+
+        Vector3 const r3a2 = Negate(Make<Vector3>(3.0f, -2.0f, 1.0f));
+        CHECK(GetX(r3a2) == Approx{ -3.0f }.margin(0.01f));
+        CHECK(GetY(r3a2) == Approx{ 2.0f }.margin(0.01f));
+        CHECK(GetZ(r3a2) == Approx{ -1.0f }.margin(0.01f));
+
+        Vector4 const r4a1 = Negate(Make<Vector4>(1.0f, -2.0f, 3.0f, -4.0f));
+        CHECK(GetX(r4a1) == Approx{ -1.0f }.margin(0.01f));
+        CHECK(GetY(r4a1) == Approx{ 2.0f }.margin(0.01f));
+        CHECK(GetZ(r4a1) == Approx{ -3.0f }.margin(0.01f));
+        CHECK(GetW(r4a1) == Approx{ 4.0f }.margin(0.01f));
+
+        Vector4 const r4a2 = Negate(Make<Vector4>(4.0f, -3.0f, 2.0f, -1.0f));
+        CHECK(GetX(r4a2) == Approx{ -4.0f }.margin(0.01f));
+        CHECK(GetY(r4a2) == Approx{ 3.0f }.margin(0.01f));
+        CHECK(GetZ(r4a2) == Approx{ -2.0f }.margin(0.01f));
+        CHECK(GetW(r4a2) == Approx{ 1.0f }.margin(0.01f));
+    }
+
+    SECTION("Add")
+    {
+    }
+
+    SECTION("Subtract")
+    {
+    }
+
+    SECTION("Multiply")
+    {
+    }
+
+    SECTION("Multiply by scalar")
+    {
+    }
+
+    SECTION("Reciprocal")
+    {
+    }
+
+    SECTION("Divide")
+    {
+    }
+
+    SECTION("Divide by scalar")
+    {
+    }
+
+    SECTION("Multiply Add")
+    {
+    }
+
+    SECTION("Multiply Subtract")
+    {
+    }
+
+    SECTION("Negate Multiply Add")
+    {
+    }
+
+    SECTION("Negate Multiply Subtract")
+    {
+    }
+
+    SECTION("Square")
+    {
+    }
+
+    SECTION("Signed Square")
+    {
+    }
+
+    SECTION("Cube")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / interpolation")
+{
+    SECTION("Lerp")
+    {
+    }
+
+    SECTION("Lerp by scalar")
+    {
+    }
+
+    SECTION("Lerp precise")
+    {
+    }
+
+    SECTION("Lerp precise by scalar")
+    {
+    }
+
+    SECTION("Hermite")
+    {
+    }
+
+    SECTION("Hermite by scalar")
+    {
+    }
+
+    SECTION("Barycentric")
+    {
+    }
+
+    SECTION("Barycentric by scalar")
+    {
+    }
+
+    SECTION("CatmullRom")
+    {
+    }
+
+    SECTION("CatmullRom by scalar")
+    {
+    }
+
+    SECTION("Value range remapping")
+    {
+    }
+
+    SECTION("Unlerp")
+    {
+    }
+
+    SECTION("SmoothStep")
+    {
+    }
+
+    SECTION("SmoothStep by scalar")
+    {
+    }
+
+    SECTION("Move Towards")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / physics")
+{
+    SECTION("Fersnel Term")
+    {
+    }
+
+    SECTION("Reflect")
+    {
+    }
+
+    SECTION("Refract")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / 4D vector operations")
+{
+    SECTION("Cross product")
+    {
+    }
+
+    SECTION("Orthogonal")
+    {
+    }
+
+    SECTION("Transform by matrix")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / 3D vector operations")
+{
+    SECTION("Cross product")
+    {
+    }
+
+    SECTION("Orthogonal")
+    {
+    }
+
+    SECTION("Decomposition")
+    {
+    }
+
+    SECTION("Transform by matrix")
+    {
+    }
+
+    SECTION("Transform coord vector by matrix")
+    {
+    }
+
+    SECTION("Transform normal vector by matrix")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / 2D vector operations")
+{
+    SECTION("Cross product")
+    {
+    }
+
+    SECTION("Orthogonal")
+    {
+    }
+
+    SECTION("Transform by matrix")
+    {
+    }
+
+    SECTION("Transform coord vector by matrix")
+    {
+    }
+
+    SECTION("Transform normal by matrix")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / rounding")
+{
+    SECTION("round")
+    {
+    }
+}
+
 
 #if false
 #include <GxBase/Maths.hxx>
@@ -674,51 +1991,6 @@ TEST_CASE("Maths / Vector / Clamp")
     Vector2 ra2 = Clamp(va2, Replicate<Vector2>(-0.1f), Replicate<Vector2>(0.875f));
     CHECK(GetX(ra2) == Approx{ 0.875f });
     CHECK(GetY(ra2) == Approx{ -0.1f });
-}
-
-TEST_CASE("Maths / Vectors / Dot Product")
-{
-    using namespace Graphyte;
-    using namespace Graphyte::Maths;
-
-    SECTION("Vector2")
-    {
-        Vector2 const a = Make<Vector2>(1.0f, -1.0f);
-        Vector2 const b = Make<Vector2>(2.0f, 1.5f);
-
-        Vector4 const r = Dot(a, b);
-
-        CHECK(GetX(r) == Approx{ 0.5f });
-        CHECK(GetY(r) == Approx{ 0.5f });
-        CHECK(GetZ(r) == Approx{ 0.5f });
-        CHECK(GetW(r) == Approx{ 0.5f });
-    }
-
-    SECTION("Vector3")
-    {
-        Vector3 const a = Make<Vector3>(1.0f, -1.0f, 3.0f);
-        Vector3 const b = Make<Vector3>(2.0f, 1.5f, 1.25f);
-
-        Vector4 const r = Dot(a, b);
-
-        CHECK(GetX(r) == Approx{ 4.25f });
-        CHECK(GetY(r) == Approx{ 4.25f });
-        CHECK(GetZ(r) == Approx{ 4.25f });
-        CHECK(GetW(r) == Approx{ 4.25f });
-    }
-
-    SECTION("Vector4")
-    {
-        Vector4 const a = Make<Vector4>(1.0f, -1.0f, 3.0f, -1.5f);
-        Vector4 const b = Make<Vector4>(2.0f, 1.5f, 1.25f, 2.25f);
-
-        Vector4 const r = Dot(a, b);
-
-        CHECK(GetX(r) == Approx{ 0.875f });
-        CHECK(GetY(r) == Approx{ 0.875f });
-        CHECK(GetZ(r) == Approx{ 0.875f });
-        CHECK(GetW(r) == Approx{ 0.875f });
-    }
 }
 
 TEST_CASE("Maths / Vectors / Angles")
