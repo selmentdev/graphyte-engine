@@ -12,7 +12,7 @@
         }
 
         .ProjectFiles = {
-            '$ProjectPath$/source/impl.cxx'
+            '$ProjectPath$/source/VmaUsage.cxx'
         }
 
         .VariantDef_Windows = [
