@@ -2,14 +2,13 @@
 #include <GxBase/System/Impl.Windows/Windows.Helpers.hxx>
 #include <GxBase/Flags.hxx>
 #include <GxBase/String.hxx>
+
 #include "Windows.KeyboardMapping.hxx"
 #include "Windows.Window.hxx"
 #include "Windows.XInput.hxx"
 
 #include <ShellScalingApi.h>
-//#include <windowsx.h>
-//#undef IsMaximized
-//#undef IsMinimized
+
 
 // =================================================================================================
 // Logging category.

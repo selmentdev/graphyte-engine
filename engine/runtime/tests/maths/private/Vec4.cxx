@@ -1,6 +1,469 @@
 #include <catch2/catch.hpp>
 #include <GxBase/Maths/Vector.hxx>
 
+
+TEST_CASE("Graphyte::Maths / select control")
+{
+    using namespace Graphyte::Maths;
+
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 0, 0, 0);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0x00000000);
+    }
+
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 0, 0, 1);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 0, 1, 0);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 0, 1, 1);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 1, 0, 0);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 1, 0, 1);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 1, 1, 0);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(0, 1, 1, 1);
+        CHECK(GetX(b) == 0x00000000);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 0, 0, 0);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 0, 0, 1);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 0, 1, 0);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 0, 1, 1);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0x00000000);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 1, 0, 0);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 1, 0, 1);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0x00000000);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 1, 1, 0);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0x00000000);
+    }
+    {
+        Bool4 const b = SelectControl<Bool4>(1, 1, 1, 1);
+        CHECK(GetX(b) == 0xFFFFFFFF);
+        CHECK(GetY(b) == 0xFFFFFFFF);
+        CHECK(GetZ(b) == 0xFFFFFFFF);
+        CHECK(GetW(b) == 0xFFFFFFFF);
+    }
+}
+
+TEST_CASE("Graphyte::Maths / ")
+{
+    using namespace Graphyte::Maths;
+    Vector4 const c1 = Make<Vector4>(1.0f, 2.0f, 3.0f, 4.0f);
+    Vector4 const c2 = Make<Vector4>(5.0f, 6.0f, 7.0f, 8.0f);
+
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 0, 0, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 0, 0, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 0, 1, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 0, 1, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 1, 0, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 1, 0, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 1, 1, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(0, 1, 1, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 1.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 0, 0, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 0, 0, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 0, 1, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 0, 1, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 2.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 1, 0, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 1, 0, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 3.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 1, 1, 0);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 4.0f);
+    }
+    {
+        Bool4 const b   = SelectControl<Bool4>(1, 1, 1, 1);
+        Vector4 const s = Select(c1, c2, b);
+
+        CHECK(GetX(s) == 5.0f);
+        CHECK(GetY(s) == 6.0f);
+        CHECK(GetZ(s) == 7.0f);
+        CHECK(GetW(s) == 8.0f);
+    }
+}
+
+TEST_CASE("Graphyte::Maths / vector permute")
+{
+    using namespace Graphyte::Maths;
+    Vector4 const c1 = Make<Vector4>(0.0f, 1.0f, 2.0f, 3.0f);
+    Vector4 const c2 = Make<Vector4>(4.0f, 5.0f, 6.0f, 7.0f);
+
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 0, 0, 0, 0);
+        Vector4 const s2 = Permute<0, 0, 0, 0>(c1, c2);
+
+        CHECK(GetX(s1) == 0.0f);
+        CHECK(GetY(s1) == 0.0f);
+        CHECK(GetZ(s1) == 0.0f);
+        CHECK(GetW(s1) == 0.0f);
+
+        CHECK(GetX(s2) == 0.0f);
+        CHECK(GetY(s2) == 0.0f);
+        CHECK(GetZ(s2) == 0.0f);
+        CHECK(GetW(s2) == 0.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 2, 1, 3, 7);
+        Vector4 const s2 = Permute<2, 1, 3, 7>(c1, c2);
+
+        CHECK(GetX(s1) == 2.0f);
+        CHECK(GetY(s1) == 1.0f);
+        CHECK(GetZ(s1) == 3.0f);
+        CHECK(GetW(s1) == 7.0f);
+
+        CHECK(GetX(s2) == 2.0f);
+        CHECK(GetY(s2) == 1.0f);
+        CHECK(GetZ(s2) == 3.0f);
+        CHECK(GetW(s2) == 7.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 3, 1, 3, 2);
+        Vector4 const s2 = Permute<3, 1, 3, 2>(c1, c2);
+
+        CHECK(GetX(s1) == 3.0f);
+        CHECK(GetY(s1) == 1.0f);
+        CHECK(GetZ(s1) == 3.0f);
+        CHECK(GetW(s1) == 2.0f);
+
+        CHECK(GetX(s2) == 3.0f);
+        CHECK(GetY(s2) == 1.0f);
+        CHECK(GetZ(s2) == 3.0f);
+        CHECK(GetW(s2) == 2.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 1, 2, 3, 4);
+        Vector4 const s2 = Permute<1, 2, 3, 4>(c1, c2);
+
+        CHECK(GetX(s1) == 1.0f);
+        CHECK(GetY(s1) == 2.0f);
+        CHECK(GetZ(s1) == 3.0f);
+        CHECK(GetW(s1) == 4.0f);
+
+        CHECK(GetX(s2) == 1.0f);
+        CHECK(GetY(s2) == 2.0f);
+        CHECK(GetZ(s2) == 3.0f);
+        CHECK(GetW(s2) == 4.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 7, 7, 7, 6);
+        Vector4 const s2 = Permute<7, 7, 7, 6>(c1, c2);
+
+        CHECK(GetX(s1) == 7.0f);
+        CHECK(GetY(s1) == 7.0f);
+        CHECK(GetZ(s1) == 7.0f);
+        CHECK(GetW(s1) == 6.0f);
+
+        CHECK(GetX(s2) == 7.0f);
+        CHECK(GetY(s2) == 7.0f);
+        CHECK(GetZ(s2) == 7.0f);
+        CHECK(GetW(s2) == 6.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 0, 3, 1, 2);
+        Vector4 const s2 = Permute<0, 3, 1, 2>(c1, c2);
+
+        CHECK(GetX(s1) == 0.0f);
+        CHECK(GetY(s1) == 3.0f);
+        CHECK(GetZ(s1) == 1.0f);
+        CHECK(GetW(s1) == 2.0f);
+
+        CHECK(GetX(s2) == 0.0f);
+        CHECK(GetY(s2) == 3.0f);
+        CHECK(GetZ(s2) == 1.0f);
+        CHECK(GetW(s2) == 2.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 0, 1, 0, 3);
+        Vector4 const s2 = Permute<0, 1, 0, 3>(c1, c2);
+
+        CHECK(GetX(s1) == 0.0f);
+        CHECK(GetY(s1) == 1.0f);
+        CHECK(GetZ(s1) == 0.0f);
+        CHECK(GetW(s1) == 3.0f);
+
+        CHECK(GetX(s2) == 0.0f);
+        CHECK(GetY(s2) == 1.0f);
+        CHECK(GetZ(s2) == 0.0f);
+        CHECK(GetW(s2) == 3.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 0, 0, 0, 1);
+        Vector4 const s2 = Permute<0, 0, 0, 1>(c1, c2);
+
+        CHECK(GetX(s1) == 0.0f);
+        CHECK(GetY(s1) == 0.0f);
+        CHECK(GetZ(s1) == 0.0f);
+        CHECK(GetW(s1) == 1.0f);
+
+        CHECK(GetX(s2) == 0.0f);
+        CHECK(GetY(s2) == 0.0f);
+        CHECK(GetZ(s2) == 0.0f);
+        CHECK(GetW(s2) == 1.0f);
+    }
+
+    {
+        Vector4 const s1 = Permute(c1, c2, 7, 0, 1, 4);
+        Vector4 const s2 = Permute<7, 0, 1, 4>(c1, c2);
+
+        CHECK(GetX(s1) == 7.0f);
+        CHECK(GetY(s1) == 0.0f);
+        CHECK(GetZ(s1) == 1.0f);
+        CHECK(GetW(s1) == 4.0f);
+
+        CHECK(GetX(s2) == 7.0f);
+        CHECK(GetY(s2) == 0.0f);
+        CHECK(GetZ(s2) == 1.0f);
+        CHECK(GetW(s2) == 4.0f);
+    }
+}
+
+TEST_CASE("Graphyte::Maths / swizzle")
+{
+    using namespace Graphyte::Maths;
+
+    Vector4 const c = Make<Vector4>(0.0f, 1.0f, 2.0f, 3.0f);
+
+    {
+        for (uint32_t x = 0; x < 4; ++x)
+        {
+            float const fx = static_cast<float>(x);
+
+            for (uint32_t y = 0; y < 4; ++y)
+            {
+                float const fy = static_cast<float>(y);
+
+                for (uint32_t z = 0; z < 4; ++z)
+                {
+                    float const fz = static_cast<float>(z);
+
+                    for (uint32_t w = 0; w < 4; ++w)
+                    {
+                        float const fw = static_cast<float>(w);
+
+                        Vector4 const s = Swizzle<Vector4>(c, x, y, z, w);
+
+                        CHECK(GetX(s) == fx);
+                        CHECK(GetY(s) == fy);
+                        CHECK(GetZ(s) == fz);
+                        CHECK(GetW(s) == fw);
+                    }
+                }
+            }
+        }
+    }
+}
+
+//TEST_CASE("Graphyte::Maths / ")
+//{
+//}
+//
+//TEST_CASE("Graphyte::Maths / ")
+//{
+//}
+//
+//TEST_CASE("Graphyte::Maths / ")
+//{
+//}
+
 TEST_CASE("Graphyte::Maths::To")
 {
     using namespace Graphyte::Maths;
@@ -238,14 +701,14 @@ TEST_CASE("Graphyte::Maths / dot product")
     using namespace Graphyte::Maths;
 
     Vector1 const c1 = Make<Vector1>(1.0f);
-    Vector2 const c2 = Make<Vector2>(1.0f, 2.0f);
-    Vector3 const c3 = Make<Vector3>(1.0f, 2.0f, 3.0f);
-    Vector4 const c4 = Make<Vector4>(1.0f, 2.0f, 3.0f, 4.0f);
+    Vector2 const c2 = Make<Vector2>(1.0f, -2.0f);
+    Vector3 const c3 = Make<Vector3>(-1.0f, 2.0f, -3.0f);
+    Vector4 const c4 = Make<Vector4>(1.0f, -2.0f, 3.0f, -4.0f);
 
     Vector1 const d1 = Dot(c1, c1);
     CHECK(GetX(d1) == 1.0f);
 
-    
+
     Vector2 const d2 = Dot(c2, c2);
     CHECK(GetX(d2) == 5.0f);
 
@@ -279,7 +742,7 @@ TEST_CASE("Graphyte::Maths / lengths")
     Vector4 const l4 = Length(c4);
     CHECK(GetX(l4) == 2.0f);
 
-    
+
     Vector1 const s1 = LengthSquared(c1);
     CHECK(GetX(s1) == 4.0f);
 
@@ -367,7 +830,31 @@ TEST_CASE("Graphyte::Maths / normalize")
     CHECK(GetX(Length(ne4)) == Approx{ 1.0f }.margin(0.01f));
 }
 
-TEST_CASE("Graphyte::Maths / arithmetic")
+TEST_CASE("Graphyte::Maths / clamp length")
+{
+}
+
+TEST_CASE("Graphyte::Maths / reflect")
+{
+}
+
+TEST_CASE("Graphyte::Maths / refract")
+{
+}
+
+TEST_CASE("Graphyte::Maths / face forward")
+{
+}
+
+TEST_CASE("Graphyte::Maths / angle between normals")
+{
+}
+
+TEST_CASE("Graphyte::Maths / angle between vectors")
+{
+}
+
+TEST_CASE("Graphyte::Maths / trigonometric functions")
 {
     using namespace Graphyte::Maths;
 
@@ -645,6 +1132,343 @@ TEST_CASE("Graphyte::Maths / arithmetic")
     }
 }
 
+TEST_CASE("Graphyte::Maths / log exp pow hypot sqrt invsqrt cbrt invcbrt")
+{
+    SECTION("Log")
+    {
+    }
+
+    SECTION("Log with base")
+    {
+    }
+
+    SECTION("Log 10")
+    {
+    }
+
+    SECTION("Log 2")
+    {
+    }
+
+    SECTION("Exp")
+    {
+    }
+
+    SECTION("Exp 10")
+    {
+    }
+
+    SECTION("Exp 2")
+    {
+    }
+
+    SECTION("Power")
+    {
+    }
+
+    SECTION("Hypot")
+    {
+    }
+
+    SECTION("Sqrt")
+    {
+    }
+
+    SECTION("SqrtEst")
+    {
+    }
+
+    SECTION("1 / Sqrt")
+    {
+    }
+
+    SECTION("1 / SqrtEst")
+    {
+    }
+
+    SECTION("Cbrt")
+    {
+    }
+
+    SECTION("1 / Cbrt")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / arithmetic")
+{
+    using namespace Graphyte::Maths;
+
+    SECTION("Abs")
+    {
+        Vector1 const r1_a1 = Abs(Make<Vector1>(1.0f));
+        CHECK(GetX(r1_a1) == Approx{ 1.0f }.margin(0.01f));
+
+        Vector1 const r1_a2 = Abs(Make<Vector1>(-1.0f));
+        CHECK(GetX(r1_a2) == Approx{ 1.0f }.margin(0.01f));
+
+        Vector2 const r2 = Abs(Make<Vector2>(1.0f, -10.0f));
+        CHECK(GetX(r2) == Approx{ 1.0f }.margin(0.01f));
+        CHECK(GetY(r2) == Approx{ 10.0f }.margin(0.01f));
+
+        Vector3 const r3 = Abs(Make<Vector3>(1.0f, -10.0f, 0.1f));
+        CHECK(GetX(r3) == Approx{ 1.0f }.margin(0.01f));
+        CHECK(GetY(r3) == Approx{ 10.0f }.margin(0.01f));
+        CHECK(GetZ(r3) == Approx{ 0.1f }.margin(0.01f));
+
+        Vector4 const r4 = Abs(Make<Vector4>(1.0f, -10.0f, 0.1f, -0.01f));
+        CHECK(GetX(r4) == Approx{ 1.0f }.margin(0.01f));
+        CHECK(GetY(r4) == Approx{ 10.0f }.margin(0.01f));
+        CHECK(GetZ(r4) == Approx{ 0.1f }.margin(0.01f));
+        CHECK(GetW(r4) == Approx{ 0.01f }.margin(0.01f));
+    }
+
+    SECTION("Negate")
+    {
+        Vector1 const r1a1 = Negate(Make<Vector1>(1.0f));
+        CHECK(GetX(r1a1) == Approx{ -1.0f }.margin(0.01f));
+
+        Vector1 const r1a2 = Negate(Make<Vector1>(-1.0f));
+        CHECK(GetX(r1a2) == Approx{ 1.0f }.margin(0.01f));
+
+        Vector2 const r2a1 = Negate(Make<Vector2>(1.0f, -2.0f));
+        CHECK(GetX(r2a1) == Approx{ -1.0f }.margin(0.01f));
+        CHECK(GetY(r2a1) == Approx{ 2.0f }.margin(0.01f));
+
+        Vector2 const r2a2 = Negate(Make<Vector2>(-2.0f, 1.0f));
+        CHECK(GetX(r2a2) == Approx{ 2.0f }.margin(0.01f));
+        CHECK(GetY(r2a2) == Approx{ -1.0f }.margin(0.01f));
+
+        Vector3 const r3a1 = Negate(Make<Vector3>(-1.0f, 2.0f, -3.0f));
+        CHECK(GetX(r3a1) == Approx{ 1.0f }.margin(0.01f));
+        CHECK(GetY(r3a1) == Approx{ -2.0f }.margin(0.01f));
+        CHECK(GetZ(r3a1) == Approx{ 3.0f }.margin(0.01f));
+
+        Vector3 const r3a2 = Negate(Make<Vector3>(3.0f, -2.0f, 1.0f));
+        CHECK(GetX(r3a2) == Approx{ -3.0f }.margin(0.01f));
+        CHECK(GetY(r3a2) == Approx{ 2.0f }.margin(0.01f));
+        CHECK(GetZ(r3a2) == Approx{ -1.0f }.margin(0.01f));
+
+        Vector4 const r4a1 = Negate(Make<Vector4>(1.0f, -2.0f, 3.0f, -4.0f));
+        CHECK(GetX(r4a1) == Approx{ -1.0f }.margin(0.01f));
+        CHECK(GetY(r4a1) == Approx{ 2.0f }.margin(0.01f));
+        CHECK(GetZ(r4a1) == Approx{ -3.0f }.margin(0.01f));
+        CHECK(GetW(r4a1) == Approx{ 4.0f }.margin(0.01f));
+
+        Vector4 const r4a2 = Negate(Make<Vector4>(4.0f, -3.0f, 2.0f, -1.0f));
+        CHECK(GetX(r4a2) == Approx{ -4.0f }.margin(0.01f));
+        CHECK(GetY(r4a2) == Approx{ 3.0f }.margin(0.01f));
+        CHECK(GetZ(r4a2) == Approx{ -2.0f }.margin(0.01f));
+        CHECK(GetW(r4a2) == Approx{ 1.0f }.margin(0.01f));
+    }
+
+    SECTION("Add")
+    {
+    }
+
+    SECTION("Subtract")
+    {
+    }
+
+    SECTION("Multiply")
+    {
+    }
+
+    SECTION("Multiply by scalar")
+    {
+    }
+
+    SECTION("Reciprocal")
+    {
+    }
+
+    SECTION("Divide")
+    {
+    }
+
+    SECTION("Divide by scalar")
+    {
+    }
+
+    SECTION("Multiply Add")
+    {
+    }
+
+    SECTION("Multiply Subtract")
+    {
+    }
+
+    SECTION("Negate Multiply Add")
+    {
+    }
+
+    SECTION("Negate Multiply Subtract")
+    {
+    }
+
+    SECTION("Square")
+    {
+    }
+
+    SECTION("Signed Square")
+    {
+    }
+
+    SECTION("Cube")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / interpolation")
+{
+    SECTION("Lerp")
+    {
+    }
+
+    SECTION("Lerp by scalar")
+    {
+    }
+
+    SECTION("Lerp precise")
+    {
+    }
+
+    SECTION("Lerp precise by scalar")
+    {
+    }
+
+    SECTION("Hermite")
+    {
+    }
+
+    SECTION("Hermite by scalar")
+    {
+    }
+
+    SECTION("Barycentric")
+    {
+    }
+
+    SECTION("Barycentric by scalar")
+    {
+    }
+
+    SECTION("CatmullRom")
+    {
+    }
+
+    SECTION("CatmullRom by scalar")
+    {
+    }
+
+    SECTION("Value range remapping")
+    {
+    }
+
+    SECTION("Unlerp")
+    {
+    }
+
+    SECTION("SmoothStep")
+    {
+    }
+
+    SECTION("SmoothStep by scalar")
+    {
+    }
+
+    SECTION("Move Towards")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / physics")
+{
+    SECTION("Fersnel Term")
+    {
+    }
+
+    SECTION("Reflect")
+    {
+    }
+
+    SECTION("Refract")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / 4D vector operations")
+{
+    SECTION("Cross product")
+    {
+    }
+
+    SECTION("Orthogonal")
+    {
+    }
+
+    SECTION("Transform by matrix")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / 3D vector operations")
+{
+    SECTION("Cross product")
+    {
+    }
+
+    SECTION("Orthogonal")
+    {
+    }
+
+    SECTION("Decomposition")
+    {
+    }
+
+    SECTION("Transform by matrix")
+    {
+    }
+
+    SECTION("Transform coord vector by matrix")
+    {
+    }
+
+    SECTION("Transform normal vector by matrix")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / 2D vector operations")
+{
+    SECTION("Cross product")
+    {
+    }
+
+    SECTION("Orthogonal")
+    {
+    }
+
+    SECTION("Transform by matrix")
+    {
+    }
+
+    SECTION("Transform coord vector by matrix")
+    {
+    }
+
+    SECTION("Transform normal by matrix")
+    {
+    }
+}
+
+TEST_CASE("Graphyte::Maths / rounding")
+{
+    SECTION("round")
+    {
+    }
+}
+
 
 #if false
 #include <GxBase/Maths.hxx>
@@ -674,51 +1498,6 @@ TEST_CASE("Maths / Vector / Clamp")
     Vector2 ra2 = Clamp(va2, Replicate<Vector2>(-0.1f), Replicate<Vector2>(0.875f));
     CHECK(GetX(ra2) == Approx{ 0.875f });
     CHECK(GetY(ra2) == Approx{ -0.1f });
-}
-
-TEST_CASE("Maths / Vectors / Dot Product")
-{
-    using namespace Graphyte;
-    using namespace Graphyte::Maths;
-
-    SECTION("Vector2")
-    {
-        Vector2 const a = Make<Vector2>(1.0f, -1.0f);
-        Vector2 const b = Make<Vector2>(2.0f, 1.5f);
-
-        Vector4 const r = Dot(a, b);
-
-        CHECK(GetX(r) == Approx{ 0.5f });
-        CHECK(GetY(r) == Approx{ 0.5f });
-        CHECK(GetZ(r) == Approx{ 0.5f });
-        CHECK(GetW(r) == Approx{ 0.5f });
-    }
-
-    SECTION("Vector3")
-    {
-        Vector3 const a = Make<Vector3>(1.0f, -1.0f, 3.0f);
-        Vector3 const b = Make<Vector3>(2.0f, 1.5f, 1.25f);
-
-        Vector4 const r = Dot(a, b);
-
-        CHECK(GetX(r) == Approx{ 4.25f });
-        CHECK(GetY(r) == Approx{ 4.25f });
-        CHECK(GetZ(r) == Approx{ 4.25f });
-        CHECK(GetW(r) == Approx{ 4.25f });
-    }
-
-    SECTION("Vector4")
-    {
-        Vector4 const a = Make<Vector4>(1.0f, -1.0f, 3.0f, -1.5f);
-        Vector4 const b = Make<Vector4>(2.0f, 1.5f, 1.25f, 2.25f);
-
-        Vector4 const r = Dot(a, b);
-
-        CHECK(GetX(r) == Approx{ 0.875f });
-        CHECK(GetY(r) == Approx{ 0.875f });
-        CHECK(GetZ(r) == Approx{ 0.875f });
-        CHECK(GetW(r) == Approx{ 0.875f });
-    }
 }
 
 TEST_CASE("Maths / Vectors / Angles")
