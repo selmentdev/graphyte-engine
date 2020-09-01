@@ -765,36 +765,39 @@ namespace Graphyte::App::Impl
 
     static void WmGetMinMaxInfo(Window& window, LPARAM lparam) noexcept
     {
-        WindowSizeLimits const& limits = GetSizeLimits(window);
-
-        if (limits.Min.has_value() || limits.Max.has_value())
+        if (window.Type == WindowType::Form || window.Type == WindowType::Dialog)
         {
-            MINMAXINFO& minmax = *reinterpret_cast<MINMAXINFO*>(lparam);
+            WindowSizeLimits const& limits = GetSizeLimits(window);
 
-            System::Size minSize = limits.Min.value_or(
-                System::Size{
-                    .Width  = minmax.ptMinTrackSize.x,
-                    .Height = minmax.ptMinTrackSize.y,
-                });
+            if (limits.Min.has_value() || limits.Max.has_value())
+            {
+                MINMAXINFO& minmax = *reinterpret_cast<MINMAXINFO*>(lparam);
 
-            System::Size maxSize = limits.Max.value_or(
-                System::Size{
-                    .Width  = minmax.ptMaxTrackSize.x,
-                    .Height = minmax.ptMaxTrackSize.y,
-                });
+                System::Size minSize = limits.Min.value_or(
+                    System::Size{
+                        .Width  = minmax.ptMinTrackSize.x,
+                        .Height = minmax.ptMinTrackSize.y,
+                    });
 
-            DWORD const dwStyle   = static_cast<DWORD>(GetWindowLongW(window.Hwnd, GWL_STYLE));
-            DWORD const dwExStyle = static_cast<DWORD>(GetWindowLongW(window.Hwnd, GWL_EXSTYLE));
+                System::Size maxSize = limits.Max.value_or(
+                    System::Size{
+                        .Width  = minmax.ptMaxTrackSize.x,
+                        .Height = minmax.ptMaxTrackSize.y,
+                    });
 
-            RECT rcBorder{};
-            AdjustWindowRectEx(&rcBorder, dwStyle, FALSE, dwExStyle);
-            maxSize.Width += (rcBorder.right - rcBorder.left);
-            maxSize.Height += (rcBorder.bottom - rcBorder.top);
+                DWORD const dwStyle   = static_cast<DWORD>(GetWindowLongW(window.Hwnd, GWL_STYLE));
+                DWORD const dwExStyle = static_cast<DWORD>(GetWindowLongW(window.Hwnd, GWL_EXSTYLE));
 
-            minmax.ptMinTrackSize.x = minSize.Width;
-            minmax.ptMinTrackSize.y = minSize.Height;
-            minmax.ptMaxTrackSize.x = maxSize.Width;
-            minmax.ptMaxTrackSize.y = maxSize.Height;
+                RECT rcBorder{};
+                AdjustWindowRectEx(&rcBorder, dwStyle, FALSE, dwExStyle);
+                maxSize.Width += (rcBorder.right - rcBorder.left);
+                maxSize.Height += (rcBorder.bottom - rcBorder.top);
+
+                minmax.ptMinTrackSize.x = minSize.Width;
+                minmax.ptMinTrackSize.y = minSize.Height;
+                minmax.ptMaxTrackSize.x = maxSize.Width;
+                minmax.ptMaxTrackSize.y = maxSize.Height;
+            }
         }
     }
 
