@@ -74,6 +74,7 @@ namespace Graphyte::Storage
     std::string GetProjectDirectory() noexcept
     {
         static std::string result{};
+
         if (result.empty())
         {
             Storage::AppendPath(result, "../../../game/");
@@ -182,7 +183,7 @@ namespace Graphyte::Storage
 
     Status OpenRead(
         std::unique_ptr<IStream>& result,
-        const std::string& path,
+        std::string_view path,
         bool share) noexcept
     {
         return IFileSystem::GetPlatformNative().OpenRead(
@@ -193,7 +194,7 @@ namespace Graphyte::Storage
 
     Status OpenWrite(
         std::unique_ptr<IStream>& result,
-        const std::string& path,
+        std::string_view path,
         bool append,
         bool share) noexcept
     {
@@ -206,7 +207,7 @@ namespace Graphyte::Storage
 
     Status CreateReader(
         std::unique_ptr<Archive>& archive,
-        const std::string& path,
+        std::string_view path,
         bool share) noexcept
     {
         std::unique_ptr<IStream> handle{};
@@ -227,7 +228,7 @@ namespace Graphyte::Storage
 
     Status CreateWriter(
         std::unique_ptr<Archive>& archive,
-        const std::string& path,
+        std::string_view path,
         bool append,
         bool share) noexcept
     {
@@ -250,7 +251,7 @@ namespace Graphyte::Storage
 
     Status ReadText(
         std::string& content,
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
@@ -283,7 +284,7 @@ namespace Graphyte::Storage
 
     Status WriteText(
         std::string_view content,
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
@@ -302,7 +303,7 @@ namespace Graphyte::Storage
 
     Status ReadBinary(
         std::vector<std::byte>& content,
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
@@ -336,7 +337,7 @@ namespace Graphyte::Storage
 
     Status WriteBinary(
         const std::vector<std::byte>& content,
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         std::unique_ptr<IStream> handle{};
 
@@ -357,7 +358,7 @@ namespace Graphyte::Storage
     Status ReadBinary(
         std::unique_ptr<std::byte[]>& contents,
         size_t& size,
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         size = 0;
         std::unique_ptr<IStream> handle{};
@@ -395,7 +396,7 @@ namespace Graphyte::Storage
     Status WriteBinary(
         const std::unique_ptr<std::byte[]>& contents,
         size_t size,
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         std::unique_ptr<IStream> handle{};
 

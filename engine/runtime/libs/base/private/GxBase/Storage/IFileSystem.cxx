@@ -18,8 +18,8 @@ namespace Graphyte::Storage
     IFileSystem::~IFileSystem() noexcept = default;
 
     Status IFileSystem::FileCopy(
-        const std::string& destination,
-        const std::string& source) noexcept
+        std::string_view destination,
+        std::string_view source) noexcept
     {
         constexpr size_t BufferSize = 1024 * 1024;
 
@@ -80,17 +80,17 @@ namespace Graphyte::Storage
     }
 
     Status IFileSystem::EnumerateRecursive(
-        const std::string& path,
+        std::string_view path,
         IDirectoryVisitor& visitor) noexcept
     {
-        class Recursive : public IDirectoryVisitor
+        class EnumerateRecursiveVisitor : public IDirectoryVisitor
         {
         private:
             IFileSystem& m_FileSystem;
             IDirectoryVisitor& m_Visitor;
 
         public:
-            Recursive(
+            EnumerateRecursiveVisitor(
                 IFileSystem& filesystem,
                 IDirectoryVisitor& visitor) noexcept
                 : m_FileSystem{ filesystem }
@@ -99,7 +99,7 @@ namespace Graphyte::Storage
             }
 
             virtual Status Visit(
-                const std::string& path,
+                std::string_view path,
                 bool is_directory) noexcept override
             {
                 Status result = m_Visitor.Visit(path, is_directory);
@@ -113,23 +113,23 @@ namespace Graphyte::Storage
             }
         };
 
-        Recursive recursive{ *this, visitor };
+        EnumerateRecursiveVisitor recursive{ *this, visitor };
 
         return Enumerate(path, recursive);
     }
 
     Status IFileSystem::EnumerateRecursive(
-        const std::string& path,
+        std::string_view path,
         IDirectoryInfoVisitor& visitor) noexcept
     {
-        class Recursive : public IDirectoryInfoVisitor
+        class EnumerateRecursiveVisitor : public IDirectoryInfoVisitor
         {
         private:
             IFileSystem& m_FileSystem;
             IDirectoryInfoVisitor& m_Visitor;
 
         public:
-            Recursive(
+            EnumerateRecursiveVisitor(
                 IFileSystem& filesystem,
                 IDirectoryInfoVisitor& visitor) noexcept
                 : m_FileSystem{ filesystem }
@@ -138,7 +138,7 @@ namespace Graphyte::Storage
             }
 
             virtual Status Visit(
-                const std::string& path,
+                std::string_view path,
                 const FileInfo& info) noexcept override
             {
                 Status result = m_Visitor.Visit(path, info);
@@ -152,13 +152,13 @@ namespace Graphyte::Storage
             }
         };
 
-        Recursive recursive{ *this, visitor };
+        EnumerateRecursiveVisitor recursive{ *this, visitor };
 
         return Enumerate(path, recursive);
     }
 
     Status IFileSystem::DirectoryTreeCreate(
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         GX_ASSERT(Storage::IsValidPath(path));
 
@@ -184,22 +184,22 @@ namespace Graphyte::Storage
     }
 
     Status IFileSystem::DirectoryTreeDelete(
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
-        class Recursive final : public IDirectoryVisitor
+        class DirectoryTreeDeleteVisitor final : public IDirectoryVisitor
         {
         private:
             IFileSystem& m_FileSystem;
 
         public:
-            Recursive(
+            DirectoryTreeDeleteVisitor(
                 IFileSystem& filesystem) noexcept
                 : m_FileSystem{ filesystem }
             {
             }
 
             virtual Status Visit(
-                const std::string& path,
+                std::string_view path,
                 bool is_directory) noexcept override
             {
                 if (is_directory)
@@ -227,7 +227,7 @@ namespace Graphyte::Storage
             }
         };
 
-        Recursive recursive{ *this };
+        DirectoryTreeDeleteVisitor recursive{ *this };
         Status status = recursive.Visit(path, true);
 
         if (status == Status::Success)
@@ -239,8 +239,8 @@ namespace Graphyte::Storage
     }
 
     Status IFileSystem::DirectoryTreeCopy(
-        const std::string& destination,
-        const std::string& source,
+        std::string_view destination,
+        std::string_view source,
         bool overwrite) noexcept
     {
         GX_ASSERT(IsValidPath(destination));
@@ -259,19 +259,19 @@ namespace Graphyte::Storage
         }
 
 
-        class CopyRecursive final : public IDirectoryVisitor
+        class DirectoryTreeCopyVisitor final : public IDirectoryVisitor
         {
         private:
             IFileSystem& m_FileSystem;
-            const std::string& m_Source;
-            const std::string& m_Destination;
+            std::string_view m_Source;
+            std::string_view m_Destination;
             bool m_Overwrite;
 
         public:
-            CopyRecursive(
+            DirectoryTreeCopyVisitor(
                 IFileSystem& filesystem,
-                const std::string& source,
-                const std::string& destination,
+                std::string_view source,
+                std::string_view destination,
                 bool overwrite) noexcept
                 : m_FileSystem{ filesystem }
                 , m_Source{ source }
@@ -281,7 +281,7 @@ namespace Graphyte::Storage
             }
 
             virtual Status Visit(
-                const std::string& path,
+                std::string_view path,
                 bool is_directory) noexcept
             {
                 std::string new_path{ path };
@@ -317,7 +317,7 @@ namespace Graphyte::Storage
         Storage::AddDirectorySeparator(path_source);
         Storage::AddDirectorySeparator(path_destination);
 
-        CopyRecursive copy_recursive{ *this, path_source, path_destination, overwrite };
+        DirectoryTreeCopyVisitor copy_recursive{ *this, path_source, path_destination, overwrite };
 
         return EnumerateRecursive(path_source, copy_recursive);
     }
@@ -338,31 +338,40 @@ namespace Graphyte::Storage
                 std::string_view extension) noexcept
                 : m_FileSystem{ filesystem }
                 , m_Result{ result }
-                , m_Extension{ extension }
+                , m_Extension{ GetExtension(extension, false) }
             {
                 (void)m_FileSystem;
             }
 
         public:
             virtual Status Visit(
-                const std::string& path,
+                std::string_view path,
                 bool is_directory) noexcept override
             {
                 if (!is_directory)
                 {
                     if (!m_Extension.empty())
                     {
-                        std::string_view const path_view{ path };
-                        std::string_view const path_extension = Storage::GetExtension(path_view, false);
-                        std::string_view const sanitized      = Storage::GetExtension(m_Extension, false);
+                        //
+                        // Caller provided extension to match. Append path to results only then.
+                        //
 
-                        if (path_extension != sanitized)
+                        std::string_view const path_extension = Storage::GetExtension(path, false);
+
+                        if (path_extension == m_Extension)
                         {
-                            return Status::Failure;
+                            m_Result.emplace_back(path);
                         }
                     }
+                    else
+                    {
+                        //
+                        // When caller did not provide proper extension, it means we match all
+                        // possible files
+                        //
 
-                    m_Result.push_back(path);
+                        m_Result.emplace_back(path);
+                    }
                 }
 
                 return Status::Success;
@@ -372,7 +381,7 @@ namespace Graphyte::Storage
 
     Status IFileSystem::FindFiles(
         std::vector<std::string>& result,
-        const std::string& path,
+        std::string_view path,
         std::string_view extension) noexcept
     {
         Impl::FindFilesVisitor visitor{ *this, result, extension };
@@ -382,7 +391,7 @@ namespace Graphyte::Storage
 
     Status IFileSystem::FindFilesRecursive(
         std::vector<std::string>& result,
-        const std::string& path,
+        std::string_view path,
         std::string_view extension) noexcept
     {
         Impl::FindFilesVisitor visitor{ *this, result, extension };

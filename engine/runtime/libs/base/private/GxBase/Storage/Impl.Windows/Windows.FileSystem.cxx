@@ -21,7 +21,7 @@ namespace Graphyte::Storage
 
     Status WindowsFileSystem::OpenRead(
         std::unique_ptr<IStream>& result,
-        const std::string& path,
+        std::string_view path,
         bool share_write) noexcept
     {
         System::Impl::WindowsPath wpath{};
@@ -53,7 +53,7 @@ namespace Graphyte::Storage
 
     Status WindowsFileSystem::OpenWrite(
         std::unique_ptr<IStream>& result,
-        const std::string& path,
+        std::string_view path,
         bool append,
         bool share_read) noexcept
     {
@@ -85,7 +85,7 @@ namespace Graphyte::Storage
 
     Status WindowsFileSystem::IsReadonly(
         bool& result,
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
         System::Impl::WidenStringPath(wpath, path);
@@ -102,7 +102,7 @@ namespace Graphyte::Storage
     }
 
     Status WindowsFileSystem::SetReadonly(
-        const std::string& path,
+        std::string_view path,
         bool value) noexcept
     {
         System::Impl::WindowsPath wpath{};
@@ -120,7 +120,7 @@ namespace Graphyte::Storage
 
     Status WindowsFileSystem::GetFileInfo(
         FileInfo& result,
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
         System::Impl::WidenStringPath(wpath, path);
@@ -149,7 +149,7 @@ namespace Graphyte::Storage
 
     Status WindowsFileSystem::GetFileSize(
         int64_t& result,
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
         System::Impl::WidenStringPath(wpath, path);
@@ -171,7 +171,7 @@ namespace Graphyte::Storage
     }
 
     Status WindowsFileSystem::Exists(
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
         System::Impl::WidenStringPath(wpath, path);
@@ -188,8 +188,8 @@ namespace Graphyte::Storage
     }
 
     Status WindowsFileSystem::FileCopy(
-        const std::string& destination,
-        const std::string& source) noexcept
+        std::string_view destination,
+        std::string_view source) noexcept
     {
         System::Impl::WindowsPath wdestination{};
         System::Impl::WidenStringPath(wdestination, destination);
@@ -205,8 +205,8 @@ namespace Graphyte::Storage
     }
 
     Status WindowsFileSystem::FileMove(
-        const std::string& destination,
-        const std::string& source) noexcept
+        std::string_view destination,
+        std::string_view source) noexcept
     {
         System::Impl::WindowsPath wdestination{};
         System::Impl::WidenStringPath(wdestination, destination);
@@ -222,7 +222,7 @@ namespace Graphyte::Storage
     }
 
     Status WindowsFileSystem::FileDelete(
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
         System::Impl::WidenStringPath(wpath, path);
@@ -236,7 +236,7 @@ namespace Graphyte::Storage
     }
 
     Status WindowsFileSystem::DirectoryCreate(
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
         System::Impl::WidenStringPath(wpath, path);
@@ -253,7 +253,7 @@ namespace Graphyte::Storage
     }
 
     Status WindowsFileSystem::DirectoryDelete(
-        const std::string& path) noexcept
+        std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
         System::Impl::WidenStringPath(wpath, path);
@@ -267,7 +267,7 @@ namespace Graphyte::Storage
     }
 
     Status WindowsFileSystem::Enumerate(
-        const std::string& path,
+        std::string_view path,
         IDirectoryVisitor& visitor) noexcept
     {
         std::string const wildcard = Storage::CombinePath(path, "*.*");
@@ -305,7 +305,7 @@ namespace Graphyte::Storage
     }
 
     Status WindowsFileSystem::Enumerate(
-        const std::string& path,
+        std::string_view path,
         IDirectoryInfoVisitor& visitor) noexcept
     {
         std::string const wildcard = Storage::CombinePath(path, "*.*");
