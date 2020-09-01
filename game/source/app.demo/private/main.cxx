@@ -88,117 +88,10 @@ namespace graphyte::system
     };
 }
 
-namespace graphyte::threading
-{
-    namespace detail
-    {
-        using CriticalSectionType = std::aligned_storage_t<sizeof(CRITICAL_SECTION), alignof(CRITICAL_SECTION)>;
-    }
-
-    class CriticalSection final
-    {
-        friend class ConditionVariable;
-        CriticalSection(const CriticalSection&) = delete;
-
-        CriticalSection& operator=(const CriticalSection&) = delete;
-
-    private:
-        detail::CriticalSectionType m_CriticalSection;
-
-    public:
-        CriticalSection() noexcept;
-        ~CriticalSection() noexcept;
-
-    public:
-        void Enter() noexcept;
-        [[nodiscard]] bool TryEnter() noexcept;
-        void Leave() noexcept;
-    };
-}
-
-namespace graphyte::threading
-{
-    static_assert(sizeof(CRITICAL_SECTION) == sizeof(detail::CriticalSectionType));
-    static_assert(alignof(CRITICAL_SECTION) == alignof(detail::CriticalSectionType));
-
-    GX_NOINLINE
-        CriticalSection::CriticalSection() noexcept
-    {
-        InitializeCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(&m_CriticalSection));
-    }
-
-    GX_NOINLINE
-        CriticalSection::~CriticalSection() noexcept
-    {
-        DeleteCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(&m_CriticalSection));
-    }
-
-    GX_NOINLINE
-        void CriticalSection::Enter() noexcept
-    {
-        EnterCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(&m_CriticalSection));
-    }
-
-    GX_NOINLINE
-        [[nodiscard]] bool CriticalSection::TryEnter() noexcept
-    {
-        return TryEnterCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(&m_CriticalSection)) != FALSE;
-    }
-
-    GX_NOINLINE
-        void CriticalSection::Leave() noexcept
-    {
-        LeaveCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(&m_CriticalSection));
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class EventHandler : public Graphyte::App::IEventHandler
 {
 public:
-    Graphyte::App::Window* m_Window;
+    Graphyte::App::Window* m_Window{};
 
 public:
     virtual void OnKeyDown(Graphyte::App::KeyEvent const& event) noexcept override
@@ -258,10 +151,6 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
 
     Graphyte::App::SetMode(*window, Graphyte::App::WindowMode::WindowedFullscreen);
     Graphyte::App::SetCaption(*window, "Game");
-    Graphyte::App::SetSizeLimits(*window, Graphyte::App::WindowSizeLimits{
-        .Min = std::nullopt,
-        .Max = Graphyte::System::Size{ 1024, 768 },
-    });
 
     std::vector<std::string> paths{};
 
@@ -280,29 +169,14 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     {
         Graphyte::Threading::SleepThread(16);
         Graphyte::App::Tick(0.016f);
-        double const elapsed = sw.GetElapsedTime<double>();
+
+        sw.Stop();
+        double const elapsed = sw.GetElapsedTime<double>() * 1000.0;
         Graphyte::App::SetCaption(*window, fmt::format("Frame: {:.18}", elapsed));
         sw.Restart();
     }
 
     Graphyte::App::Destroy(window);
-
-    {
-        graphyte::system::Process p1 = graphyte::system::Process::Create("a");
-
-        graphyte::system::Process p2{};
-        graphyte::threading::CriticalSection cs{};
-
-        {
-            graphyte::system::Process p3 = std::move(p1);
-
-            cs.Enter();
-            p2 = std::move(p3);
-            cs.Leave();
-        }
-
-
-    }
 
     return 0;
 }
