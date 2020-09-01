@@ -1547,6 +1547,50 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths
 {
+    template <size_t Index, typename T>
+    mathinline T mathcall Splat(T v) noexcept
+        requires(T::Components >= 1 && Impl::IsSimdFloat4<T> && Index <= T::Components)
+    {
+#if GRAPHYTE_MATH_NO_INTRINSICS
+        float const value = v.V.F[Index];
+        Impl::ConstFloat32x4 const result{ { {
+                value,
+                value,
+                value,
+                value,
+            } } };
+        return { result.V };
+#elif GRAPHYTE_HW_AVX2
+        if constexpr (Index == 0)
+        {
+            return { _mm_broadcastss_ps(v.V) };
+        }
+        else
+        {
+            return { _mm_permute_ps(v.V, _MM_SHUFFLE(Index, Index, Index, Index)) };
+        }
+#elif GRAPHYTE_HW_AVX
+        return { _mm_permute_ps(v.V, _MM_SHUFFLE(Index, Index, Index, Index)) };
+#elif GRAPHYTE_HW_NEON
+        if constexpr (Index == 0)
+        {
+            return { vdupq_lane_f32(vget_low_f32(v.V), 0) };
+        }
+        else if constexpr (Index == 1)
+        {
+            return { vdupq_lane_f32(vget_low_f32(v.V), 1) };
+        }
+        else if constexpr (Index == 2)
+        {
+            return { vdupq_lane_f32(vget_high_f32(v.V), 0) };
+        }
+        else if constexpr (Index == 3)
+        {
+            return { vdupq_lane_f32(vget_high_f32(v.V), 1) };
+        }
+#endif
+    }
+
     template <typename T>
     mathinline T mathcall SplatX(T v) noexcept
         requires(T::Components >= 1 && Impl::IsSimdFloat4<T>)
