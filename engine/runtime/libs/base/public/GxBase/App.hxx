@@ -379,7 +379,7 @@ namespace Graphyte::App
 
     struct Window;
 
-    BASE_API extern [[nodiscard]] Window* Create(WindowType type) noexcept;
+    BASE_API [[nodiscard]] extern Window* Create(WindowType type) noexcept;
     BASE_API extern void Destroy(Window* self) noexcept;
     BASE_API extern bool Focus(Window& self) noexcept;
     BASE_API extern bool BringToFront(Window& self, bool force) noexcept;
@@ -390,11 +390,11 @@ namespace Graphyte::App
     BASE_API extern bool Minimize(Window& self) noexcept;
     BASE_API extern bool Maximize(Window& self) noexcept;
     BASE_API extern bool Restore(Window& self) noexcept;
-    BASE_API extern [[nodiscard]] bool IsMinimized(Window& self) noexcept;
-    BASE_API extern [[nodiscard]] bool IsMaximized(Window& self) noexcept;
-    BASE_API extern [[nodiscard]] bool IsFocused(Window& self) noexcept;
-    BASE_API extern [[nodiscard]] bool IsEnabled(Window& self) noexcept;
-    BASE_API extern [[nodiscard]] bool IsVisible(Window& self) noexcept;
+    BASE_API [[nodiscard]] extern bool IsMinimized(Window& self) noexcept;
+    BASE_API [[nodiscard]] extern bool IsMaximized(Window& self) noexcept;
+    BASE_API [[nodiscard]] extern bool IsFocused(Window& self) noexcept;
+    BASE_API [[nodiscard]] extern bool IsEnabled(Window& self) noexcept;
+    BASE_API [[nodiscard]] extern bool IsVisible(Window& self) noexcept;
 
     BASE_API extern bool SetMode(Window& self, WindowMode value) noexcept;
     BASE_API extern WindowMode GetMode(Window& self) noexcept;
