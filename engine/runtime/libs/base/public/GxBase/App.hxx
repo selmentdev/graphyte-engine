@@ -293,6 +293,7 @@ namespace Graphyte::App
     {
         ModifierKey Modifiers;
         float Delta;
+        bool Horizontal;
     };
 
     struct MouseMoveEvent final
@@ -376,70 +377,40 @@ namespace Graphyte::App
         std::optional<System::Size> Max;
     };
 
-    class Window
-    {
-    protected:
-        virtual ~Window() noexcept = default;
+    struct Window;
 
-    public:
-        virtual bool Focus() noexcept = 0;
+    BASE_API extern [[nodiscard]] Window* Create(WindowType type) noexcept;
+    BASE_API extern void Destroy(Window* self) noexcept;
+    BASE_API extern bool Focus(Window& self) noexcept;
+    BASE_API extern bool BringToFront(Window& self, bool force) noexcept;
+    BASE_API extern bool Show(Window& self) noexcept;
+    BASE_API extern bool Hide(Window& self) noexcept;
+    BASE_API extern bool Enable(Window& self) noexcept;
+    BASE_API extern bool Disable(Window& self) noexcept;
+    BASE_API extern bool Minimize(Window& self) noexcept;
+    BASE_API extern bool Maximize(Window& self) noexcept;
+    BASE_API extern bool Restore(Window& self) noexcept;
+    BASE_API extern [[nodiscard]] bool IsMinimized(Window& self) noexcept;
+    BASE_API extern [[nodiscard]] bool IsMaximized(Window& self) noexcept;
+    BASE_API extern [[nodiscard]] bool IsFocused(Window& self) noexcept;
+    BASE_API extern [[nodiscard]] bool IsEnabled(Window& self) noexcept;
+    BASE_API extern [[nodiscard]] bool IsVisible(Window& self) noexcept;
 
-        virtual bool BringToFront(bool force) noexcept = 0;
-
-        virtual bool Show() noexcept = 0;
-
-        virtual bool Hide() noexcept = 0;
-
-        virtual bool Enable() noexcept = 0;
-
-        virtual bool Disable() noexcept = 0;
-
-        virtual bool Minimize() noexcept = 0;
-
-        virtual bool Maximize() noexcept = 0;
-
-        virtual bool Restore() noexcept = 0;
-
-        virtual bool IsMinimized() const noexcept = 0;
-
-        virtual bool IsMaximized() const noexcept = 0;
-
-        virtual bool IsFocused() const noexcept = 0;
-
-        virtual bool IsEnabled() const noexcept = 0;
-
-        virtual bool IsVisible() const noexcept = 0;
-
-        virtual bool SetMode(WindowMode value) noexcept = 0;
-
-        virtual WindowMode GetMode() const noexcept = 0;
-
-        virtual WindowType GetType() const noexcept = 0;
-
-        virtual void* GetNativeHandle() const noexcept = 0;
-
-        virtual System::Size GetClientSize() const noexcept = 0;
-
-        virtual bool GetFullscreenPlacement(System::Rect& out_value) noexcept = 0;
-
-        virtual bool SetCaption(std::string_view value) noexcept = 0;
-
-        virtual bool GetPlacement(System::Rect& out_value) noexcept = 0;
-
-        virtual bool SetPlacement(System::Rect value) noexcept = 0;
-
-        virtual bool SetLocation(System::Point value) noexcept = 0;
-
-        virtual bool SetSize(System::Size value) noexcept = 0;
-
-        virtual float GetDpiScale() const noexcept = 0;
-
-        virtual void SetDpiScale(float value) noexcept = 0;
-
-        virtual void SetSizeLimits(WindowSizeLimits const& limits) noexcept = 0;
-
-        virtual WindowSizeLimits const& GetSizeLimits() const noexcept = 0;
-    };
+    BASE_API extern bool SetMode(Window& self, WindowMode value) noexcept;
+    BASE_API extern WindowMode GetMode(Window& self) noexcept;
+    BASE_API extern WindowType GetType(Window& self) noexcept;
+    BASE_API extern void* GetNativeHandle(Window& self) noexcept;
+    BASE_API extern System::Size GetClientSize(Window& self) noexcept;
+    BASE_API extern bool GetFullscreenPlacement(Window& self, System::Rect& out_value) noexcept;
+    BASE_API extern bool SetCaption(Window& self, std::string_view value) noexcept;
+    BASE_API extern bool GetPlacement(Window& self, System::Rect& out_value) noexcept;
+    BASE_API extern bool SetPlacement(Window& self, System::Rect value) noexcept;
+    BASE_API extern bool SetLocation(Window& self, System::Point value) noexcept;
+    BASE_API extern bool SetSize(Window& self, System::Size value) noexcept;
+    BASE_API extern float GetDpiScale(Window& self) noexcept;
+    BASE_API extern void SetDpiScale(Window& self, float value) noexcept;
+    BASE_API extern WindowSizeLimits GetSizeLimits(Window& self) noexcept;
+    BASE_API extern bool SetSizeLimits(Window& self, WindowSizeLimits value) noexcept;
 }
 
 
@@ -533,8 +504,4 @@ namespace Graphyte::App
     BASE_API bool IsForeground() noexcept;
 
     BASE_API void RequestExit() noexcept;
-
-    BASE_API Window* MakeWindow(WindowType type) noexcept;
-
-    BASE_API void DestroyWindow(Window* window) noexcept;
 }

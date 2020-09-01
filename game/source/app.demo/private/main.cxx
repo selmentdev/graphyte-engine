@@ -28,6 +28,172 @@ Graphyte::App::ApplicationDescriptor GraphyteApp{
 #include <GxBase/App.hxx>
 #include <GxBase/Flags.hxx>
 #include <GxBase/Stopwatch.hxx>
+#include <GxBase/Storage/IFileSystem.hxx>
+
+namespace graphyte::system
+{
+    class Process final
+    {
+    private:
+        void* m_Handle = nullptr;
+        std::string_view m_Name{ "unassigned" };
+
+        Process(void* handle, std::string_view name)
+            : m_Handle{ handle }
+            , m_Name{ name }
+        {
+            GX_LOG_TRACE(LogAssetsCompiler, "Process explicit ctor: {}\n", m_Name);
+        }
+
+    public:
+        Process() noexcept
+        {
+            GX_LOG_TRACE(LogAssetsCompiler, "Process default ctor: {}\n", m_Name);
+        }
+
+        ~Process() noexcept
+        {
+            GX_LOG_TRACE(LogAssetsCompiler, "Process dtor: {}\n", m_Name);
+        }
+
+        Process(Process const&) = delete;
+        Process& operator=(Process const&) = delete;
+
+        Process(Process&& other) noexcept
+            : m_Handle{ std::exchange(other.m_Handle, nullptr) }
+            , m_Name{ std::exchange(other.m_Name, "unassigned") }
+        {
+            GX_LOG_TRACE(LogAssetsCompiler, "Process move ctor: {}\n", m_Name);
+        }
+
+        Process& operator=(Process&& other) noexcept
+        {
+            // cleanup this instance
+            std::swap(this->m_Handle, other.m_Handle);
+            this->m_Name = std::exchange(other.m_Name, "unassigned");
+
+            GX_LOG_TRACE(LogAssetsCompiler, "Process move op: {}\n", m_Name);
+            return (*this);
+        }
+
+        static Process Create(std::string_view path) noexcept
+        {
+            return Process(reinterpret_cast<void*>(INVALID_HANDLE_VALUE), path);
+        }
+
+        bool Wait() noexcept
+        {
+            GX_ASSERT(this->m_Handle == reinterpret_cast<void*>(INVALID_HANDLE_VALUE));
+        }
+    };
+}
+
+namespace graphyte::threading
+{
+    namespace detail
+    {
+        using CriticalSectionType = std::aligned_storage_t<sizeof(CRITICAL_SECTION), alignof(CRITICAL_SECTION)>;
+    }
+
+    class CriticalSection final
+    {
+        friend class ConditionVariable;
+        CriticalSection(const CriticalSection&) = delete;
+
+        CriticalSection& operator=(const CriticalSection&) = delete;
+
+    private:
+        detail::CriticalSectionType m_CriticalSection;
+
+    public:
+        CriticalSection() noexcept;
+        ~CriticalSection() noexcept;
+
+    public:
+        void Enter() noexcept;
+        [[nodiscard]] bool TryEnter() noexcept;
+        void Leave() noexcept;
+    };
+}
+
+namespace graphyte::threading
+{
+    static_assert(sizeof(CRITICAL_SECTION) == sizeof(detail::CriticalSectionType));
+    static_assert(alignof(CRITICAL_SECTION) == alignof(detail::CriticalSectionType));
+
+    GX_NOINLINE
+        CriticalSection::CriticalSection() noexcept
+    {
+        InitializeCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(&m_CriticalSection));
+    }
+
+    GX_NOINLINE
+        CriticalSection::~CriticalSection() noexcept
+    {
+        DeleteCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(&m_CriticalSection));
+    }
+
+    GX_NOINLINE
+        void CriticalSection::Enter() noexcept
+    {
+        EnterCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(&m_CriticalSection));
+    }
+
+    GX_NOINLINE
+        [[nodiscard]] bool CriticalSection::TryEnter() noexcept
+    {
+        return TryEnterCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(&m_CriticalSection)) != FALSE;
+    }
+
+    GX_NOINLINE
+        void CriticalSection::Leave() noexcept
+    {
+        LeaveCriticalSection(reinterpret_cast<LPCRITICAL_SECTION>(&m_CriticalSection));
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class EventHandler : public Graphyte::App::IEventHandler
 {
@@ -39,30 +205,30 @@ public:
     {
         if (event.Key == Graphyte::App::KeyCode::F1)
         {
-            this->m_Window->SetMode(Graphyte::App::WindowMode::Fullscreen);
+            Graphyte::App::SetMode(*this->m_Window, Graphyte::App::WindowMode::Fullscreen);
         }
         else if (event.Key == Graphyte::App::KeyCode::F2)
         {
-            this->m_Window->SetMode(Graphyte::App::WindowMode::Windowed);
+            Graphyte::App::SetMode(*this->m_Window, Graphyte::App::WindowMode::Windowed);
         }
         else if (event.Key == Graphyte::App::KeyCode::F3)
         {
-            this->m_Window->SetMode(Graphyte::App::WindowMode::WindowedFullscreen);
+            Graphyte::App::SetMode(*this->m_Window, Graphyte::App::WindowMode::WindowedFullscreen);
         }
     }
     virtual void OnControllerButtonPressed(Graphyte::App::GamepadButtonEvent const& event) noexcept override
     {
         if (event.Key == Graphyte::App::GamepadKey::DPadLeft)
         {
-            this->m_Window->SetMode(Graphyte::App::WindowMode::Fullscreen);
+            Graphyte::App::SetMode(*this->m_Window, Graphyte::App::WindowMode::Fullscreen);
         }
         else if (event.Key == Graphyte::App::GamepadKey::DPadUp)
         {
-            this->m_Window->SetMode(Graphyte::App::WindowMode::Windowed);
+            Graphyte::App::SetMode(*this->m_Window, Graphyte::App::WindowMode::Windowed);
         }
         else if (event.Key == Graphyte::App::GamepadKey::DPadRight)
         {
-            this->m_Window->SetMode(Graphyte::App::WindowMode::WindowedFullscreen);
+            Graphyte::App::SetMode(*this->m_Window, Graphyte::App::WindowMode::WindowedFullscreen);
         }
         else if (event.Key == Graphyte::App::GamepadKey::DPadDown)
         {
@@ -86,16 +252,26 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     EventHandler e{};
     Graphyte::App::SetEventHandler(&e);
 
-    auto window = Graphyte::App::MakeWindow(Graphyte::App::WindowType::Game);
+    auto window = Graphyte::App::Create(Graphyte::App::WindowType::Game);
 
     e.m_Window = window;
 
-    window->SetMode(Graphyte::App::WindowMode::WindowedFullscreen);
-    window->SetCaption("Game");
-    window->SetSizeLimits(Graphyte::App::WindowSizeLimits{
+    Graphyte::App::SetMode(*window, Graphyte::App::WindowMode::WindowedFullscreen);
+    Graphyte::App::SetCaption(*window, "Game");
+    Graphyte::App::SetSizeLimits(*window, Graphyte::App::WindowSizeLimits{
         .Min = std::nullopt,
         .Max = Graphyte::System::Size{ 1024, 768 },
     });
+
+    std::vector<std::string> paths{};
+
+    if (Graphyte::Storage::IFileSystem::GetPlatformNative().FindFilesRecursive(paths, Graphyte::Storage::GetEngineDirectory(), ".hxx") == Graphyte::Status::Success)
+    {
+        for (auto const& path : paths)
+        {
+            GX_LOG_TRACE(LogAssetsCompiler, "Path: {}\n", path);
+        }
+    }
 
     Graphyte::Diagnostics::Stopwatch sw{};
     sw.Start();
@@ -105,11 +281,28 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
         Graphyte::Threading::SleepThread(16);
         Graphyte::App::Tick(0.016f);
         double const elapsed = sw.GetElapsedTime<double>();
-        window->SetCaption(fmt::format("Frame: {:.18}", elapsed));
+        Graphyte::App::SetCaption(*window, fmt::format("Frame: {:.18}", elapsed));
         sw.Restart();
     }
 
-    Graphyte::App::DestroyWindow(window);
+    Graphyte::App::Destroy(window);
+
+    {
+        graphyte::system::Process p1 = graphyte::system::Process::Create("a");
+
+        graphyte::system::Process p2{};
+        graphyte::threading::CriticalSection cs{};
+
+        {
+            graphyte::system::Process p3 = std::move(p1);
+
+            cs.Enter();
+            p2 = std::move(p3);
+            cs.Leave();
+        }
+
+
+    }
 
     return 0;
 }

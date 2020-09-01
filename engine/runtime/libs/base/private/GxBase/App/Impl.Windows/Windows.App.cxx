@@ -264,20 +264,20 @@ namespace Graphyte::App::Impl
         return result != FALSE;
     }
 
-    /*static */ void EnableRawInputKeyboard(NativeWindow& window, bool enable, bool enforce) noexcept
+    /*static */ void EnableRawInputKeyboard(Window& window, bool enable, bool enforce) noexcept
     {
         EnableRawInputDevice(
-            window.GetHandle(),
+            window.Hwnd,
             enable,
             enforce,
             UsagePage_Desktop,
             UsageId_Keyboard);
     }
 
-    static void EnableRawInputMouse(NativeWindow& window, bool enable, bool enforce) noexcept
+    static void EnableRawInputMouse(Window& window, bool enable, bool enforce) noexcept
     {
         g_UseHighPrecisionMouse = EnableRawInputDevice(
-            window.GetHandle(),
+            window.Hwnd,
             enable,
             enforce,
             UsagePage_Desktop,
@@ -468,7 +468,7 @@ namespace Graphyte::App::Impl
         return 0;
     }
 
-    static void WmMouseButton(NativeWindow& window, HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) noexcept
+    static void WmMouseButton(Window& window, HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) noexcept
     {
         POINT cursor{
             .x = LOWORD(lparam),
@@ -564,17 +564,18 @@ namespace Graphyte::App::Impl
         }
     }
 
-    static void WmMouseWheel(WPARAM wparam) noexcept
+    static void WmMouseWheel(WPARAM wparam, bool horizontal) noexcept
     {
         constexpr float const spin = 1.0f / static_cast<float>(WHEEL_DELTA);
 
         float const wheelDelta = static_cast<float>(GET_WHEEL_DELTA_WPARAM(wparam));
 
-        GX_LOG_TRACE(LogNativeApp, "WM_MOUSEWHEEL {}\n", wheelDelta * spin);
+        GX_LOG_TRACE(LogNativeApp, "WM_MOUSEWHEEL {} (horizontal = {})\n", wheelDelta * spin, horizontal);
 
         g_EventHandler->OnMouseWheel(MouseWheelEvent{
             .Modifiers = g_ModifierKey,
             .Delta     = wheelDelta * spin,
+            .Horizontal = horizontal,
         });
     }
 
@@ -626,9 +627,9 @@ namespace Graphyte::App::Impl
         return false;
     }
 
-    static LRESULT WmNcCalcSize(NativeWindow& window, HWND hwnd, WPARAM wparam, LPARAM lparam) noexcept
+    static LRESULT WmNcCalcSize(Window& window, HWND hwnd, WPARAM wparam, LPARAM lparam) noexcept
     {
-        if (wparam != 0 && window.GetType() == WindowType::Game && window.GetMode() != WindowMode::Windowed && window.IsMaximized())
+        if (wparam != 0 && window.Type == WindowType::Game && window.Mode != WindowMode::Windowed && IsMaximized(window))
         {
             // Maximized fullscreen borderless game window has visible border in multiple displays
             // scenario. Limit this by adjusting window placement to just fit display - we are still
@@ -656,7 +657,7 @@ namespace Graphyte::App::Impl
         return DefWindowProcW(hwnd, WM_NCCALCSIZE, wparam, lparam);
     }
 
-    static LRESULT WmClose(NativeWindow& window) noexcept
+    static LRESULT WmClose(Window& window) noexcept
     {
         GX_LOG_TRACE(LogNativeApp, "WM_CLOSE\n");
 
@@ -664,9 +665,9 @@ namespace Graphyte::App::Impl
         return 0;
     }
 
-    static void WmSize(NativeWindow& window, WPARAM wparam, LPARAM lparam) noexcept
+    static void WmSize(Window& window, WPARAM wparam, LPARAM lparam) noexcept
     {
-        bool const exclusive = (window.GetMode() == WindowMode::Fullscreen);
+        bool const exclusive = (window.Mode == WindowMode::Fullscreen);
         int32_t const cx     = LOWORD(lparam);
         int32_t const cy     = HIWORD(lparam);
 
@@ -674,7 +675,7 @@ namespace Graphyte::App::Impl
 
         if constexpr (true)
         {
-            [[maybe_unused]] auto const viewport = window.GetClientSize();
+            [[maybe_unused]] auto const viewport = GetClientSize(window);
             GX_LOG_TRACE(LogNativeApp, "WM_SIZE (client: cx: {}, cy: {})\n", viewport.Width, viewport.Height);
         }
 
@@ -693,17 +694,17 @@ namespace Graphyte::App::Impl
         }
     }
 
-    static void WmEnterSizeMove(NativeWindow& window) noexcept
+    static void WmEnterSizeMove(Window& window) noexcept
     {
         g_EventHandler->OnWindowSizingBegin(window);
     }
 
-    static void WmExitSizeMove(NativeWindow& window) noexcept
+    static void WmExitSizeMove(Window& window) noexcept
     {
         g_EventHandler->OnWindowSizingEnd(window);
     }
 
-    static void WmMove(NativeWindow& window, LPARAM lparam) noexcept
+    static void WmMove(Window& window, LPARAM lparam) noexcept
     {
         LONG const x = LOWORD(lparam);
         LONG const y = HIWORD(lparam);
@@ -720,7 +721,7 @@ namespace Graphyte::App::Impl
         }
     }
 
-    static void WmActivate(NativeWindow& window, WPARAM wparam) noexcept
+    static void WmActivate(Window& window, WPARAM wparam) noexcept
     {
         WORD const flags = LOWORD(wparam);
 
@@ -762,9 +763,9 @@ namespace Graphyte::App::Impl
             static_cast<UINT>(HIWORD(lparam)));
     }
 
-    static void WmGetMinMaxInfo(NativeWindow& window, LPARAM lparam) noexcept
+    static void WmGetMinMaxInfo(Window& window, LPARAM lparam) noexcept
     {
-        WindowSizeLimits const& limits = window.GetSizeLimits();
+        WindowSizeLimits const& limits = GetSizeLimits(window);
 
         if (limits.Min.has_value() || limits.Max.has_value())
         {
@@ -782,8 +783,8 @@ namespace Graphyte::App::Impl
                     .Height = minmax.ptMaxTrackSize.y,
                 });
 
-            DWORD const dwStyle   = static_cast<DWORD>(GetWindowLongW(window.GetHandle(), GWL_STYLE));
-            DWORD const dwExStyle = static_cast<DWORD>(GetWindowLongW(window.GetHandle(), GWL_EXSTYLE));
+            DWORD const dwStyle   = static_cast<DWORD>(GetWindowLongW(window.Hwnd, GWL_STYLE));
+            DWORD const dwExStyle = static_cast<DWORD>(GetWindowLongW(window.Hwnd, GWL_EXSTYLE));
 
             RECT rcBorder{};
             AdjustWindowRectEx(&rcBorder, dwStyle, FALSE, dwExStyle);
@@ -797,11 +798,11 @@ namespace Graphyte::App::Impl
         }
     }
 
-    static void WmDpiChanged(NativeWindow& window, HWND hwnd, WPARAM wparam, LPARAM lparam) noexcept
+    static void WmDpiChanged(Window& window, HWND hwnd, WPARAM wparam, LPARAM lparam) noexcept
     {
         GX_LOG_TRACE(LogNativeApp, "WM_DPICHANGED\n");
 
-        window.SetDpiScale(static_cast<float>(LOWORD(wparam)) / 96.0f);
+        window.DpiScale = static_cast<float>(LOWORD(wparam)) / 96.0f;
 
         RECT const& rc = *reinterpret_cast<LPRECT>(lparam);
 
@@ -873,7 +874,7 @@ namespace Graphyte::App::Impl
 
 
         // Set pointer to window in HWND storage.
-        NativeWindow* window = reinterpret_cast<NativeWindow*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+        Window* window = reinterpret_cast<Window*>(GetWindowLongPtrW(hwnd, GWLP_USERDATA));
 
         if (window == nullptr)
         {
@@ -884,7 +885,9 @@ namespace Graphyte::App::Impl
 
             GX_ASSERT(msg == WM_NCCREATE);
 
-            window = reinterpret_cast<NativeWindow*>(reinterpret_cast<CREATESTRUCTW*>(lparam)->lpCreateParams);
+            CREATESTRUCTW* const createparams = reinterpret_cast<CREATESTRUCTW*>(lparam);
+            window = reinterpret_cast<Window*>(createparams->lpCreateParams);
+            window->Hwnd = hwnd;
 
             SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
         }
@@ -935,7 +938,11 @@ namespace Graphyte::App::Impl
                 break;
 
             case WM_MOUSEWHEEL:
-                WmMouseWheel(wparam);
+                WmMouseWheel(wparam, false);
+                break;
+
+            case WM_MOUSEHWHEEL:
+                WmMouseWheel(wparam, true);
                 break;
 
             case WM_INPUT:
@@ -950,14 +957,14 @@ namespace Graphyte::App::Impl
                 return WmNcCalcSize(*window, hwnd, wparam, lparam);
 
             case WM_NCACTIVATE:
-                if (window->GetMode() != WindowMode::Windowed)
+                if (window->Mode != WindowMode::Windowed)
                 {
                     return TRUE;
                 }
                 break;
 
             case WM_NCPAINT:
-                if (window->GetMode() != WindowMode::Windowed)
+                if (window->Mode != WindowMode::Windowed)
                 {
                     // Don't repaint non-client area for fullscreen window.
                     return 0;
@@ -1141,24 +1148,5 @@ namespace Graphyte::App
         GX_LOG_TRACE(LogNativeApp, "Application requesting exit\n");
 
         Impl::g_IsRequestingExit = true;
-    }
-
-    Window* MakeWindow(WindowType type) noexcept
-    {
-        GX_LOG_TRACE(LogNativeApp, "Make new window\n");
-
-        Impl::NativeWindow* native = new Impl::NativeWindow();
-        native->Create(type);
-        Impl::EnableRawInputMouse(*native, true, false);
-        return native;
-    }
-
-    void DestroyWindow(Window* window) noexcept
-    {
-        GX_LOG_TRACE(LogNativeApp, "Destroy window\n");
-
-        Impl::NativeWindow* native = static_cast<Impl::NativeWindow*>(window);
-        native->Destroy();
-        delete native;
     }
 }
