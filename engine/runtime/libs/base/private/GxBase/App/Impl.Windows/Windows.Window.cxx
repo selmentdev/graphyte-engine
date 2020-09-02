@@ -1,4 +1,5 @@
 #include "Windows.Window.hxx"
+#include "Windows.RawInput.hxx"
 
 #include <dwmapi.h>
 
@@ -94,6 +95,9 @@ namespace Graphyte::App
         GX_ASSERT(self->Hwnd != nullptr);
 
         ShowWindow(self->Hwnd, SW_SHOW);
+
+        //Impl::EnableRawInputKeyboard(*self, true, false);
+        //Impl::EnableRawInputMouse(*self, true, false);
 
         return self;
     }

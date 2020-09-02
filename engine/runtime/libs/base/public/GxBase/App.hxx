@@ -292,8 +292,8 @@ namespace Graphyte::App
     struct MouseWheelEvent final
     {
         ModifierKey Modifiers;
-        float Delta;
-        bool Horizontal;
+        float DeltaX;
+        float DeltaY;
     };
 
     struct MouseMoveEvent final
@@ -459,6 +459,7 @@ namespace Graphyte::App::Impl
 {
     extern BASE_API bool g_IsRequestingExit;
     extern BASE_API bool g_IsFirstInstance;
+    extern BASE_API bool g_UseHighPrecisionMouse;
     extern BASE_API ApplicationDescriptor g_ApplicationDescriptor;
     extern BASE_API IEventHandler* g_EventHandler;
 }

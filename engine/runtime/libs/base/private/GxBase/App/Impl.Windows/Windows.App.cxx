@@ -36,10 +36,10 @@ namespace Graphyte::App::Impl
     ApplicationDescriptor g_ApplicationDescriptor{};
     bool g_IsRequestingExit{ false };
     bool g_IsFirstInstance{ false };
+    bool g_UseHighPrecisionMouse{ false };
 
     static ModifierKey g_ModifierKey{};
     static bool g_IsMouseAttached{ false };
-    static bool g_UseHighPrecisionMouse{ false };
     static bool g_ClickWindowActivate{ false };
 }
 
@@ -229,60 +229,6 @@ namespace Graphyte::App::Impl
 
         g_IsMouseAttached = (mouseCount != 0);
     }
-
-    constexpr uint16_t UsagePage_Desktop = 0x01;
-    constexpr uint16_t UsageId_Mouse     = 0x02;
-    constexpr uint16_t UsageId_Keyboard  = 0x06;
-
-    static bool EnableRawInputDevice(
-        HWND handle,
-        bool enable,
-        bool enforce,
-        uint16_t usage_page,
-        uint16_t usage_id) noexcept
-    {
-        DWORD dwFlags{};
-
-        if (enforce && enable)
-        {
-            dwFlags |= RIDEV_NOLEGACY;
-        }
-
-        if (!enable)
-        {
-            dwFlags |= RIDEV_REMOVE;
-        }
-
-        RAWINPUTDEVICE device{
-            .usUsagePage = usage_page,
-            .usUsage     = usage_id,
-            .dwFlags     = dwFlags,
-            .hwndTarget  = handle,
-        };
-
-        BOOL const result = RegisterRawInputDevices(&device, 1, sizeof(RAWINPUTDEVICE));
-        return result != FALSE;
-    }
-
-    /*static */ void EnableRawInputKeyboard(Window& window, bool enable, bool enforce) noexcept
-    {
-        EnableRawInputDevice(
-            window.Hwnd,
-            enable,
-            enforce,
-            UsagePage_Desktop,
-            UsageId_Keyboard);
-    }
-
-    static void EnableRawInputMouse(Window& window, bool enable, bool enforce) noexcept
-    {
-        g_UseHighPrecisionMouse = EnableRawInputDevice(
-            window.Hwnd,
-            enable,
-            enforce,
-            UsagePage_Desktop,
-            UsageId_Mouse);
-    }
 }
 
 
@@ -468,14 +414,14 @@ namespace Graphyte::App::Impl
         return 0;
     }
 
-    static void WmMouseButton(Window& window, HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) noexcept
+    static void WmMouseButton(Window& window, UINT msg, WPARAM wparam, LPARAM lparam) noexcept
     {
         POINT cursor{
             .x = LOWORD(lparam),
             .y = HIWORD(lparam),
         };
 
-        ClientToScreen(hwnd, &cursor);
+        ClientToScreen(window.Hwnd, &cursor);
 
         bool const doubleClick = [=]() {
             switch (msg)
@@ -572,62 +518,116 @@ namespace Graphyte::App::Impl
 
         GX_LOG_TRACE(LogNativeApp, "WM_MOUSEWHEEL {} (horizontal = {})\n", wheelDelta * spin, horizontal);
 
-        g_EventHandler->OnMouseWheel(MouseWheelEvent{
-            .Modifiers = g_ModifierKey,
-            .Delta     = wheelDelta * spin,
-            .Horizontal = horizontal,
-        });
+        if (horizontal)
+        {
+            g_EventHandler->OnMouseWheel(MouseWheelEvent{
+                .Modifiers = g_ModifierKey,
+                .DeltaX = wheelDelta * spin,
+                .DeltaY = 0.0f,
+                });
+        }
+        else
+        {
+            g_EventHandler->OnMouseWheel(MouseWheelEvent{
+                .Modifiers = g_ModifierKey,
+                .DeltaX = 0.0f,
+                .DeltaY = wheelDelta * spin,
+                });
+        }
     }
 
-    static bool WmInput(LPARAM lparam) noexcept
+    static bool WmInput(WPARAM wparam, LPARAM lparam) noexcept
     {
-        HRAWINPUT handle = reinterpret_cast<HRAWINPUT>(lparam);
-
-        UINT size{};
-        GetRawInputData(handle, RID_INPUT, nullptr, &size, sizeof(RAWINPUTHEADER));
-
-        auto buffer = std::make_unique<uint8_t[]>(size);
-
-        if (GetRawInputData(handle, RID_INPUT, buffer.get(), &size, sizeof(RAWINPUTHEADER)) == size)
+        bool const foreground = GET_RAWINPUT_CODE_WPARAM(wparam) == RIM_INPUT;
+        if (foreground)
         {
-            RAWINPUT* input = reinterpret_cast<RAWINPUT*>(buffer.get());
+            HRAWINPUT const handle = reinterpret_cast<HRAWINPUT>(lparam);
 
-            if (input->header.dwType == RIM_TYPEMOUSE)
+            UINT size{};
+            GetRawInputData(handle, RID_INPUT, nullptr, &size, sizeof(RAWINPUTHEADER));
+
+            auto buffer = std::make_unique<uint8_t[]>(size);
+
+            if (GetRawInputData(handle, RID_INPUT, buffer.get(), &size, sizeof(RAWINPUTHEADER)) == size)
             {
-                bool const relative = ((input->data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE) == 0);
+                RAWINPUT* input = reinterpret_cast<RAWINPUT*>(buffer.get());
 
-                if (relative)
+                if (input->header.dwType == RIM_TYPEMOUSE)
                 {
-                    g_EventHandler->OnMouseMove(MouseMoveEvent{
-                        .Modifiers = g_ModifierKey,
-                        .Relative  = {
-                            .X = static_cast<float>(input->data.mouse.lLastX),
-                            .Y = static_cast<float>(input->data.mouse.lLastY),
-                        },
-                    });
-                }
-                else
-                {
-                    g_EventHandler->OnMouseMove();
-                }
+                    GX_LOG_TRACE(LogNativeApp,
+                        "usFlags: {:x}, ulButtons: {:x}, usButtonFlags {:x}, usButtonData: {}, ulRawButtons: {:x}, lLastX: {}, lLastY: {}, ulExtraInformation: {:x}\n",
+                        input->data.mouse.usFlags,
+                        input->data.mouse.ulButtons,
+                        input->data.mouse.usButtonFlags,
+                        static_cast<short>(input->data.mouse.usButtonData),
+                        input->data.mouse.ulRawButtons,
+                        input->data.mouse.lLastX,
+                        input->data.mouse.lLastY,
+                        input->data.mouse.ulExtraInformation);
 
-                return true;
-            }
-            else if (input->header.dwType == RIM_TYPEKEYBOARD)
-            {
-                GX_LOG_TRACE(LogNativeApp, "(kbd: vk: {:x}, msg: {:x}, mc: {:x}, flg: {:x}, ei: {:x})\n",
-                    input->data.keyboard.VKey,
-                    input->data.keyboard.Message,
-                    input->data.keyboard.MakeCode,
-                    input->data.keyboard.Flags,
-                    input->data.keyboard.ExtraInformation);
+                    bool const relative = ((input->data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE) == 0);
+
+                    if (relative)
+                    {
+                        LONG const x = input->data.mouse.lLastX;
+                        LONG const y = input->data.mouse.lLastY;
+
+                        if (x != 0 && y != 0)
+                        {
+                            g_EventHandler->OnMouseMove(MouseMoveEvent{
+                                .Modifiers = g_ModifierKey,
+                                .Relative = {
+                                    .X = static_cast<float>(x),
+                                    .Y = static_cast<float>(y),
+                                },
+                                });
+                        }
+                    }
+                    else
+                    {
+                        static POINT s_LastCursorPosition{};
+
+                        bool const virtualDesktop = (input->data.mouse.usFlags & MOUSE_VIRTUAL_DESKTOP) != MOUSE_VIRTUAL_DESKTOP;
+
+                        LONG const cx = GetSystemMetrics(virtualDesktop ? SM_CXVIRTUALSCREEN : SM_CXSCREEN);
+                        LONG const cy = GetSystemMetrics(virtualDesktop ? SM_CYVIRTUALSCREEN : SM_CYSCREEN);
+
+                        LONG const x = static_cast<LONG>((static_cast<float>(input->data.mouse.lLastX) / 65535.0f) * cx);
+                        LONG const y = static_cast<LONG>((static_cast<float>(input->data.mouse.lLastY) / 65535.0f) * cy);
+
+                        if (s_LastCursorPosition.x == 0 && s_LastCursorPosition.y == 0)
+                        {
+                            s_LastCursorPosition.x = x;
+                            s_LastCursorPosition.y = y;
+                        }
+
+                        g_EventHandler->OnMouseMove(MouseMoveEvent{
+                            .Modifiers = g_ModifierKey,
+                            .Relative = {
+                                .X = static_cast<float>(x - s_LastCursorPosition.x),
+                                .Y = static_cast<float>(y - s_LastCursorPosition.y),
+                            },
+                            });
+                    }
+
+                    return true;
+                }
+                else if (input->header.dwType == RIM_TYPEKEYBOARD)
+                {
+                    GX_LOG_TRACE(LogNativeApp, "(kbd: vk: {:x}, msg: {:x}, mc: {:x}, flg: {:x}, ei: {:x})\n",
+                        input->data.keyboard.VKey,
+                        input->data.keyboard.Message,
+                        input->data.keyboard.MakeCode,
+                        input->data.keyboard.Flags,
+                        input->data.keyboard.ExtraInformation);
+                }
             }
         }
 
         return false;
     }
 
-    static LRESULT WmNcCalcSize(Window& window, HWND hwnd, WPARAM wparam, LPARAM lparam) noexcept
+    static LRESULT WmNcCalcSize(Window& window, WPARAM wparam, LPARAM lparam) noexcept
     {
         if (wparam != 0 && window.Type == WindowType::Game && window.Mode != WindowMode::Windowed && IsMaximized(window))
         {
@@ -636,7 +636,7 @@ namespace Graphyte::App::Impl
             // render over whole area anyway.
 
             WINDOWINFO wi{ .cbSize = sizeof(wi) };
-            GetWindowInfo(hwnd, &wi);
+            GetWindowInfo(window.Hwnd, &wi);
 
             NCCALCSIZE_PARAMS& params = *reinterpret_cast<LPNCCALCSIZE_PARAMS>(lparam);
             params.rgrc[0].left += wi.cxWindowBorders;
@@ -654,7 +654,7 @@ namespace Graphyte::App::Impl
             return WVR_VALIDRECTS;
         }
 
-        return DefWindowProcW(hwnd, WM_NCCALCSIZE, wparam, lparam);
+        return DefWindowProcW(window.Hwnd, WM_NCCALCSIZE, wparam, lparam);
     }
 
     static LRESULT WmClose(Window& window) noexcept
@@ -801,7 +801,7 @@ namespace Graphyte::App::Impl
         }
     }
 
-    static void WmDpiChanged(Window& window, HWND hwnd, WPARAM wparam, LPARAM lparam) noexcept
+    static void WmDpiChanged(Window& window, WPARAM wparam, LPARAM lparam) noexcept
     {
         GX_LOG_TRACE(LogNativeApp, "WM_DPICHANGED\n");
 
@@ -810,7 +810,7 @@ namespace Graphyte::App::Impl
         RECT const& rc = *reinterpret_cast<LPRECT>(lparam);
 
         SetWindowPos(
-            hwnd,
+            window.Hwnd,
             nullptr,
             rc.left,
             rc.top,
@@ -932,7 +932,7 @@ namespace Graphyte::App::Impl
             case WM_XBUTTONDOWN:
             case WM_XBUTTONUP:
             case WM_XBUTTONDBLCLK:
-                WmMouseButton(*window, hwnd, msg, wparam, lparam);
+                WmMouseButton(*window, msg, wparam, lparam);
                 break;
 
             case WM_NCMOUSEMOVE:
@@ -949,7 +949,7 @@ namespace Graphyte::App::Impl
                 break;
 
             case WM_INPUT:
-                if (WmInput(lparam))
+                if (WmInput(wparam, lparam))
                 {
                     return TRUE;
                 }
@@ -957,7 +957,7 @@ namespace Graphyte::App::Impl
                 break;
 
             case WM_NCCALCSIZE:
-                return WmNcCalcSize(*window, hwnd, wparam, lparam);
+                return WmNcCalcSize(*window, wparam, lparam);
 
             case WM_NCACTIVATE:
                 if (window->Mode != WindowMode::Windowed)
@@ -1018,7 +1018,7 @@ namespace Graphyte::App::Impl
                 break;
 
             case WM_DPICHANGED:
-                WmDpiChanged(*window, hwnd, wparam, lparam);
+                WmDpiChanged(*window, wparam, lparam);
                 break;
 
             case WM_GETDLGCODE:
