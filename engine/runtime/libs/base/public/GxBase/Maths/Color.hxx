@@ -26,7 +26,7 @@ namespace Graphyte::Maths::Impl
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Load(ColorBGRA const* source) noexcept
+    [[nodiscard]] mathinline T mathcall Load(ColorBGRA const* source) noexcept
         requires(Impl::IsColor<T>)
     {
         GX_ASSERT(source != nullptr);
@@ -99,7 +99,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Negative(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Negative(T v) noexcept
         requires(Impl::IsColor<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -118,7 +118,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Modulate(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall Modulate(T a, T b) noexcept
         requires(Impl::IsColor<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -135,7 +135,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall AdjustSaturation(T v, float saturation) noexcept
+    [[nodiscard]] mathinline T mathcall AdjustSaturation(T v, float saturation) noexcept
         requires(Impl::IsColor<T>)
     {
         static Impl::ConstFloat32x4 const luminance{ { {
@@ -169,7 +169,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall AdjustContrast(T v, float contrast) noexcept
+    [[nodiscard]] mathinline T mathcall AdjustContrast(T v, float contrast) noexcept
         requires(Impl::IsColor<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -195,7 +195,7 @@ namespace Graphyte::Maths
 
 namespace Graphyte::Maths::Impl
 {
-    mathinline Vector3 mathcall HueToColor(Vector3 p, Vector3 q, Vector3 h) noexcept
+    [[nodiscard]] mathinline Vector3 mathcall HueToColor(Vector3 p, Vector3 q, Vector3 h) noexcept
     {
         static constexpr Impl::ConstFloat32x4 g_OneSixth = { { {
                 1.0f / 6.0f,
@@ -249,12 +249,12 @@ namespace Graphyte::Maths::Impl
 
 namespace Graphyte::Maths
 {
-    mathinline Color mathcall RGBToHSL(Color c) noexcept;
-    mathinline Color mathcall HSLToRGB(Color c) noexcept;
-    mathinline Color mathcall RGBToHSV(Color c) noexcept;
-    mathinline Color mathcall HSVToRGB(Color c) noexcept;
+    [[nodiscard]] mathinline Color mathcall RGBToHSL(Color c) noexcept;
+    [[nodiscard]] mathinline Color mathcall HSLToRGB(Color c) noexcept;
+    [[nodiscard]] mathinline Color mathcall RGBToHSV(Color c) noexcept;
+    [[nodiscard]] mathinline Color mathcall HSVToRGB(Color c) noexcept;
 
-    mathinline Color mathcall RGBToYUV(Color c) noexcept
+    [[nodiscard]] mathinline Color mathcall RGBToYUV(Color c) noexcept
     {
         static constexpr Impl::ConstFloat32x4 m0{ { { 0.299f, -0.147f, 0.615f, 0.0f } } };
         static constexpr Impl::ConstFloat32x4 m1{ { { 0.587f, -0.289f, -0.515f, 0.0f } } };
@@ -271,7 +271,7 @@ namespace Graphyte::Maths
         return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
-    mathinline Color mathcall YUVToRGB(Color c) noexcept
+    [[nodiscard]] mathinline Color mathcall YUVToRGB(Color c) noexcept
     {
         static constexpr Impl::ConstFloat32x4 m1{ { { 0.0f, -0.395f, 2.032f, 0.0f } } };
         static constexpr Impl::ConstFloat32x4 m2{ { { 1.140f, -0.581f, 0.0f, 0.0f } } };
@@ -287,7 +287,7 @@ namespace Graphyte::Maths
         return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
-    mathinline Color mathcall RGBToYUVHD(Color c) noexcept
+    [[nodiscard]] mathinline Color mathcall RGBToYUVHD(Color c) noexcept
     {
         static constexpr Impl::ConstFloat32x4 m0{ { { 0.2126f, -0.0997f, 0.6150f, 0.0f } } };
         static constexpr Impl::ConstFloat32x4 m1{ { { 0.7152f, -0.3354f, -0.5586f, 0.0f } } };
@@ -304,7 +304,7 @@ namespace Graphyte::Maths
         return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
-    mathinline Color mathcall YUVToRGBHD(Color c) noexcept
+    [[nodiscard]] mathinline Color mathcall YUVToRGBHD(Color c) noexcept
     {
         static constexpr Impl::ConstFloat32x4 m1{ { { 0.0f, -0.2153f, 2.1324f, 0.0f } } };
         static constexpr Impl::ConstFloat32x4 m2{ { { 1.2803f, -0.3806f, 0.0f, 0.0f } } };
@@ -320,7 +320,7 @@ namespace Graphyte::Maths
         return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
-    mathinline Color mathcall RGBToXYZ(Color c) noexcept
+    [[nodiscard]] mathinline Color mathcall RGBToXYZ(Color c) noexcept
     {
         static constexpr Impl::ConstFloat32x4 m0{ { { 0.4887180f, 0.1762044f, 0.0000000f, 0.0f } } };
         static constexpr Impl::ConstFloat32x4 m1{ { { 0.3106803f, 0.8129847f, 0.0102048f, 0.0f } } };
@@ -337,7 +337,7 @@ namespace Graphyte::Maths
         return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
-    mathinline Color mathcall XYZToRGB(Color c) noexcept
+    [[nodiscard]] mathinline Color mathcall XYZToRGB(Color c) noexcept
     {
         static constexpr Impl::ConstFloat32x4 m0{ { { 2.3706743f, -0.5138850f, 0.0052982f, 0.0f } } };
         static constexpr Impl::ConstFloat32x4 m1{ { { -0.9000405f, 1.4253036f, -0.0146949f, 0.0f } } };
@@ -354,7 +354,7 @@ namespace Graphyte::Maths
         return Select(c, Color{ result.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
-    mathinline Color mathcall XYZToSRGB(Color c) noexcept
+    [[nodiscard]] mathinline Color mathcall XYZToSRGB(Color c) noexcept
     {
         static constexpr Impl::ConstFloat32x4 m0{ { { 3.2406f, -0.9689f, 0.0557f, 0.0f } } };
         static constexpr Impl::ConstFloat32x4 m1{ { { -1.5372f, 1.8758f, -0.2040f, 0.0f } } };
@@ -377,7 +377,7 @@ namespace Graphyte::Maths
         return Select(c, Color{ vclr.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
-    mathinline Color mathcall SRGBToXYZ(Color c) noexcept
+    [[nodiscard]] mathinline Color mathcall SRGBToXYZ(Color c) noexcept
     {
         static constexpr Impl::ConstFloat32x4 m0{ { { 0.4124f, 0.2126f, 0.0193f, 0.0f } } };
         static constexpr Impl::ConstFloat32x4 m1{ { { 0.3576f, 0.7152f, 0.1192f, 0.0f } } };
@@ -400,7 +400,7 @@ namespace Graphyte::Maths
         return Select(c, vclr, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
-    mathinline Color mathcall RGBToSRGB(Color c) noexcept
+    [[nodiscard]] mathinline Color mathcall RGBToSRGB(Color c) noexcept
     {
         static constexpr Impl::ConstFloat32x4 cutoff{ { { 0.0031308f, 0.0031308f, 0.0031308f, 1.0f } } };
         static constexpr Impl::ConstFloat32x4 linear{ { { 12.92f, 12.92f, 12.92f, 1.0f } } };
@@ -416,7 +416,7 @@ namespace Graphyte::Maths
         return Select(c, Color{ vv2.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
     }
 
-    mathinline Color mathcall SRGBToRGB(Color c) noexcept
+    [[nodiscard]] mathinline Color mathcall SRGBToRGB(Color c) noexcept
     {
         static constexpr Impl::ConstFloat32x4 cutoff{ { { 0.04045f, 0.04045f, 0.04045f, 1.0f } } };
         static constexpr Impl::ConstFloat32x4 linear{ { { 1.0f / 12.92f, 1.0f / 12.92f, 1.0f / 12.92f, 1.0f } } };

@@ -5,70 +5,70 @@
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Dot(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall Dot(T a, T b) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return { Dot(Vector4{ a.V }, Vector4{ b.V }).V };
     }
 
     template <typename T>
-    mathinline Vector4 mathcall Length(T v) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall Length(T v) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return { Length(Vector4{ v.V }).V };
     }
 
     template <typename T>
-    mathinline Vector4 mathcall LengthSquared(T v) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall LengthSquared(T v) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return { LengthSquared(Vector4{ v.V }).V };
     }
 
     template <typename T>
-    mathinline Vector4 mathcall ReciprocalLength(T v) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall ReciprocalLength(T v) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return { ReciprocalLength(Vector4{ v.V }).V };
     }
 
     template <typename T>
-    mathinline T mathcall Normalize(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Normalize(T v) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return { Normalize(Vector4{ v.V }).V };
     }
 
     template <typename T>
-    mathinline T mathcall NormalizeEst(T v) noexcept
+    [[nodiscard]] mathinline T mathcall NormalizeEst(T v) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return { NormalizeEst(Vector4{ v.V }).V };
     }
 
     template <typename T>
-    mathinline T mathcall Identity() noexcept
+    [[nodiscard]] mathinline T mathcall Identity() noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return { Impl::c_V4_F32_PositiveUnitW.V };
     }
 
     template <typename T>
-    mathinline bool mathcall IsIdentity(T q) noexcept
+    [[nodiscard]] mathinline bool mathcall IsIdentity(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return IsEqual(Vector4{ q.V }, Vector4{ Impl::c_V4_F32_PositiveUnitW.V });
     }
 
     template <typename T>
-    mathinline bool mathcall IsIdentity(T q, Vector4 epsilon) noexcept
+    [[nodiscard]] mathinline bool mathcall IsIdentity(T q, Vector4 epsilon) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         return IsEqual(Vector4{ q.V }, Vector4{ Impl::c_V4_F32_PositiveUnitW.V }, epsilon);
     }
 
     template <typename T>
-    mathinline T mathcall Conjugate(T q) noexcept
+    [[nodiscard]] mathinline T mathcall Conjugate(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -93,7 +93,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Inverse(T q) noexcept
+    [[nodiscard]] mathinline T mathcall Inverse(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         Vector4 const zero            = Zero<Vector4>();
@@ -106,7 +106,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Multiply(T q1, T q2) noexcept
+    [[nodiscard]] mathinline T mathcall Multiply(T q1, T q2) noexcept
         requires(Impl::IsQuaternion<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -144,7 +144,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Vector3 Rotate(Vector3 v, Quaternion q) noexcept
+    [[nodiscard]] mathinline Vector3 Rotate(Vector3 v, Quaternion q) noexcept
     {
         Quaternion const a = Select<Quaternion>(
             Quaternion{ Impl::c_V4_U32_Mask_1110.V },
@@ -157,7 +157,7 @@ namespace Graphyte::Maths
         return Vector3{ qaqn.V };
     }
 
-    mathinline Vector3 InverseRotate(Vector3 v, Quaternion q) noexcept
+    [[nodiscard]] mathinline Vector3 InverseRotate(Vector3 v, Quaternion q) noexcept
     {
         Quaternion const a = Select<Quaternion>(
             Quaternion{ Impl::c_V4_U32_Mask_1110.V },
@@ -171,7 +171,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Exp(T q) noexcept
+    [[nodiscard]] mathinline T mathcall Exp(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -228,7 +228,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Log(T q) noexcept
+    [[nodiscard]] mathinline T mathcall Log(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -280,7 +280,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateFromEuler(Vector3 angles) noexcept
+    [[nodiscard]] mathinline T mathcall CreateFromEuler(Vector3 angles) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         static Impl::ConstFloat32x4 const sign{ { {
@@ -313,7 +313,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateFromEuler(float x, float y, float z) noexcept
+    [[nodiscard]] mathinline T mathcall CreateFromEuler(float x, float y, float z) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         Vector3 const angles    = Make<Vector3>(x, y, z);
@@ -322,7 +322,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept
+    [[nodiscard]] mathinline T mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept
         requires(Impl::IsQuaternion<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -354,7 +354,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept
+    [[nodiscard]] mathinline T mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         GX_ASSERT(IsNotEqual(axis, Zero<Vector3>()));
@@ -372,7 +372,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateFromMatrix(Matrix m) noexcept
+    [[nodiscard]] mathinline T mathcall CreateFromMatrix(Matrix m) noexcept
         requires(Impl::IsQuaternion<T>)
     {
         //
@@ -544,7 +544,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, Vector4 t) noexcept
+    [[nodiscard]] mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, Vector4 t) noexcept
     {
         GX_ASSERT(GetX(t) == GetY(t) && GetX(t) == GetZ(t) && GetX(t) == GetW(t));
 
@@ -636,12 +636,12 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, float t) noexcept
+    [[nodiscard]] mathinline Quaternion mathcall Slerp(Quaternion q0, Quaternion q1, float t) noexcept
     {
         return Slerp(q0, q1, Make<Vector4>(t));
     }
 
-    mathinline Quaternion mathcall Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, Vector4 t) noexcept
+    [[nodiscard]] mathinline Quaternion mathcall Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, Vector4 t) noexcept
     {
         GX_ASSERT(GetX(t) == GetY(t) && GetX(t) == GetZ(t) && GetX(t) == GetW(t));
 
@@ -657,7 +657,7 @@ namespace Graphyte::Maths
         return result;
     }
 
-    mathinline Quaternion mathcall Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, float t) noexcept
+    [[nodiscard]] mathinline Quaternion mathcall Squad(Quaternion q0, Quaternion q1, Quaternion q2, Quaternion q3, float t) noexcept
     {
         return Squad(q0, q1, q2, q3, Make<Vector4>(t));
     }
@@ -715,7 +715,7 @@ namespace Graphyte::Maths
         out_c = vsq2;
     }
 
-    mathinline Quaternion mathcall Barycentric(Quaternion q0, Quaternion q1, Quaternion q2, Vector4 f, Vector4 g) noexcept
+    [[nodiscard]] mathinline Quaternion mathcall Barycentric(Quaternion q0, Quaternion q1, Quaternion q2, Vector4 f, Vector4 g) noexcept
     {
         GX_ASSERT(GetX(f) == GetY(f) && GetX(f) == GetZ(f) && GetX(f) == GetW(f));
         GX_ASSERT(GetX(g) == GetY(g) && GetX(g) == GetZ(g) && GetX(g) == GetW(g));
@@ -741,7 +741,7 @@ namespace Graphyte::Maths
         return result;
     }
 
-    mathinline Quaternion mathcall Barycentric(Quaternion q0, Quaternion q1, Quaternion q2, float f, float g) noexcept
+    [[nodiscard]] mathinline Quaternion mathcall Barycentric(Quaternion q0, Quaternion q1, Quaternion q2, float f, float g) noexcept
     {
         float const fg = f + g;
 

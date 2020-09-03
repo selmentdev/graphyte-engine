@@ -6,7 +6,7 @@
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall RevolutionsToDegrees(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RevolutionsToDegrees(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(360.0f);
@@ -15,14 +15,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall RevolutionsToDegrees(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RevolutionsToDegrees(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value * T(360.0);
     }
 
     template <typename T>
-    mathinline T mathcall RevolutionsToRadians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RevolutionsToRadians(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier{ Impl::c_V4_F32_Pi.V };
@@ -31,14 +31,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall RevolutionsToRadians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RevolutionsToRadians(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value * Maths::Impl::ConstPi<T>;
     }
 
     template <typename T>
-    mathinline T mathcall RevolutionsToGradians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RevolutionsToGradians(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(400.0f);
@@ -47,14 +47,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall RevolutionsToGradians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RevolutionsToGradians(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value * T(400.0);
     }
 
     template <typename T>
-    mathinline T mathcall DegreesToRevolutions(T value) noexcept
+    [[nodiscard]] mathinline T mathcall DegreesToRevolutions(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(1.0f / 360.0f);
@@ -63,14 +63,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall DegreesToRevolutions(T value) noexcept
+    [[nodiscard]] mathinline T mathcall DegreesToRevolutions(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value / T(360.0);
     }
 
     template <typename T>
-    mathinline T mathcall RadiansToRevolutions(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RadiansToRevolutions(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(1.0 / Maths::Impl::ConstPi2<float>);
@@ -79,14 +79,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall RadiansToRevolutions(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RadiansToRevolutions(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value / Maths::Impl::ConstPi2<T>;
     }
 
     template <typename T>
-    mathinline T mathcall GradiansToRevolutions(T value) noexcept
+    [[nodiscard]] mathinline T mathcall GradiansToRevolutions(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(1.0f / 400.0f);
@@ -95,14 +95,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall GradiansToRevolutions(T value) noexcept
+    [[nodiscard]] mathinline T mathcall GradiansToRevolutions(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value / T(400.0);
     }
 
     template <typename T>
-    mathinline T mathcall RadiansToGradians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RadiansToGradians(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(200.0f / Maths::Impl::ConstPi<float>);
@@ -111,14 +111,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall RadiansToGradians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RadiansToGradians(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value * (T(200.0) / Maths::Impl::ConstPi<T>);
     }
 
     template <typename T>
-    mathinline T mathcall GradiansToRadians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall GradiansToRadians(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(Maths::Impl::ConstPi<float> / 200.0f);
@@ -127,14 +127,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall GradiansToRadians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall GradiansToRadians(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value * (Maths::Impl::ConstPi<T> / T(200.0));
     }
 
     template <typename T>
-    mathinline T mathcall RadiansToDegrees(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RadiansToDegrees(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(180.0f / Maths::Impl::ConstPi<float>);
@@ -143,14 +143,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall RadiansToDegrees(T value) noexcept
+    [[nodiscard]] mathinline T mathcall RadiansToDegrees(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value * (T(180.0) / Maths::Impl::ConstPi<T>);
     }
 
     template <typename T>
-    mathinline T mathcall DegreesToRadians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall DegreesToRadians(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(Maths::Impl::ConstPi<float> / 180.0f);
@@ -159,14 +159,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall DegreesToRadians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall DegreesToRadians(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value * (Maths::Impl::ConstPi<T> / T(180.0));
     }
 
     template <typename T>
-    mathinline T mathcall GradiansToDegrees(T value) noexcept
+    [[nodiscard]] mathinline T mathcall GradiansToDegrees(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(9.0f / 10.0f);
@@ -175,14 +175,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall GradiansToDegrees(T value) noexcept
+    [[nodiscard]] mathinline T mathcall GradiansToDegrees(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value * (T(9.0) / T(10.0));
     }
 
     template <typename T>
-    mathinline T mathcall DegreesToGradians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall DegreesToGradians(T value) noexcept
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(10.0f / 9.0f);
@@ -191,13 +191,13 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall DegreesToGradians(T value) noexcept
+    [[nodiscard]] mathinline T mathcall DegreesToGradians(T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return value * (T(10.0) / T(9.0));
     }
 
-    mathinline Float3A mathcall CartesianToSpherical(const Float3A& value) noexcept
+    [[nodiscard]] mathinline Float3A mathcall CartesianToSpherical(const Float3A& value) noexcept
     {
         float const radius = Sqrt(
             value.X * value.X + value.Y * value.Y + value.Z * value.Z);
@@ -209,7 +209,7 @@ namespace Graphyte::Maths
         return { radius, theta, phi };
     }
 
-    mathinline Float3A mathcall SphericalToCartesian(const Float3A& value) noexcept
+    [[nodiscard]] mathinline Float3A mathcall SphericalToCartesian(const Float3A& value) noexcept
     {
         float sin_theta;
         float cos_theta;
@@ -224,7 +224,7 @@ namespace Graphyte::Maths
         return { partial * cos_phi, partial * sin_phi, radius * cos_theta };
     }
 
-    mathinline Float3A mathcall CartesianToCylindrical(const Float3A& value) noexcept
+    [[nodiscard]] mathinline Float3A mathcall CartesianToCylindrical(const Float3A& value) noexcept
     {
         float const radius = Sqrt(
             value.X * value.X + value.Y * value.Y);
@@ -235,7 +235,7 @@ namespace Graphyte::Maths
         return { radius, angle, elevation };
     }
 
-    mathinline Float3A mathcall CylindricalToCartesian(const Float3A& value) noexcept
+    [[nodiscard]] mathinline Float3A mathcall CylindricalToCartesian(const Float3A& value) noexcept
     {
         float const radius = value.X;
         float const angle = value.Y;
@@ -248,7 +248,7 @@ namespace Graphyte::Maths
         return { radius * cos_angle, radius * sin_angle, elevation };
     }
 
-    mathinline Float2A mathcall PolarToCartesian(const Float2A& value) noexcept
+    [[nodiscard]] mathinline Float2A mathcall PolarToCartesian(const Float2A& value) noexcept
     {
         float const radius = value.X;
         float const angle = value.Y;
@@ -263,7 +263,7 @@ namespace Graphyte::Maths
         return { x, y };
     }
 
-    mathinline Float2A mathcall CartesianToPolar(const Float2A& value) noexcept
+    [[nodiscard]] mathinline Float2A mathcall CartesianToPolar(const Float2A& value) noexcept
     {
         float const radius = Sqrt(
             value.X * value.X + value.Y * value.Y);

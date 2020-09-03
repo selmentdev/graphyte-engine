@@ -10,196 +10,196 @@
 namespace Graphyte::Maths
 {
     template <typename T>
-    constexpr T mathcall E() noexcept
+    [[nodiscard]] constexpr T mathcall E() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_E<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Log2E() noexcept
+    [[nodiscard]] constexpr T mathcall Log2E() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Log2E<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Log10E() noexcept
+    [[nodiscard]] constexpr T mathcall Log10E() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Log10E<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Ln2() noexcept
+    [[nodiscard]] constexpr T mathcall Ln2() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Ln2<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Ln10() noexcept
+    [[nodiscard]] constexpr T mathcall Ln10() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Ln10<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Pi() noexcept
+    [[nodiscard]] constexpr T mathcall Pi() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Pi<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Pi2() noexcept
+    [[nodiscard]] constexpr T mathcall Pi2() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Pi2<T>;
     }
 
     template <typename T>
-    constexpr T mathcall InvPi() noexcept
+    [[nodiscard]] constexpr T mathcall InvPi() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_InvPi<T>;
     }
 
     template <typename T>
-    constexpr T mathcall InvPi2() noexcept
+    [[nodiscard]] constexpr T mathcall InvPi2() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_InvPi2<T>;
     }
 
     template <typename T>
-    constexpr T mathcall InvSqrtPi() noexcept
+    [[nodiscard]] constexpr T mathcall InvSqrtPi() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_InvSqrtPi<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Sqrt2() noexcept
+    [[nodiscard]] constexpr T mathcall Sqrt2() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Sqrt2<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Sqrt3() noexcept
+    [[nodiscard]] constexpr T mathcall Sqrt3() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Sqrt3<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Sqrt5() noexcept
+    [[nodiscard]] constexpr T mathcall Sqrt5() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Sqrt5<T>;
     }
 
     template <typename T>
-    constexpr T mathcall InvSqrt2() noexcept
+    [[nodiscard]] constexpr T mathcall InvSqrt2() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_InvSqrt2<T>;
     }
 
     template <typename T>
-    constexpr T mathcall InvSqrt3() noexcept
+    [[nodiscard]] constexpr T mathcall InvSqrt3() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_InvSqrt3<T>;
     }
 
     template <typename T>
-    constexpr T mathcall InvSqrt5() noexcept
+    [[nodiscard]] constexpr T mathcall InvSqrt5() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_InvSqrt5<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Phi() noexcept
+    [[nodiscard]] constexpr T mathcall Phi() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Phi<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Gamma() noexcept
+    [[nodiscard]] constexpr T mathcall Gamma() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Gamma<T>;
     }
 
     template <typename T>
-    constexpr T mathcall PiDiv2() noexcept
+    [[nodiscard]] constexpr T mathcall PiDiv2() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_PiDiv2<T>;
     }
 
     template <typename T>
-    constexpr T mathcall PiDiv3() noexcept
+    [[nodiscard]] constexpr T mathcall PiDiv3() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_PiDiv3<T>;
     }
 
     template <typename T>
-    constexpr T mathcall PiDiv4() noexcept
+    [[nodiscard]] constexpr T mathcall PiDiv4() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_PiDiv4<T>;
     }
 
     template <typename T>
-    constexpr T mathcall PiDiv6() noexcept
+    [[nodiscard]] constexpr T mathcall PiDiv6() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_PiDiv6<T>;
     }
 
     template <typename T>
-    constexpr T mathcall PiDiv8() noexcept
+    [[nodiscard]] constexpr T mathcall PiDiv8() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_PiDiv8<T>;
     }
 
     template <typename T>
-    constexpr T mathcall EpsilonAngular() noexcept
+    [[nodiscard]] constexpr T mathcall EpsilonAngular() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_EpsilonAngular<T>;
     }
 
     template <typename T>
-    constexpr T mathcall EpsilonLow() noexcept
+    [[nodiscard]] constexpr T mathcall EpsilonLow() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_EpsilonLow<T>;
     }
 
     template <typename T>
-    constexpr T mathcall Epsilon() noexcept
+    [[nodiscard]] constexpr T mathcall Epsilon() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_Epsilon<T>;
     }
 
     template <typename T>
-    constexpr T mathcall EpsilonHigh() noexcept
+    [[nodiscard]] constexpr T mathcall EpsilonHigh() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_EpsilonHigh<T>;
     }
 
     template <typename T>
-    constexpr T mathcall RoundingError() noexcept
+    [[nodiscard]] constexpr T mathcall RoundingError() noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Impl::c_S_RoundingError<T>;
@@ -212,7 +212,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Select(T a, T b, T control) noexcept
+    [[nodiscard]] mathinline T mathcall Select(T a, T b, T control) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (control >= 0) ? a : b;
@@ -226,14 +226,14 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall CopySign(T number, T sign) noexcept
+    [[nodiscard]] mathinline T mathcall CopySign(T number, T sign) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return copysign(number, sign);
     }
 
     template <typename T>
-    mathinline T mathcall Sign(T x) noexcept
+    [[nodiscard]] mathinline T mathcall Sign(T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const gt_zero = ((T(0.0) < x) ? T(1.0) : T(0.0));
@@ -242,21 +242,21 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall NearbyInt(T x) noexcept
+    [[nodiscard]] mathinline T mathcall NearbyInt(T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return nearbyint(x);
     }
 
     template <typename T>
-    mathinline T mathcall NextToward(T value, T to) noexcept
+    [[nodiscard]] mathinline T mathcall NextToward(T value, T to) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return nexttoward(value, to);
     }
 
     template <typename T>
-    mathinline T mathcall NextAfter(T value, T to) noexcept
+    [[nodiscard]] mathinline T mathcall NextAfter(T value, T to) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return nextafter(value, to);
@@ -270,35 +270,35 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline bool mathcall IsZero(T v) noexcept
+    [[nodiscard]] mathinline bool mathcall IsZero(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return v == T(0.0);
     }
 
     template <typename T>
-    mathinline bool mathcall IsZero(T v, T epsilon) noexcept
+    [[nodiscard]] mathinline bool mathcall IsZero(T v, T epsilon) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return fabs(v) <= epsilon;
     }
 
     template <typename T>
-    mathinline bool mathcall IsEqual(T a, T b) noexcept
+    [[nodiscard]] mathinline bool mathcall IsEqual(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (a == b);
     }
 
     template <typename T>
-    mathinline bool mathcall IsEqual(T a, T b, T epsilon) noexcept
+    [[nodiscard]] mathinline bool mathcall IsEqual(T a, T b, T epsilon) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (fabs(a - b) <= epsilon);
     }
 
     template <typename T>
-    mathinline bool mathcall IsNearEqual(T a, T b, int32_t tolerance) noexcept
+    [[nodiscard]] mathinline bool mathcall IsNearEqual(T a, T b, int32_t tolerance) noexcept
         requires(std::is_floating_point_v<T>)
     {
         if (IsZero(a - b))
@@ -319,7 +319,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline bool mathcall IsNearEqual(T a, T b) noexcept
+    [[nodiscard]] mathinline bool mathcall IsNearEqual(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         static constexpr const int32_t tolerance{ 4 };
@@ -327,14 +327,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline bool mathcall IsNotEqual(T a, T b) noexcept
+    [[nodiscard]] mathinline bool mathcall IsNotEqual(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (a != b);
     }
 
     template <typename T>
-    mathinline bool mathcall IsNearEqualSquared(T a, T b, T tolerance) noexcept
+    [[nodiscard]] mathinline bool mathcall IsNearEqualSquared(T a, T b, T tolerance) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const diff         = (b - a);
@@ -345,90 +345,90 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline bool mathcall IsNearEqualSquared(T a, T b) noexcept
+    [[nodiscard]] mathinline bool mathcall IsNearEqualSquared(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return IsNearEqualSquared(a, b, Epsilon<T>());
     }
 
     template <typename T>
-    mathinline bool mathcall IsGreater(T a, T b) noexcept
+    [[nodiscard]] mathinline bool mathcall IsGreater(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return isgreater(a, b);
     }
 
     template <typename T>
-    mathinline bool mathcall IsGreaterEqual(T a, T b) noexcept
+    [[nodiscard]] mathinline bool mathcall IsGreaterEqual(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return isgreaterequal(a, b);
     }
 
     template <typename T>
-    mathinline bool mathcall IsLess(T a, T b) noexcept
+    [[nodiscard]] mathinline bool mathcall IsLess(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return isless(a, b);
     }
 
     template <typename T>
-    mathinline bool mathcall IsLessEqual(T a, T b) noexcept
+    [[nodiscard]] mathinline bool mathcall IsLessEqual(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return islessequal(a, b);
     }
 
     template <typename T>
-    mathinline bool mathcall IsLessGreater(T a, T b) noexcept
+    [[nodiscard]] mathinline bool mathcall IsLessGreater(T a, T b) noexcept
     {
         return islessgreater(a, b);
     }
 
     template <typename T>
-    mathinline bool mathcall InBounds(T v, T bounds) noexcept
+    [[nodiscard]] mathinline bool mathcall InBounds(T v, T bounds) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (-bounds <= v) && (v <= bounds);
     }
 
     template <typename T>
-    mathinline bool mathcall InRange(T v, T min, T max) noexcept
+    [[nodiscard]] mathinline bool mathcall InRange(T v, T min, T max) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (min <= v) && (v < max);
     }
 
     template <typename T>
-    mathinline bool mathcall InRangeInclusive(T v, T min, T max) noexcept
+    [[nodiscard]] mathinline bool mathcall InRangeInclusive(T v, T min, T max) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (min <= v) && (v <= max);
     }
 
     template <typename T>
-    mathinline bool mathcall IsNan(T v) noexcept
+    [[nodiscard]] mathinline bool mathcall IsNan(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return FloatTraits<T>::IsNan(v);
     }
 
     template <typename T>
-    mathinline bool mathcall IsInfinity(T v) noexcept
+    [[nodiscard]] mathinline bool mathcall IsInfinity(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return FloatTraits<T>::IsInf(v);
     }
 
     template <typename T>
-    mathinline bool mathcall IsNormal(T v) noexcept
+    [[nodiscard]] mathinline bool mathcall IsNormal(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return isnormal(v);
     }
 
     template <typename T>
-    mathinline bool mathcall IsUnordered(T a, T b) noexcept
+    [[nodiscard]] mathinline bool mathcall IsUnordered(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return isunordered(a, b);
@@ -441,14 +441,14 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Cos(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Cos(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return cos(v);
     }
 
     template <typename T>
-    mathinline T mathcall Sin(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Sin(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return sin(v);
@@ -463,154 +463,154 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Tan(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Tan(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return tan(v);
     }
 
     template <typename T>
-    mathinline T mathcall Asin(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Asin(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return asin(v);
     }
 
     template <typename T>
-    mathinline T mathcall Acos(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Acos(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return acos(v);
     }
 
     template <typename T>
-    mathinline T mathcall Atan(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Atan(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return atan(v);
     }
 
     template <typename T>
-    mathinline T mathcall Atan2(T y, T x) noexcept
+    [[nodiscard]] mathinline T mathcall Atan2(T y, T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return atan2(y, x);
     }
 
     template <typename T>
-    mathinline T mathcall Sinh(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Sinh(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return sinh(v);
     }
 
     template <typename T>
-    mathinline T mathcall Cosh(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Cosh(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return cosh(v);
     }
 
     template <typename T>
-    mathinline T mathcall Tanh(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Tanh(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return tanh(v);
     }
 
     template <typename T>
-    mathinline T mathcall Asinh(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Asinh(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return asinh(v);
     }
 
     template <typename T>
-    mathinline T mathcall Acosh(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Acosh(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return acosh(v);
     }
 
     template <typename T>
-    mathinline T mathcall Atanh(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Atanh(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return atanh(v);
     }
 
     template <typename T>
-    mathinline T mathcall Log(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Log(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return log(v);
     }
 
     template <typename T>
-    mathinline T mathcall Log(T base, T value) noexcept
+    [[nodiscard]] mathinline T mathcall Log(T base, T value) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return log(value) / log(base);
     }
 
     template <typename T>
-    mathinline T mathcall Log10(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Log10(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return log10(v);
     }
 
     template <typename T>
-    mathinline T mathcall Log2(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Log2(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return log2(v);
     }
 
     template <typename T>
-    mathinline T mathcall Exp(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Exp(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return exp(v);
     }
 
     template <typename T>
-    mathinline T mathcall Exp10(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Exp10(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return pow(T(10), v);
     }
 
     template <typename T>
-    mathinline T mathcall Exp2(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Exp2(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return exp2(v);
     }
 
     template <typename T>
-    mathinline T mathcall Power(T x, T y) noexcept
+    [[nodiscard]] mathinline T mathcall Power(T x, T y) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return pow(x, y);
     }
 
     template <typename T>
-    mathinline T mathcall Power(T x, int y) noexcept
+    [[nodiscard]] mathinline T mathcall Power(T x, int y) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return pow(x, y);
     }
 
     template <typename T>
-    mathinline T mathcall Hypot(T x, T y) noexcept
+    [[nodiscard]] mathinline T mathcall Hypot(T x, T y) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return hypot(x, y);
     }
 
     template <typename T>
-    mathinline T mathcall Sqrt(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Sqrt(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
@@ -624,7 +624,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall SqrtEst(T v) noexcept
+    [[nodiscard]] mathinline T mathcall SqrtEst(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
@@ -638,7 +638,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall InvSqrt(T v) noexcept
+    [[nodiscard]] mathinline T mathcall InvSqrt(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
@@ -653,7 +653,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall InvSqrtEst(T v) noexcept
+    [[nodiscard]] mathinline T mathcall InvSqrtEst(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
@@ -668,112 +668,112 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Cbrt(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Cbrt(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return cbrt(v);
     }
 
     template <typename T>
-    mathinline T mathcall InvCbrt(T v) noexcept
+    [[nodiscard]] mathinline T mathcall InvCbrt(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return T(1) / cbrt(v);
     }
 
     template <typename T>
-    mathinline T mathcall Abs(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Abs(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return fabs(v);
     }
 
     template <typename T>
-    mathinline T mathcall Negate(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Negate(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return -v;
     }
 
     template <typename T>
-    mathinline T mathcall Add(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall Add(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return a + b;
     }
 
     template <typename T>
-    mathinline T mathcall Subtract(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall Subtract(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return a - b;
     }
 
     template <typename T>
-    mathinline T mathcall Multiply(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall Multiply(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return a * b;
     }
 
     template <typename T>
-    mathinline T mathcall Reciprocal(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Reciprocal(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return T(1) / v;
     }
 
     template <typename T>
-    mathinline T mathcall Divide(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall Divide(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return a / b;
     }
 
     template <typename T>
-    mathinline T mathcall MultiplyAdd(T a, T b, T c) noexcept
+    [[nodiscard]] mathinline T mathcall MultiplyAdd(T a, T b, T c) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (a * b) + c;
     }
 
     template <typename T>
-    mathinline T mathcall MultiplySubtract(T a, T b, T c) noexcept
+    [[nodiscard]] mathinline T mathcall MultiplySubtract(T a, T b, T c) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (a * b) - c;
     }
 
     template <typename T>
-    mathinline T mathcall NegateMultiplyAdd(T a, T b, T c) noexcept
+    [[nodiscard]] mathinline T mathcall NegateMultiplyAdd(T a, T b, T c) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return -(a * b) + c;
     }
 
     template <typename T>
-    mathinline T mathcall NegateMultiplySubtract(T a, T b, T c) noexcept
+    [[nodiscard]] mathinline T mathcall NegateMultiplySubtract(T a, T b, T c) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return -(a * b) - c;
     }
 
     template <typename T>
-    mathinline T mathcall Square(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Square(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return v * v;
     }
 
     template <typename T>
-    mathinline T mathcall SignedSquare(T v) noexcept
+    [[nodiscard]] mathinline T mathcall SignedSquare(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return v * fabs(v);
     }
 
     template <typename T>
-    mathinline T mathcall Cube(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Cube(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return v * v * v;
@@ -787,21 +787,21 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Lerp(T a, T b, T t) noexcept
+    [[nodiscard]] mathinline T mathcall Lerp(T a, T b, T t) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return a + (b - a) * t;
     }
 
     template <typename T>
-    mathinline T mathcall LerpPrecise(T a, T b, T t) noexcept
+    [[nodiscard]] mathinline T mathcall LerpPrecise(T a, T b, T t) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return ((T(1) - t) * a) + (t * b);
     }
 
     template <typename T>
-    mathinline T mathcall Hermite(T position0, T tangent0, T position1, T tangent1, T t) noexcept
+    [[nodiscard]] mathinline T mathcall Hermite(T position0, T tangent0, T position1, T tangent1, T t) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const t2 = t * t;
@@ -821,7 +821,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Barycentric(T a, T b, T c, T f, T g) noexcept
+    [[nodiscard]] mathinline T mathcall Barycentric(T a, T b, T c, T f, T g) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const pba    = b - a;
@@ -832,7 +832,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CatmullRom(T p0, T p1, T p2, T p3, T t) noexcept
+    [[nodiscard]] mathinline T mathcall CatmullRom(T p0, T p1, T p2, T p3, T t) noexcept
         requires(std::is_floating_point_v<T>)
     {
         float const t2 = t * t;
@@ -852,7 +852,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Remap(T value, T from_min, T from_max, T to_min, T to_max) noexcept
+    [[nodiscard]] mathinline T mathcall Remap(T value, T from_min, T from_max, T to_min, T to_max) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const from_abs     = (value - from_min);
@@ -869,7 +869,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Unlerp(T value, T min, T max) noexcept
+    [[nodiscard]] mathinline T mathcall Unlerp(T value, T min, T max) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const base   = (value - min);
@@ -879,7 +879,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Bezier(T a, T b, T c, T t) noexcept
+    [[nodiscard]] mathinline T mathcall Bezier(T a, T b, T c, T t) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const t2  = t * t;
@@ -889,7 +889,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Bezier(T a, T b, T c, T d, T t) noexcept
+    [[nodiscard]] mathinline T mathcall Bezier(T a, T b, T c, T d, T t) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const t1  = T(1.0) - t;
@@ -900,7 +900,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Cubic(T a, T b, T c, T d, T t) noexcept
+    [[nodiscard]] mathinline T mathcall Cubic(T a, T b, T c, T d, T t) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const t2 = t * t;
@@ -912,7 +912,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall SmoothStep(T a, T b, T x) noexcept
+    [[nodiscard]] mathinline T mathcall SmoothStep(T a, T b, T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         float const t      = Saturate((x - a) / (b - a));
@@ -921,7 +921,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Cosine(T a, T b, T t) noexcept
+    [[nodiscard]] mathinline T mathcall Cosine(T a, T b, T t) noexcept
         requires(std::is_floating_point_v<T>)
     {
         float const t0 = (T(1.0) - Cos(t * Impl::c_S_Pi<T>)) * T(0.5);
@@ -929,14 +929,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall EaseSmoothC2(T x) noexcept
+    [[nodiscard]] mathinline T mathcall EaseSmoothC2(T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (x * x * x) * (x * ((x * T(6.0)) - T(15.0)) + T(10.0));
     }
 
     template <typename T>
-    mathinline T mathcall Smooth(T min, T max, T x) noexcept
+    [[nodiscard]] mathinline T mathcall Smooth(T min, T max, T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         if (x <= min)
@@ -954,7 +954,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall SmoothSquared(T min, T max, T x) noexcept
+    [[nodiscard]] mathinline T mathcall SmoothSquared(T min, T max, T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         if (x <= min)
@@ -971,7 +971,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall SmoothInvSquared(T min, T max, T x) noexcept
+    [[nodiscard]] mathinline T mathcall SmoothInvSquared(T min, T max, T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         if (x <= min)
@@ -990,7 +990,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall SmoothCubed(T min, T max, T x) noexcept
+    [[nodiscard]] mathinline T mathcall SmoothCubed(T min, T max, T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         if (x <= min)
@@ -1007,7 +1007,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall SmoothInvCubed(T min, T max, T x) noexcept
+    [[nodiscard]] mathinline T mathcall SmoothInvCubed(T min, T max, T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         if (x <= min)
@@ -1026,7 +1026,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Trapezoid(T a, T b, T c, T d, T t) noexcept
+    [[nodiscard]] mathinline T mathcall Trapezoid(T a, T b, T c, T d, T t) noexcept
         requires(std::is_floating_point_v<T>)
     {
         if (t <= a)
@@ -1050,14 +1050,14 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Trapezoid(T a, T b, T c, T d, T t, T min, T max) noexcept
+    [[nodiscard]] mathinline T mathcall Trapezoid(T a, T b, T c, T d, T t, T min, T max) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Lerp<T>(min, max, Trapezoid(a, b, c, d, t));
     }
 
     template <typename T>
-    mathinline T mathcall MoveTowards(T current, T target, T max_distance) noexcept
+    [[nodiscard]] mathinline T mathcall MoveTowards(T current, T target, T max_distance) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const distance = (target - current);
@@ -1132,7 +1132,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Gain(T value, T gain) noexcept
+    [[nodiscard]] mathinline T mathcall Gain(T value, T gain) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const g = -Log2(T(1.0) - gain);
@@ -1141,7 +1141,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Bias(T value, T base) noexcept
+    [[nodiscard]] mathinline T mathcall Bias(T value, T base) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Power(value, -Log2(base));
@@ -1157,7 +1157,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline size_t QuadricEquation(T a, T b, T c, T& out_x1, T& out_x2) noexcept
+    [[nodiscard]] mathinline size_t QuadricEquation(T a, T b, T c, T& out_x1, T& out_x2) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const delta = (b * b) - (T(4) * a * c);
@@ -1183,7 +1183,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall SnapToGrid(T value, T grid) noexcept
+    [[nodiscard]] mathinline T mathcall SnapToGrid(T value, T grid) noexcept
         requires(std::is_floating_point_v<T>)
     {
         if (IsZero(grid))
@@ -1196,7 +1196,7 @@ namespace Graphyte::Maths
         }
     }
 
-    mathinline float mathcall WangHashNoise(uint32_t u, uint32_t v, uint32_t s) noexcept
+    [[nodiscard]] mathinline float mathcall WangHashNoise(uint32_t u, uint32_t v, uint32_t s) noexcept
     {
         uint32_t seed = (u * 1664525U + v) + s;
 
@@ -1211,7 +1211,7 @@ namespace Graphyte::Maths
         return value;
     }
 
-    mathinline float mathcall WrapAngle(float value) noexcept
+    [[nodiscard]] mathinline float mathcall WrapAngle(float value) noexcept
     {
         float const raw = value + Maths::Impl::c_S_Pi<float>;
         float abs = Abs(raw);
@@ -1230,7 +1230,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall DiffAngle(T angle1, T angle2) noexcept
+    [[nodiscard]] mathinline T mathcall DiffAngle(T angle1, T angle2) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const r1 = angle2 - angle1;
@@ -1261,91 +1261,91 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Ceiling(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Ceiling(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return ceil(v);
     }
 
     template <typename T>
-    mathinline T mathcall Floor(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Floor(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return floor(v);
     }
 
     template <typename T>
-    mathinline T mathcall Truncate(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Truncate(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return trunc(v);
     }
 
     template <typename T>
-    mathinline T mathcall Round(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Round(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return round(v);
     }
 
     template <typename T>
-    mathinline T mathcall Remainder(T x, T y) noexcept
+    [[nodiscard]] mathinline T mathcall Remainder(T x, T y) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return fmod(x, y);
     }
 
     template <typename T>
-    mathinline T mathcall Fraction(T x) noexcept
+    [[nodiscard]] mathinline T mathcall Fraction(T x) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return x - Floor(x);
     }
 
     template <typename T>
-    mathinline T mathcall Min(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall Min(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (a < b) ? a : b;
     }
 
     template <typename T>
-    mathinline T mathcall Min(T a, T b, T c) noexcept
+    [[nodiscard]] mathinline T mathcall Min(T a, T b, T c) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Min(Min(a, b), c);
     }
 
     template <typename T>
-    mathinline T mathcall Min(T a, T b, T c, T d) noexcept
+    [[nodiscard]] mathinline T mathcall Min(T a, T b, T c, T d) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Min(Min(a, b), Min(c, d));
     }
 
     template <typename T>
-    mathinline T mathcall Max(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall Max(T a, T b) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return (a > b) ? a : b;
     }
 
     template <typename T>
-    mathinline T mathcall Max(T a, T b, T c) noexcept
+    [[nodiscard]] mathinline T mathcall Max(T a, T b, T c) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Min(Min(a, b), c);
     }
 
     template <typename T>
-    mathinline T mathcall Max(T a, T b, T c, T d) noexcept
+    [[nodiscard]] mathinline T mathcall Max(T a, T b, T c, T d) noexcept
         requires(std::is_floating_point_v<T>)
     {
         return Min(Min(a, b), Min(c, d));
     }
 
     template <typename T>
-    mathinline T mathcall Clamp(T v, T min, T max) noexcept
+    [[nodiscard]] mathinline T mathcall Clamp(T v, T min, T max) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const below = Max(min, v);
@@ -1354,7 +1354,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall ClampRoll(T v, T min, T max) noexcept
+    [[nodiscard]] mathinline T mathcall ClampRoll(T v, T min, T max) noexcept
         requires(std::is_floating_point_v<T>)
     {
         if (v > max)
@@ -1371,7 +1371,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Saturate(T v) noexcept
+    [[nodiscard]] mathinline T mathcall Saturate(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const below = Max(T(0.0), v);
@@ -1380,7 +1380,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Wrap(T v, T min, T max) noexcept
+    [[nodiscard]] mathinline T mathcall Wrap(T v, T min, T max) noexcept
         requires(std::is_floating_point_v<T>)
     {
         T const range = (max - min);

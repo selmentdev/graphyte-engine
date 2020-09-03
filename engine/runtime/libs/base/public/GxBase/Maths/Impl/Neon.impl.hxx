@@ -7,7 +7,7 @@
 
 namespace Graphyte::Maths::Impl
 {
-    mathinline float32x4_t mathcall neon_permute(
+    [[nodiscard]] mathinline float32x4_t mathcall neon_permute(
         float32x4_t a,
         float32x4_t b,
         size_t x,
@@ -49,7 +49,7 @@ namespace Graphyte::Maths::Impl
     }
 
     template <size_t X, size_t Y, size_t Z, size_t W>
-    mathinline float32x4_t mathcall neon_permute(float32x4_t a, float32x4_t b) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_permute(float32x4_t a, float32x4_t b) noexcept
     {
         static_assert((X < 8) && (Y < 8) && (Z < 8) && (W < 8));
 
@@ -164,7 +164,7 @@ namespace Graphyte::Maths::Impl
     }
 
     template <size_t X, size_t Y, size_t Z, size_t W>
-    mathinline float32x4_t mathcall neon_shuffle(float32x4_t a, float32x4_t b) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_shuffle(float32x4_t a, float32x4_t b) noexcept
     {
         static_assert((X < 4) && (Y < 4) && (Z < 4) && (W < 4));
 
@@ -258,7 +258,7 @@ namespace Graphyte::Maths::Impl
         }
     }
 
-    mathinline float32x4_t mathcall neon_swizzle(
+    [[nodiscard]] mathinline float32x4_t mathcall neon_swizzle(
         float32x4_t v,
         size_t x,
         size_t y,
@@ -287,7 +287,7 @@ namespace Graphyte::Maths::Impl
     }
 
     template <size_t X, size_t Y, size_t Z, size_t W>
-    mathinline float32x4_t mathcall neon_swizzle(float32x4_t v) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_swizzle(float32x4_t v) noexcept
     {
         static_assert((X < 4) && (Y < 4) && (Z < 4) && (W < 4));
 
@@ -401,7 +401,7 @@ namespace Graphyte::Maths::Impl
 namespace Graphyte::Maths::Impl
 {
     // (a * b) + c
-    mathinline float32x4_t mathcall neon_fmadd_f32x4(
+    [[nodiscard]] mathinline float32x4_t mathcall neon_fmadd_f32x4(
         float32x4_t a,
         float32x4_t b,
         float32x4_t c) noexcept
@@ -410,7 +410,7 @@ namespace Graphyte::Maths::Impl
     }
 
     // (a * b) - c
-    mathinline float32x4_t mathcall neon_fmsub_f32x4(
+    [[nodiscard]] mathinline float32x4_t mathcall neon_fmsub_f32x4(
         float32x4_t a,
         float32x4_t b,
         float32x4_t c) noexcept
@@ -420,7 +420,7 @@ namespace Graphyte::Maths::Impl
     }
 
     // -(a * b) + c
-    mathinline float32x4_t mathcall neon_fnmadd_f32x4(
+    [[nodiscard]] mathinline float32x4_t mathcall neon_fnmadd_f32x4(
         float32x4_t a,
         float32x4_t b,
         float32x4_t c) noexcept
@@ -429,7 +429,7 @@ namespace Graphyte::Maths::Impl
     }
 
     // -(a * b) - c
-    mathinline float32x4_t mathcall neon_fnmsub_f32x4(
+    [[nodiscard]] mathinline float32x4_t mathcall neon_fnmsub_f32x4(
         float32x4_t a,
         float32x4_t b,
         float32x4_t c) noexcept
@@ -448,7 +448,7 @@ namespace Graphyte::Maths::Impl
     float32x4_t neon_dp(float32x4_t v) = delete;
 
     template <>
-    mathinline float32x4_t mathcall neon_dp<4>(float32x4_t a, float32x4_t b) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_dp<4>(float32x4_t a, float32x4_t b) noexcept
     {
         // {r0}[x, y, z, w] = {a,b}[x1*x2, y1*y2, z1*z2, w1*w2]
         float32x4_t const r0 = vmulq_f32(a, b);
@@ -469,13 +469,13 @@ namespace Graphyte::Maths::Impl
     }
 
     template <>
-    mathinline float32x4_t mathcall neon_dp<4>(float32x4_t v) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_dp<4>(float32x4_t v) noexcept
     {
         return neon_dp<4>(v, v);
     }
 
     template <>
-    mathinline float32x4_t mathcall neon_dp<3>(float32x4_t a, float32x4_t b) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_dp<3>(float32x4_t a, float32x4_t b) noexcept
     {
         // {r0}[x, y, z, w] = {a,b}[x1*x2, y1*y2, z1*z2, w1*w2]
         float32x4_t const r0 = vmulq_f32(a, b);
@@ -499,13 +499,13 @@ namespace Graphyte::Maths::Impl
     }
 
     template <>
-    mathinline float32x4_t mathcall neon_dp<3>(float32x4_t v) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_dp<3>(float32x4_t v) noexcept
     {
         return neon_dp<3>(v, v);
     }
 
     template <>
-    mathinline float32x4_t mathcall neon_dp<2>(float32x4_t a, float32x4_t b) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_dp<2>(float32x4_t a, float32x4_t b) noexcept
     {
         // {r0}[x, y] = {a}[x, y]
         float32x2_t const r0 = vget_low_f32(a);
@@ -525,7 +525,7 @@ namespace Graphyte::Maths::Impl
     }
 
     template <>
-    mathinline float32x4_t mathcall neon_dp<2>(float32x4_t v) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_dp<2>(float32x4_t v) noexcept
     {
         // {r0}[x, y] = {v}[x, y]
         float32x2_t const r0 = vget_low_f32(v);
@@ -543,7 +543,7 @@ namespace Graphyte::Maths::Impl
     }
 
     template <>
-    mathinline float32x4_t mathcall neon_dp<1>(float32x4_t a, float32x4_t b) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_dp<1>(float32x4_t a, float32x4_t b) noexcept
     {
         float32x4_t const axxxx = vdupq_lane_f32(a, 0);
         float32x4_t const bxxxx = vdupq_lane_f32(b, 0);
@@ -552,7 +552,7 @@ namespace Graphyte::Maths::Impl
     }
 
     template <>
-    mathinline float32x4_t mathcall neon_dp<1>(float32x4_t v) noexcept
+    [[nodiscard]] mathinline float32x4_t mathcall neon_dp<1>(float32x4_t v) noexcept
     {
         float32x4_t const vxxxx = vdupq_lane_f32(v, 0);
         float32x4_t const result = vmulq_f32(vxxxx, vxxxx);

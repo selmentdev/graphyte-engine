@@ -4,7 +4,7 @@
 
 namespace Graphyte::Maths
 {
-    mathinline Vector4 mathcall Dot(
+    [[nodiscard]] mathinline Vector4 mathcall Dot(
         Vector4 xs1,
         Vector4 ys1,
         Vector4 zs1,
@@ -21,7 +21,7 @@ namespace Graphyte::Maths
         return r3;
     }
 
-    mathinline Vector4 mathcall Dot(
+    [[nodiscard]] mathinline Vector4 mathcall Dot(
         Vector4 xs1,
         Vector4 ys1,
         Vector4 zs1,
@@ -35,7 +35,7 @@ namespace Graphyte::Maths
         return r2;
     }
 
-    mathinline Vector4 mathcall Dot(
+    [[nodiscard]] mathinline Vector4 mathcall Dot(
         Vector4 xs1,
         Vector4 ys1,
         Vector4 xs2,

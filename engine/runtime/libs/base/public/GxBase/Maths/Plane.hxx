@@ -5,7 +5,7 @@
 
 namespace Graphyte::Maths
 {
-    mathinline Vector4 mathcall DotCoord(Plane p, Vector3 v) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall DotCoord(Plane p, Vector3 v) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         // v4 = {v3, 1}
@@ -27,7 +27,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Vector4 mathcall DotNormal(Plane p, Vector3 n) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall DotNormal(Plane p, Vector3 n) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         return Vector4{ Dot(Vector3{ p.V }, n).V };
@@ -37,7 +37,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Plane mathcall Normalize(Plane p) noexcept
+    [[nodiscard]] mathinline Plane mathcall Normalize(Plane p) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         float length = sqrtf(
@@ -66,7 +66,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Plane mathcall NormalizeEst(Plane p) noexcept
+    [[nodiscard]] mathinline Plane mathcall NormalizeEst(Plane p) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         Vector4 const length{ ReciprocalLengthEst(Vector3{ p.V }).V };
@@ -81,14 +81,14 @@ namespace Graphyte::Maths
     }
 
     // tag: this probably could be handled by template version
-    mathinline bool mathcall IsEqual(Plane p1, Plane p2, Vector4 epsilon) noexcept
+    [[nodiscard]] mathinline bool mathcall IsEqual(Plane p1, Plane p2, Vector4 epsilon) noexcept
     {
         Vector4 const np1{ Normalize(p1).V };
         Vector4 const np2{ Normalize(p2).V };
         return IsEqual(np1, np2, epsilon);
     }
 
-    mathinline Plane mathcall Transform(Plane p, Matrix m) noexcept
+    [[nodiscard]] mathinline Plane mathcall Transform(Plane p, Matrix m) noexcept
     {
         Vector4 const pl{ p.V };
 
@@ -105,7 +105,7 @@ namespace Graphyte::Maths
         return Plane{ r3.V };
     }
 
-    mathinline Plane mathcall CreateFromPointNormal(Vector3 point, Vector3 normal) noexcept
+    [[nodiscard]] mathinline Plane mathcall CreateFromPointNormal(Vector3 point, Vector3 normal) noexcept
     {
         Vector3 const p_wwww = Dot(point, normal);
         Vector3 const n_wwww = Negate(p_wwww);
@@ -114,7 +114,7 @@ namespace Graphyte::Maths
         return result;
     }
 
-    mathinline Plane mathcall CreateFromPoints(Vector3 p1, Vector3 p2, Vector3 p3) noexcept
+    [[nodiscard]] mathinline Plane mathcall CreateFromPoints(Vector3 p1, Vector3 p2, Vector3 p3) noexcept
     {
         Vector3 const d_p21 = Subtract(p1, p2);
         Vector3 const d_p31 = Subtract(p1, p3);
@@ -133,7 +133,7 @@ namespace Graphyte::Maths
         return plane;
     }
 
-    mathinline Matrix mathcall Reflect(Plane reflection) noexcept
+    [[nodiscard]] mathinline Matrix mathcall Reflect(Plane reflection) noexcept
     {
         GX_ASSERT(!IsEqual(Vector3{ reflection.V }, Zero<Vector3>()));
         GX_ASSERT(!IsInfinity(reflection));
@@ -161,7 +161,7 @@ namespace Graphyte::Maths
         return result;
     }
 
-    mathinline Matrix mathcall Shadow(Plane shadow, Vector4 light) noexcept
+    [[nodiscard]] mathinline Matrix mathcall Shadow(Plane shadow, Vector4 light) noexcept
     {
         GX_ASSERT(!IsEqual(Vector3{ shadow.V }, Zero<Vector3>()));
         GX_ASSERT(!IsInfinity(shadow));

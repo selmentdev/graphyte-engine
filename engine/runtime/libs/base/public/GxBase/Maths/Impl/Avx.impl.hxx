@@ -10,7 +10,7 @@ namespace Graphyte::Maths::Impl
     template <size_t Components>
     inline constexpr int avx_mm_dp_mask = 0xFF >> (4 - Components);
 
-    mathinline __m128 mathcall avx_fmadd_f32x4(
+    [[nodiscard]] mathinline __m128 mathcall avx_fmadd_f32x4(
         __m128 a,
         __m128 b,
         __m128 c) noexcept
@@ -28,7 +28,7 @@ namespace Graphyte::Maths::Impl
 #endif
     }
 
-    mathinline __m128 mathcall avx_fmsub_f32x4(
+    [[nodiscard]] mathinline __m128 mathcall avx_fmsub_f32x4(
         __m128 a,
         __m128 b,
         __m128 c) noexcept
@@ -46,7 +46,7 @@ namespace Graphyte::Maths::Impl
 #endif
     }
 
-    mathinline __m128 mathcall avx_fnmadd_f32x4(
+    [[nodiscard]] mathinline __m128 mathcall avx_fnmadd_f32x4(
         __m128 a,
         __m128 b,
         __m128 c) noexcept
@@ -64,7 +64,7 @@ namespace Graphyte::Maths::Impl
 #endif
     }
 
-    mathinline __m128 mathcall avx_fnmsub_f32x4(
+    [[nodiscard]] mathinline __m128 mathcall avx_fnmsub_f32x4(
         __m128 a,
         __m128 b,
         __m128 c) noexcept
@@ -89,7 +89,7 @@ namespace Graphyte::Maths::Impl
 namespace Graphyte::Maths::Impl
 {
     template <size_t X, size_t Y, size_t Z, size_t W>
-    mathinline __m128 mathcall avx_permute(__m128 a, __m128 b) noexcept
+    [[nodiscard]] mathinline __m128 mathcall avx_permute(__m128 a, __m128 b) noexcept
     {
         static_assert((X < 8) && (Y < 8) && (Z < 8) && (W < 8));
 
@@ -263,7 +263,7 @@ namespace Graphyte::Maths::Impl
     }
 
     template <size_t X, size_t Y, size_t Z, size_t W>
-    mathinline __m128 mathcall avx_swizzle(__m128 v) noexcept
+    [[nodiscard]] mathinline __m128 mathcall avx_swizzle(__m128 v) noexcept
     {
         static_assert((X < 4) && (Y < 4) && (Z < 4) && (W < 4));
 
@@ -311,7 +311,7 @@ namespace Graphyte::Maths::Impl
         }
     }
 
-    mathinline __m128 mathcall avx_select(__m128 a, __m128 b, __m128 control) noexcept
+    [[nodiscard]] mathinline __m128 mathcall avx_select(__m128 a, __m128 b, __m128 control) noexcept
     {
         __m128 const result = _mm_blendv_ps(a, b, control);
         return result;

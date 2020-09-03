@@ -8,7 +8,7 @@
 
 namespace Graphyte::Maths
 {
-    mathinline Vector3 mathcall LinePlaneIntersection(Plane plane, Vector3 start, Vector3 end) noexcept
+    [[nodiscard]] mathinline Vector3 mathcall LinePlaneIntersection(Plane plane, Vector3 start, Vector3 end) noexcept
     {
         Vector3 const plane_normal{ plane.V };
         Vector3 const plane_normal_dot_start = Dot(plane_normal, start);
@@ -48,7 +48,7 @@ namespace Graphyte::Maths
         out_line2 = Vector3{ Select(linepoint2, Nan<Vector4>(), control).V };
     }
 
-    mathinline Vector2 mathcall LineLineIntersection(
+    [[nodiscard]] mathinline Vector2 mathcall LineLineIntersection(
         Vector2 line1_start,
         Vector2 line1_end,
         Vector2 line2_start,
@@ -125,7 +125,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline Vector4 mathcall LinePointDistance(T line1, T line2, T point) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall LinePointDistance(T line1, T line2, T point) noexcept
     {
         T const vec_line_point       = Subtract(point, line1);
         T const vec_line_line        = Subtract(line2, line1);

@@ -5,7 +5,7 @@
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Make(Vector3 origin, float radius) noexcept
+    [[nodiscard]] mathinline T mathcall Make(Vector3 origin, float radius) noexcept
         requires(Impl::IsSphere<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -22,7 +22,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Make(Vector3 origin, Vector1 radius) noexcept
+    [[nodiscard]] mathinline T mathcall Make(Vector3 origin, Vector1 radius) noexcept
         requires(Impl::IsSphere<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -37,7 +37,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline bool mathcall Contains(Sphere s, Vector3 p) noexcept
+    [[nodiscard]] mathinline bool mathcall Contains(Sphere s, Vector3 p) noexcept
     {
         Vector3 const origin{ s.V };
         Vector3 const radius{ SplatW(Vector4{ s.V }).V };

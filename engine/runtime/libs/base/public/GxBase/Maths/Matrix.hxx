@@ -8,7 +8,7 @@
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Make(
+    [[nodiscard]] mathinline T mathcall Make(
         float m00, float m01, float m02, float m03,
         float m10, float m11, float m12, float m13,
         float m20, float m21, float m22, float m23,
@@ -53,7 +53,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Load(Float4x4A const* source) noexcept
+    [[nodiscard]] mathinline T mathcall Load(Float4x4A const* source) noexcept
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
@@ -100,7 +100,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Store(Float4x4A* destination, T m) noexcept
+    [[nodiscard]] mathinline T mathcall Store(Float4x4A* destination, T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(destination != nullptr);
@@ -139,7 +139,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Load(Float4x3A const* source) noexcept
+    [[nodiscard]] mathinline T mathcall Load(Float4x3A const* source) noexcept
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
@@ -260,7 +260,7 @@ namespace Graphyte::Maths
 
     /// \note   Float3x4 is stored as transposed Float4x3
     template <typename T>
-    mathinline T mathcall Load(Float3x4A const* source) noexcept
+    [[nodiscard]] mathinline T mathcall Load(Float3x4A const* source) noexcept
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
@@ -353,7 +353,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Load(Float4x4 const* source) noexcept
+    [[nodiscard]] mathinline T mathcall Load(Float4x4 const* source) noexcept
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
@@ -428,7 +428,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Load(Float4x3 const* source) noexcept
+    [[nodiscard]] mathinline T mathcall Load(Float4x3 const* source) noexcept
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
@@ -547,7 +547,7 @@ namespace Graphyte::Maths
 
     /// \note   Float3x4 is stored as transposed Float4x3
     template <typename T>
-    mathinline T mathcall Load(Float3x4 const* source) noexcept
+    [[nodiscard]] mathinline T mathcall Load(Float3x4 const* source) noexcept
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
@@ -638,7 +638,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Load(Float3x3 const* source) noexcept
+    [[nodiscard]] mathinline T mathcall Load(Float3x3 const* source) noexcept
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
@@ -726,7 +726,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall Nan() noexcept
+    [[nodiscard]] mathinline T mathcall Nan() noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -743,7 +743,7 @@ namespace Graphyte::Maths
 #endif
 
     template <typename T>
-    mathinline bool mathcall IsNan(Matrix m) noexcept
+    [[nodiscard]] mathinline bool mathcall IsNan(Matrix m) noexcept
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
         size_t count = 16u;
@@ -790,7 +790,7 @@ namespace Graphyte::Maths
 #endif
 
     template <typename T>
-    mathinline T mathcall Infinity() noexcept
+    [[nodiscard]] mathinline T mathcall Infinity() noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -804,7 +804,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline bool mathcall IsInfinity(T m) noexcept
+    [[nodiscard]] mathinline bool mathcall IsInfinity(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -858,7 +858,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Identity() noexcept
+    [[nodiscard]] mathinline T mathcall Identity() noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -870,7 +870,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline bool mathcall IsIdentity(T m) noexcept
+    [[nodiscard]] mathinline bool mathcall IsIdentity(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -924,22 +924,22 @@ namespace Graphyte::Maths
 #endif
     }
 
-    mathinline Vector4 mathcall GetBaseX(Matrix m) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall GetBaseX(Matrix m) noexcept
     {
         return { m.M.R[0] };
     }
 
-    mathinline Vector4 mathcall GetBaseY(Matrix m) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall GetBaseY(Matrix m) noexcept
     {
         return { m.M.R[1] };
     }
 
-    mathinline Vector4 mathcall GetBaseZ(Matrix m) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall GetBaseZ(Matrix m) noexcept
     {
         return { m.M.R[2] };
     }
 
-    mathinline Vector4 mathcall GetBaseW(Matrix m) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall GetBaseW(Matrix m) noexcept
     {
         return { m.M.R[3] };
     }
@@ -950,7 +950,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall OuterProduct(Vector4 c, Vector4 r) noexcept
+    [[nodiscard]] mathinline T mathcall OuterProduct(Vector4 c, Vector4 r) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -974,7 +974,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline Vector4 mathcall Diagnoal(T m) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall Diagnoal(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1014,7 +1014,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline Vector4 mathcall Trace(T m) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall Trace(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Vector4 const diagnoal = Diagnoal(m);
@@ -1022,7 +1022,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Add(T m1, T m2) noexcept
+    [[nodiscard]] mathinline T mathcall Add(T m1, T m2) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -1046,7 +1046,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Subtract(T m1, T m2) noexcept
+    [[nodiscard]] mathinline T mathcall Subtract(T m1, T m2) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -1070,7 +1070,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Negate(T m) noexcept
+    [[nodiscard]] mathinline T mathcall Negate(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -1082,7 +1082,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Multiply(float s, T m) noexcept
+    [[nodiscard]] mathinline T mathcall Multiply(float s, T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -1108,7 +1108,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Multiply(T m, float s) noexcept
+    [[nodiscard]] mathinline T mathcall Multiply(T m, float s) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -1134,7 +1134,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Divide(T m, float s) noexcept
+    [[nodiscard]] mathinline T mathcall Divide(T m, float s) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -1161,7 +1161,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall ComponentMultiply(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall ComponentMultiply(T a, T b) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
@@ -1185,7 +1185,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Multiply(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall Multiply(T a, T b) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1364,7 +1364,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall MultiplyTranspose(T a, T b) noexcept
+    [[nodiscard]] mathinline T mathcall MultiplyTranspose(T a, T b) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1517,7 +1517,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Transpose(T m) noexcept
+    [[nodiscard]] mathinline T mathcall Transpose(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1577,7 +1577,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall Inverse(T m, Vector4* determinant = nullptr) noexcept
+    [[nodiscard]] mathinline T mathcall Inverse(T m, Vector4* determinant = nullptr) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -1651,6 +1651,7 @@ namespace Graphyte::Maths
         Vector4 const r7 = MultiplyAdd(hd0, hd1, fd1);
         Vector4 const r6 = NegateMultiplyAdd(hd0, hd1, fd1);
 
+        // Transpose matrix
         Matrix partial;
         partial.M.R[0] = Select(r0, r1, Bool4{ Impl::c_V4_U32_Mask_0101.V }).V;
         partial.M.R[1] = Select(r2, r3, Bool4{ Impl::c_V4_U32_Mask_0101.V }).V;
@@ -1794,7 +1795,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline Vector4 mathcall Determinant(T m) noexcept
+    [[nodiscard]] mathinline Vector4 mathcall Determinant(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
         static Impl::ConstFloat32x4 const sign{ { { 1.0f,
@@ -1831,7 +1832,7 @@ namespace Graphyte::Maths
     }
 
 #if false
-    mathinline bool mathcall Decompopse(Vector4& out_scale, Quaternion& out_rotation, Vector4& out_translation, Matrix m) noexcept
+    [[nodiscard]] mathinline bool mathcall Decompopse(Vector4& out_scale, Quaternion& out_rotation, Vector4& out_translation, Matrix m) noexcept
     {
         constexpr float const DecomposeEpsilon = 0.0001f;
 
@@ -1999,7 +2000,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept
+    [[nodiscard]] mathinline T mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
@@ -2087,7 +2088,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept
+    [[nodiscard]] mathinline T mathcall CreateFromAxisAngle(Vector3 axis, float angle) noexcept
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(!IsEqual(axis, Zero<Vector3>()));
@@ -2098,7 +2099,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateFromQuaternion(Quaternion q) noexcept
+    [[nodiscard]] mathinline T mathcall CreateFromQuaternion(Quaternion q) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -2180,7 +2181,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateFromEuler(Vector3 angles) noexcept
+    [[nodiscard]] mathinline T mathcall CreateFromEuler(Vector3 angles) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Quaternion const q = CreateFromEuler<Quaternion>(angles);
@@ -2188,7 +2189,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateFromEuler(float x, float y, float z) noexcept
+    [[nodiscard]] mathinline T mathcall CreateFromEuler(float x, float y, float z) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Vector3 const v = Make<Vector3>(x, y, z);
@@ -2202,7 +2203,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall CreateTranslation(float x, float y, float z) noexcept
+    [[nodiscard]] mathinline T mathcall CreateTranslation(float x, float y, float z) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -2243,7 +2244,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateTranslation(Vector3 translation) noexcept
+    [[nodiscard]] mathinline T mathcall CreateTranslation(Vector3 translation) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -2288,7 +2289,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateScaling(float x, float y, float z) noexcept
+    [[nodiscard]] mathinline T mathcall CreateScaling(float x, float y, float z) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -2329,7 +2330,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateScaling(Vector3 scale) noexcept
+    [[nodiscard]] mathinline T mathcall CreateScaling(Vector3 scale) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -2370,7 +2371,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateRotationX(float angle) noexcept
+    [[nodiscard]] mathinline T mathcall CreateRotationX(float angle) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -2426,7 +2427,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateRotationY(float angle) noexcept
+    [[nodiscard]] mathinline T mathcall CreateRotationY(float angle) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -2482,7 +2483,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateRotationZ(float angle) noexcept
+    [[nodiscard]] mathinline T mathcall CreateRotationZ(float angle) noexcept
         requires(Impl::IsMatrix<T>)
     {
 #if GRAPHYTE_MATH_NO_INTRINSICS
@@ -2538,7 +2539,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateTransform2D(
+    [[nodiscard]] mathinline T mathcall CreateTransform2D(
         Vector2 scaling_origin,
         float scaling_orientation,
         Vector2 scaling,
@@ -2600,7 +2601,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateAffineTransform2D(
+    [[nodiscard]] mathinline T mathcall CreateAffineTransform2D(
         Vector2 scaling,
         Vector2 rotation_origin,
         float rotation,
@@ -2635,7 +2636,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateTransform(
+    [[nodiscard]] mathinline T mathcall CreateTransform(
         Vector3 scaling_origin,
         Quaternion scaling_orientation,
         Vector3 scaling,
@@ -2680,7 +2681,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall CreateAffineTransform(
+    [[nodiscard]] mathinline T mathcall CreateAffineTransform(
         Vector3 scaling,
         Vector3 rotation_origin,
         Quaternion rotation,
@@ -2715,7 +2716,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall LookToLH(Vector3 eye_position, Vector3 eye_direction, Vector3 up_direction) noexcept
+    [[nodiscard]] mathinline T mathcall LookToLH(Vector3 eye_position, Vector3 eye_direction, Vector3 up_direction) noexcept
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(!IsEqual(eye_direction, Zero<Vector3>()));
@@ -2746,7 +2747,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall LookToRH(Vector3 eye_position, Vector3 eye_direction, Vector3 up_direction) noexcept
+    [[nodiscard]] mathinline T mathcall LookToRH(Vector3 eye_position, Vector3 eye_direction, Vector3 up_direction) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Vector3 const neg_eye_direction = Negate(eye_direction);
@@ -2754,7 +2755,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall LookAtLH(Vector3 eye_position, Vector3 focus_position, Vector3 up_direction) noexcept
+    [[nodiscard]] mathinline T mathcall LookAtLH(Vector3 eye_position, Vector3 focus_position, Vector3 up_direction) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Vector3 const eye_direction = Subtract(eye_position, focus_position);
@@ -2762,7 +2763,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall LookAtRH(Vector3 eye_position, Vector3 focus_position, Vector3 up_direction) noexcept
+    [[nodiscard]] mathinline T mathcall LookAtRH(Vector3 eye_position, Vector3 focus_position, Vector3 up_direction) noexcept
         requires(Impl::IsMatrix<T>)
     {
         Vector3 const eye_direction = Subtract(eye_position, focus_position);
@@ -2776,7 +2777,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     template <typename T>
-    mathinline T mathcall PerspectiveLH(
+    [[nodiscard]] mathinline T mathcall PerspectiveLH(
         float view_width,
         float view_height,
         float z_near,
@@ -2853,7 +2854,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall PerspectiveRH(
+    [[nodiscard]] mathinline T mathcall PerspectiveRH(
         float view_width,
         float view_height,
         float z_near,
@@ -2930,7 +2931,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall PerspectiveFovLH(
+    [[nodiscard]] mathinline T mathcall PerspectiveFovLH(
         float fov_angle_y,
         float aspect_ratio,
         float z_near,
@@ -3012,7 +3013,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall PerspectiveFovRH(
+    [[nodiscard]] mathinline T mathcall PerspectiveFovRH(
         float fov_angle_y,
         float aspect_ratio,
         float z_near,
@@ -3094,7 +3095,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall PerspectiveOffsetLH(
+    [[nodiscard]] mathinline T mathcall PerspectiveOffsetLH(
         float view_left,
         float view_right,
         float view_bottom,
@@ -3181,7 +3182,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall PerspectiveOffsetRH(
+    [[nodiscard]] mathinline T mathcall PerspectiveOffsetRH(
         float view_left,
         float view_right,
         float view_bottom,
@@ -3268,7 +3269,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall OrthographicLH(
+    [[nodiscard]] mathinline T mathcall OrthographicLH(
         float view_width,
         float view_height,
         float z_near,
@@ -3334,7 +3335,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall OrthographicRH(
+    [[nodiscard]] mathinline T mathcall OrthographicRH(
         float view_width,
         float view_height,
         float z_near,
@@ -3400,7 +3401,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall OrthographicOffsetLH(
+    [[nodiscard]] mathinline T mathcall OrthographicOffsetLH(
         float view_left,
         float view_right,
         float view_bottom,
@@ -3486,7 +3487,7 @@ namespace Graphyte::Maths
     }
 
     template <typename T>
-    mathinline T mathcall OrthographicOffsetRH(
+    [[nodiscard]] mathinline T mathcall OrthographicOffsetRH(
         float view_left,
         float view_right,
         float view_bottom,
@@ -3581,7 +3582,7 @@ namespace Graphyte::Maths
 namespace Graphyte::Maths
 {
     // TODO: make Viewport struct instead of this
-    mathinline Vector3 mathcall Project(
+    [[nodiscard]] mathinline Vector3 mathcall Project(
         Vector3 v,
         float viewport_x,
         float viewport_y,
@@ -3614,7 +3615,7 @@ namespace Graphyte::Maths
         return result;
     }
 
-    mathinline Vector3 mathcall Unproject(
+    [[nodiscard]] mathinline Vector3 mathcall Unproject(
         Vector3 v,
         float viewport_x,
         float viewport_y,
