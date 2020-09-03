@@ -4,8 +4,8 @@
 namespace Graphyte::App::Impl
 {
     constexpr uint16_t UsagePage_Desktop = 0x01;
-    constexpr uint16_t UsageId_Mouse = 0x02;
-    constexpr uint16_t UsageId_Keyboard = 0x06;
+    constexpr uint16_t UsageId_Mouse     = 0x02;
+    constexpr uint16_t UsageId_Keyboard  = 0x06;
 
     static bool EnableRawInputDevice(
         HWND handle,
@@ -28,9 +28,9 @@ namespace Graphyte::App::Impl
 
         RAWINPUTDEVICE device{
             .usUsagePage = usage_page,
-            .usUsage = usage_id,
-            .dwFlags = dwFlags,
-            .hwndTarget = handle,
+            .usUsage     = usage_id,
+            .dwFlags     = dwFlags,
+            .hwndTarget  = handle,
         };
 
         BOOL const result = RegisterRawInputDevices(&device, 1, sizeof(RAWINPUTDEVICE));

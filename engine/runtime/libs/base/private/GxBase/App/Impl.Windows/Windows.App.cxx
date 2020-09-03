@@ -522,17 +522,17 @@ namespace Graphyte::App::Impl
         {
             g_EventHandler->OnMouseWheel(MouseWheelEvent{
                 .Modifiers = g_ModifierKey,
-                .DeltaX = wheelDelta * spin,
-                .DeltaY = 0.0f,
-                });
+                .DeltaX    = wheelDelta * spin,
+                .DeltaY    = 0.0f,
+            });
         }
         else
         {
             g_EventHandler->OnMouseWheel(MouseWheelEvent{
                 .Modifiers = g_ModifierKey,
-                .DeltaX = 0.0f,
-                .DeltaY = wheelDelta * spin,
-                });
+                .DeltaX    = 0.0f,
+                .DeltaY    = wheelDelta * spin,
+            });
         }
     }
 
@@ -576,11 +576,11 @@ namespace Graphyte::App::Impl
                         {
                             g_EventHandler->OnMouseMove(MouseMoveEvent{
                                 .Modifiers = g_ModifierKey,
-                                .Relative = {
+                                .Relative  = {
                                     .X = static_cast<float>(x),
                                     .Y = static_cast<float>(y),
                                 },
-                                });
+                            });
                         }
                     }
                     else
@@ -603,11 +603,11 @@ namespace Graphyte::App::Impl
 
                         g_EventHandler->OnMouseMove(MouseMoveEvent{
                             .Modifiers = g_ModifierKey,
-                            .Relative = {
+                            .Relative  = {
                                 .X = static_cast<float>(x - s_LastCursorPosition.x),
                                 .Y = static_cast<float>(y - s_LastCursorPosition.y),
                             },
-                            });
+                        });
                     }
 
                     return true;
@@ -889,7 +889,9 @@ namespace Graphyte::App::Impl
             GX_ASSERT(msg == WM_NCCREATE);
 
             CREATESTRUCTW* const createparams = reinterpret_cast<CREATESTRUCTW*>(lparam);
+
             window = reinterpret_cast<Window*>(createparams->lpCreateParams);
+
             window->Hwnd = hwnd;
 
             SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));

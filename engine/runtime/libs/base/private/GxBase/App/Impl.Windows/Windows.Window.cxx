@@ -11,29 +11,29 @@ namespace Graphyte::App::Impl
 
         switch (type)
         {
-        case WindowType::Game:
-            switch (mode)
-            {
-            case WindowMode::Windowed:
+            case WindowType::Game:
+                switch (mode)
+                {
+                    case WindowMode::Windowed:
+                        result |= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_BORDER;
+                        break;
+                    case WindowMode::Fullscreen:
+                    case WindowMode::WindowedFullscreen:
+                        result |= WS_BORDER;
+                        break;
+                }
+                break;
+
+            case WindowType::Viewport:
+                result |= WS_CHILD;
+
+            case WindowType::Form:
+                result |= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_BORDER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME;
+                break;
+
+            case WindowType::Dialog:
                 result |= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_BORDER;
                 break;
-            case WindowMode::Fullscreen:
-            case WindowMode::WindowedFullscreen:
-                result |= WS_BORDER;
-                break;
-            }
-            break;
-
-        case WindowType::Viewport:
-            result |= WS_CHILD;
-
-        case WindowType::Form:
-            result |= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_BORDER | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_THICKFRAME;
-            break;
-
-        case WindowType::Dialog:
-            result |= WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_BORDER;
-            break;
         }
 
         return result;
@@ -44,23 +44,23 @@ namespace Graphyte::App::Impl
 
         switch (type)
         {
-        case WindowType::Game:
-            // Game window covers taskbar?
-            //result |= WS_EX_TOPMOST;
-            break;
-        case WindowType::Viewport:
-            // Viewport window is a window embedded with external window.
-            // Input is handled by parent window.
-            result |= WS_EX_TRANSPARENT;
-            break;
-        case WindowType::Form:
-            // Form window is visible on taskbar.
-            result |= WS_EX_APPWINDOW;
-            break;
-        case WindowType::Dialog:
-            // Dialog window is not visible on taskbar.
-            //result |= WS_EX_TOOLWINDOW;
-            break;
+            case WindowType::Game:
+                // Game window covers taskbar?
+                //result |= WS_EX_TOPMOST;
+                break;
+            case WindowType::Viewport:
+                // Viewport window is a window embedded with external window.
+                // Input is handled by parent window.
+                result |= WS_EX_TRANSPARENT;
+                break;
+            case WindowType::Form:
+                // Form window is visible on taskbar.
+                result |= WS_EX_APPWINDOW;
+                break;
+            case WindowType::Dialog:
+                // Dialog window is not visible on taskbar.
+                //result |= WS_EX_TOOLWINDOW;
+                break;
         }
 
         return result;
@@ -222,8 +222,8 @@ namespace Graphyte::App
     {
         bool const result = IsZoomed(self.Hwnd) != FALSE;
         return result;
-
     }
+
     extern bool IsFocused(Window& self) noexcept
     {
         bool const result = GetForegroundWindow() == self.Hwnd;
@@ -248,7 +248,7 @@ namespace Graphyte::App
         {
             if (self.Type == WindowType::Game)
             {
-                DWORD const dwStyle = Impl::GetStyle(self.Type, value);
+                DWORD const dwStyle   = Impl::GetStyle(self.Type, value);
                 DWORD const dwExStyle = Impl::GetExStyle(self.Type, value);
 
                 if (self.Mode == WindowMode::Windowed)
@@ -342,7 +342,7 @@ namespace Graphyte::App
         GetClientRect(self.Hwnd, &rcClient);
 
         return System::Size{
-            .Width = (rcClient.right - rcClient.left),
+            .Width  = (rcClient.right - rcClient.left),
             .Height = (rcClient.bottom - rcClient.top),
         };
     }
@@ -366,9 +366,9 @@ namespace Graphyte::App
         if (GetMonitorInfoW(hMonitor, &mi) != FALSE)
         {
             out_value = System::Rect{
-                .Left = mi.rcMonitor.left,
-                .Top = mi.rcMonitor.top,
-                .Width = mi.rcMonitor.right - mi.rcMonitor.left,
+                .Left   = mi.rcMonitor.left,
+                .Top    = mi.rcMonitor.top,
+                .Width  = mi.rcMonitor.right - mi.rcMonitor.left,
                 .Height = mi.rcMonitor.bottom - mi.rcMonitor.top,
             };
 
@@ -381,7 +381,7 @@ namespace Graphyte::App
     extern bool SetCaption(Window& self, std::string_view value) noexcept
     {
         std::wstring wtitle = System::Impl::WidenString(value);
-        bool const result = SetWindowTextW(self.Hwnd, wtitle.c_str()) != FALSE;
+        bool const result   = SetWindowTextW(self.Hwnd, wtitle.c_str()) != FALSE;
         return result;
     }
 
@@ -435,7 +435,7 @@ namespace Graphyte::App
     {
         if (self.Mode == WindowMode::Windowed)
         {
-            DWORD dwStyle = static_cast<DWORD>(GetWindowLongW(self.Hwnd, GWL_STYLE));
+            DWORD dwStyle   = static_cast<DWORD>(GetWindowLongW(self.Hwnd, GWL_STYLE));
             DWORD dwExStyle = static_cast<DWORD>(GetWindowLongW(self.Hwnd, GWL_EXSTYLE));
 
             RECT rcBorder{};
@@ -463,7 +463,7 @@ namespace Graphyte::App
     {
         if (self.Mode == WindowMode::Windowed)
         {
-            DWORD dwStyle = static_cast<DWORD>(GetWindowLongW(self.Hwnd, GWL_STYLE));
+            DWORD dwStyle   = static_cast<DWORD>(GetWindowLongW(self.Hwnd, GWL_STYLE));
             DWORD dwExStyle = static_cast<DWORD>(GetWindowLongW(self.Hwnd, GWL_EXSTYLE));
 
             RECT rcBorder{};

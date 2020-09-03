@@ -72,8 +72,8 @@ namespace Graphyte::App::Impl
             {
                 g_EventHandler->OnControllerAnalog(GamepadAnalogEvent{
                     .Controller = controller,
-                    .Key   = key,
-                    .Value = normalized,
+                    .Key        = key,
+                    .Value      = normalized,
                 });
             }
 
@@ -213,8 +213,8 @@ namespace Graphyte::App::Impl
                         {
                             GamepadButtonEvent event{
                                 .Controller = controller,
-                                .Key    = XBoxPadInputMapping[i],
-                                .Repeat = false,
+                                .Key        = XBoxPadInputMapping[i],
+                                .Repeat     = false,
                             };
 
                             if (controller_state.Button[i] != button_states[i])

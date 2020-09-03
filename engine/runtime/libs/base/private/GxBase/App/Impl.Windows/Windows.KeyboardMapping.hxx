@@ -134,7 +134,8 @@ namespace Graphyte::App::Impl
         result[VK_OEM_7]            = KeyCode::Quote;
 
         return result;
-    }();
+    }
+    ();
 
     constexpr KeyCode TranslateKeyCode(UINT vk) noexcept
     {
