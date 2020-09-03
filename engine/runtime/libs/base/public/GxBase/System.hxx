@@ -60,12 +60,12 @@ namespace Graphyte::System
         int32_t Width;
         int32_t Height;
 
-        constexpr int32_t Right() const noexcept
+        [[nodiscard]] constexpr int32_t Right() const noexcept
         {
             return this->Left + this->Width;
         }
 
-        constexpr int32_t Bottom() const noexcept
+        [[nodiscard]] constexpr int32_t Bottom() const noexcept
         {
             return this->Top + this->Height;
         }
@@ -121,7 +121,7 @@ namespace Graphyte::System
     };
 
     /// @brief Gets current application memory usage.
-    extern BASE_API MemoryUsage GetMemoryUsage() noexcept;
+    [[nodiscard]] extern BASE_API MemoryUsage GetMemoryUsage() noexcept;
 
     struct MemoryProperties final
     {
@@ -134,7 +134,7 @@ namespace Graphyte::System
     };
 
     /// @brief Gets system memory properties.
-    extern BASE_API MemoryProperties GetMemoryProperties() noexcept;
+    [[nodiscard]] extern BASE_API MemoryProperties GetMemoryProperties() noexcept;
 }
 
 
@@ -145,17 +145,17 @@ namespace Graphyte::System
 
 namespace Graphyte::System
 {
-    extern BASE_API void* OsMalloc(
+    [[nodiscard]] extern BASE_API void* OsMalloc(
         size_t size) noexcept;
 
-    extern BASE_API void* OsRealloc(
+    [[nodiscard]] extern BASE_API void* OsRealloc(
         void* memory,
         size_t size) noexcept;
 
     extern BASE_API void OsFree(
         void* memory) noexcept;
 
-    extern BASE_API void* OsVirtualAlloc(
+    [[nodiscard]] extern BASE_API void* OsVirtualAlloc(
         size_t size) noexcept;
 
     extern BASE_API void OsVirtualFree(
@@ -299,69 +299,69 @@ namespace Graphyte::System
 namespace Graphyte::System
 {
     /// @brief Gets user directory.
-    extern BASE_API std::string GetUserDirectory() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetUserDirectory() noexcept;
 
     /// @brief Gets user documents directory.
-    extern BASE_API std::string GetUserDocumentsDirectory() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetUserDocumentsDirectory() noexcept;
 
     /// @brief Gets user temp directory.
-    extern BASE_API std::string GetUserTemporaryDirectory() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetUserTemporaryDirectory() noexcept;
 
     /// @brief Gets user settings directory.
-    extern BASE_API std::string GetUserSettingsDirectory() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetUserSettingsDirectory() noexcept;
 
     /// @brief Gets directory for application common data.
-    extern BASE_API std::string GetApplicationCommonDataDirectory() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetApplicationCommonDataDirectory() noexcept;
 
     /// @brief Gets user domain name.
-    extern BASE_API std::string GetUserDomain() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetUserDomain() noexcept;
 
     /// @brief Gets user name.
-    extern BASE_API std::string GetUserName() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetUserName() noexcept;
 
     /// @brief Gets system version.
-    extern BASE_API std::string GetSystemVersion() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetSystemVersion() noexcept;
 
     /// @brief Gets system identifier.
-    extern BASE_API std::string GetSystemId() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetSystemId() noexcept;
 
     /// @brief Gets default locale name.
-    extern BASE_API std::string GetDefaultLocale() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetDefaultLocale() noexcept;
 
     /// @brief Gets default language.
-    extern BASE_API std::string GetDefaultLanguage() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetDefaultLanguage() noexcept;
 
     /// @brief Gets local currency code.
-    extern BASE_API std::string GetLocalCurrencyCode() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetLocalCurrencyCode() noexcept;
 
     /// @brief Gets local currency symbol.
-    extern BASE_API std::string GetLocalCurrencySymbol() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetLocalCurrencySymbol() noexcept;
 
     /// @brief Checks whether WIFI connection is active.
-    extern BASE_API bool HasActiveWifiConnection() noexcept;
+    [[nodiscard]] extern BASE_API bool HasActiveWifiConnection() noexcept;
 
     /// @brief Gets value indicating whether process is running on 64-bit operating system.
-    extern BASE_API bool Is64BitOperatingSystem() noexcept;
+    [[nodiscard]] extern BASE_API bool Is64BitOperatingSystem() noexcept;
 
     /// @brief Gets value indicating whether current process is 64-bit.
-    extern BASE_API bool Is64BitProcess() noexcept;
+    [[nodiscard]] extern BASE_API bool Is64BitProcess() noexcept;
 
     /// @brief Gets value indicating whether mouse HID is present.
-    extern BASE_API bool IsMousePresent() noexcept;
+    [[nodiscard]] extern BASE_API bool IsMousePresent() noexcept;
 
     /// @brief Gets value indicating whether mouse has wheel.
-    extern BASE_API bool IsMouseWheelPresent() noexcept;
+    [[nodiscard]] extern BASE_API bool IsMouseWheelPresent() noexcept;
 
     /// @brief Gets value indicating whether platform is little endian.
-    extern BASE_API bool IsLittleEndian() noexcept;
+    [[nodiscard]] extern BASE_API bool IsLittleEndian() noexcept;
 
     /// @brief Gets platform specific hardware window.
-    extern BASE_API void* GetHardwareWindow() noexcept;
+    [[nodiscard]] extern BASE_API void* GetHardwareWindow() noexcept;
 
     /// @brief Restores system UI.
     ///
     /// @remarks Releases mouse capture and clipping for UI purposes
-    extern BASE_API void RestoreSystemUI() noexcept;
+    [[nodiscard]] extern BASE_API void RestoreSystemUI() noexcept;
 }
 
 
@@ -381,7 +381,7 @@ namespace Graphyte::System
     };
 
     /// @brief Gets kind of build.
-    extern BASE_API BuildKind GetBuildKind() noexcept;
+    [[nodiscard]] extern BASE_API BuildKind GetBuildKind() noexcept;
 
     // clang-format off
 #if GX_CONFIG_RELEASE
@@ -413,34 +413,34 @@ namespace Graphyte::System
     // clang-format on
 
     /// @brief Gets build type.
-    extern BASE_API BuildType GetBuildType() noexcept;
+    [[nodiscard]] extern BASE_API BuildType GetBuildType() noexcept;
 
     /// @brief Checks whether current process runs on build machine.
-    extern BASE_API bool IsBuildMachine() noexcept;
+    [[nodiscard]] extern BASE_API bool IsBuildMachine() noexcept;
 
     /// @brief Gets unique build ID.
-    extern BASE_API std::string_view GetBuildId() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetBuildId() noexcept;
 
     /// @brief Gets source code build branch.
-    extern BASE_API std::string_view GetBuildBranch() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetBuildBranch() noexcept;
 
     /// @brief Gets source code build commit.
-    extern BASE_API std::string_view GetBuildCommit() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetBuildCommit() noexcept;
 
     /// @brief Gets source code build version.
-    extern BASE_API Version GetBuildVersion() noexcept;
+    [[nodiscard]] extern BASE_API Version GetBuildVersion() noexcept;
 
     /// @brief Gets builder machine host system name.
-    extern BASE_API std::string_view GetBuildHostSystem() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetBuildHostSystem() noexcept;
 
     /// @brief Gets builder machine host system version.
-    extern BASE_API std::string_view GetBuildHostVersion() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetBuildHostVersion() noexcept;
 
     /// @brief Gets build timestamp.
-    extern BASE_API std::string_view GetBuildTimestamp() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetBuildTimestamp() noexcept;
 
     /// @brief Gets build compiler name.
-    extern BASE_API std::string_view GetCompilerName() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetCompilerName() noexcept;
 }
 
 
@@ -472,7 +472,7 @@ namespace Graphyte::System
     // clang-format on
 
     /// @brief Gets platform kind.
-    extern BASE_API PlatformKind GetPlatformKind() noexcept;
+    [[nodiscard]] extern BASE_API PlatformKind GetPlatformKind() noexcept;
 
     enum struct PlatformType : uint32_t
     {
@@ -523,10 +523,10 @@ namespace Graphyte::System
 
 
     /// @brief Gets platform type.
-    extern BASE_API PlatformType GetPlatformType() noexcept;
+    [[nodiscard]] extern BASE_API PlatformType GetPlatformType() noexcept;
 
     /// @brief Gets platform name.
-    extern BASE_API std::string_view GetPlatformName() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetPlatformName() noexcept;
 
     enum struct PlatformFeature : uint32_t
     {
@@ -562,20 +562,19 @@ namespace Graphyte::System
     };
 
     /// @brief Checks whether specific platform feature is supported.
-    extern BASE_API bool HasPlatformFeature(
-        PlatformFeature feature) noexcept;
+    [[nodiscard]] extern BASE_API bool HasPlatformFeature(PlatformFeature feature) noexcept;
 
     /// @brief Gets name of file manager.
-    extern BASE_API std::string_view GetFileManagerName() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetFileManagerName() noexcept;
 
     /// @brief Gets platform specific module extension.
-    extern BASE_API std::string_view GetModuleExtension() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetModuleExtension() noexcept;
 
     /// @brief Gets platform specific module prefix.
-    extern BASE_API std::string_view GetModulePrefix() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetModulePrefix() noexcept;
 
     /// @brief Gets platform specific executable extension.
-    extern BASE_API std::string_view GetExecutableExtension() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetExecutableExtension() noexcept;
 }
 
 
@@ -648,13 +647,13 @@ namespace Graphyte::System
         std::string& result) noexcept;
 
     /// @brief Gets full path to currently running application executable.
-    extern BASE_API std::string GetExecutablePath() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetExecutablePath() noexcept;
 
     /// @brief Gets name of currently running application executable.
-    extern BASE_API std::string GetExecutableName() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetExecutableName() noexcept;
 
     /// @brief Gets base directory of currently runnning application executable.
-    extern BASE_API std::string GetBaseDirectory() noexcept;
+    [[nodiscard]] extern BASE_API std::string GetBaseDirectory() noexcept;
 
     /// @brief Executes system process command.
     ///
@@ -673,7 +672,7 @@ namespace Graphyte::System
     /// @param path Provides path to open.
     ///
     /// @return The status code.
-    extern BASE_API Status Explore(
+    [[nodiscard]] extern BASE_API Status Explore(
         const char* path) noexcept;
 }
 
@@ -859,29 +858,29 @@ namespace Graphyte::System
     /// @param feature Provides CPU feature to check.
     ///
     /// @return The value indicating whether feature is supported.
-    extern BASE_API bool HasProcessorFeature(
+    [[nodiscard]] extern BASE_API bool HasProcessorFeature(
         ProcessorFeature feature) noexcept;
 
     /// @brief Gets number of available I/O worker threads.
-    extern BASE_API size_t GetIoWorkerThreads() noexcept;
+    [[nodiscard]] extern BASE_API size_t GetIoWorkerThreads() noexcept;
 
     /// @brief Gets number of worker threads.
-    extern BASE_API size_t GetWorkerThreads() noexcept;
+    [[nodiscard]] extern BASE_API size_t GetWorkerThreads() noexcept;
 
     /// @brief Gets number of physical cores.
-    extern BASE_API size_t GetPhysicalCores() noexcept;
+    [[nodiscard]] extern BASE_API size_t GetPhysicalCores() noexcept;
 
     /// @brief Gets number of logical cores.
-    extern BASE_API size_t GetLogicalCores() noexcept;
+    [[nodiscard]] extern BASE_API size_t GetLogicalCores() noexcept;
 
     /// @brief Gets size of cacheline.
-    extern BASE_API size_t GetProcessorCachelineSize() noexcept;
+    [[nodiscard]] extern BASE_API size_t GetProcessorCachelineSize() noexcept;
 
     /// @brief Gets processor vendor.
-    extern BASE_API std::string_view GetProcessorVendor() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetProcessorVendor() noexcept;
 
     /// @brief Gets brand of processor.
-    extern BASE_API std::string_view GetProcessorBrand() noexcept;
+    [[nodiscard]] extern BASE_API std::string_view GetProcessorBrand() noexcept;
 }
 
 
@@ -938,7 +937,7 @@ namespace Graphyte::System
     };
 
     /// @brief Gets screen orientation.
-    extern BASE_API DeviceScreenOrientation GetScreenOrientation() noexcept;
+    [[nodiscard]] extern BASE_API DeviceScreenOrientation GetScreenOrientation() noexcept;
 
     /// @brief Gets color of pixel on screen.
     ///
@@ -946,7 +945,7 @@ namespace Graphyte::System
     /// @param gamma    Provides gamma factor.
     ///
     /// @return The color on screen. Returns (0, 0, 0) for invalid position / when not supported.
-    extern BASE_API ColorF GetScreenPixel(
+    [[nodiscard]] extern BASE_API ColorF GetScreenPixel(
         Point position,
         float gamma) noexcept;
 
@@ -990,17 +989,17 @@ namespace Graphyte::System
     extern BASE_API void GetLocalTime(
         CalendarTime& time) noexcept;
 
-    extern BASE_API uint64_t GetSystemTime() noexcept;
+    [[nodiscard]] extern BASE_API uint64_t GetSystemTime() noexcept;
 
-    extern BASE_API uint64_t GetLocalTime() noexcept;
+    [[nodiscard]] extern BASE_API uint64_t GetLocalTime() noexcept;
 
-    extern BASE_API uint64_t GetTimestampResolution() noexcept;
+    [[nodiscard]] extern BASE_API uint64_t GetTimestampResolution() noexcept;
 
-    extern BASE_API uint64_t GetTimestamp() noexcept;
+    [[nodiscard]] extern BASE_API uint64_t GetTimestamp() noexcept;
 
-    extern BASE_API uint64_t GetMonotonic() noexcept;
+    [[nodiscard]] extern BASE_API uint64_t GetMonotonic() noexcept;
 
-    extern BASE_API double GetSeconds() noexcept;
+    [[nodiscard]] extern BASE_API double GetSeconds() noexcept;
 }
 
 
@@ -1053,7 +1052,7 @@ namespace Graphyte::System
     /// @param image   Provides image type.
     ///
     /// @return  The message dialog result.
-    BASE_API MessageDialogResult ShowMessageDialog(
+    [[nodiscard]] BASE_API MessageDialogResult ShowMessageDialog(
         std::string_view title,
         std::string_view message,
         MessageDialogType type   = MessageDialogType::Ok,

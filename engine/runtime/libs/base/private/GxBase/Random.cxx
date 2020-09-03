@@ -73,7 +73,7 @@ namespace Graphyte::Random
                     s3 ^= state.State[3];
                 }
 
-                NextUInt64(state);
+                (void)NextUInt64(state);
             }
         }
 
@@ -104,7 +104,7 @@ namespace Graphyte::Random
                     s3 ^= state.State[3];
                 }
 
-                NextUInt64(state);
+                (void)NextUInt64(state);
             }
         }
 

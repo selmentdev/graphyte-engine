@@ -20,7 +20,7 @@ namespace Graphyte
     /// @param removeEmpty Provides value indicating whether empty slices should be removed.
     ///
     /// @return The collection of slices of source string.
-    BASE_API std::vector<std::string_view> Split(
+    [[nodiscard]] BASE_API std::vector<std::string_view> Split(
         std::string_view value,
         std::string_view separator,
         bool removeEmpty = true) noexcept;
@@ -33,7 +33,7 @@ namespace Graphyte
     /// @param removeEmpty Provides value indicating whether empty slices should be removed.
     ///
     /// @return The collection of sliced parts of source string.
-    BASE_API std::vector<std::string_view> Split(
+    [[nodiscard]] BASE_API std::vector<std::string_view> Split(
         std::string_view value,
         char separator,
         bool removeEmpty = true) noexcept;
@@ -46,7 +46,7 @@ namespace Graphyte
     ///
     /// @return The joined string.
     template <typename TContainer>
-    inline std::string Join(
+    [[nodiscard]] inline std::string Join(
         TContainer const& container,
         std::string_view separator) noexcept
     {
@@ -76,7 +76,7 @@ namespace Graphyte
     /// @param separator Provides separator string.
     ///
     /// @return The joined string.
-    inline std::string Join(
+    [[nodiscard]] inline std::string Join(
         std::initializer_list<std::string_view> container,
         std::string_view separator) noexcept
     {
@@ -104,7 +104,7 @@ namespace Graphyte
     /// @param value Provides string to left trim.
     ///
     /// @return The trimmed string.
-    inline std::string_view TrimLeft(
+    [[nodiscard]] inline std::string_view TrimLeft(
         std::string_view value) noexcept
     {
         std::size_t const offset = value.find_first_not_of(" \t\f\r\n\v\b");
@@ -122,7 +122,7 @@ namespace Graphyte
     /// @param value Provides string to right trim.
     ///
     /// @return The trimmed string.
-    inline std::string_view TrimRight(
+    [[nodiscard]] inline std::string_view TrimRight(
         std::string_view value) noexcept
     {
         std::size_t const offset = value.find_last_not_of(" \t\f\r\n\v\b");
@@ -140,13 +140,13 @@ namespace Graphyte
     /// @param value Provides string to trim.
     ///
     /// @return The Trimmed string.
-    inline std::string_view Trim(
+    [[nodiscard]] inline std::string_view Trim(
         std::string_view value) noexcept
     {
         return TrimLeft(TrimRight(value));
     }
 
-    BASE_API bool MatchWildcard(
+    [[nodiscard]] BASE_API bool MatchWildcard(
         std::string_view::const_iterator pattern_first,
         std::string_view::const_iterator pattern_last,
         std::string_view::const_iterator value_first,
@@ -158,7 +158,7 @@ namespace Graphyte
     /// @param value   Provides value to match.
     ///
     /// @return @c true when matched, @c false otherwise.
-    inline bool MatchWildcard(
+    [[nodiscard]] inline bool MatchWildcard(
         std::string_view pattern,
         std::string_view value) noexcept
     {
@@ -169,11 +169,11 @@ namespace Graphyte
             std::cend(value));
     }
 
-    BASE_API bool HexStringToByteStream(
+    [[nodiscard]] BASE_API bool HexStringToByteStream(
         std::vector<std::byte>& output,
         std::string_view input) noexcept;
 
-    BASE_API bool HexStringFromByteStream(
+    [[nodiscard]] BASE_API bool HexStringFromByteStream(
         std::string& output,
         std::span<const std::byte> input) noexcept;
 }

@@ -10,7 +10,7 @@ TEST_CASE("DateTime")
         auto dt = DateTime::Create(2020, 5, 26, 7, 52, 11, 115);
 
         CalendarTime ct;
-        dt.ToCalendar(ct);
+        REQUIRE(dt.ToCalendar(ct));
 
         REQUIRE(ct.Year == 2020);
         REQUIRE(ct.Month == 5);

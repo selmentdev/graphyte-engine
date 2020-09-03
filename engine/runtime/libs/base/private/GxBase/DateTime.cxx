@@ -328,7 +328,7 @@ namespace Graphyte
     BASE_API bool ToString(std::string& result, DateTime value, DateTimeFormat format) noexcept
     {
         CalendarTime time;
-        value.ToCalendar(time);
+        (void)value.ToCalendar(time);
 
         switch (format)
         {
@@ -405,7 +405,7 @@ namespace Graphyte
     BASE_API bool ToString(std::string& result, DateTime value, std::string_view format) noexcept
     {
         CalendarTime time{};
-        value.ToCalendar(time);
+        (void)value.ToCalendar(time);
 
         bool const isMorning = time.Hour < 12;
 

@@ -475,17 +475,17 @@ namespace Graphyte::App
         return Impl::g_ApplicationDescriptor;
     }
 
-    inline bool IsRequestingExit() noexcept
+    [[nodiscard]] inline bool IsRequestingExit() noexcept
     {
         return Impl::g_IsRequestingExit;
     }
 
-    inline bool IsFirstInstance() noexcept
+    [[nodiscard]] inline bool IsFirstInstance() noexcept
     {
         return Impl::g_IsFirstInstance;
     }
 
-    inline IEventHandler* GetEventHandler() noexcept
+    [[nodiscard]] inline IEventHandler* GetEventHandler() noexcept
     {
         return Impl::g_EventHandler;
     }

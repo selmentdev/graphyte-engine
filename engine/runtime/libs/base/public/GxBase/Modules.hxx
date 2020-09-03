@@ -131,7 +131,7 @@ namespace Graphyte
         /// @retval Status::NotImplemented `CreateModule` function returned null module.
         /// @retval Status::NotSupported   `CreateModule` function is not supported.
         /// @retval Status::Failed         Module couldn't be loaded.
-        BASE_API static IModule* Load(
+        [[nodiscard]] BASE_API static IModule* Load(
             std::string_view name,
             Status* status = nullptr) noexcept;
 
@@ -143,7 +143,7 @@ namespace Graphyte
         /// @param name Provides name of module to load.
         ///
         /// @return The instance of loaded module.
-        BASE_API static IModule& LoadChecked(
+        [[nodiscard]] BASE_API static IModule& LoadChecked(
             std::string_view name) noexcept;
 
         /// @brief Unloads specified module.
@@ -159,7 +159,7 @@ namespace Graphyte
         /// @param name Provides name of module.
         ///
         /// @return \c true when module is loaded, \c false otherwise.
-        BASE_API static bool IsLoaded(
+        [[nodiscard]] BASE_API static bool IsLoaded(
             std::string_view name) noexcept;
 
         /// @brief Queries status of module by name.
@@ -168,7 +168,7 @@ namespace Graphyte
         /// @param name   Provides name of module.
         ///
         /// @return \c true when successful, \c false otherwise.
-        BASE_API static bool Query(
+        [[nodiscard]] BASE_API static bool Query(
             ModuleStatus& result, std::string_view name) noexcept;
 
         /// @brief Queries status of all modules.
@@ -176,14 +176,14 @@ namespace Graphyte
         /// @param modules Returns status of all loaded modules.
         ///
         /// @return \c true when successful, \c false otherwise.
-        BASE_API static bool Query(
+        [[nodiscard]] BASE_API static bool Query(
             std::vector<ModuleStatus>& modules) noexcept;
 
         /// @brief Queries status of all modules with names matching specified pattern.
         ///
         /// @param modules Returns status of all matching modules.
         /// @param pattern Provides pattern to match module names.
-        BASE_API static bool Query(
+        [[nodiscard]] BASE_API static bool Query(
             std::vector<ModuleStatus>& modules,
             std::string_view pattern) noexcept;
 
@@ -192,7 +192,7 @@ namespace Graphyte
         /// @param name Provides name of module.
         ///
         /// @return The instance of module when successful, \c nullptr otherwise.
-        BASE_API static IModule* Get(
+        [[nodiscard]] BASE_API static IModule* Get(
             std::string_view name) noexcept;
 
         /// @brief Gets module instance by name.
@@ -202,13 +202,13 @@ namespace Graphyte
         /// @param name Provides name of module.
         ///
         /// @return The instance of module.
-        BASE_API static IModule& GetChecked(
+        [[nodiscard]] BASE_API static IModule& GetChecked(
             std::string_view name) noexcept;
 
         /// @brief Gets number of loaded modules.
         ///
         /// @return The number of loaded modules.
-        BASE_API static size_t GetModulesCount() noexcept;
+        [[nodiscard]] BASE_API static size_t GetModulesCount() noexcept;
 
         /// @brief Registers static module instance.
         ///
@@ -216,7 +216,7 @@ namespace Graphyte
         /// @param instance Provides instance of module to register.
         ///
         /// @return The status code.
-        BASE_API static Status RegisterStaticModule(
+        [[nodiscard]] BASE_API static Status RegisterStaticModule(
             std::string_view name,
             IModule* instance) noexcept;
 
@@ -226,7 +226,7 @@ namespace Graphyte
         /// @param instance Provides instance of module to unregister.
         ///
         /// @return The status code.
-        BASE_API static Status UnregisterStaticModule(
+        [[nodiscard]] BASE_API static Status UnregisterStaticModule(
             std::string_view name,
             IModule* instance) noexcept;
 
@@ -240,7 +240,7 @@ namespace Graphyte
         ///
         /// @see Graphyte::ModuleManager::Load
         template <typename TModule>
-        static TModule* Load(
+        [[nodiscard]] static TModule* Load(
             std::string_view name,
             Status* status = nullptr) noexcept
         {
@@ -256,7 +256,7 @@ namespace Graphyte
         ///
         /// @see Graphyte::ModuleManager::LoadChecked
         template <typename TModule>
-        static TModule& LoadChecked(
+        [[nodiscard]] static TModule& LoadChecked(
             std::string_view name) noexcept
         {
             static_assert(std::is_base_of_v<IModule, TModule>, "TModule must implement IModule interface!");
@@ -271,7 +271,7 @@ namespace Graphyte
         ///
         /// @see Graphyte::ModuleManager::Get
         template <typename TModule>
-        static TModule* Get(
+        [[nodiscard]] static TModule* Get(
             std::string_view name) noexcept
         {
             static_assert(std::is_base_of_v<IModule, TModule>, "TModule must implement IModule interface!");
@@ -286,7 +286,7 @@ namespace Graphyte
         ///
         /// @see Graphyte::ModuleManager::GetChecked
         template <typename TModule>
-        static TModule& GetChecked(
+        [[nodiscard]] static TModule& GetChecked(
             std::string_view name) noexcept
         {
             static_assert(std::is_base_of_v<IModule, TModule>, "TModule must implement IModule interface!");
@@ -299,8 +299,7 @@ namespace Graphyte
         Threading::CriticalSection m_CS;
 
     private:
-        static std::string MakeModulePath(
-            std::string_view name) noexcept;
+        [[nodiscard]] static std::string MakeModulePath(std::string_view name) noexcept;
     };
 }
 

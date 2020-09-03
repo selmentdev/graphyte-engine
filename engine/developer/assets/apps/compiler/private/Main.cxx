@@ -33,9 +33,9 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     using namespace Graphyte;
     using namespace Graphyte::System;
 
-    ModuleManager::LoadChecked("GxAssetsBase");
-    ModuleManager::LoadChecked("GxAssetsMesh");
-    ModuleManager::LoadChecked("GxAssetsShader");
+    (void)ModuleManager::LoadChecked("GxAssetsBase");
+    (void)ModuleManager::LoadChecked("GxAssetsMesh");
+    (void)ModuleManager::LoadChecked("GxAssetsShader");
 
     if (Graphyte::CommandLine::Get("--help").has_value())
     {

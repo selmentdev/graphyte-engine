@@ -43,7 +43,7 @@ namespace Graphyte::Threading
 namespace Graphyte::Threading
 {
     template <typename T>
-    inline T VolatileLoad(const T* p) noexcept
+    [[nodiscard]] inline T VolatileLoad(const T* p) noexcept
         requires(std::is_trivially_copyable_v<T>)
     {
         GX_ASSERT(p != nullptr);
@@ -86,7 +86,7 @@ namespace Graphyte::Threading
         All  = ~uint64_t{},
     };
 
-    constexpr ThreadAffinity MakeThreadAffinity(uint64_t processor) noexcept
+    [[nodiscard]] constexpr ThreadAffinity MakeThreadAffinity(uint64_t processor) noexcept
     {
         return static_cast<ThreadAffinity>(uint64_t{ 1 } << processor);
     }
@@ -101,7 +101,7 @@ namespace Graphyte::Threading
 #error Not supported.
 #endif
 
-        bool IsValid() const noexcept
+        [[nodiscard]] bool IsValid() const noexcept
         {
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
             return Value != nullptr;
@@ -168,7 +168,7 @@ namespace Graphyte::Threading
     }
 
     /// @brief Gets current thread id.
-    __forceinline ThreadId CurrentThreadId() noexcept
+    [[nodiscard]] __forceinline ThreadId CurrentThreadId() noexcept
     {
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 

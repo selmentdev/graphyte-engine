@@ -17,12 +17,12 @@ namespace Graphyte
         uint32_t Patch;
         uint32_t Build;
 
-        constexpr bool IsEmpty() const noexcept
+        [[nodiscard]] constexpr bool IsEmpty() const noexcept
         {
             return (this->Major | this->Minor | this->Patch | this->Build) == 0;
         }
 
-        constexpr auto operator<=>(Version const& rhs) const noexcept = default;
+        [[nodiscard]] constexpr auto operator<=>(Version const& rhs) const noexcept = default;
     };
 }
 
@@ -35,8 +35,8 @@ namespace Graphyte
 template <>
 struct Graphyte::Converter<Graphyte::Version> final
 {
-    BASE_API static bool ToString(std::string& result, Graphyte::Version const& value) noexcept;
-    BASE_API static bool FromString(Graphyte::Version& result, std::string_view value) noexcept;
+    [[nodiscard]] BASE_API static bool ToString(std::string& result, Graphyte::Version const& value) noexcept;
+    [[nodiscard]] BASE_API static bool FromString(Graphyte::Version& result, std::string_view value) noexcept;
 };
 
 

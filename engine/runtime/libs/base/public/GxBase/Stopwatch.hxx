@@ -22,23 +22,23 @@ namespace Graphyte::Diagnostics
         }
 
     public:
-        bool IsRunning() const noexcept
+        [[nodiscard]] bool IsRunning() const noexcept
         {
             return this->m_IsRunning;
         }
 
-        int64_t GetFrequency() const noexcept
+        [[nodiscard]] int64_t GetFrequency() const noexcept
         {
             return m_Resolution;
         }
 
-        int64_t GetElapsedTicks() const noexcept
+        [[nodiscard]] int64_t GetElapsedTicks() const noexcept
         {
             return this->m_Elapsed;
         }
 
         template <typename T>
-        T GetElapsedTime() const noexcept
+        [[nodiscard]] T GetElapsedTime() const noexcept
             requires(std::is_floating_point_v<T>)
         {
             return static_cast<T>(this->m_Elapsed) / static_cast<T>(m_Resolution);

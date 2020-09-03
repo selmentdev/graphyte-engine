@@ -14,9 +14,9 @@ namespace Graphyte
         uint64_t Low;
         uint64_t High;
 
-        BASE_API static Uuid Create() noexcept;
+        [[nodiscard]] BASE_API static Uuid Create() noexcept;
 
-        bool IsEmpty() const noexcept
+        [[nodiscard]] bool IsEmpty() const noexcept
         {
             return (this->Low | this->High) == 0;
         }
@@ -37,9 +37,9 @@ namespace Graphyte
 template <>
 struct Graphyte::Converter<Graphyte::Uuid> final
 {
-    BASE_API static bool ToString(std::string& result, Graphyte::Uuid const& value) noexcept;
+    [[nodiscard]] BASE_API static bool ToString(std::string& result, Graphyte::Uuid const& value) noexcept;
 
-    BASE_API static bool FromString(Graphyte::Uuid& result, std::string_view value) noexcept;
+    [[nodiscard]] BASE_API static bool FromString(Graphyte::Uuid& result, std::string_view value) noexcept;
 };
 
 

@@ -63,45 +63,45 @@ namespace Graphyte
         };
         static_assert(sizeof(Layout) == sizeof(uint16_t));
 
-        static constexpr Half FromBits(uint16_t bits) noexcept
+        [[nodiscard]] static constexpr Half FromBits(uint16_t bits) noexcept
         {
             return Half{ bits };
         }
 
-        static constexpr uint16_t ToBits(Half value) noexcept
+        [[nodiscard]] static constexpr uint16_t ToBits(Half value) noexcept
         {
             return value.Value;
         }
 
-        static constexpr bool BitIsNan(uint16_t bits) noexcept
+        [[nodiscard]] static constexpr bool BitIsNan(uint16_t bits) noexcept
         {
             return ((bits & Exponent) == Exponent)
                    && ((bits & Mantissa) != 0);
         }
 
-        static constexpr bool BitIsInf(uint16_t bits) noexcept
+        [[nodiscard]] static constexpr bool BitIsInf(uint16_t bits) noexcept
         {
             return ((bits & ~Sign) == Exponent);
         }
 
-        static constexpr bool IsInf(Half value) noexcept
+        [[nodiscard]] static constexpr bool IsInf(Half value) noexcept
         {
             return BitIsInf(ToBits(value));
         }
 
-        static constexpr bool IsNan(Half value) noexcept
+        [[nodiscard]] static constexpr bool IsNan(Half value) noexcept
         {
             return BitIsInf(ToBits(value));
         }
 
-        static constexpr Half Range12FromHighBits(uint16_t value) noexcept
+        [[nodiscard]] static constexpr Half Range12FromHighBits(uint16_t value) noexcept
         {
             uint16_t const u = One | (value >> (ExponentBits + SignBits));
             Half const f     = FromBits(u);
             return f;
         }
 
-        static constexpr Half Range12FromLowBits(uint16_t value) noexcept
+        [[nodiscard]] static constexpr Half Range12FromLowBits(uint16_t value) noexcept
         {
             uint16_t const u = One | (value & Mantissa);
             Half const f     = FromBits(u);
@@ -161,17 +161,17 @@ namespace Graphyte
         };
         static_assert(sizeof(Layout) == sizeof(float));
 
-        static constexpr float FromBits(uint32_t bits) noexcept
+        [[nodiscard]] static constexpr float FromBits(uint32_t bits) noexcept
         {
             return BitCast<float, uint32_t>(bits);
         }
 
-        static constexpr uint32_t ToBits(float value) noexcept
+        [[nodiscard]] static constexpr uint32_t ToBits(float value) noexcept
         {
             return BitCast<uint32_t, float>(value);
         }
 
-        static constexpr bool BitIsNan(uint32_t bits) noexcept
+        [[nodiscard]] static constexpr bool BitIsNan(uint32_t bits) noexcept
         {
 #if false
             return ((bits & Exponent) == Exponent)
@@ -184,29 +184,29 @@ namespace Graphyte
 #endif
         }
 
-        static constexpr bool BitIsInf(uint32_t bits) noexcept
+        [[nodiscard]] static constexpr bool BitIsInf(uint32_t bits) noexcept
         {
             return ((bits & ~Sign) == Exponent);
         }
 
-        static constexpr bool IsInf(float value) noexcept
+        [[nodiscard]] static constexpr bool IsInf(float value) noexcept
         {
             return BitIsInf(ToBits(value));
         }
 
-        static constexpr bool IsNan(float value) noexcept
+        [[nodiscard]] static constexpr bool IsNan(float value) noexcept
         {
             return BitIsInf(ToBits(value));
         }
 
-        static constexpr float Range12FromHighBits(uint32_t value) noexcept
+        [[nodiscard]] static constexpr float Range12FromHighBits(uint32_t value) noexcept
         {
             uint32_t const u = One | (value >> (ExponentBits + SignBits));
             float const f    = FromBits(u);
             return f;
         }
 
-        static constexpr float Range12FromLowBits(uint32_t value) noexcept
+        [[nodiscard]] static constexpr float Range12FromLowBits(uint32_t value) noexcept
         {
             uint32_t const u = One | (value & Mantissa);
             float const f    = FromBits(u);
@@ -268,45 +268,45 @@ namespace Graphyte
         };
         static_assert(sizeof(Layout) == sizeof(double));
 
-        static constexpr double FromBits(uint64_t bits) noexcept
+        [[nodiscard]] static constexpr double FromBits(uint64_t bits) noexcept
         {
             return BitCast<double, uint64_t>(bits);
         }
 
-        static constexpr uint64_t ToBits(double value) noexcept
+        [[nodiscard]] static constexpr uint64_t ToBits(double value) noexcept
         {
             return BitCast<uint64_t, double>(value);
         }
 
-        static constexpr bool BitIsNan(uint64_t bits) noexcept
+        [[nodiscard]] static constexpr bool BitIsNan(uint64_t bits) noexcept
         {
             return ((bits & Exponent) == Exponent)
                    && ((bits & Mantissa) != 0);
         }
 
-        static constexpr bool BitIsInf(uint64_t bits) noexcept
+        [[nodiscard]] static constexpr bool BitIsInf(uint64_t bits) noexcept
         {
             return ((bits & ~Sign) == Exponent);
         }
 
-        static constexpr bool IsInf(double value) noexcept
+        [[nodiscard]] static constexpr bool IsInf(double value) noexcept
         {
             return BitIsInf(ToBits(value));
         }
 
-        static constexpr bool IsNan(double value) noexcept
+        [[nodiscard]] static constexpr bool IsNan(double value) noexcept
         {
             return BitIsInf(ToBits(value));
         }
 
-        static constexpr double Range12FromHighBits(uint64_t value) noexcept
+        [[nodiscard]] static constexpr double Range12FromHighBits(uint64_t value) noexcept
         {
             uint64_t const u = One | (value >> (ExponentBits + SignBits));
             double const f   = FromBits(u);
             return f;
         }
 
-        static constexpr double Range12FromLowBits(uint64_t value) noexcept
+        [[nodiscard]] static constexpr double Range12FromLowBits(uint64_t value) noexcept
         {
             uint64_t const u = One | (value & Mantissa);
             double const f   = FromBits(u);
@@ -317,7 +317,7 @@ namespace Graphyte
 
 namespace Graphyte
 {
-    constexpr float FromHalfBitwise(Half v) noexcept
+    [[nodiscard]] constexpr float FromHalfBitwise(Half v) noexcept
     {
         uint32_t const value = v.Value;
 
@@ -365,7 +365,7 @@ namespace Graphyte
         return BitCast<float>(result);
     }
 
-    constexpr float FromHalf(Half v) noexcept
+    [[nodiscard]] constexpr float FromHalf(Half v) noexcept
     {
         if (std::is_constant_evaluated())
         {
@@ -387,7 +387,7 @@ namespace Graphyte
         }
     }
 
-    constexpr Half ToHalfBitwise(float value) noexcept
+    [[nodiscard]] constexpr Half ToHalfBitwise(float value) noexcept
     {
         uint32_t result        = 0;
         uint32_t const uvalue1 = BitCast<uint32_t>(value);
@@ -428,7 +428,7 @@ namespace Graphyte
         return Graphyte::Half{ .Value = static_cast<uint16_t>(result | sign) };
     }
 
-    __forceinline Half ToHalf(float value) noexcept
+    [[nodiscard]] __forceinline Half ToHalf(float value) noexcept
     {
         if (std::is_constant_evaluated())
         {

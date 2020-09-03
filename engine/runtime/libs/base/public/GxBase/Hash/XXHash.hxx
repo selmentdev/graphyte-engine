@@ -31,10 +31,10 @@ namespace Graphyte::Hash
 
     public:
         bool Update(const void* input, size_t input_size) noexcept;
-        uint64_t GetValue() const noexcept;
+        [[nodiscard]] uint64_t GetValue() const noexcept;
 
     public:
-        static uint64_t Hash(const void* buffer, size_t buffer_size, uint64_t seed) noexcept;
+        [[nodiscard]] static uint64_t Hash(const void* buffer, size_t buffer_size, uint64_t seed) noexcept;
 
     private:
         static uint64_t ProcessSingle(uint64_t previous, uint64_t input) noexcept;

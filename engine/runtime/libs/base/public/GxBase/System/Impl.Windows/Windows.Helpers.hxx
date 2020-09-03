@@ -11,7 +11,7 @@ namespace Graphyte::System::Impl
 
     extern BASE_API HINSTANCE GInstanceHandle;
 
-    extern BASE_API bool IsSystemVersion(
+    [[nodiscard]] extern BASE_API bool IsSystemVersion(
         uint32_t major,
         uint32_t minor) noexcept;
 
@@ -21,25 +21,25 @@ namespace Graphyte::System::Impl
         const wchar_t* name,
         std::string& result) noexcept;
 
-    extern BASE_API std::string NarrowString(
+    [[nodiscard]] extern BASE_API std::string NarrowString(
         std::wstring_view value) noexcept;
 
-    extern BASE_API std::wstring WidenString(
+    [[nodiscard]] extern BASE_API std::wstring WidenString(
         std::string_view value) noexcept;
 
-    extern BASE_API size_t NarrowString(
+    [[nodiscard]] extern BASE_API size_t NarrowString(
         char* buffer,
         size_t buffer_size,
         std::wstring_view value) noexcept;
 
-    extern BASE_API size_t WidenString(
+    [[nodiscard]] extern BASE_API size_t WidenString(
         wchar_t* buffer,
         size_t buffer_size,
         std::string_view value) noexcept;
 
     using WindowsPath = std::array<wchar_t, MAX_PATH>;
 
-    extern BASE_API bool WidenStringPath(
+    [[nodiscard]] extern BASE_API bool WidenStringPath(
         WindowsPath& result,
         std::string_view value) noexcept;
 }

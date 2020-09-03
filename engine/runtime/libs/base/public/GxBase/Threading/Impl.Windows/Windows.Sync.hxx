@@ -138,7 +138,7 @@ namespace Graphyte::Threading
             return SleepConditionVariableCS(&m_ConditionVariable, &lock.m_CriticalSection, INFINITE) != FALSE;
         }
 
-        bool Wait(CriticalSection& lock, uint32_t timeout) noexcept
+        [[nodiscard]] bool Wait(CriticalSection& lock, uint32_t timeout) noexcept
         {
             return SleepConditionVariableCS(&m_ConditionVariable, &lock.m_CriticalSection, timeout) != FALSE;
         }
@@ -294,12 +294,12 @@ namespace Graphyte::Threading
             return WaitForSingleObject(m_Handle, INFINITE) != WAIT_TIMEOUT;
         }
 
-        bool Wait(uint32_t timeout) noexcept
+        [[nodiscard]] bool Wait(uint32_t timeout) noexcept
         {
             return WaitForSingleObject(m_Handle, timeout) != WAIT_TIMEOUT;
         }
 
-        bool Test() noexcept
+        [[nodiscard]] bool Test() noexcept
         {
             return WaitForSingleObject(m_Handle, 0) != WAIT_TIMEOUT;
         }

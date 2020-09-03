@@ -26,7 +26,7 @@ namespace Graphyte::Launch::Impl::Windows
         unsigned int line,
         [[maybe_unused]] uintptr_t reserved) noexcept
     {
-        Diagnostics::OnAbort(
+        (void)Diagnostics::OnAbort(
             System::Impl::NarrowString(expression),
             System::Impl::NarrowString(function),
             System::Impl::NarrowString(file),

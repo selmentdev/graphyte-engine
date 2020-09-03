@@ -23,7 +23,7 @@ namespace Graphyte
     template <>
     struct Converter<bool> final
     {
-        static std::string_view ToString(bool value) noexcept
+        [[nodiscard]] static std::string_view ToString(bool value) noexcept
         {
             return value ? "true" : "false";
         }
@@ -51,7 +51,7 @@ namespace Graphyte
     template <>
     struct Converter<float> final
     {
-        static std::string ToString(float value) noexcept
+        [[nodiscard]] static std::string ToString(float value) noexcept
         {
 #if GRAPHYTE_COMPILER_MSVC
 
@@ -101,7 +101,7 @@ namespace Graphyte
     template <>
     struct Converter<double> final
     {
-        static std::string ToString(double value) noexcept
+        [[nodiscard]] static std::string ToString(double value) noexcept
         {
 #if GRAPHYTE_COMPILER_MSVC
 
@@ -147,7 +147,7 @@ namespace Graphyte
     template <>
     struct Converter<signed char> final
     {
-        static std::string ToString(signed char value, int radix = 10) noexcept
+        [[nodiscard]] static std::string ToString(signed char value, int radix = 10) noexcept
         {
             char buffer[80];
             auto [end, ec] = std::to_chars(
@@ -175,7 +175,7 @@ namespace Graphyte
     template <>
     struct Converter<unsigned char> final
     {
-        static std::string ToString(unsigned char value, int radix = 10) noexcept
+        [[nodiscard]] static std::string ToString(unsigned char value, int radix = 10) noexcept
         {
             char buffer[80];
             auto [end, ec] = std::to_chars(
@@ -206,7 +206,7 @@ namespace Graphyte
     template <>
     struct Converter<signed short> final
     {
-        static std::string ToString(signed short value, int radix = 10) noexcept
+        [[nodiscard]] static std::string ToString(signed short value, int radix = 10) noexcept
         {
             char buffer[80];
             auto [end, ec] = std::to_chars(
@@ -234,7 +234,7 @@ namespace Graphyte
     template <>
     struct Converter<unsigned short> final
     {
-        static std::string ToString(unsigned short value, int radix = 10) noexcept
+        [[nodiscard]] static std::string ToString(unsigned short value, int radix = 10) noexcept
         {
             char buffer[80];
             auto [end, ec] = std::to_chars(
@@ -265,7 +265,7 @@ namespace Graphyte
     template <>
     struct Converter<signed int> final
     {
-        static std::string ToString(signed int value, int radix = 10) noexcept
+        [[nodiscard]] static std::string ToString(signed int value, int radix = 10) noexcept
         {
             char buffer[80];
             auto [end, ec] = std::to_chars(
@@ -293,7 +293,7 @@ namespace Graphyte
     template <>
     struct Converter<unsigned int> final
     {
-        static std::string ToString(unsigned int value, int radix = 10) noexcept
+        [[nodiscard]] static std::string ToString(unsigned int value, int radix = 10) noexcept
         {
             char buffer[80];
             auto [end, ec] = std::to_chars(
@@ -324,7 +324,7 @@ namespace Graphyte
     template <>
     struct Converter<signed long> final
     {
-        static std::string ToString(signed long value, int radix = 10) noexcept
+        [[nodiscard]] static std::string ToString(signed long value, int radix = 10) noexcept
         {
             char buffer[80];
             auto [end, ec] = std::to_chars(
@@ -352,7 +352,7 @@ namespace Graphyte
     template <>
     struct Converter<unsigned long> final
     {
-        static std::string ToString(unsigned long value, int radix = 10) noexcept
+        [[nodiscard]] static std::string ToString(unsigned long value, int radix = 10) noexcept
         {
             char buffer[80];
             auto [end, ec] = std::to_chars(
@@ -383,7 +383,7 @@ namespace Graphyte
     template <>
     struct Converter<signed long long> final
     {
-        static std::string ToString(signed long long value, int radix = 10) noexcept
+        [[nodiscard]] static std::string ToString(signed long long value, int radix = 10) noexcept
         {
             char buffer[80];
             auto [end, ec] = std::to_chars(
@@ -411,7 +411,7 @@ namespace Graphyte
     template <>
     struct Converter<unsigned long long> final
     {
-        static std::string ToString(unsigned long long value, int radix = 10) noexcept
+        [[nodiscard]] static std::string ToString(unsigned long long value, int radix = 10) noexcept
         {
             char buffer[80];
             auto [end, ec] = std::to_chars(
@@ -442,12 +442,12 @@ namespace Graphyte
     template <>
     struct Converter<std::string_view> final
     {
-        static std::string_view ToString(std::string_view value) noexcept
+        [[nodiscard]] static std::string_view ToString(std::string_view value) noexcept
         {
             return value;
         }
 
-        static std::string_view FromString(std::string_view value) noexcept
+        [[nodiscard]] static std::string_view FromString(std::string_view value) noexcept
         {
             return value;
         }

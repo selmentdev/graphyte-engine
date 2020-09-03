@@ -232,10 +232,7 @@ namespace Graphyte::Launch
 
     static void LogBanner() noexcept
     {
-        std::string engine_version{};
-        Converter<Version>::ToString(engine_version, System::GetBuildVersion());
-
-        GX_LOG_INFO(LogInit, "Engine version: {}\n", engine_version);
+        GX_LOG_INFO(LogInit, "Engine version: {}\n", System::GetBuildVersion());
         GX_LOG_INFO(LogInit, "Build-ID: {}-{}\n",
             System::GetBuildBranch(),
             System::GetBuildCommit());

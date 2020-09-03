@@ -25,12 +25,12 @@ namespace Graphyte::Threading
         Thread& operator=(Thread&& other) noexcept;
 
     public:
-        ThreadHandle GetHandle() const noexcept
+        [[nodiscard]] ThreadHandle GetHandle() const noexcept
         {
             return m_Handle;
         }
 
-        ThreadId GetId() const noexcept
+        [[nodiscard]] ThreadId GetId() const noexcept
         {
             return m_Id;
         }

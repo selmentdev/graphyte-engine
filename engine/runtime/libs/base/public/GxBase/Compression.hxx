@@ -19,7 +19,7 @@ namespace Graphyte::Compression
     /// @param size     Provides size of uncompressed data.
     ///
     /// @return         The minimum number of bytes required to compress data of specified size.
-    extern BASE_API size_t MemoryBound(
+    [[nodiscard]] extern BASE_API size_t MemoryBound(
         CompressionMethod method,
         size_t size) noexcept;
 
@@ -33,7 +33,7 @@ namespace Graphyte::Compression
     /// @param input_size       Provides size of input buffer.
     ///
     /// @return Value indicating whether memory block was decompressed successfully.
-    extern BASE_API bool CompressBlock(
+    [[nodiscard]] extern BASE_API bool CompressBlock(
         CompressionMethod method,
         void* output_buffer,
         size_t& output_size,
@@ -50,29 +50,29 @@ namespace Graphyte::Compression
     /// @param input_size      Provides size of input buffer.
     ///
     /// @return Value indicating whether memory block was decompressed successfully.
-    extern BASE_API bool DecompressBlock(
+    [[nodiscard]] extern BASE_API bool DecompressBlock(
         CompressionMethod method,
         void* output_buffer,
         size_t output_size,
         const void* input_buffer,
         size_t input_size) noexcept;
 
-    extern BASE_API bool CompressBlock(
+    [[nodiscard]] extern BASE_API bool CompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
         std::span<const std::byte> input) noexcept;
 
-    extern BASE_API bool DecompressBlock(
+    [[nodiscard]] extern BASE_API bool DecompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
         std::span<const std::byte> input) noexcept;
 
-    extern BASE_API bool CompressString(
+    [[nodiscard]] extern BASE_API bool CompressString(
         CompressionMethod method,
         std::vector<std::byte>& output,
         std::string_view input) noexcept;
 
-    extern BASE_API bool DecompressString(
+    [[nodiscard]] extern BASE_API bool DecompressString(
         CompressionMethod method,
         std::string& output,
         const std::vector<std::byte>& input) noexcept;
@@ -84,7 +84,7 @@ namespace Graphyte::Compression
     /// @param input    Provides input vector data to compress.
     ///
     /// @return Value indicating whether memory block was compressed successfully.
-    inline bool CompressBlock(
+    [[nodiscard]] inline bool CompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
         const std::vector<std::byte>& input) noexcept
@@ -103,7 +103,7 @@ namespace Graphyte::Compression
     /// @return Value indicating whether memory block was decompressed successfully.
     ///
     /// @pre Output vector must contain enough place for decompressed data.
-    inline bool DecompressBlock(
+    [[nodiscard]] inline bool DecompressBlock(
         CompressionMethod method,
         std::vector<std::byte>& output,
         const std::vector<std::byte>& input) noexcept

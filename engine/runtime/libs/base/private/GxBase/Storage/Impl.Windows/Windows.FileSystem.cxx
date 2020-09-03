@@ -25,30 +25,34 @@ namespace Graphyte::Storage
         bool share_write) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
 
-        DWORD dwAccess = static_cast<DWORD>(GENERIC_READ);
-        DWORD dwShare  = static_cast<DWORD>(FILE_SHARE_READ | (share_write ? FILE_SHARE_WRITE : 0));
-        DWORD dwCreate = static_cast<DWORD>(OPEN_EXISTING);
-
-        HANDLE handle = CreateFileW(
-            wpath.data(),
-            dwAccess,
-            dwShare,
-            nullptr,
-            dwCreate,
-            FILE_ATTRIBUTE_NORMAL,
-            nullptr);
-
-        if (handle != INVALID_HANDLE_VALUE)
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            result = std::make_unique<WindowsAsyncFileStream>(handle);
-            return Status::Success;
+            DWORD dwAccess = static_cast<DWORD>(GENERIC_READ);
+            DWORD dwShare  = static_cast<DWORD>(FILE_SHARE_READ | (share_write ? FILE_SHARE_WRITE : 0));
+            DWORD dwCreate = static_cast<DWORD>(OPEN_EXISTING);
+
+            HANDLE handle = CreateFileW(
+                wpath.data(),
+                dwAccess,
+                dwShare,
+                nullptr,
+                dwCreate,
+                FILE_ATTRIBUTE_NORMAL,
+                nullptr);
+
+            if (handle != INVALID_HANDLE_VALUE)
+            {
+                result = std::make_unique<WindowsAsyncFileStream>(handle);
+                return Status::Success;
+            }
+
+            result = nullptr;
+
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        result = nullptr;
-
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::OpenWrite(
@@ -58,29 +62,33 @@ namespace Graphyte::Storage
         bool share_read) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
 
-        DWORD dwAccess = static_cast<DWORD>(GENERIC_WRITE);
-        DWORD dwShare  = static_cast<DWORD>(share_read ? FILE_SHARE_READ : 0);
-        DWORD dwCreate = static_cast<DWORD>(append ? OPEN_ALWAYS : CREATE_ALWAYS);
-
-        HANDLE handle = CreateFileW(
-            wpath.data(),
-            dwAccess,
-            dwShare,
-            nullptr,
-            dwCreate,
-            FILE_ATTRIBUTE_NORMAL,
-            nullptr);
-
-        if (handle != INVALID_HANDLE_VALUE)
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            result = std::make_unique<WindowsFileStream>(handle);
-            return Status::Success;
+            DWORD dwAccess = static_cast<DWORD>(GENERIC_WRITE);
+            DWORD dwShare  = static_cast<DWORD>(share_read ? FILE_SHARE_READ : 0);
+            DWORD dwCreate = static_cast<DWORD>(append ? OPEN_ALWAYS : CREATE_ALWAYS);
+
+            HANDLE handle = CreateFileW(
+                wpath.data(),
+                dwAccess,
+                dwShare,
+                nullptr,
+                dwCreate,
+                FILE_ATTRIBUTE_NORMAL,
+                nullptr);
+
+            if (handle != INVALID_HANDLE_VALUE)
+            {
+                result = std::make_unique<WindowsFileStream>(handle);
+                return Status::Success;
+            }
+
+            result = nullptr;
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        result = nullptr;
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::IsReadonly(
@@ -88,17 +96,21 @@ namespace Graphyte::Storage
         std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
 
-        DWORD dwFileAttributes = GetFileAttributesW(wpath.data());
-
-        if (dwFileAttributes != INVALID_FILE_ATTRIBUTES)
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            result = ((dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0);
-            return Status::Success;
+            DWORD dwFileAttributes = GetFileAttributesW(wpath.data());
+
+            if (dwFileAttributes != INVALID_FILE_ATTRIBUTES)
+            {
+                result = ((dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0);
+                return Status::Success;
+            }
+
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::SetReadonly(
@@ -106,16 +118,20 @@ namespace Graphyte::Storage
         bool value) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
 
-        DWORD dwFileAttributes = static_cast<DWORD>(value ? FILE_ATTRIBUTE_READONLY : FILE_ATTRIBUTE_NORMAL);
-
-        if (SetFileAttributesW(wpath.data(), dwFileAttributes) != FALSE)
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            return Status::Success;
+            DWORD dwFileAttributes = static_cast<DWORD>(value ? FILE_ATTRIBUTE_READONLY : FILE_ATTRIBUTE_NORMAL);
+
+            if (SetFileAttributesW(wpath.data(), dwFileAttributes) != FALSE)
+            {
+                return Status::Success;
+            }
+
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::GetFileInfo(
@@ -123,28 +139,32 @@ namespace Graphyte::Storage
         std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
 
-        WIN32_FILE_ATTRIBUTE_DATA wfad{};
-
-        if (GetFileAttributesExW(wpath.data(), GetFileExInfoStandard, &wfad))
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            ULARGE_INTEGER li_file_size{};
-            li_file_size.LowPart  = wfad.nFileSizeLow;
-            li_file_size.HighPart = wfad.nFileSizeHigh;
+            WIN32_FILE_ATTRIBUTE_DATA wfad{};
 
-            result.CreationTime     = System::TypeConverter<FILETIME>::ConvertDateTime(wfad.ftCreationTime);
-            result.AccessTime       = System::TypeConverter<FILETIME>::ConvertDateTime(wfad.ftLastAccessTime);
-            result.ModificationTime = System::TypeConverter<FILETIME>::ConvertDateTime(wfad.ftLastWriteTime);
-            result.FileSize         = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(li_file_size);
-            result.IsDirectory      = (wfad.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
-            result.IsReadonly       = (wfad.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0;
-            result.IsValid          = true;
-            return Status::Success;
+            if (GetFileAttributesExW(wpath.data(), GetFileExInfoStandard, &wfad))
+            {
+                ULARGE_INTEGER li_file_size{};
+                li_file_size.LowPart  = wfad.nFileSizeLow;
+                li_file_size.HighPart = wfad.nFileSizeHigh;
+
+                result.CreationTime     = System::TypeConverter<FILETIME>::ConvertDateTime(wfad.ftCreationTime);
+                result.AccessTime       = System::TypeConverter<FILETIME>::ConvertDateTime(wfad.ftLastAccessTime);
+                result.ModificationTime = System::TypeConverter<FILETIME>::ConvertDateTime(wfad.ftLastWriteTime);
+                result.FileSize         = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(li_file_size);
+                result.IsDirectory      = (wfad.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+                result.IsReadonly       = (wfad.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0;
+                result.IsValid          = true;
+                return Status::Success;
+            }
+
+            result = {};
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        result = {};
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::GetFileSize(
@@ -152,39 +172,47 @@ namespace Graphyte::Storage
         std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
 
-        WIN32_FILE_ATTRIBUTE_DATA wfad{};
-
-        if (GetFileAttributesExW(wpath.data(), GetFileExInfoStandard, &wfad))
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            ULARGE_INTEGER li_file_size{};
-            li_file_size.LowPart  = wfad.nFileSizeLow;
-            li_file_size.HighPart = wfad.nFileSizeHigh;
+            WIN32_FILE_ATTRIBUTE_DATA wfad{};
 
-            result = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(li_file_size);
-            return Status::Success;
+            if (GetFileAttributesExW(wpath.data(), GetFileExInfoStandard, &wfad))
+            {
+                ULARGE_INTEGER li_file_size{};
+                li_file_size.LowPart  = wfad.nFileSizeLow;
+                li_file_size.HighPart = wfad.nFileSizeHigh;
+
+                result = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(li_file_size);
+                return Status::Success;
+            }
+
+            result = -1;
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        result = -1;
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::Exists(
         std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
 
-        DWORD dwFileAttributes = GetFileAttributesW(wpath.data());
-        DWORD dwLastError      = GetLastError();
-
-        if (dwFileAttributes != INVALID_FILE_ATTRIBUTES)
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            return Status::Success;
+            DWORD dwFileAttributes = GetFileAttributesW(wpath.data());
+            DWORD dwLastError      = GetLastError();
+
+            if (dwFileAttributes != INVALID_FILE_ATTRIBUTES)
+            {
+                return Status::Success;
+            }
+
+            return Diagnostics::GetStatusFromSystemError(dwLastError);
         }
 
-        return Diagnostics::GetStatusFromSystemError(dwLastError);
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::FileCopy(
@@ -192,16 +220,19 @@ namespace Graphyte::Storage
         std::string_view source) noexcept
     {
         System::Impl::WindowsPath wdestination{};
-        System::Impl::WidenStringPath(wdestination, destination);
         System::Impl::WindowsPath wsource{};
-        System::Impl::WidenStringPath(wsource, source);
 
-        if (CopyFileW(wsource.data(), wdestination.data(), TRUE) != FALSE)
+        if (System::Impl::WidenStringPath(wdestination, destination) && System::Impl::WidenStringPath(wsource, source))
         {
-            return Status::Success;
+            if (CopyFileW(wsource.data(), wdestination.data(), TRUE) != FALSE)
+            {
+                return Status::Success;
+            }
+
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::FileMove(
@@ -209,61 +240,75 @@ namespace Graphyte::Storage
         std::string_view source) noexcept
     {
         System::Impl::WindowsPath wdestination{};
-        System::Impl::WidenStringPath(wdestination, destination);
         System::Impl::WindowsPath wsource{};
-        System::Impl::WidenStringPath(wsource, source);
 
-        if (MoveFileW(wsource.data(), wdestination.data()) != FALSE)
+        if (System::Impl::WidenStringPath(wdestination, destination) && System::Impl::WidenStringPath(wsource, source))
         {
-            return Status::Success;
+            if (MoveFileW(wsource.data(), wdestination.data()) != FALSE)
+            {
+                return Status::Success;
+            }
+
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::FileDelete(
         std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
 
-        if (DeleteFileW(wpath.data()) != FALSE)
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            return Status::Success;
+            if (DeleteFileW(wpath.data()) != FALSE)
+            {
+                return Status::Success;
+            }
+
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::DirectoryCreate(
         std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
 
-        BOOL created      = CreateDirectoryW(wpath.data(), nullptr);
-        DWORD dwLastError = GetLastError();
-
-        if (created != FALSE || dwLastError == ERROR_ALREADY_EXISTS)
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            return Status::Success;
+            BOOL created      = CreateDirectoryW(wpath.data(), nullptr);
+            DWORD dwLastError = GetLastError();
+
+            if (created != FALSE || dwLastError == ERROR_ALREADY_EXISTS)
+            {
+                return Status::Success;
+            }
+
+            return Diagnostics::GetStatusFromSystemError(dwLastError);
         }
 
-        return Diagnostics::GetStatusFromSystemError(dwLastError);
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::DirectoryDelete(
         std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
-
-        if (RemoveDirectoryW(wpath.data()) != FALSE)
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            return Status::Success;
+            if (RemoveDirectoryW(wpath.data()) != FALSE)
+            {
+                return Status::Success;
+            }
+
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::Enumerate(
@@ -273,35 +318,39 @@ namespace Graphyte::Storage
         std::string const wildcard = Storage::CombinePath(path, "*.*");
 
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, wildcard);
 
-        WIN32_FIND_DATAW wfd{};
-
-        HANDLE hFindFile = FindFirstFileW(wpath.data(), &wfd);
-
-        if (hFindFile != INVALID_HANDLE_VALUE)
+        if (System::Impl::WidenStringPath(wpath, wildcard))
         {
-            Status status{};
+            WIN32_FIND_DATAW wfd{};
 
-            do
+            HANDLE hFindFile = FindFirstFileW(wpath.data(), &wfd);
+
+            if (hFindFile != INVALID_HANDLE_VALUE)
             {
-                std::wstring_view filename{ wfd.cFileName };
+                Status status{};
 
-                if (filename != L"." && filename != L"..")
+                do
                 {
-                    std::string const report_path = Storage::CombinePath(path, System::Impl::NarrowString(filename));
-                    bool const is_directory       = !!(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+                    std::wstring_view filename{ wfd.cFileName };
 
-                    status = visitor.Visit(report_path, is_directory);
-                }
-            } while (status == Status::Success && FindNextFileW(hFindFile, &wfd) != FALSE);
+                    if (filename != L"." && filename != L"..")
+                    {
+                        std::string const report_path = Storage::CombinePath(path, System::Impl::NarrowString(filename));
+                        bool const is_directory       = !!(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 
-            FindClose(hFindFile);
+                        status = visitor.Visit(report_path, is_directory);
+                    }
+                } while (status == Status::Success && FindNextFileW(hFindFile, &wfd) != FALSE);
 
-            return status;
+                FindClose(hFindFile);
+
+                return status;
+            }
+
+            return Status::Failure;
         }
 
-        return Status::Failure;
+        return Status::InvalidArgument;
     }
 
     Status WindowsFileSystem::Enumerate(
@@ -311,47 +360,51 @@ namespace Graphyte::Storage
         std::string const wildcard = Storage::CombinePath(path, "*.*");
 
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, wildcard);
 
-        WIN32_FIND_DATAW wfd{};
-
-        HANDLE hFindFile = FindFirstFileW(wpath.data(), &wfd);
-
-        if (hFindFile != INVALID_HANDLE_VALUE)
+        if (System::Impl::WidenStringPath(wpath, wildcard))
         {
-            Status status{};
+            WIN32_FIND_DATAW wfd{};
 
-            do
+            HANDLE hFindFile = FindFirstFileW(wpath.data(), &wfd);
+
+            if (hFindFile != INVALID_HANDLE_VALUE)
             {
-                std::wstring_view filename{ wfd.cFileName };
+                Status status{};
 
-                if (filename != L"." && filename != L"..")
+                do
                 {
-                    std::string const report_path = Storage::CombinePath(path, System::Impl::NarrowString(filename));
+                    std::wstring_view filename{ wfd.cFileName };
 
-                    ULARGE_INTEGER li_file_size{};
-                    li_file_size.LowPart  = wfd.nFileSizeLow;
-                    li_file_size.HighPart = wfd.nFileSizeHigh;
+                    if (filename != L"." && filename != L"..")
+                    {
+                        std::string const report_path = Storage::CombinePath(path, System::Impl::NarrowString(filename));
 
-                    FileInfo file_info{
-                        .CreationTime     = System::TypeConverter<FILETIME>::ConvertDateTime(wfd.ftCreationTime),
-                        .AccessTime       = System::TypeConverter<FILETIME>::ConvertDateTime(wfd.ftLastAccessTime),
-                        .ModificationTime = System::TypeConverter<FILETIME>::ConvertDateTime(wfd.ftLastWriteTime),
-                        .FileSize         = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(li_file_size),
-                        .IsDirectory      = (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0,
-                        .IsReadonly       = (wfd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0,
-                        .IsValid          = true,
-                    };
+                        ULARGE_INTEGER li_file_size{};
+                        li_file_size.LowPart  = wfd.nFileSizeLow;
+                        li_file_size.HighPart = wfd.nFileSizeHigh;
 
-                    status = visitor.Visit(report_path, file_info);
-                }
-            } while (status == Status::Success && FindNextFileW(hFindFile, &wfd) != FALSE);
+                        FileInfo file_info{
+                            .CreationTime     = System::TypeConverter<FILETIME>::ConvertDateTime(wfd.ftCreationTime),
+                            .AccessTime       = System::TypeConverter<FILETIME>::ConvertDateTime(wfd.ftLastAccessTime),
+                            .ModificationTime = System::TypeConverter<FILETIME>::ConvertDateTime(wfd.ftLastWriteTime),
+                            .FileSize         = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(li_file_size),
+                            .IsDirectory      = (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0,
+                            .IsReadonly       = (wfd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0,
+                            .IsValid          = true,
+                        };
 
-            FindClose(hFindFile);
+                        status = visitor.Visit(report_path, file_info);
+                    }
+                } while (status == Status::Success && FindNextFileW(hFindFile, &wfd) != FALSE);
 
-            return status;
+                FindClose(hFindFile);
+
+                return status;
+            }
+
+            return Status::Failure;
         }
 
-        return Status::Failure;
+        return Status::InvalidArgument;
     }
 }

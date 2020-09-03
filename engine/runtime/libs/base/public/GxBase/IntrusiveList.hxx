@@ -127,7 +127,7 @@ namespace Graphyte
             }
         }
 
-        T* RemoveHead() noexcept
+        [[nodiscard]] T* RemoveHead() noexcept
         {
             GX_ASSERT(this->Head != nullptr);
 
@@ -136,7 +136,7 @@ namespace Graphyte
             return result;
         }
 
-        T* RemoveTail() noexcept
+        [[nodiscard]] T* RemoveTail() noexcept
         {
             GX_ASSERT(this->Tail != nullptr);
 
@@ -183,17 +183,17 @@ namespace Graphyte
             return next;
         }
 
-        T* GetHead() const noexcept
+        [[nodiscard]] T* GetHead() const noexcept
         {
             return this->Head;
         }
 
-        T* GetTail() const noexcept
+        [[nodiscard]] T* GetTail() const noexcept
         {
             return this->Tail;
         }
 
-        T* Next(T* element) const noexcept
+        [[nodiscard]] T* Next(T* element) const noexcept
         {
             GX_ASSERT(element != nullptr);
 
@@ -201,7 +201,7 @@ namespace Graphyte
             return elementNode->Next;
         }
 
-        const T* Next(const T* element) const noexcept
+        [[nodiscard]] const T* Next(const T* element) const noexcept
         {
             GX_ASSERT(element != nullptr);
 
@@ -209,7 +209,7 @@ namespace Graphyte
             return elementNode->Next;
         }
 
-        T* Prev(T* element) const noexcept
+        [[nodiscard]] T* Prev(T* element) const noexcept
         {
             GX_ASSERT(element != nullptr);
 
@@ -217,7 +217,7 @@ namespace Graphyte
             return elementNode->Prev;
         }
 
-        const T* Prev(const T* element) const noexcept
+        [[nodiscard]] const T* Prev(const T* element) const noexcept
         {
             GX_ASSERT(element != nullptr);
 
@@ -233,12 +233,12 @@ namespace Graphyte
             }
         }
 
-        bool IsEmpty() const noexcept
+        [[nodiscard]] bool IsEmpty() const noexcept
         {
             return this->Head == nullptr;
         }
 
-        size_t GetLength() const noexcept
+        [[nodiscard]] size_t GetLength() const noexcept
         {
             size_t length{};
 
@@ -250,7 +250,7 @@ namespace Graphyte
             return length;
         }
 
-        bool Contains(T* element) noexcept
+        [[nodiscard]] bool Contains(T* element) noexcept
         {
             for (T* current = this->Head; current != element; current = this->Next(current))
             {
@@ -263,7 +263,7 @@ namespace Graphyte
             return false;
         }
 
-        bool Contains(const T* element) const noexcept
+        [[nodiscard]] bool Contains(const T* element) const noexcept
         {
             for (T* current = this->Head; current != element; current = this->Next(current))
             {

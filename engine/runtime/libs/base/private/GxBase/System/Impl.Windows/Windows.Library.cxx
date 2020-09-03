@@ -7,19 +7,22 @@ namespace Graphyte::System
     Status Library::Load(std::string_view path) noexcept
     {
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, path);
-
-        HMODULE const native = LoadLibraryExW(wpath.data(), nullptr, 0);
-
-        if (native != nullptr)
+        if (System::Impl::WidenStringPath(wpath, path))
         {
-            m_Handle = { native };
-            return Status::Success;
+            HMODULE const native = LoadLibraryExW(wpath.data(), nullptr, 0);
+
+            if (native != nullptr)
+            {
+                m_Handle = { native };
+                return Status::Success;
+            }
+
+            m_Handle = {};
+
+            return Diagnostics::GetStatusFromSystemError();
         }
 
-        m_Handle = {};
-
-        return Diagnostics::GetStatusFromSystemError();
+        return Status::InvalidArgument;
     }
 
     Status Library::Unload() noexcept

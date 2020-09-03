@@ -36,34 +36,38 @@ namespace Graphyte::AssetsPipeline
         auto sdk_path = PlatformToolchain::GetWindowsSdkBinary();
 
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, Storage::CombinePath(sdk_path, "dxcompiler.dll"));
 
-        m_LibDxCompiler = ::LoadLibraryW(wpath.data());
-
-        if (m_LibDxCompiler != nullptr)
+        if (System::Impl::WidenStringPath(wpath, Storage::CombinePath(sdk_path, "dxcompiler.dll")))
         {
-            auto create_instance = reinterpret_cast<DxcCreateInstanceProc>(reinterpret_cast<void*>(::GetProcAddress(m_LibDxCompiler, "DxcCreateInstance")));
+            m_LibDxCompiler = ::LoadLibraryW(wpath.data());
 
-            if (create_instance != nullptr)
+            if (m_LibDxCompiler != nullptr)
             {
-                HRESULT hr{};
+                auto create_instance = reinterpret_cast<DxcCreateInstanceProc>(reinterpret_cast<void*>(::GetProcAddress(m_LibDxCompiler, "DxcCreateInstance")));
 
-                hr = create_instance(
-                    CLSID_DxcLibrary,
-                    __uuidof(IDxcLibrary),
-                    reinterpret_cast<void**>(m_DxcLibrary.GetAddressOf()));
+                if (create_instance != nullptr)
+                {
+                    HRESULT hr{};
 
-                GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to create DXC Library");
+                    hr = create_instance(
+                        CLSID_DxcLibrary,
+                        __uuidof(IDxcLibrary),
+                        reinterpret_cast<void**>(m_DxcLibrary.GetAddressOf()));
 
-                hr = create_instance(
-                    CLSID_DxcCompiler,
-                    __uuidof(IDxcCompiler),
-                    reinterpret_cast<void**>(m_DxcCompiler.GetAddressOf()));
+                    GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to create DXC Library");
 
-                GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to create DXC Compiler");
+                    hr = create_instance(
+                        CLSID_DxcCompiler,
+                        __uuidof(IDxcCompiler),
+                        reinterpret_cast<void**>(m_DxcCompiler.GetAddressOf()));
 
-                System::Impl::WidenStringPath(wpath, Storage::CombinePath(sdk_path, "dxil.dll"));
-                m_LibDxil = ::LoadLibraryW(wpath.data());
+                    GX_ABORT_UNLESS(SUCCEEDED(hr), "Failed to create DXC Compiler");
+
+                    if (System::Impl::WidenStringPath(wpath, Storage::CombinePath(sdk_path, "dxil.dll")))
+                    {
+                        m_LibDxil = ::LoadLibraryW(wpath.data());
+                    }
+                }
             }
         }
     }

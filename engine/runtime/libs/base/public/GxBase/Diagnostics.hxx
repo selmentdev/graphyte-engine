@@ -28,7 +28,7 @@ namespace Graphyte::Diagnostics
     /// @brief Determines whether debugger is attached to current process.
     ///
     /// @return \c true when debugger is attached, \c false otherwise.
-    BASE_API bool IsDebuggerAttached() noexcept;
+    [[nodiscard]] BASE_API bool IsDebuggerAttached() noexcept;
 
     /// @brief Exits from current process with provided exit code.
     ///
@@ -46,7 +46,7 @@ namespace Graphyte::Diagnostics
     };
 
     /// @brief Gets current error reporting mode.
-    BASE_API ErrorReporting GetErrorReporting() noexcept;
+    [[nodiscard]] BASE_API ErrorReporting GetErrorReporting() noexcept;
 
     /// @brief Sets current error reporting mode.
     ///
@@ -64,7 +64,7 @@ namespace Graphyte::Diagnostics
 namespace Graphyte::Diagnostics
 {
     /// @brief Determines whether source code is executing assert right now.
-    BASE_API bool IsAsserting() noexcept;
+    [[nodiscard]] BASE_API bool IsAsserting() noexcept;
 
     /// @brief Handles assertion request.
     ///
@@ -76,7 +76,7 @@ namespace Graphyte::Diagnostics
     /// @param args      Provides list of format args.
     ///
     /// @return \c true when assert should break into debugger, \c false otherwise.
-    BASE_API bool OnAssertArgs(
+    [[nodiscard]] BASE_API bool OnAssertArgs(
         bool& always_ignore,
         std::string_view condition,
         std::string_view function,
@@ -98,7 +98,7 @@ namespace Graphyte::Diagnostics
     ///
     /// @return \c true when assert should break into debugger, \c false otherwise.
     template <typename... TArgs>
-    bool OnAssert(
+    [[nodiscard]] bool OnAssert(
         bool& always_ignore,
         std::string_view condition,
         std::string_view function,
@@ -169,7 +169,7 @@ namespace Graphyte::Diagnostics
 namespace Graphyte::Diagnostics
 {
     /// @brief Determines whether source code is executing abort right now.
-    BASE_API bool IsAborting() noexcept;
+    [[nodiscard]] BASE_API bool IsAborting() noexcept;
 
     /// @brief Handles abort request.
     ///
@@ -181,7 +181,7 @@ namespace Graphyte::Diagnostics
     /// @param args      Provides list of format args.
     ///
     /// @return \c true when assert should continue, \c false otherwise.
-    BASE_API bool OnAbortArgs(
+    [[nodiscard]] BASE_API bool OnAbortArgs(
         std::string_view condition,
         std::string_view function,
         std::string_view file,
@@ -202,7 +202,7 @@ namespace Graphyte::Diagnostics
     ///
     /// @return \c true when assert should continue, \c false otherwise.
     template <typename... TArgs>
-    bool OnAbort(
+    [[nodiscard]] bool OnAbort(
         std::string_view condition,
         std::string_view function,
         std::string_view file,
@@ -290,7 +290,7 @@ namespace Graphyte::Diagnostics
     /// @brief Gets list of modules.
     ///
     /// @param modules Returns list of loaded modules.
-    BASE_API std::vector<std::string> GetModules() noexcept;
+    [[nodiscard]] BASE_API std::vector<std::string> GetModules() noexcept;
 }
 
 
@@ -328,7 +328,7 @@ namespace Graphyte::Diagnostics
     /// @param format Provides output format.
     ///
     /// @return The string representation of stack frame.
-    BASE_API std::string ToString(
+    [[nodiscard]] BASE_API std::string ToString(
         const StackFrame& frame,
         StackFrameFormat format = StackFrameFormat::Standard) noexcept;
 
@@ -338,7 +338,7 @@ namespace Graphyte::Diagnostics
     /// @param format Provides output format.
     ///
     /// @return The string representation of stack trace.
-    BASE_API std::string ToString(
+    [[nodiscard]] BASE_API std::string ToString(
         std::span<const StackFrame> frames,
         StackFrameFormat format = StackFrameFormat::Standard) noexcept;
 
@@ -407,7 +407,7 @@ namespace Graphyte::Diagnostics
     {
         BASE_API extern LogLevel GLogLevel;
 
-        constexpr bool IsCompiled(LogLevel level) noexcept
+        [[nodiscard]] constexpr bool IsCompiled(LogLevel level) noexcept
         {
             switch (level)
             {
@@ -431,7 +431,7 @@ namespace Graphyte::Diagnostics
     /// @param args     Provides format args.
     ///
     /// @return \c true when successful, \c false otherwise.
-    BASE_API bool LogDispatchArgs(
+    [[nodiscard]] BASE_API bool LogDispatchArgs(
         LogLevel level,
         std::string_view category,
         std::string_view format,
@@ -473,7 +473,7 @@ namespace Graphyte::Diagnostics
         {
         }
 
-        constexpr bool CanDispatch(LogLevel level) const noexcept
+        [[nodiscard]] constexpr bool CanDispatch(LogLevel level) const noexcept
         {
             return level <= Level;
         }
@@ -572,7 +572,7 @@ namespace Graphyte::Diagnostics
     /// @param error Provides errno value.
     ///
     /// @return The matching error message.
-    BASE_API std::string GetMessageFromErrno(
+    [[nodiscard]] BASE_API std::string GetMessageFromErrno(
         int error) noexcept;
 
     /// @brief Gets message from status code.
@@ -580,7 +580,7 @@ namespace Graphyte::Diagnostics
     /// @param error Provides status code value.
     ///
     /// @return The matching message.
-    BASE_API std::string_view GetMessageFromStatus(
+    [[nodiscard]] BASE_API std::string_view GetMessageFromStatus(
         Status status) noexcept;
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
@@ -603,7 +603,7 @@ namespace Graphyte::Diagnostics
     /// @param code Provides exception code.
     ///
     /// @return The matching message.
-    BASE_API std::string_view GeMessageFromtExceptionCode(
+    [[nodiscard]] BASE_API std::string_view GeMessageFromtExceptionCode(
         DWORD code) noexcept;
 
     /// @brief Gets messge from WinAPI Error Code.
@@ -611,30 +611,30 @@ namespace Graphyte::Diagnostics
     /// @param error Provides WinAPI Error Code.
     ///
     /// @return The matching message.
-    BASE_API std::string GetMessageFromSystemError(
+    [[nodiscard]] BASE_API std::string GetMessageFromSystemError(
         DWORD error) noexcept;
 
     /// @brief Gets message from last WinAPI error code.
     ///
     /// @return The matching message.
-    BASE_API std::string GetMessageFromSystemError() noexcept;
+    [[nodiscard]] BASE_API std::string GetMessageFromSystemError() noexcept;
 
     /// @brief Gets message from WinAPI HRESULT.
     ///
     /// @param hr Provides HRESULT value.
     ///
     /// @return The matching message.
-    BASE_API std::string_view GetMessageFromHRESULT(
+    [[nodiscard]] BASE_API std::string_view GetMessageFromHRESULT(
         HRESULT hr) noexcept;
 
 #endif
 
 #if GRAPHYTE_PLATFORM_POSIX
 
-    BASE_API std::string_view GetSignalName(
+    [[nodiscard]] BASE_API std::string_view GetSignalName(
         const siginfo_t* signal_info) noexcept;
 
-    BASE_API Status GetStatusFromSiginfo(
+    [[nodiscard]] BASE_API Status GetStatusFromSiginfo(
         const siginfo_t* signal_info) noexcept;
 
 #endif

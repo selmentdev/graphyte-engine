@@ -10,7 +10,7 @@ namespace Graphyte::Hash
         static constexpr const hash_type Prime   = 0x01000193;
         static constexpr const hash_type Initial = 0x811C9DC5;
 
-        static constexpr hash_type FromString(const char* s, hash_type initial) noexcept
+        [[nodiscard]] static constexpr hash_type FromString(const char* s, hash_type initial) noexcept
         {
             hash_type result = initial;
 
@@ -24,12 +24,13 @@ namespace Graphyte::Hash
 
             return result;
         }
-        static constexpr hash_type FromString(const char* s) noexcept
+
+        [[nodiscard]] static constexpr hash_type FromString(const char* s) noexcept
         {
             return FromString(s, Initial);
         }
 
-        static constexpr hash_type FromBuffer(const char* buffer, size_t size, hash_type initial) noexcept
+        [[nodiscard]] static constexpr hash_type FromBuffer(const char* buffer, size_t size, hash_type initial) noexcept
         {
             hash_type result = initial;
 
@@ -43,7 +44,8 @@ namespace Graphyte::Hash
 
             return result;
         }
-        static constexpr hash_type FromBuffer(const char* buffer, size_t size) noexcept
+
+        [[nodiscard]] static constexpr hash_type FromBuffer(const char* buffer, size_t size) noexcept
         {
             return FromBuffer(buffer, size, Initial);
         }
@@ -56,7 +58,7 @@ namespace Graphyte::Hash
         static constexpr const hash_type Prime   = 0x00000100000001B3;
         static constexpr const hash_type Initial = 0xCBF29CE484222325;
 
-        static constexpr hash_type FromString(const char* s, hash_type initial) noexcept
+        [[nodiscard]] static constexpr hash_type FromString(const char* s, hash_type initial) noexcept
         {
             hash_type result = initial;
 
@@ -70,12 +72,13 @@ namespace Graphyte::Hash
 
             return result;
         }
-        static constexpr hash_type FromString(const char* s) noexcept
+
+        [[nodiscard]] static constexpr hash_type FromString(const char* s) noexcept
         {
             return FromString(s, Initial);
         }
 
-        static constexpr hash_type FromBuffer(const std::byte* buffer, size_t size, hash_type initial) noexcept
+        [[nodiscard]] static constexpr hash_type FromBuffer(const std::byte* buffer, size_t size, hash_type initial) noexcept
         {
             hash_type result = initial;
 
@@ -89,7 +92,7 @@ namespace Graphyte::Hash
 
             return result;
         }
-        static constexpr hash_type FromBuffer(const std::byte* buffer, size_t size) noexcept
+        [[nodiscard]] static constexpr hash_type FromBuffer(const std::byte* buffer, size_t size) noexcept
         {
             return FromBuffer(buffer, size, Initial);
         }

@@ -101,13 +101,15 @@ namespace Graphyte::AssetsPipeline
         auto sdk_path = PlatformToolchain::GetWindowsSdkBinary();
 
         System::Impl::WindowsPath wpath{};
-        System::Impl::WidenStringPath(wpath, Storage::CombinePath(sdk_path, "d3dcompiler_47.dll"));
 
-        m_LibD3DCompiler = ::LoadLibraryW(wpath.data());
-
-        if (m_LibD3DCompiler != nullptr)
+        if (System::Impl::WidenStringPath(wpath, Storage::CombinePath(sdk_path, "d3dcompiler_47.dll")))
         {
-            m_D3DCompile = reinterpret_cast<pD3DCompile>(reinterpret_cast<void*>(::GetProcAddress(m_LibD3DCompiler, "D3DCompile")));
+            m_LibD3DCompiler = ::LoadLibraryW(wpath.data());
+
+            if (m_LibD3DCompiler != nullptr)
+            {
+                m_D3DCompile = reinterpret_cast<pD3DCompile>(reinterpret_cast<void*>(::GetProcAddress(m_LibD3DCompiler, "D3DCompile")));
+            }
         }
     }
 

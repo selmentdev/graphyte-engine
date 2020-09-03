@@ -107,8 +107,8 @@ namespace Graphyte
         std::int32_t DayOfWeek;
         std::int32_t DayOfYear;
 
-        BASE_API std::int64_t ToTicks() const noexcept;
-        BASE_API bool IsValid() const noexcept;
+        [[nodiscard]] BASE_API std::int64_t ToTicks() const noexcept;
+        [[nodiscard]] BASE_API bool IsValid() const noexcept;
     };
 
     struct TimeSpanMembers final
@@ -130,12 +130,12 @@ namespace Graphyte
     {
         std::int64_t Value;
 
-        BASE_API static DateTime Create(
+        [[nodiscard]] BASE_API static DateTime Create(
             std::int32_t year,
             std::int32_t month,
             std::int32_t day) noexcept;
 
-        BASE_API static DateTime Create(
+        [[nodiscard]] BASE_API static DateTime Create(
             std::int32_t year,
             std::int32_t month,
             std::int32_t day,
@@ -143,7 +143,7 @@ namespace Graphyte
             std::int32_t minute,
             std::int32_t second) noexcept;
 
-        BASE_API static DateTime Create(
+        [[nodiscard]] BASE_API static DateTime Create(
             std::int32_t year,
             std::int32_t month,
             std::int32_t day,
@@ -152,24 +152,24 @@ namespace Graphyte
             std::int32_t second,
             std::int32_t millisecond) noexcept;
 
-        BASE_API static DateTime Now() noexcept;
-        BASE_API static DateTime Now(DateTimeKind kind) noexcept;
+        [[nodiscard]] BASE_API static DateTime Now() noexcept;
+        [[nodiscard]] BASE_API static DateTime Now(DateTimeKind kind) noexcept;
 
-        BASE_API static DateTime Today(DateTimeKind kind) noexcept;
-        BASE_API static DateTime Today() noexcept;
+        [[nodiscard]] BASE_API static DateTime Today(DateTimeKind kind) noexcept;
+        [[nodiscard]] BASE_API static DateTime Today() noexcept;
 
-        BASE_API static DateTime FromUnixTimestamp(std::int64_t seconds) noexcept;
+        [[nodiscard]] BASE_API static DateTime FromUnixTimestamp(std::int64_t seconds) noexcept;
 
-        BASE_API static DateTime FromCalendar(CalendarTime const& value) noexcept;
+        [[nodiscard]] BASE_API static DateTime FromCalendar(CalendarTime const& value) noexcept;
 
-        BASE_API bool ToCalendar(CalendarTime& result) noexcept;
+        [[nodiscard]] BASE_API bool ToCalendar(CalendarTime& result) noexcept;
 
-        BASE_API std::int64_t ToUnixTimestamp() noexcept;
+        [[nodiscard]] BASE_API std::int64_t ToUnixTimestamp() noexcept;
 
-        BASE_API TimeSpan GetTimeOfDay() const noexcept;
-        BASE_API DateTime GetDate() const noexcept;
+        [[nodiscard]] BASE_API TimeSpan GetTimeOfDay() const noexcept;
+        [[nodiscard]] BASE_API DateTime GetDate() const noexcept;
 
-        constexpr auto operator<=>(DateTime const& rhs) const noexcept = default;
+        [[nodiscard]] constexpr auto operator<=>(DateTime const& rhs) const noexcept = default;
     };
 
     static_assert(sizeof(DateTime) == sizeof(std::int64_t));
@@ -195,30 +195,30 @@ namespace Graphyte
     {
         std::int64_t Value;
 
-        BASE_API static TimeSpan Create(
+        [[nodiscard]] BASE_API static TimeSpan Create(
             std::int32_t hours,
             std::int32_t minutes,
             std::int32_t seconds) noexcept;
 
-        BASE_API static TimeSpan Create(
+        [[nodiscard]] BASE_API static TimeSpan Create(
             std::int32_t days,
             std::int32_t hours,
             std::int32_t minutes,
             std::int32_t seconds) noexcept;
 
-        BASE_API static TimeSpan Create(
+        [[nodiscard]] BASE_API static TimeSpan Create(
             std::int32_t days,
             std::int32_t hours,
             std::int32_t minutes,
             std::int32_t seconds,
             std::int32_t milliseconds) noexcept;
 
-        constexpr static TimeSpan FromSeconds(std::int64_t seconds) noexcept
+        [[nodiscard]] constexpr static TimeSpan FromSeconds(std::int64_t seconds) noexcept
         {
             return { seconds * Impl::GTicksInSecond };
         }
 
-        constexpr std::int64_t ToSeconds() const noexcept
+        [[nodiscard]] constexpr std::int64_t ToSeconds() const noexcept
         {
             return Value / Impl::GTicksInSecond;
         }
@@ -226,40 +226,40 @@ namespace Graphyte
         BASE_API void ToMembers(
             TimeSpanMembers& result) noexcept;
 
-        BASE_API static TimeSpan FromMembers(
+        [[nodiscard]] BASE_API static TimeSpan FromMembers(
             TimeSpanMembers const& value) noexcept;
 
-        TimeSpan GetDuration() const noexcept
+        [[nodiscard]] TimeSpan GetDuration() const noexcept
         {
             return { std::abs(Value) };
         }
 
-        constexpr double GetTotalDays() const noexcept
+        [[nodiscard]] constexpr double GetTotalDays() const noexcept
         {
             return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInDay);
         }
 
-        constexpr double GetTotalHours() const noexcept
+        [[nodiscard]] constexpr double GetTotalHours() const noexcept
         {
             return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInHour);
         }
 
-        constexpr double GetTotalMinutes() const noexcept
+        [[nodiscard]] constexpr double GetTotalMinutes() const noexcept
         {
             return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInMinute);
         }
 
-        constexpr double GetTotalSeconds() const noexcept
+        [[nodiscard]] constexpr double GetTotalSeconds() const noexcept
         {
             return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInSecond);
         }
 
-        constexpr double GetTotalMilliseconds() const noexcept
+        [[nodiscard]] constexpr double GetTotalMilliseconds() const noexcept
         {
             return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInMillisecond);
         }
 
-        constexpr auto operator<=>(TimeSpan const& rhs) const noexcept = default;
+        [[nodiscard]] constexpr auto operator<=>(TimeSpan const& rhs) const noexcept = default;
     };
 
     static_assert(sizeof(TimeSpan) == sizeof(std::int64_t));
@@ -277,17 +277,17 @@ namespace Graphyte
 
 namespace Graphyte
 {
-    constexpr TimeSpan operator-(DateTime lhs, DateTime rhs) noexcept
+    [[nodiscard]] constexpr TimeSpan operator-(DateTime lhs, DateTime rhs) noexcept
     {
         return { lhs.Value - rhs.Value };
     }
 
-    constexpr DateTime operator+(DateTime lhs, TimeSpan rhs) noexcept
+    [[nodiscard]] constexpr DateTime operator+(DateTime lhs, TimeSpan rhs) noexcept
     {
         return { lhs.Value + rhs.Value };
     }
 
-    constexpr DateTime operator-(DateTime lhs, TimeSpan rhs) noexcept
+    [[nodiscard]] constexpr DateTime operator-(DateTime lhs, TimeSpan rhs) noexcept
     {
         return { lhs.Value - rhs.Value };
     }
@@ -307,17 +307,17 @@ namespace Graphyte
 
 namespace Graphyte
 {
-    constexpr TimeSpan operator-(TimeSpan value) noexcept
+    [[nodiscard]] constexpr TimeSpan operator-(TimeSpan value) noexcept
     {
         return { -value.Value };
     }
 
-    constexpr TimeSpan operator+(TimeSpan lhs, TimeSpan rhs) noexcept
+    [[nodiscard]] constexpr TimeSpan operator+(TimeSpan lhs, TimeSpan rhs) noexcept
     {
         return { lhs.Value + rhs.Value };
     }
 
-    constexpr TimeSpan operator-(TimeSpan lhs, TimeSpan rhs) noexcept
+    [[nodiscard]] constexpr TimeSpan operator-(TimeSpan lhs, TimeSpan rhs) noexcept
     {
         return { lhs.Value - rhs.Value };
     }

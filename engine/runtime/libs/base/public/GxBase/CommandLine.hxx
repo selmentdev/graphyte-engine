@@ -26,7 +26,7 @@ namespace Graphyte::CommandLine
         {
         }
 
-        bool Next() noexcept
+        [[nodiscard]] bool Next() noexcept
         {
             if (m_Index < m_Args.size())
             {
@@ -50,7 +50,7 @@ namespace Graphyte::CommandLine
 
     extern BASE_API void Finalize() noexcept;
 
-    extern BASE_API std::optional<std::string_view> Get(std::string_view name) noexcept;
+    [[nodiscard]] extern BASE_API std::optional<std::string_view> Get(std::string_view name) noexcept;
 
-    extern BASE_API CommandLine::Enumerator GetEnumerator() noexcept;
+    [[nodiscard]] extern BASE_API CommandLine::Enumerator GetEnumerator() noexcept;
 }
