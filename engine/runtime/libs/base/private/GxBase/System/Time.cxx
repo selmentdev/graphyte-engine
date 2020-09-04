@@ -2,5 +2,5 @@
 
 namespace Graphyte::System
 {
-    BASE_API double GSecondsPerCycle{ 1.0 };
+    BASE_API double g_SecondsPerCycle{ 1.0 };
 }

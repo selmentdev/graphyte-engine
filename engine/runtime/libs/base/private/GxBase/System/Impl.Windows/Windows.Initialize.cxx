@@ -58,7 +58,7 @@ namespace Graphyte::System::Impl
         // Compute time divisor.
         //
 
-        GSecondsPerCycle = 1.0 / static_cast<double>(System::GetTimestampResolution());
+        g_SecondsPerCycle = 1.0 / static_cast<double>(System::GetTimestampResolution());
     }
 
     void FinalizePlatform() noexcept

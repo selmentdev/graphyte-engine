@@ -12,7 +12,7 @@ namespace Graphyte::Graphics
             GLenum NativeFormat;
             GLenum NativeType;
             GLboolean Compressed;
-        } GPixelFormatMapping[] = {
+        } g_PixelFormatMapping[] = {
             // clang-format off
             { PixelFormat::UNKNOWN,                 GL_NONE,                            GL_NONE,            GL_NONE,                    GL_FALSE, },
             { PixelFormat::R8_UNORM,                GL_R8,                              GL_RED,             GL_UNSIGNED_BYTE,           GL_FALSE, },
@@ -101,13 +101,13 @@ namespace Graphyte::Graphics
         GLboolean& compressed) noexcept
     {
         auto result = std::find_if(
-            std::begin(Impl::GPixelFormatMapping),
-            std::end(Impl::GPixelFormatMapping),
+            std::begin(Impl::g_PixelFormatMapping),
+            std::end(Impl::g_PixelFormatMapping),
             [&](const Impl::PixelFormatMapping& mapping) -> bool {
                 return mapping.Format == pixel_format;
             });
 
-        if (result != std::end(Impl::GPixelFormatMapping))
+        if (result != std::end(Impl::g_PixelFormatMapping))
         {
             internal_format = result->InternalFormat;
             compressed      = result->Compressed;
@@ -123,13 +123,13 @@ namespace Graphyte::Graphics
         GLenum& type) noexcept
     {
         auto result = std::find_if(
-            std::begin(Impl::GPixelFormatMapping),
-            std::end(Impl::GPixelFormatMapping),
+            std::begin(Impl::g_PixelFormatMapping),
+            std::end(Impl::g_PixelFormatMapping),
             [&](const Impl::PixelFormatMapping& mapping) -> bool {
                 return mapping.Format == pixel_format;
             });
 
-        if (result != std::end(Impl::GPixelFormatMapping))
+        if (result != std::end(Impl::g_PixelFormatMapping))
         {
             format = result->NativeFormat;
             type   = result->NativeType;

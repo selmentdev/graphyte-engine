@@ -1093,7 +1093,7 @@ namespace Graphyte::App
         SystemParametersInfoW(SPI_GETSTICKYKEYS, sizeof(FILTERKEYS), &Impl::g_StartupFilterKeys, 0);
 
         // Check if application is initialized properly.
-        HINSTANCE const instance = System::Impl::GInstanceHandle;
+        HINSTANCE const instance = System::Impl::g_InstanceHandle;
         GX_ABORT_UNLESS(instance != nullptr, "Application not initialized properly");
 
         // Disable DWM ghosting, so system won't show "(not responding)" on window titlebar.

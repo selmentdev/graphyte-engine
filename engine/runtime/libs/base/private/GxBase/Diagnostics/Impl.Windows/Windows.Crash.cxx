@@ -125,7 +125,7 @@ namespace Graphyte::Diagnostics
             TASKDIALOGCONFIG const config{
                 .cbSize             = sizeof(TASKDIALOGCONFIG),
                 .hwndParent         = nullptr,
-                .hInstance          = System::Impl::GInstanceHandle,
+                .hInstance          = System::Impl::g_InstanceHandle,
                 .dwCommonButtons    = TDCBF_CLOSE_BUTTON,
                 .pszWindowTitle     = L"Graphyte Engine Crashed",
                 .pszMainIcon        = TD_ERROR_ICON,

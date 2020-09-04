@@ -3,7 +3,7 @@
 
 namespace Graphyte
 {
-    GRAPHICS_API std::unique_ptr<Graphics::GpuDevice> GRenderDevice{ nullptr };
+    GRAPHICS_API std::unique_ptr<Graphics::GpuDevice> g_RenderDevice{ nullptr };
 }
 
 

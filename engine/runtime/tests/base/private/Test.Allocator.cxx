@@ -20,9 +20,9 @@ TEST_CASE("Allocator Test")
         //REQUIRE(object->m_Value1 == uint64_t{ 1337 });
         //REQUIRE(object->m_Value2 == 21.37F);
         //REQUIRE(object->m_Value3 == "Hello World!");
-        //REQUIRE(Graphyte::Platform::Allocator::GInstance.Validate());
+        //REQUIRE(Graphyte::Platform::Allocator::g_Instance.Validate());
         //Graphyte::Platform::Delete(object);
-        //REQUIRE(Graphyte::Platform::Allocator::GInstance.Validate());
+        //REQUIRE(Graphyte::Platform::Allocator::g_Instance.Validate());
     }
 
     SECTION("Fail with OOM")

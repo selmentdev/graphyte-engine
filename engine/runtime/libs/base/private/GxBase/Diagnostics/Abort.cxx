@@ -11,14 +11,14 @@
 
 namespace Graphyte::Diagnostics::Impl
 {
-    static bool GIsAborting{ false };
+    static bool g_IsAborting{ false };
 }
 
 namespace Graphyte::Diagnostics
 {
     BASE_API bool IsAborting() noexcept
     {
-        return Impl::GIsAborting;
+        return Impl::g_IsAborting;
     }
 
     BASE_API bool OnAbortArgs(
@@ -35,14 +35,14 @@ namespace Graphyte::Diagnostics
 
         Threading::ScopedLock<Threading::CriticalSection> lock{ Impl::GetDiagnosticsLock() };
 
-        if (Impl::GIsAborting)
+        if (Impl::g_IsAborting)
         {
             GX_LOG_ERROR(LogPlatform, "Aborting is not reentrant\n");
 
             Diagnostics::FailFast();
         }
 
-        Impl::GIsAborting = true;
+        Impl::g_IsAborting = true;
 
         fmt::memory_buffer content_buffer{};
 
@@ -112,7 +112,7 @@ namespace Graphyte::Diagnostics
                 content,
                 stacktrace))
         {
-            Impl::GIsAborting = false;
+            Impl::g_IsAborting = false;
             return true;
         }
 
@@ -123,7 +123,7 @@ namespace Graphyte::Diagnostics
 
 #if GRAPHYTE_PLATFORM_WINDOWS
 
-        if (Impl::GSystemEventLog != nullptr)
+        if (Impl::g_SystemEventLog != nullptr)
         {
             content_buffer.push_back('\0');
 
@@ -132,7 +132,7 @@ namespace Graphyte::Diagnostics
             constexpr DWORD event_id = 0xc000'0001;
 
             ReportEventA(
-                Impl::GSystemEventLog,
+                Impl::g_SystemEventLog,
                 EVENTLOG_ERROR_TYPE,
                 0,
                 event_id,
@@ -151,7 +151,7 @@ namespace Graphyte::Diagnostics
 
 #endif
 
-        Impl::GIsAborting = false;
+        Impl::g_IsAborting = false;
 
         //
         // User requested exit from abort message.

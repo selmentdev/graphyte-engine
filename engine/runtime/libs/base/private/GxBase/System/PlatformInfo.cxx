@@ -21,7 +21,7 @@ namespace Graphyte::System
     BASE_API bool HasPlatformFeature(
         PlatformFeature feature) noexcept
     {
-        return Impl::GPlatformFeatureSet.Has(feature);
+        return Impl::g_PlatformFeatureSet.Has(feature);
     }
 
     BASE_API std::string_view GetFileManagerName() noexcept

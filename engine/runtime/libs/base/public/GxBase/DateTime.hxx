@@ -8,35 +8,35 @@
 
 namespace Graphyte::Impl
 {
-    static constexpr const std::int64_t GTicksInMicrosecond{ 10 };
-    static constexpr const std::int64_t GTicksInMillisecond{ GTicksInMicrosecond * std::int64_t{ 1000 } };
-    static constexpr const std::int64_t GTicksInSecond{ GTicksInMillisecond * std::int64_t{ 1000 } };
-    static constexpr const std::int64_t GTicksInMinute{ GTicksInSecond * std::int64_t{ 60 } };
-    static constexpr const std::int64_t GTicksInHour{ GTicksInMinute * std::int64_t{ 60 } };
-    static constexpr const std::int64_t GTicksInDay{ GTicksInHour * std::int64_t{ 24 } };
+    static constexpr const std::int64_t g_TicksInMicrosecond{ 10 };
+    static constexpr const std::int64_t g_TicksInMillisecond{ g_TicksInMicrosecond * std::int64_t{ 1000 } };
+    static constexpr const std::int64_t g_TicksInSecond{ g_TicksInMillisecond * std::int64_t{ 1000 } };
+    static constexpr const std::int64_t g_TicksInMinute{ g_TicksInSecond * std::int64_t{ 60 } };
+    static constexpr const std::int64_t g_TicksInHour{ g_TicksInMinute * std::int64_t{ 60 } };
+    static constexpr const std::int64_t g_TicksInDay{ g_TicksInHour * std::int64_t{ 24 } };
 
-    static constexpr const std::int64_t GMaxSeconds = std::numeric_limits<std::int64_t>::max() / GTicksInSecond;
-    static constexpr const std::int64_t GMinSeconds = std::numeric_limits<std::int64_t>::min() / GTicksInSecond;
+    static constexpr const std::int64_t g_MaxSeconds = std::numeric_limits<std::int64_t>::max() / g_TicksInSecond;
+    static constexpr const std::int64_t g_MinSeconds = std::numeric_limits<std::int64_t>::min() / g_TicksInSecond;
 
-    static constexpr const std::int32_t GDaysInYear{ 365 };
-    static constexpr const std::int32_t GDaysIn4Years{ (4 * 365) + 1 };
-    static constexpr const std::int32_t GDaysIn100Years{ (100 * 365) + 24 };
-    static constexpr const std::int32_t GDaysIn400Years{ (400 * 365) + 97 };
+    static constexpr const std::int32_t g_DaysInYear{ 365 };
+    static constexpr const std::int32_t g_DaysIn4Years{ (4 * 365) + 1 };
+    static constexpr const std::int32_t g_DaysIn100Years{ (100 * 365) + 24 };
+    static constexpr const std::int32_t g_DaysIn400Years{ (400 * 365) + 97 };
 
-    static constexpr const std::int32_t GDaysTo1601{ GDaysIn400Years * 4 };
-    static constexpr const std::int32_t GDaysTo1899{ GDaysIn400Years * 4 + GDaysIn100Years * 3 - 367 };
-    static constexpr const std::int32_t GDaysTo10000{ GDaysIn400Years * 25 - 366 };
+    static constexpr const std::int32_t g_DaysTo1601{ g_DaysIn400Years * 4 };
+    static constexpr const std::int32_t g_DaysTo1899{ g_DaysIn400Years * 4 + g_DaysIn100Years * 3 - 367 };
+    static constexpr const std::int32_t g_DaysTo10000{ g_DaysIn400Years * 25 - 366 };
 
-    static constexpr const std::int64_t GTicksMinValue{ 0 };
-    static constexpr const std::int64_t GTicksMaxValue{ GDaysTo10000 * GTicksInDay - 1 };
-    static constexpr const std::int64_t GDateAdjustOffset{ GDaysTo1601 * GTicksInDay };
-    static constexpr const std::int64_t GUnixAdjustOffset{ 621355968000000000 };
+    static constexpr const std::int64_t g_TicksMinValue{ 0 };
+    static constexpr const std::int64_t g_TicksMaxValue{ g_DaysTo10000 * g_TicksInDay - 1 };
+    static constexpr const std::int64_t g_DateAdjustOffset{ g_DaysTo1601 * g_TicksInDay };
+    static constexpr const std::int64_t g_UnixAdjustOffset{ 621355968000000000 };
 
-    static_assert(GDaysTo1601 == 584388, "Invalid number of days from 0001-01-01 to 1601-12-31");
-    static_assert(GDaysTo1899 == 693593, "Invalid number of days from 0001-01-01 to 1899-12-31");
-    static_assert(GDaysTo10000 == 3652059, "Invalid number of days from 0001-01-01 to 9999-12-31");
-    static_assert(GTicksInSecond == 10000000, "Invalid number of ticks in second");
-    static_assert(GDateAdjustOffset == 504911232000000000, "Invalid number of ticks for time adjustment");
+    static_assert(g_DaysTo1601 == 584388, "Invalid number of days from 0001-01-01 to 1601-12-31");
+    static_assert(g_DaysTo1899 == 693593, "Invalid number of days from 0001-01-01 to 1899-12-31");
+    static_assert(g_DaysTo10000 == 3652059, "Invalid number of days from 0001-01-01 to 9999-12-31");
+    static_assert(g_TicksInSecond == 10000000, "Invalid number of ticks in second");
+    static_assert(g_DateAdjustOffset == 504911232000000000, "Invalid number of ticks for time adjustment");
 }
 
 
@@ -215,12 +215,12 @@ namespace Graphyte
 
         [[nodiscard]] constexpr static TimeSpan FromSeconds(std::int64_t seconds) noexcept
         {
-            return { seconds * Impl::GTicksInSecond };
+            return { seconds * Impl::g_TicksInSecond };
         }
 
         [[nodiscard]] constexpr std::int64_t ToSeconds() const noexcept
         {
-            return Value / Impl::GTicksInSecond;
+            return Value / Impl::g_TicksInSecond;
         }
 
         BASE_API void ToMembers(
@@ -236,27 +236,27 @@ namespace Graphyte
 
         [[nodiscard]] constexpr double GetTotalDays() const noexcept
         {
-            return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInDay);
+            return static_cast<double>(Value) / static_cast<double>(Impl::g_TicksInDay);
         }
 
         [[nodiscard]] constexpr double GetTotalHours() const noexcept
         {
-            return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInHour);
+            return static_cast<double>(Value) / static_cast<double>(Impl::g_TicksInHour);
         }
 
         [[nodiscard]] constexpr double GetTotalMinutes() const noexcept
         {
-            return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInMinute);
+            return static_cast<double>(Value) / static_cast<double>(Impl::g_TicksInMinute);
         }
 
         [[nodiscard]] constexpr double GetTotalSeconds() const noexcept
         {
-            return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInSecond);
+            return static_cast<double>(Value) / static_cast<double>(Impl::g_TicksInSecond);
         }
 
         [[nodiscard]] constexpr double GetTotalMilliseconds() const noexcept
         {
-            return static_cast<double>(Value) / static_cast<double>(Impl::GTicksInMillisecond);
+            return static_cast<double>(Value) / static_cast<double>(Impl::g_TicksInMillisecond);
         }
 
         [[nodiscard]] constexpr auto operator<=>(TimeSpan const& rhs) const noexcept = default;

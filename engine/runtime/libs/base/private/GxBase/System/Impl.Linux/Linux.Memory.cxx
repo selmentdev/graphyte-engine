@@ -72,7 +72,7 @@ namespace Graphyte::System
 
     BASE_API MemoryProperties GetMemoryProperties() noexcept
     {
-        return Impl::GMemoryProperties;
+        return Impl::g_MemoryProperties;
     }
 }
 

@@ -3,7 +3,7 @@
 
 namespace Graphyte::Impl
 {
-    static constexpr uint32_t const GCrc32Table[256] = {
+    static constexpr uint32_t const g_Crc32Table[256] = {
         // clang-format off
         0x00000000u, 0x04C11DB7u, 0x09823B6Eu, 0x0D4326D9u, 0x130476DCu, 0x17C56B6Bu, 0x1A864DB2u, 0x1E475005u,
         0x2608EDB8u, 0x22C9F00Fu, 0x2F8AD6D6u, 0x2B4BCB61u, 0x350C9B64u, 0x31CD86D3u, 0x3C8EA00Au, 0x384FBDBDu,
@@ -58,7 +58,8 @@ namespace Graphyte
         while (it < end)
         {
             std::size_t const index = (static_cast<std::size_t>(initial >> 24) ^ *it++) & 0xFFu;
-            initial                 = Impl::GCrc32Table[index] ^ (initial << 8);
+
+            initial                 = Impl::g_Crc32Table[index] ^ (initial << 8);
         }
 
         if (finalize)
@@ -72,7 +73,7 @@ namespace Graphyte
 
 namespace Graphyte::Impl
 {
-    static constexpr uint64_t const GCrc64Table[256] = {
+    static constexpr uint64_t const g_Crc64Table[256] = {
         // clang-format off
         0x0000000000000000u, 0x42F0E1EBA9EA3693u, 0x85E1C3D753D46D26u, 0xC711223CFA3E5BB5u,
         0x493366450E42ECDFu, 0x0BC387AEA7A8DA4Cu, 0xCCD2A5925D9681F9u, 0x8E224479F47CB76Au,
@@ -155,7 +156,8 @@ namespace Graphyte
         while (it < end)
         {
             std::size_t const index = (static_cast<std::size_t>(initial >> 56) ^ *it++) & 0xFFu;
-            initial                 = Impl::GCrc64Table[index] ^ (initial << 8);
+
+            initial                 = Impl::g_Crc64Table[index] ^ (initial << 8);
         }
 
         if (finalize)

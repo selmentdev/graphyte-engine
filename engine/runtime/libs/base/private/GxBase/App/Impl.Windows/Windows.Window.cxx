@@ -89,7 +89,7 @@ namespace Graphyte::App
             CW_USEDEFAULT,
             nullptr,
             nullptr,
-            System::Impl::GInstanceHandle,
+            System::Impl::g_InstanceHandle,
             reinterpret_cast<LPVOID>(self));
 
         GX_ASSERT(self->Hwnd != nullptr);

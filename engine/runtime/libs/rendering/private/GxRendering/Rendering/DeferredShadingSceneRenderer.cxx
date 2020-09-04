@@ -33,7 +33,7 @@ namespace Graphyte::Rendering
             args.DebugName                    = "DepthStencil";
             args.Flags                        = Graphics::GpuTextureFlags::DepthStencil;
 
-            m_Depth = GRenderDevice->CreateTexture2D(args);
+            m_Depth = g_RenderDevice->CreateTexture2D(args);
         }
         {
             Graphics::GpuTextureCreateArgs args{};
@@ -44,18 +44,18 @@ namespace Graphyte::Rendering
             args.MipCount                     = 1;
             args.DebugName                    = "Color";
             args.Flags                        = Graphics::GpuTextureFlags::RenderTarget;
-            m_Color                           = GRenderDevice->CreateTexture2D(args);
+            m_Color                           = g_RenderDevice->CreateTexture2D(args);
         }
 
         // Create render target.
-        m_RenderTarget = GRenderDevice->BeginCreateRenderTarget(width, height, 1);
-        GRenderDevice->SetRenderTargetSurface(m_RenderTarget, 0, m_Color, 0);
-        GRenderDevice->SetRenderTargetSurface(m_RenderTarget, -1, m_Depth, 0);
-        GRenderDevice->EndCreateRenderTarget(m_RenderTarget);
+        m_RenderTarget = g_RenderDevice->BeginCreateRenderTarget(width, height, 1);
+        g_RenderDevice->SetRenderTargetSurface(m_RenderTarget, 0, m_Color, 0);
+        g_RenderDevice->SetRenderTargetSurface(m_RenderTarget, -1, m_Depth, 0);
+        g_RenderDevice->EndCreateRenderTarget(m_RenderTarget);
 
         // Create buffers.
-        m_CameraParams = GRenderDevice->CreateUniformBuffer(sizeof(CameraParamsBuffer), Graphics::GpuBufferUsage::Dynamic, nullptr);
-        m_ObjectParams = GRenderDevice->CreateUniformBuffer(sizeof(ObjectParamsBuffer), Graphics::GpuBufferUsage::Dynamic, nullptr);
+        m_CameraParams = g_RenderDevice->CreateUniformBuffer(sizeof(CameraParamsBuffer), Graphics::GpuBufferUsage::Dynamic, nullptr);
+        m_ObjectParams = g_RenderDevice->CreateUniformBuffer(sizeof(ObjectParamsBuffer), Graphics::GpuBufferUsage::Dynamic, nullptr);
 
         {
             //Maths::Matrix rot = Maths::Matrix::RotationX(-Maths::PI_OVER_2<float>);
@@ -64,9 +64,9 @@ namespace Graphyte::Rendering
             //Maths::Matrix::Store(&data.World, rot);
             //Maths::Matrix::Store(&data.InverseWorld, rot);
 
-            void* buffer = GRenderDevice->LockUniformBuffer(m_ObjectParams, 0, sizeof(ObjectParamsBuffer), Graphics::GpuResourceLockMode::WriteOnly);
+            void* buffer = g_RenderDevice->LockUniformBuffer(m_ObjectParams, 0, sizeof(ObjectParamsBuffer), Graphics::GpuResourceLockMode::WriteOnly);
             memcpy(buffer, &data, sizeof(data));
-            GRenderDevice->UnlockUniformBuffer(m_ObjectParams);
+            g_RenderDevice->UnlockUniformBuffer(m_ObjectParams);
         }
         ///////////////////////////////////////
         {
@@ -79,7 +79,7 @@ namespace Graphyte::Rendering
             desc.MinLod    = 0.0F;
             desc.MaxLod    = 10.0F;
 
-            m_Sampler = GRenderDevice->CreateSampler(desc);
+            m_Sampler = g_RenderDevice->CreateSampler(desc);
         }
         {
             std::unique_ptr<Graphyte::Graphics::Image> image{};
@@ -123,7 +123,7 @@ namespace Graphyte::Rendering
             args.DataFormat = image->GetPixelFormat();
             args.ViewFormat = image->GetPixelFormat();
             args.Data       = pixels.data();
-            m_Texture       = GRenderDevice->CreateTexture2D(args);
+            m_Texture       = g_RenderDevice->CreateTexture2D(args);
         }
 
         {
@@ -132,7 +132,7 @@ namespace Graphyte::Rendering
             layout.SetUniformBuffer(0, m_CameraParams, Graphics::GpuShaderVisibility::Pixel | Graphics::GpuShaderVisibility::Vertex);
             layout.SetTexture(0, m_Texture, Graphics::GpuShaderVisibility::Pixel);
             layout.SetSampler(0, m_Sampler, Graphics::GpuShaderVisibility::Pixel);
-            m_ResourceSet = GRenderDevice->CreateResourceSet(layout);
+            m_ResourceSet = g_RenderDevice->CreateResourceSet(layout);
 
             Graphics::GpuGraphicsPipelineStateCreateArgs state{};
             state.InputLayout = Graphics::GpuInputLayout::Complex;
@@ -170,8 +170,8 @@ namespace Graphyte::Rendering
             }
             GX_ASSERT(status == Status::Success);
 
-            m_ShaderPS = GRenderDevice->CreateShader(Graphics::GpuShaderStage::Pixel, { ps_data.get(), ps_size }, Graphics::GpuInputLayout::Complex);
-            m_ShaderVS = GRenderDevice->CreateShader(Graphics::GpuShaderStage::Vertex, { vs_data.get(), vs_size }, Graphics::GpuInputLayout::Complex);
+            m_ShaderPS = g_RenderDevice->CreateShader(Graphics::GpuShaderStage::Pixel, { ps_data.get(), ps_size }, Graphics::GpuInputLayout::Complex);
+            m_ShaderVS = g_RenderDevice->CreateShader(Graphics::GpuShaderStage::Vertex, { vs_data.get(), vs_size }, Graphics::GpuInputLayout::Complex);
 
             state.VertexShader = m_ShaderVS;
             state.PixelShader  = m_ShaderPS;
@@ -225,7 +225,7 @@ namespace Graphyte::Rendering
             state.DepthStencilState.BackFace.DepthFail    = Graphics::GpuStencilOperation::Keep;
             state.DepthStencilState.BackFace.Compare      = Graphics::GpuCompareOperation::Always;
             state.DepthStencilState.DepthBoundsTestEnable = false;
-            m_PipelineState                               = GRenderDevice->CreateGraphicsPipelineState(state, layout);
+            m_PipelineState                               = g_RenderDevice->CreateGraphicsPipelineState(state, layout);
         }
 
         std::string destination = Graphyte::Storage::FileManager::GetProjectContentDirectory();
@@ -276,9 +276,9 @@ namespace Graphyte::Rendering
         //Maths::Matrix::Store(&params.ViewProjection, vp);
 
         {
-            void* buffer = GRenderDevice->LockUniformBuffer(m_CameraParams, 0, sizeof(params), Graphics::GpuResourceLockMode::WriteOnly);
+            void* buffer = g_RenderDevice->LockUniformBuffer(m_CameraParams, 0, sizeof(params), Graphics::GpuResourceLockMode::WriteOnly);
             memcpy(buffer, &params, sizeof(params));
-            GRenderDevice->UnlockUniformBuffer(m_CameraParams);
+            g_RenderDevice->UnlockUniformBuffer(m_CameraParams);
         }
     }
 
@@ -292,20 +292,20 @@ namespace Graphyte::Rendering
 
         Meshes.clear();
 
-        GRenderDevice->DestroyShader(m_ShaderPS);
-        GRenderDevice->DestroyShader(m_ShaderVS);
+        g_RenderDevice->DestroyShader(m_ShaderPS);
+        g_RenderDevice->DestroyShader(m_ShaderVS);
 
-        GRenderDevice->DestroySampler(m_Sampler);
-        GRenderDevice->DestroyGraphicsPipelineState(m_PipelineState);
-        GRenderDevice->DestroyResourceSet(m_ResourceSet);
-        GRenderDevice->DestroyTexture2D(m_Texture);
+        g_RenderDevice->DestroySampler(m_Sampler);
+        g_RenderDevice->DestroyGraphicsPipelineState(m_PipelineState);
+        g_RenderDevice->DestroyResourceSet(m_ResourceSet);
+        g_RenderDevice->DestroyTexture2D(m_Texture);
 
-        GRenderDevice->DestroyUniformBuffer(m_ObjectParams);
-        GRenderDevice->DestroyUniformBuffer(m_CameraParams);
+        g_RenderDevice->DestroyUniformBuffer(m_ObjectParams);
+        g_RenderDevice->DestroyUniformBuffer(m_CameraParams);
 
-        GRenderDevice->DestroyRenderTarget(m_RenderTarget);
-        GRenderDevice->DestroyTexture2D(m_Color);
-        GRenderDevice->DestroyTexture2D(m_Depth);
+        g_RenderDevice->DestroyRenderTarget(m_RenderTarget);
+        g_RenderDevice->DestroyTexture2D(m_Color);
+        g_RenderDevice->DestroyTexture2D(m_Depth);
     }
 
     void DeferredShadingSceneRenderer::Render(Graphics::GpuCommandList& commandList) noexcept
@@ -319,9 +319,9 @@ namespace Graphyte::Rendering
             ObjectParamsBuffer params;
             params.World = sm.second;
             //Maths::Matrix::Store(&params.InverseWorld, Maths::Matrix::Inverse(nullptr, Maths::Matrix::Load(&params.World)));
-            void* buffer = GRenderDevice->LockUniformBuffer(m_ObjectParams, 0, sizeof(params), Graphics::GpuResourceLockMode::WriteOnly);
+            void* buffer = g_RenderDevice->LockUniformBuffer(m_ObjectParams, 0, sizeof(params), Graphics::GpuResourceLockMode::WriteOnly);
             memcpy(buffer, &params, sizeof(params));
-            GRenderDevice->UnlockUniformBuffer(m_ObjectParams);
+            g_RenderDevice->UnlockUniformBuffer(m_ObjectParams);
 
             sm.first->Render(commandList);
         }

@@ -21,12 +21,12 @@ namespace Graphyte::Rendering
     {
         if (m_VertexBuffer != nullptr)
         {
-            GRenderDevice->DestroyVertexBuffer(m_VertexBuffer);
+            g_RenderDevice->DestroyVertexBuffer(m_VertexBuffer);
         }
 
         if (m_IndexBuffer != nullptr)
         {
-            GRenderDevice->DestroyIndexBuffer(m_IndexBuffer);
+            g_RenderDevice->DestroyIndexBuffer(m_IndexBuffer);
         }
     }
 
@@ -76,7 +76,7 @@ namespace Graphyte::Rendering
         subresource.SlicePitch = 0;
 
         m_VertexCount  = static_cast<uint32_t>(vertices.size());
-        m_VertexBuffer = GRenderDevice->CreateVertexBuffer(subresource.Pitch, Graphics::GpuBufferUsage::Static, &subresource);
+        m_VertexBuffer = g_RenderDevice->CreateVertexBuffer(subresource.Pitch, Graphics::GpuBufferUsage::Static, &subresource);
     }
 
     void StaticMesh::Render(Graphics::GpuCommandList& commandList) noexcept

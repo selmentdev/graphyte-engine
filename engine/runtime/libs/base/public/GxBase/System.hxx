@@ -969,13 +969,13 @@ namespace Graphyte::System
 
 namespace Graphyte::System
 {
-    static constexpr const uint64_t GSecondsToMicroseconds = 1000000;
+    static constexpr const uint64_t g_SecondsToMicroseconds = 1000000;
 
-    static constexpr const uint64_t GSecondsToNanoseconds = 1000000000;
+    static constexpr const uint64_t g_SecondsToNanoseconds = 1000000000;
 
-    static constexpr const uint64_t GSystemClockTimeFrequency = UINT64_C(10000000);
+    static constexpr const uint64_t g_SystemClockTimeFrequency = UINT64_C(10000000);
 
-    extern BASE_API double GSecondsPerCycle;
+    extern BASE_API double g_SecondsPerCycle;
 
     /// @brief Gets UTC system time as calendar time.
     ///

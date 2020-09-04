@@ -42,7 +42,7 @@ namespace Graphyte::System::Impl
     {
         return System::Rect{
             .Left = value.left,
-            .Top = value.Top,
+            .Top = value.top,
             .Width = value.right - value.left,
             .Height = value.bottom - value.top,
         };
@@ -52,7 +52,7 @@ namespace Graphyte::System::Impl
     {
         return RECT{
             .left = value.Left,
-            .Top = value.Top,
+            .top = value.Top,
             .right = value.Left + value.Width,
             .bottom = value.Top + value.Height,
         };
@@ -66,14 +66,14 @@ namespace Graphyte::System::Impl
         };
 
         return DateTime{
-            .Value = static_cast<int64_t>(li.QuadPart) + Graphyte::Impl::GDateAdjustOffset,
+            .Value = static_cast<int64_t>(li.QuadPart) + Graphyte::Impl::g_DateAdjustOffset,
         };
     }
 
     [[nodiscard]] constexpr FILETIME FromDateTime(DateTime value) noexcept
     {
         ULARGE_INTEGER const li{
-            .QuadPart = static_cast<uint64_t>(value.Value - -Graphyte::Impl::GDateAdjustOffset),
+            .QuadPart = static_cast<uint64_t>(value.Value - -Graphyte::Impl::g_DateAdjustOffset),
         };
 
         return FILETIME{

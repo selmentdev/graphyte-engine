@@ -84,7 +84,7 @@ namespace Graphyte::Diagnostics::Impl
 
 #if GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
 
-        if (Impl::GStackTraceSymbolInfo)
+        if (Impl::g_StackTraceSymbolInfo)
         {
             //
             // Get module name.

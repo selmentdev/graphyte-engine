@@ -3,7 +3,7 @@
 
 namespace Graphyte::System::Impl
 {
-    BASE_API HINSTANCE GInstanceHandle{};
+    BASE_API HINSTANCE g_InstanceHandle{};
 
     BASE_API bool IsSystemVersion(
         [[maybe_unused]] uint32_t major,

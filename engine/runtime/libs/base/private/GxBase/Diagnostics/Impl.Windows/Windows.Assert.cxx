@@ -46,7 +46,7 @@ namespace Graphyte::Diagnostics::Impl
         TASKDIALOGCONFIG config{
             .cbSize                  = sizeof(TASKDIALOGCONFIG),
             .hwndParent              = nullptr,
-            .hInstance               = System::Impl::GInstanceHandle,
+            .hInstance               = System::Impl::g_InstanceHandle,
             .dwFlags                 = TDF_ALLOW_DIALOG_CANCELLATION,
             .dwCommonButtons         = 0,
             .pszWindowTitle          = wtitle.c_str(),

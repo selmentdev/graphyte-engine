@@ -21,8 +21,8 @@ namespace Graphyte::Launch
 
     int Main(int argc, char** argv) noexcept
     {
-        //System::Impl::GInstanceHandle = GetModuleHandleW(nullptr);
-        Graphyte::Application::Impl::GApplicationDescriptor = GraphyteApp;
+        //System::Impl::g_InstanceHandle = GetModuleHandleW(nullptr);
+        Graphyte::Application::Impl::g_ApplicationDescriptor = GraphyteApp;
 
         int result = 0;
 

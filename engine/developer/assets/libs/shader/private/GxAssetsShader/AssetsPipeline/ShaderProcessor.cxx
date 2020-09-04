@@ -26,7 +26,7 @@ namespace Graphyte::AssetsPipeline
         TValue Value;
     };
 
-    EnumNameValue<System::PlatformType> GPlatformTypeNames[] = {
+    constexpr EnumNameValue<System::PlatformType> g_PlatformTypeNames[] = {
         { "windows", System::PlatformType::Windows },
         { "android", System::PlatformType::Android },
         { "linux", System::PlatformType::Linux },
@@ -34,11 +34,11 @@ namespace Graphyte::AssetsPipeline
 
     std::string_view ToString(System::PlatformType value) noexcept
     {
-        auto it = std::find_if(std::begin(GPlatformTypeNames), std::end(GPlatformTypeNames), [&](auto v) {
+        auto it = std::find_if(std::begin(g_PlatformTypeNames), std::end(g_PlatformTypeNames), [&](auto v) {
             return v.Value == value;
         });
 
-        if (it != std::end(GPlatformTypeNames))
+        if (it != std::end(g_PlatformTypeNames))
         {
             return it->Name;
         }
@@ -48,11 +48,11 @@ namespace Graphyte::AssetsPipeline
 
     bool FromString(System::PlatformType& result, std::string_view value) noexcept
     {
-        auto it = std::find_if(std::begin(GPlatformTypeNames), std::end(GPlatformTypeNames), [&](auto v) {
+        auto it = std::find_if(std::begin(g_PlatformTypeNames), std::end(g_PlatformTypeNames), [&](auto v) {
             return v.Name == value;
         });
 
-        if (it != std::end(GPlatformTypeNames))
+        if (it != std::end(g_PlatformTypeNames))
         {
             result = it->Value;
             return true;
@@ -61,7 +61,7 @@ namespace Graphyte::AssetsPipeline
         return false;
     }
 
-    EnumNameValue<Graphics::GpuRenderAPI> GRenderAPINames[] = {
+    constexpr EnumNameValue<Graphics::GpuRenderAPI> g_RenderAPINames[] = {
         { "d3d11", Graphics::GpuRenderAPI::D3D11 },
         { "d3d12", Graphics::GpuRenderAPI::D3D12 },
         { "vulkan", Graphics::GpuRenderAPI::Vulkan },
@@ -70,11 +70,11 @@ namespace Graphyte::AssetsPipeline
 
     std::string_view ToString(Graphics::GpuRenderAPI value) noexcept
     {
-        auto it = std::find_if(std::begin(GRenderAPINames), std::end(GRenderAPINames), [&](auto v) {
+        auto it = std::find_if(std::begin(g_RenderAPINames), std::end(g_RenderAPINames), [&](auto v) {
             return v.Value == value;
         });
 
-        if (it != std::end(GRenderAPINames))
+        if (it != std::end(g_RenderAPINames))
         {
             return it->Name;
         }
@@ -84,11 +84,11 @@ namespace Graphyte::AssetsPipeline
 
     bool FromString(Graphics::GpuRenderAPI& result, std::string_view value) noexcept
     {
-        auto it = std::find_if(std::begin(GRenderAPINames), std::end(GRenderAPINames), [&](auto v) {
+        auto it = std::find_if(std::begin(g_RenderAPINames), std::end(g_RenderAPINames), [&](auto v) {
             return v.Name == value;
         });
 
-        if (it != std::end(GRenderAPINames))
+        if (it != std::end(g_RenderAPINames))
         {
             result = it->Value;
             return true;
@@ -97,7 +97,7 @@ namespace Graphyte::AssetsPipeline
         return false;
     }
 
-    EnumNameValue<Graphics::GpuShaderProfile> GGpuShaderProfileNames[] = {
+    constexpr EnumNameValue<Graphics::GpuShaderProfile> g_GpuShaderProfileNames[] = {
         { "d3dsm_5_0", Graphics::GpuShaderProfile::D3DSM_5_0 },
         { "d3dsm_5_1", Graphics::GpuShaderProfile::D3DSM_5_1 },
         { "d3dsm_6_0", Graphics::GpuShaderProfile::D3DSM_6_0 },
@@ -117,11 +117,11 @@ namespace Graphyte::AssetsPipeline
 
     std::string_view ToString(Graphics::GpuShaderProfile value) noexcept
     {
-        auto it = std::find_if(std::begin(GGpuShaderProfileNames), std::end(GGpuShaderProfileNames), [&](auto v) {
+        auto it = std::find_if(std::begin(g_GpuShaderProfileNames), std::end(g_GpuShaderProfileNames), [&](auto v) {
             return v.Value == value;
         });
 
-        if (it != std::end(GGpuShaderProfileNames))
+        if (it != std::end(g_GpuShaderProfileNames))
         {
             return it->Name;
         }
@@ -131,11 +131,11 @@ namespace Graphyte::AssetsPipeline
 
     bool FromString(Graphics::GpuShaderProfile& result, std::string_view value) noexcept
     {
-        auto it = std::find_if(std::begin(GGpuShaderProfileNames), std::end(GGpuShaderProfileNames), [&](auto v) {
+        auto it = std::find_if(std::begin(g_GpuShaderProfileNames), std::end(g_GpuShaderProfileNames), [&](auto v) {
             return v.Name == value;
         });
 
-        if (it != std::end(GGpuShaderProfileNames))
+        if (it != std::end(g_GpuShaderProfileNames))
         {
             result = it->Value;
             return true;
@@ -144,7 +144,7 @@ namespace Graphyte::AssetsPipeline
         return false;
     }
 
-    EnumNameValue<Graphics::GpuShaderStage> GGpuShaderStageNames[] = {
+    constexpr EnumNameValue<Graphics::GpuShaderStage> g_GpuShaderStageNames[] = {
         { "ps", Graphics::GpuShaderStage::Pixel },
         { "vs", Graphics::GpuShaderStage::Vertex },
         { "gs", Graphics::GpuShaderStage::Geometry },
@@ -155,11 +155,11 @@ namespace Graphyte::AssetsPipeline
 
     std::string_view ToString(Graphics::GpuShaderStage value) noexcept
     {
-        auto it = std::find_if(std::begin(GGpuShaderStageNames), std::end(GGpuShaderStageNames), [&](auto v) {
+        auto it = std::find_if(std::begin(g_GpuShaderStageNames), std::end(g_GpuShaderStageNames), [&](auto v) {
             return v.Value == value;
         });
 
-        if (it != std::end(GGpuShaderStageNames))
+        if (it != std::end(g_GpuShaderStageNames))
         {
             return it->Name;
         }
@@ -169,11 +169,11 @@ namespace Graphyte::AssetsPipeline
 
     bool FromString(Graphics::GpuShaderStage& result, std::string_view value) noexcept
     {
-        auto it = std::find_if(std::begin(GGpuShaderStageNames), std::end(GGpuShaderStageNames), [&](auto v) {
+        auto it = std::find_if(std::begin(g_GpuShaderStageNames), std::end(g_GpuShaderStageNames), [&](auto v) {
             return v.Name == value;
         });
 
-        if (it != std::end(GGpuShaderStageNames))
+        if (it != std::end(g_GpuShaderStageNames))
         {
             result = it->Value;
             return true;

@@ -10,9 +10,9 @@
 namespace Graphyte::Diagnostics::Impl
 {
 #if !defined(NDEBUG)
-    BASE_API LogLevel GLogLevel{ LogLevel::Trace };
+    BASE_API LogLevel g_LogLevel{ LogLevel::Trace };
 #else
-    BASE_API LogLevel GLogLevel{ LogLevel::Warn };
+    BASE_API LogLevel g_LogLevel{ LogLevel::Warn };
 #endif
 
     static Threading::CriticalSection& GetGlobalLogLock() noexcept
@@ -56,7 +56,7 @@ namespace Graphyte::Diagnostics
                 bool const is_error    = (level == LogLevel::Error || level == LogLevel::Fatal);
                 bool const is_terminal = App::GetDescriptor().Type == App::ApplicationType::ConsoleTool;
 
-                if (Impl::GLogOutputTerminal && is_error && is_terminal)
+                if (Impl::g_LogOutputTerminal && is_error && is_terminal)
                 {
                     std::fwrite(buffer.data(), buffer.size(), 1, stderr);
                 }
@@ -67,13 +67,13 @@ namespace Graphyte::Diagnostics
             // Forward to file.
             //
 
-            if (Impl::GLogOutputFile != nullptr)
+            if (Impl::g_LogOutputFile != nullptr)
             {
                 Threading::ScopedLock<Threading::CriticalSection> lock{ Impl::GetGlobalLogLock() };
 
                 size_t processed{};
 
-                auto const status = Impl::GLogOutputFile->Write(
+                auto const status = Impl::g_LogOutputFile->Write(
                     { reinterpret_cast<const std::byte*>(buffer.data()), buffer.size() },
                     processed);
 
@@ -85,7 +85,7 @@ namespace Graphyte::Diagnostics
             // Forward log message to debugger first.
             //
 
-            if (Impl::GLogOutputDebugger)
+            if (Impl::g_LogOutputDebugger)
             {
                 // Guarantee nul character at end.
                 buffer.push_back(0);

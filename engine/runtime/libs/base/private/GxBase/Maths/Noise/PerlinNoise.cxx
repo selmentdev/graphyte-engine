@@ -64,8 +64,8 @@ namespace Graphyte::Maths
 
         auto s = Detail::Fade(fx0);
 
-        auto n0 = Detail::Gradient(CommonNoise::GPermutations[ix0], fx0);
-        auto n1 = Detail::Gradient(CommonNoise::GPermutations[ix1], fx1);
+        auto n0 = Detail::Gradient(CommonNoise::g_Permutations[ix0], fx0);
+        auto n1 = Detail::Gradient(CommonNoise::g_Permutations[ix1], fx1);
 
         return 0.188F * Interpolation::Lerp(n0, n1, s);
     }
@@ -87,13 +87,13 @@ namespace Graphyte::Maths
         auto t = Detail::Fade(fy0);
         auto s = Detail::Fade(fx0);
 
-        auto nx0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0]], fx0, fy0);
-        auto nx1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1]], fx0, fy1);
+        auto nx0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0]], fx0, fy0);
+        auto nx1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1]], fx0, fy1);
 
         auto n0 = Interpolation::Lerp(nx0, nx1, t);
 
-        nx0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0]], fx1, fy0);
-        nx1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1]], fx1, fy1);
+        nx0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0]], fx1, fy0);
+        nx1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1]], fx1, fy1);
 
         auto n1 = Interpolation::Lerp(nx0, nx1, t);
 
@@ -126,25 +126,25 @@ namespace Graphyte::Maths
         auto t = Detail::Fade(fy0);
         auto s = Detail::Fade(fx0);
 
-        auto nxy0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0]]], fx0, fy0, fz0);
-        auto nxy1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1]]], fx0, fy0, fz1);
+        auto nxy0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0]]], fx0, fy0, fz0);
+        auto nxy1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1]]], fx0, fy0, fz1);
 
         auto nx0 = Interpolation::Lerp(nxy0, nxy1, r);
 
-        nxy0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0]]], fx0, fy1, fz0);
-        nxy1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1]]], fx0, fy1, fz1);
+        nxy0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0]]], fx0, fy1, fz0);
+        nxy1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1]]], fx0, fy1, fz1);
 
         auto nx1 = Interpolation::Lerp(nxy0, nxy1, r);
 
         auto n0 = Interpolation::Lerp(nx0, nx1, t);
 
-        nxy0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0]]], fx1, fy0, fz0);
-        nxy1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1]]], fx1, fy0, fz1);
+        nxy0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0]]], fx1, fy0, fz0);
+        nxy1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1]]], fx1, fy0, fz1);
 
         nx0 = Interpolation::Lerp(nxy0, nxy1, r);
 
-        nxy0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0]]], fx1, fy1, fz0);
-        nxy1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1]]], fx1, fy1, fz1);
+        nxy0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0]]], fx1, fy1, fz0);
+        nxy1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1]]], fx1, fy1, fz1);
 
         nx1 = Interpolation::Lerp(nxy0, nxy1, r);
 
@@ -197,25 +197,25 @@ namespace Graphyte::Maths
         float n0;
         float n1;
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw0]]]], fx0, fy0, fz0, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw1]]]], fx0, fy0, fz0, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw0]]]], fx0, fy0, fz0, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw1]]]], fx0, fy0, fz0, fw1);
 
         nxy0 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw0]]]], fx0, fy0, fz1, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw1]]]], fx0, fy0, fz1, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw0]]]], fx0, fy0, fz1, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw1]]]], fx0, fy0, fz1, fw1);
 
         nxy1 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
         nx0 = Interpolation::Lerp(nxy0, nxy1, r);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw0]]]], fx0, fy1, fz0, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw1]]]], fx0, fy1, fz0, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw0]]]], fx0, fy1, fz0, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw1]]]], fx0, fy1, fz0, fw1);
 
         nxy0 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw0]]]], fx0, fy1, fz1, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw1]]]], fx0, fy1, fz1, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw0]]]], fx0, fy1, fz1, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw1]]]], fx0, fy1, fz1, fw1);
 
         nxy1 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
@@ -223,25 +223,25 @@ namespace Graphyte::Maths
 
         n0 = Interpolation::Lerp(nx0, nx1, t);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw0]]]], fx1, fy0, fz0, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw1]]]], fx1, fy0, fz0, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw0]]]], fx1, fy0, fz0, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw1]]]], fx1, fy0, fz0, fw1);
 
         nxy0 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw0]]]], fx1, fy0, fz1, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw1]]]], fx1, fy0, fz1, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw0]]]], fx1, fy0, fz1, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw1]]]], fx1, fy0, fz1, fw1);
 
         nxy1 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
         nx0 = Interpolation::Lerp(nxy0, nxy1, r);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw0]]]], fx1, fy1, fz0, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw1]]]], fx1, fy1, fz0, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw0]]]], fx1, fy1, fz0, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw1]]]], fx1, fy1, fz0, fw1);
 
         nxy0 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw0]]]], fx1, fy1, fz1, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw1]]]], fx1, fy1, fz1, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw0]]]], fx1, fy1, fz1, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw1]]]], fx1, fy1, fz1, fw1);
 
         nxy1 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
@@ -262,8 +262,8 @@ namespace Graphyte::Maths
 
         auto s = Detail::Fade(fx0);
 
-        auto n0 = Detail::Gradient(CommonNoise::GPermutations[ix0], fx0);
-        auto n1 = Detail::Gradient(CommonNoise::GPermutations[ix1], fx1);
+        auto n0 = Detail::Gradient(CommonNoise::g_Permutations[ix0], fx0);
+        auto n1 = Detail::Gradient(CommonNoise::g_Permutations[ix1], fx1);
 
         return 0.188F * Interpolation::Lerp(n0, n1, s);
     }
@@ -284,13 +284,13 @@ namespace Graphyte::Maths
         auto t = Detail::Fade(fy0);
         auto s = Detail::Fade(fx0);
 
-        auto nx0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0]], fx0, fy0);
-        auto nx1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1]], fx0, fy1);
+        auto nx0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0]], fx0, fy0);
+        auto nx1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1]], fx0, fy1);
 
         auto n0 = Interpolation::Lerp(nx0, nx1, t);
 
-        nx0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0]], fx1, fy0);
-        nx1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1]], fx1, fy1);
+        nx0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0]], fx1, fy0);
+        nx1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1]], fx1, fy1);
 
         auto n1 = Interpolation::Lerp(nx0, nx1, t);
 
@@ -323,25 +323,25 @@ namespace Graphyte::Maths
         auto t = Detail::Fade(fy0);
         auto s = Detail::Fade(fx0);
 
-        auto nxy0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0]]], fx0, fy0, fz0);
-        auto nxy1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1]]], fx0, fy0, fz1);
+        auto nxy0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0]]], fx0, fy0, fz0);
+        auto nxy1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1]]], fx0, fy0, fz1);
 
         auto nx0 = Interpolation::Lerp(nxy0, nxy1, r);
 
-        nxy0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0]]], fx0, fy1, fz0);
-        nxy1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1]]], fx0, fy1, fz1);
+        nxy0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0]]], fx0, fy1, fz0);
+        nxy1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1]]], fx0, fy1, fz1);
 
         auto nx1 = Interpolation::Lerp(nxy0, nxy1, r);
 
         auto n0 = Interpolation::Lerp(nx0, nx1, t);
 
-        nxy0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0]]], fx1, fy0, fz0);
-        nxy1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1]]], fx1, fy0, fz1);
+        nxy0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0]]], fx1, fy0, fz0);
+        nxy1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1]]], fx1, fy0, fz1);
 
         nx0 = Interpolation::Lerp(nxy0, nxy1, r);
 
-        nxy0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0]]], fx1, fy1, fz0);
-        nxy1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1]]], fx1, fy1, fz1);
+        nxy0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0]]], fx1, fy1, fz0);
+        nxy1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1]]], fx1, fy1, fz1);
 
         nx1 = Interpolation::Lerp(nxy0, nxy1, r);
 
@@ -394,25 +394,25 @@ namespace Graphyte::Maths
         float n0;
         float n1;
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw0]]]], fx0, fy0, fz0, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw1]]]], fx0, fy0, fz0, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw0]]]], fx0, fy0, fz0, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw1]]]], fx0, fy0, fz0, fw1);
 
         nxy0 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw0]]]], fx0, fy0, fz1, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw1]]]], fx0, fy0, fz1, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw0]]]], fx0, fy0, fz1, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw1]]]], fx0, fy0, fz1, fw1);
 
         nxy1 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
         nx0 = Interpolation::Lerp(nxy0, nxy1, r);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw0]]]], fx0, fy1, fz0, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw1]]]], fx0, fy1, fz0, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw0]]]], fx0, fy1, fz0, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw1]]]], fx0, fy1, fz0, fw1);
 
         nxy0 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw0]]]], fx0, fy1, fz1, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix0 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw1]]]], fx0, fy1, fz1, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw0]]]], fx0, fy1, fz1, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix0 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw1]]]], fx0, fy1, fz1, fw1);
 
         nxy1 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
@@ -420,25 +420,25 @@ namespace Graphyte::Maths
 
         n0 = Interpolation::Lerp(nx0, nx1, t);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw0]]]], fx1, fy0, fz0, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw1]]]], fx1, fy0, fz0, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw0]]]], fx1, fy0, fz0, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw1]]]], fx1, fy0, fz0, fw1);
 
         nxy0 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw0]]]], fx1, fy0, fz1, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy0 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw1]]]], fx1, fy0, fz1, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw0]]]], fx1, fy0, fz1, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy0 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw1]]]], fx1, fy0, fz1, fw1);
 
         nxy1 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
         nx0 = Interpolation::Lerp(nxy0, nxy1, r);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw0]]]], fx1, fy1, fz0, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz0 + CommonNoise::GPermutations[iw1]]]], fx1, fy1, fz0, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw0]]]], fx1, fy1, fz0, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz0 + CommonNoise::g_Permutations[iw1]]]], fx1, fy1, fz0, fw1);
 
         nxy0 = Interpolation::Lerp(nxyz0, nxyz1, q);
 
-        nxyz0 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw0]]]], fx1, fy1, fz1, fw0);
-        nxyz1 = Detail::Gradient(CommonNoise::GPermutations[ix1 + CommonNoise::GPermutations[iy1 + CommonNoise::GPermutations[iz1 + CommonNoise::GPermutations[iw1]]]], fx1, fy1, fz1, fw1);
+        nxyz0 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw0]]]], fx1, fy1, fz1, fw0);
+        nxyz1 = Detail::Gradient(CommonNoise::g_Permutations[ix1 + CommonNoise::g_Permutations[iy1 + CommonNoise::g_Permutations[iz1 + CommonNoise::g_Permutations[iw1]]]], fx1, fy1, fz1, fw1);
 
         nxy1 = Interpolation::Lerp(nxyz0, nxyz1, q);
 

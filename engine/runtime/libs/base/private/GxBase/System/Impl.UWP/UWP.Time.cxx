@@ -58,6 +58,6 @@ namespace Graphyte::System
         LARGE_INTEGER li{};
         QueryPerformanceCounter(&li);
 
-        return li.QuadPart * GSecondsPerCycle;
+        return li.QuadPart * g_SecondsPerCycle;
     }
 }

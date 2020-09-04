@@ -405,7 +405,7 @@ namespace Graphyte::Diagnostics
 
     namespace Impl
     {
-        BASE_API extern LogLevel GLogLevel;
+        BASE_API extern LogLevel g_LogLevel;
 
         [[nodiscard]] constexpr bool IsCompiled(LogLevel level) noexcept
         {

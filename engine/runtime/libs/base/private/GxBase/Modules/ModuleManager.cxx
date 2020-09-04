@@ -9,22 +9,22 @@ namespace Graphyte
     GX_DECLARE_LOG_CATEGORY(LogModuleManager, Trace, Trace);
     GX_DEFINE_LOG_CATEGORY(LogModuleManager);
 
-    ModuleManager* ModuleManager::GInstance{};
+    ModuleManager* ModuleManager::g_Instance{};
 
     void ModuleManager::Initialize() noexcept
     {
         GX_ASSERT_SINGLE_CALL();
-        GX_ASSERTF(ModuleManager::GInstance == nullptr, "Module manager is already initialized");
+        GX_ASSERTF(ModuleManager::g_Instance == nullptr, "Module manager is already initialized");
 
-        ModuleManager::GInstance = new ModuleManager();
+        ModuleManager::g_Instance = new ModuleManager();
     }
 
     void ModuleManager::Finalize() noexcept
     {
         GX_ASSERT_SINGLE_CALL();
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
 
-        for (auto& [key, descriptor] : ModuleManager::GInstance->m_Modules)
+        for (auto& [key, descriptor] : ModuleManager::g_Instance->m_Modules)
         {
             GX_LOG_INFO(LogPlatform,
                 "Unloading module: {} ({})\n",
@@ -50,23 +50,23 @@ namespace Graphyte
             GX_ASSERT(status == Status::Success);
         }
 
-        delete ModuleManager::GInstance;
-        ModuleManager::GInstance = nullptr;
+        delete ModuleManager::g_Instance;
+        ModuleManager::g_Instance = nullptr;
     }
 
     IModule* ModuleManager::Load(
         std::string_view name,
         Status* status) noexcept
     {
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
 
-        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::GInstance->m_CS };
+        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::g_Instance->m_CS };
 
         Status currentStatus = Status::NotFound;
         IModule* result{};
 
-        auto it = ModuleManager::GInstance->m_Modules.find(name);
-        if (it != ModuleManager::GInstance->m_Modules.end())
+        auto it = ModuleManager::g_Instance->m_Modules.find(name);
+        if (it != ModuleManager::g_Instance->m_Modules.end())
         {
             //
             // Get already loaded module back with proper status code.
@@ -123,7 +123,7 @@ namespace Graphyte
                             .LoadOrder     = 0,
                         };
 
-                        ModuleManager::GInstance->m_Modules.insert({ descriptor.Name,
+                        ModuleManager::g_Instance->m_Modules.insert({ descriptor.Name,
                             std::move(descriptor) });
 
 
@@ -173,7 +173,7 @@ namespace Graphyte
     IModule& ModuleManager::LoadChecked(
         std::string_view name) noexcept
     {
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
 
         //
         // Load module.
@@ -190,14 +190,14 @@ namespace Graphyte
     Status ModuleManager::Unload(
         std::string_view name) noexcept
     {
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
 
-        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::GInstance->m_CS };
+        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::g_Instance->m_CS };
 
         Status status = Status::NotFound;
 
-        auto it = ModuleManager::GInstance->m_Modules.find(name);
-        if (it != ModuleManager::GInstance->m_Modules.end())
+        auto it = ModuleManager::g_Instance->m_Modules.find(name);
+        if (it != ModuleManager::g_Instance->m_Modules.end())
         {
             //
             // Module is loaded.
@@ -235,7 +235,7 @@ namespace Graphyte
             // Remove entry for that module.
             //
 
-            ModuleManager::GInstance->m_Modules.erase(it);
+            ModuleManager::g_Instance->m_Modules.erase(it);
 
             GX_LOG_INFO(LogPlatform,
                 "Unloading module: {} ({})\n",
@@ -249,12 +249,12 @@ namespace Graphyte
     bool ModuleManager::IsLoaded(
         std::string_view name) noexcept
     {
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
 
-        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::GInstance->m_CS };
+        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::g_Instance->m_CS };
 
-        auto it = ModuleManager::GInstance->m_Modules.find(name);
-        if (it != ModuleManager::GInstance->m_Modules.end())
+        auto it = ModuleManager::g_Instance->m_Modules.find(name);
+        if (it != ModuleManager::g_Instance->m_Modules.end())
         {
             //
             // Check whether module is loaded.
@@ -270,12 +270,12 @@ namespace Graphyte
         ModuleStatus& result,
         std::string_view name) noexcept
     {
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
 
-        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::GInstance->m_CS };
+        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::g_Instance->m_CS };
 
-        auto it = ModuleManager::GInstance->m_Modules.find(name);
-        if (it != ModuleManager::GInstance->m_Modules.end())
+        auto it = ModuleManager::g_Instance->m_Modules.find(name);
+        if (it != ModuleManager::g_Instance->m_Modules.end())
         {
             //
             // Get module status info.
@@ -292,11 +292,11 @@ namespace Graphyte
     bool ModuleManager::Query(
         std::vector<ModuleStatus>& modules) noexcept
     {
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
 
-        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::GInstance->m_CS };
+        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::g_Instance->m_CS };
 
-        for (const auto& [key, value] : ModuleManager::GInstance->m_Modules)
+        for (const auto& [key, value] : ModuleManager::g_Instance->m_Modules)
         {
             auto& status = modules.emplace_back();
 
@@ -312,11 +312,11 @@ namespace Graphyte
         std::vector<ModuleStatus>& modules,
         std::string_view pattern) noexcept
     {
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
 
-        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::GInstance->m_CS };
+        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::g_Instance->m_CS };
 
-        for (const auto& [key, value] : ModuleManager::GInstance->m_Modules)
+        for (const auto& [key, value] : ModuleManager::g_Instance->m_Modules)
         {
             if (Graphyte::MatchWildcard(key, pattern))
             {
@@ -334,14 +334,14 @@ namespace Graphyte
     IModule* ModuleManager::Get(
         std::string_view name) noexcept
     {
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
 
-        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::GInstance->m_CS };
+        Threading::ScopedLock<Threading::CriticalSection> lock{ ModuleManager::g_Instance->m_CS };
 
         IModule* result{};
 
-        auto it = ModuleManager::GInstance->m_Modules.find(name);
-        if (it != ModuleManager::GInstance->m_Modules.end())
+        auto it = ModuleManager::g_Instance->m_Modules.find(name);
+        if (it != ModuleManager::g_Instance->m_Modules.end())
         {
             result = it->second.Instance.get();
         }
@@ -352,7 +352,7 @@ namespace Graphyte
     IModule& ModuleManager::GetChecked(
         std::string_view name) noexcept
     {
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
 
         auto* instance = ModuleManager::Get(name);
 
@@ -363,8 +363,8 @@ namespace Graphyte
 
     size_t ModuleManager::GetModulesCount() noexcept
     {
-        GX_ASSERTF(ModuleManager::GInstance != nullptr, "Module manager is not initialized");
-        return ModuleManager::GInstance->m_Modules.size();
+        GX_ASSERTF(ModuleManager::g_Instance != nullptr, "Module manager is not initialized");
+        return ModuleManager::g_Instance->m_Modules.size();
     }
 
     Status ModuleManager::RegisterStaticModule(

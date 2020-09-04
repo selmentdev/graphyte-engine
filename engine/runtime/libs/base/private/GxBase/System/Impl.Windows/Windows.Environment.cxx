@@ -235,7 +235,7 @@ namespace Graphyte::System
         System::Impl::WindowsPath wpath{};
 
         DWORD dwLength = GetModuleFileNameW(
-            System::Impl::GInstanceHandle,
+            System::Impl::g_InstanceHandle,
             std::data(wpath),
             static_cast<DWORD>(std::size(wpath)));
 

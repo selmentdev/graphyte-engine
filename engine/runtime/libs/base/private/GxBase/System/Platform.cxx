@@ -17,18 +17,18 @@
 
 namespace Graphyte::System::Impl
 {
-    ProcessorFeatureSet GProcessorFeatureSet{};
-    PlatformFeatureSet GPlatformFeatureSet{};
+    ProcessorFeatureSet g_ProcessorFeatureSet{};
+    PlatformFeatureSet g_PlatformFeatureSet{};
 
-    std::string GProcessorVendor{};
-    std::string GProcessorBrand{};
+    std::string g_ProcessorVendor{};
+    std::string g_ProcessorBrand{};
 
-    MemoryProperties GMemoryProperties{};
+    MemoryProperties g_MemoryProperties{};
 
-    size_t GIoWorkerThreads{ 1 };
-    size_t GWorkerThreads{ 1 };
-    size_t GPhysicalCores{ 1 };
-    size_t GLogicalCores{ 1 };
+    size_t g_IoWorkerThreads{ 1 };
+    size_t g_WorkerThreads{ 1 };
+    size_t g_PhysicalCores{ 1 };
+    size_t g_LogicalCores{ 1 };
 }
 
 GX_DEFINE_LOG_CATEGORY(LogPlatform);
@@ -44,7 +44,7 @@ namespace Graphyte::System
         Impl::InitializePlatform();
 
 #if GX_BUILD_TYPE_RETAIL
-        Impl::GIsBuildMachine = Graphyte::CommandLine::Get("--build-machine").has_value();
+        Impl::g_IsBuildMachine = Graphyte::CommandLine::Get("--build-machine").has_value();
 #endif
     }
 

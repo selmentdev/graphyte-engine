@@ -13,7 +13,7 @@
 
 namespace Graphyte::Network::Impl::Windows
 {
-    Microsoft::WRL::ComPtr<INetworkListManager> GNetworkListManager{};
+    Microsoft::WRL::ComPtr<INetworkListManager> g_NetworkListManager{};
 }
 
 #endif
@@ -55,14 +55,14 @@ namespace Graphyte::Network
             nullptr,
             CLSCTX_ALL,
             IID_INetworkListManager,
-            reinterpret_cast<LPVOID*>(Impl::Windows::GNetworkListManager.GetAddressOf()));
+            reinterpret_cast<LPVOID*>(Impl::Windows::g_NetworkListManager.GetAddressOf()));
 
         GX_ABORT_UNLESS(SUCCEEDED(hr),
             "Failed to initialize network subsystem: ({:08x}, {})",
             hr,
             Diagnostics::GetMessageFromHRESULT(hr));
 
-        GX_ASSERT(Impl::Windows::GNetworkListManager != nullptr);
+        GX_ASSERT(Impl::Windows::g_NetworkListManager != nullptr);
 
 #elif GRAPHYTE_PLATFORM_UWP
 #elif GRAPHYTE_PLATFORM_LINUX
@@ -87,7 +87,7 @@ namespace Graphyte::Network
 #endif
 
 #if GRAPHYTE_PLATFORM_WINDOWS
-        Impl::Windows::GNetworkListManager = nullptr;
+        Impl::Windows::g_NetworkListManager = nullptr;
 #endif
     }
 
@@ -95,11 +95,11 @@ namespace Graphyte::Network
         bool& status) noexcept
     {
 #if GRAPHYTE_PLATFORM_WINDOWS
-        GX_ASSERT(Impl::Windows::GNetworkListManager != nullptr);
+        GX_ASSERT(Impl::Windows::g_NetworkListManager != nullptr);
 
         VARIANT_BOOL result{};
 
-        HRESULT hr = Impl::Windows::GNetworkListManager->get_IsConnectedToInternet(&result);
+        HRESULT hr = Impl::Windows::g_NetworkListManager->get_IsConnectedToInternet(&result);
 
         if (SUCCEEDED(hr))
         {

@@ -10,11 +10,11 @@ namespace Graphyte::Graphics
 {
     GRAPHICS_API void Initialize() noexcept
     {
-        GRenderDevice = Impl::CreateRenderDevice();
+        g_RenderDevice = Impl::CreateRenderDevice();
     }
 
     GRAPHICS_API void Finalize() noexcept
     {
-        GRenderDevice = nullptr;
+        g_RenderDevice = nullptr;
     }
 }

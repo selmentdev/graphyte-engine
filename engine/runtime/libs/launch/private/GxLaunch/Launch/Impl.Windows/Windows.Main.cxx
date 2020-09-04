@@ -17,7 +17,7 @@ extern Graphyte::App::ApplicationDescriptor GraphyteApp;
 
 namespace Graphyte::Launch::Impl::Windows
 {
-    HANDLE GSingleInstanceMutex{};
+    HANDLE g_SingleInstanceMutex{};
 
     //
     // WARN:    Do not move this to RAII idiom. Functions using `__try` and `__except` keywords must
@@ -35,12 +35,12 @@ namespace Graphyte::Launch::Impl::Windows
         // Try to create mutex for current application.
         //
 
-        GSingleInstanceMutex = CreateMutexW(
+        g_SingleInstanceMutex = CreateMutexW(
             nullptr,
             TRUE,
             System::Impl::WidenString(name).c_str());
 
-        if (GSingleInstanceMutex != nullptr)
+        if (g_SingleInstanceMutex != nullptr)
         {
             DWORD dwError = GetLastError();
 
@@ -57,9 +57,9 @@ namespace Graphyte::Launch::Impl::Windows
                 // We don't need this mutex anymore.
                 //
 
-                ReleaseMutex(GSingleInstanceMutex);
+                ReleaseMutex(g_SingleInstanceMutex);
 
-                GSingleInstanceMutex = nullptr;
+                g_SingleInstanceMutex = nullptr;
             }
             else if (dwError == ERROR_ACCESS_DENIED)
             {
@@ -72,9 +72,9 @@ namespace Graphyte::Launch::Impl::Windows
 
     void ReleaseSingleInstance() noexcept
     {
-        if (GSingleInstanceMutex != nullptr)
+        if (g_SingleInstanceMutex != nullptr)
         {
-            ReleaseMutex(GSingleInstanceMutex);
+            ReleaseMutex(g_SingleInstanceMutex);
         }
     }
 }
@@ -91,7 +91,7 @@ namespace Graphyte::Launch
 
     int Main(int argc, char** argv) noexcept
     {
-        System::Impl::GInstanceHandle = GetModuleHandleW(nullptr);
+        System::Impl::g_InstanceHandle = GetModuleHandleW(nullptr);
 
         Graphyte::App::Impl::g_ApplicationDescriptor = GraphyteApp;
 

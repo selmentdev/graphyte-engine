@@ -6,14 +6,14 @@
 
 namespace Graphyte::Diagnostics::Impl
 {
-    static bool GIsAsserting{ false };
+    static bool g_IsAsserting{ false };
 }
 
 namespace Graphyte::Diagnostics
 {
     BASE_API bool IsAsserting() noexcept
     {
-        return Impl::GIsAsserting;
+        return Impl::g_IsAsserting;
     }
 
     BASE_API bool OnAssertArgs(
@@ -41,14 +41,14 @@ namespace Graphyte::Diagnostics
 
         Threading::ScopedLock<Threading::CriticalSection> lock{ Impl::GetDiagnosticsLock() };
 
-        if (Impl::GIsAsserting)
+        if (Impl::g_IsAsserting)
         {
             GX_LOG_ERROR(LogPlatform, "Assertion is not reentrant\n");
 
             Diagnostics::FailFast();
         }
 
-        Impl::GIsAsserting = true;
+        Impl::g_IsAsserting = true;
 
         //
         // Format location.
@@ -136,7 +136,7 @@ namespace Graphyte::Diagnostics
         }
 
 
-        Impl::GIsAsserting = false;
+        Impl::g_IsAsserting = false;
 
         if (result == Impl::AssertResult::Abort)
         {

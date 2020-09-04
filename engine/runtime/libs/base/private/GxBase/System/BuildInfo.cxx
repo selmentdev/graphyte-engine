@@ -3,7 +3,7 @@
 
 namespace Graphyte::System::Impl
 {
-    bool GIsBuildMachine = false;
+    bool g_IsBuildMachine = false;
 }
 
 namespace Graphyte::System
@@ -23,7 +23,7 @@ namespace Graphyte::System
 #if GX_BUILD_TYPE_RETAIL
         return false;
 #else
-        return Impl::GIsBuildMachine;
+        return Impl::g_IsBuildMachine;
 #endif
     }
 

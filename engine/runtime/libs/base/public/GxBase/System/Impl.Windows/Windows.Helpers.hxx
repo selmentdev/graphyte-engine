@@ -9,7 +9,7 @@ namespace Graphyte::System::Impl
 {
     constexpr const ULONG_PTR IDI_MAIN_ICON = 2137;
 
-    extern BASE_API HINSTANCE GInstanceHandle;
+    extern BASE_API HINSTANCE g_InstanceHandle;
 
     [[nodiscard]] extern BASE_API bool IsSystemVersion(
         uint32_t major,

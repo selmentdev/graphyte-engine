@@ -67,15 +67,15 @@ namespace Graphyte::System
         __forceinline static DateTime ConvertDateTime(struct timespec value) noexcept
         {
             const auto ticks
-                = (value.tv_sec * Impl::GTicksInSecond)
+                = (value.tv_sec * Impl::g_TicksInSecond)
                   + (value.tv_nsec / 100);
-            return DateTime{ Impl::GUnixAdjustOffset + ticks };
+            return DateTime{ Impl::g_UnixAdjustOffset + ticks };
         }
         __forceinline static struct timespec ConvertDateTime(DateTime value) noexcept
         {
             const auto ticks = value.Value;
-            const auto sec   = ticks / Impl::GTicksInSecond;
-            const auto nsec  = (ticks % Impl::GTicksInSecond) / Impl::GTicksInMicrosecond;
+            const auto sec   = ticks / Impl::g_TicksInSecond;
+            const auto nsec  = (ticks % Impl::g_TicksInSecond) / Impl::g_TicksInMicrosecond;
 
             return timespec{
                 .tv_sec  = sec,

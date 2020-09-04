@@ -51,19 +51,19 @@ namespace Graphyte::System::Impl
 
 namespace Graphyte::System::Impl
 {
-    extern std::string GProcessorVendor;
-    extern std::string GProcessorBrand;
+    extern std::string g_ProcessorVendor;
+    extern std::string g_ProcessorBrand;
 
-    extern ProcessorFeatureSet GProcessorFeatureSet;
-    extern PlatformFeatureSet GPlatformFeatureSet;
+    extern ProcessorFeatureSet g_ProcessorFeatureSet;
+    extern PlatformFeatureSet g_PlatformFeatureSet;
 
-    extern MemoryProperties GMemoryProperties;
-    extern bool GIsBuildMachine;
+    extern MemoryProperties g_MemoryProperties;
+    extern bool g_IsBuildMachine;
 
-    extern size_t GIoWorkerThreads;
-    extern size_t GWorkerThreads;
-    extern size_t GPhysicalCores;
-    extern size_t GLogicalCores;
+    extern size_t g_IoWorkerThreads;
+    extern size_t g_WorkerThreads;
+    extern size_t g_PhysicalCores;
+    extern size_t g_LogicalCores;
 
     extern void DetectPlatformFeatures() noexcept;
     extern void InitializePlatform() noexcept;

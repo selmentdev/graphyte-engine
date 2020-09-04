@@ -4,12 +4,12 @@
 
 namespace Graphyte::Impl
 {
-    static constexpr const std::int32_t GDaysToMonth365[13] = {
+    static constexpr const std::int32_t g_DaysToMonth365[13] = {
         // clang-format off
         0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365,
         // clang-format on
     };
-    static constexpr const std::int32_t GDaysToMonth366[13] = {
+    static constexpr const std::int32_t g_DaysToMonth366[13] = {
         // clang-format off
         0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366,
         // clang-format on
@@ -24,7 +24,7 @@ namespace Graphyte::Impl
     {
         bool const leap_year = IsLeapYear(year);
 
-        auto const& days_to_month = leap_year ? GDaysToMonth366 : GDaysToMonth365;
+        auto const& days_to_month = leap_year ? g_DaysToMonth366 : g_DaysToMonth365;
 
         return days_to_month[month] - days_to_month[month - 1];
     }
@@ -40,7 +40,7 @@ namespace Graphyte::Impl
             status = Status::InvalidArgument;
         }
 
-        auto const& days = IsLeapYear(year) ? GDaysToMonth366 : GDaysToMonth365;
+        auto const& days = IsLeapYear(year) ? g_DaysToMonth366 : g_DaysToMonth365;
         if (day > days[month] - days[month - 1])
         {
             status = Status::InvalidArgument;
@@ -51,7 +51,7 @@ namespace Graphyte::Impl
         std::int32_t const y = year - 1;
         std::int32_t const n = y * 365 + y / 4 - y / 100 + y / 400 + days[month - 1] + day - 1;
 
-        return n * GTicksInDay;
+        return n * g_TicksInDay;
     }
 
 
@@ -65,11 +65,11 @@ namespace Graphyte::Impl
                                    + static_cast<std::int64_t>(minute) * 60
                                    + static_cast<std::int64_t>(second);
 
-        status = (total > GMaxSeconds || total < GMinSeconds)
+        status = (total > g_MaxSeconds || total < g_MinSeconds)
                      ? Status::Failure
                      : Status::Success;
 
-        return total * GTicksInSecond;
+        return total * g_TicksInSecond;
     }
 
     static constexpr void GetDatePart(
@@ -80,25 +80,25 @@ namespace Graphyte::Impl
         std::int32_t& year_day,
         std::int32_t& week_day) noexcept
     {
-        int32_t n = static_cast<int32_t>(ticks / GTicksInDay);
+        int32_t n = static_cast<int32_t>(ticks / g_TicksInDay);
 
         week_day = (n + 1) % 7;
 
-        int32_t y400 = n / GDaysIn400Years;
-        n -= y400 * GDaysIn400Years;
-        int32_t y100 = n / GDaysIn100Years;
+        int32_t y400 = n / g_DaysIn400Years;
+        n -= y400 * g_DaysIn400Years;
+        int32_t y100 = n / g_DaysIn100Years;
 
         if (y100 == 4)
         {
             y100 = 3;
         }
 
-        n -= y100 * GDaysIn100Years;
+        n -= y100 * g_DaysIn100Years;
 
-        int32_t y4 = n / GDaysIn4Years;
-        n -= y4 * GDaysIn4Years;
+        int32_t y4 = n / g_DaysIn4Years;
+        n -= y4 * g_DaysIn4Years;
 
-        int32_t y1 = n / GDaysInYear;
+        int32_t y1 = n / g_DaysInYear;
 
         if (y1 == 4)
         {
@@ -107,13 +107,13 @@ namespace Graphyte::Impl
 
         year = y400 * 400 + y100 * 100 + y4 * 4 + y1 + 1;
 
-        n -= y1 * GDaysInYear;
+        n -= y1 * g_DaysInYear;
 
         year_day = n + 1;
 
         bool is_leap = (y1 == 3 && (y4 != 24 || y100 == 3));
 
-        auto const& days = is_leap ? GDaysToMonth366 : GDaysToMonth365;
+        auto const& days = is_leap ? g_DaysToMonth366 : g_DaysToMonth365;
 
         int32_t m = (n >> 5) + 1;
 
@@ -133,7 +133,7 @@ namespace Graphyte::Impl
         std::int32_t& second,
         std::int32_t& millisecond) noexcept
     {
-        std::int64_t n = ticks / Impl::GTicksInMillisecond;
+        std::int64_t n = ticks / Impl::g_TicksInMillisecond;
 
         millisecond = static_cast<std::int32_t>(n % 1000);
         n           = n / 1000;
@@ -160,7 +160,7 @@ namespace Graphyte
         std::int64_t const ticksTime = Impl::TimeToTicks(this->Hour, this->Minute, this->Second, status);
         GX_ASSERT(status == Status::Success);
 
-        std::int64_t const ticksMillisecond = this->Millisecond * Impl::GTicksInMillisecond;
+        std::int64_t const ticksMillisecond = this->Millisecond * Impl::g_TicksInMillisecond;
 
         return ticksDate + ticksTime + ticksMillisecond;
     }
@@ -231,21 +231,21 @@ namespace Graphyte
         std::int64_t const time_ticks = Impl::TimeToTicks(hour, minute, second, status);
         GX_ASSERT(status == Status::Success);
 
-        std::int64_t const part_ticks = static_cast<std::int64_t>(millisecond) * Impl::GTicksInMillisecond;
+        std::int64_t const part_ticks = static_cast<std::int64_t>(millisecond) * Impl::g_TicksInMillisecond;
 
         return { date_ticks + time_ticks + part_ticks };
     }
 
     BASE_API DateTime DateTime::Now() noexcept
     {
-        std::int64_t ticks = Impl::GDateAdjustOffset;
+        std::int64_t ticks = Impl::g_DateAdjustOffset;
         ticks += System::GetLocalTime();
         return DateTime{ ticks };
     }
 
     BASE_API DateTime DateTime::Now(DateTimeKind kind) noexcept
     {
-        std::int64_t ticks = Impl::GDateAdjustOffset;
+        std::int64_t ticks = Impl::g_DateAdjustOffset;
 
         if (kind == DateTimeKind::Local)
         {
@@ -276,20 +276,20 @@ namespace Graphyte
 
     BASE_API std::int64_t DateTime::ToUnixTimestamp() noexcept
     {
-        return (this->Value - DateTime::Create(1970, 1, 1).Value) / Impl::GTicksInSecond;
+        return (this->Value - DateTime::Create(1970, 1, 1).Value) / Impl::g_TicksInSecond;
     }
 
     BASE_API TimeSpan DateTime::GetTimeOfDay() const noexcept
     {
         return TimeSpan{
-            this->Value % Impl::GTicksInDay
+            this->Value % Impl::g_TicksInDay
         };
     }
 
     BASE_API DateTime DateTime::GetDate() const noexcept
     {
         return DateTime{
-            this->Value - (this->Value % Impl::GTicksInDay)
+            this->Value - (this->Value % Impl::g_TicksInDay)
         };
     }
 
@@ -658,7 +658,7 @@ namespace Graphyte
             result = DateTime::FromCalendar(time);
 
             std::int32_t timezone_offset = timezone_sign * (timezone_hours * 60 + timezone_minutes);
-            result.Value -= Impl::GTicksInMinute * timezone_offset;
+            result.Value -= Impl::g_TicksInMinute * timezone_offset;
         }
 
         return valid;
@@ -681,11 +681,11 @@ namespace Graphyte::Impl
         std::int64_t const as_milliseconds    = as_seconds * std::int64_t{ 1000 };
         std::int64_t const total_milliseconds = as_milliseconds + static_cast<std::int64_t>(milliseconds);
 
-        std::int64_t const ticks = total_milliseconds * Impl::GTicksInMillisecond;
+        std::int64_t const ticks = total_milliseconds * Impl::g_TicksInMillisecond;
 
         bool overflow = false;
 
-        std::int64_t const ticks_per_day = Impl::GTicksInDay * days;
+        std::int64_t const ticks_per_day = Impl::g_TicksInDay * days;
         std::int64_t const biased_ticks  = ticks + ticks_per_day;
 
         if (days > 0)
@@ -758,26 +758,26 @@ namespace Graphyte
 
     BASE_API void TimeSpan::ToMembers(TimeSpanMembers& result) noexcept
     {
-        result.Days         = static_cast<std::int32_t>(this->Value / Impl::GTicksInDay);
-        result.Hours        = static_cast<std::int32_t>((this->Value % Impl::GTicksInDay) / Impl::GTicksInHour);
-        result.Minutes      = static_cast<std::int32_t>((this->Value % Impl::GTicksInHour) / Impl::GTicksInMinute);
-        result.Seconds      = static_cast<std::int32_t>((this->Value % Impl::GTicksInMinute) / Impl::GTicksInSecond);
-        result.Milliseconds = static_cast<std::int32_t>((this->Value % Impl::GTicksInSecond) / Impl::GTicksInMillisecond);
+        result.Days         = static_cast<std::int32_t>(this->Value / Impl::g_TicksInDay);
+        result.Hours        = static_cast<std::int32_t>((this->Value % Impl::g_TicksInDay) / Impl::g_TicksInHour);
+        result.Minutes      = static_cast<std::int32_t>((this->Value % Impl::g_TicksInHour) / Impl::g_TicksInMinute);
+        result.Seconds      = static_cast<std::int32_t>((this->Value % Impl::g_TicksInMinute) / Impl::g_TicksInSecond);
+        result.Milliseconds = static_cast<std::int32_t>((this->Value % Impl::g_TicksInSecond) / Impl::g_TicksInMillisecond);
     }
 
     BASE_API TimeSpan TimeSpan::FromMembers(const TimeSpanMembers& value) noexcept
     {
-        std::int64_t ticks = value.Days * Impl::GTicksInDay;
-        ticks += value.Hours * Impl::GTicksInHour;
-        ticks += value.Minutes * Impl::GTicksInMinute;
-        ticks += value.Seconds * Impl::GTicksInSecond;
-        ticks += value.Milliseconds * Impl::GTicksInMillisecond;
+        std::int64_t ticks = value.Days * Impl::g_TicksInDay;
+        ticks += value.Hours * Impl::g_TicksInHour;
+        ticks += value.Minutes * Impl::g_TicksInMinute;
+        ticks += value.Seconds * Impl::g_TicksInSecond;
+        ticks += value.Milliseconds * Impl::g_TicksInMillisecond;
         return { ticks };
     }
 
     BASE_API bool ToString(std::string& result, TimeSpan value) noexcept
     {
-        const char* format = (value.Value < Impl::GTicksInDay)
+        const char* format = (value.Value < Impl::g_TicksInDay)
                                  ? "%n%h:%m:%s.%f"
                                  : "%n%d.%h:%m:%s.%f";
 

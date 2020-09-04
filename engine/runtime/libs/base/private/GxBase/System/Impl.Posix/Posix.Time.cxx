@@ -55,7 +55,7 @@ namespace Graphyte::System
 
     BASE_API uint64_t GetTimestampResolution() noexcept
     {
-        return GSecondsToNanoseconds;
+        return g_SecondsToNanoseconds;
     }
 
     BASE_API uint64_t GetTimestamp() noexcept

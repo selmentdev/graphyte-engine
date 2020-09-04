@@ -10,35 +10,35 @@ namespace Graphyte::System::Impl
         // Specify common platform properties.
         //
 
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::AudioStreaming, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::AudioThread, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::CallstackAssertDump, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::DeadlockWatchdog, false);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::DistanceFieldShadows, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::Exit, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::FastVRAMMemory, false);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::FramerateSmoothing, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::FullCrashDump, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::HighQualityLightmaps, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::LowQualityLightmaps, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::LocalCaching, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::Messaging, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::Minimize, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::MultipleInstances, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::Multithreading, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::RenderThread, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::ResolutionChanging, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::SystemAudioVolumeHandling, false);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::Tesselation, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::TextureStreaming, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::TouchInput, false);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::WindowedMode, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::VariableHardware, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::SeparateDebugOutput, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::VirtualJoystick, false);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::VirtualKeyboard, false);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::RequiresCookedData, true);
-        Impl::GPlatformFeatureSet.Set(PlatformFeature::RequiresUserCredenials, false);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::AudioStreaming, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::AudioThread, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::CallstackAssertDump, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::DeadlockWatchdog, false);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::DistanceFieldShadows, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::Exit, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::FastVRAMMemory, false);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::FramerateSmoothing, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::FullCrashDump, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::HighQualityLightmaps, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::LowQualityLightmaps, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::LocalCaching, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::Messaging, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::Minimize, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::MultipleInstances, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::Multithreading, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::RenderThread, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::ResolutionChanging, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::SystemAudioVolumeHandling, false);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::Tesselation, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::TextureStreaming, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::TouchInput, false);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::WindowedMode, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::VariableHardware, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::SeparateDebugOutput, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::VirtualJoystick, false);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::VirtualKeyboard, false);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::RequiresCookedData, true);
+        Impl::g_PlatformFeatureSet.Set(PlatformFeature::RequiresUserCredenials, false);
 
 
         //
@@ -64,14 +64,14 @@ namespace Graphyte::System::Impl
                 GetSystemInfo(&si);
             }
 
-            Impl::GLogicalCores = si.dwNumberOfProcessors;
+            Impl::g_LogicalCores = si.dwNumberOfProcessors;
 
-            Impl::GMemoryProperties.TotalPhysical               = msex.ullTotalPhys;
-            Impl::GMemoryProperties.TotalVirtual                = msex.ullTotalVirtual;
-            Impl::GMemoryProperties.TotalPagefile               = msex.ullTotalPageFile;
-            Impl::GMemoryProperties.SystemAllocationGranularity = si.dwAllocationGranularity;
-            Impl::GMemoryProperties.PageSize                    = si.dwPageSize;
-            Impl::GMemoryProperties.AddressLimit                = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(si.lpMaximumApplicationAddress));
+            Impl::g_MemoryProperties.TotalPhysical               = msex.ullTotalPhys;
+            Impl::g_MemoryProperties.TotalVirtual                = msex.ullTotalVirtual;
+            Impl::g_MemoryProperties.TotalPagefile               = msex.ullTotalPageFile;
+            Impl::g_MemoryProperties.SystemAllocationGranularity = si.dwAllocationGranularity;
+            Impl::g_MemoryProperties.PageSize                    = si.dwPageSize;
+            Impl::g_MemoryProperties.AddressLimit                = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(si.lpMaximumApplicationAddress));
         }
 
 
@@ -128,7 +128,7 @@ namespace Graphyte::System::Impl
 
             System::OsFree(data);
 
-            Impl::GPhysicalCores = cores;
+            Impl::g_PhysicalCores = cores;
         }
 
 
@@ -136,6 +136,6 @@ namespace Graphyte::System::Impl
         // Set worker threads count.
         //
 
-        Impl::GWorkerThreads = Impl::GLogicalCores;
+        Impl::g_WorkerThreads = Impl::g_LogicalCores;
     }
 }

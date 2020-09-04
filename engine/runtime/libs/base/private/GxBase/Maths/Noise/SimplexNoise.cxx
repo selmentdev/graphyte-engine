@@ -8,7 +8,7 @@ namespace Graphyte::Maths
 {
     namespace Common
     {
-        static const uint8_t GSimplex[64][4] = {
+        static const uint8_t g_Simplex[64][4] = {
             { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 },
             { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2, 0 },
             { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
@@ -71,12 +71,12 @@ namespace Graphyte::Maths
         auto t0 = 1.0F - x0 * x0;
         t0 *= t0;
 
-        auto n0 = t0 * t0 * Common::Gradient(CommonNoise::GPermutations[i0 & 0xFF], x0);
+        auto n0 = t0 * t0 * Common::Gradient(CommonNoise::g_Permutations[i0 & 0xFF], x0);
 
         auto t1 = 1.0F - x1 * x1;
         t1 *= t1;
 
-        auto n1 = t1 * t1 * Common::Gradient(CommonNoise::GPermutations[i1 & 0xFF], x1);
+        auto n1 = t1 * t1 * Common::Gradient(CommonNoise::g_Permutations[i1 & 0xFF], x1);
 
         return 0.25F * (n0 + n1);
     }
@@ -131,7 +131,7 @@ namespace Graphyte::Maths
         else
         {
             t0 *= t0;
-            n0 = t0 * t0 * Common::Gradient(CommonNoise::GPermutations[ii + CommonNoise::GPermutations[jj]], x0, y0);
+            n0 = t0 * t0 * Common::Gradient(CommonNoise::g_Permutations[ii + CommonNoise::g_Permutations[jj]], x0, y0);
         }
 
         auto t1 = 0.5F - x1 * x1 - y1 * y1;
@@ -144,7 +144,7 @@ namespace Graphyte::Maths
         else
         {
             t1 *= t1;
-            n1 = t1 * t1 * Common::Gradient(CommonNoise::GPermutations[ii + i1 + CommonNoise::GPermutations[jj + j1]], x1, y1);
+            n1 = t1 * t1 * Common::Gradient(CommonNoise::g_Permutations[ii + i1 + CommonNoise::g_Permutations[jj + j1]], x1, y1);
         }
 
         auto t2 = 0.5F - x2 * x2 - y2 * y2;
@@ -157,7 +157,7 @@ namespace Graphyte::Maths
         else
         {
             t2 *= t2;
-            n2 = t2 * t2 * Common::Gradient(CommonNoise::GPermutations[ii + 1 + CommonNoise::GPermutations[jj + 1]], x2, y2);
+            n2 = t2 * t2 * Common::Gradient(CommonNoise::g_Permutations[ii + 1 + CommonNoise::g_Permutations[jj + 1]], x2, y2);
         }
 
         return 40.0F * (n0 + n1 + n2);
@@ -273,7 +273,7 @@ namespace Graphyte::Maths
         else
         {
             t0 *= t0;
-            n0 = t0 * t0 * Common::Gradient(CommonNoise::GPermutations[ii + CommonNoise::GPermutations[jj + CommonNoise::GPermutations[kk]]], x0, y0, z0);
+            n0 = t0 * t0 * Common::Gradient(CommonNoise::g_Permutations[ii + CommonNoise::g_Permutations[jj + CommonNoise::g_Permutations[kk]]], x0, y0, z0);
         }
 
         auto t1 = 0.6F - x1 * x1 - y1 * y1 - z1 * z1;
@@ -286,7 +286,7 @@ namespace Graphyte::Maths
         else
         {
             t1 *= t1;
-            n1 = t1 * t1 *Common::Gradient(CommonNoise::GPermutations[ii + i1 + CommonNoise::GPermutations[jj + j1 + CommonNoise::GPermutations[kk + k1]]], x1, y1, z1);
+            n1 = t1 * t1 *Common::Gradient(CommonNoise::g_Permutations[ii + i1 + CommonNoise::g_Permutations[jj + j1 + CommonNoise::g_Permutations[kk + k1]]], x1, y1, z1);
         }
 
         auto t2 = 0.6F - x2 * x2 - y2 * y2 - z2 * z2;
@@ -299,7 +299,7 @@ namespace Graphyte::Maths
         else
         {
             t2 *= t2;
-            n2 = t2 * t2 * Common::Gradient(CommonNoise::GPermutations[ii + i2 + CommonNoise::GPermutations[jj + j2 + CommonNoise::GPermutations[kk + k2]]], x2, y2, z2);
+            n2 = t2 * t2 * Common::Gradient(CommonNoise::g_Permutations[ii + i2 + CommonNoise::g_Permutations[jj + j2 + CommonNoise::g_Permutations[kk + k2]]], x2, y2, z2);
         }
 
         auto t3 = 0.6F - x3 * x3 - y3 * y3 - z3 * z3;
@@ -312,7 +312,7 @@ namespace Graphyte::Maths
         else
         {
             t3 *= t3;
-            n3 = t3 * t3 * Common::Gradient(CommonNoise::GPermutations[ii + 1 + CommonNoise::GPermutations[jj + 1 + CommonNoise::GPermutations[kk + 1]]], x3, y3, z3);
+            n3 = t3 * t3 * Common::Gradient(CommonNoise::g_Permutations[ii + 1 + CommonNoise::g_Permutations[jj + 1 + CommonNoise::g_Permutations[kk + 1]]], x3, y3, z3);
         }
 
         return 32.0F * (n0 + n1 + n2 + n3);
@@ -353,20 +353,20 @@ namespace Graphyte::Maths
         int c6 = (z0 > w0) ? 1 : 0;
         int c = c1 + c2 + c3 + c4 + c5 + c6;
 
-        int i1 = Common::GSimplex[c][0] >= 3 ? 1 : 0;
-        int j1 = Common::GSimplex[c][1] >= 3 ? 1 : 0;
-        int k1 = Common::GSimplex[c][2] >= 3 ? 1 : 0;
-        int l1 = Common::GSimplex[c][3] >= 3 ? 1 : 0;
+        int i1 = Common::g_Simplex[c][0] >= 3 ? 1 : 0;
+        int j1 = Common::g_Simplex[c][1] >= 3 ? 1 : 0;
+        int k1 = Common::g_Simplex[c][2] >= 3 ? 1 : 0;
+        int l1 = Common::g_Simplex[c][3] >= 3 ? 1 : 0;
 
-        int i2 = Common::GSimplex[c][0] >= 2 ? 1 : 0;
-        int j2 = Common::GSimplex[c][1] >= 2 ? 1 : 0;
-        int k2 = Common::GSimplex[c][2] >= 2 ? 1 : 0;
-        int l2 = Common::GSimplex[c][3] >= 2 ? 1 : 0;
+        int i2 = Common::g_Simplex[c][0] >= 2 ? 1 : 0;
+        int j2 = Common::g_Simplex[c][1] >= 2 ? 1 : 0;
+        int k2 = Common::g_Simplex[c][2] >= 2 ? 1 : 0;
+        int l2 = Common::g_Simplex[c][3] >= 2 ? 1 : 0;
 
-        int i3 = Common::GSimplex[c][0] >= 1 ? 1 : 0;
-        int j3 = Common::GSimplex[c][1] >= 1 ? 1 : 0;
-        int k3 = Common::GSimplex[c][2] >= 1 ? 1 : 0;
-        int l3 = Common::GSimplex[c][3] >= 1 ? 1 : 0;
+        int i3 = Common::g_Simplex[c][0] >= 1 ? 1 : 0;
+        int j3 = Common::g_Simplex[c][1] >= 1 ? 1 : 0;
+        int k3 = Common::g_Simplex[c][2] >= 1 ? 1 : 0;
+        int l3 = Common::g_Simplex[c][3] >= 1 ? 1 : 0;
 
         auto x1 = x0 - static_cast<float>(i1) + G4;
         auto y1 = y0 - static_cast<float>(j1) + G4;
@@ -403,7 +403,7 @@ namespace Graphyte::Maths
         else
         {
             t0 *= t0;
-            n0 = t0 * t0 * Common::Gradient(CommonNoise::GPermutations[ii + CommonNoise::GPermutations[jj + CommonNoise::GPermutations[kk + CommonNoise::GPermutations[ll]]]], x0, y0, z0, w0);
+            n0 = t0 * t0 * Common::Gradient(CommonNoise::g_Permutations[ii + CommonNoise::g_Permutations[jj + CommonNoise::g_Permutations[kk + CommonNoise::g_Permutations[ll]]]], x0, y0, z0, w0);
         }
 
         auto t1 = 0.6F - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
@@ -416,7 +416,7 @@ namespace Graphyte::Maths
         else
         {
             t1 *= t1;
-            n1 = t1 * t1 * Common::Gradient(CommonNoise::GPermutations[ii + i1 + CommonNoise::GPermutations[jj + j1 + CommonNoise::GPermutations[kk + k1 + CommonNoise::GPermutations[ll + l1]]]], x1, y1, z1, w1);
+            n1 = t1 * t1 * Common::Gradient(CommonNoise::g_Permutations[ii + i1 + CommonNoise::g_Permutations[jj + j1 + CommonNoise::g_Permutations[kk + k1 + CommonNoise::g_Permutations[ll + l1]]]], x1, y1, z1, w1);
         }
 
         auto t2 = 0.6F - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
@@ -429,7 +429,7 @@ namespace Graphyte::Maths
         else
         {
             t2 *= t2;
-            n2 = t2 * t2 * Common::Gradient(CommonNoise::GPermutations[ii + i2 + CommonNoise::GPermutations[jj + j2 + CommonNoise::GPermutations[kk + k2 + CommonNoise::GPermutations[ll + l2]]]], x2, y2, z2, w2);
+            n2 = t2 * t2 * Common::Gradient(CommonNoise::g_Permutations[ii + i2 + CommonNoise::g_Permutations[jj + j2 + CommonNoise::g_Permutations[kk + k2 + CommonNoise::g_Permutations[ll + l2]]]], x2, y2, z2, w2);
         }
 
         auto t3 = 0.6F - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
@@ -442,7 +442,7 @@ namespace Graphyte::Maths
         else
         {
             t3 *= t3;
-            n3 = t3 * t3 * Common::Gradient(CommonNoise::GPermutations[ii + i3 + CommonNoise::GPermutations[jj + j3 + CommonNoise::GPermutations[kk + k3 + CommonNoise::GPermutations[ll + l3]]]], x3, y3, z3, w3);
+            n3 = t3 * t3 * Common::Gradient(CommonNoise::g_Permutations[ii + i3 + CommonNoise::g_Permutations[jj + j3 + CommonNoise::g_Permutations[kk + k3 + CommonNoise::g_Permutations[ll + l3]]]], x3, y3, z3, w3);
         }
 
         auto t4 = 0.6F - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
@@ -455,7 +455,7 @@ namespace Graphyte::Maths
         else
         {
             t4 *= t4;
-            n4 = t4 * t4 * Common::Gradient(CommonNoise::GPermutations[ii + 1 + CommonNoise::GPermutations[jj + 1 + CommonNoise::GPermutations[kk + 1 + CommonNoise::GPermutations[ll + 1]]]], x4, y4, z4, w4);
+            n4 = t4 * t4 * Common::Gradient(CommonNoise::g_Permutations[ii + 1 + CommonNoise::g_Permutations[jj + 1 + CommonNoise::g_Permutations[kk + 1 + CommonNoise::g_Permutations[ll + 1]]]], x4, y4, z4, w4);
         }
 
         return 27.0F * (n0 + n1 + n2 + n3 + n4);

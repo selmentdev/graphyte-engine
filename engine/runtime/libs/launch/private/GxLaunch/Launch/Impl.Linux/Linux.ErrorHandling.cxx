@@ -6,13 +6,13 @@
 
 namespace Graphyte::Launch::Impl::Posix
 {
-    static struct sigaction GPreviousSIGILL;
-    static struct sigaction GPreviousSIGTRAP;
-    static struct sigaction GPreviousSIGFPE;
-    static struct sigaction GPreviousSIGBUS;
-    static struct sigaction GPreviousSIGSEGV;
-    static struct sigaction GPreviousSIGINT;
-    static struct sigaction GPreviousSIGQUIT;
+    static struct sigaction g_PreviousSIGILL;
+    static struct sigaction g_PreviousSIGTRAP;
+    static struct sigaction g_PreviousSIGFPE;
+    static struct sigaction g_PreviousSIGBUS;
+    static struct sigaction g_PreviousSIGSEGV;
+    static struct sigaction g_PreviousSIGINT;
+    static struct sigaction g_PreviousSIGQUIT;
 
     using SignalFunction = void (*)(int, siginfo_t*, void*);
 
@@ -137,13 +137,13 @@ namespace Graphyte::Launch::Impl::Posix
 
     static void SetupSignalHandlers() noexcept
     {
-        SetSignal(SIGILL, HandleSignalKill, &GPreviousSIGILL);
-        SetSignal(SIGTRAP, HandleSignalTrap, &GPreviousSIGTRAP);
-        SetSignal(SIGFPE, HandleSignalFpe, &GPreviousSIGFPE);
-        SetSignal(SIGBUS, HandleSignalBus, &GPreviousSIGBUS);
-        SetSignal(SIGSEGV, HandleSignalSegv, &GPreviousSIGSEGV, SA_ONSTACK);
-        SetSignal(SIGINT, HandleSignalInt, &GPreviousSIGINT, 0, true);
-        SetSignal(SIGQUIT, HandleSignalQuit, &GPreviousSIGQUIT, 0, true);
+        SetSignal(SIGILL, HandleSignalKill, &g_PreviousSIGILL);
+        SetSignal(SIGTRAP, HandleSignalTrap, &g_PreviousSIGTRAP);
+        SetSignal(SIGFPE, HandleSignalFpe, &g_PreviousSIGFPE);
+        SetSignal(SIGBUS, HandleSignalBus, &g_PreviousSIGBUS);
+        SetSignal(SIGSEGV, HandleSignalSegv, &g_PreviousSIGSEGV, SA_ONSTACK);
+        SetSignal(SIGINT, HandleSignalInt, &g_PreviousSIGINT, 0, true);
+        SetSignal(SIGQUIT, HandleSignalQuit, &g_PreviousSIGQUIT, 0, true);
     }
 }
 

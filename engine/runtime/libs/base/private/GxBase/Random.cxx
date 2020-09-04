@@ -401,7 +401,7 @@ namespace Graphyte::Random
 
 namespace Graphyte::Random::Impl
 {
-    static constexpr const char GBase32Chars[32] = {
+    static constexpr const char g_Base32Chars[32] = {
         // clang-format off
         '0', '1', '2', '3', '4', '5', '6', '7',
         '8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
@@ -433,7 +433,7 @@ namespace Graphyte::Random
 
                 for (size_t i = 0; i < 8; ++i)
                 {
-                    characters[i] = Impl::GBase32Chars[static_cast<size_t>(random.bytes[i] & 0x1Fu)];
+                    characters[i] = Impl::g_Base32Chars[static_cast<size_t>(random.bytes[i] & 0x1Fu)];
                 }
 
                 characters = characters.subspan(8);
@@ -445,7 +445,7 @@ namespace Graphyte::Random
 
                 for (size_t i = 0, count = characters.size(); i < count; ++i)
                 {
-                    characters[i] = Impl::GBase32Chars[static_cast<size_t>(random.bytes[i] & 0x1Fu)];
+                    characters[i] = Impl::g_Base32Chars[static_cast<size_t>(random.bytes[i] & 0x1Fu)];
                 }
             }
         }

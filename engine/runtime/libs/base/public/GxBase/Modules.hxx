@@ -294,7 +294,7 @@ namespace Graphyte
         }
 
     private:
-        static ModuleManager* GInstance;
+        static ModuleManager* g_Instance;
         std::map<std::string, ModuleDescriptor, std::less<>> m_Modules;
         Threading::CriticalSection m_CS;
 

@@ -300,5 +300,5 @@ namespace Graphyte::Graphics
 
 namespace Graphyte
 {
-    extern GRAPHICS_API std::unique_ptr<Graphics::GpuDevice> GRenderDevice;
+    extern GRAPHICS_API std::unique_ptr<Graphics::GpuDevice> g_RenderDevice;
 }

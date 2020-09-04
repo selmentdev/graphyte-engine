@@ -51,16 +51,16 @@ namespace Graphyte::Diagnostics::Impl
 
 namespace Graphyte::Diagnostics::Impl
 {
-    extern bool GLogOutputDebugger;
+    extern bool g_LogOutputDebugger;
 
-    extern bool GLogOutputTerminal;
-    extern bool GStackTraceSymbolInfo;
+    extern bool g_LogOutputTerminal;
+    extern bool g_StackTraceSymbolInfo;
 
-    extern std::unique_ptr<Storage::IStream> GLogOutputFile;
+    extern std::unique_ptr<Storage::IStream> g_LogOutputFile;
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
-    extern HANDLE GSystemEventLog;
+    extern HANDLE g_SystemEventLog;
 
 #endif
 }

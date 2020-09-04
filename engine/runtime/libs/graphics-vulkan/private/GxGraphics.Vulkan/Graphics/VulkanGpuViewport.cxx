@@ -33,8 +33,7 @@ namespace Graphyte::Graphics
 
         GX_ENSURE(SDL_GetWindowWMInfo(
                       sdl_window,
-                      &window_info)
-                  == SDL_TRUE);
+                      &window_info) == SDL_TRUE);
 
         VkXcbSurfaceCreateInfoKHR create_info{};
         create_info.sType      = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
@@ -61,7 +60,7 @@ namespace Graphyte::Graphics
 
         VkWin32SurfaceCreateInfoKHR create_info{};
         create_info.sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-        create_info.hinstance = System::Impl::GInstanceHandle;
+        create_info.hinstance = System::Impl::g_InstanceHandle;
         create_info.hwnd      = reinterpret_cast<HWND>(native_handle);
 
         auto create_surface_khr = VKGetFunction<PFN_vkCreateWin32SurfaceKHR>(

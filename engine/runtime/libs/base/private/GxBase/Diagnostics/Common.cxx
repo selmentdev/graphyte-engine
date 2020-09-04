@@ -32,17 +32,17 @@ namespace Graphyte::Diagnostics::Impl
         return s_DiagnosticsLock;
     }
 
-    ErrorReporting GErrorReporting{ ErrorReporting::Interactive };
+    ErrorReporting g_ErrorReporting{ ErrorReporting::Interactive };
 
-    bool GStackTraceSymbolInfo{ false };
+    bool g_StackTraceSymbolInfo{ false };
 
-    bool GLogOutputTerminal{ false };
-    bool GLogOutputDebugger{ false };
-    std::unique_ptr<Storage::IStream> GLogOutputFile{};
+    bool g_LogOutputTerminal{ false };
+    bool g_LogOutputDebugger{ false };
+    std::unique_ptr<Storage::IStream> g_LogOutputFile{};
 
 #if GRAPHYTE_PLATFORM_WINDOWS
 
-    HANDLE GSystemEventLog{};
+    HANDLE g_SystemEventLog{};
 
 #endif
 
@@ -52,10 +52,10 @@ namespace Graphyte::Diagnostics::Impl
         // Flush file log.
         //
 
-        if (Impl::GLogOutputFile != nullptr)
+        if (Impl::g_LogOutputFile != nullptr)
         {
-            [[maybe_unused]] auto status = Impl::GLogOutputFile->Flush();
-            Impl::GLogOutputFile.reset();
+            [[maybe_unused]] auto status = Impl::g_LogOutputFile->Flush();
+            Impl::g_LogOutputFile.reset();
         }
 
 
@@ -63,7 +63,7 @@ namespace Graphyte::Diagnostics::Impl
         // Flush terminal output.
         //
 
-        if (Impl::GLogOutputTerminal)
+        if (Impl::g_LogOutputTerminal)
         {
             fflush(stdout);
             fflush(stderr);
@@ -79,7 +79,7 @@ namespace Graphyte::Diagnostics
         // Check whether application has debugger attached.
         //
 
-        Impl::GLogOutputDebugger = Diagnostics::IsDebuggerAttached();
+        Impl::g_LogOutputDebugger = Diagnostics::IsDebuggerAttached();
 
 
         //
@@ -105,7 +105,7 @@ namespace Graphyte::Diagnostics
             if (!!SymInitialize(process, nullptr, TRUE))
             {
                 SymSetOptions(SYMOPT_LOAD_LINES | SYMOPT_FAIL_CRITICAL_ERRORS);
-                Impl::GStackTraceSymbolInfo = true;
+                Impl::g_StackTraceSymbolInfo = true;
                 break;
             }
 
@@ -130,12 +130,12 @@ namespace Graphyte::Diagnostics
         // Posix systems have symbols always enabled.
         //
 
-        Impl::GStackTraceSymbolInfo = true;
+        Impl::g_StackTraceSymbolInfo = true;
 
 #endif
 
 
-        GX_LOG_INFO(LogPlatform, "Stack trace enabled: {}\n", Impl::GStackTraceSymbolInfo);
+        GX_LOG_INFO(LogPlatform, "Stack trace enabled: {}\n", Impl::g_StackTraceSymbolInfo);
 
 
         //
@@ -149,9 +149,9 @@ namespace Graphyte::Diagnostics
         std::wstring event_source{ L"pid-" };
         event_source += std::to_wstring(process_id);
 
-        Impl::GSystemEventLog = RegisterEventSourceW(nullptr, event_source.c_str());
+        Impl::g_SystemEventLog = RegisterEventSourceW(nullptr, event_source.c_str());
 
-        if (Impl::GSystemEventLog == nullptr)
+        if (Impl::g_SystemEventLog == nullptr)
         {
             GX_LOG_ERROR(LogPlatform, "Cannot open event log: {}\n", Diagnostics::GetMessageFromSystemError());
         }
@@ -173,7 +173,7 @@ namespace Graphyte::Diagnostics
             if (_isatty(_fileno(stdout)))
 #endif
             {
-                Impl::GLogOutputTerminal = true;
+                Impl::g_LogOutputTerminal = true;
             }
         }
 
@@ -195,7 +195,7 @@ namespace Graphyte::Diagnostics
                 Storage::AppendPath(log_path, fmt::format("{}-{}.txt", executable, timestamp));
 
                 Status status = Storage::IFileSystem::GetPlatformNative().OpenWrite(
-                    Impl::GLogOutputFile,
+                    Impl::g_LogOutputFile,
                     log_path,
                     false,
                     true);
@@ -220,11 +220,11 @@ namespace Graphyte::Diagnostics
 
 #if GRAPHYTE_PLATFORM_WINDOWS
 
-        GX_ASSERT(Impl::GSystemEventLog != nullptr);
+        GX_ASSERT(Impl::g_SystemEventLog != nullptr);
 
-        if (Impl::GSystemEventLog != nullptr)
+        if (Impl::g_SystemEventLog != nullptr)
         {
-            DeregisterEventSource(Impl::GSystemEventLog);
+            DeregisterEventSource(Impl::g_SystemEventLog);
         }
 
 #elif GRAPHYTE_PLATFORM_POSIX
@@ -359,12 +359,12 @@ namespace Graphyte::Diagnostics
 
     BASE_API ErrorReporting GetErrorReporting() noexcept
     {
-        return Impl::GErrorReporting;
+        return Impl::g_ErrorReporting;
     }
 
     BASE_API void SetErrorReporting(
         ErrorReporting value) noexcept
     {
-        Impl::GErrorReporting = value;
+        Impl::g_ErrorReporting = value;
     }
 }

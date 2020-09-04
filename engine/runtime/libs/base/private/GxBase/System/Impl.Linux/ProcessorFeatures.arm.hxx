@@ -19,67 +19,67 @@ namespace Graphyte::System::Impl
 
         if ((hwcap & HWCAP_AES) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::AES, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::AES, true);
         }
 
         if ((hwcap & HWCAP_ASIMD) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::ASIMD, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::ASIMD, true);
         }
 
         if ((hwcap & HWCAP_ASIMDFHM) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::ASIMDFHM, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::ASIMDFHM, true);
         }
 
         if ((hwcap & HWCAP_ASIMDHP) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::ASIMDHP, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::ASIMDHP, true);
         }
 
         if ((hwcap & HWCAP_ATOMICS) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::ATOMICS, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::ATOMICS, true);
         }
 
         if ((hwcap & HWCAP_CRC32) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::CRC32, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::CRC32, true);
         }
 
         if ((hwcap & HWCAP_FP) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::FP, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::FP, true);
         }
 
         if ((hwcap & HWCAP_FPHP) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::FPHP, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::FPHP, true);
         }
 
         if ((hwcap & HWCAP_PMULL) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::PMULL, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::PMULL, true);
         }
 
         if ((hwcap & HWCAP_SHA1) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::SHA1, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::SHA1, true);
         }
 
         if ((hwcap & HWCAP_SHA2) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::SHA2, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::SHA2, true);
         }
 
         if ((hwcap & HWCAP_SHA3) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::SHA3, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::SHA3, true);
         }
 
         if ((hwcap & HWCAP_SHA512) != 0)
         {
-            Impl::GProcessorFeatureSet.Set(ProcessorFeature::SHA512, true);
+            Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::SHA512, true);
         }
     }
 }

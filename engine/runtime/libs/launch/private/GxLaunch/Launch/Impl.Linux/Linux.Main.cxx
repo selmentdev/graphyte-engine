@@ -20,9 +20,9 @@ namespace Graphyte::Launch
 
     int Main(int argc, char** argv) noexcept
     {
-        Graphyte::Application::Impl::GApplicationDescriptor = GraphyteApp;
+        Graphyte::Application::Impl::g_ApplicationDescriptor = GraphyteApp;
 
-        Graphyte::Application::Impl::GIsFirstInstance = true;
+        Graphyte::Application::Impl::g_IsFirstInstance = true;
 
         return MainWrapper(argc, argv);
     }

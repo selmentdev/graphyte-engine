@@ -5,7 +5,7 @@
 
 namespace Graphyte::Storage::Impl
 {
-    static constexpr const char GFolderSeparators[] = {
+    static constexpr const char g_FolderSeparators[] = {
         Storage::DirectorySeparator,
         Storage::AlternativeDirectorySeparator,
         0,
@@ -154,7 +154,7 @@ namespace Graphyte::Storage
         std::string& path,
         std::string_view filename) noexcept
     {
-        std::size_t const separator_position = path.find_last_of(Impl::GFolderSeparators);
+        std::size_t const separator_position = path.find_last_of(Impl::g_FolderSeparators);
 
         if (separator_position != std::string::npos)
         {
@@ -198,7 +198,7 @@ namespace Graphyte::Storage
     {
         std::string_view result{};
 
-        std::size_t separator_position = path.find_last_of(Impl::GFolderSeparators);
+        std::size_t separator_position = path.find_last_of(Impl::g_FolderSeparators);
 
         if (separator_position != std::string::npos)
         {
@@ -233,7 +233,7 @@ namespace Graphyte::Storage
     {
         std::string_view result{};
 
-        std::size_t separator_position = path.find_last_of(Impl::GFolderSeparators);
+        std::size_t separator_position = path.find_last_of(Impl::g_FolderSeparators);
 
         if (separator_position != std::string::npos)
         {
