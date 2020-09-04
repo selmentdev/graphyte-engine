@@ -769,6 +769,20 @@
 #define GRAPHYTE_ENABLE_DEBUG_RENDER 1
 #endif
 
+
+// =================================================================================================
+// Stack trace support
+
+#if GX_BUILD_TYPE_RETAIL
+#define GRAPHYTE_ENABLE_STACKTRACE 0
+#define GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS 0
+#define GRAPHYTE_ENABLE_STACKTRACE_FAST 0
+#endif
+
+#if !defined(GRAPHYTE_ENABLE_STACKTRACE)
+#define GRAPHYTE_ENABLE_STACKTRACE 1
+#endif
+
 #if !defined(GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS)
 #define GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS 1
 #endif

@@ -9,10 +9,10 @@
 
 namespace Graphyte::Diagnostics::Impl
 {
-#if !defined(NDEBUG)
-    BASE_API LogLevel g_LogLevel{ LogLevel::Trace };
+#if GX_BUILD_TYPE_RETAIL
+    BASE_API LogLevel g_LogLevel{ LogLevel::Error };
 #else
-    BASE_API LogLevel g_LogLevel{ LogLevel::Warn };
+    BASE_API LogLevel g_LogLevel{ LogLevel::Trace };
 #endif
 
     static Threading::CriticalSection& GetGlobalLogLock() noexcept

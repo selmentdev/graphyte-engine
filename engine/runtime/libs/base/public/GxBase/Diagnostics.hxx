@@ -423,6 +423,7 @@ namespace Graphyte::Diagnostics
         }
     }
 
+
     /// @brief Logs message to logger.
     ///
     /// @param level    Provides log level.
@@ -520,7 +521,10 @@ namespace Graphyte::Diagnostics
         { \
             if (category.CanDispatch(level)) \
             { \
-                ::Graphyte::Diagnostics::LogDispatch(level, category.Name, format, ##__VA_ARGS__); \
+                if (level <= ::Graphyte::Diagnostics::Impl::g_LogLevel) \
+                { \
+                    ::Graphyte::Diagnostics::LogDispatch(level, category.Name, format, ##__VA_ARGS__); \
+                } \
             } \
         } \
     }

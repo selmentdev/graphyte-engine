@@ -41,7 +41,12 @@ namespace Graphyte::Diagnostics::Impl
 
         std::wstring wtitle      = System::Impl::WidenString(title);
         std::wstring wcontent    = System::Impl::WidenString(content);
+
+#if GRAPHYTE_ENABLE_STACKTRACE
         std::wstring wstacktrace = System::Impl::WidenString(stacktrace);
+#else
+        (void)stacktrace;
+#endif
 
         TASKDIALOGCONFIG config{
             .cbSize                  = sizeof(TASKDIALOGCONFIG),
@@ -56,9 +61,16 @@ namespace Graphyte::Diagnostics::Impl
             .cButtons                = static_cast<UINT>(std::size(buttons)),
             .pButtons                = std::data(buttons),
             .nDefaultButton          = static_cast<int>(AssertResult::Retry),
+
+#if GRAPHYTE_ENABLE_STACKTRACE
             .pszExpandedInformation  = wstacktrace.c_str(),
             .pszExpandedControlText  = L"Hide Stack Trace",
             .pszCollapsedControlText = L"Show Stack Trace",
+#else
+            .pszExpandedInformation  = nullptr,
+            .pszExpandedControlText  = nullptr,
+            .pszCollapsedControlText = nullptr,
+#endif
         };
 
         System::RestoreSystemUI();

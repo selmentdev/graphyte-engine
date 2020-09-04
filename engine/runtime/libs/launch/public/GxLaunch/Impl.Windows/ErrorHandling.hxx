@@ -2,7 +2,7 @@
 #include <GxBase/System/Impl.Windows/Windows.Helpers.hxx>
 #include <GxBase/App.hxx>
 
-namespace Graphyte::Launch::Impl::Windows
+namespace Graphyte::Launch::Impl
 {
     static void __cdecl OnTerminate() noexcept
     {
@@ -61,7 +61,7 @@ namespace Graphyte::Launch::Impl::Windows
     }
 }
 
-namespace Graphyte::Launch
+namespace Graphyte::Launch::Impl
 {
     void InitializeErrorHandling() noexcept
     {
@@ -109,21 +109,21 @@ namespace Graphyte::Launch
         errorMode &= ~SEM_NOALIGNMENTFAULTEXCEPT;
         SetErrorMode(errorMode);
 
-        std::set_terminate(Impl::Windows::OnTerminate);
+        std::set_terminate(Impl::OnTerminate);
 
-        SetUnhandledExceptionFilter(Impl::Windows::OnUnhandledException);
+        SetUnhandledExceptionFilter(Impl::OnUnhandledException);
 
 #if defined(_MSC_VER)
-        set_unexpected(Impl::Windows::OnUnexpected);
+        set_unexpected(Impl::OnUnexpected);
 #endif
 
-        _set_purecall_handler(Impl::Windows::OnPureCall);
+        _set_purecall_handler(Impl::OnPureCall);
 
-        _set_invalid_parameter_handler(Impl::Windows::OnInvalidParam);
+        _set_invalid_parameter_handler(Impl::OnInvalidParam);
 
         if (Graphyte::App::Impl::g_ApplicationDescriptor.Type == Graphyte::App::ApplicationType::Game)
         {
-            if (SetConsoleCtrlHandler(Impl::Windows::OnConsoleCtrlC, TRUE) == FALSE)
+            if (SetConsoleCtrlHandler(Impl::OnConsoleCtrlC, TRUE) == FALSE)
             {
                 GX_ASSERTF(false, "Cannot set ctrl+c handler: {}", Diagnostics::GetMessageFromSystemError());
             }

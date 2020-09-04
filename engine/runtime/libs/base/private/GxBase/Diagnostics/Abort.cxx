@@ -46,6 +46,24 @@ namespace Graphyte::Diagnostics
 
         fmt::memory_buffer content_buffer{};
 
+#if GX_BUILD_TYPE_RETAIL
+
+        (void)file;
+        (void)line;
+        (void)condition;
+        (void)function;
+
+        std::string message = fmt::vformat(format, args);
+
+        GX_LOG_ERROR(LogPlatform, "Application aborted:\n{}", message);
+
+        if (Diagnostics::Impl::ReportAbort("Graphyte Engine", message, ""))
+        {
+            Impl::g_IsAborting = false;
+            return true;
+        }
+
+#else
         //
         // Format message.
         //
@@ -115,6 +133,7 @@ namespace Graphyte::Diagnostics
             Impl::g_IsAborting = false;
             return true;
         }
+#endif
 
 
         //

@@ -7,15 +7,17 @@
 GX_DECLARE_LOG_CATEGORY(LogAssetsCompiler, Trace, Trace);
 GX_DEFINE_LOG_CATEGORY(LogAssetsCompiler);
 
-#include <GxLaunch/Launch/Main.hxx>
+#include <GxBase/App.hxx>
 
 Graphyte::App::ApplicationDescriptor GraphyteApp{
     .Name       = "Graphyte Assets Compiler",
     .Id         = "assets.compiler",
     .Company    = "Graphyte",
-    .Type       = Graphyte::App::ApplicationType::ConsoleTool,
+    .Type       = Graphyte::App::ApplicationType::Game,
     .AppVersion = Graphyte::Version{ 1, 0, 0, 0 }
 };
+
+#include <GxLaunch/Main.hxx>
 
 #include <GxBase/Uuid.hxx>
 #include <GxBase/System/Dialogs.hxx>
@@ -25,7 +27,6 @@ Graphyte::App::ApplicationDescriptor GraphyteApp{
 #include <GxBase/Maths/Quaternion.hxx>
 #include <GxBase/Maths/Geometric.hxx>
 #include <GxBase/Maths/Color.hxx>
-#include <GxBase/App.hxx>
 #include <GxBase/Flags.hxx>
 #include <GxBase/Stopwatch.hxx>
 #include <GxBase/Storage/IFileSystem.hxx>

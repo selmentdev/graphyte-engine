@@ -10,7 +10,6 @@
             'SdkFmt'
             'GxBase'
             'GxGraphics'
-            'GxLaunch'
             'GxTestExecutor'
         }
         .ProjectIncludes = {

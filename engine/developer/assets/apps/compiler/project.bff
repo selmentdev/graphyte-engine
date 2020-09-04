@@ -12,6 +12,7 @@
             'sdks/fmt/include'
             'engine/runtime/libs/base/public'
             'engine/runtime/libs/launch/public'
+            'engine/runtime/libs/graphics/public'
             'engine/developer/assets/libs/base/public'
             'engine/developer/assets/libs/shader/public'
         }
@@ -19,7 +20,6 @@
             'SdkFmt'
             'GxBase'
             'GxGraphics'
-            'GxLaunch'
             'GxAssetsBase'
             'GxAssetsShader'
         }

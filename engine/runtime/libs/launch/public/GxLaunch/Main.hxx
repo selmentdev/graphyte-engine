@@ -1,3 +1,4 @@
+#include <GxBase/App.hxx>
 #include <GxBase/Diagnostics.hxx>
 #include <GxBase/CommandLine.hxx>
 #include <GxBase/Threading/TaskDispatcher.hxx>
@@ -15,73 +16,36 @@
 GX_DECLARE_LOG_CATEGORY(LogInit, Trace, Trace);
 GX_DEFINE_LOG_CATEGORY(LogInit);
 
-#if false
-inline bool XMVerifyAVX2Support()
+//
+// Available features:
+//  `#define GX_LAUNCH_SINGLE_INSTANCE "<instance-marker>"
+//      Enables single instance checking
+//
+
+// =================================================================================================
+// GPU Driver Markers
+
+extern "C"
 {
-    // Should return true for AMD "Excavator", Intel "Haswell" or later processors
-    // with OS support for AVX (Windows 7 Service Pack 1, Windows Server 2008 R2 Service Pack 1, Windows 8, Windows Server 2012)
+    // https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
+    GX_LIB_EXPORT uint32_t NvOptimusEnablement = 1;
 
-    // See http://msdn.microsoft.com/en-us/library/hskdteyh.aspx
-    int CPUInfo[4] = { -1 };
-#ifdef __clang__
-    __cpuid(0, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
-#else
-    __cpuid(CPUInfo, 0);
-#endif
-
-    if (CPUInfo[0] < 7)
-        return false;
-
-#ifdef __clang__
-    __cpuid(1, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
-#else
-    __cpuid(CPUInfo, 1);
-#endif
-
-    // We check for F16C, FMA3, AVX, OSXSAVE, SSSE4.1, and SSE3
-    if ((CPUInfo[2] & 0x38081001) != 0x38081001)
-        return false;
-
-#ifdef __clang__
-    __cpuid_count(7, 0, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
-#else
-    __cpuidex(CPUInfo, 7, 0);
-#endif
-
-    return ((CPUInfo[1] & 0x20) == 0x20);
+    // https://gpuopen.com/amdpowerxpressrequesthighperformance/
+    GX_LIB_EXPORT uint32_t AmdPowerXpressRequestHighPerformance = 1;
 }
 
-inline bool XMVerifyAVXSupport()
-{
-    // Should return true for AMD Bulldozer, Intel "Sandy Bridge", and Intel "Ivy Bridge" or later processors
-    // with OS support for AVX (Windows 7 Service Pack 1, Windows Server 2008 R2 Service Pack 1, Windows 8, Windows Server 2012)
 
-    // See http://msdn.microsoft.com/en-us/library/hskdteyh.aspx
-    int CPUInfo[4] = { -1 };
-#ifdef __clang__
-    __cpuid(0, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
-#else
-    __cpuid(CPUInfo, 0);
-#endif
+// =================================================================================================
+// Executable engine entry point
 
-    if (CPUInfo[0] < 1)
-        return false;
+extern int GraphyteMain(int argc, char** argv) noexcept;
 
-#ifdef __clang__
-    __cpuid(1, CPUInfo[0], CPUInfo[1], CPUInfo[2], CPUInfo[3]);
-#else
-    __cpuid(CPUInfo, 1);
-#endif
 
-    // We check for AVX, OSXSAVE, SSSE4.1, and SSE3
-    return ((CPUInfo[2] & 0x18080001) == 0x18080001);
-}
-#endif
+// =================================================================================================
+// Initalization phase
 
 namespace Graphyte::Launch
 {
-    extern void InitializeErrorHandling() noexcept;
-
     static void ValidateRequirements() noexcept
     {
 #if !GRAPHYTE_MATH_NO_INTRINSICS
@@ -91,44 +55,35 @@ namespace Graphyte::Launch
 #endif
 
         using Graphyte::Flags;
-        using Graphyte::System::ProcessorFeature;
-
-        // F16C, FMA3, AVX, OSXSAVE, SSSE4.1, and SSE3
+        using namespace Graphyte::System;
 
 #if GRAPHYTE_HW_SSE2
-        GX_ABORT_UNLESS(
-            System::HasProcessorFeature(System::ProcessorFeature::SSE2),
-            "Support for SSE2 is required");
+        bool const supports_sse2 =
+            HasProcessorFeature(ProcessorFeature::SSE)
+            && HasProcessorFeature(ProcessorFeature::SSE2);
+
+        GX_ABORT_UNLESS(supports_sse2, "Support for SSE2 is required");
 #endif
 
 #if GRAPHYTE_HW_AVX
-        GX_ABORT_UNLESS(
-            System::HasProcessorFeature(System::ProcessorFeature::SSE3),
-            "Support for SSE3 is required");
-        GX_ABORT_UNLESS(
-            System::HasProcessorFeature(System::ProcessorFeature::SSE41),
-            "Support for SSE4.1 is required");
-        GX_ABORT_UNLESS(
-            System::HasProcessorFeature(System::ProcessorFeature::AVX),
-            "Support for AVX is required");
+        bool const supports_avx = HasProcessorFeature(ProcessorFeature::SSE3)
+            && HasProcessorFeature(ProcessorFeature::SSE41)
+            && HasProcessorFeature(ProcessorFeature::OSXSAVE)
+            && HasProcessorFeature(ProcessorFeature::AVX);
+
+        GX_ABORT_UNLESS(supports_avx, "Support for AVX is required");
 #endif
 
-#if GRAPHYTE_HW_AVX2
-        GX_ABORT_UNLESS(
-            System::HasProcessorFeature(System::ProcessorFeature::AVX2),
-            "Support for AVX2 is required");
-#endif
-
-#if GRAPHYTE_HW_AVX2 || GRAPHYTE_HW_FMA3
-        GX_ABORT_UNLESS(
-            System::HasProcessorFeature(System::ProcessorFeature::FMA3),
-            "Support for FMA3 is required");
-#endif
-
-#if GRAPHYTE_HW_AVX2 || GRAPHYTE_HW_F16C
-        GX_ABORT_UNLESS(
-            System::HasProcessorFeature(System::ProcessorFeature::F16C),
-            "Support for F16C is required");
+#if !GRAPHYTE_HW_AVX2
+        bool const supports_avx2 =
+            HasProcessorFeature(ProcessorFeature::SSE3)
+            && HasProcessorFeature(ProcessorFeature::FMA3)
+            && HasProcessorFeature(ProcessorFeature::SSE41)
+            && HasProcessorFeature(ProcessorFeature::OSXSAVE)
+            && HasProcessorFeature(ProcessorFeature::AVX)
+            && HasProcessorFeature(ProcessorFeature::F16C)
+            && HasProcessorFeature(ProcessorFeature::AVX2);
+        GX_ABORT_UNLESS(supports_avx2, "Support for AVX is required");
 #endif
 
 #endif
@@ -294,8 +249,6 @@ namespace Graphyte::Launch
     {
         GX_ASSERT_SINGLE_CALL();
 
-        InitializeErrorHandling();
-
 
         //
         // Try to initialize current directory as early as possible - any other thread spawned from
@@ -358,7 +311,7 @@ namespace Graphyte::Launch
         CommandLine::Finalize();
     }
 
-    static void LoadModules() noexcept
+    static void LoadModules()
     {
         //Graphyte::ModuleManager::LoadChecked("GxBase");
         //Graphyte::ModuleManager::LoadChecked("GxFramework");
@@ -367,19 +320,8 @@ namespace Graphyte::Launch
     }
 }
 
-
 // =================================================================================================
-//
-// Main function defined in application project.
-//
-
-extern int GraphyteMain(int argc, char** argv) noexcept;
-
-
-// =================================================================================================
-//
-// Common engine initialization and finalization.
-//
+// Entry point
 
 namespace Graphyte::Launch
 {
@@ -389,10 +331,57 @@ namespace Graphyte::Launch
 
         LoadModules();
 
-        int result = GraphyteMain(argc, argv);
+        int const result = GraphyteMain(argc, argv);
 
         Finalize();
 
         return result;
     }
 }
+
+// =================================================================================================
+// Per-platform initialization
+
+#if GRAPHYTE_PLATFORM_WINDOWS
+#include <GxLaunch/Impl.Windows/ErrorHandling.hxx>
+#include <GxLaunch/Impl.Windows/SingleInstance.hxx>
+#elif GRAPHYTE_PLATFORM_LINUX
+#include <GxLaunch/Impl.Linux/ErrorHandling.hxx>
+#include <GxLaunch/Impl.Linux/SingleInstance.hxx>
+#else
+#error Not supported
+#endif
+
+// =================================================================================================
+// Initialization
+
+#include <GxLaunch/Impl/Init.hxx>
+
+// common main function
+int main(int argc, char** argv)
+{
+    return Graphyte::Launch::Main(argc, argv);
+}
+
+// Windows specific entry point
+#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+INT
+#if !defined(_MAC)
+#if defined(_M_CEE_PURE)
+    __clrcall
+#else
+    WINAPI
+#endif
+#else
+    CALLBACK
+#endif
+    WinMain(
+        [[maybe_unused]] _In_ HINSTANCE hInstance,
+        [[maybe_unused]] _In_opt_ HINSTANCE hPrevInstance,
+        [[maybe_unused]] _In_ LPSTR lpCmdLine,
+        [[maybe_unused]] _In_ INT nShowCmd)
+{
+    return Graphyte::Launch::Main(__argc, __argv);
+}
+
+#endif

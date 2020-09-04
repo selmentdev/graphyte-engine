@@ -3,7 +3,7 @@
 
 #include <catch2/catch.hpp>
 
-#include <GxLaunch/Launch/Main.hxx>
+#include <GxBase/App.hxx>
 
 Graphyte::App::ApplicationDescriptor GraphyteApp{
     .Name       = "Graphyte Engine Unit Test",
@@ -12,6 +12,8 @@ Graphyte::App::ApplicationDescriptor GraphyteApp{
     .Type       = Graphyte::App::ApplicationType::UnitTest,
     .AppVersion = Graphyte::Version{ 1, 0, 0, 0 }
 };
+
+#include <GxLaunch/Main.hxx>
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #include <io.h>

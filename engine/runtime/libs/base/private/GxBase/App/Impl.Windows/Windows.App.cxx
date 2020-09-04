@@ -35,7 +35,7 @@ namespace Graphyte::App::Impl
 {
     ApplicationDescriptor g_ApplicationDescriptor{};
     bool g_IsRequestingExit{ false };
-    bool g_IsFirstInstance{ false };
+    bool g_IsFirstInstance{ true };
     bool g_UseHighPrecisionMouse{ false };
 
     static ModifierKey g_ModifierKey{};

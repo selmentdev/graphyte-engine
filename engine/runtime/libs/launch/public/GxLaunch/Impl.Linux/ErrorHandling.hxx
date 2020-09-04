@@ -4,7 +4,7 @@
 #include <sys/resource.h>
 #include <signal.h>
 
-namespace Graphyte::Launch::Impl::Posix
+namespace Graphyte::Launch::Impl
 {
     static struct sigaction g_PreviousSIGILL;
     static struct sigaction g_PreviousSIGTRAP;
@@ -147,14 +147,14 @@ namespace Graphyte::Launch::Impl::Posix
     }
 }
 
-namespace Graphyte::Launch
+namespace Graphyte::Launch::Impl
 {
     void InitializeErrorHandling() noexcept
     {
-        std::set_terminate(Impl::Posix::TerminateHandler);
-        Impl::Posix::SetupSignalHandlers();
+        std::set_terminate(Impl::TerminateHandler);
+        Impl::SetupSignalHandlers();
 
-        Impl::Posix::SetResourceLimit(RLIMIT_NOFILE, 8192, true);
-        Impl::Posix::SetResourceLimit(RLIMIT_CORE, 0, false);
+        Impl::SetResourceLimit(RLIMIT_NOFILE, 8192, true);
+        Impl::SetResourceLimit(RLIMIT_CORE, 0, false);
     }
 }

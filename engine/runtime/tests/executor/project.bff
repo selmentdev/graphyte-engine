@@ -11,6 +11,7 @@
             'sdks/catch2/include'
             'engine/runtime/libs/base/public'
             'engine/runtime/libs/launch/public'
+            'engine/runtime/libs/graphics/public'
         }
     ]
 

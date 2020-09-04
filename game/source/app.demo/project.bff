@@ -9,7 +9,6 @@
         .ProjectImports = {
             'SdkFmt'
             'GxBase'
-            'GxLaunch'
             'GxGraphics'
         }
 

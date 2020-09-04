@@ -244,3 +244,6 @@
 #include <arm64intr.h>
 #endif
 #endif
+
+#define GX_WIN32_WIDEN__(x) L##x
+#define GX_WIN32_WIDEN(x) GX_WIN32_WIDEN__(x)
