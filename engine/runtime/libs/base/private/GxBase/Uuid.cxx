@@ -1,4 +1,5 @@
 #include <GxBase/Uuid.hxx>
+#include <GxBase/Bitwise.hxx>
 
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 #include <rpc.h>
@@ -10,8 +11,6 @@ namespace Graphyte
 {
     BASE_API Uuid Uuid::Create() noexcept
     {
-        Uuid result;
-
 #if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
 
         static_assert(sizeof(Uuid) == sizeof(UUID));
@@ -19,7 +18,7 @@ namespace Graphyte
         UUID uuid;
         UuidCreateSequential(&uuid);
 
-        std::memcpy(&result, &uuid, sizeof(Uuid));
+        return BitCast<Uuid>(uuid);
 
 #elif GRAPHYTE_PLATFORM_LINUX
 
@@ -28,13 +27,10 @@ namespace Graphyte
         uuid_t uuid;
         uuid_generate(uuid);
 
-        std::memcpy(&result, uuid, sizeof(Uuid));
-
+        return BitCast<Uuid>(uuid);
 #else
 #error Not implemented
 #endif
-
-        return result;
     }
 
 

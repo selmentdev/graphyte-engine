@@ -26,7 +26,10 @@ namespace Graphyte::Storage
 
         __forceinline void UpdatePosition() noexcept
         {
-            auto position            = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(this->m_Position);
+            ULARGE_INTEGER position{
+                .QuadPart = static_cast<uint64_t>(this->m_Position),
+            };
+
             this->m_Async.Offset     = position.LowPart;
             this->m_Async.OffsetHigh = position.HighPart;
         }

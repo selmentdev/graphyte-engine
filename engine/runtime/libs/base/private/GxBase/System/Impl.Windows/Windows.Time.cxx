@@ -7,21 +7,26 @@ namespace Graphyte::System
     {
         SYSTEMTIME st{};
         GetSystemTime(&st);
-        System::TypeConverter<SYSTEMTIME>::Convert(time, st);
+        time = System::Impl::ToCalendarTime(st);
     }
 
     BASE_API void GetLocalTime(CalendarTime& time) noexcept
     {
         SYSTEMTIME st{};
         GetLocalTime(&st);
-        System::TypeConverter<SYSTEMTIME>::Convert(time, st);
+        time = System::Impl::ToCalendarTime(st);
     }
 
     BASE_API uint64_t GetSystemTime() noexcept
     {
         FILETIME ft{};
         GetSystemTimeAsFileTime(&ft);
-        return System::TypeConverter<FILETIME>::ConvertUInt64(ft);
+
+        ULARGE_INTEGER const ul{
+            .LowPart = ft.dwLowDateTime,
+            .HighPart = ft.dwHighDateTime,
+        };
+        return static_cast<uint64_t>(ul.QuadPart);
     }
 
     BASE_API uint64_t GetLocalTime() noexcept
@@ -31,7 +36,12 @@ namespace Graphyte::System
 
         FILETIME ft{};
         SystemTimeToFileTime(&st, &ft);
-        return System::TypeConverter<FILETIME>::ConvertUInt64(ft);
+
+        ULARGE_INTEGER const ul{
+            .LowPart = ft.dwLowDateTime,
+            .HighPart = ft.dwHighDateTime,
+        };
+        return static_cast<uint64_t>(ul.QuadPart);
     }
 
     BASE_API uint64_t GetTimestampResolution() noexcept
@@ -54,7 +64,7 @@ namespace Graphyte::System
     {
         LARGE_INTEGER li{};
         QueryPerformanceCounter(&li);
-        return System::TypeConverter<LARGE_INTEGER>::ConvertUInt64(li);
+        return static_cast<uint64_t>(li.QuadPart);
     }
 
     BASE_API uint64_t GetMonotonic() noexcept

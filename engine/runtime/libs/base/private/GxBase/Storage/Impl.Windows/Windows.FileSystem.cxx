@@ -146,17 +146,20 @@ namespace Graphyte::Storage
 
             if (GetFileAttributesExW(wpath.data(), GetFileExInfoStandard, &wfad))
             {
-                ULARGE_INTEGER li_file_size{};
-                li_file_size.LowPart  = wfad.nFileSizeLow;
-                li_file_size.HighPart = wfad.nFileSizeHigh;
+                ULARGE_INTEGER const li_file_size{
+                    .LowPart  = wfad.nFileSizeLow,
+                    .HighPart = wfad.nFileSizeHigh,
+                };
 
-                result.CreationTime     = System::TypeConverter<FILETIME>::ConvertDateTime(wfad.ftCreationTime);
-                result.AccessTime       = System::TypeConverter<FILETIME>::ConvertDateTime(wfad.ftLastAccessTime);
-                result.ModificationTime = System::TypeConverter<FILETIME>::ConvertDateTime(wfad.ftLastWriteTime);
-                result.FileSize         = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(li_file_size);
-                result.IsDirectory      = (wfad.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
-                result.IsReadonly       = (wfad.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0;
-                result.IsValid          = true;
+                result = FileInfo{
+                    .CreationTime = System::Impl::ToDateTime(wfad.ftCreationTime),
+                    .AccessTime = System::Impl::ToDateTime(wfad.ftLastAccessTime),
+                    .ModificationTime = System::Impl::ToDateTime(wfad.ftLastWriteTime),
+                    .FileSize = static_cast<int64_t>(li_file_size.QuadPart),
+                    .IsDirectory = (wfad.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0,
+                    .IsReadonly = (wfad.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0,
+                    .IsValid = true,
+                };
                 return Status::Success;
             }
 
@@ -179,11 +182,12 @@ namespace Graphyte::Storage
 
             if (GetFileAttributesExW(wpath.data(), GetFileExInfoStandard, &wfad))
             {
-                ULARGE_INTEGER li_file_size{};
-                li_file_size.LowPart  = wfad.nFileSizeLow;
-                li_file_size.HighPart = wfad.nFileSizeHigh;
+                ULARGE_INTEGER const li_file_size{
+                    .LowPart  = wfad.nFileSizeLow,
+                    .HighPart = wfad.nFileSizeHigh,
+                };
 
-                result = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(li_file_size);
+                result = static_cast<int64_t>(li_file_size.QuadPart);
                 return Status::Success;
             }
 
@@ -379,15 +383,16 @@ namespace Graphyte::Storage
                     {
                         std::string const report_path = Storage::CombinePath(path, System::Impl::NarrowString(filename));
 
-                        ULARGE_INTEGER li_file_size{};
-                        li_file_size.LowPart  = wfd.nFileSizeLow;
-                        li_file_size.HighPart = wfd.nFileSizeHigh;
+                        ULARGE_INTEGER const li_file_size{
+                            .LowPart  = wfd.nFileSizeLow,
+                            .HighPart = wfd.nFileSizeHigh,
+                        };
 
-                        FileInfo file_info{
-                            .CreationTime     = System::TypeConverter<FILETIME>::ConvertDateTime(wfd.ftCreationTime),
-                            .AccessTime       = System::TypeConverter<FILETIME>::ConvertDateTime(wfd.ftLastAccessTime),
-                            .ModificationTime = System::TypeConverter<FILETIME>::ConvertDateTime(wfd.ftLastWriteTime),
-                            .FileSize         = System::TypeConverter<ULARGE_INTEGER>::ConvertInt64(li_file_size),
+                        FileInfo const file_info{
+                            .CreationTime     = System::Impl::ToDateTime(wfd.ftCreationTime),
+                            .AccessTime       = System::Impl::ToDateTime(wfd.ftLastAccessTime),
+                            .ModificationTime = System::Impl::ToDateTime(wfd.ftLastWriteTime),
+                            .FileSize         = static_cast<int64_t>(li_file_size.QuadPart),
                             .IsDirectory      = (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0,
                             .IsReadonly       = (wfd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0,
                             .IsValid          = true,
