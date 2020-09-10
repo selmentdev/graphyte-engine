@@ -6,7 +6,7 @@ namespace Graphyte::System::Impl
 {
     void DetectProcessorFeatures() noexcept
     {
-#if GRAPHYTE_CPU_ARM_64
+#if GX_CPU_ARM_64
 
         Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::ASIMD, true);
         Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::FP, true);
@@ -23,7 +23,7 @@ namespace Graphyte::System::Impl
             Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::CRC32, true);
         }
 
-#elif GRAPHYTE_CPU_ARM_32
+#elif GX_CPU_ARM_32
 
         Impl::g_ProcessorFeatureSet.Set(ProcessorFeature::ARMv7, true);
 

@@ -42,7 +42,7 @@ namespace Graphyte::Diagnostics::Impl
         std::wstring wtitle      = System::Impl::WidenString(title);
         std::wstring wcontent    = System::Impl::WidenString(content);
 
-#if GRAPHYTE_ENABLE_STACKTRACE
+#if GX_ENABLE_STACKTRACE
         std::wstring wstacktrace = System::Impl::WidenString(stacktrace);
 #else
         (void)stacktrace;
@@ -62,7 +62,7 @@ namespace Graphyte::Diagnostics::Impl
             .pButtons                = std::data(buttons),
             .nDefaultButton          = static_cast<int>(AssertResult::Retry),
 
-#if GRAPHYTE_ENABLE_STACKTRACE
+#if GX_ENABLE_STACKTRACE
             .pszExpandedInformation  = wstacktrace.c_str(),
             .pszExpandedControlText  = L"Hide Stack Trace",
             .pszCollapsedControlText = L"Show Stack Trace",

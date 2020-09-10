@@ -108,7 +108,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
         '_WIN32'
         '_WIN32_WINNT=0x0A00'
         'WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP'
-        'GRAPHYTE_WINDOWS_SDK_BUILD_VERSION=$WindowsSdkBuildVersion$'
+        'GX_WINDOWS_SDK_BUILD_VERSION=$WindowsSdkBuildVersion$'
         '__WINDOWS__'
         '__STDC_WANT_LIB_EXT1__=1'
         '__STDINT_MACROS'
@@ -159,7 +159,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
         '_WIN32'
         '_WIN32_WINNT=0x0A00'
         'WINAPI_FAMILY=WINAPI_FAMILY_PC_APP'
-        'GRAPHYTE_WINDOWS_SDK_BUILD_VERSION=$WindowsSdkBuildVersion$'
+        'GX_WINDOWS_SDK_BUILD_VERSION=$WindowsSdkBuildVersion$'
         '__WINDOWS__'
         '__STDC_WANT_LIB_EXT1__=1'
         '__STDINT_MACROS'
@@ -432,7 +432,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
     .VisualStudioPlatform = 'ARM64'
 
     .CompilerOptions_Architecture
-        = ' /DGRAPHYTE_MATH_NO_INTRINSICS=1'
+        = ' /DGX_MATH_NO_INTRINSICS=1'
 
     .LinkerOptions_Architecture
         = ' /MACHINE:ARM64'
@@ -671,7 +671,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 
 .GxToolchainDef_Compiler_GCC_Architecture_ARMv8 = [
     .CompilerOptions_Architecture
-        = ' -DGRAPHYTE_MATH_NO_INTRINSICS=1'
+        = ' -DGX_MATH_NO_INTRINSICS=1'
 
     .LinkerOptions_Architecture
         = ' /MACHINE:ARM64'
@@ -834,7 +834,7 @@ Compiler('Compiler-Windows-x64-LLVM-ClangCL') {
 
 .GxToolchainDef_Compiler_Clang_Architecture_ARMv8 = [
     .CompilerOptions_Architecture
-        = ' -DGRAPHYTE_MATH_NO_INTRINSICS=1'
+        = ' -DGX_MATH_NO_INTRINSICS=1'
 
     .LinkerOptions_Architecture
         = ''

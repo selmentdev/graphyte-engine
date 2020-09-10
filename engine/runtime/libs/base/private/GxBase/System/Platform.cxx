@@ -1,12 +1,12 @@
 #include "Platform.impl.hxx"
 #include <GxBase/CommandLine.hxx>
 
-#if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
+#if GX_CPU_X86_32 || GX_CPU_X86_64
 #include "Impl/ProcessorFeatures.x86.hxx"
-#elif GRAPHYTE_CPU_ARM_32 || GRAPHYTE_CPU_ARM_64
-#if GRAPHYTE_PLATFORM_LINUX
+#elif GX_CPU_ARM_32 || GX_CPU_ARM_64
+#if GX_PLATFORM_LINUX
 #include "Impl.Linux/ProcessorFeatures.arm.hxx"
-#elif GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#elif GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 #include "Impl.Windows/ProcessorFeatures.arm.hxx"
 #else
 #error "Not implemented"

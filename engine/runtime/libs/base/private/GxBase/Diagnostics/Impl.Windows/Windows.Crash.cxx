@@ -9,7 +9,7 @@ namespace Graphyte::Diagnostics
 {
     static void LogProcessorContext(CONTEXT const& context) noexcept
     {
-#if GRAPHYTE_CPU_X86_64
+#if GX_CPU_X86_64
 
         GX_LOG_ERROR(LogPlatform, "  rax = {:016x}  rbx = {:016x}  rcx = {:016x}  rdx = {:016x}\n", context.Rax, context.Rbx, context.Rcx, context.Rdx);
         GX_LOG_ERROR(LogPlatform, "  rsp = {:016x}  rbp = {:016x}  rsi = {:016x}  rdi = {:016x}\n", context.Rsp, context.Rbp, context.Rsi, context.Rdi);
@@ -17,13 +17,13 @@ namespace Graphyte::Diagnostics
         GX_LOG_ERROR(LogPlatform, "  r12 = {:016x}  r13 = {:016x}  r14 = {:016x}  r15 = {:016x}\n", context.R12, context.R13, context.R14, context.R15);
         GX_LOG_ERROR(LogPlatform, "  rfl = {:016x}  rip = {:016x}\n", context.EFlags, context.Rip);
 
-#elif GRAPHYTE_CPU_X86_32
+#elif GX_CPU_X86_32
 
         GX_LOG_ERROR(LogPlatform, "  eax = {:08x}  ebx = {:08x}  ecx = {:08x}  edx = {:08x}\n", context.Eax, context.Ebx, context.Ecx, context.Edx);
         GX_LOG_ERROR(LogPlatform, "  esp = {:08x}  ebp = {:08x}  esi = {:08x}  edi = {:08x}\n", context.Esp, context.Ebp, context.Esi, context.Edi);
         GX_LOG_ERROR(LogPlatform, "  efl = {:08x}  eip = {:08x}\n", context.EFlags, context.Eip);
 
-#elif GRAPHYTE_CPU_ARM_64
+#elif GX_CPU_ARM_64
 
         GX_LOG_ERROR(LogPlatform, "   x0 = {:016x}   x1 = {:016x}   x2 = {:016x}   x3 = {:016x}\n", context.X0, context.X1, context.X2, context.X3);
         GX_LOG_ERROR(LogPlatform, "   x4 = {:016x}   x5 = {:016x}   x6 = {:016x}   x7 = {:016x}\n", context.X4, context.X5, context.X6, context.X7);
@@ -35,7 +35,7 @@ namespace Graphyte::Diagnostics
         GX_LOG_ERROR(LogPlatform, "  x28 = {:016x}   fp = {:016x}   lr = {:016x},  sp = {:016x}\n", context.X28, context.Fp, context.Lr, context.Sp);
         GX_LOG_ERROR(LogPlatform, "   pc = {:016x} cpsr = {:016x}\n", context.Pc, context.Cpsr);
 
-#elif GRAPHYTE_CPU_ARM_32
+#elif GX_CPU_ARM_32
 
         GX_LOG_ERROR(LogPlatform, "   r0 = {:08x}   r1 = {:08x}   r2 = {:08x}   r3 = {:08x}\n", context.R0, context.R1, context.R2, context.R3);
         GX_LOG_ERROR(LogPlatform, "   r4 = {:08x}   r5 = {:08x}   r6 = {:08x}   r7 = {:08x}\n", context.R4, context.R5, context.R6, context.R7);

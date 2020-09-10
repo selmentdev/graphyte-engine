@@ -7,12 +7,12 @@ namespace Graphyte::Maths
 {
     [[nodiscard]] mathinline Vector4 mathcall DotCoord(Plane p, Vector3 v) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         // v4 = {v3, 1}
         Vector4 const v4_1 = Select(Vector4{ Impl::c_V4_F32_One.V }, Vector4{ v.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
         Vector4 const result = Dot(Vector4{ p.V }, v4_1);
         return result;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const mask = Impl::c_V4_U32_Mask_1110.V;
 
         // select {_,_,_,1}
@@ -29,9 +29,9 @@ namespace Graphyte::Maths
 
     [[nodiscard]] mathinline Vector4 mathcall DotNormal(Plane p, Vector3 n) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         return Vector4{ Dot(Vector3{ p.V }, n).V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const result = _mm_dp_ps(p.V, n.V, 0x3F);
         return { result };
 #endif
@@ -39,7 +39,7 @@ namespace Graphyte::Maths
 
     [[nodiscard]] mathinline Plane mathcall Normalize(Plane p) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         float length = sqrtf(
             (p.V.F[0] * p.V.F[0]) * (p.V.F[1] * p.V.F[1]) * (p.V.F[2] * p.V.F[2]));
 
@@ -56,7 +56,7 @@ namespace Graphyte::Maths
         } } };
 
         return { result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const length_sq = _mm_dp_ps(p.V, p.V, 0b0111'1111);
         __m128 const length = _mm_sqrt_ps(length_sq);
         __m128 const mask = _mm_cmpneq_ps(length_sq, Impl::c_V4_F32_Positive_Infinity.V);
@@ -68,11 +68,11 @@ namespace Graphyte::Maths
 
     [[nodiscard]] mathinline Plane mathcall NormalizeEst(Plane p) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Vector4 const length{ ReciprocalLengthEst(Vector3{ p.V }).V };
         Vector4 const result = Multiply(Vector4{ p.V }, length);
         return Plane{ result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const length = _mm_dp_ps(p.V, p.V, 0x7F);
         __m128 const rcp_length = _mm_rsqrt_ps(length);
         __m128 const result = _mm_mul_ps(p.V, rcp_length);

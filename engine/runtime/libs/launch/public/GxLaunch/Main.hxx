@@ -28,10 +28,10 @@ GX_DEFINE_LOG_CATEGORY(LogInit);
 extern "C"
 {
     // https://docs.nvidia.com/gameworks/content/technologies/desktop/optimus.htm
-    GX_LIB_EXPORT uint32_t NvOptimusEnablement = 1;
+    GX_MODULE_EXPORT uint32_t NvOptimusEnablement = 1;
 
     // https://gpuopen.com/amdpowerxpressrequesthighperformance/
-    GX_LIB_EXPORT uint32_t AmdPowerXpressRequestHighPerformance = 1;
+    GX_MODULE_EXPORT uint32_t AmdPowerXpressRequestHighPerformance = 1;
 }
 
 
@@ -48,16 +48,16 @@ namespace Graphyte::Launch
 {
     static void ValidateRequirements() noexcept
     {
-#if !GRAPHYTE_MATH_NO_INTRINSICS
+#if !GX_MATH_NO_INTRINSICS
 
-#if GRAPHYTE_HW_AVX2 && !GRAPHYTE_HW_AVX
+#if GX_HW_AVX2 && !GX_HW_AVX
 #error "AVX must be enabled with AVX2"
 #endif
 
         using Graphyte::Flags;
         using namespace Graphyte::System;
 
-#if GRAPHYTE_HW_SSE2
+#if GX_HW_SSE2
         bool const supports_sse2 =
             HasProcessorFeature(ProcessorFeature::SSE)
             && HasProcessorFeature(ProcessorFeature::SSE2);
@@ -65,7 +65,7 @@ namespace Graphyte::Launch
         GX_ABORT_UNLESS(supports_sse2, "Support for SSE2 is required");
 #endif
 
-#if GRAPHYTE_HW_AVX
+#if GX_HW_AVX
         bool const supports_avx = HasProcessorFeature(ProcessorFeature::SSE3)
             && HasProcessorFeature(ProcessorFeature::SSE41)
             && HasProcessorFeature(ProcessorFeature::OSXSAVE)
@@ -74,7 +74,7 @@ namespace Graphyte::Launch
         GX_ABORT_UNLESS(supports_avx, "Support for AVX is required");
 #endif
 
-#if !GRAPHYTE_HW_AVX2
+#if !GX_HW_AVX2
         bool const supports_avx2 =
             HasProcessorFeature(ProcessorFeature::SSE3)
             && HasProcessorFeature(ProcessorFeature::FMA3)
@@ -99,7 +99,7 @@ namespace Graphyte::Launch
         features.push_back(#x); \
     }
 
-#if GRAPHYTE_CPU_X86_64 || GRAPHYTE_CPU_X86_32
+#if GX_CPU_X86_64 || GX_CPU_X86_32
 
         CHECK_FEATURE(AES);
         CHECK_FEATURE(AVX);
@@ -143,7 +143,7 @@ namespace Graphyte::Launch
         CHECK_FEATURE(VAES);
         CHECK_FEATURE(VPCL);
 
-#elif GRAPHYTE_CPU_ARM_32
+#elif GX_CPU_ARM_32
 
         CHECK_FEATURE(AES);
         CHECK_FEATURE(ARMv7);
@@ -162,7 +162,7 @@ namespace Graphyte::Launch
         CHECK_FEATURE(VFPv2);
         CHECK_FEATURE(VFPv3);
 
-#elif GRAPHYTE_CPU_ARM_64
+#elif GX_CPU_ARM_64
 
         CHECK_FEATURE(AES);
         CHECK_FEATURE(ASIMD);
@@ -342,10 +342,10 @@ namespace Graphyte::Launch
 // =================================================================================================
 // Per-platform initialization
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 #include <GxLaunch/Impl.Windows/ErrorHandling.hxx>
 #include <GxLaunch/Impl.Windows/SingleInstance.hxx>
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 #include <GxLaunch/Impl.Linux/ErrorHandling.hxx>
 #include <GxLaunch/Impl.Linux/SingleInstance.hxx>
 #else
@@ -364,7 +364,7 @@ int main(int argc, char** argv)
 }
 
 // Windows specific entry point
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 INT
 #if !defined(_MAC)
 #if defined(_M_CEE_PURE)

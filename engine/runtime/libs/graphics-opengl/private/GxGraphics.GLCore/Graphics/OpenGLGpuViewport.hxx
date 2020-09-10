@@ -8,13 +8,13 @@ namespace Graphyte::Graphics
     class OpenGLGpuViewport : public GpuViewport
     {
     public:
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
         HWND m_Handle;
         HGLRC m_ContextHandle;
         HDC m_DeviceContext;
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         SDL_Window* m_Handle;
         SDL_GLContext m_Context;

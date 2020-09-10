@@ -2,7 +2,7 @@
 #include <GxBase/Storage/Path.hxx>
 #include <GxBase/System.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 #include <GxBase/System/Impl.Windows/Windows.Helpers.hxx>
 #endif
 
@@ -10,7 +10,7 @@ namespace Graphyte::AssetsPipeline
 {
     std::string PlatformToolchain::GetWindowsSdkVersion() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         static std::string version{};
 
         if (version.empty())
@@ -26,7 +26,7 @@ namespace Graphyte::AssetsPipeline
 
     std::string PlatformToolchain::GetWindowsSdkLocation() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         static std::string path{};
 
         if (path.empty())
@@ -43,7 +43,7 @@ namespace Graphyte::AssetsPipeline
 
     std::string PlatformToolchain::GetWindowsSdkBinary() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         static std::string path = GetWindowsSdkLocation();
 
         if (!path.empty())
@@ -54,13 +54,13 @@ namespace Graphyte::AssetsPipeline
             Storage::AppendPath(path, version);
             path.append(".0");
 
-#if GRAPHYTE_CPU_X86_64
+#if GX_CPU_X86_64
             Storage::AppendPath(path, "x64");
-#elif GRAPHYTE_CPU_X86_32
+#elif GX_CPU_X86_32
             Storage::AppendPath(path, "x86");
-#elif GRAPHYTE_CPU_ARM_64
+#elif GX_CPU_ARM_64
             Storage::AppendPath(path, "arm64");
-#elif GRAPHYTE_CPU_ARM_32
+#elif GX_CPU_ARM_32
             Storage::AppendPath(path, "arm");
 #else
 #error "Unknown"

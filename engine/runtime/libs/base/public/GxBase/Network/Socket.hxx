@@ -25,7 +25,7 @@ namespace Graphyte::Network
     {
     public:
         using SocketDescriptor = uint64_t;
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         using SocketHandle                                = SOCKET;
         static constexpr const SocketHandle InvalidHandle = INVALID_SOCKET;
         static constexpr const int SocketErrorValue       = SOCKET_ERROR;
@@ -130,7 +130,7 @@ namespace Graphyte::Network
 
         void StoreLastError() noexcept
         {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
             this->m_Error = static_cast<SocketError>(WSAGetLastError());
 #else
             this->m_Error = static_cast<SocketError>(errno);

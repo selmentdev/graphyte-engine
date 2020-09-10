@@ -8,14 +8,14 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Make(Vector3 origin, float radius) noexcept
         requires(Impl::IsSphere<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
                 origin.V.F[0],
                 origin.V.F[1],
                 origin.V.F[2],
                 radius,
             } } };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const vradius = _mm_set_ps1(radius);
         __m128 const vresult = Impl::avx_permute<0, 1, 2, 7>(origin.V, vradius);
 #endif
@@ -25,14 +25,14 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Make(Vector3 origin, Vector1 radius) noexcept
         requires(Impl::IsSphere<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
                 origin.V.F[0],
                 origin.V.F[1],
                 origin.V.F[2],
                 radius.V.F[0],
             } } };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const vresult = Impl::avx_permute<0, 1, 2, 5>(origin.V, radius.V);
 #endif
     }

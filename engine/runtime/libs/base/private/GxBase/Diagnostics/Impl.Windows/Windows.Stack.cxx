@@ -4,26 +4,26 @@
 
 #include <Windows.h>
 
-#if GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#if GX_ENABLE_STACKTRACE_SYMBOLS
 #include <DbgHelp.h>
 #endif
 
 #include <crtdbg.h>
 #include <exception>
 
-#if GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#if GX_ENABLE_STACKTRACE_SYMBOLS
 
 namespace Graphyte::Diagnostics::Impl
 {
     static DWORD GetMachineType() noexcept
     {
-#if GRAPHYTE_CPU_X86_64
+#if GX_CPU_X86_64
         return IMAGE_FILE_MACHINE_AMD64;
-#elif GRAPHYTE_CPU_X86_32
+#elif GX_CPU_X86_32
         return IMAGE_FILE_MACHINE_I386;
-#elif GRAPHYTE_CPU_ARM_64
+#elif GX_CPU_ARM_64
         return IMAGE_FILE_MACHINE_ARM64;
-#elif GRAPHYTE_CPU_ARM_32
+#elif GX_CPU_ARM_32
         return IMAGE_FILE_MACHINE_ARM;
 #else
 #error Not supported architecture
@@ -44,25 +44,25 @@ namespace Graphyte::Diagnostics::Impl
         };
 
 
-#if GRAPHYTE_CPU_X86_64
+#if GX_CPU_X86_64
 
         frame.AddrPC.Offset    = context.Rip;
         frame.AddrFrame.Offset = context.Rbp;
         frame.AddrStack.Offset = context.Rsp;
 
-#elif GRAPHYTE_CPU_X86_32
+#elif GX_CPU_X86_32
 
         frame.AddrPC.Offset    = context.Eip;
         frame.AddrFrame.Offset = context.Ebp;
         frame.AddrStack.Offset = context.Esp;
 
-#elif GRAPHYTE_CPU_ARM_64
+#elif GX_CPU_ARM_64
 
         frame.AddrPC.Offset    = context.Pc;
         frame.AddrFrame.Offset = context.Fp;
         frame.AddrStack.Offset = context.Sp;
 
-#elif GRAPHYTE_CPU_ARM_32
+#elif GX_CPU_ARM_32
 
         frame.AddrPC.Offset    = context.Pc;
         frame.AddrFrame.Offset = context.R11;
@@ -82,7 +82,7 @@ namespace Graphyte::Diagnostics::Impl
     {
         frame.Address = address;
 
-#if GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#if GX_ENABLE_STACKTRACE_SYMBOLS
 
         if (Impl::g_StackTraceSymbolInfo)
         {
@@ -161,9 +161,9 @@ namespace Graphyte::Diagnostics
     BASE_API Status GetStackTrace(
         std::vector<StackFrame>& frames) noexcept
     {
-#if GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#if GX_ENABLE_STACKTRACE_SYMBOLS
 
-#if GRAPHYTE_ENABLE_STACKTRACE_FAST
+#if GX_ENABLE_STACKTRACE_FAST
         {
             constexpr const DWORD MaxFramesCount = 128;
 
@@ -197,21 +197,21 @@ namespace Graphyte::Diagnostics
 
             return GetStackTrace(frames, context);
         }
-#endif // GRAPHYTE_ENABLE_STACKTRACE_FAST
+#endif // GX_ENABLE_STACKTRACE_FAST
 
 #else
 
         frames.clear();
         return Status::NotSupported;
 
-#endif // GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#endif // GX_ENABLE_STACKTRACE_SYMBOLS
     }
 
     BASE_API Status GetStackTrace(
         std::vector<StackFrame>& frames,
         [[maybe_unused]] const CONTEXT& context) noexcept
     {
-#if GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#if GX_ENABLE_STACKTRACE_SYMBOLS
 
         HANDLE process = GetCurrentProcess();
 

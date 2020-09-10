@@ -241,7 +241,7 @@ namespace Graphyte::System
 
     BASE_API bool Is64BitOperatingSystem() noexcept
     {
-#if GRAPHYTE_ARCH_64BIT
+#if GX_ARCH_64BIT
         return true;
 #else
         return false;
@@ -250,7 +250,7 @@ namespace Graphyte::System
 
     BASE_API bool Is64BitProcess() noexcept
     {
-#if GRAPHYTE_ARCH_64BIT
+#if GX_ARCH_64BIT
         return true;
 #else
         return false;
@@ -269,7 +269,7 @@ namespace Graphyte::System
 
     BASE_API bool IsLittleEndian() noexcept
     {
-#if GRAPHYTE_ENDIAN_LITTLE
+#if GX_ENDIAN_LITTLE
         return true;
 #else
         return false;

@@ -118,7 +118,7 @@ namespace Graphyte::Diagnostics
     }
 }
 
-#if GRAPHYTE_CONFIG_DO_ASSERT
+#if GX_CONFIG_DO_ASSERT
 
 #define GX_ASSERT(condition) \
     { \
@@ -253,7 +253,7 @@ namespace Graphyte::Diagnostics
 
 namespace Graphyte::Diagnostics
 {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
     /// @brief Handles crash request.
     ///
@@ -265,7 +265,7 @@ namespace Graphyte::Diagnostics
 
 #endif
 
-#if GRAPHYTE_PLATFORM_LINUX
+#if GX_PLATFORM_LINUX
 
     /// @brief Handles crash request.
     ///
@@ -349,7 +349,7 @@ namespace Graphyte::Diagnostics
     BASE_API Status GetStackTrace(
         std::vector<StackFrame>& frames) noexcept;
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
     /// @brief Gets stack trace for current thread.
     ///
@@ -361,7 +361,7 @@ namespace Graphyte::Diagnostics
 
 #endif
 
-#if GRAPHYTE_PLATFORM_LINUX
+#if GX_PLATFORM_LINUX
 
     /// @brief Gets stack trace for current thread.
     ///
@@ -515,7 +515,7 @@ namespace Graphyte::Diagnostics
 #define GX_DEFINE_LOG_CATEGORY(name) \
     LogCategory##name name { }
 
-#define GRAPHYTE_DIAGNOSTICS_IMPL_GX_LOG(category, level, format, ...) \
+#define GX_DIAGNOSTICS_IMPL_GX_LOG(category, level, format, ...) \
     { \
         if constexpr (level <= static_cast<::Graphyte::Diagnostics::LogLevel>(LogCategory##category::CompileLevel)) \
         { \
@@ -544,16 +544,16 @@ namespace Graphyte::Diagnostics
     }
 
 #define GX_LOG_ERROR(category, format, ...) \
-    GRAPHYTE_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Error, format, ##__VA_ARGS__)
+    GX_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Error, format, ##__VA_ARGS__)
 
 #define GX_LOG_WARN(category, format, ...) \
-    GRAPHYTE_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Warn, format, ##__VA_ARGS__)
+    GX_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Warn, format, ##__VA_ARGS__)
 
 #define GX_LOG_INFO(category, format, ...) \
-    GRAPHYTE_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Info, format, ##__VA_ARGS__)
+    GX_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Info, format, ##__VA_ARGS__)
 
 #define GX_LOG_TRACE(category, format, ...) \
-    GRAPHYTE_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Trace, format, ##__VA_ARGS__)
+    GX_DIAGNOSTICS_IMPL_GX_LOG(category, ::Graphyte::Diagnostics::LogLevel::Trace, format, ##__VA_ARGS__)
 
 
 // =================================================================================================
@@ -587,7 +587,7 @@ namespace Graphyte::Diagnostics
     [[nodiscard]] BASE_API std::string_view GetMessageFromStatus(
         Status status) noexcept;
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
     /// @brief Gets status from WinAPI Error Code.
     ///
@@ -633,7 +633,7 @@ namespace Graphyte::Diagnostics
 
 #endif
 
-#if GRAPHYTE_PLATFORM_POSIX
+#if GX_PLATFORM_POSIX
 
     [[nodiscard]] BASE_API std::string_view GetSignalName(
         const siginfo_t* signal_info) noexcept;
@@ -680,7 +680,7 @@ namespace Graphyte::Diagnostics
 }
 
 
-#if GRAPHYTE_CONFIG_DO_ASSERT
+#if GX_CONFIG_DO_ASSERT
 
 #define GX_RECURSION() \
     static size_t GX_UNIQUE_NAME(gx_recursion_watch_count){}; \
@@ -713,7 +713,7 @@ namespace Graphyte::Diagnostics
 // Asserting single call.
 //
 
-#if GRAPHYTE_CONFIG_DO_ASSERT
+#if GX_CONFIG_DO_ASSERT
 
 #define GX_ASSERT_SINGLE_CALL_MSG(message, ...) \
     { \

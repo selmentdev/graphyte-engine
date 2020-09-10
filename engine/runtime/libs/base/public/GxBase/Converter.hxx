@@ -53,7 +53,7 @@ namespace Graphyte
     {
         [[nodiscard]] static std::string ToString(float value) noexcept
         {
-#if GRAPHYTE_COMPILER_MSVC
+#if GX_COMPILER_MSVC
 
             char buffer[80];
 
@@ -73,7 +73,7 @@ namespace Graphyte
 
         static bool FromString(float& result, std::string_view value) noexcept
         {
-#if GRAPHYTE_COMPILER_MSVC
+#if GX_COMPILER_MSVC
 
             auto [end, ec] = std::from_chars(
                 std::data(value),
@@ -103,7 +103,7 @@ namespace Graphyte
     {
         [[nodiscard]] static std::string ToString(double value) noexcept
         {
-#if GRAPHYTE_COMPILER_MSVC
+#if GX_COMPILER_MSVC
 
             char buffer[80];
 
@@ -121,7 +121,7 @@ namespace Graphyte
 
         static bool FromString(double& result, std::string_view value) noexcept
         {
-#if GRAPHYTE_COMPILER_MSVC
+#if GX_COMPILER_MSVC
 
             auto [end, ec] = std::from_chars(
                 std::data(value),

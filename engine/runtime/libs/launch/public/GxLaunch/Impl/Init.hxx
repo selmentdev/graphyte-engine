@@ -1,7 +1,7 @@
 // =================================================================================================
 // UWP specific code
 
-#if GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_UWP
 
 #pragma warning(push)
 #pragma warning(disable : 4715)
@@ -16,15 +16,15 @@ namespace Graphyte::Launch
 {
     int Main(int argc, char** argv) noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
         System::Impl::g_InstanceHandle = GetModuleHandleW(nullptr);
-#elif GRAPHYTE_PLATFORM_UWP
+#elif GX_PLATFORM_UWP
         winrt::init_apartment();
 #endif
 
         Graphyte::App::Impl::g_ApplicationDescriptor = GraphyteApp;
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
         SetProcessDPIAware();
 #endif
 
@@ -34,13 +34,13 @@ namespace Graphyte::Launch
 
         int result = 0;
 
-#if GRAPHYTE_PLATFORM_HAVE_SEH_EXCEPTIONS
+#if GX_PLATFORM_HAVE_SEH_EXCEPTIONS
         if (Diagnostics::IsDebuggerAttached())
 #endif
         {
             result = MainWrapper(argc, argv);
         }
-#if GRAPHYTE_PLATFORM_HAVE_SEH_EXCEPTIONS
+#if GX_PLATFORM_HAVE_SEH_EXCEPTIONS
         else
         {
             __try

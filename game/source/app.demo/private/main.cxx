@@ -17,6 +17,8 @@ Graphyte::App::ApplicationDescriptor GraphyteApp{
     .AppVersion = Graphyte::Version{ 1, 0, 0, 0 }
 };
 
+#define GX_LAUNCH_SINGLE_INSTANCE "game.exe-17C76F8A-F26E-4C0F-983B-0520D64CB4D8"
+
 #include <GxLaunch/Main.hxx>
 
 #include <GxBase/Uuid.hxx>
@@ -143,6 +145,8 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
     auto const q0 = Make<Quaternion>(1.0f, 0.0f, 0.0f, 5.0f);
     auto const l0 = Length(Multiply(q0, v0));
 
+    GX_ABORT_UNLESS(Graphyte::App::IsFirstInstance(), "Another instance of this game is already running.");
+
     EventHandler e{};
     Graphyte::App::SetEventHandler(&e);
 
@@ -168,13 +172,12 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
 
     while (!Graphyte::App::IsRequestingExit())
     {
-        Graphyte::Threading::SleepThread(16);
-        Graphyte::App::Tick(0.016f);
-
         sw.Stop();
         double const elapsed = sw.GetElapsedTime<double>() * 1000.0;
-        Graphyte::App::SetCaption(*window, fmt::format("Frame: {:.18}", elapsed));
         sw.Restart();
+        Graphyte::App::Tick(static_cast<float>(elapsed));
+
+        Graphyte::App::SetCaption(*window, fmt::format("Frame: {:.18}", elapsed));
     }
 
     Graphyte::App::Destroy(window);

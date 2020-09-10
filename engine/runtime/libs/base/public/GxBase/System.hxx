@@ -181,9 +181,9 @@ namespace Graphyte::System
         [[maybe_unused]] const void* memory,
         [[maybe_unused]] ptrdiff_t offset) noexcept
     {
-#if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
+#if GX_CPU_X86_32 || GX_CPU_X86_64
         _mm_prefetch(reinterpret_cast<const char*>(memory) + offset, _MM_HINT_T0);
-#elif GRAPHYTE_CPU_ARM_32 || GRAPHYTE_CPU_ARM_64
+#elif GX_CPU_ARM_32 || GX_CPU_ARM_64
         // http://infocenter.arm.com/help/topic/com.arm.doc.ihi0053c/IHI0053C_acle_2_0.pdf
 #else
 #error "Unimplemented"
@@ -194,8 +194,8 @@ namespace Graphyte::System
         [[maybe_unused]] const void* memory,
         [[maybe_unused]] size_t size) noexcept
     {
-#if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
-        size_t const cacheline_size = GRAPHYTE_CACHELINE_SIZE;
+#if GX_CPU_X86_32 || GX_CPU_X86_64
+        size_t const cacheline_size = GX_CACHELINE_SIZE;
         std::byte const* it         = reinterpret_cast<std::byte const*>(memory);
 
         for (size_t lines = (size + cacheline_size - 1) / cacheline_size; lines != 0; --lines)
@@ -203,7 +203,7 @@ namespace Graphyte::System
             _mm_prefetch(reinterpret_cast<const char*>(it), _MM_HINT_T0);
             it += cacheline_size;
         }
-#elif GRAPHYTE_CPU_ARM_32 || GRAPHYTE_CPU_ARM_64
+#elif GX_CPU_ARM_32 || GX_CPU_ARM_64
         // http://infocenter.arm.com/help/topic/com.arm.doc.ihi0053c/IHI0053C_acle_2_0.pdf
 #else
 #error "Unimplemented"
@@ -226,7 +226,7 @@ namespace Graphyte::System
         volatile char* it = reinterpret_cast<volatile char*>(destination);
         for (; size != 0; --size, ++it)
         {
-#if GRAPHYTE_COMPILER_MSVC && (GRAPHYTE_CPU_ARM_32 || GRAPHYTE_CPU_ARM_64)
+#if GX_COMPILER_MSVC && (GX_CPU_ARM_32 || GX_CPU_ARM_64)
             __iso_volatile_store8(it, 0);
 #else
             (*it) = 0;
@@ -460,13 +460,13 @@ namespace Graphyte::System
     };
 
     // clang-format off
-#if GRAPHYTE_PLATFORM_TYPE_MOBILE
+#if GX_PLATFORM_TYPE_MOBILE
     inline constexpr const PlatformKind CurrentPlatformKind = PlatformKind::Mobile;
-#elif GRAPHYTE_PLATFORM_TYPE_DESKTOP
+#elif GX_PLATFORM_TYPE_DESKTOP
     inline constexpr const PlatformKind CurrentPlatformKind = PlatformKind::Desktop;
-#elif GRAPHYTE_PLATFORM_TYPE_HYBRID
+#elif GX_PLATFORM_TYPE_HYBRID
     inline constexpr const PlatformKind CurrentPlatformKind = PlatformKind::Hybrid;
-#elif GRAPHYTE_PLATFORM_TYPE_CONSOLE
+#elif GX_PLATFORM_TYPE_CONSOLE
     inline constexpr const PlatformKind CurrentPlatformKind = PlatformKind::Console;
 #endif
     // clang-format on
@@ -492,31 +492,31 @@ namespace Graphyte::System
     };
 
     // clang-format off
-#if GRAPHYTE_PLATFORM_ANDROID
+#if GX_PLATFORM_ANDROID
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::Android;
-#elif GRAPHYTE_PLATFORM_BSD
+#elif GX_PLATFORM_BSD
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::BSD;
-#elif GRAPHYTE_PLATFORM_EMSCRIPTEN
+#elif GX_PLATFORM_EMSCRIPTEN
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::Emscripten;
-#elif GRAPHYTE_PLATFORM_IOS
+#elif GX_PLATFORM_IOS
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::IOS;
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::Linux;
-#elif GRAPHYTE_PLATFORM_NX
+#elif GX_PLATFORM_NX
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::NX;
-#elif GRAPHYTE_PLATFORM_OSX
+#elif GX_PLATFORM_OSX
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::OSX;
-#elif GRAPHYTE_PLATFORM_PS4
+#elif GX_PLATFORM_PS4
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::PS4;
-#elif GRAPHYTE_PLATFORM_RPI
+#elif GX_PLATFORM_RPI
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::RaspberryPI;
-#elif GRAPHYTE_PLATFORM_STEAMLINK
+#elif GX_PLATFORM_STEAMLINK
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::SteamLink;
-#elif GRAPHYTE_PLATFORM_WINDOWS
+#elif GX_PLATFORM_WINDOWS
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::Windows;
-#elif GRAPHYTE_PLATFORM_UWP
+#elif GX_PLATFORM_UWP
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::UWP;
-#elif GRAPHYTE_PLATFORM_XBOXONE
+#elif GX_PLATFORM_XBOXONE
     inline constexpr const PlatformType CurrentPlatformType = PlatformType::XBoxOne;
 #endif
     // clang-format on
@@ -736,27 +736,27 @@ namespace Graphyte::System
         RiscV32,
     };
 
-#if GRAPHYTE_CPU_ARM_64
+#if GX_CPU_ARM_64
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::Arm64;
-#elif GRAPHYTE_CPU_ARM_32
+#elif GX_CPU_ARM_32
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::Arm32;
-#elif GRAPHYTE_CPU_X86_64
+#elif GX_CPU_X86_64
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::X64;
-#elif GRAPHYTE_CPU_X86_32
+#elif GX_CPU_X86_32
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::X86;
-#elif GRAPHYTE_CPU_MIPS_64
+#elif GX_CPU_MIPS_64
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::Mips64;
-#elif GRAPHYTE_CPU_MIPS_32
+#elif GX_CPU_MIPS_32
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::Mips32;
-#elif GRAPHYTE_CPU_PPC_64
+#elif GX_CPU_PPC_64
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::PowerPC64;
-#elif GRAPHYTE_CPU_PPC_32
+#elif GX_CPU_PPC_32
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::PowerPC32;
-#elif GRAPHYTE_CPU_RISCV_128
+#elif GX_CPU_RISCV_128
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::RiscV128;
-#elif GRAPHYTE_CPU_RISCV_64
+#elif GX_CPU_RISCV_64
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::RiscV64;
-#elif GRAPHYTE_CPU_RISCV_32
+#elif GX_CPU_RISCV_32
     inline constexpr const ProcessorArchitecture CurrentArchitecture = ProcessorArchitecture::RiscV32;
 #endif
 
@@ -769,7 +769,7 @@ namespace Graphyte::System
     // https://github.com/weidai11/cryptopp/issues/213
     enum class ProcessorFeature : uint32_t
     {
-#if GRAPHYTE_CPU_X86_64 || GRAPHYTE_CPU_X86_32
+#if GX_CPU_X86_64 || GX_CPU_X86_32
 
         AES,
         AVX,
@@ -813,7 +813,7 @@ namespace Graphyte::System
         VAES,
         VPCL,
 
-#elif GRAPHYTE_CPU_ARM_32
+#elif GX_CPU_ARM_32
 
         AES,
         ARMv7, // this maybe required
@@ -832,7 +832,7 @@ namespace Graphyte::System
         VFPv2,
         VFPv3,
 
-#elif GRAPHYTE_CPU_ARM_64
+#elif GX_CPU_ARM_64
 
         AES,
         ASIMD,

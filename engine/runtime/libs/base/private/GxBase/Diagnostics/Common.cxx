@@ -7,20 +7,20 @@
 #include <GxBase/Storage/FileManager.hxx>
 #include "Diagnostics.Impl.hxx"
 
-#if GRAPHYTE_PLATFORM_POSIX
+#if GX_PLATFORM_POSIX
 #include <syslog.h>
 #endif
 
-#if GRAPHYTE_PLATFORM_LINUX
+#if GX_PLATFORM_LINUX
 #include <sys/types.h>
 #include <signal.h>
 #endif
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 #include <io.h>
 #endif
 
-#if (GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP) && GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#if (GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP) && GX_ENABLE_STACKTRACE_SYMBOLS
 #include <DbgHelp.h>
 #endif
 
@@ -40,7 +40,7 @@ namespace Graphyte::Diagnostics::Impl
     bool g_LogOutputDebugger{ false };
     std::unique_ptr<Storage::IStream> g_LogOutputFile{};
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
     HANDLE g_SystemEventLog{};
 
@@ -86,7 +86,7 @@ namespace Graphyte::Diagnostics
         // Enable debug symbols access for stacktrace.
         //
 
-#if GRAPHYTE_PLATFORM_WINDOWS && GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#if GX_PLATFORM_WINDOWS && GX_ENABLE_STACKTRACE_SYMBOLS
 
 
         //
@@ -124,7 +124,7 @@ namespace Graphyte::Diagnostics
 
 #endif
 
-#if GRAPHYTE_PLATFORM_POSIX && GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#if GX_PLATFORM_POSIX && GX_ENABLE_STACKTRACE_SYMBOLS
 
         //
         // Posix systems have symbols always enabled.
@@ -142,7 +142,7 @@ namespace Graphyte::Diagnostics
         // Check for syslog output.
         //
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
         DWORD process_id = GetCurrentProcessId();
 
@@ -156,7 +156,7 @@ namespace Graphyte::Diagnostics
             GX_LOG_ERROR(LogPlatform, "Cannot open event log: {}\n", Diagnostics::GetMessageFromSystemError());
         }
 
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
 
         openlog(nullptr, LOG_ODELAY, LOG_USER);
 
@@ -169,7 +169,7 @@ namespace Graphyte::Diagnostics
 
         if (App::GetDescriptor().Type == App::ApplicationType::ConsoleTool)
         {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
             if (_isatty(_fileno(stdout)))
 #endif
             {
@@ -218,7 +218,7 @@ namespace Graphyte::Diagnostics
         // Cleanup syslog.
         //
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
         GX_ASSERT(Impl::g_SystemEventLog != nullptr);
 
@@ -227,14 +227,14 @@ namespace Graphyte::Diagnostics
             DeregisterEventSource(Impl::g_SystemEventLog);
         }
 
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
 
         closelog();
 
 #endif
 
 
-#if GRAPHYTE_PLATFORM_WINDOWS && GRAPHYTE_ENABLE_STACKTRACE_SYMBOLS
+#if GX_PLATFORM_WINDOWS && GX_ENABLE_STACKTRACE_SYMBOLS
 
         if (SymCleanup(GetCurrentProcess()) == FALSE)
         {
@@ -246,11 +246,11 @@ namespace Graphyte::Diagnostics
 
     BASE_API bool IsDebuggerAttached() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         return IsDebuggerPresent() != FALSE;
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         int fd = open("/proc/self/status", O_RDONLY);
 
@@ -300,11 +300,11 @@ namespace Graphyte::Diagnostics
 
         Impl::FinishLogOutput();
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         ExitProcess(static_cast<UINT>(exitCode));
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         exit(exitCode);
 
@@ -333,12 +333,12 @@ namespace Graphyte::Diagnostics
         // And fail application.
         //
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         RaiseFailFastException(nullptr, nullptr, 0);
         TerminateProcess(GetCurrentProcess(), 1);
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         kill(getpid(), SIGKILL);
 

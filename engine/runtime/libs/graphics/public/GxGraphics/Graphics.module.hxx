@@ -5,9 +5,9 @@
 #define GRAPHICS_API
 #else
 #if defined(module_graphics_EXPORTS)
-#define GRAPHICS_API GX_LIB_EXPORT
+#define GRAPHICS_API GX_MODULE_EXPORT
 #else
-#define GRAPHICS_API GX_LIB_IMPORT
+#define GRAPHICS_API GX_MODULE_IMPORT
 #endif
 #endif
 

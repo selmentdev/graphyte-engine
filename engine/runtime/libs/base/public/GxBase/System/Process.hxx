@@ -8,17 +8,17 @@ namespace Graphyte::System
 {
     struct ProcessHandle final
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         HANDLE Handle;
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
         pid_t ProcessID;
 #endif
 
         bool IsValid() const noexcept
         {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
             return Handle != nullptr;
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
             return ProcessID != 0;
 #endif
         }
@@ -26,9 +26,9 @@ namespace Graphyte::System
 
     struct ProcessId final
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         DWORD Value;
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
         pid_t Value;
 #endif
     };

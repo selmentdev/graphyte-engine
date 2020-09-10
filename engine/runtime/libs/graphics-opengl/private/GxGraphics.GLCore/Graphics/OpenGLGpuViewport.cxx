@@ -59,7 +59,7 @@ namespace Graphyte::Graphics
 
         auto native = new OpenGLGpuViewport();
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
         native->m_Handle        = static_cast<HWND>(native_handle);
         native->m_DeviceContext = GetDC(native->m_Handle);
@@ -157,7 +157,7 @@ namespace Graphyte::Graphics
             native->m_DeviceContext,
             native->m_ContextHandle);
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         native->m_Handle = reinterpret_cast<SDL_Window*>(native_handle);
 
@@ -302,12 +302,12 @@ namespace Graphyte::Graphics
 
         auto native = static_cast<OpenGLGpuViewport*>(handle);
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
         wglDeleteContext(
             native->m_ContextHandle);
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         SDL_GL_DeleteContext(
             native->m_Context);
@@ -371,7 +371,7 @@ namespace Graphyte::Graphics
 
         if (present)
         {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
             GPU_GL_VALIDATE(wglSwapIntervalEXT(
                 interval));

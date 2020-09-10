@@ -71,7 +71,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Conjugate(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
             -q.V.F[0],
             -q.V.F[1],
@@ -79,7 +79,7 @@ namespace Graphyte::Maths
             q.V.F[3],
         } } };
         return { result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         static Impl::ConstFloat32x4 const flip_xyz{ { {
             -1.0F,
             -1.0F,
@@ -109,7 +109,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Multiply(T q1, T q2) noexcept
         requires(Impl::IsQuaternion<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
             (q1.V.F[3] * q2.V.F[0]) + (q1.V.F[0] * q2.V.F[3]) + (q1.V.F[1] * q2.V.F[2]) - (q1.V.F[2] * q2.V.F[1]),
             (q1.V.F[3] * q2.V.F[1]) + (q1.V.F[1] * q2.V.F[3]) + (q1.V.F[2] * q2.V.F[0]) - (q1.V.F[0] * q2.V.F[2]),
@@ -117,7 +117,7 @@ namespace Graphyte::Maths
             (q1.V.F[3] * q2.V.F[3]) - (q1.V.F[0] * q2.V.F[0]) - (q1.V.F[1] * q2.V.F[1]) - (q1.V.F[2] * q2.V.F[2]),
         } } };
         return { result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         static Impl::ConstFloat32x4 const control{ { { 1.0F, 1.0F, 1.0F, -1.0F } } };
 
         __m128 const q1_xyzw = q1.V;
@@ -174,7 +174,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Exp(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Vector3 const q_xyz{ q.V };
         Vector4 const q_dot{ Dot(q_xyz, q_xyz).V };
         Vector4 const v_rcp_len = InvSqrt(q_dot);
@@ -190,12 +190,12 @@ namespace Graphyte::Maths
         Vector4 const wexp   = Exp(w);
         Vector4 const result = Multiply(r1, wexp);
         return Quaternion{ result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const v_len_sq  = _mm_dp_ps(q.V, q.V, 0x7F);
         __m128 const v_rcp_len = _mm_rsqrt_ps(v_len_sq);
         __m128 const v_len     = _mm_rcp_ps(v_rcp_len);
 
-#if GRAPHYTE_MATH_SVML
+#if GX_MATH_SVML
         __m128 coslen;
         __m128 const sinlen = _mm_sincos_ps(&coslen, v_len);
 #else
@@ -214,7 +214,7 @@ namespace Graphyte::Maths
         __m128 const q_w = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
 
         // exp(w)
-#if GRAPHYTE_MATH_SVML
+#if GX_MATH_SVML
         __m128 const q_w_exp = _mm_exp_ps(q_w);
 #else
         float const f_q_w         = _mm_cvtss_f32(q_w);
@@ -231,7 +231,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Log(T q) noexcept
         requires(Impl::IsQuaternion<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Vector4 const qv{ q.V };
         Vector3 const q_xyz{ qv.V };
         Vector4 const v_len_sq{ Dot(q_xyz, q_xyz).V };
@@ -245,7 +245,7 @@ namespace Graphyte::Maths
 
         Quaternion r0{ Select(w, Vector4{ q_xyz_s.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V }).V };
         return r0;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const v_len_sq = _mm_dp_ps(q.V, q.V, 0x7F);
         __m128 const q_w      = _mm_permute_ps(q.V, _MM_SHUFFLE(3, 3, 3, 3));
 
@@ -257,7 +257,7 @@ namespace Graphyte::Maths
         __m128 const rcp          = _mm_mul_ps(q_w, _mm_rsqrt_ps(q_len_sq));
         __m128 const clamped      = _mm_max_ps(_mm_min_ps(rcp, pone), none);
 
-#if GRAPHYTE_MATH_SVML
+#if GX_MATH_SVML
         __m128 const acos_clamped = _mm_acos_ps(clamped);
 #else
         __m128 const acos_clamped = _mm_set_ps1(acosf(_mm_cvtss_f32(clamped)));
@@ -266,7 +266,7 @@ namespace Graphyte::Maths
         __m128 const s       = _mm_mul_ps(acos_clamped, _mm_rsqrt_ps(v_len_sq));
         __m128 const q_xyz_s = _mm_mul_ps(q.V, s);
 
-#if GRAPHYTE_MATH_SVML
+#if GX_MATH_SVML
         __m128 const w       = _mm_mul_ps(_mm_log_ps(q_len_sq), _mm_set_ps1(0.5F));
 #else
         __m128 const w            = _mm_set_ps1(logf(_mm_cvtss_f32(q_len_sq)) * 0.5F);
@@ -325,7 +325,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept
         requires(Impl::IsQuaternion<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Vector4 qv = Select(Vector4{ Impl::c_V4_F32_One.V }, Vector4{ normal.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
 
         float fsin;
@@ -335,7 +335,7 @@ namespace Graphyte::Maths
         Vector4 const scale  = Make<Vector4>(fsin, fsin, fsin, fcos);
         Vector4 const result = Multiply(qv, scale);
         return Quaternion{ result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const normal_xyz  = _mm_and_ps(normal.V, Impl::c_V4_U32_Mask_1110.V);
         __m128 const normal_xyz1 = _mm_or_ps(normal_xyz, Impl::c_V4_F32_PositiveUnitW.V);
         __m128 const scale       = _mm_set_ps1(0.5F * angle);
@@ -409,7 +409,7 @@ namespace Graphyte::Maths
         //  q *= 0.5 / Sqrt(t);
         //
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 result;
 
         float const m22 = m.M.M[2][2];
@@ -474,7 +474,7 @@ namespace Graphyte::Maths
         }
 
         return { result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         static Impl::ConstFloat32x4 const const_p1_m1_m1_p1{ { { +1.0f, -1.0f, -1.0f, +1.0f } } };
         static Impl::ConstFloat32x4 const const_m1_p1_m1_p1{ { { -1.0f, +1.0f, -1.0f, +1.0f } } };
         static Impl::ConstFloat32x4 const const_m1_m1_p1_p1{ { { -1.0f, -1.0f, +1.0f, +1.0f } } };
@@ -548,7 +548,7 @@ namespace Graphyte::Maths
     {
         GX_ASSERT(GetX(t) == GetY(t) && GetX(t) == GetZ(t) && GetX(t) == GetW(t));
 
-#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+#if GX_MATH_NO_INTRINSICS || GX_HW_NEON
         static constexpr Impl::ConstFloat32x4 const one_minus_epsilon{ { {
             1.0f - 0.00001f,
             1.0f - 0.00001f,
@@ -593,7 +593,7 @@ namespace Graphyte::Maths
         Vector4 const vresult1 = MultiplyAdd(Vector4{ q1.V }, vs1b, vresult0);
 
         return Quaternion{ vresult1.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         static constexpr Impl::ConstFloat32x4 const one_minus_epsilon{ { {
             1.0f - 0.00001f,
             1.0f - 0.00001f,

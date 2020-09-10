@@ -31,7 +31,7 @@ namespace Graphyte::Maths
     {
         GX_ASSERT(source != nullptr);
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         uint32_t const value = source->Value;
 
         Impl::ConstFloat32x4 const result{ { {
@@ -42,7 +42,7 @@ namespace Graphyte::Maths
         } } };
 
         return { result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         // {c0}[#bgra, #bgra, #bgra, #bgra]
         __m128i const c0 = _mm_set1_epi32(static_cast<int>(source->Value));
         // {c1}[#__r_, #_g__, #b___, #___a]
@@ -61,7 +61,7 @@ namespace Graphyte::Maths
     {
         GX_ASSERT(destination != nullptr);
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Vector4 const c0 = Saturate(Vector4{ color.V });
         Vector4 const c1 = Multiply(c0, Vector4{ Impl::c_V4_F32_U8_Max.V });
         Vector4 const c2 = Round(c1);
@@ -75,7 +75,7 @@ namespace Graphyte::Maths
         uint32_t const b = static_cast<uint32_t>(buffer.X);
 
         destination->Value = a | r | g | b;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         // Saturate
         __m128 const color_max = _mm_max_ps(color.V, _mm_setzero_ps());
         __m128 const color_min = _mm_min_ps(color_max, Impl::c_V4_F32_One.V);
@@ -102,7 +102,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Negative(T v) noexcept
         requires(Impl::IsColor<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
             1.0F - v.V.F[0],
             1.0F - v.V.F[1],
@@ -110,7 +110,7 @@ namespace Graphyte::Maths
             v.V.F[3],
         } } };
         return { result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const neg_xyz = _mm_xor_ps(v.V, Impl::c_V3_F32_Negative_Zero.V);
         __m128 const result = _mm_add_ps(neg_xyz, Impl::c_V3_F32_One.V);
         return { result };
@@ -121,7 +121,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Modulate(T a, T b) noexcept
         requires(Impl::IsColor<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
             a.V.F[0] * b.V.F[0],
             a.V.F[1] * b.V.F[1],
@@ -129,7 +129,7 @@ namespace Graphyte::Maths
             a.V.F[3] * b.V.F[3],
         } } };
         return { result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         return { _mm_mul_ps(a.V, b.V) };
 #endif
     }
@@ -145,7 +145,7 @@ namespace Graphyte::Maths
             0.0F,
         } } };
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         float const factor
             = (v.V.F[0] * luminance.V.F[0])
             + (v.V.F[1] * luminance.V.F[1])
@@ -157,7 +157,7 @@ namespace Graphyte::Maths
             v.V.F[3] } } };
 
         return { result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const vfactor = _mm_dp_ps(v.V, luminance.V, 0x3F);
         __m128 const vsaturation = _mm_set_ps1(saturation);
         __m128 const r0 = _mm_sub_ps(v.V, vfactor);
@@ -172,13 +172,13 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall AdjustContrast(T v, float contrast) noexcept
         requires(Impl::IsColor<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { { ((v.V.F[0] - 0.5F) * contrast) + 0.5F,
             ((v.V.F[1] - 0.5F) * contrast) + 0.5F,
             ((v.V.F[2] - 0.5F) * contrast) + 0.5F,
             v.V.F[3] } } };
         return { result.V };
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const vcontrast = _mm_set_ps1(contrast);
         __m128 const r0 = _mm_sub_ps(v.V, Impl::c_V4_F32_One_Half.V);
         __m128 const r1 = Impl::avx_fmadd_f32x4(r0, vcontrast, Impl::c_V4_F32_One_Half.V);

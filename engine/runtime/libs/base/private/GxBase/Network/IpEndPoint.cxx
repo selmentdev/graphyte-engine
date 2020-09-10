@@ -4,7 +4,7 @@
 #include <GxBase/String.hxx>
 #include <GxBase/Diagnostics.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 #include <mstcpip.h>
 #endif
 
@@ -229,7 +229,7 @@ namespace Graphyte::Network
         return 0;
     }
 
-#if !(GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP)
+#if !(GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP)
     static bool SplitEndpoint(
         std::string_view address,
         std::string& host,
@@ -266,7 +266,7 @@ namespace Graphyte::Network
     {
         GX_ASSERT(value != nullptr);
 
-#if (GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP)
+#if (GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP)
         AddressStorage u{};
         if (RtlIpv4StringToAddressExA(value, TRUE, &u.V4.sin_addr, &u.V4.sin_port) == 0)
         {
@@ -315,7 +315,7 @@ namespace Graphyte::Network
         std::string& out_result
     ) const noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         std::array<char, INET6_ADDRSTRLEN> temp_buffer{};
         ULONG string_length = static_cast<ULONG>(temp_buffer.max_size());
         bool valid = false;

@@ -111,28 +111,28 @@ def generate_version_file():
         build_timestamp : str = date.strftime("%Y-%m-%dT%H:%M:%S")
         build_uuid : str = hashlib.sha256(b'graphyte').hexdigest()[0:32]
 
-        file.write('#define GRAPHYTE_BUILD_OS_VERSION        "{}"\n'.format(os_version))
-        file.write('#define GRAPHYTE_BUILD_OS_RELEASE        "{}"\n'.format(os_release))
-        file.write('#define GRAPHYTE_BUILD_OS_SYSTEM         "{}"\n'.format(os_system))
-        file.write('#define GRAPHYTE_BUILD_OS_PLATFORM       "{}"\n'.format(os_platform))
-        file.write('#define GRAPHYTE_BUILD_OS_NODE           "{}"\n'.format(os_node))
+        file.write('#define GX_BUILD_OS_VERSION        "{}"\n'.format(os_version))
+        file.write('#define GX_BUILD_OS_RELEASE        "{}"\n'.format(os_release))
+        file.write('#define GX_BUILD_OS_SYSTEM         "{}"\n'.format(os_system))
+        file.write('#define GX_BUILD_OS_PLATFORM       "{}"\n'.format(os_platform))
+        file.write('#define GX_BUILD_OS_NODE           "{}"\n'.format(os_node))
 
-        file.write('#define GRAPHYTE_BUILD_COMMIT            "{}"\n'.format(build_commit[0] or "<unknown>"))
-        file.write('#define GRAPHYTE_BUILD_COMMIT_SHORT      "{}"\n'.format(build_commit_short[0] or "<unknown>"))
-        file.write('#define GRAPHYTE_BUILD_BRANCH            "{}"\n'.format(build_branch[0] or "<unknown>"))
-        file.write('#define GRAPHYTE_BUILD_UUID              "{}"\n'.format(build_uuid))
-        file.write('#define GRAPHYTE_BUILD_VERSION           "{}.{}.{}.{}"\n'.format(
+        file.write('#define GX_BUILD_COMMIT            "{}"\n'.format(build_commit[0] or "<unknown>"))
+        file.write('#define GX_BUILD_COMMIT_SHORT      "{}"\n'.format(build_commit_short[0] or "<unknown>"))
+        file.write('#define GX_BUILD_BRANCH            "{}"\n'.format(build_branch[0] or "<unknown>"))
+        file.write('#define GX_BUILD_UUID              "{}"\n'.format(build_uuid))
+        file.write('#define GX_BUILD_VERSION           "{}.{}.{}.{}"\n'.format(
             build_version_major,
             build_version_minor,
             build_version_release,
             build_version_build
         ))
 
-        file.write('#define GRAPHYTE_BUILD_VERSION_MAJOR     {}\n'.format(build_version_major))
-        file.write('#define GRAPHYTE_BUILD_VERSION_MINOR     {}\n'.format(build_version_minor))
-        file.write('#define GRAPHYTE_BUILD_VERSION_RELEASE   {}\n'.format(build_version_release))
-        file.write('#define GRAPHYTE_BUILD_VERSION_BUILD     {}\n'.format(build_version_build))
-        file.write('#define GRAPHYTE_BUILD_TIMESTAMP         "{}"\n'.format(build_timestamp))
+        file.write('#define GX_BUILD_VERSION_MAJOR     {}\n'.format(build_version_major))
+        file.write('#define GX_BUILD_VERSION_MINOR     {}\n'.format(build_version_minor))
+        file.write('#define GX_BUILD_VERSION_RELEASE   {}\n'.format(build_version_release))
+        file.write('#define GX_BUILD_VERSION_BUILD     {}\n'.format(build_version_build))
+        file.write('#define GX_BUILD_TIMESTAMP         "{}"\n'.format(build_timestamp))
 
 def _emit_separator(f):
     f.write('// -------------------------------------------------------------------------------------------------\n')

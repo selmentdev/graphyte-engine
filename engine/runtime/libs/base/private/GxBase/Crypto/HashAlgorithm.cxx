@@ -1,6 +1,6 @@
 #include <GxBase/Crypto/HashAlgorithm.hxx>
 
-#if GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_UWP
 #include <winrt/Windows.Security.Cryptography.Core.h>
 #include <winrt/Windows.Storage.Streams.h>
 
@@ -8,7 +8,7 @@
 #pragma warning(disable : 4715)
 #endif
 
-#if !GRAPHYTE_PLATFORM_UWP
+#if !GX_PLATFORM_UWP
 
 #include <mbedtls/md.h>
 
@@ -132,7 +132,7 @@ namespace Graphyte::Crypto
     std::unique_ptr<HashAlgorithm> HashAlgorithm::Create(
         [[maybe_unused]] HashType hashType) noexcept
     {
-#if !GRAPHYTE_PLATFORM_UWP
+#if !GX_PLATFORM_UWP
         mbedtls_md_type_t const type        = MbedtlsHelpers::Impl::GetType(hashType);
         const mbedtls_md_info_t* const info = mbedtls_md_info_from_type(type);
 
@@ -152,7 +152,7 @@ namespace Graphyte::Crypto
         [[maybe_unused]] std::vector<std::byte>& output,
         [[maybe_unused]] std::span<const std::byte> input) noexcept
     {
-#if GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_UWP
 
         using winrt::Windows::Security::Cryptography::CryptographicBuffer;
         using winrt::Windows::Security::Cryptography::Core::HashAlgorithmNames;
@@ -225,6 +225,6 @@ namespace Graphyte::Crypto
     }
 }
 
-#if GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_UWP
 #pragma warning(pop)
 #endif

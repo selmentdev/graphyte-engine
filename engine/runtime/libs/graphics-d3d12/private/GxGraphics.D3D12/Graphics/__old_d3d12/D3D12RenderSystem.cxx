@@ -11,7 +11,7 @@ namespace Graphyte::Graphics::Render
         //
         // Enable debug interface.
         //
-#if GRAPHYTE_BUILD_TYPE_DEBUG
+#if GX_BUILD_TYPE_DEBUG
         {
             Microsoft::WRL::ComPtr<ID3D12Debug> debug{};
             if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debug))))
@@ -66,7 +66,7 @@ namespace Graphyte::Graphics::Render
             }
         }
 
-#if GRAPHYTE_BUILD_TYPE_DEBUG
+#if GX_BUILD_TYPE_DEBUG
         if (m_Adapter == nullptr)
         {
             if (FAILED(m_Factory->EnumWarpAdapter(IID_PPV_ARGS(&m_Adapter))))

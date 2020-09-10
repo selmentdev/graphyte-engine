@@ -46,7 +46,7 @@ namespace Graphyte
             {
                 struct
                 {
-#if GRAPHYTE_ENDIAN_LITTLE
+#if GX_ENDIAN_LITTLE
                     uint16_t Mantissa : MantissaBits;
                     uint16_t Exponent : ExponentBits;
                     uint16_t Sign : SignBits;
@@ -143,7 +143,7 @@ namespace Graphyte
             {
                 struct
                 {
-#if GRAPHYTE_ENDIAN_LITTLE
+#if GX_ENDIAN_LITTLE
                     uint32_t Mantissa : MantissaBits;
                     uint32_t Exponent : ExponentBits;
                     uint32_t Sign : SignBits;
@@ -248,7 +248,7 @@ namespace Graphyte
             {
                 struct
                 {
-#if GRAPHYTE_ENDIAN_LITTLE
+#if GX_ENDIAN_LITTLE
                     uint64_t Mantissa : MantissaBits;
                     uint64_t Exponent : ExponentBits;
                     uint64_t Sign : SignBits;
@@ -373,11 +373,11 @@ namespace Graphyte
         }
         else
         {
-#if !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_HW_F16C
+#if !GX_MATH_NO_INTRINSICS && GX_HW_F16C
             __m128i const vh = _mm_cvtsi32_si128(static_cast<int>(v.Value));
             __m128 const vf  = _mm_cvtph_ps(vh);
             return _mm_cvtss_f32(vf);
-#elif !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_HW_NEON
+#elif !GX_MATH_NO_INTRINSICS && GX_HW_NEON
             uint16x4_t vh = vdup_n_u16(v.Value);
             float32x4_t vf = vcvt_f32_f16(vreinterpret_f16_u16(vh));
             return vgetq_lane_f32(vf, 0);
@@ -436,14 +436,14 @@ namespace Graphyte
         }
         else
         {
-#if !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_HW_F16C
+#if !GX_MATH_NO_INTRINSICS && GX_HW_F16C
             __m128 const vf  = _mm_set_ss(value);
             __m128i const vh = _mm_cvtps_ph(vf, _MM_FROUND_TO_NEAREST_INT);
 
             return Graphyte::Half{
                 .Value = static_cast<uint16_t>(_mm_extract_epi16(vh, 0))
             };
-#elif !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_HW_NEON
+#elif !GX_MATH_NO_INTRINSICS && GX_HW_NEON
             float32x4_t const vf = vdupq_n_f32(value);
             float16x4_t const vh = vcvt_f16_f32(vf);
 

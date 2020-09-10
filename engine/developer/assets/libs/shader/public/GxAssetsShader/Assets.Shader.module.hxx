@@ -5,8 +5,8 @@
 #define ASSETS_SHADER_API
 #else
 #if defined(assets_shader_EXPORTS)
-#define ASSETS_SHADER_API GX_LIB_EXPORT
+#define ASSETS_SHADER_API GX_MODULE_EXPORT
 #else
-#define ASSETS_SHADER_API GX_LIB_IMPORT
+#define ASSETS_SHADER_API GX_MODULE_IMPORT
 #endif
 #endif

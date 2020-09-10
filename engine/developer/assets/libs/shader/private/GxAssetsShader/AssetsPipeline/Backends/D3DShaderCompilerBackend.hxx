@@ -1,7 +1,7 @@
 #pragma once
 #include <GxAssetsShader/Assets.Shader.module.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
 #include <GxAssetsShader/AssetsPipeline/ShaderProcessor.hxx>
 #include <GxBase/System/Library.hxx>

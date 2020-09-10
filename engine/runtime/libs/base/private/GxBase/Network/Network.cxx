@@ -1,13 +1,13 @@
 #include <GxBase/Network.hxx>
 #include <GxBase/Diagnostics.hxx>
 
-#define GRAPHYTE_SDKS_WITH_CURL 0
+#define GX_SDKS_WITH_CURL 0
 
-#if GRAPHYTE_SDKS_WITH_CURL
+#if GX_SDKS_WITH_CURL
 #include <curl/curl.h>
 #endif
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 #include <netlistmgr.h>
 #include <wrl/client.h>
 
@@ -18,7 +18,7 @@ namespace Graphyte::Network::Impl::Windows
 
 #endif
 
-#if GRAPHYTE_SDKS_WITH_CURL
+#if GX_SDKS_WITH_CURL
 namespace Graphyte::Network::Impl
 {
     static size_t CURL_Client_Download_WriteCallback(
@@ -48,7 +48,7 @@ namespace Graphyte::Network
         // Do platform-specific initialization.
         //
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
         HRESULT hr = CoCreateInstance(
             CLSID_NetworkListManager,
@@ -64,13 +64,13 @@ namespace Graphyte::Network
 
         GX_ASSERT(Impl::Windows::g_NetworkListManager != nullptr);
 
-#elif GRAPHYTE_PLATFORM_UWP
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_UWP
+#elif GX_PLATFORM_LINUX
 #else
 #error Not supported
 #endif
 
-#if GRAPHYTE_SDKS_WITH_CURL
+#if GX_SDKS_WITH_CURL
         //
         // Initialize CURL.
         //
@@ -82,11 +82,11 @@ namespace Graphyte::Network
 
     BASE_API void Finalize() noexcept
     {
-#if GRAPHYTE_SDKS_WITH_CURL
+#if GX_SDKS_WITH_CURL
         curl_global_cleanup();
 #endif
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
         Impl::Windows::g_NetworkListManager = nullptr;
 #endif
     }
@@ -94,7 +94,7 @@ namespace Graphyte::Network
     BASE_API Status HasInternetConnection(
         bool& status) noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
         GX_ASSERT(Impl::Windows::g_NetworkListManager != nullptr);
 
         VARIANT_BOOL result{};
@@ -110,12 +110,12 @@ namespace Graphyte::Network
         status = false;
         return Status::Failure;
 
-#elif GRAPHYTE_PLATFORM_UWP
+#elif GX_PLATFORM_UWP
 
         status = false;
         return Status::NotImplemented;
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         status = false;
 
@@ -137,7 +137,7 @@ namespace Graphyte::Network
         [[maybe_unused]] size_t& size,
         [[maybe_unused]] std::string_view url) noexcept
     {
-#if GRAPHYTE_SDKS_WITH_CURL
+#if GX_SDKS_WITH_CURL
         std::string url_string{ url.data(), url.size() };
         std::vector<std::byte> buffer{};
 

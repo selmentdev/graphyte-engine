@@ -19,7 +19,7 @@ namespace Graphyte::System::Impl
                 GX_ASSERTF(false, "SDL Initialization failure: `{}`", SDL_GetError());
             }
 
-#if GRAPHYTE_CONFIG_DO_ASSERT
+#if GX_CONFIG_DO_ASSERT
             auto const initialized_subsystems = SDL_WasInit(SDL_INIT_EVERYTHING);
             GX_ASSERTF((initialized_subsystems & SDL_INIT_EVENTS) != 0, "SDL_INIT_EVENTS not initialized");
             GX_ASSERTF((initialized_subsystems & SDL_INIT_JOYSTICK) != 0, "SDL_INIT_JOYSTICK not initialized");

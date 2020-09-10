@@ -93,9 +93,9 @@ namespace Graphyte::Threading
 
     struct ThreadHandle final
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         ::HANDLE Value;
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
         ::pthread_t Value;
 #else
 #error Not supported.
@@ -103,9 +103,9 @@ namespace Graphyte::Threading
 
         [[nodiscard]] bool IsValid() const noexcept
         {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
             return Value != nullptr;
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
             return Value != 0;
 #else
 #error Not supported
@@ -115,9 +115,9 @@ namespace Graphyte::Threading
 
     struct ThreadId final
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         ::DWORD Value;
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
         ::pthread_t Value;
 #else
 #error Not supported.
@@ -136,11 +136,11 @@ namespace Graphyte::Threading
     /// @brief Yields execution of current thread.
     __forceinline void YieldThread() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         ::Sleep(0);
 
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
 
         sched_yield();
 
@@ -154,11 +154,11 @@ namespace Graphyte::Threading
     /// @param milliseconds Provides timeout in milliseconds.
     __forceinline void SleepThread(uint32_t milliseconds) noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         ::Sleep(milliseconds);
 
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
 
         usleep(milliseconds * 1000);
 
@@ -170,11 +170,11 @@ namespace Graphyte::Threading
     /// @brief Gets current thread id.
     [[nodiscard]] __forceinline ThreadId CurrentThreadId() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         return ThreadId{ .Value = ::GetCurrentThreadId() };
 
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
 
         return ThreadId{ ::pthread_self() };
 
@@ -193,7 +193,7 @@ namespace Graphyte::Threading
 {
     __forceinline void LoadBarrier() noexcept
     {
-#if GRAPHYTE_COMPILER_MSVC
+#if GX_COMPILER_MSVC
         _ReadBarrier();
 #else
         // clang-format off
@@ -204,7 +204,7 @@ namespace Graphyte::Threading
 
     __forceinline void StoreBarrier() noexcept
     {
-#if GRAPHYTE_COMPILER_MSVC
+#if GX_COMPILER_MSVC
         _WriteBarrier();
 #else
         // clang-format off
@@ -215,7 +215,7 @@ namespace Graphyte::Threading
 
     __forceinline void LoadStoreBarrier() noexcept
     {
-#if GRAPHYTE_COMPILER_MSVC
+#if GX_COMPILER_MSVC
         _ReadWriteBarrier();
 #else
         // clang-format off
@@ -237,18 +237,18 @@ namespace Graphyte::Threading
 
     __forceinline void StoreStoreFence() noexcept
     {
-#if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
+#if GX_CPU_X86_32 || GX_CPU_X86_64
         StoreBarrier();
         _mm_sfence();
-#elif GRAPHYTE_CPU_ARM_64 && GRAPHYTE_COMPILER_MSVC
+#elif GX_CPU_ARM_64 && GX_COMPILER_MSVC
         __dmb(_ARM64_BARRIER_ISHST);
-#elif GRAPHYTE_CPU_ARM_64 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+#elif GX_CPU_ARM_64 && (GX_COMPILER_GCC || GX_COMPILER_CLANG)
         // clang-format off
         __asm__ __volatile__("dmb ishst" : : : "memory");
         // clang-format on
-#elif GRAPHYTE_CPU_ARM_32 && GRAPHYTE_COMPILER_MSVC
+#elif GX_CPU_ARM_32 && GX_COMPILER_MSVC
         __dmb(_ARM_BARRIER_ISHST);
-#elif GRAPHYTE_CPU_ARM_32 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+#elif GX_CPU_ARM_32 && (GX_COMPILER_GCC || GX_COMPILER_CLANG)
         // clang-format off
         __asm__ __volatile__("dmb ishst" : : : "memory");
         // clang-format on
@@ -259,18 +259,18 @@ namespace Graphyte::Threading
 
     __forceinline void StoreLoadFence() noexcept
     {
-#if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
+#if GX_CPU_X86_32 || GX_CPU_X86_64
         StoreBarrier();
         _mm_mfence();
-#elif GRAPHYTE_CPU_ARM_64 && GRAPHYTE_COMPILER_MSVC
+#elif GX_CPU_ARM_64 && GX_COMPILER_MSVC
         __dmb(_ARM64_BARRIER_ISH);
-#elif GRAPHYTE_CPU_ARM_64 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+#elif GX_CPU_ARM_64 && (GX_COMPILER_GCC || GX_COMPILER_CLANG)
         // clang-format off
         __asm__ __volatile__("dmb ish" : : : "memory");
         // clang-format on
-#elif GRAPHYTE_CPU_ARM_32 && GRAPHYTE_COMPILER_MSVC
+#elif GX_CPU_ARM_32 && GX_COMPILER_MSVC
         __dmb(_ARM_BARRIER_ISH);
-#elif GRAPHYTE_CPU_ARM_32 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+#elif GX_CPU_ARM_32 && (GX_COMPILER_GCC || GX_COMPILER_CLANG)
         // clang-format off
         __asm__ __volatile__("dmb ish" : : : "memory");
         // clang-format on
@@ -281,18 +281,18 @@ namespace Graphyte::Threading
 
     __forceinline void LoadStoreFence() noexcept
     {
-#if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
+#if GX_CPU_X86_32 || GX_CPU_X86_64
         StoreBarrier();
         _mm_mfence();
-#elif GRAPHYTE_CPU_ARM_64 && GRAPHYTE_COMPILER_MSVC
+#elif GX_CPU_ARM_64 && GX_COMPILER_MSVC
         __dmb(_ARM64_BARRIER_ISHLD);
-#elif GRAPHYTE_CPU_ARM_64 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+#elif GX_CPU_ARM_64 && (GX_COMPILER_GCC || GX_COMPILER_CLANG)
         // clang-format off
         __asm__ __volatile__("dmb ishld" : : : "memory");
         // clang-format on
-#elif GRAPHYTE_CPU_ARM_32 && GRAPHYTE_COMPILER_MSVC
+#elif GX_CPU_ARM_32 && GX_COMPILER_MSVC
         __dmb(_ARM_BARRIER_ISH);
-#elif GRAPHYTE_CPU_ARM_32 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+#elif GX_CPU_ARM_32 && (GX_COMPILER_GCC || GX_COMPILER_CLANG)
         // clang-format off
         __asm__ __volatile__("dmb ish" : : : "memory");
         // clang-format on
@@ -303,18 +303,18 @@ namespace Graphyte::Threading
 
     __forceinline void LoadLoadFence() noexcept
     {
-#if GRAPHYTE_CPU_X86_32 || GRAPHYTE_CPU_X86_64
+#if GX_CPU_X86_32 || GX_CPU_X86_64
         StoreBarrier();
         _mm_lfence();
-#elif GRAPHYTE_CPU_ARM_64 && GRAPHYTE_COMPILER_MSVC
+#elif GX_CPU_ARM_64 && GX_COMPILER_MSVC
         __dmb(_ARM64_BARRIER_ISHLD);
-#elif GRAPHYTE_CPU_ARM_64 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+#elif GX_CPU_ARM_64 && (GX_COMPILER_GCC || GX_COMPILER_CLANG)
         // clang-format off
         __asm__ __volatile__("dmb ishld" : : : "memory");
         // clang-format on
-#elif GRAPHYTE_CPU_ARM_32 && GRAPHYTE_COMPILER_MSVC
+#elif GX_CPU_ARM_32 && GX_COMPILER_MSVC
         __dmb(_ARM_BARRIER_ISH);
-#elif GRAPHYTE_CPU_ARM_32 && (GRAPHYTE_COMPILER_GCC || GRAPHYTE_COMPILER_CLANG)
+#elif GX_CPU_ARM_32 && (GX_COMPILER_GCC || GX_COMPILER_CLANG)
         // clang-format off
         __asm__ __volatile__("dmb ish" : : : "memory");
         // clang-format on

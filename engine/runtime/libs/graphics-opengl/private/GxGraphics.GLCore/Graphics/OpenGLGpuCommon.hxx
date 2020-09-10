@@ -5,9 +5,9 @@
 
 #include <glad/glad.h>
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 #include <glad/glad_wgl.h>
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 #include <glad/glad_glx.h>
 #include <SDL2/SDL.h>
 

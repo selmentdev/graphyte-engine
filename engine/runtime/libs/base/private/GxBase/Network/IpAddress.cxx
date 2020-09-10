@@ -3,7 +3,7 @@
 #include <GxBase/Diagnostics.hxx>
 //#include <GxBase/ByteAccess.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 #include <mstcpip.h>
 #endif
 
@@ -666,7 +666,7 @@ namespace Graphyte::Network
         {
         case AddressFamily::IpV4:
             {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
                 RtlIpv4AddressToStringA(&m_address.v4, temp_buffer.data());
 #else
                 inet_ntop(AF_INET, &m_address.v4, temp_buffer.data(), temp_buffer.size());
@@ -677,7 +677,7 @@ namespace Graphyte::Network
 
         case AddressFamily::IpV6:
             {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
                 RtlIpv6AddressToStringA(&m_address.v6, temp_buffer.data());
 #else
                 inet_ntop(AF_INET6, &m_address.v4, temp_buffer.data(), temp_buffer.size());
@@ -722,7 +722,7 @@ namespace Graphyte::Network
     {
         if (address != nullptr)
         {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
             USHORT port = {};
             ULONG scope_id = {};
 #endif
@@ -731,7 +731,7 @@ namespace Graphyte::Network
             case AddressFamily::IpV4:
                 {
                     in_addr ipv4_address{};
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
                     if (RtlIpv4StringToAddressExA(address, TRUE, &ipv4_address, &port) == 0)
 #else
                     if (inet_pton(AF_INET, address, &ipv4_address) == 1)
@@ -750,7 +750,7 @@ namespace Graphyte::Network
                     //
                     // Otherwise, it may be valid IPv6 address.
                     //
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
                     if (RtlIpv6StringToAddressExA(address, &ipv6_address, &scope_id, &port) == 0)
 #else
                     if (inet_pton(AF_INET6, address, &ipv6_address) == 1)

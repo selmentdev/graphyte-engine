@@ -4,7 +4,7 @@
 
 namespace Graphyte::Rendering
 {
-    static constexpr bool IsDebugRenderEnabled = (GRAPHYTE_ENABLE_DEBUG_RENDER != 0);
+    static constexpr bool IsDebugRenderEnabled = (GX_ENABLE_DEBUG_RENDER != 0);
 
     class IDebugRenderer
     {

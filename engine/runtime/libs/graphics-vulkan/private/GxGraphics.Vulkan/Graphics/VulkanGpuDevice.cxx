@@ -4,7 +4,7 @@
 #include "VulkanGpuCommandList.hxx"
 #include "VulkanGpuDevice.hxx"
 
-#if GRAPHYTE_PLATFORM_LINUX
+#if GX_PLATFORM_LINUX
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 #include <X11/Xlib-xcb.h>
@@ -284,10 +284,10 @@ namespace Graphyte::Graphics
         const char* extensions[]
         {
             VK_KHR_SURFACE_EXTENSION_NAME,
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
                 VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
 #endif
-#if GRAPHYTE_PLATFORM_LINUX
+#if GX_PLATFORM_LINUX
                 VK_KHR_XCB_SURFACE_EXTENSION_NAME,
 #endif
                 VK_EXT_DEBUG_REPORT_EXTENSION_NAME,

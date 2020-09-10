@@ -1,7 +1,7 @@
 // =================================================================================================
 // Single instance support
 
-#if defined(GX_LAUNCH_SINGLE_INSTANCE) && GRAPHYTE_PLATFORM_WINDOWS
+#if defined(GX_LAUNCH_SINGLE_INSTANCE) && GX_PLATFORM_WINDOWS
 
 namespace Graphyte::Launch::Impl
 {
@@ -9,7 +9,7 @@ namespace Graphyte::Launch::Impl
 
     static void SingleInstance_Acquire() noexcept
     {
-        HANDLE const mutex = CreateMutexW(nullptr, TRUE, GX_WIN32_WIDEN(GX_LAUNCH_SINGLE_INSTANCE));
+        HANDLE mutex = CreateMutexW(nullptr, TRUE, GX_WIN32_WIDEN(GX_LAUNCH_SINGLE_INSTANCE));
 
         if (mutex != nullptr)
         {
@@ -20,6 +20,8 @@ namespace Graphyte::Launch::Impl
                 // Mutex was already created by other instance of current application
                 Graphyte::App::Impl::g_IsFirstInstance = false;
                 ReleaseMutex(mutex);
+
+                mutex = nullptr;
             }
             else if (dwError == ERROR_ACCESS_DENIED)
             {

@@ -304,7 +304,7 @@ namespace Graphyte
 }
 
 #define GX_IMPLEMENT_MODULE(module_class) \
-    extern "C" GX_LIB_EXPORT Graphyte::IModule* CreateModule() noexcept \
+    extern "C" GX_MODULE_EXPORT Graphyte::IModule* CreateModule() noexcept \
     { \
         return new module_class(); \
     }

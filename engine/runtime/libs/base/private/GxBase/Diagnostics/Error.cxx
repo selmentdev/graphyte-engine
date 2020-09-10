@@ -23,7 +23,7 @@ namespace Graphyte::Diagnostics
                 return Status::InvalidArgument;
 
             case ENOEXEC:
-#if GRAPHYTE_PLATFORM_POSIX
+#if GX_PLATFORM_POSIX
             case ENOTBLK:
 #endif
                 return Status::NotSupported;
@@ -68,7 +68,7 @@ namespace Graphyte::Diagnostics
     BASE_API std::string GetMessageFromErrno(
         int error) noexcept
     {
-#if GRAPHYTE_PLATFORM_POSIX
+#if GX_PLATFORM_POSIX
 
         std::array<char, 128> buffer{};
 
@@ -79,7 +79,7 @@ namespace Graphyte::Diagnostics
 
         return { result };
 
-#elif GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#elif GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         char buffer[128];
         strerror_s(buffer, error);

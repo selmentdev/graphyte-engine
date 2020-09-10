@@ -107,7 +107,7 @@ namespace Graphyte::Graphics
     {
         if (!m_Valid)
         {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
             HWND focused            = GetFocus();
             bool const is_focused   = (focused == m_Handle);
             bool const is_minimized = !!IsIconic(m_Handle);

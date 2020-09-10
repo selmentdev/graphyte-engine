@@ -7,7 +7,7 @@ namespace Graphyte::Graphics
     class OpenGLGpuDevice final : public GpuDevice
     {
     public:
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
         HGLRC m_InitialContext;
         HWND m_InitialWindow;
 #endif

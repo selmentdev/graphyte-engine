@@ -54,7 +54,7 @@ namespace Graphyte::Maths
         Vector2 line2_start,
         Vector2 line2_end) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Vector2 const line1  = Subtract(line1_end, line1_start);
         Vector2 const line2  = Subtract(line2_end, line2_start);
         Vector2 const line12 = Subtract(line1_start, line2_start);
@@ -87,7 +87,7 @@ namespace Graphyte::Maths
         }
 
         return result;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const line1  = _mm_sub_ps(line1_end.V, line1_start.V);
         __m128 const line2  = _mm_sub_ps(line2_end.V, line2_start.V);
         __m128 const line12 = _mm_sub_ps(line1_start.V, line2_start.V);

@@ -15,7 +15,7 @@ namespace Graphyte::Maths
         float m30, float m31, float m32, float m33) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Matrix result;
         result.M.M[0][0] = m00;
         result.M.M[0][1] = m01;
@@ -38,7 +38,7 @@ namespace Graphyte::Maths
         result.M.M[3][3] = m33;
 
         return result;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Matrix result;
         result.M.R[0] = _mm_set_ps(m03, m02, m01, m00);
         result.M.R[1] = _mm_set_ps(m13, m12, m11, m10);
@@ -59,7 +59,7 @@ namespace Graphyte::Maths
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
 
         Matrix result;
 
@@ -85,7 +85,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
 
         Matrix result;
 
@@ -106,7 +106,7 @@ namespace Graphyte::Maths
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
 
         destination->M[0][0] = m.M.R[0].F[0];
         destination->M[0][1] = m.M.R[0].F[1];
@@ -128,7 +128,7 @@ namespace Graphyte::Maths
         destination->M[3][2] = m.M.R[3].F[2];
         destination->M[3][3] = m.M.R[3].F[3];
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
 
         _mm_store_ps(&destination->M11, m.M.R[0]);
         _mm_store_ps(&destination->M21, m.M.R[1]);
@@ -145,7 +145,7 @@ namespace Graphyte::Maths
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Matrix result;
 
         result.M.M[0][0] = source->M[0][0];
@@ -169,7 +169,7 @@ namespace Graphyte::Maths
         result.M.M[3][3] = 1.0f;
 
         return result;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         // = [r0.xyz, r1.x]
         __m128 const r0 = _mm_load_ps(&source->M[0][0]);
         // = [r1.yz, r2.xy]
@@ -212,7 +212,7 @@ namespace Graphyte::Maths
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         destination->M[0][0] = m.M.M[0][0];
         destination->M[0][1] = m.M.M[0][1];
         destination->M[0][2] = m.M.M[0][2];
@@ -228,7 +228,7 @@ namespace Graphyte::Maths
         destination->M[3][0] = m.M.M[3][0];
         destination->M[3][1] = m.M.M[3][1];
         destination->M[3][2] = m.M.M[3][2];
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         // = [r0.xyzw]
         __m128 const r0 = m.M.R[0];
         // = [r1.xyzw]
@@ -266,7 +266,7 @@ namespace Graphyte::Maths
         GX_ASSERT(source != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(source), std::align_val_t{ 16 }));
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
 
         Matrix result;
 
@@ -292,7 +292,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         // = []
         __m128 const r0 = _mm_load_ps(&source->M[0][0]);
         __m128 const r1 = _mm_load_ps(&source->M[1][0]);
@@ -320,7 +320,7 @@ namespace Graphyte::Maths
         GX_ASSERT(destination != nullptr);
         GX_ASSERT(IsAligned(reinterpret_cast<void const*>(destination), std::align_val_t{ 16 }));
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         destination->M[0][0] = m.M.R[0].F[0];
         destination->M[0][1] = m.M.R[1].F[0];
         destination->M[0][2] = m.M.R[2].F[0];
@@ -335,7 +335,7 @@ namespace Graphyte::Maths
         destination->M[2][1] = m.M.R[1].F[2];
         destination->M[2][2] = m.M.R[2].F[2];
         destination->M[2][3] = m.M.R[3].F[2];
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         // load & transpose
         __m128 const t1 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(1, 0, 1, 0));
         __m128 const t3 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(3, 2, 3, 2));
@@ -357,7 +357,7 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Matrix result;
 
         result.M.M[0][0] = source->M[0][0];
@@ -381,7 +381,7 @@ namespace Graphyte::Maths
         result.M.M[3][3] = source->M[3][3];
 
         return result;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Matrix result;
 
         result.M.R[0] = _mm_loadu_ps(&source->M[0][0]);
@@ -399,7 +399,7 @@ namespace Graphyte::Maths
     {
         GX_ASSERT(destination != nullptr);
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         destination->M[0][0] = m.M.M[0][0];
         destination->M[0][1] = m.M.M[0][1];
         destination->M[0][2] = m.M.M[0][2];
@@ -419,7 +419,7 @@ namespace Graphyte::Maths
         destination->M[3][1] = m.M.M[3][1];
         destination->M[3][2] = m.M.M[3][2];
         destination->M[3][3] = m.M.M[3][3];
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         _mm_storeu_ps(&destination->M[0][0], m.M.R[0]);
         _mm_storeu_ps(&destination->M[1][0], m.M.R[1]);
         _mm_storeu_ps(&destination->M[2][0], m.M.R[2]);
@@ -433,7 +433,7 @@ namespace Graphyte::Maths
     {
         GX_ASSERT(source != nullptr);
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Matrix result;
 
         result.M.M[0][0] = source->M[0][0];
@@ -457,7 +457,7 @@ namespace Graphyte::Maths
         result.M.M[3][3] = 1.0f;
 
         return result;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         // = [r0.xyz, r1.x]
         __m128 const r0 = _mm_loadu_ps(&source->M[0][0]);
         // = [r1.yz, r2.xy]
@@ -499,7 +499,7 @@ namespace Graphyte::Maths
     {
         GX_ASSERT(destination != nullptr);
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         destination->M[0][0] = m.M.M[0][0];
         destination->M[0][1] = m.M.M[0][1];
         destination->M[0][2] = m.M.M[0][2];
@@ -515,7 +515,7 @@ namespace Graphyte::Maths
         destination->M[3][0] = m.M.M[3][0];
         destination->M[3][1] = m.M.M[3][1];
         destination->M[3][2] = m.M.M[3][2];
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         // = [r0.xyzw]
         __m128 const r0 = m.M.R[0];
         // = [r1.xyzw]
@@ -552,7 +552,7 @@ namespace Graphyte::Maths
     {
         GX_ASSERT(source != nullptr);
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
 
         Matrix result;
 
@@ -578,7 +578,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         // = []
         __m128 const r0 = _mm_loadu_ps(&source->M[0][0]);
         __m128 const r1 = _mm_loadu_ps(&source->M[1][0]);
@@ -605,7 +605,7 @@ namespace Graphyte::Maths
     {
         GX_ASSERT(destination != nullptr);
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         destination->M[0][0] = m.M.R[0].F[0];
         destination->M[0][1] = m.M.R[1].F[0];
         destination->M[0][2] = m.M.R[2].F[0];
@@ -620,7 +620,7 @@ namespace Graphyte::Maths
         destination->M[2][1] = m.M.R[1].F[2];
         destination->M[2][2] = m.M.R[2].F[2];
         destination->M[2][3] = m.M.R[3].F[2];
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         // load & transpose
         __m128 const t1 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(1, 0, 1, 0));
         __m128 const t3 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(3, 2, 3, 2));
@@ -642,7 +642,7 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(source != nullptr);
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
 
         Matrix result;
 
@@ -667,7 +667,7 @@ namespace Graphyte::Maths
         result.M.M[3][3] = 1.0f;
 
         return result;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const zero = _mm_setzero_ps();
 
         __m128 const t0 = _mm_loadu_ps(&source->M[0][0]);
@@ -695,7 +695,7 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         GX_ASSERT(destination != nullptr);
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         destination->M[0][0] = m.M.M[0][0];
         destination->M[0][1] = m.M.M[0][1];
         destination->M[0][2] = m.M.M[0][2];
@@ -707,7 +707,7 @@ namespace Graphyte::Maths
         destination->M[2][0] = m.M.M[2][0];
         destination->M[2][1] = m.M.M[2][1];
         destination->M[2][2] = m.M.M[2][2];
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const r0 = m.M.R[0];
         __m128 const r1 = m.M.R[1];
         __m128 const r2 = m.M.R[2];
@@ -737,7 +737,7 @@ namespace Graphyte::Maths
         return result;
     }
 
-#if !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_COMPILER_MSVC
+#if !GX_MATH_NO_INTRINSICS && GX_COMPILER_MSVC
 #pragma float_control(push)
 #pragma float_control(precise, on)
 #endif
@@ -745,7 +745,7 @@ namespace Graphyte::Maths
     template <typename T>
     [[nodiscard]] mathinline bool mathcall IsNan(Matrix m) noexcept
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         size_t count = 16u;
 
         uint32_t const* item = reinterpret_cast<uint32_t const*>(&m.M.F[0]);
@@ -763,7 +763,7 @@ namespace Graphyte::Maths
 
         return count != 0;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
 
         __m128 const r0 = m.M.R[0];
         __m128 const r1 = m.M.R[1];
@@ -785,7 +785,7 @@ namespace Graphyte::Maths
 #endif
     }
 
-#if !GRAPHYTE_MATH_NO_INTRINSICS && GRAPHYTE_COMPILER_MSVC
+#if !GX_MATH_NO_INTRINSICS && GX_COMPILER_MSVC
 #pragma float_control(pop)
 #endif
 
@@ -807,7 +807,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline bool mathcall IsInfinity(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         size_t count = 16;
 
         uint32_t const* item = reinterpret_cast<uint32_t const*>(&m.M.F[0]);
@@ -826,7 +826,7 @@ namespace Graphyte::Maths
 
         return count != 0;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
 
         __m128 const r0 = m.M.R[0];
         __m128 const r1 = m.M.R[1];
@@ -873,7 +873,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline bool mathcall IsIdentity(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
 
         uint32_t const* items = reinterpret_cast<uint32_t const*>(&m.M.M[0][0]);
 
@@ -903,7 +903,7 @@ namespace Graphyte::Maths
 
         return one == 0;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
 
         __m128 const r0 = m.M.R[0];
         __m128 const r1 = m.M.R[1];
@@ -954,17 +954,17 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.R[0] = Multiply(c, SplatX<Vector4>(r)).V;
         result.M.R[1] = Multiply(c, SplatY<Vector4>(r)).V;
         result.M.R[2] = Multiply(c, SplatZ<Vector4>(r)).V;
         result.M.R[3] = Multiply(c, SplatW<Vector4>(r)).V;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         result.M.R[0] = vmulq_f32(c.V, vdupq_lane_f32(vget_low_f32(r.V), 0));
         result.M.R[1] = vmulq_f32(c.V, vdupq_lane_f32(vget_low_f32(r.V), 1));
         result.M.R[2] = vmulq_f32(c.V, vdupq_lane_f32(vget_high_f32(r.V), 0));
         result.M.R[3] = vmulq_f32(c.V, vdupq_lane_f32(vget_high_f32(r.V), 1));
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         result.M.R[0] = _mm_mul_ps(c.V, _mm_permute_ps(r.V, _MM_SHUFFLE(0, 0, 0, 0)));
         result.M.R[1] = _mm_mul_ps(c.V, _mm_permute_ps(r.V, _MM_SHUFFLE(1, 1, 1, 1)));
         result.M.R[2] = _mm_mul_ps(c.V, _mm_permute_ps(r.V, _MM_SHUFFLE(2, 2, 2, 2)));
@@ -977,7 +977,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline Vector4 mathcall Diagnoal(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
             m.M.M[0][0],
             m.M.M[1][1],
@@ -986,7 +986,7 @@ namespace Graphyte::Maths
         } } };
         return { result.V };
 
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         uint32x4_t const t0_x = vandq_u32(vreinterpretq_u32_f32(m.M.R[0]), vreinterpretq_u32_f32(Impl::c_V4_U32_Mask_1000.V));
         uint32x4_t const t0_y = vandq_u32(vreinterpretq_u32_f32(m.M.R[1]), vreinterpretq_u32_f32(Impl::c_V4_U32_Mask_0100.V));
         uint32x4_t const t0_z = vandq_u32(vreinterpretq_u32_f32(m.M.R[2]), vreinterpretq_u32_f32(Impl::c_V4_U32_Mask_0010.V));
@@ -999,7 +999,7 @@ namespace Graphyte::Maths
 
         return { vreinterpret_f32_u32(t2_xyzw) };
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const t0_x = _mm_and_ps(m.M.R[0], Impl::c_V4_U32_Mask_1000.V);
         __m128 const t0_y = _mm_and_ps(m.M.R[1], Impl::c_V4_U32_Mask_0100.V);
         __m128 const t0_z = _mm_and_ps(m.M.R[2], Impl::c_V4_U32_Mask_0010.V);
@@ -1026,17 +1026,17 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.R[0] = Add(Vector4{ m1.M.R[0] }, Vector4{ m2.M.R[0] }).V;
         result.M.R[1] = Add(Vector4{ m1.M.R[1] }, Vector4{ m2.M.R[1] }).V;
         result.M.R[2] = Add(Vector4{ m1.M.R[2] }, Vector4{ m2.M.R[2] }).V;
         result.M.R[3] = Add(Vector4{ m1.M.R[3] }, Vector4{ m2.M.R[3] }).V;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         result.M.R[0] = vaddq_f32(m1.M.R[0], m2.M.R[0]);
         result.M.R[1] = vaddq_f32(m1.M.R[1], m2.M.R[1]);
         result.M.R[2] = vaddq_f32(m1.M.R[2], m2.M.R[2]);
         result.M.R[3] = vaddq_f32(m1.M.R[3], m2.M.R[3]);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         result.M.R[0] = _mm_add_ps(m1.M.R[0], m2.M.R[0]);
         result.M.R[1] = _mm_add_ps(m1.M.R[1], m2.M.R[1]);
         result.M.R[2] = _mm_add_ps(m1.M.R[2], m2.M.R[2]);
@@ -1050,17 +1050,17 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.R[0] = Subtract(Vector4{ m1.M.R[0] }, Vector4{ m2.M.R[0] }).V;
         result.M.R[1] = Subtract(Vector4{ m1.M.R[1] }, Vector4{ m2.M.R[1] }).V;
         result.M.R[2] = Subtract(Vector4{ m1.M.R[2] }, Vector4{ m2.M.R[2] }).V;
         result.M.R[3] = Subtract(Vector4{ m1.M.R[3] }, Vector4{ m2.M.R[3] }).V;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         result.M.R[0] = vsubq_f32(m1.M.R[0], m2.M.R[0]);
         result.M.R[1] = vsubq_f32(m1.M.R[1], m2.M.R[1]);
         result.M.R[2] = vsubq_f32(m1.M.R[2], m2.M.R[2]);
         result.M.R[3] = vsubq_f32(m1.M.R[3], m2.M.R[3]);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         result.M.R[0] = _mm_sub_ps(m1.M.R[0], m2.M.R[0]);
         result.M.R[1] = _mm_sub_ps(m1.M.R[1], m2.M.R[1]);
         result.M.R[2] = _mm_sub_ps(m1.M.R[2], m2.M.R[2]);
@@ -1086,18 +1086,18 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.R[0] = Multiply(Vector4{ m.M.R[0] }, s).V;
         result.M.R[1] = Multiply(Vector4{ m.M.R[1] }, s).V;
         result.M.R[2] = Multiply(Vector4{ m.M.R[2] }, s).V;
         result.M.R[3] = Multiply(Vector4{ m.M.R[3] }, s).V;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const sv = vdupq_n_f32(s);
         result.M.R[0] = vmulq_f32(m.M.R[0], sv);
         result.M.R[1] = vmulq_f32(m.M.R[1], sv);
         result.M.R[2] = vmulq_f32(m.M.R[2], sv);
         result.M.R[3] = vmulq_f32(m.M.R[3], sv);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const sv = _mm_set1_ps(s);
         result.M.R[0] = _mm_mul_ps(m.M.R[0], sv);
         result.M.R[1] = _mm_mul_ps(m.M.R[1], sv);
@@ -1112,18 +1112,18 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.R[0] = Multiply(Vector4{ m.M.R[0] }, s).V;
         result.M.R[1] = Multiply(Vector4{ m.M.R[1] }, s).V;
         result.M.R[2] = Multiply(Vector4{ m.M.R[2] }, s).V;
         result.M.R[3] = Multiply(Vector4{ m.M.R[3] }, s).V;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const sv = vdupq_n_f32(s);
         result.M.R[0] = vmulq_f32(m.M.R[0], sv);
         result.M.R[1] = vmulq_f32(m.M.R[1], sv);
         result.M.R[2] = vmulq_f32(m.M.R[2], sv);
         result.M.R[3] = vmulq_f32(m.M.R[3], sv);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const sv = _mm_set1_ps(s);
         result.M.R[0] = _mm_mul_ps(m.M.R[0], sv);
         result.M.R[1] = _mm_mul_ps(m.M.R[1], sv);
@@ -1138,19 +1138,19 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Vector4 const sv = Replicate<Vector4>(s);
         result.M.R[0] = Divide(Vector4{ m.M.R[0] }, sv).V;
         result.M.R[1] = Divide(Vector4{ m.M.R[1] }, sv).V;
         result.M.R[2] = Divide(Vector4{ m.M.R[2] }, sv).V;
         result.M.R[3] = Divide(Vector4{ m.M.R[3] }, sv).V;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const sv = vdupq_n_f32(s);
         result.M.R[0] = vdivq_f32(m.M.R[0], sv);
         result.M.R[1] = vdivq_f32(m.M.R[1], sv);
         result.M.R[2] = vdivq_f32(m.M.R[2], sv);
         result.M.R[3] = vdivq_f32(m.M.R[3], sv);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const sv = _mm_set1_ps(s);
         result.M.R[0] = _mm_div_ps(m.M.R[0], sv);
         result.M.R[1] = _mm_div_ps(m.M.R[1], sv);
@@ -1165,17 +1165,17 @@ namespace Graphyte::Maths
         requires(Impl::IsMatrix<T>)
     {
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.R[0] = Multiply(Vector4{ a.M.R[0] }, Vector4{ b.M.R[0] }).V;
         result.M.R[1] = Multiply(Vector4{ a.M.R[1] }, Vector4{ b.M.R[1] }).V;
         result.M.R[2] = Multiply(Vector4{ a.M.R[2] }, Vector4{ b.M.R[2] }).V;
         result.M.R[3] = Multiply(Vector4{ a.M.R[3] }, Vector4{ b.M.R[3] }).V;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         result.M.R[0] = vmulq_f32(a.M.R[0], b.M.R[0]);
         result.M.R[1] = vmulq_f32(a.M.R[1], b.M.R[1]);
         result.M.R[2] = vmulq_f32(a.M.R[2], b.M.R[2]);
         result.M.R[3] = vmulq_f32(a.M.R[3], b.M.R[3]);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         result.M.R[0] = _mm_mul_ps(a.M.R[0], b.M.R[0]);
         result.M.R[1] = _mm_mul_ps(a.M.R[1], b.M.R[1]);
         result.M.R[2] = _mm_mul_ps(a.M.R[2], b.M.R[2]);
@@ -1188,7 +1188,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Multiply(T a, T b) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
 
         Matrix result;
 
@@ -1242,11 +1242,11 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
 
         Matrix result;
 
-#if GRAPHYTE_HW_AVX2
+#if GX_HW_AVX2
         __m128 const m_r0 = a.M.R[0];
         __m128 const x_r0 = _mm_broadcastss_ps(m_r0);
         __m128 const y_r0 = _mm_permute_ps(m_r0, _MM_SHUFFLE(1, 1, 1, 1);
@@ -1265,7 +1265,7 @@ namespace Graphyte::Maths
         __m128 const abw_r0 = Impl::avx_fmadd_f32x4(w_r0, b.M.R[3], abz_r0);
 
 
-#if GRAPHYTE_HW_AVX2
+#if GX_HW_AVX2
         __m128 const m_r1 = a.M.R[1];
         __m128 const x_r1 = _mm_broadcastss_ps(m_r1);
         __m128 const y_r1 = _mm_permute_ps(m_r1, _MM_SHUFFLE(1, 1, 1, 1);
@@ -1284,7 +1284,7 @@ namespace Graphyte::Maths
         __m128 const abw_r1 = Impl::avx_fmadd_f32x4(w_r1, b.M.R[3], abz_r1);
 
 
-#if GRAPHYTE_HW_AVX2
+#if GX_HW_AVX2
         __m128 const m_r2 = a.M.R[2];
         __m128 const x_r2 = _mm_broadcastss_ps(m_r2);
         __m128 const y_r2 = _mm_permute_ps(m_r2, _MM_SHUFFLE(1, 1, 1, 1);
@@ -1302,7 +1302,7 @@ namespace Graphyte::Maths
         __m128 const abz_r2 = Impl::avx_fmadd_f32x4(z_r2, b.M.R[2], aby_r2);
         __m128 const abw_r2 = Impl::avx_fmadd_f32x4(w_r2, b.M.R[3], abz_r2);
 
-#if GRAPHYTE_HW_AVX2
+#if GX_HW_AVX2
         __m128 const m_r3 = a.M.R[3];
         __m128 const x_r3 = _mm_broadcastss_ps(m_r3);
         __m128 const y_r3 = _mm_permute_ps(m_r3, _MM_SHUFFLE(1, 1, 1, 1);
@@ -1327,7 +1327,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
 
         // rNc0 = (b.r0 * a.rN.xxxx)
         float32x4_t const r0c0 = vmulq_laneq_f32(b.M.R[0], a.M.R[0], 0);
@@ -1367,7 +1367,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall MultiplyTranspose(T a, T b) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
 
         Matrix result;
 
@@ -1421,11 +1421,11 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Matrix result;
 
 
-#if GRAPHYTE_HW_AVX2
+#if GX_HW_AVX2
         __m128 const m_r0 = a.M.R[0];
         __m128 const x_r0 = _mm_broadcastss_ps(m_r0);
         __m128 const y_r0 = _mm_permute_ps(m_r0, _MM_SHUFFLE(1, 1, 1, 1);
@@ -1443,7 +1443,7 @@ namespace Graphyte::Maths
         __m128 const abz_r0 = Impl::avx_fmadd_f32x4(z_r0, b.M.R[2], aby_r0);
         __m128 const abw_r0 = Impl::avx_fmadd_f32x4(w_r0, b.M.R[3], abz_r0);
 
-#if GRAPHYTE_HW_AVX2
+#if GX_HW_AVX2
         __m128 const m_r1 = a.M.R[1];
         __m128 const x_r1 = _mm_broadcastss_ps(m_r1);
         __m128 const y_r1 = _mm_permute_ps(m_r1, _MM_SHUFFLE(1, 1, 1, 1);
@@ -1461,7 +1461,7 @@ namespace Graphyte::Maths
         __m128 const abz_r1 = Impl::avx_fmadd_f32x4(z_r1, b.M.R[2], aby_r1);
         __m128 const abw_r1 = Impl::avx_fmadd_f32x4(w_r1, b.M.R[3], abz_r1);
 
-#if GRAPHYTE_HW_AVX2
+#if GX_HW_AVX2
         __m128 const m_r2 = a.M.R[2];
         __m128 const x_r2 = _mm_broadcastss_ps(m_r2);
         __m128 const y_r2 = _mm_permute_ps(m_r2, _MM_SHUFFLE(1, 1, 1, 1);
@@ -1479,7 +1479,7 @@ namespace Graphyte::Maths
         __m128 const abz_r2 = Impl::avx_fmadd_f32x4(z_r2, b.M.R[2], aby_r2);
         __m128 const abw_r2 = Impl::avx_fmadd_f32x4(w_r2, b.M.R[3], abz_r2);
 
-#if GRAPHYTE_HW_AVX2
+#if GX_HW_AVX2
         __m128 const m_r3 = a.M.R[3];
         __m128 const x_r3 = _mm_broadcastss_ps(m_r3);
         __m128 const y_r3 = _mm_permute_ps(m_r3, _MM_SHUFFLE(1, 1, 1, 1);
@@ -1520,7 +1520,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Transpose(T m) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Matrix result;
 
         result.M.M[0][0] = m.M.M[0][0];
@@ -1544,7 +1544,7 @@ namespace Graphyte::Maths
         result.M.M[3][3] = m.M.M[3][3];
 
         return result;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const trx_r0 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(1, 0, 1, 0));
         __m128 const trx_r2 = _mm_shuffle_ps(m.M.R[0], m.M.R[1], _MM_SHUFFLE(3, 2, 3, 2));
         __m128 const trx_r1 = _mm_shuffle_ps(m.M.R[2], m.M.R[3], _MM_SHUFFLE(1, 0, 1, 0));
@@ -1561,7 +1561,7 @@ namespace Graphyte::Maths
         result.M.R[2] = res_r2;
         result.M.R[3] = res_r3;
         return result;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4x2_t const t0 = vzipq_f32(m.M.R[0], m.M.R[2]);
         float32x4x2_t const t1 = vzipq_f32(m.M.R[1], m.M.R[3]);
         float32x4x2_t const r0 = vzipq_f32(t0.val[0], t1.val[0]);
@@ -1580,7 +1580,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Inverse(T m, Vector4* determinant = nullptr) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Matrix const mt = Transpose(m);
 
         Vector4 const ca0 = Swizzle<0, 0, 1, 1>(Vector4{ mt.M.R[2] });
@@ -1674,7 +1674,7 @@ namespace Graphyte::Maths
         result.M.R[3] = Multiply(Vector4{ partial.M.R[3] }, rcp_det).V;
 
         return result;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
 
         Matrix mt = Transpose(m);
 
@@ -2003,7 +2003,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall CreateFromNormalAngle(Vector3 normal, float angle) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+#if GX_MATH_NO_INTRINSICS || GX_HW_NEON
         float sin_angle;
         float cos_angle;
 
@@ -2038,7 +2038,7 @@ namespace Graphyte::Maths
         result.M.R[2] = Permute<4, 5, 2, 3>(r0, r2).V;
         result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
         return result;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         float sin_angle;
         float cos_angle;
 
@@ -2102,7 +2102,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall CreateFromQuaternion(Quaternion q) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Vector4 const q_xyzw{ q.V };
 
         Vector4 const q0 = Add(q_xyzw, q_xyzw);
@@ -2134,7 +2134,7 @@ namespace Graphyte::Maths
         result.M.R[3] = Impl::c_V4_F32_PositiveUnitW.V;
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         static Impl::ConstFloat32x4 const Constant1110 = { { { 1.0f, 1.0f, 1.0f, 0.0f } } };
 
         __m128 Q0 = _mm_add_ps(q.V, q.V);
@@ -2206,7 +2206,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall CreateTranslation(float x, float y, float z) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Matrix result;
 
         result.M.M[0][0] = 1.0F;
@@ -2231,7 +2231,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
 
         Matrix result;
         result.M.R[0] = Impl::c_V4_F32_PositiveUnitX.V;
@@ -2247,7 +2247,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall CreateTranslation(Vector3 translation) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Matrix result;
 
         result.M.M[0][0] = 1.0F;
@@ -2272,7 +2272,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX || GRAPHYTE_HW_NEON
+#elif GX_HW_AVX || GX_HW_NEON
 
         Matrix result;
         result.M.R[0] = Impl::c_V4_F32_PositiveUnitX.V;
@@ -2292,7 +2292,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall CreateScaling(float x, float y, float z) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Matrix result;
 
         result.M.M[0][0] = x;
@@ -2317,7 +2317,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
 
         Matrix result;
         result.M.R[0] = _mm_set_ps(0.0F, 0.0F, 0.0F, x);
@@ -2333,7 +2333,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall CreateScaling(Vector3 scale) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         Matrix result;
 
         result.M.M[0][0] = scale.V.F[0];
@@ -2358,7 +2358,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
 
         Matrix result;
         result.M.R[0] = _mm_and_ps(scale.V, Impl::c_V4_U32_Mask_1000.V);
@@ -2374,7 +2374,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall CreateRotationX(float angle) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         float sin_angle;
         float cos_angle;
         SinCos(sin_angle, cos_angle, angle);
@@ -2402,7 +2402,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         float sin_angle;
         float cos_angle;
         SinCos(sin_angle, cos_angle, angle);
@@ -2430,7 +2430,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall CreateRotationY(float angle) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         float sin_angle;
         float cos_angle;
         SinCos(sin_angle, cos_angle, angle);
@@ -2458,7 +2458,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         float sin_angle;
         float cos_angle;
         SinCos(sin_angle, cos_angle, angle);
@@ -2486,7 +2486,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall CreateRotationZ(float angle) noexcept
         requires(Impl::IsMatrix<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         float sin_angle;
         float cos_angle;
         SinCos(sin_angle, cos_angle, angle);
@@ -2514,7 +2514,7 @@ namespace Graphyte::Maths
 
         return result;
 
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         float sin_angle;
         float cos_angle;
         SinCos(sin_angle, cos_angle, angle);
@@ -2793,7 +2793,7 @@ namespace Graphyte::Maths
         float const range = z_far / (z_far - z_near);
 
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.M[0][0] = z_near_2 / view_width;
         result.M.M[0][1] = 0.0f;
         result.M.M[0][2] = 0.0f;
@@ -2813,13 +2813,13 @@ namespace Graphyte::Maths
         result.M.M[3][1] = 0.0f;
         result.M.M[3][2] = -range * z_near;
         result.M.M[3][3] = 0.0f;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(z_near_2 / view_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(z_near_2 / view_height, zero, 1);
         result.M.R[2] = vsetq_lane_f32(range, Impl::c_V4_F32_PositiveUnitW.V, 2);
         result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             z_near_2 / view_width,
             z_near_2 / view_height,
@@ -2870,7 +2870,7 @@ namespace Graphyte::Maths
         float const range = z_far / (z_near - z_far);
 
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.M[0][0] = z_near_2 / view_width;
         result.M.M[0][1] = 0.0f;
         result.M.M[0][2] = 0.0f;
@@ -2890,13 +2890,13 @@ namespace Graphyte::Maths
         result.M.M[3][1] = 0.0f;
         result.M.M[3][2] = range * z_near;
         result.M.M[3][3] = 0.0f;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(z_near_2 / view_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(z_near_2 / view_height, zero, 1);
         result.M.R[2] = vsetq_lane_f32(range, Impl::c_V4_F32_NegativeUnitW.V, 2);
         result.M.R[3] = vsetq_lane_f32(range * z_near, zero, 2);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             z_near_2 / view_width,
             z_near_2 / view_height,
@@ -2952,7 +2952,7 @@ namespace Graphyte::Maths
         float const range = z_far / (z_far - z_near);
 
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.M[0][0] = width;
         result.M.M[0][1] = 0.0f;
         result.M.M[0][2] = 0.0f;
@@ -2972,13 +2972,13 @@ namespace Graphyte::Maths
         result.M.M[3][1] = 0.0f;
         result.M.M[3][2] = -range * z_near;
         result.M.M[3][3] = 0.0f;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(height, zero, 1);
         result.M.R[2] = vsetq_lane_f32(range, Impl::c_V4_F32_PositiveUnitW.V, 2);
         result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             width,
             height,
@@ -3034,7 +3034,7 @@ namespace Graphyte::Maths
         float const range = z_far / (z_near - z_far);
 
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.M[0][0] = width;
         result.M.M[0][1] = 0.0f;
         result.M.M[0][2] = 0.0f;
@@ -3054,13 +3054,13 @@ namespace Graphyte::Maths
         result.M.M[3][1] = 0.0f;
         result.M.M[3][2] = range * z_near;
         result.M.M[3][3] = 0.0f;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(height, zero, 1);
         result.M.R[2] = vsetq_lane_f32(range, Impl::c_V4_F32_NegativeUnitW.V, 2);
         result.M.R[3] = vsetq_lane_f32(range * z_near, zero, 2);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             width,
             height,
@@ -3115,7 +3115,7 @@ namespace Graphyte::Maths
         float const range = z_far / (z_far - z_near);
 
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.M[0][0] = z_near_2 * rcp_width;
         result.M.M[0][1] = 0.0f;
         result.M.M[0][2] = 0.0f;
@@ -3135,7 +3135,7 @@ namespace Graphyte::Maths
         result.M.M[3][1] = 0.0f;
         result.M.M[3][2] = -range * z_near;
         result.M.M[3][3] = 0.0f;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(z_near_2 * rcp_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(z_near_2 * rcp_height, zero, 1);
@@ -3146,7 +3146,7 @@ namespace Graphyte::Maths
             1.0f)
             .V;
         result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             z_near_2 * rcp_width,
             z_near_2 * rcp_height,
@@ -3202,7 +3202,7 @@ namespace Graphyte::Maths
         float const range = z_far / (z_near - z_far);
 
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.M[0][0] = z_near_2 * rcp_width;
         result.M.M[0][1] = 0.0f;
         result.M.M[0][2] = 0.0f;
@@ -3222,7 +3222,7 @@ namespace Graphyte::Maths
         result.M.M[3][1] = 0.0f;
         result.M.M[3][2] = range * z_near;
         result.M.M[3][3] = 0.0f;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(z_near_2 * rcp_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(z_near_2 * rcp_height, zero, 1);
@@ -3233,7 +3233,7 @@ namespace Graphyte::Maths
             -1.0f)
             .V;
         result.M.R[3] = vsetq_lane_f32(-range * z_near, zero, 2);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             z_near_2 * rcp_width,
             z_near_2 * rcp_height,
@@ -3283,7 +3283,7 @@ namespace Graphyte::Maths
         float const range = 1.0f / (z_far - z_near);
 
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.M[0][0] = 2.0f / view_width;
         result.M.M[0][1] = 0.0f;
         result.M.M[0][2] = 0.0f;
@@ -3303,13 +3303,13 @@ namespace Graphyte::Maths
         result.M.M[3][1] = 0.0f;
         result.M.M[3][2] = -range * z_near;
         result.M.M[3][3] = 1.0f;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(2.0f / view_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(2.0f / view_height, zero, 1);
         result.M.R[2] = vsetq_lane_f32(range, zero, 2);
         result.M.R[3] = vsetq_lane_f32(-range * z_near, Impl::c_V4_F32_PositiveUnitW.V, 2);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             2.0f / view_width,
             2.0f / view_height,
@@ -3349,7 +3349,7 @@ namespace Graphyte::Maths
         float const range = 1.0f / (z_near - z_far);
 
         Matrix result;
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.M[0][0] = 2.0f / view_width;
         result.M.M[0][1] = 0.0f;
         result.M.M[0][2] = 0.0f;
@@ -3369,13 +3369,13 @@ namespace Graphyte::Maths
         result.M.M[3][1] = 0.0f;
         result.M.M[3][2] = range * z_near;
         result.M.M[3][3] = 1.0f;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(2.0f / view_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(2.0f / view_height, zero, 1);
         result.M.R[2] = vsetq_lane_f32(range, zero, 2);
         result.M.R[3] = vsetq_lane_f32(range * z_near, Impl::c_V4_F32_PositiveUnitW.V, 2);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             2.0f / view_width,
             2.0f / view_height,
@@ -3420,7 +3420,7 @@ namespace Graphyte::Maths
 
         Matrix result;
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.M[0][0] = rcp_width + rcp_width;
         result.M.M[0][1] = 0.0f;
         result.M.M[0][2] = 0.0f;
@@ -3440,7 +3440,7 @@ namespace Graphyte::Maths
         result.M.M[3][1] = -(view_top + view_bottom) * rcp_height;
         result.M.M[3][2] = -range * z_near;
         result.M.M[3][3] = 1.0f;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(rcp_width + rcp_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(rcp_height + rcp_height, zero, 1);
@@ -3451,7 +3451,7 @@ namespace Graphyte::Maths
             -range * z_near,
             1.0f)
             .V;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             rcp_width,
             rcp_height,
@@ -3506,7 +3506,7 @@ namespace Graphyte::Maths
 
         Matrix result;
 
-#if GRAPHYTE_MATH_NO_INTRINSICS
+#if GX_MATH_NO_INTRINSICS
         result.M.M[0][0] = rcp_width + rcp_width;
         result.M.M[0][1] = 0.0f;
         result.M.M[0][2] = 0.0f;
@@ -3526,7 +3526,7 @@ namespace Graphyte::Maths
         result.M.M[3][1] = -(view_top + view_bottom) * rcp_height;
         result.M.M[3][2] = range * z_near;
         result.M.M[3][3] = 1.0f;
-#elif GRAPHYTE_HW_NEON
+#elif GX_HW_NEON
         float32x4_t const zero = vdupq_n_f32(0.0f);
         result.M.R[0] = vsetq_lane_f32(rcp_width + rcp_width, zero, 0);
         result.M.R[1] = vsetq_lane_f32(rcp_height + rcp_height, zero, 1);
@@ -3537,7 +3537,7 @@ namespace Graphyte::Maths
             range * z_near,
             1.0f)
             .V;
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         Impl::ConstFloat32x4 const mvalues{ { {
             rcp_width,
             rcp_height,

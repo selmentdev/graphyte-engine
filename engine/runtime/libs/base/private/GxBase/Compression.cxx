@@ -5,12 +5,12 @@
 #include <lz4.h>
 #include <lz4hc.h>
 
-#if GRAPHYTE_SDKS_WITH_ZLIB
+#if GX_SDKS_WITH_ZLIB
 #include <zlib.h>
 #endif
 
 
-#if GRAPHYTE_SDKS_WITH_ZLIB
+#if GX_SDKS_WITH_ZLIB
 namespace Graphyte::Compression::Impl
 {
     struct ZlibHelper final
@@ -167,7 +167,7 @@ namespace Graphyte::Compression::Impl
 
 namespace Graphyte::Compression
 {
-#if GRAPHYTE_SDKS_WITH_ZLIB
+#if GX_SDKS_WITH_ZLIB
     constexpr const int BitWindow = ZlibHelper::DEFAULT_BIT_WINDOW;
 #endif
 
@@ -187,7 +187,7 @@ namespace Graphyte::Compression
 
                 break;
             }
-#if GRAPHYTE_SDKS_WITH_ZLIB
+#if GX_SDKS_WITH_ZLIB
             case CompressionMethod::Zlib:
             {
                 if constexpr (BitWindow == ZlibHelper::DEFAULT_BIT_WINDOW)
@@ -255,7 +255,7 @@ namespace Graphyte::Compression
 
                 break;
             }
-#if GRAPHYTE_SDKS_WITH_ZLIB
+#if GX_SDKS_WITH_ZLIB
             case CompressionMethod::Zlib:
             {
                 return ZlibHelper::CompressMemory(
@@ -307,7 +307,7 @@ namespace Graphyte::Compression
 
                 break;
             }
-#if GRAPHYTE_SDKS_WITH_ZLIB
+#if GX_SDKS_WITH_ZLIB
             case CompressionMethod::Zlib:
             {
                 return ZlibHelper::DecompressMemory(

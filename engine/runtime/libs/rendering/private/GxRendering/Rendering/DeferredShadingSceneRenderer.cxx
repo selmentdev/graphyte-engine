@@ -6,7 +6,7 @@
 #include <Graphyte/Geometry/Model.hxx>
 #include <Graphyte/CommandLine.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 #define CHECKING_OPENGL 0
 #else
 #define CHECKING_OPENGL 1

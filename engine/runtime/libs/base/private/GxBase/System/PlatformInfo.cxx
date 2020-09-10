@@ -15,7 +15,7 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetPlatformName() noexcept
     {
-        return GRAPHYTE_PLATFORM_NAME;
+        return GX_PLATFORM_NAME;
     }
 
     BASE_API bool HasPlatformFeature(
@@ -26,11 +26,11 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetFileManagerName() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         return "explorer.exe";
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         return {};
 
@@ -41,11 +41,11 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetModuleExtension() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         return "dll";
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         return "so";
 
@@ -56,11 +56,11 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetModulePrefix() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         return "lib";
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         return "lib";
 
@@ -71,11 +71,11 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetExecutableExtension() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
         return "exe";
 
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 
         return {};
 

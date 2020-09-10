@@ -5,15 +5,15 @@
 
 #include <vulkan/vulkan.h>
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 #include <vulkan/vulkan_win32.h>
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 #include <xcb/xcb.h>
 #include <vulkan/vulkan_xcb.h>
 #include <vulkan/vulkan_wayland.h>
 #endif
 
-#if GRAPHYTE_COMPILER_CLANG
+#if GX_COMPILER_CLANG
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundef"
 #pragma clang diagnostic ignored "-Wold-style-cast"
@@ -24,20 +24,20 @@
 #pragma clang diagnostic ignored "-Wunused-variable"
 #pragma clang diagnostic ignored "-Wmissing-field-initializers"
 #pragma clang diagnostic ignored "-Wtautological-unsigned-zero-compare"
-#elif GRAPHYTE_COMPILER_GNU
+#elif GX_COMPILER_GNU
 #pragma GCC diagnostic push
-#elif GRAPHYTE_COMPILER_MSVC
+#elif GX_COMPILER_MSVC
 #pragma push_macro("new")
 #undef new
 #endif
 
 #include <vk_mem_alloc.h>
 
-#if GRAPHYTE_COMPILER_CLANG
+#if GX_COMPILER_CLANG
 #pragma clang diagnostic pop
-#elif GRAPHYTE_COMPILER_GNU
+#elif GX_COMPILER_GNU
 #pragma GCC diagnostic pop
-#elif GRAPHYTE_COMPILER_MSVC
+#elif GX_COMPILER_MSVC
 #pragma pop_macro("new")
 #endif
 

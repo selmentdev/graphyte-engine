@@ -5,9 +5,9 @@ namespace Graphyte::System
 {
     struct PipeHandle final
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         HANDLE Handle;
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
         int Descriptor;
 #endif
     };

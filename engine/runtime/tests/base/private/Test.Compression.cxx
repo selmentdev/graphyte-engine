@@ -43,7 +43,7 @@ TEST_CASE("Compression")
         CHECK(output.size() < data.size());
     }
 
-#if GRAPHYTE_SDKS_WITH_ZLIB
+#if GX_SDKS_WITH_ZLIB
     SECTION("ZLIB")
     {
         std::vector<std::byte> output{};

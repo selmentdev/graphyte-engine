@@ -102,7 +102,7 @@
 // SIMD support
 //
 
-#if GRAPHYTE_HW_AVX
+#if GX_HW_AVX
 // SSE
 #include <xmmintrin.h>
 // SSE2
@@ -119,11 +119,11 @@
 #include <immintrin.h>
 #endif
 
-#if GRAPHYTE_HW_AESNI
+#if GX_HW_AESNI
 #include <wmmintrin.h>
 #endif
 
-#if GRAPHYTE_HW_NEON
+#if GX_HW_NEON
 #include <arm_neon.h>
 #endif
 

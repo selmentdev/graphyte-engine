@@ -31,7 +31,7 @@ namespace Graphyte::Graphics
 
     OpenGLGpuDevice::OpenGLGpuDevice() noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
         WNDCLASSW wc{};
         wc.lpfnWndProc   = DefWindowProcW;
@@ -151,7 +151,7 @@ namespace Graphyte::Graphics
         GX_LOG_TRACE(LogOpenGLRender, "OpenGL Vendor:   {}\n", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
         GX_LOG_TRACE(LogOpenGLRender, "OpenGL Renderer: {}\n", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
         wglDeleteContext(m_InitialContext);
         DestroyWindow(m_InitialWindow);

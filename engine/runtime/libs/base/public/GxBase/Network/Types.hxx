@@ -43,9 +43,9 @@ namespace Graphyte::Network
         UnknownError = -1,
         Success      = 0,
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 #define SELECT_VALUE(X, Y, ...) X
-#elif GRAPHYTE_PLATFORM_LINUX || GRAPHYTE_PLATFORM_ANDROID
+#elif GX_PLATFORM_LINUX || GX_PLATFORM_ANDROID
 #define SELECT_VALUE(X, Y, ...) Y
 #endif
         AccessDenied               = SELECT_VALUE(WSAEACCES, EINTR),

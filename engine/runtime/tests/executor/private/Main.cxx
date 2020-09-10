@@ -15,14 +15,14 @@ Graphyte::App::ApplicationDescriptor GraphyteApp{
 
 #include <GxLaunch/Main.hxx>
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 #include <io.h>
 #include <fcntl.h>
 #endif
 
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
     ::_setmode(::_fileno(stdout), _O_TEXT);
 #endif
 

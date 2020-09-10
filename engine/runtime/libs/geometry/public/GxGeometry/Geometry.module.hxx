@@ -5,8 +5,8 @@
 #define GEOMETRY_API
 #else
 #if defined(module_geometry_EXPORTS)
-#define GEOMETRY_API GX_LIB_EXPORT
+#define GEOMETRY_API GX_MODULE_EXPORT
 #else
-#define GEOMETRY_API GX_LIB_IMPORT
+#define GEOMETRY_API GX_MODULE_IMPORT
 #endif
 #endif

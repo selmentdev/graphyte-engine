@@ -5,8 +5,8 @@
 #define GRAPHICS_VULKAN_API
 #else
 #if defined(module_graphics_vulkan_EXPORTS)
-#define GRAPHICS_VULKAN_API GX_LIB_EXPORT
+#define GRAPHICS_VULKAN_API GX_MODULE_EXPORT
 #else
-#define GRAPHICS_VULKAN_API GX_LIB_IMPORT
+#define GRAPHICS_VULKAN_API GX_MODULE_IMPORT
 #endif
 #endif

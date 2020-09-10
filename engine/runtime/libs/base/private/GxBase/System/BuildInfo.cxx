@@ -29,46 +29,46 @@ namespace Graphyte::System
 
     BASE_API std::string_view GetBuildId() noexcept
     {
-        return GRAPHYTE_BUILD_UUID;
+        return GX_BUILD_UUID;
     }
 
     BASE_API std::string_view GetBuildBranch() noexcept
     {
-        return GRAPHYTE_BUILD_BRANCH;
+        return GX_BUILD_BRANCH;
     }
 
     BASE_API std::string_view GetBuildCommit() noexcept
     {
-        return GRAPHYTE_BUILD_COMMIT;
+        return GX_BUILD_COMMIT;
     }
 
     BASE_API Version GetBuildVersion() noexcept
     {
         return {
-            GRAPHYTE_BUILD_VERSION_MAJOR,
-            GRAPHYTE_BUILD_VERSION_MINOR,
-            GRAPHYTE_BUILD_VERSION_RELEASE,
-            GRAPHYTE_BUILD_VERSION_BUILD,
+            GX_BUILD_VERSION_MAJOR,
+            GX_BUILD_VERSION_MINOR,
+            GX_BUILD_VERSION_RELEASE,
+            GX_BUILD_VERSION_BUILD,
         };
     }
 
     BASE_API std::string_view GetBuildHostSystem() noexcept
     {
-        return GRAPHYTE_BUILD_OS_PLATFORM;
+        return GX_BUILD_OS_PLATFORM;
     }
 
     BASE_API std::string_view GetBuildHostVersion() noexcept
     {
-        return GRAPHYTE_BUILD_OS_VERSION;
+        return GX_BUILD_OS_VERSION;
     }
 
     BASE_API std::string_view GetBuildTimestamp() noexcept
     {
-        return GRAPHYTE_BUILD_TIMESTAMP;
+        return GX_BUILD_TIMESTAMP;
     }
 
     BASE_API std::string_view GetCompilerName() noexcept
     {
-        return GRAPHYTE_COMPILER_NAME;
+        return GX_COMPILER_NAME;
     }
 }

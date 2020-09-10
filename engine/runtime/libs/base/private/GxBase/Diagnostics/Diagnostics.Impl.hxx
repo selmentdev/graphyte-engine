@@ -58,7 +58,7 @@ namespace Graphyte::Diagnostics::Impl
 
     extern std::unique_ptr<Storage::IStream> g_LogOutputFile;
 
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
 
     extern HANDLE g_SystemEventLog;
 

@@ -5,7 +5,7 @@
 #include "VulkanGpuViewport.hxx"
 #include "VulkanGpuDevice.hxx"
 
-#if GRAPHYTE_PLATFORM_LINUX
+#if GX_PLATFORM_LINUX
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 #include <X11/Xlib-xcb.h>
@@ -23,7 +23,7 @@ namespace Graphyte::Graphics
         PixelFormat depth_format,
         GpuMsaaQuality msaa) noexcept
     {
-#if GRAPHYTE_PLATFORM_LINUX
+#if GX_PLATFORM_LINUX
 
         auto* sdl_window = reinterpret_cast<SDL_Window*>(native_handle);
 
@@ -56,7 +56,7 @@ namespace Graphyte::Graphics
             nullptr,
             &surface));
 
-#elif GRAPHYTE_PLATFORM_WINDOWS
+#elif GX_PLATFORM_WINDOWS
 
         VkWin32SurfaceCreateInfoKHR create_info{};
         create_info.sType     = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;

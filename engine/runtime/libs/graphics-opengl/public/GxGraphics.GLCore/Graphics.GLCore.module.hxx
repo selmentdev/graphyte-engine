@@ -5,8 +5,8 @@
 #define GRAPHICS_GLCORE_API
 #else
 #if defined(module_graphics_glcore_EXPORTS)
-#define GRAPHICS_GLCORE_API GX_LIB_EXPORT
+#define GRAPHICS_GLCORE_API GX_MODULE_EXPORT
 #else
-#define GRAPHICS_GLCORE_API GX_LIB_IMPORT
+#define GRAPHICS_GLCORE_API GX_MODULE_IMPORT
 #endif
 #endif

@@ -146,7 +146,7 @@ namespace Graphyte::Network
         const IpEndPoint& address
     ) noexcept
     {
-#if GRAPHYTE_PLATFORM_WINDOWS || GRAPHYTE_PLATFORM_UWP
+#if GX_PLATFORM_WINDOWS || GX_PLATFORM_UWP
         // Hack 'till we develop something better: GetAddrInfoEx
         std::string host{};
 

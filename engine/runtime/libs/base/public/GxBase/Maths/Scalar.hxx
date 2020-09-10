@@ -613,9 +613,9 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Sqrt(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+#if GX_MATH_NO_INTRINSICS || GX_HW_NEON
         return sqrtf(v);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const s = _mm_sqrt_ss(_mm_set_ss(v));
         float result;
         _mm_store_ss(&result, s);
@@ -627,9 +627,9 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall SqrtEst(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+#if GX_MATH_NO_INTRINSICS || GX_HW_NEON
         return sqrtf(v);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const s = _mm_rcp_ss(_mm_rsqrt_ss(_mm_set_ss(v)));
         float result;
         _mm_store_ss(&result, s);
@@ -641,9 +641,9 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall InvSqrt(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+#if GX_MATH_NO_INTRINSICS || GX_HW_NEON
         return 1.0F / sqrtf(v);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const vv = _mm_set_ss(v);
         __m128 const rv = _mm_rsqrt_ss(vv);
         float result;
@@ -656,9 +656,9 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall InvSqrtEst(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
-#if GRAPHYTE_MATH_NO_INTRINSICS || GRAPHYTE_HW_NEON
+#if GX_MATH_NO_INTRINSICS || GX_HW_NEON
         return 1.0F / sqrtf(v);
-#elif GRAPHYTE_HW_AVX
+#elif GX_HW_AVX
         __m128 const vv = _mm_set_ss(v);
         __m128 const rv = _mm_rsqrt_ss(vv);
         float result;

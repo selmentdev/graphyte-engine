@@ -41,7 +41,7 @@ namespace Graphyte::System
         //      This value should be validated at initialization.
         //
 
-        return GRAPHYTE_CACHELINE_SIZE;
+        return GX_CACHELINE_SIZE;
     }
 
     BASE_API std::string_view GetProcessorVendor() noexcept

@@ -80,13 +80,13 @@ namespace Graphyte::Threading
     };
 }
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 #include <GxBase/Threading/Impl.Windows/Windows.Sync.hxx>
-#elif GRAPHYTE_PLATFORM_UWP
+#elif GX_PLATFORM_UWP
 #include <GxBase/Threading/Impl.UWP/UWP.Sync.hxx>
-#elif GRAPHYTE_PLATFORM_LINUX
+#elif GX_PLATFORM_LINUX
 #include <GxBase/Threading/Impl.Linux/Linux.Sync.hxx>
-#elif GRAPHYTE_PLATFORM_ANDROID
+#elif GX_PLATFORM_ANDROID
 #include <GxBase/Threading/Impl.Android/Android.Sync.hxx>
 #else
 #error "Unknown platform"

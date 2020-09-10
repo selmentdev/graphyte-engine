@@ -48,9 +48,9 @@ namespace Graphyte
         BigEndian    = 0x04030201,
 
         Network = BigEndian,
-#if GRAPHYTE_ENDIAN_LITTLE
+#if GX_ENDIAN_LITTLE
         Host = LittleEndian,
-#elif GRAPHYTE_ENDIAN_BIG
+#elif GX_ENDIAN_BIG
         Host = BigEndian,
 #else
 #error "Unknown endianess"
@@ -113,7 +113,7 @@ namespace Graphyte
         }
         else
         {
-#if GRAPHYTE_COMPILER_MSVC
+#if GX_COMPILER_MSVC
             if constexpr (sizeof(T) == 1)
             {
                 return value;

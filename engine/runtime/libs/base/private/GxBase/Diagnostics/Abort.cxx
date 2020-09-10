@@ -5,7 +5,7 @@
 
 #include "Diagnostics.Impl.hxx"
 
-#if GRAPHYTE_PLATFORM_LINUX
+#if GX_PLATFORM_LINUX
 #include <syslog.h>
 #endif
 
@@ -140,7 +140,7 @@ namespace Graphyte::Diagnostics
         // Report that event to system log.
         //
 
-#if GRAPHYTE_PLATFORM_WINDOWS
+#if GX_PLATFORM_WINDOWS
 
         if (Impl::g_SystemEventLog != nullptr)
         {
@@ -162,7 +162,7 @@ namespace Graphyte::Diagnostics
                 nullptr);
         }
 
-#elif GRAPHYTE_PLATFORM_POSIX
+#elif GX_PLATFORM_POSIX
 
         content_buffer.push_back('\0');
 
