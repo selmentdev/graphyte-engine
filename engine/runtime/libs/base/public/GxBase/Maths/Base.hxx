@@ -2457,13 +2457,11 @@ namespace Graphyte::Maths
 #elif GX_HW_AVX
         return { _mm_set_ps(w, z, y, x) };
 #elif GX_HW_NEON
-        float32x2_t const xy = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&y)) << 32));
-
-        float32x2_t const zw = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&z)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&w)) << 32));
-
-        return { vcombine_f32(xy, zw) };
+        float32x4_t const r0 = vdupq_n_f32(w);
+        float32x4_t const r1 = vsetq_lane_f32(x, r0, 0);
+        float32x4_t const r2 = vsetq_lane_f32(y, r1, 1);
+        float32x4_t const r3 = vsetq_lane_f32(z, r2, 2);
+        return { r3 };
 #endif
     }
 
@@ -2483,13 +2481,11 @@ namespace Graphyte::Maths
 #elif GX_HW_AVX
         return { _mm_set_ps(0.0F, z, y, x) };
 #elif GX_HW_NEON
-        float32x2_t const xy = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&y)) << 32));
-
-        float32x2_t const zn = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&z)));
-
-        return { vcombine_f32(xy, zn) };
+        float32x4_t const r0 = vdupq_n_f32(0.0f);
+        float32x4_t const r1 = vsetq_lane_f32(x, r0, 0);
+        float32x4_t const r2 = vsetq_lane_f32(y, r1, 1);
+        float32x4_t const r3 = vsetq_lane_f32(z, r2, 2);
+        return { r3 };
 #endif
     }
 
@@ -2509,12 +2505,10 @@ namespace Graphyte::Maths
 #elif GX_HW_AVX
         return { _mm_set_ps(0.0F, 0.0F, y, x) };
 #elif GX_HW_NEON
-        float32x2_t const xy = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)) | (static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&y)) << 32));
-
-        float32x2_t const zero = vdup_n_f32(0.0F);
-
-        return { vcombine_f32(xy, zero) };
+        float32x4_t const r0 = vdupq_n_f32(0.0f);
+        float32x4_t const r1 = vsetq_lane_f32(x, r0, 0);
+        float32x4_t const r2 = vsetq_lane_f32(y, r1, 1);
+        return { r2 };
 #endif
     }
 
@@ -2534,12 +2528,9 @@ namespace Graphyte::Maths
 #elif GX_HW_AVX
         return { _mm_set_ps(0.0F, 0.0F, 0.0F, x) };
 #elif GX_HW_NEON
-        float32x2_t const xn = vcreate_f32(
-            static_cast<uint64_t>(*reinterpret_cast<uint32_t const*>(&x)));
-
-        float32x2_t const zero = vdup_n_f32(0.0F);
-
-        return { vcombine_f32(xn, zero) };
+        float32x4_t const r0 = vdupq_n_f32(0.0f);
+        float32x4_t const r1 = vsetq_lane_f32(x, r0, 0);
+        return { r1 };
 #endif
     }
 
