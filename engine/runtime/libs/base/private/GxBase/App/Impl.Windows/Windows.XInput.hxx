@@ -43,7 +43,7 @@ namespace Graphyte::App::Impl
         struct ControllerState final
         {
             std::array<bool, MaxButtons> Button;
-            std::array<double, MaxButtons> RepeatTime;
+            std::array<uint64_t, MaxButtons> RepeatTime;
             int16_t LeftXAnalog;
             int16_t LeftYAnalog;
             int16_t RightXAnalog;
@@ -55,8 +55,8 @@ namespace Graphyte::App::Impl
         };
 
         std::array<ControllerState, MaxControllers> m_Controllers{};
-        float m_ButtonRepeatDelay{ 0.1f };
-        float m_ButtonInitialDelay{ 0.2f };
+        uint64_t const m_ButtonRepeatDelay  = static_cast<uint64_t>(System::GetTimestampResolution() * 0.1);
+        uint64_t const m_ButtonInitialDelay = static_cast<uint64_t>(System::GetTimestampResolution() * 0.2);
         bool m_NeedsUpdate{ true };
 
     private:
@@ -122,7 +122,7 @@ namespace Graphyte::App::Impl
 
             if (is_attached)
             {
-                double current_time = System::GetSeconds();
+                uint64_t const current_time = System::GetTimestamp();
 
                 for (uint32_t controller = 0; controller < MaxControllers; ++controller)
                 {

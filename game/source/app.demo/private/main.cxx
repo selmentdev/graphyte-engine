@@ -138,8 +138,86 @@ public:
     }
 };
 
+namespace GraphyteX
+{
+    struct ProcessorFeatures
+    {
+        bool SSE2;
+        bool SSE3;
+        bool SSE4;
+        bool AVX;
+        bool AES;
+    };
+
+    namespace Impl
+    {
+        ProcessorFeatures AcquireProcessorFeatures() noexcept
+        {
+            return ProcessorFeatures{
+                .SSE2 = true,
+                .SSE3 = true,
+                .SSE4 = true,
+                .AVX  = true,
+                .AES  = false,
+            };
+        }
+    }
+
+    ProcessorFeatures g_ProcessorFeatures = Impl::AcquireProcessorFeatures();
+
+    struct MemoryProperties
+    {
+        uint64_t TotalVirtual;
+        uint64_t TotalPhysical;
+        uint64_t TotalPagefile;
+        uint64_t SystemAllocationGranularity;
+        uint64_t PageSize;
+        uint64_t MinimumAddressLimit;
+        uint64_t MaximumAddressLimit;
+    };
+
+    namespace Impl
+    {
+        MemoryProperties AcquireMemoryProperties() noexcept
+        {
+            MEMORYSTATUSEX msex{ .dwLength = sizeof(msex) };
+            GlobalMemoryStatusEx(&msex);
+
+            SYSTEM_INFO si{};
+
+            if (Graphyte::System::Is64BitOperatingSystem())
+            {
+                GetNativeSystemInfo(&si);
+            }
+            else
+            {
+                GetSystemInfo(&si);
+            }
+
+            return MemoryProperties{
+                .TotalVirtual                = msex.ullTotalVirtual,
+                .TotalPhysical               = msex.ullTotalPhys,
+                .TotalPagefile               = msex.ullTotalPageFile,
+                .SystemAllocationGranularity = si.dwAllocationGranularity,
+                .PageSize                    = si.dwPageSize,
+                .MinimumAddressLimit         = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(si.lpMinimumApplicationAddress)),
+                .MaximumAddressLimit         = static_cast<uint64_t>(reinterpret_cast<uintptr_t>(si.lpMaximumApplicationAddress)),
+            };
+        }
+    }
+
+    MemoryProperties g_MemoryProperties = Impl::AcquireMemoryProperties();
+}
+
 int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexcept
 {
+    GX_LOG_TRACE(LogAssetsCompiler, "{} {} {} {} {}\n",
+        GraphyteX::g_MemoryProperties.TotalPhysical,
+        GraphyteX::g_MemoryProperties.TotalPagefile,
+        GraphyteX::g_MemoryProperties.TotalVirtual,
+        GraphyteX::g_MemoryProperties.MinimumAddressLimit,
+        GraphyteX::g_MemoryProperties.MaximumAddressLimit);
+
     using namespace Graphyte::Maths;
     auto const v0 = Make<Quaternion>(1.0f, 2.0f, 3.0f, 4.0f);
     auto const q0 = Make<Quaternion>(1.0f, 0.0f, 0.0f, 5.0f);
@@ -166,6 +244,8 @@ int GraphyteMain([[maybe_unused]] int argc, [[maybe_unused]] char** argv) noexce
             GX_LOG_TRACE(LogAssetsCompiler, "Path: {}\n", path);
         }
     }
+
+    GX_LOG_ERROR(LogAssetsCompiler, "{} ({}) = {}\n", Graphyte::System::GetTimestampResolution(), Graphyte::System::GetTimestamp(), Graphyte::System::GetTimestamp() / Graphyte::System::GetTimestampResolution());
 
     Graphyte::Diagnostics::Stopwatch sw{};
     sw.Start();
