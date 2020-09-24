@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../game/source/app.demo/project.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../engine/runtime/libs/base/project.cs" />
+    <Compile Include="../../engine/runtime/libs/geometry/project.cs" />
+    <Compile Include="../../engine/runtime/libs/graphics-d3d11/project.cs" />
+    <Compile Include="../../engine/runtime/libs/graphics/project.cs" />
+    <Compile Include="../../engine/runtime/libs/launch/project.cs" />
+    <Compile Include="../../engine/runtime/libs/rendering/project.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../sdks/catch2/project.cs" />
+    <Compile Include="../../sdks/fmt/project.cs" />
+    <Compile Include="../../sdks/lz4/project.cs" />
+    <Compile Include="../../sdks/mbedtls/project.cs" />
+    <Compile Include="../../sdks/sqlite/project.cs" />
+    <Compile Include="../../sdks/vulkanvma/project.cs" />
+  </ItemGroup>
+</Project>
