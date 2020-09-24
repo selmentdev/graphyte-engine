@@ -23,10 +23,10 @@ namespace Graphyte
     enum struct ModuleFeatures : uint32_t
     {
         /// No features specified.
-        None              = 0,
+        None = 0,
 
         /// Module may be reloaded at runtime.
-        DynamicReloading  = 1 << 0,
+        DynamicReloading = 1 << 0,
 
         /// Module can be safely unloaded at shutdown.
         AutomaticShutdown = 1 << 1,

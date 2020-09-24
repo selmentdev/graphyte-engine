@@ -10,7 +10,7 @@ namespace Graphyte::System::Impl
     {
         return System::Point{
             .Left = value.x,
-            .Top = value.y,
+            .Top  = value.y,
         };
     }
 
@@ -25,7 +25,7 @@ namespace Graphyte::System::Impl
     [[nodiscard]] constexpr System::Size ToSize(SIZE value) noexcept
     {
         return System::Size{
-            .Width = value.cx,
+            .Width  = value.cx,
             .Height = value.cy,
         };
     }
@@ -41,9 +41,9 @@ namespace Graphyte::System::Impl
     [[nodiscard]] constexpr System::Rect ToRect(RECT value) noexcept
     {
         return System::Rect{
-            .Left = value.left,
-            .Top = value.top,
-            .Width = value.right - value.left,
+            .Left   = value.left,
+            .Top    = value.top,
+            .Width  = value.right - value.left,
             .Height = value.bottom - value.top,
         };
     }
@@ -51,9 +51,9 @@ namespace Graphyte::System::Impl
     [[nodiscard]] constexpr RECT FromRect(System::Rect value) noexcept
     {
         return RECT{
-            .left = value.Left,
-            .top = value.Top,
-            .right = value.Left + value.Width,
+            .left   = value.Left,
+            .top    = value.Top,
+            .right  = value.Left + value.Width,
             .bottom = value.Top + value.Height,
         };
     }
@@ -61,7 +61,7 @@ namespace Graphyte::System::Impl
     [[nodiscard]] constexpr DateTime ToDateTime(FILETIME value) noexcept
     {
         ULARGE_INTEGER const li{
-            .LowPart = value.dwLowDateTime,
+            .LowPart  = value.dwLowDateTime,
             .HighPart = value.dwHighDateTime,
         };
 
@@ -77,7 +77,7 @@ namespace Graphyte::System::Impl
         };
 
         return FILETIME{
-            .dwLowDateTime = li.LowPart,
+            .dwLowDateTime  = li.LowPart,
             .dwHighDateTime = li.HighPart,
         };
     }
@@ -95,15 +95,15 @@ namespace Graphyte::System::Impl
     [[nodiscard]] constexpr CalendarTime ToCalendarTime(SYSTEMTIME const& value) noexcept
     {
         return CalendarTime{
-            .Year = value.wYear,
-            .Month = value.wMonth,
-            .Day = value.wDay,
-            .Hour = value.wHour,
-            .Minute = value.wMinute,
-            .Second = value.wSecond,
+            .Year        = value.wYear,
+            .Month       = value.wMonth,
+            .Day         = value.wDay,
+            .Hour        = value.wHour,
+            .Minute      = value.wMinute,
+            .Second      = value.wSecond,
             .Millisecond = value.wMilliseconds,
-            .DayOfWeek = value.wDayOfWeek,
-            .DayOfYear = 0,
+            .DayOfWeek   = value.wDayOfWeek,
+            .DayOfYear   = 0,
         };
     }
 

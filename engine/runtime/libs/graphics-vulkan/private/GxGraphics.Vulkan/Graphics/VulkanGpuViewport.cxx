@@ -33,7 +33,8 @@ namespace Graphyte::Graphics
 
         GX_ENSURE(SDL_GetWindowWMInfo(
                       sdl_window,
-                      &window_info) == SDL_TRUE);
+                      &window_info)
+                  == SDL_TRUE);
 
         VkXcbSurfaceCreateInfoKHR create_info{};
         create_info.sType      = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;

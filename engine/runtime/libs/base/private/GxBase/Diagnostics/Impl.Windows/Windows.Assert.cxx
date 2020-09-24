@@ -39,8 +39,8 @@ namespace Graphyte::Diagnostics::Impl
             }
         };
 
-        std::wstring wtitle      = System::Impl::WidenString(title);
-        std::wstring wcontent    = System::Impl::WidenString(content);
+        std::wstring wtitle   = System::Impl::WidenString(title);
+        std::wstring wcontent = System::Impl::WidenString(content);
 
 #if GX_ENABLE_STACKTRACE
         std::wstring wstacktrace = System::Impl::WidenString(stacktrace);
@@ -48,19 +48,20 @@ namespace Graphyte::Diagnostics::Impl
         (void)stacktrace;
 #endif
 
-        TASKDIALOGCONFIG config{
-            .cbSize                  = sizeof(TASKDIALOGCONFIG),
-            .hwndParent              = nullptr,
-            .hInstance               = System::Impl::g_InstanceHandle,
-            .dwFlags                 = TDF_ALLOW_DIALOG_CANCELLATION,
-            .dwCommonButtons         = 0,
-            .pszWindowTitle          = wtitle.c_str(),
-            .pszMainIcon             = TD_ERROR_ICON,
-            .pszMainInstruction      = L"Assertion failed",
-            .pszContent              = wcontent.c_str(),
-            .cButtons                = static_cast<UINT>(std::size(buttons)),
-            .pButtons                = std::data(buttons),
-            .nDefaultButton          = static_cast<int>(AssertResult::Retry),
+        TASKDIALOGCONFIG config
+        {
+            .cbSize             = sizeof(TASKDIALOGCONFIG),
+            .hwndParent         = nullptr,
+            .hInstance          = System::Impl::g_InstanceHandle,
+            .dwFlags            = TDF_ALLOW_DIALOG_CANCELLATION,
+            .dwCommonButtons    = 0,
+            .pszWindowTitle     = wtitle.c_str(),
+            .pszMainIcon        = TD_ERROR_ICON,
+            .pszMainInstruction = L"Assertion failed",
+            .pszContent         = wcontent.c_str(),
+            .cButtons           = static_cast<UINT>(std::size(buttons)),
+            .pButtons           = std::data(buttons),
+            .nDefaultButton     = static_cast<int>(AssertResult::Retry),
 
 #if GX_ENABLE_STACKTRACE
             .pszExpandedInformation  = wstacktrace.c_str(),

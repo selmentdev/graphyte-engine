@@ -4,7 +4,7 @@
 // NOTE:
 //  `c_V[X]_F[Y]_` - constant vector with X components and type Y
 //  `c_S_` - templated scalar constant value
-//  `c_S_F[X]_` - constant scalar with type X 
+//  `c_S_F[X]_` - constant scalar with type X
 
 namespace Graphyte::Maths::Impl
 {
@@ -89,8 +89,8 @@ namespace Graphyte::Maths::Impl
     template <typename T>
     inline constexpr const T c_S_EpsilonHigh = static_cast<T>(0.0000005);
 
-    inline constexpr const uint32_t SELECT_0      = 0x00000000u;
-    inline constexpr const uint32_t SELECT_1      = 0xFFFFFFFFu;
+    inline constexpr const uint32_t SELECT_0 = 0x00000000u;
+    inline constexpr const uint32_t SELECT_1 = 0xFFFFFFFFu;
 
 
     inline constexpr const uint32_t PERMUTE_0X = 0;

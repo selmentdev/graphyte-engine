@@ -558,12 +558,12 @@ namespace Graphyte::Maths
 
         Vector4 const vcos_omega0{ Dot(q0, q1).V };
 
-        Vector4 const vzero   = Zero<Vector4>();
-        Bool4 const vc0 = CompareLess(vcos_omega0, vzero);
-        Vector4 const vsign   = Select(Vector4{ Impl::c_V4_F32_One.V }, Vector4{ Impl::c_V4_F32_Negative_One.V }, vc0);
+        Vector4 const vzero = Zero<Vector4>();
+        Bool4 const vc0     = CompareLess(vcos_omega0, vzero);
+        Vector4 const vsign = Select(Vector4{ Impl::c_V4_F32_One.V }, Vector4{ Impl::c_V4_F32_Negative_One.V }, vc0);
 
         Vector4 const vcos_omega1 = Multiply(vcos_omega0, vsign);
-        Bool4 const vc1     = CompareLess(vcos_omega1, Vector4{ one_minus_epsilon.V });
+        Bool4 const vc1           = CompareLess(vcos_omega1, Vector4{ one_minus_epsilon.V });
 
         Vector4 const vsin_omega_sq = NegateMultiplySubtract(vcos_omega1, vcos_omega1, Vector4{ Impl::c_V4_F32_One.V });
         Vector4 const vsin_omega    = Sqrt(vsin_omega_sq);
@@ -605,9 +605,9 @@ namespace Graphyte::Maths
 
         __m128 const vcos_omega0 = Dot(q0, q1).V;
 
-        __m128 const vzero = _mm_setzero_ps();
-        __m128 const vc0   = _mm_cmplt_ps(vcos_omega0, vzero);
-        __m128 const vsign = _mm_blendv_ps(Impl::c_V4_F32_One.V, Impl::c_V4_F32_Negative_One.V, vc0);
+        __m128 const vzero       = _mm_setzero_ps();
+        __m128 const vc0         = _mm_cmplt_ps(vcos_omega0, vzero);
+        __m128 const vsign       = _mm_blendv_ps(Impl::c_V4_F32_One.V, Impl::c_V4_F32_Negative_One.V, vc0);
         __m128 const vcos_omega1 = _mm_mul_ps(vcos_omega0, vsign);
         __m128 const vc1         = _mm_cmplt_ps(vcos_omega1, one_minus_epsilon.V);
         __m128 const vsin_omega0 = _mm_mul_ps(vcos_omega1, vcos_omega1);
@@ -625,8 +625,8 @@ namespace Graphyte::Maths
         __m128 const vs0c = _mm_div_ps(vs0b, vsin_omega2);
         __m128 const vs0d = _mm_blendv_ps(v01d, vs0c, vc1);
 
-        __m128 const vs1a = SplatY(Vector4{v01d}).V;
-        __m128 const vs0e = SplatX(Vector4{v01d}).V;
+        __m128 const vs1a = SplatY(Vector4{ v01d }).V;
+        __m128 const vs0e = SplatX(Vector4{ v01d }).V;
 
         __m128 const vs1b = _mm_mul_ps(vs1a, vsign);
 

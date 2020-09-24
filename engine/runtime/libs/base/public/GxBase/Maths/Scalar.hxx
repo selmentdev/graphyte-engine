@@ -1102,7 +1102,7 @@ namespace Graphyte::Maths
 
     template <typename TFixed, typename TFloat>
     constexpr TFixed mathcall FloatToFixed(TFloat value, size_t bits) noexcept
-        requires(std::is_unsigned_v<TFixed> && std::is_floating_point_v<TFloat>)
+        requires(std::is_unsigned_v<TFixed>&& std::is_floating_point_v<TFloat>)
     {
         if (value <= TFloat(0.0))
         {
@@ -1119,7 +1119,7 @@ namespace Graphyte::Maths
 
     template <typename TFloat, typename TFixed>
     constexpr TFloat mathcall FixedToFloat(TFixed value, size_t bits) noexcept
-        requires(std::is_unsigned_v<TFixed> && std::is_floating_point_v<TFloat>)
+        requires(std::is_unsigned_v<TFixed>&& std::is_floating_point_v<TFloat>)
     {
         return static_cast<TFloat>(value) / static_cast<TFloat>((TFixed{ 1 } << bits) - 1);
     }
@@ -1152,8 +1152,8 @@ namespace Graphyte::Maths
         requires(std::is_floating_point_v<T>)
     {
         return (value1 <= value2)
-            ? T(0.0)
-            : T(1.0);
+                   ? T(0.0)
+                   : T(1.0);
     }
 
     template <typename T>
@@ -1174,7 +1174,7 @@ namespace Graphyte::Maths
         }
 
         T const denominator = T(1) / (T(2) * a);
-        T const delta_sqrt = Sqrt(delta);
+        T const delta_sqrt  = Sqrt(delta);
 
         out_x1 = (-b - delta_sqrt) * denominator;
         out_x2 = (-b + delta_sqrt) * denominator;
@@ -1207,14 +1207,14 @@ namespace Graphyte::Maths
         seed = seed ^ (seed >> 15U);
 
         float value = static_cast<float>(seed);
-        value = static_cast<float>(static_cast<double>(value) * (1.0 / 4294967296.0));
+        value       = static_cast<float>(static_cast<double>(value) * (1.0 / 4294967296.0));
         return value;
     }
 
     [[nodiscard]] mathinline float mathcall WrapAngle(float value) noexcept
     {
         float const raw = value + Maths::Impl::c_S_Pi<float>;
-        float abs = Abs(raw);
+        float abs       = Abs(raw);
 
         float const scaled = static_cast<float>(static_cast<int32_t>(abs / Impl::c_S_Pi<float>));
 
@@ -1348,7 +1348,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Clamp(T v, T min, T max) noexcept
         requires(std::is_floating_point_v<T>)
     {
-        T const below = Max(min, v);
+        T const below  = Max(min, v);
         T const result = Min(max, below);
         return result;
     }
@@ -1374,7 +1374,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Saturate(T v) noexcept
         requires(std::is_floating_point_v<T>)
     {
-        T const below = Max(T(0.0), v);
+        T const below  = Max(T(0.0), v);
         T const result = Min(T(1.0), below);
         return result;
     }
@@ -1383,7 +1383,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline T mathcall Wrap(T v, T min, T max) noexcept
         requires(std::is_floating_point_v<T>)
     {
-        T const range = (max - min);
+        T const range    = (max - min);
         T const progress = (v - min);
         return min + progress + (range * floorf(progress / range));
     }

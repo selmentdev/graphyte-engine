@@ -59,7 +59,7 @@ namespace Graphyte
         {
             std::size_t const index = (static_cast<std::size_t>(initial >> 24) ^ *it++) & 0xFFu;
 
-            initial                 = Impl::g_Crc32Table[index] ^ (initial << 8);
+            initial = Impl::g_Crc32Table[index] ^ (initial << 8);
         }
 
         if (finalize)
@@ -157,7 +157,7 @@ namespace Graphyte
         {
             std::size_t const index = (static_cast<std::size_t>(initial >> 56) ^ *it++) & 0xFFu;
 
-            initial                 = Impl::g_Crc64Table[index] ^ (initial << 8);
+            initial = Impl::g_Crc64Table[index] ^ (initial << 8);
         }
 
         if (finalize)

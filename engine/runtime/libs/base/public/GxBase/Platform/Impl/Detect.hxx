@@ -333,30 +333,30 @@
 // Detect if platform is posix compatible
 
 #define GX_PLATFORM_POSIX (0 \
-                                 || GX_PLATFORM_ANDROID \
-                                 || GX_PLATFORM_BSD \
-                                 || GX_PLATFORM_EMSCRIPTEN \
-                                 || GX_PLATFORM_IOS \
-                                 || GX_PLATFORM_LINUX \
-                                 || GX_PLATFORM_NX \
-                                 || GX_PLATFORM_OSX \
-                                 || GX_PLATFORM_PS4 \
-                                 || GX_PLATFORM_RPI \
-                                 || GX_PLATFORM_STEAMLINK)
+                           || GX_PLATFORM_ANDROID \
+                           || GX_PLATFORM_BSD \
+                           || GX_PLATFORM_EMSCRIPTEN \
+                           || GX_PLATFORM_IOS \
+                           || GX_PLATFORM_LINUX \
+                           || GX_PLATFORM_NX \
+                           || GX_PLATFORM_OSX \
+                           || GX_PLATFORM_PS4 \
+                           || GX_PLATFORM_RPI \
+                           || GX_PLATFORM_STEAMLINK)
 
 
 // =================================================================================================
 // Detect if we support pthreads
 
 #define GX_HAVE_PTHREADS (0 \
-                                || GX_PLATFORM_ANDROID \
-                                || GX_PLATFORM_BSD \
-                                || GX_PLATFORM_EMSCRIPTEN \
-                                || GX_PLATFORM_IOS \
-                                || GX_PLATFORM_LINUX \
-                                || GX_PLATFORM_OSX \
-                                || GX_PLATFORM_RPI \
-                                || GX_PLATFORM_STEAMLINK)
+                          || GX_PLATFORM_ANDROID \
+                          || GX_PLATFORM_BSD \
+                          || GX_PLATFORM_EMSCRIPTEN \
+                          || GX_PLATFORM_IOS \
+                          || GX_PLATFORM_LINUX \
+                          || GX_PLATFORM_OSX \
+                          || GX_PLATFORM_RPI \
+                          || GX_PLATFORM_STEAMLINK)
 
 
 // =================================================================================================
@@ -709,9 +709,9 @@
 // Stack trace support
 
 #if GX_BUILD_TYPE_RETAIL
-#define GX_ENABLE_STACKTRACE 0
+#define GX_ENABLE_STACKTRACE         0
 #define GX_ENABLE_STACKTRACE_SYMBOLS 0
-#define GX_ENABLE_STACKTRACE_FAST 0
+#define GX_ENABLE_STACKTRACE_FAST    0
 #endif
 
 #if !defined(GX_ENABLE_STACKTRACE)

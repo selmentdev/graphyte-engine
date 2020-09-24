@@ -10,7 +10,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(360.0f);
-        T const result = Multiply<T>(value, multiplier);
+        T const result     = Multiply<T>(value, multiplier);
         return result;
     }
 
@@ -42,7 +42,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(400.0f);
-        T const result = Multiply(value, multiplier);
+        T const result     = Multiply(value, multiplier);
         return result;
     }
 
@@ -58,7 +58,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(1.0f / 360.0f);
-        T const result = Multiply(value, multiplier);
+        T const result     = Multiply(value, multiplier);
         return result;
     }
 
@@ -74,7 +74,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(1.0 / Maths::Impl::ConstPi2<float>);
-        T const result = Multiply(value, multiplier);
+        T const result     = Multiply(value, multiplier);
         return result;
     }
 
@@ -90,7 +90,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(1.0f / 400.0f);
-        T const result = Multiply(value, multiplier);
+        T const result     = Multiply(value, multiplier);
         return result;
     }
 
@@ -106,7 +106,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(200.0f / Maths::Impl::ConstPi<float>);
-        T const result = Multiply(value, multiplier);
+        T const result     = Multiply(value, multiplier);
         return result;
     }
 
@@ -122,7 +122,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(Maths::Impl::ConstPi<float> / 200.0f);
-        T const result = Multiply(value, multiplier);
+        T const result     = Multiply(value, multiplier);
         return result;
     }
 
@@ -138,7 +138,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(180.0f / Maths::Impl::ConstPi<float>);
-        T const result = Multiply(value, multiplier);
+        T const result     = Multiply(value, multiplier);
         return result;
     }
 
@@ -154,7 +154,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(Maths::Impl::ConstPi<float> / 180.0f);
-        T const result = Multiply(value, multiplier);
+        T const result     = Multiply(value, multiplier);
         return result;
     }
 
@@ -170,7 +170,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(9.0f / 10.0f);
-        T const result = Multiply(value, multiplier);
+        T const result     = Multiply(value, multiplier);
         return result;
     }
 
@@ -186,7 +186,7 @@ namespace Graphyte::Maths
         requires(Impl::IsSimdFloat4<T>)
     {
         T const multiplier = Replicate<T>(10.0f / 9.0f);
-        T const result = Multiply(value, multiplier);
+        T const result     = Multiply(value, multiplier);
         return result;
     }
 
@@ -237,8 +237,8 @@ namespace Graphyte::Maths
 
     [[nodiscard]] mathinline Float3A mathcall CylindricalToCartesian(const Float3A& value) noexcept
     {
-        float const radius = value.X;
-        float const angle = value.Y;
+        float const radius    = value.X;
+        float const angle     = value.Y;
         float const elevation = value.Z;
 
         float sin_angle;
@@ -251,7 +251,7 @@ namespace Graphyte::Maths
     [[nodiscard]] mathinline Float2A mathcall PolarToCartesian(const Float2A& value) noexcept
     {
         float const radius = value.X;
-        float const angle = value.Y;
+        float const angle  = value.Y;
 
         float sin_angle;
         float cos_angle;

@@ -71,37 +71,37 @@ namespace Graphyte::System
 
             case MessageDialogType::Ok:
             {
-                buttons[0] = Impl::g_MessageDialogButtonOk;
+                buttons[0]   = Impl::g_MessageDialogButtonOk;
                 buttonsCount = 1;
                 break;
             }
             case MessageDialogType::OkCancel:
             {
-                buttons[0] = Impl::g_MessageDialogButtonOk;
-                buttons[1] = Impl::g_MessageDialogButtonCancel;
+                buttons[0]   = Impl::g_MessageDialogButtonOk;
+                buttons[1]   = Impl::g_MessageDialogButtonCancel;
                 buttonsCount = 2;
                 break;
             }
             case MessageDialogType::YesNo:
             {
-                buttons[0] = Impl::g_MessageDialogButtonYes;
-                buttons[1] = Impl::g_MessageDialogButtonNo;
+                buttons[0]   = Impl::g_MessageDialogButtonYes;
+                buttons[1]   = Impl::g_MessageDialogButtonNo;
                 buttonsCount = 2;
                 break;
             }
             case MessageDialogType::YesNoCancel:
             {
-                buttons[0] = Impl::g_MessageDialogButtonYes;
-                buttons[1] = Impl::g_MessageDialogButtonNo;
-                buttons[2] = Impl::g_MessageDialogButtonCancel;
+                buttons[0]   = Impl::g_MessageDialogButtonYes;
+                buttons[1]   = Impl::g_MessageDialogButtonNo;
+                buttons[2]   = Impl::g_MessageDialogButtonCancel;
                 buttonsCount = 3;
                 break;
             }
             case MessageDialogType::CancelTryContinue:
             {
-                buttons[0] = Impl::g_MessageDialogButtonCancel;
-                buttons[1] = Impl::g_MessageDialogButtonTry;
-                buttons[2] = Impl::g_MessageDialogButtonContinue;
+                buttons[0]   = Impl::g_MessageDialogButtonCancel;
+                buttons[1]   = Impl::g_MessageDialogButtonTry;
+                buttons[2]   = Impl::g_MessageDialogButtonContinue;
                 buttonsCount = 3;
                 break;
             }

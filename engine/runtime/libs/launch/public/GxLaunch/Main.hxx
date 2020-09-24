@@ -58,31 +58,29 @@ namespace Graphyte::Launch
         using namespace Graphyte::System;
 
 #if GX_HW_SSE2
-        bool const supports_sse2 =
-            HasProcessorFeature(ProcessorFeature::SSE)
-            && HasProcessorFeature(ProcessorFeature::SSE2);
+        bool const supports_sse2 = HasProcessorFeature(ProcessorFeature::SSE)
+                                   && HasProcessorFeature(ProcessorFeature::SSE2);
 
         GX_ABORT_UNLESS(supports_sse2, "Support for SSE2 is required");
 #endif
 
 #if GX_HW_AVX
         bool const supports_avx = HasProcessorFeature(ProcessorFeature::SSE3)
-            && HasProcessorFeature(ProcessorFeature::SSE41)
-            && HasProcessorFeature(ProcessorFeature::OSXSAVE)
-            && HasProcessorFeature(ProcessorFeature::AVX);
+                                  && HasProcessorFeature(ProcessorFeature::SSE41)
+                                  && HasProcessorFeature(ProcessorFeature::OSXSAVE)
+                                  && HasProcessorFeature(ProcessorFeature::AVX);
 
         GX_ABORT_UNLESS(supports_avx, "Support for AVX is required");
 #endif
 
 #if !GX_HW_AVX2
-        bool const supports_avx2 =
-            HasProcessorFeature(ProcessorFeature::SSE3)
-            && HasProcessorFeature(ProcessorFeature::FMA3)
-            && HasProcessorFeature(ProcessorFeature::SSE41)
-            && HasProcessorFeature(ProcessorFeature::OSXSAVE)
-            && HasProcessorFeature(ProcessorFeature::AVX)
-            && HasProcessorFeature(ProcessorFeature::F16C)
-            && HasProcessorFeature(ProcessorFeature::AVX2);
+        bool const supports_avx2 = HasProcessorFeature(ProcessorFeature::SSE3)
+                                   && HasProcessorFeature(ProcessorFeature::FMA3)
+                                   && HasProcessorFeature(ProcessorFeature::SSE41)
+                                   && HasProcessorFeature(ProcessorFeature::OSXSAVE)
+                                   && HasProcessorFeature(ProcessorFeature::AVX)
+                                   && HasProcessorFeature(ProcessorFeature::F16C)
+                                   && HasProcessorFeature(ProcessorFeature::AVX2);
         GX_ABORT_UNLESS(supports_avx2, "Support for AVX is required");
 #endif
 

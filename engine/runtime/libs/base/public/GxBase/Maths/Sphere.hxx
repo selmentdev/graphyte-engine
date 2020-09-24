@@ -10,11 +10,11 @@ namespace Graphyte::Maths
     {
 #if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                origin.V.F[0],
-                origin.V.F[1],
-                origin.V.F[2],
-                radius,
-            } } };
+            origin.V.F[0],
+            origin.V.F[1],
+            origin.V.F[2],
+            radius,
+        } } };
 #elif GX_HW_AVX
         __m128 const vradius = _mm_set_ps1(radius);
         __m128 const vresult = Impl::avx_permute<0, 1, 2, 7>(origin.V, vradius);
@@ -27,11 +27,11 @@ namespace Graphyte::Maths
     {
 #if GX_MATH_NO_INTRINSICS
         Impl::ConstFloat32x4 const result{ { {
-                origin.V.F[0],
-                origin.V.F[1],
-                origin.V.F[2],
-                radius.V.F[0],
-            } } };
+            origin.V.F[0],
+            origin.V.F[1],
+            origin.V.F[2],
+            radius.V.F[0],
+        } } };
 #elif GX_HW_AVX
         __m128 const vresult = Impl::avx_permute<0, 1, 2, 5>(origin.V, radius.V);
 #endif
@@ -42,7 +42,7 @@ namespace Graphyte::Maths
         Vector3 const origin{ s.V };
         Vector3 const radius{ SplatW(Vector4{ s.V }).V };
         Vector3 const distance_squared = LengthSquared(Subtract(p, origin));
-        Vector3 const radius_squared = Multiply(radius, radius);
+        Vector3 const radius_squared   = Multiply(radius, radius);
         return IsLessEqual(distance_squared, radius_squared);
     }
 }

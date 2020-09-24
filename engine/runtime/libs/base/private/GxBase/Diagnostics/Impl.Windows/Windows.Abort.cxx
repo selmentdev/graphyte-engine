@@ -17,8 +17,8 @@ namespace Graphyte::Diagnostics::Impl
             return false;
         }
 
-        std::wstring wtitle      = System::Impl::WidenString(title);
-        std::wstring wcontent    = System::Impl::WidenString(content);
+        std::wstring wtitle   = System::Impl::WidenString(title);
+        std::wstring wcontent = System::Impl::WidenString(content);
 
 #if GX_ENABLE_STACKTRACE
         std::wstring wstacktrace = System::Impl::WidenString(stacktrace);
@@ -26,24 +26,25 @@ namespace Graphyte::Diagnostics::Impl
         (void)stacktrace;
 #endif
 
-        TASKDIALOGCONFIG config{
-            .cbSize                  = sizeof(TASKDIALOGCONFIG),
-            .hwndParent              = nullptr,
-            .hInstance               = System::Impl::g_InstanceHandle,
-            .dwFlags                 = TDF_ALLOW_DIALOG_CANCELLATION | TDF_SIZE_TO_CONTENT,
-            .dwCommonButtons         = TDCBF_CLOSE_BUTTON,
-            .pszWindowTitle          = wtitle.c_str(),
-            .pszMainIcon             = TD_ERROR_ICON,
-            .pszMainInstruction      = L"Abort",
-            .pszContent              = wcontent.c_str(),
+        TASKDIALOGCONFIG config
+        {
+            .cbSize             = sizeof(TASKDIALOGCONFIG),
+            .hwndParent         = nullptr,
+            .hInstance          = System::Impl::g_InstanceHandle,
+            .dwFlags            = TDF_ALLOW_DIALOG_CANCELLATION | TDF_SIZE_TO_CONTENT,
+            .dwCommonButtons    = TDCBF_CLOSE_BUTTON,
+            .pszWindowTitle     = wtitle.c_str(),
+            .pszMainIcon        = TD_ERROR_ICON,
+            .pszMainInstruction = L"Abort",
+            .pszContent         = wcontent.c_str(),
 
 #if GX_ENABLE_STACKTRACE
-            .pszExpandedInformation = wstacktrace.c_str(),
-            .pszExpandedControlText = L"Hide Stack Trace",
+            .pszExpandedInformation  = wstacktrace.c_str(),
+            .pszExpandedControlText  = L"Hide Stack Trace",
             .pszCollapsedControlText = L"Show Stack Trace",
 #else
-            .pszExpandedInformation = nullptr,
-            .pszExpandedControlText = nullptr,
+            .pszExpandedInformation  = nullptr,
+            .pszExpandedControlText  = nullptr,
             .pszCollapsedControlText = nullptr,
 #endif
         };

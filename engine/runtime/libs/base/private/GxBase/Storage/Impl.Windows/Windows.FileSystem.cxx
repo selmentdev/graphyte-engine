@@ -152,13 +152,13 @@ namespace Graphyte::Storage
                 };
 
                 result = FileInfo{
-                    .CreationTime = System::Impl::ToDateTime(wfad.ftCreationTime),
-                    .AccessTime = System::Impl::ToDateTime(wfad.ftLastAccessTime),
+                    .CreationTime     = System::Impl::ToDateTime(wfad.ftCreationTime),
+                    .AccessTime       = System::Impl::ToDateTime(wfad.ftLastAccessTime),
                     .ModificationTime = System::Impl::ToDateTime(wfad.ftLastWriteTime),
-                    .FileSize = static_cast<int64_t>(li_file_size.QuadPart),
-                    .IsDirectory = (wfad.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0,
-                    .IsReadonly = (wfad.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0,
-                    .IsValid = true,
+                    .FileSize         = static_cast<int64_t>(li_file_size.QuadPart),
+                    .IsDirectory      = (wfad.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0,
+                    .IsReadonly       = (wfad.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0,
+                    .IsValid          = true,
                 };
                 return Status::Success;
             }

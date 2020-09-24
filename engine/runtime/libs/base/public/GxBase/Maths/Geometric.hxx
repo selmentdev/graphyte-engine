@@ -32,17 +32,17 @@ namespace Graphyte::Maths
         Plane plane1,
         Plane plane2) noexcept
     {
-        Vector3 const cross0        = Cross(Vector3{ plane2.V }, Vector3{ plane1.V });
+        Vector3 const cross0 = Cross(Vector3{ plane2.V }, Vector3{ plane1.V });
         Vector4 const cross0_length{ Length(cross0).V };
-        Vector3 const cross1        = Cross(Vector3{ plane2.V }, cross0);
-        Vector4 const plane1_wwww   = SplatW(Vector4{ plane1.V });
-        Vector4 const point0        = Multiply(Vector4{ cross1.V }, plane1_wwww);
-        Vector3 const cross2        = Cross(cross0, Vector3{ plane1.V });
-        Vector4 const plane2_wwww   = SplatW(Vector4{ plane2.V });
-        Vector4 const point1        = MultiplyAdd(Vector4{ cross2.V }, plane2_wwww, point0);
-        Vector4 const linepoint1    = Divide(point1, cross0_length);
-        Vector4 const linepoint2    = Add(linepoint1, Vector4{ cross0.V });
-        Bool4 const control         = CompareLessEqual(cross0_length, Vector4{ Impl::c_V4_F32_Epsilon.V });
+        Vector3 const cross1      = Cross(Vector3{ plane2.V }, cross0);
+        Vector4 const plane1_wwww = SplatW(Vector4{ plane1.V });
+        Vector4 const point0      = Multiply(Vector4{ cross1.V }, plane1_wwww);
+        Vector3 const cross2      = Cross(cross0, Vector3{ plane1.V });
+        Vector4 const plane2_wwww = SplatW(Vector4{ plane2.V });
+        Vector4 const point1      = MultiplyAdd(Vector4{ cross2.V }, plane2_wwww, point0);
+        Vector4 const linepoint1  = Divide(point1, cross0_length);
+        Vector4 const linepoint2  = Add(linepoint1, Vector4{ cross0.V });
+        Bool4 const control       = CompareLessEqual(cross0_length, Vector4{ Impl::c_V4_F32_Epsilon.V });
 
         out_line1 = Vector3{ Select(linepoint1, Nan<Vector4>(), control).V };
         out_line2 = Vector3{ Select(linepoint2, Nan<Vector4>(), control).V };

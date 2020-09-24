@@ -545,8 +545,8 @@ namespace Graphyte::Maths::Impl
     template <>
     [[nodiscard]] mathinline float32x4_t mathcall neon_dp<1>(float32x4_t a, float32x4_t b) noexcept
     {
-        float32x4_t const axxxx = vdupq_lane_f32(a, 0);
-        float32x4_t const bxxxx = vdupq_lane_f32(b, 0);
+        float32x4_t const axxxx  = vdupq_lane_f32(a, 0);
+        float32x4_t const bxxxx  = vdupq_lane_f32(b, 0);
         float32x4_t const result = vmulq_f32(axxxx, bxxxx);
         return result;
     }
@@ -554,7 +554,7 @@ namespace Graphyte::Maths::Impl
     template <>
     [[nodiscard]] mathinline float32x4_t mathcall neon_dp<1>(float32x4_t v) noexcept
     {
-        float32x4_t const vxxxx = vdupq_lane_f32(v, 0);
+        float32x4_t const vxxxx  = vdupq_lane_f32(v, 0);
         float32x4_t const result = vmulq_f32(vxxxx, vxxxx);
         return result;
     }

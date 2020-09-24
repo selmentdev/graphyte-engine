@@ -9,7 +9,7 @@ namespace Graphyte::Maths
     {
 #if GX_MATH_NO_INTRINSICS
         // v4 = {v3, 1}
-        Vector4 const v4_1 = Select(Vector4{ Impl::c_V4_F32_One.V }, Vector4{ v.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
+        Vector4 const v4_1   = Select(Vector4{ Impl::c_V4_F32_One.V }, Vector4{ v.V }, Bool4{ Impl::c_V4_U32_Mask_1110.V });
         Vector4 const result = Dot(Vector4{ p.V }, v4_1);
         return result;
 #elif GX_HW_AVX
@@ -57,11 +57,11 @@ namespace Graphyte::Maths
 
         return { result.V };
 #elif GX_HW_AVX
-        __m128 const length_sq = _mm_dp_ps(p.V, p.V, 0b0111'1111);
-        __m128 const length = _mm_sqrt_ps(length_sq);
-        __m128 const mask = _mm_cmpneq_ps(length_sq, Impl::c_V4_F32_Positive_Infinity.V);
+        __m128 const length_sq  = _mm_dp_ps(p.V, p.V, 0b0111'1111);
+        __m128 const length     = _mm_sqrt_ps(length_sq);
+        __m128 const mask       = _mm_cmpneq_ps(length_sq, Impl::c_V4_F32_Positive_Infinity.V);
         __m128 const normalized = _mm_div_ps(p.V, length);
-        __m128 const result = _mm_and_ps(normalized, mask);
+        __m128 const result     = _mm_and_ps(normalized, mask);
         return { result };
 #endif
     }
@@ -73,9 +73,9 @@ namespace Graphyte::Maths
         Vector4 const result = Multiply(Vector4{ p.V }, length);
         return Plane{ result.V };
 #elif GX_HW_AVX
-        __m128 const length = _mm_dp_ps(p.V, p.V, 0x7F);
+        __m128 const length     = _mm_dp_ps(p.V, p.V, 0x7F);
         __m128 const rcp_length = _mm_rsqrt_ps(length);
-        __m128 const result = _mm_mul_ps(p.V, rcp_length);
+        __m128 const result     = _mm_mul_ps(p.V, rcp_length);
         return { result };
 #endif
     }
@@ -120,10 +120,10 @@ namespace Graphyte::Maths
         Vector3 const d_p31 = Subtract(p1, p3);
 
         Vector3 const plane_perpendicular = Cross(d_p21, d_p31);
-        Vector3 const plane_normal = Normalize(plane_perpendicular);
+        Vector3 const plane_normal        = Normalize(plane_perpendicular);
 
         Vector4 const neg_plane_distance = DotNormal(Plane{ plane_normal.V }, p1);
-        Vector4 const plane_distance = Negate(neg_plane_distance);
+        Vector4 const plane_distance     = Negate(neg_plane_distance);
 
         Vector4 const result = Select(
             plane_distance,
@@ -167,22 +167,22 @@ namespace Graphyte::Maths
         GX_ASSERT(!IsInfinity(shadow));
 
         Vector4 const vp{ Normalize(shadow).V };
-        Vector4 const pp = Negate(vp);
+        Vector4 const pp     = Negate(vp);
         Vector4 const p_aaaa = SplatX(pp);
         Vector4 const p_bbbb = SplatY(pp);
         Vector4 const p_cccc = SplatZ(pp);
         Vector4 const p_dddd = SplatW(pp);
 
         Vector4 dot = Dot(vp, light);
-        dot = Select(Vector4{ Impl::c_V4_U32_Mask_0001.V }, dot, Bool4{ Impl::c_V4_U32_Mask_0001.V });
+        dot         = Select(Vector4{ Impl::c_V4_U32_Mask_0001.V }, dot, Bool4{ Impl::c_V4_U32_Mask_0001.V });
 
         Matrix result;
         result.M.R[3] = MultiplyAdd(p_dddd, light, dot).V;
-        dot = RotateLeft<1>(dot);
+        dot           = RotateLeft<1>(dot);
         result.M.R[2] = MultiplyAdd(p_cccc, light, dot).V;
-        dot = RotateLeft<1>(dot);
+        dot           = RotateLeft<1>(dot);
         result.M.R[1] = MultiplyAdd(p_bbbb, light, dot).V;
-        dot = RotateLeft<1>(dot);
+        dot           = RotateLeft<1>(dot);
         result.M.R[0] = MultiplyAdd(p_aaaa, light, dot).V;
 
         return result;

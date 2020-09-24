@@ -23,7 +23,7 @@ namespace Graphyte::System
         GetSystemTimeAsFileTime(&ft);
 
         ULARGE_INTEGER const ul{
-            .LowPart = ft.dwLowDateTime,
+            .LowPart  = ft.dwLowDateTime,
             .HighPart = ft.dwHighDateTime,
         };
         return static_cast<uint64_t>(ul.QuadPart);
@@ -38,7 +38,7 @@ namespace Graphyte::System
         SystemTimeToFileTime(&st, &ft);
 
         ULARGE_INTEGER const ul{
-            .LowPart = ft.dwLowDateTime,
+            .LowPart  = ft.dwLowDateTime,
             .HighPart = ft.dwHighDateTime,
         };
         return static_cast<uint64_t>(ul.QuadPart);
