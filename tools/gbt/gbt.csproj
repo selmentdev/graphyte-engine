@@ -9,6 +9,10 @@
     <Compile Include="../../game/source/app.demo/project.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="../../engine/runtime/tests/base/project.cs" />
+    <Compile Include="../../engine/runtime/tests/executor/project.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="../../engine/runtime/libs/base/project.cs" />
     <Compile Include="../../engine/runtime/libs/geometry/project.cs" />
     <Compile Include="../../engine/runtime/libs/graphics-d3d11/project.cs" />

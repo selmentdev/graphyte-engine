@@ -1,16 +1,13 @@
-using System;
 using GraphyteBuildTool;
-using System.Collections.Generic;
+using GraphyteBuildTool.Projects;
 
 namespace Graphyte
 {
     public class GxGraphicsD3D11 : Project
     {
-        public override ResolvedProject? Resolve(ResolveContext context)
+        public override ProjectDefinition? GetDefinition(Configuration configuration)
         {
-            var platform = context.Selector.Platform;
-
-            switch (platform)
+            switch (configuration.Platform)
             {
                 case PlatformType.Windows:
                 case PlatformType.UWP:
@@ -19,9 +16,9 @@ namespace Graphyte
                     return null;
             }
 
-            var result = new ResolvedProject(this, context);
+            var result = new ProjectDefinition(this);
 
-            if (context.Selector.Build == BuildType.Retail)
+            if (configuration.Build == BuildType.Retail)
             {
                 result.Kind = ProjectKind.StaticLib;
             }
@@ -31,10 +28,10 @@ namespace Graphyte
             }
 
             result.PublicIncludes.Add("engine/runtime/libs/graphics-d3d11/public");
-            result.Dependencies.Add(nameof(SdkFmt));
             result.Dependencies.Add(nameof(GxBase));
             result.Dependencies.Add(nameof(GxGraphics));
-            result.Libraries.AddRange(new [] {
+            result.Dependencies.Add(nameof(SdkFmt));
+            result.Libraries.AddRange(new[] {
                 "dxgi.lib",
                 "d3d11.lib",
                 "dxguid.lib",

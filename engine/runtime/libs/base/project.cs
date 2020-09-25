@@ -1,15 +1,15 @@
 using GraphyteBuildTool;
-using System.Collections.Generic;
+using GraphyteBuildTool.Projects;
 
 namespace Graphyte
 {
     public class GxBase : Project
     {
-        public override ResolvedProject? Resolve(ResolveContext context)
+        public override ProjectDefinition? GetDefinition(Configuration configuration)
         {
-            var result = new ResolvedProject(this, context);
+            var result = new ProjectDefinition(this);
 
-            if (context.Selector.Build == BuildType.Retail)
+            if (configuration.Build == BuildType.Retail)
             {
                 result.Kind = ProjectKind.StaticLib;
             }
@@ -24,7 +24,7 @@ namespace Graphyte
             result.PublicIncludes.Add("engine/runtime/libs/base/public");
 
             // This project is included by default on every setup
-            if (context.Selector.Platform == PlatformType.Windows)
+            if (configuration.Platform == PlatformType.Windows)
             {
                 result.Libraries.AddRange(new[]{
                     "ntdll.lib",
@@ -46,7 +46,7 @@ namespace Graphyte
                 });
                 result.Dependencies.Add(nameof(SdkMbedtls));
             }
-            else if (context.Selector.Platform == PlatformType.UWP)
+            else if (configuration.Platform == PlatformType.UWP)
             {
                 result.Libraries.AddRange(new[]{
                     "ntdll.lib",
@@ -67,7 +67,7 @@ namespace Graphyte
                     "Mincore.lib",
                 });
             }
-            else if (context.Selector.Platform == PlatformType.Linux)
+            else if (configuration.Platform == PlatformType.Linux)
             {
                 result.Libraries.AddRange(new[]{
                     "pthread",
@@ -79,11 +79,11 @@ namespace Graphyte
                 });
                 result.Dependencies.Add(nameof(SdkMbedtls));
 
-                if (context.Selector.Architecture == ArchitectureType.X64)
+                if (configuration.Architecture == ArchitectureType.X64)
                 {
                     result.Libraries.Add("unwind-x86_64");
                 }
-                else if (context.Selector.Architecture == ArchitectureType.ARM64)
+                else if (configuration.Architecture == ArchitectureType.ARM64)
                 {
                     result.Libraries.Add("unwind-aarch64");
                 }

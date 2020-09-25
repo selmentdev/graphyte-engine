@@ -1,16 +1,15 @@
-using System;
 using GraphyteBuildTool;
-using System.Collections.Generic;
+using GraphyteBuildTool.Projects;
 
 namespace Graphyte
 {
     public class GxRendering : Project
     {
-        public override ResolvedProject? Resolve(ResolveContext context)
+        public override ProjectDefinition? GetDefinition(Configuration configuration)
         {
-            var result = new ResolvedProject(this, context);
+            var result = new ProjectDefinition(this);
 
-            if (context.Selector.Build == BuildType.Retail)
+            if (configuration.Build == BuildType.Retail)
             {
                 result.Kind = ProjectKind.StaticLib;
             }
@@ -20,9 +19,9 @@ namespace Graphyte
             }
 
             result.PublicIncludes.Add("engine/runtime/libs/rendering/public");
-            result.Dependencies.Add(nameof(SdkFmt));
             result.Dependencies.Add(nameof(GxBase));
             result.Dependencies.Add(nameof(GxGraphics));
+            result.Dependencies.Add(nameof(SdkFmt));
             return result;
         }
     }

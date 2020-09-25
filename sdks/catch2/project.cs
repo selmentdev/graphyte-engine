@@ -1,12 +1,14 @@
-using GraphyteBuildTool;
 using System.Collections.Generic;
+using GraphyteBuildTool;
+using GraphyteBuildTool.Projects;
 
-namespace Graphyte{
+namespace Graphyte
+{
     public class SdkCatch2 : Project
     {
-        public override ResolvedProject? Resolve(ResolveContext context)
+        public override ProjectDefinition? GetDefinition(Configuration configuration)
         {
-            var result = new ResolvedProject(this, context);
+            var result = new ProjectDefinition(this);
             result.Kind = ProjectKind.HeaderLib;
             result.PublicIncludes.Add("sdks/catch2/include");
             return result;

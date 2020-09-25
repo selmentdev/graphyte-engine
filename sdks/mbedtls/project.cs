@@ -1,16 +1,16 @@
 using GraphyteBuildTool;
-using System.Collections.Generic;
+using GraphyteBuildTool.Projects;
 
 namespace Graphyte{
     public class SdkMbedtls : Project
     {
-        public override ResolvedProject? Resolve(ResolveContext context)
+        public override ProjectDefinition? GetDefinition(Configuration configuration)
         {
-            var result = new ResolvedProject(this, context);
-            result.PublicIncludes.Add("sdks/mbedtls/include");
+            var result = new ProjectDefinition(this);
             result.Kind = ProjectKind.StaticLib;
+            result.PublicIncludes.Add("sdks/mbedtls/include");
 
-            if (context.Selector.Architecture == ArchitectureType.X64) {
+            if (configuration.Architecture == ArchitectureType.X64) {
                 result.PrivateDefines["MBEDTLS_HAVE_SSE2"] = "1";
             }
 
