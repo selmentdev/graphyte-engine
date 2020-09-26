@@ -13,7 +13,7 @@ namespace Graphyte
             target.Dependencies.Add(nameof(GxGraphics));
             target.Dependencies.Add(nameof(SdkFmt));
 
-            if (configuration.Build == MainSolution.Builds.Retail)
+            if (configuration.Build == BuildType.Retail)
             {
                 target.Dependencies.Add(nameof(GxGraphicsD3D11));
             }

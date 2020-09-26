@@ -4,21 +4,6 @@ namespace Graphyte
 {
     public class MainSolution : Solution
     {
-        public static class Builds
-        {
-            public static readonly BuildType Developer = new BuildType("Developer");
-            public static readonly BuildType Testing = new BuildType("Testing");
-            public static readonly BuildType Retail = new BuildType("Retail");
-        }
-
-        public static class Configurations
-        {
-            public static readonly ConfigurationType Release = new ConfigurationType("Release");
-            public static readonly ConfigurationType Profile = new ConfigurationType("Profile");
-            public static readonly ConfigurationType Checked = new ConfigurationType("Checked");
-            public static readonly ConfigurationType Debug = new ConfigurationType("Debug");
-        }
-
         public MainSolution()
         {
             this.Name = "Graphyte";
@@ -32,14 +17,14 @@ namespace Graphyte
             this.AddTarget(new TargetType(PlatformType.Linux, ArchitectureType.X64));
             this.AddTarget(new TargetType(PlatformType.Linux, ArchitectureType.ARMv8));
 
-            this.AddBuildType(Builds.Developer);
-            this.AddBuildType(Builds.Testing);
-            this.AddBuildType(Builds.Retail);
+            this.AddBuildType(BuildType.Developer);
+            this.AddBuildType(BuildType.Testing);
+            this.AddBuildType(BuildType.Retail);
 
-            this.AddConfigurationType(Configurations.Debug);
-            this.AddConfigurationType(Configurations.Checked);
-            this.AddConfigurationType(Configurations.Release);
-            this.AddConfigurationType(Configurations.Profile);
+            this.AddConfigurationType(ConfigurationType.Debug);
+            this.AddConfigurationType(ConfigurationType.Checked);
+            this.AddConfigurationType(ConfigurationType.Release);
+            this.AddConfigurationType(ConfigurationType.Profile);
 
             // Applications
             this.AddProject<AppDemo>();
@@ -101,7 +86,7 @@ namespace Graphyte
     {
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {
-            if (configuration.Build == MainSolution.Builds.Retail)
+            if (configuration.Build == BuildType.Retail)
             {
                 target.Type = OutputType.StaticLib;
             }

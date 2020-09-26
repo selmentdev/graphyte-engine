@@ -1,4 +1,5 @@
 using Graphyte.Build.Engine;
+using Graphyte.Build.Platforms.Windows;
 using System;
 using System.Linq;
 
@@ -7,6 +8,7 @@ namespace Graphyte.Build.Application
     class Program
     {
         private static readonly Version CurrentVersion = new Version(1, 0, 0, 0);
+
         private static void Main(string[] args)
         {
             Console.WriteLine($@"Graphyte Build {Program.CurrentVersion}");
@@ -20,8 +22,8 @@ namespace Graphyte.Build.Application
             var context = new ConfigurationContext(
                 PlatformType.Windows,
                 ArchitectureType.X64,
-                new BuildType("Developer"),
-                new ConfigurationType("Release"));
+                BuildType.Developer,
+                ConfigurationType.Release);
 
             var resolvedSolution = new ResolvedSolution(solutions.First(), context);
         }

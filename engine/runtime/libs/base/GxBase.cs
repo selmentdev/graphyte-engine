@@ -38,7 +38,7 @@ namespace Graphyte
                 target.Libraries.Add("user32.lib");
                 target.Libraries.Add("Mincore.lib");
 
-                if (configuration.Build != MainSolution.Builds.Retail)
+                if (configuration.Build != BuildType.Retail)
                 {
                     target.Libraries.Add("dbghelp.lib");
                 }

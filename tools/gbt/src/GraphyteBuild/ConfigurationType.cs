@@ -1,47 +1,69 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Graphyte.Build
 {
-    public sealed class ConfigurationType
+    public readonly struct ConfigurationType
+        : IEquatable<ConfigurationType>
     {
-        public string Name { get; }
+        public static ConfigurationType Release = new ConfigurationType("Release");
+        public static ConfigurationType Profile = new ConfigurationType("Profile");
+        public static ConfigurationType Checked = new ConfigurationType("Checked");
+        public static ConfigurationType Debug = new ConfigurationType("Debug");
 
-        public ConfigurationType(string name)
+
+        private readonly string m_Id;
+
+        public static ConfigurationType Create(string id)
         {
-            this.Name = name;
+            return new ConfigurationType(id);
         }
 
-        public override string ToString() => this.Name;
-
-        public static bool operator ==(ConfigurationType lhs, ConfigurationType rhs)
+        private ConfigurationType(string id)
         {
-            if (Object.ReferenceEquals(lhs, rhs))
+            if (id == null)
             {
-                return true;
+                throw new ArgumentNullException(nameof(id));
             }
 
-            if ((object)lhs == null || (object)rhs == null)
+            if (id.Length == 0)
             {
-                return false;
+                throw new ArgumentOutOfRangeException(nameof(id));
             }
 
-            return lhs.Equals(rhs);
+            this.m_Id = id;
         }
 
-        public static bool operator !=(ConfigurationType lhs, ConfigurationType rhs)
+        public override string ToString() => this.m_Id ?? string.Empty;
+
+        public bool Equals([AllowNull] ConfigurationType other)
         {
-            return !(lhs == rhs);
+            return Equals(other.m_Id);
+        }
+
+        internal bool Equals(string value)
+        {
+            return string.Equals(this.m_Id, value, StringComparison.Ordinal);
         }
 
         public override bool Equals(object? obj)
         {
-            return obj is ConfigurationType other &&
-                   this.Name == other.Name;
+            return obj is ConfigurationType other && this.Equals(other);
+        }
+
+        public static bool operator ==(ConfigurationType left, ConfigurationType right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ConfigurationType left, ConfigurationType right)
+        {
+            return !(left == right);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(this.Name);
+            return this.m_Id.GetHashCode();
         }
     }
 }

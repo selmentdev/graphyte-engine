@@ -6,7 +6,7 @@ namespace Graphyte
     {
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {
-            if (configuration.Build == MainSolution.Builds.Retail)
+            if (configuration.Build == BuildType.Retail)
             {
                 target.Type = OutputType.StaticLib;
             }

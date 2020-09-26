@@ -1,47 +1,63 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Graphyte.Build
 {
-    public sealed class CompilerFamily
+    public readonly struct CompilerFamily
+        : IEquatable<CompilerFamily>
     {
-        public string Name { get; }
+        private readonly string m_Id;
 
-        public CompilerFamily(string name)
+        public static CompilerFamily Create(string id)
         {
-            this.Name = name;
+            return new CompilerFamily(id);
         }
 
-        public override string ToString() => this.Name;
-
-        public static bool operator ==(CompilerFamily lhs, CompilerFamily rhs)
+        private CompilerFamily(string id)
         {
-            if (Object.ReferenceEquals(lhs, rhs))
+            if (id == null)
             {
-                return true;
+                throw new ArgumentNullException(nameof(id));
             }
 
-            if ((object)lhs == null || (object)rhs == null)
+            if (id.Length == 0)
             {
-                return false;
+                throw new ArgumentOutOfRangeException(nameof(id));
             }
 
-            return lhs.Equals(rhs);
+            this.m_Id = id;
         }
 
-        public static bool operator !=(CompilerFamily lhs, CompilerFamily rhs)
+        public override string ToString() => this.m_Id ?? string.Empty;
+
+        public bool Equals([AllowNull] CompilerFamily other)
         {
-            return !(lhs == rhs);
+            return Equals(other.m_Id);
+        }
+
+        internal bool Equals(string value)
+        {
+            return string.Equals(this.m_Id, value, StringComparison.Ordinal);
         }
 
         public override bool Equals(object? obj)
         {
-            return obj is CompilerFamily other &&
-                   this.Name == other.Name;
+            return obj is CompilerFamily other && this.Equals(other);
+        }
+
+        public static bool operator ==(CompilerFamily left, CompilerFamily right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator!=(CompilerFamily left, CompilerFamily right)
+        {
+            return !(left == right);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(this.Name);
+            return this.m_Id.GetHashCode();
         }
     }
 }
