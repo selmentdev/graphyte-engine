@@ -30,47 +30,47 @@ namespace Graphyte.Build
         /// <summary>
         /// Internal value.
         /// </summary>
-        private readonly string m_Name;
+        private readonly string m_Value;
 
         /// <summary>
         /// Creates new custom build type.
         /// </summary>
-        /// <param name="name">A build type name.</param>
+        /// <param name="value">A build type.</param>
         /// <returns>The build type.</returns>
-        public static BuildType Create(string name)
+        public static BuildType Create(string value)
         {
-            return new BuildType(name);
+            return new BuildType(value);
         }
 
         /// <summary>
         /// Creates new instance of BuildType.
         /// </summary>
-        /// <param name="name">A build type name.</param>
-        private BuildType(string name)
+        /// <param name="value">A build type.</param>
+        private BuildType(string value)
         {
-            if (name == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(name));
+                throw new ArgumentNullException(nameof(value));
             }
 
-            if (name.Length == 0)
+            if (value.Length == 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(name));
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
 
-            this.m_Name = name;
+            this.m_Value = value;
         }
 
-        public override string ToString() => this.m_Name ?? string.Empty;
+        public override string ToString() => this.m_Value ?? string.Empty;
 
         public bool Equals([AllowNull] BuildType other)
         {
-            return Equals(other.m_Name);
+            return Equals(other.m_Value);
         }
 
         internal bool Equals(string value)
         {
-            return string.Equals(this.m_Name, value, StringComparison.Ordinal);
+            return string.Equals(this.m_Value, value, StringComparison.Ordinal);
         }
 
         public override bool Equals(object? obj)
@@ -91,7 +91,7 @@ namespace Graphyte.Build
 
         public override int GetHashCode()
         {
-            return this.m_Name.GetHashCode();
+            return this.m_Value.GetHashCode();
         }
     }
 }

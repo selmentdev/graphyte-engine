@@ -17,6 +17,9 @@ namespace Graphyte.Build.Application
             Console.WriteLine($@"Operating System: {os.VersionString}");
             Console.WriteLine($@"Discovering solutions...");
 
+            var profile = new Application.BuildProfile();
+            Application.BuildProfileSupport.Save(profile, "profile.json");
+
             var solutions = SolutionProvider.Solutions;
 
             var context = new ConfigurationContext(
@@ -26,6 +29,7 @@ namespace Graphyte.Build.Application
                 ConfigurationType.Release);
 
             var resolvedSolution = new ResolvedSolution(solutions.First(), context);
+
         }
     }
 }

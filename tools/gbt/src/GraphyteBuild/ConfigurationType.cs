@@ -12,38 +12,38 @@ namespace Graphyte.Build
         public static ConfigurationType Debug = new ConfigurationType("Debug");
 
 
-        private readonly string m_Id;
+        private readonly string m_Value;
 
-        public static ConfigurationType Create(string id)
+        public static ConfigurationType Create(string value)
         {
-            return new ConfigurationType(id);
+            return new ConfigurationType(value);
         }
 
-        private ConfigurationType(string id)
+        private ConfigurationType(string value)
         {
-            if (id == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(id));
+                throw new ArgumentNullException(nameof(value));
             }
 
-            if (id.Length == 0)
+            if (value.Length == 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(id));
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
 
-            this.m_Id = id;
+            this.m_Value = value;
         }
 
-        public override string ToString() => this.m_Id ?? string.Empty;
+        public override string ToString() => this.m_Value ?? string.Empty;
 
         public bool Equals([AllowNull] ConfigurationType other)
         {
-            return Equals(other.m_Id);
+            return Equals(other.m_Value);
         }
 
         internal bool Equals(string value)
         {
-            return string.Equals(this.m_Id, value, StringComparison.Ordinal);
+            return string.Equals(this.m_Value, value, StringComparison.Ordinal);
         }
 
         public override bool Equals(object? obj)
@@ -63,7 +63,7 @@ namespace Graphyte.Build
 
         public override int GetHashCode()
         {
-            return this.m_Id.GetHashCode();
+            return this.m_Value.GetHashCode();
         }
     }
 }

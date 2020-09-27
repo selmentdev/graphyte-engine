@@ -15,6 +15,11 @@ namespace Graphyte.Build.Platforms.Windows
             return new WindowsTargetPlatformVersion(value);
         }
 
+        public static WindowsTargetPlatformVersion Create(Version version)
+        {
+            return new WindowsTargetPlatformVersion(version.ToString());
+        }
+
         private WindowsTargetPlatformVersion(string value)
         {
             if (value == null)
@@ -60,6 +65,11 @@ namespace Graphyte.Build.Platforms.Windows
         public override int GetHashCode()
         {
             return this.m_Value.GetHashCode();
+        }
+
+        public Version ToVersion()
+        {
+            return Version.Parse(this.m_Value);
         }
     }
 }
