@@ -9,7 +9,8 @@ namespace Graphyte
             base.Configure(target, configuration);
 
             target.IncludePaths.Add("engine/runtime/libs/geometry/public");
-            target.Dependencies.Add(nameof(GxBase));
+
+            target.AddPublicDependency<GxBase>();
         }
     }
 }

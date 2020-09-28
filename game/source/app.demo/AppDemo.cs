@@ -9,13 +9,11 @@ namespace Graphyte
             target.Type = OutputType.GameApplication;
             target.IncludePaths.Add("game/source/app.demo/public");
 
-            target.Dependencies.AddRange(new[] {
-                nameof(GxBase),
-                nameof(GxGraphics),
-                nameof(GxLaunch),
-                nameof(GxRendering),
-                nameof(GxGeometry),
-            });
+            target.AddPrivateDependency<GxBase>();
+            target.AddPrivateDependency<GxGraphics>();
+            target.AddPrivateDependency<GxLaunch>();
+            target.AddPrivateDependency<GxRendering>();
+            target.AddPrivateDependency<GxGeometry>();
         }
     }
 }

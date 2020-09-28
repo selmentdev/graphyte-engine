@@ -10,11 +10,7 @@ namespace Graphyte
 
             target.IncludePaths.Add("engine/runtime/libs/rendering/public");
 
-            target.Dependencies.AddRange(new[]{
-                nameof(GxBase),
-                nameof(GxGraphics),
-                nameof(SdkFmt)
-            });
+            target.AddPublicDependency<GxGraphics>();
         }
     }
 }

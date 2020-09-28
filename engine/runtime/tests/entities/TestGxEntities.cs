@@ -7,11 +7,9 @@ namespace Graphyte
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {
             target.Type = OutputType.TestApplication;
-            target.Dependencies.AddRange(new[]
-            {
-                nameof(GxBase),
-                nameof(GxTestExecutor),
-            });
+
+            target.AddPrivateDependency<GxBase>();
+            target.AddPrivateDependency<GxTestExecutor>();
         }
     }
 }

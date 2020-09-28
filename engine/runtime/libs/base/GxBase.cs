@@ -10,13 +10,12 @@ namespace Graphyte
 
             target.IncludePaths.Add("engine/runtime/libs/base/public");
 
-            target.Dependencies.Add(nameof(SdkFmt));
-            target.Dependencies.Add(nameof(SdkLz4));
-            target.Dependencies.Add(nameof(SdkMbedtls));
+            target.AddPublicDependency<SdkFmt>();
+            target.AddPrivateDependency<SdkLz4>();
 
-            if (configuration.Platform == PlatformType.UWP)
+            if (configuration.Platform != PlatformType.UWP)
             {
-                target.Dependencies.Remove(nameof(SdkMbedtls));
+                target.AddPrivateDependency<SdkMbedtls>();
             }
 
 
@@ -56,8 +55,9 @@ namespace Graphyte
                 {
                     target.Libraries.Add("unwind-x86_64");
                 }
-                else if (configuration.Architecture == ArchitectureType.ARMv8)
+                else if (configuration.Architecture == ArchitectureType.Arm64)
                 {
+
                     target.Libraries.Add("unwind-aarch64");
 
                 }

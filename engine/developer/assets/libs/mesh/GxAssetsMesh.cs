@@ -8,10 +8,8 @@ namespace Graphyte
         {
             target.Type = OutputType.SharedLib;
             target.IncludePaths.Add("engine/developer/assets/libs/mesh");
-            target.Dependencies.AddRange(new[]
-            {
-                nameof(GxAssetsBase),
-            });
+
+            target.AddPublicDependency<GxAssetsBase>();
         }
     }
 }

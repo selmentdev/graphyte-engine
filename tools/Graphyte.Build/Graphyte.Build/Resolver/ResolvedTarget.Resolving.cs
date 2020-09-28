@@ -38,8 +38,8 @@ namespace Graphyte.Build.Resolver
 
             if (this.IsResolved == false)
             {
-                Debug.WriteLine($@"{this.Target.Name}: Resolving target");
-                Debug.Indent();
+                Console.WriteLine($@"{this.Target.Name}: Resolving target");
+                //Console.Indent();
 
                 this.IsResolved = true;
 
@@ -58,7 +58,9 @@ namespace Graphyte.Build.Resolver
 
                 this.ResolveDependencies();
 
-                Debug.Unindent();
+                this.ResolveProperties();
+
+                //Console.Unindent();
             }
 
             callstack.Pop();
@@ -69,8 +71,8 @@ namespace Graphyte.Build.Resolver
         /// </summary>
         private void ImportProperties()
         {
-            Debug.WriteLine($@"{this.Target.Name}: Importing properties");
-            Debug.Indent();
+            Console.WriteLine($@"{this.Target.Name}: Importing properties");
+            //Console.Indent();
 
             this.Dependencies.AddRange(this.Target.Dependencies.Select(this.Solution.FindTargetByProjectName));
             this.PrivateDependencies.AddRange(this.Target.PrivateDependencies.Select(this.Solution.FindTargetByProjectName));
@@ -87,13 +89,13 @@ namespace Graphyte.Build.Resolver
             this.LibraryPaths.Import(this.Target.LibraryPaths);
             this.PrivateLibraryPaths.Import(this.Target.PrivateLibraryPaths);
 
-            Debug.Unindent();
+            //Console.Unindent();
         }
 
         private void ResolveDependencies()
         {
-            Debug.WriteLine($@"{this.Target.Name}: Started resolving dependencies");
-            Debug.Indent();
+            Console.WriteLine($@"{this.Target.Name}: Started resolving dependencies");
+            //Console.Indent();
 
             foreach (var dependency in this.PrivateDependencies.ToArray())
             {
@@ -105,46 +107,104 @@ namespace Graphyte.Build.Resolver
                 this.ResolvePublicDependency(dependency);
             }
 
-            Debug.Unindent();
+            //Console.Unindent();
         }
 
+        /// <summary>
+        /// Imports specified public dependency.
+        /// </summary>
+        /// <param name="dependency">A public dependency</param>
         private void ResolvePublicDependency(ResolvedTarget dependency)
         {
-            Debug.WriteLine($@"{this.Target.Name}: resolve public {dependency.Target.Name}");
-            Debug.Indent();
-            Debug.WriteLine($@"- {this.Target.Type} <= {dependency.Target.Type}");
+            Console.WriteLine($@"{this.Target.Name}: resolve public {dependency.Target.Name}");
+            //Console.Indent();
+            Console.WriteLine($@"- {this.Target.Type} <= {dependency.Target.Type}");
 
-            Debug.Unindent();
+            if (!dependency.Target.Type.IsLibrary())
+            {
+                //
+                // Only library can be consumed as public dependency.
+                //
+
+                throw new ResolverException($@"Target {this.Target.Name} of type {this.Target.Type} cannot be used as dependency");
+            }
+
+
+            //
+            // Consume public dependencies of library.
+            //
+
+            this.Dependencies.Import(dependency.Dependencies);
+
+            if (dependency.Target.IsInheritable)
+            {
+                //
+                // Consume private dependencies of static/header only libraries.
+                //
+
+                this.PrivateDependencies.Import(dependency.PrivateDependencies);
+            }
+
+            //Console.Unindent();
         }
 
         private void ResolvePrivateDependency(ResolvedTarget dependency)
         {
-            Debug.WriteLine($@"{this.Target.Name}: resolve private {dependency.Target.Name}");
-            Debug.Indent();
-            Debug.WriteLine($@"- {this.Target.Type} <= {dependency.Target.Type}");
+            Console.WriteLine($@"{this.Target.Name}: resolve private {dependency.Target.Name}");
+            //Console.Indent();
+            Console.WriteLine($@"- {this.Target.Type} <= {dependency.Target.Type}");
+
+            if (!dependency.Target.Type.IsLibrary())
+            {
+                //
+                // Only library can be consumed as private dependency.
+                //
+
+                throw new ResolverException($@"Target {this.Target.Name} of type {this.Target.Type} cannot be used as dependency");
+            }
 
 
+            //
+            // Import public dependencies as private.
+            //
 
-            Debug.Unindent();
+            this.PrivateDependencies.Import(dependency.Dependencies);
+
+            if (dependency.IsInheritable)
+            {
+                //
+                // Dependency is inheritable. Import private dependencies as private.
+                //
+                //
+
+                this.PrivateDependencies.Import(dependency.PrivateDependencies);
+            }
+
+            //Console.Unindent();
         }
 
-#if false
-        private void ResolveDependencies()
+        private void ResolveProperties()
         {
-            var inheritable = this.Dependencies
-                .Where(x => x.IsInheritable)
-                .SelectMany(x => x.Dependencies)
-                .ToArray();
-
-            foreach (var dependency in inheritable)
+            foreach (var dependency in this.Dependencies)
             {
-                if (!this.Dependencies.Contains(dependency))
-                {
-                    this.Dependencies.Add(dependency);
-                }
+                this.ResolvePublicDependencyProperties(dependency);
+            }
+
+            foreach (var dependency in this.PrivateDependencies)
+            {
+                this.ResolvePrivateDependencyProperties(dependency);
             }
         }
 
+        private void ResolvePublicDependencyProperties(ResolvedTarget dependency)
+        {
+        }
+
+        private void ResolvePrivateDependencyProperties(ResolvedTarget dependency)
+        {
+        }
+
+#if false
         private void ResolveDependency(ResolvedTarget dependency)
         {
             if (dependency.Target.Type == OutputType.StaticLib)

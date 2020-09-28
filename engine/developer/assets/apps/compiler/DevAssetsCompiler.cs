@@ -7,12 +7,10 @@ namespace Graphyte
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {
             target.Type = OutputType.DeveloperApplication;
-            target.Dependencies.AddRange(new[]
-            {
-                nameof(GxLaunch),
-                nameof(GxAssetsMesh),
-                nameof(GxAssetsShader),
-            });
+
+            target.AddPrivateDependency<GxLaunch>();
+            target.AddPrivateDependency<GxAssetsMesh>();
+            target.AddPrivateDependency<GxAssetsShader>();
         }
     }
 }

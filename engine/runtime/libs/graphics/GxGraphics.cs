@@ -8,8 +8,8 @@ namespace Graphyte
         {
             base.Configure(target, configuration);
             target.IncludePaths.Add("engine/runtime/libs/graphics/public");
-            target.Dependencies.Add(nameof(GxBase));
-            target.Dependencies.Add(nameof(SdkFmt));
+
+            target.AddPublicDependency<GxBase>();
         }
     }
 }

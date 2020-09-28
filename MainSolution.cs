@@ -8,69 +8,69 @@ namespace Graphyte
         {
             this.Name = "Graphyte";
 
-            this.AddTarget(new TargetType(PlatformType.Windows, ArchitectureType.X64));
-            this.AddTarget(new TargetType(PlatformType.Windows, ArchitectureType.ARMv8));
+            this.AddTarget(PlatformType.Windows, ArchitectureType.X64);
+            this.AddTarget(PlatformType.Windows, ArchitectureType.Arm64);
 
-            this.AddTarget(new TargetType(PlatformType.UWP, ArchitectureType.X64));
-            this.AddTarget(new TargetType(PlatformType.UWP, ArchitectureType.ARMv8));
+            this.AddTarget(PlatformType.UWP, ArchitectureType.X64);
+            this.AddTarget(PlatformType.UWP, ArchitectureType.Arm64);
 
-            this.AddTarget(new TargetType(PlatformType.Linux, ArchitectureType.X64));
-            this.AddTarget(new TargetType(PlatformType.Linux, ArchitectureType.ARMv8));
+            this.AddTarget(PlatformType.Linux, ArchitectureType.X64);
+            this.AddTarget(PlatformType.Linux, ArchitectureType.Arm64);
 
-            this.AddBuildType(BuildType.Developer);
-            this.AddBuildType(BuildType.Testing);
-            this.AddBuildType(BuildType.Retail);
+            this.AddBuild(BuildType.Developer);
+            this.AddBuild(BuildType.Testing);
+            this.AddBuild(BuildType.Retail);
 
-            this.AddConfigurationType(ConfigurationType.Debug);
-            this.AddConfigurationType(ConfigurationType.Checked);
-            this.AddConfigurationType(ConfigurationType.Release);
-            this.AddConfigurationType(ConfigurationType.Profile);
+            this.AddConfiguration(ConfigurationType.Debug);
+            this.AddConfiguration(ConfigurationType.Checked);
+            this.AddConfiguration(ConfigurationType.Release);
+            this.AddConfiguration(ConfigurationType.Profile);
 
             // Applications
-            this.AddProject<AppDemo>();
+            this.AddProject(new AppDemo());
 
             // Modules
-            this.AddProject<GxBase>();
-            this.AddProject<GxGeometry>();
-            this.AddProject<GxGraphics>();
-            this.AddProject<GxGraphicsD3D11>();
-            this.AddProject<GxGraphicsD3D12>();
-            this.AddProject<GxGraphicsGLCore>();
-            this.AddProject<GxGraphicsVulkan>();
-            this.AddProject<GxLaunch>();
-            this.AddProject<GxRendering>();
+            this.AddProject(new GxBase());
+            this.AddProject(new GxGeometry());
+            this.AddProject(new GxGraphics());
+            this.AddProject(new GxGraphicsD3D11());
+            this.AddProject(new GxGraphicsD3D12());
+            this.AddProject(new GxGraphicsGLCore());
+            this.AddProject(new GxGraphicsVulkan());
+            this.AddProject(new GxLaunch());
+            this.AddProject(new GxRendering());
 
             // Sdks
-            this.AddProject<SdkCatch2>();
-            this.AddProject<SdkFmt>();
-            this.AddProject<SdkLz4>();
-            this.AddProject<SdkMbedtls>();
-            this.AddProject<SdkSqlite>();
-            this.AddProject<SdkVulkanVma>();
+            this.AddProject(new SdkCatch2());
+            this.AddProject(new SdkFmt());
+            this.AddProject(new SdkLz4());
+            this.AddProject(new SdkMbedtls());
+            this.AddProject(new SdkSqlite());
+            this.AddProject(new SdkVulkanVma());
 
             // Tests
-            this.AddProject<GxTestExecutor>();
-            this.AddProject<TestGxBase>();
-            this.AddProject<TestGxEntities>();
-            this.AddProject<TestGxGraphics>();
-            this.AddProject<TestGxMaths>();
+            this.AddProject(new GxTestExecutor());
+            this.AddProject(new TestGxBase());
+            this.AddProject(new TestGxEntities());
+            this.AddProject(new TestGxGraphics());
+            this.AddProject(new TestGxMaths());
 
             // Developer tools
-            this.AddProject<DevAssetsCompiler>();
-            this.AddProject<DevLogFix>();
-            this.AddProject<GxAssetsBase>();
-            this.AddProject<GxAssetsMesh>();
-            this.AddProject<GxAssetsShader>();
+            this.AddProject(new DevAssetsCompiler());
+            this.AddProject(new DevLogFix());
+            this.AddProject(new GxAssetsBase());
+            this.AddProject(new GxAssetsMesh());
+            this.AddProject(new GxAssetsShader());
         }
 
-        public override void PreConfigure(ConfiguredTarget target, ConfigurationContext context)
+        protected override void PreConfigure(ConfiguredTarget target, ConfigurationContext context)
         {
             base.PreConfigure(target, context);
 
             target.PrivateIncludePaths.Add("engine/include");
         }
 
-        public override void PostConfigure(ConfiguredTarget target, ConfigurationContext context)
+        protected override void PostConfigure(ConfiguredTarget target, ConfigurationContext context)
         {
             base.PostConfigure(target, context);
 

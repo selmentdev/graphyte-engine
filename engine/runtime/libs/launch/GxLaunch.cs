@@ -8,15 +8,12 @@ namespace Graphyte
         {
             target.Type = OutputType.HeaderLib;
             target.IncludePaths.Add("engine/runtime/libs/launch/public");
-            target.Dependencies.Add(nameof(GxBase));
-            target.Dependencies.Add(nameof(GxGeometry));
-            target.Dependencies.Add(nameof(GxGraphics));
-            target.Dependencies.Add(nameof(SdkFmt));
 
-            if (configuration.Build == BuildType.Retail)
-            {
-                target.Dependencies.Add(nameof(GxGraphicsD3D11));
-            }
+            target.AddPublicDependency<GxBase>();
+            target.AddPublicDependency<GxGeometry>();
+            target.AddPublicDependency<GxGraphics>();
+
+            target.AddPublicDependency<GxGraphicsD3D11>();
 
             if (configuration.Platform == PlatformType.UWP)
             {

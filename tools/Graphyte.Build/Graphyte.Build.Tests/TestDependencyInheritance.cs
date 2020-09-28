@@ -1,26 +1,35 @@
 
 using Graphyte.Build.Resolver;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Data;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace Graphyte.Build.Tests
 {
     [TestClass]
     public class TestExplicitDependency
     {
-        abstract class BaseProject : Project
+        protected struct DependencyVisibility
         {
-            public OutputType DesiredType { get; set; }
+            public OutputType Type;
+            public bool IsPublic;
+
+            public DependencyVisibility(OutputType type, bool isPublic)
+            {
+                this.Type = type;
+                this.IsPublic = isPublic;
+            }
+        }
+
+        protected abstract class BaseProject : Project
+        {
+            public DependencyVisibility Visibility { get; set; }
             protected string m_Name = null;
 
             public override void Configure(ConfiguredTarget target, ConfigurationContext context)
             {
                 var name = m_Name;
 
-                target.Type = this.DesiredType;
+                target.Type = this.Visibility.Type;
 
                 target.Libraries.Add($@"{name}_library");
 
@@ -34,7 +43,7 @@ namespace Graphyte.Build.Tests
             }
         }
 
-        class AppProject : BaseProject
+        protected class AppProject : BaseProject
         {
             public AppProject()
             {
@@ -45,11 +54,18 @@ namespace Graphyte.Build.Tests
             {
                 base.Configure(target, context);
 
-                target.AddPublicDependency<DirectDependencyProject>();
+                if (this.Visibility.IsPublic)
+                {
+                    target.AddPublicDependency<DirectDependencyProject>();
+                }
+                else
+                {
+                    target.AddPrivateDependency<DirectDependencyProject>();
+                }
             }
         }
 
-        class DirectDependencyProject : BaseProject
+        protected class DirectDependencyProject : BaseProject
         {
             public DirectDependencyProject()
             {
@@ -60,11 +76,18 @@ namespace Graphyte.Build.Tests
             {
                 base.Configure(target, context);
 
-                target.AddPublicDependency<IndirectDependencyProject>();
+                if (this.Visibility.IsPublic)
+                {
+                    target.AddPublicDependency<IndirectDependencyProject>();
+                }
+                else
+                {
+                    target.AddPrivateDependency<IndirectDependencyProject>();
+                }
             }
         }
 
-        class IndirectDependencyProject : BaseProject
+        protected class IndirectDependencyProject : BaseProject
         {
             public IndirectDependencyProject()
             {
@@ -72,28 +95,45 @@ namespace Graphyte.Build.Tests
             }
         }
 
-        class SampleSolution : Solution
+        protected class SampleSolution : Solution
         {
             public static BuildType DefaultBuildType = BuildType.Developer;
             public static ConfigurationType DefaultConfigurationType = ConfigurationType.Debug;
             public static PlatformType DefaultPlatformType = PlatformType.Windows;
             public static ArchitectureType DefaultArchitectureType = ArchitectureType.Arm64;
 
-            public SampleSolution(OutputType direct, OutputType indirect)
+            public SampleSolution(
+                DependencyVisibility app,
+                DependencyVisibility direct,
+                DependencyVisibility indirect)
             {
                 this.AddBuild(DefaultBuildType);
                 this.AddConfiguration(DefaultConfigurationType);
                 this.AddTarget(DefaultPlatformType, DefaultArchitectureType);
 
-                this.AddProject(new AppProject() { DesiredType = OutputType.GameApplication });
-                this.AddProject(new DirectDependencyProject() { DesiredType = direct });
-                this.AddProject(new IndirectDependencyProject() { DesiredType = indirect });
+                this.AddProject(new AppProject()
+                {
+                    Visibility = app
+                });
+
+                this.AddProject(new DirectDependencyProject()
+                {
+                    Visibility = direct
+                });
+
+                this.AddProject(new IndirectDependencyProject()
+                {
+                    Visibility = indirect
+                });
             }
         }
 
-        private ResolvedSolution Resolve(OutputType direct, OutputType indirect)
+        private ResolvedSolution Resolve(
+            DependencyVisibility app,
+            DependencyVisibility direct,
+            DependencyVisibility indirect)
         {
-            var solution = new SampleSolution(direct, indirect);
+            var solution = new SampleSolution(app, direct, indirect);
             var context = new ConfigurationContext(
                 SampleSolution.DefaultPlatformType,
                 SampleSolution.DefaultArchitectureType,
@@ -107,12 +147,13 @@ namespace Graphyte.Build.Tests
             return resolver;
         }
 
-        #region Valid cases
-
         [TestMethod]
-        public void StaticToStatic()
+        public void PublicStaticToPublicStatic()
         {
-            var solution = Resolve(OutputType.StaticLib, OutputType.StaticLib);
+            var solution = Resolve(
+                new DependencyVisibility(OutputType.GameApplication, true),
+                new DependencyVisibility(OutputType.StaticLib, true),
+                new DependencyVisibility(OutputType.StaticLib, true));
 
             var app = solution.FindTargetByProjectName(nameof(AppProject));
             var direct = solution.FindTargetByProjectName(nameof(DirectDependencyProject));
@@ -130,94 +171,94 @@ namespace Graphyte.Build.Tests
                 Assert.AreEqual(2, app.Dependencies.Count);
                 Assert.AreEqual(0, app.PrivateDependencies.Count);
             }
-
-#if false
-            {
-                Assert.AreEqual(1, indirect.Libraries.Count);
-                Assert.IsTrue(indirect.Libraries.Contains("leaf_library"));
-
-                Assert.AreEqual(1, indirect.Defines.Count);
-                Assert.AreEqual("1", indirect.Defines["leaf_public_define"]);
-
-                Assert.AreEqual(1, indirect.IncludePaths.Count);
-                Assert.IsTrue(indirect.IncludePaths.Contains("leaf_public_include_path"));
-
-                Assert.AreEqual(1, indirect.LibraryPaths.Count);
-                Assert.IsTrue(indirect.LibraryPaths.Contains("leaf_public_library_path"));
-
-                Assert.AreEqual(1, indirect.PrivateDefines.Count);
-                Assert.AreEqual("1", indirect.PrivateDefines["leaf_private_define"]);
-
-                Assert.AreEqual(1, indirect.PrivateIncludePaths.Count);
-                Assert.IsTrue(indirect.PrivateIncludePaths.Contains("leaf_private_include_path"));
-
-                Assert.AreEqual(1, indirect.PrivateLibraryPaths.Count);
-                Assert.IsTrue(indirect.PrivateLibraryPaths.Contains("leaf_private_library_path"));
-            }
-
-            {
-                Assert.AreEqual(2, direct.Libraries.Count);
-                Assert.IsTrue(direct.Libraries.Contains("direct_library"));
-                Assert.IsTrue(direct.Libraries.Contains("leaf_library"));
-
-                Assert.AreEqual(1, direct.Defines.Count);
-                Assert.AreEqual("1", direct.Defines["direct_public_define"]);
-
-                Assert.AreEqual(2, direct.IncludePaths.Count);
-                Assert.IsTrue(direct.IncludePaths.Contains("direct_public_include_path"));
-                Assert.IsTrue(direct.IncludePaths.Contains("leaf_public_include_path"));
-
-                Assert.AreEqual(1, direct.LibraryPaths.Count);
-                Assert.IsTrue(direct.LibraryPaths.Contains("direct_public_library_path"));
-
-                Assert.AreEqual(2, direct.PrivateDefines.Count);
-                Assert.AreEqual("1", direct.PrivateDefines["direct_private_define"]);
-                Assert.AreEqual("1", direct.PrivateDefines["leaf_public_define"]);
-
-                Assert.AreEqual(1, direct.PrivateIncludePaths.Count);
-                Assert.IsTrue(direct.PrivateIncludePaths.Contains("direct_private_include_path"));
-
-                Assert.AreEqual(3, direct.PrivateLibraryPaths.Count);
-                Assert.IsTrue(direct.PrivateLibraryPaths.Contains("direct_private_library_path"));
-                Assert.IsTrue(direct.PrivateLibraryPaths.Contains("leaf_private_library_path"));
-                Assert.IsTrue(direct.PrivateLibraryPaths.Contains("leaf_public_library_path"));
-            }
-
-            {
-                Assert.AreEqual(3, app.Libraries.Count);
-                Assert.IsTrue(app.Libraries.Contains("app_library"));
-                Assert.IsTrue(app.Libraries.Contains("direct_library"));
-                Assert.IsTrue(app.Libraries.Contains("leaf_library"));
-
-                Assert.AreEqual(1, app.Defines.Count);
-                Assert.AreEqual("1", app.Defines["app_public_define"]);
-
-                Assert.AreEqual(1, app.IncludePaths.Count);
-                Assert.IsTrue(app.IncludePaths.Contains("app_public_include_path"));
-
-                Assert.AreEqual(1, app.LibraryPaths.Count);
-                Assert.IsTrue(app.LibraryPaths.Contains("app_public_library_path"));
-
-                Assert.AreEqual(1, app.PrivateDefines.Count);
-                Assert.AreEqual("1", app.PrivateDefines["app_private_define"]);
-                Assert.AreEqual("1", app.PrivateDefines["direct_public_define"]);
-                Assert.AreEqual("1", app.PrivateDefines["leaf_public_define"]);
-
-                Assert.AreEqual(3, app.PrivateIncludePaths.Count);
-                Assert.IsTrue(app.PrivateIncludePaths.Contains("app_private_include_path"));
-                Assert.IsTrue(app.PrivateLibraryPaths.Contains("direct_public_library_path"));
-                Assert.IsTrue(app.PrivateLibraryPaths.Contains("leaf_public_library_path"));
-
-                Assert.AreEqual(5, app.PrivateLibraryPaths.Count);
-                Assert.IsTrue(app.PrivateLibraryPaths.Contains("app_private_library_path"));
-                Assert.IsTrue(app.PrivateLibraryPaths.Contains("direct_private_library_path"));
-                Assert.IsTrue(app.PrivateLibraryPaths.Contains("leaf_private_library_path"));
-                Assert.IsTrue(app.PrivateIncludePaths.Contains("direct_public_include_path"));
-                Assert.IsTrue(app.PrivateIncludePaths.Contains("leaf_public_include_path"));
-            }
-#endif
         }
 
+        [TestMethod]
+        public void PrivateStaticToPublicStatic()
+        {
+            var solution = Resolve(
+                new DependencyVisibility(OutputType.GameApplication, false),
+                new DependencyVisibility(OutputType.StaticLib, true),
+                new DependencyVisibility(OutputType.StaticLib, true));
+
+            var app = solution.FindTargetByProjectName(nameof(AppProject));
+            var direct = solution.FindTargetByProjectName(nameof(DirectDependencyProject));
+            var indirect = solution.FindTargetByProjectName(nameof(IndirectDependencyProject));
+
+            {
+                Assert.AreEqual(0, indirect.Dependencies.Count);
+                Assert.AreEqual(0, indirect.PrivateDependencies.Count);
+            }
+            {
+                Assert.AreEqual(1, direct.Dependencies.Count);
+                Assert.IsNotNull(direct.Dependencies.FirstOrDefault(x => x.Target.Name == nameof(IndirectDependencyProject)));
+                Assert.AreEqual(0, direct.PrivateDependencies.Count);
+            }
+            {
+                Assert.AreEqual(0, app.Dependencies.Count);
+                Assert.AreEqual(2, app.PrivateDependencies.Count);
+                Assert.IsNotNull(app.PrivateDependencies.FirstOrDefault(x => x.Target.Name == nameof(DirectDependencyProject)));
+                Assert.IsNotNull(app.PrivateDependencies.FirstOrDefault(x => x.Target.Name == nameof(IndirectDependencyProject)));
+            }
+        }
+
+        [TestMethod]
+        public void PublicStaticToPrivateStatic()
+        {
+            var solution = Resolve(
+                new DependencyVisibility(OutputType.GameApplication, true),
+                new DependencyVisibility(OutputType.StaticLib, false),
+                new DependencyVisibility(OutputType.StaticLib, true));
+
+            var app = solution.FindTargetByProjectName(nameof(AppProject));
+            var direct = solution.FindTargetByProjectName(nameof(DirectDependencyProject));
+            var indirect = solution.FindTargetByProjectName(nameof(IndirectDependencyProject));
+
+            {
+                Assert.AreEqual(0, indirect.Dependencies.Count);
+                Assert.AreEqual(0, indirect.PrivateDependencies.Count);
+            }
+            {
+                Assert.AreEqual(0, direct.Dependencies.Count);
+                Assert.AreEqual(1, direct.PrivateDependencies.Count);
+                Assert.IsNotNull(direct.PrivateDependencies.FirstOrDefault(x => x.Target.Name == nameof(IndirectDependencyProject)));
+            }
+            {
+                Assert.AreEqual(1, app.Dependencies.Count);
+                Assert.IsNotNull(app.Dependencies.FirstOrDefault(x => x.Target.Name == nameof(DirectDependencyProject)));
+
+                Assert.AreEqual(1, app.PrivateDependencies.Count);
+                Assert.IsNotNull(app.PrivateDependencies.FirstOrDefault(x => x.Target.Name == nameof(IndirectDependencyProject)));
+            }
+        }
+
+        [TestMethod]
+        public void PrivateStaticToPrivateStatic()
+        {
+            var solution = Resolve(
+                new DependencyVisibility(OutputType.GameApplication, false),
+                new DependencyVisibility(OutputType.StaticLib, false),
+                new DependencyVisibility(OutputType.StaticLib, true));
+
+            var app = solution.FindTargetByProjectName(nameof(AppProject));
+            var direct = solution.FindTargetByProjectName(nameof(DirectDependencyProject));
+            var indirect = solution.FindTargetByProjectName(nameof(IndirectDependencyProject));
+
+            {
+                Assert.AreEqual(0, indirect.Dependencies.Count);
+                Assert.AreEqual(0, indirect.PrivateDependencies.Count);
+            }
+            {
+                Assert.AreEqual(0, direct.Dependencies.Count);
+                Assert.AreEqual(1, direct.PrivateDependencies.Count);
+            }
+            {
+                Assert.AreEqual(0, app.Dependencies.Count);
+                Assert.AreEqual(2, app.PrivateDependencies.Count);
+            }
+        }
+
+#if false
         [TestMethod]
         public void StaticToShared()
         {
@@ -367,10 +408,7 @@ namespace Graphyte.Build.Tests
             var direct = solution.FindTargetByProjectName(nameof(DirectDependencyProject));
             var indirect = solution.FindTargetByProjectName(nameof(IndirectDependencyProject));
         }
-        #endregion
 
-
-        #region Using application as dependency
         [TestMethod]
         public void StaticToDeveloper()
         {
@@ -667,7 +705,7 @@ namespace Graphyte.Build.Tests
                 Resolve(OutputType.TestApplication, OutputType.TestApplication);
             });
         }
-        #endregion
+#endif
     }
 
 

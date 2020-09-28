@@ -9,11 +9,9 @@ namespace Graphyte
             base.Configure(target, configuration);
 
             target.IncludePaths.Add("engine/runtime/libs/graphics-d3d12/public");
-            target.Dependencies.AddRange(new[]
-            {
-                nameof(GxBase),
-                nameof(GxGraphics),
-            });
+
+            target.AddPrivateDependency<GxGraphics>();
+
             target.Libraries.AddRange(new[]
             {
                 "dxgi.lib",
