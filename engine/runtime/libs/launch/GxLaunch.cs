@@ -2,7 +2,7 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class GxLaunch : Project
+    public class GxLaunch : Target
     {
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {

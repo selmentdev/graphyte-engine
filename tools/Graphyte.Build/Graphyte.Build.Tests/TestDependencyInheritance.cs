@@ -20,7 +20,7 @@ namespace Graphyte.Build.Tests
             }
         }
 
-        protected abstract class BaseProject : Project
+        protected abstract class BaseProject : Target
         {
             public DependencyVisibility Visibility { get; set; }
             protected string m_Name = null;
@@ -191,14 +191,14 @@ namespace Graphyte.Build.Tests
             }
             {
                 Assert.AreEqual(1, direct.Dependencies.Count);
-                Assert.IsNotNull(direct.Dependencies.FirstOrDefault(x => x.Target.Name == nameof(IndirectDependencyProject)));
+                Assert.IsNotNull(direct.Dependencies.FirstOrDefault(x => x.SourceTarget.Name == nameof(IndirectDependencyProject)));
                 Assert.AreEqual(0, direct.PrivateDependencies.Count);
             }
             {
                 Assert.AreEqual(0, app.Dependencies.Count);
                 Assert.AreEqual(2, app.PrivateDependencies.Count);
-                Assert.IsNotNull(app.PrivateDependencies.FirstOrDefault(x => x.Target.Name == nameof(DirectDependencyProject)));
-                Assert.IsNotNull(app.PrivateDependencies.FirstOrDefault(x => x.Target.Name == nameof(IndirectDependencyProject)));
+                Assert.IsNotNull(app.PrivateDependencies.FirstOrDefault(x => x.SourceTarget.Name == nameof(DirectDependencyProject)));
+                Assert.IsNotNull(app.PrivateDependencies.FirstOrDefault(x => x.SourceTarget.Name == nameof(IndirectDependencyProject)));
             }
         }
 
@@ -221,14 +221,14 @@ namespace Graphyte.Build.Tests
             {
                 Assert.AreEqual(0, direct.Dependencies.Count);
                 Assert.AreEqual(1, direct.PrivateDependencies.Count);
-                Assert.IsNotNull(direct.PrivateDependencies.FirstOrDefault(x => x.Target.Name == nameof(IndirectDependencyProject)));
+                Assert.IsNotNull(direct.PrivateDependencies.FirstOrDefault(x => x.SourceTarget.Name == nameof(IndirectDependencyProject)));
             }
             {
                 Assert.AreEqual(1, app.Dependencies.Count);
-                Assert.IsNotNull(app.Dependencies.FirstOrDefault(x => x.Target.Name == nameof(DirectDependencyProject)));
+                Assert.IsNotNull(app.Dependencies.FirstOrDefault(x => x.SourceTarget.Name == nameof(DirectDependencyProject)));
 
                 Assert.AreEqual(1, app.PrivateDependencies.Count);
-                Assert.IsNotNull(app.PrivateDependencies.FirstOrDefault(x => x.Target.Name == nameof(IndirectDependencyProject)));
+                Assert.IsNotNull(app.PrivateDependencies.FirstOrDefault(x => x.SourceTarget.Name == nameof(IndirectDependencyProject)));
             }
         }
 
@@ -714,7 +714,7 @@ namespace Graphyte.Build.Tests
     {
         sealed class SampleSolution : Solution
         {
-            public abstract class BaseProject : Project
+            public abstract class BaseProject : Target
             {
                 public override void Configure(ConfiguredTarget target, ConfigurationContext context)
                 {

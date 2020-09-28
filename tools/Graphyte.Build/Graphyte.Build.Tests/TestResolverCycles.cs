@@ -24,7 +24,7 @@ namespace Graphyte.Build.Tests
             // D requires C
             // A requires D
 
-            class ProjectA : Project
+            class ProjectA : Target
             {
                 public override void Configure(ConfiguredTarget target, ConfigurationContext context)
                 {
@@ -32,7 +32,7 @@ namespace Graphyte.Build.Tests
                 }
             }
 
-            class ProjectB : Project
+            class ProjectB : Target
             {
                 public override void Configure(ConfiguredTarget target, ConfigurationContext context)
                 {
@@ -40,7 +40,7 @@ namespace Graphyte.Build.Tests
                 }
             }
 
-            class ProjectC : Project
+            class ProjectC : Target
             {
                 public override void Configure(ConfiguredTarget target, ConfigurationContext context)
                 {
@@ -48,7 +48,7 @@ namespace Graphyte.Build.Tests
                 }
             }
 
-            class ProjectD : Project
+            class ProjectD : Target
             {
                 public override void Configure(ConfiguredTarget target, ConfigurationContext context)
                 {

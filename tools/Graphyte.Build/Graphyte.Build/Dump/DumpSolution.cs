@@ -21,16 +21,16 @@ namespace Graphyte.Build.Dump
 
         private static void DumpTarget(StreamWriter file, ResolvedTarget target)
         {
-            file.WriteLine($@"Target: name = `{target.Target.Name}`, type = `{target.Target.Type}`");
+            file.WriteLine($@"Target: name = `{target.SourceTarget.Name}`, type = `{target.SourceTarget.Type}`");
 
             foreach (var dependency in target.Dependencies)
             {
-                file.WriteLine($@"- public dependency:    `{dependency.Target.Name}`");
+                file.WriteLine($@"- public dependency:    `{dependency.SourceTarget.Name}`");
             }
 
             foreach (var dependency in target.PrivateDependencies)
             {
-                file.WriteLine($@"- private dependency:   `{dependency.Target.Name}`");
+                file.WriteLine($@"- private dependency:   `{dependency.SourceTarget.Name}`");
             }
 
             foreach (var item in target.Defines)

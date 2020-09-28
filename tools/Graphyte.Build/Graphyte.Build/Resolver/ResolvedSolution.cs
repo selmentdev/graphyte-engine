@@ -60,7 +60,7 @@ namespace Graphyte.Build.Resolver
 
         public ResolvedTarget FindTargetByProjectName(string name)
         {
-            var found = this.m_Targets.FirstOrDefault(x => x.Target.Project.Name == name);
+            var found = this.m_Targets.FirstOrDefault(x => x.SourceTarget.SourceTarget.Name == name);
 
             if (found == null)
             {

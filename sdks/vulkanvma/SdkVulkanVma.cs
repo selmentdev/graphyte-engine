@@ -2,7 +2,7 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class SdkVulkanVma : Project
+    public class SdkVulkanVma : Target
     {
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {

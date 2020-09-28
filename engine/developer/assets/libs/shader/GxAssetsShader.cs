@@ -2,7 +2,7 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class GxAssetsShader : Project
+    public class GxAssetsShader : Target
     {
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {

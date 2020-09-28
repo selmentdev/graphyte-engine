@@ -66,8 +66,6 @@ namespace Graphyte
         protected override void PreConfigure(ConfiguredTarget target, ConfigurationContext context)
         {
             base.PreConfigure(target, context);
-
-            target.PrivateIncludePaths.Add("engine/include");
         }
 
         protected override void PostConfigure(ConfiguredTarget target, ConfigurationContext context)
@@ -82,7 +80,7 @@ namespace Graphyte
         }
     }
 
-    public class ModuleProject : Project
+    public class ModuleProject : Target
     {
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {

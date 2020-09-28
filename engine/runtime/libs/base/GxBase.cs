@@ -9,6 +9,7 @@ namespace Graphyte
             base.Configure(target, configuration);
 
             target.IncludePaths.Add("engine/runtime/libs/base/public");
+            target.IncludePaths.Add("engine/include");
 
             target.AddPublicDependency<SdkFmt>();
             target.AddPrivateDependency<SdkLz4>();

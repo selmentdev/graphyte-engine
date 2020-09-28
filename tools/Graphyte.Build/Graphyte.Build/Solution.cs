@@ -7,14 +7,14 @@ namespace Graphyte.Build
     public class Solution
     {
         #region Fields
-        private readonly List<Project> m_Projects = new List<Project>();
+        private readonly List<Target> m_Projects = new List<Target>();
         private readonly List<TargetType> m_TargetTypes = new List<TargetType>();
         private readonly List<BuildType> m_BuildTypes = new List<BuildType>();
         private readonly List<ConfigurationType> m_ConfigurationTypes = new List<ConfigurationType>();
         #endregion
 
         #region Properties
-        public IReadOnlyList<Project> Projects => m_Projects;
+        public IReadOnlyList<Target> Projects => m_Projects;
         public IReadOnlyList<TargetType> TargetTypes => m_TargetTypes;
         public IReadOnlyList<BuildType> BuildTypes => m_BuildTypes;
         public IReadOnlyList<ConfigurationType> ConfigurationTypes => m_ConfigurationTypes;
@@ -41,7 +41,7 @@ namespace Graphyte.Build
         #endregion
 
         #region Solution Setup
-        protected void AddProject(Project project)
+        protected void AddProject(Target project)
         {
             this.m_Projects.Add(project);
         }

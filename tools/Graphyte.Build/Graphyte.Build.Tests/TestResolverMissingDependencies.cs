@@ -12,7 +12,7 @@ namespace Graphyte.Build.Tests
     {
         sealed class SampleSolution : Solution
         {
-            class App : Project
+            class App : Target
             {
                 public override void Configure(ConfiguredTarget target, ConfigurationContext context)
                 {
@@ -20,7 +20,7 @@ namespace Graphyte.Build.Tests
                 }
             }
 
-            class SharedLibrary : Project
+            class SharedLibrary : Target
             {
                 public override void Configure(ConfiguredTarget target, ConfigurationContext context)
                 {

@@ -6,7 +6,7 @@ namespace Graphyte.Build
 {
     public sealed class ConfiguredTarget
     {
-        public Project Project { get; }
+        public Target SourceTarget { get; }
         public OutputType Type { get; set; }
         public string Name { get; set; }
 
@@ -23,20 +23,20 @@ namespace Graphyte.Build
 
         public bool IsInheritable => this.Type.IsInheritableDependency();
 
-        public ConfiguredTarget(Project project)
+        public ConfiguredTarget(Target project)
         {
-            this.Project = project;
+            this.SourceTarget = project;
             this.Name = project.Name;
         }
 
         public void AddPublicDependency<T>()
-            where T : Project
+            where T : Target
         {
             this.Dependencies.Add(typeof(T).Name);
         }
 
         public void AddPrivateDependency<T>()
-            where T : Project
+            where T : Target
         {
             this.PrivateDependencies.Add(typeof(T).Name);
         }

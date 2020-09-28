@@ -2,7 +2,7 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class SdkSqlite : Project
+    public class SdkSqlite : Target
     {
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {

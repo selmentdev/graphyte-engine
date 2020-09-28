@@ -13,13 +13,13 @@ namespace Graphyte.Build.Resolver
         #region Debug View
         private string GetDebuggerDisplay()
         {
-            return this.Target.Name;
+            return this.SourceTarget.Name;
         }
         #endregion
 
         #region Properties
         public ResolvedSolution Solution { get; }
-        public ConfiguredTarget Target { get; }
+        public ConfiguredTarget SourceTarget { get; }
 
         public List<ResolvedTarget> Dependencies { get; } = new List<ResolvedTarget>();
         public List<ResolvedTarget> PrivateDependencies { get; } = new List<ResolvedTarget>();
@@ -37,7 +37,7 @@ namespace Graphyte.Build.Resolver
         public ResolvedTarget(ResolvedSolution solution, ConfiguredTarget target)
         {
             this.Solution = solution;
-            this.Target = target;
+            this.SourceTarget = target;
         }
         #endregion
     }

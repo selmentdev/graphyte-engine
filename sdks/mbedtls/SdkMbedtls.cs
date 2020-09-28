@@ -2,7 +2,7 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class SdkMbedtls : Project
+    public class SdkMbedtls : Target
     {
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {

@@ -11,7 +11,7 @@ namespace Graphyte.Build.Resolver
     {
         #region Resolving
         public bool IsResolved { get; private set; } = false;
-        public bool IsInheritable => this.Target.IsInheritable;
+        public bool IsInheritable => this.SourceTarget.IsInheritable;
         #endregion
 
         private void ValidateDependencyCycle(Stack<ResolvedTarget> callstack)
@@ -19,11 +19,11 @@ namespace Graphyte.Build.Resolver
             if (callstack.Contains(this))
             {
                 var message = new StringBuilder();
-                message.AppendLine($@"Cycle in dependent module {this.Target.Name} found");
+                message.AppendLine($@"Cycle in dependent module {this.SourceTarget.Name} found");
 
                 foreach (var call in callstack)
                 {
-                    message.AppendLine($@"- required by {call.Target.Name}");
+                    message.AppendLine($@"- required by {call.SourceTarget.Name}");
                 }
 
                 throw new ResolverException(message.ToString());
@@ -38,7 +38,7 @@ namespace Graphyte.Build.Resolver
 
             if (this.IsResolved == false)
             {
-                Console.WriteLine($@"{this.Target.Name}: Resolving target");
+                Console.WriteLine($@"{this.SourceTarget.Name}: Resolving target");
                 //Console.Indent();
 
                 this.IsResolved = true;
@@ -71,30 +71,30 @@ namespace Graphyte.Build.Resolver
         /// </summary>
         private void ImportProperties()
         {
-            Console.WriteLine($@"{this.Target.Name}: Importing properties");
+            Console.WriteLine($@"{this.SourceTarget.Name}: Importing properties");
             //Console.Indent();
 
-            this.Dependencies.AddRange(this.Target.Dependencies.Select(this.Solution.FindTargetByProjectName));
-            this.PrivateDependencies.AddRange(this.Target.PrivateDependencies.Select(this.Solution.FindTargetByProjectName));
+            this.Dependencies.AddRange(this.SourceTarget.Dependencies.Select(this.Solution.FindTargetByProjectName));
+            this.PrivateDependencies.AddRange(this.SourceTarget.PrivateDependencies.Select(this.Solution.FindTargetByProjectName));
 
-            this.Defines.Import(this.Target.Defines);
-            this.PrivateDefines.Import(this.Target.PrivateDefines);
+            this.Defines.Import(this.SourceTarget.Defines);
+            this.PrivateDefines.Import(this.SourceTarget.PrivateDefines);
 
-            this.IncludePaths.Import(this.Target.IncludePaths);
-            this.PrivateIncludePaths.Import(this.Target.PrivateIncludePaths);
+            this.IncludePaths.Import(this.SourceTarget.IncludePaths);
+            this.PrivateIncludePaths.Import(this.SourceTarget.PrivateIncludePaths);
 
-            this.Libraries.Import(this.Target.Libraries);
-            this.PrivateLibraries.Import(this.Target.PrivateLibraries);
+            this.Libraries.Import(this.SourceTarget.Libraries);
+            this.PrivateLibraries.Import(this.SourceTarget.PrivateLibraries);
 
-            this.LibraryPaths.Import(this.Target.LibraryPaths);
-            this.PrivateLibraryPaths.Import(this.Target.PrivateLibraryPaths);
+            this.LibraryPaths.Import(this.SourceTarget.LibraryPaths);
+            this.PrivateLibraryPaths.Import(this.SourceTarget.PrivateLibraryPaths);
 
             //Console.Unindent();
         }
 
         private void ResolveDependencies()
         {
-            Console.WriteLine($@"{this.Target.Name}: Started resolving dependencies");
+            Console.WriteLine($@"{this.SourceTarget.Name}: Started resolving dependencies");
             //Console.Indent();
 
             foreach (var dependency in this.PrivateDependencies.ToArray())
@@ -116,17 +116,17 @@ namespace Graphyte.Build.Resolver
         /// <param name="dependency">A public dependency</param>
         private void ResolvePublicDependency(ResolvedTarget dependency)
         {
-            Console.WriteLine($@"{this.Target.Name}: resolve public {dependency.Target.Name}");
+            Console.WriteLine($@"{this.SourceTarget.Name}: resolve public {dependency.SourceTarget.Name}");
             //Console.Indent();
-            Console.WriteLine($@"- {this.Target.Type} <= {dependency.Target.Type}");
+            Console.WriteLine($@"- {this.SourceTarget.Type} <= {dependency.SourceTarget.Type}");
 
-            if (!dependency.Target.Type.IsLibrary())
+            if (!dependency.SourceTarget.Type.IsLibrary())
             {
                 //
                 // Only library can be consumed as public dependency.
                 //
 
-                throw new ResolverException($@"Target {this.Target.Name} of type {this.Target.Type} cannot be used as dependency");
+                throw new ResolverException($@"Target {this.SourceTarget.Name} of type {this.SourceTarget.Type} cannot be used as dependency");
             }
 
 
@@ -136,7 +136,7 @@ namespace Graphyte.Build.Resolver
 
             this.Dependencies.Import(dependency.Dependencies);
 
-            if (dependency.Target.IsInheritable)
+            if (dependency.SourceTarget.IsInheritable)
             {
                 //
                 // Consume private dependencies of static/header only libraries.
@@ -150,17 +150,17 @@ namespace Graphyte.Build.Resolver
 
         private void ResolvePrivateDependency(ResolvedTarget dependency)
         {
-            Console.WriteLine($@"{this.Target.Name}: resolve private {dependency.Target.Name}");
+            Console.WriteLine($@"{this.SourceTarget.Name}: resolve private {dependency.SourceTarget.Name}");
             //Console.Indent();
-            Console.WriteLine($@"- {this.Target.Type} <= {dependency.Target.Type}");
+            Console.WriteLine($@"- {this.SourceTarget.Type} <= {dependency.SourceTarget.Type}");
 
-            if (!dependency.Target.Type.IsLibrary())
+            if (!dependency.SourceTarget.Type.IsLibrary())
             {
                 //
                 // Only library can be consumed as private dependency.
                 //
 
-                throw new ResolverException($@"Target {this.Target.Name} of type {this.Target.Type} cannot be used as dependency");
+                throw new ResolverException($@"Target {this.SourceTarget.Name} of type {this.SourceTarget.Type} cannot be used as dependency");
             }
 
 
@@ -185,6 +185,12 @@ namespace Graphyte.Build.Resolver
 
         private void ResolveProperties()
         {
+            //
+            // BUG:
+            //  Dependency resolving requires checking if resolved target is placed in both collections. We cannot
+            //  resolve such targets.
+            //
+
             foreach (var dependency in this.Dependencies)
             {
                 this.ResolvePublicDependencyProperties(dependency);

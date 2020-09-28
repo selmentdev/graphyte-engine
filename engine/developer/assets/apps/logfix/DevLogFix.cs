@@ -2,7 +2,7 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class DevLogFix : Project
+    public class DevLogFix : Target
     {
         public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
         {

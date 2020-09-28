@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Graphyte.Build
 {
-    public abstract class Project
+    public abstract class Target
     {
         public abstract void Configure(ConfiguredTarget target, ConfigurationContext context);
 
