@@ -45,7 +45,7 @@ namespace Graphyte.Build.Tests
             {
                 base.Configure(target, context);
 
-                target.Dependencies.Add(nameof(DirectDependencyProject));
+                target.AddPublicDependency<DirectDependencyProject>();
             }
         }
 
@@ -60,7 +60,7 @@ namespace Graphyte.Build.Tests
             {
                 base.Configure(target, context);
 
-                target.Dependencies.Add(nameof(IndirectDependencyProject));
+                target.AddPublicDependency<IndirectDependencyProject>();
             }
         }
 
@@ -118,6 +118,20 @@ namespace Graphyte.Build.Tests
             var direct = solution.FindTargetByProjectName(nameof(DirectDependencyProject));
             var indirect = solution.FindTargetByProjectName(nameof(IndirectDependencyProject));
 
+            {
+                Assert.AreEqual(0, indirect.Dependencies.Count);
+                Assert.AreEqual(0, indirect.PrivateDependencies.Count);
+            }
+            {
+                Assert.AreEqual(1, direct.Dependencies.Count);
+                Assert.AreEqual(0, direct.PrivateDependencies.Count);
+            }
+            {
+                Assert.AreEqual(2, app.Dependencies.Count);
+                Assert.AreEqual(0, app.PrivateDependencies.Count);
+            }
+
+#if false
             {
                 Assert.AreEqual(1, indirect.Libraries.Count);
                 Assert.IsTrue(indirect.Libraries.Contains("leaf_library"));
@@ -201,6 +215,7 @@ namespace Graphyte.Build.Tests
                 Assert.IsTrue(app.PrivateIncludePaths.Contains("direct_public_include_path"));
                 Assert.IsTrue(app.PrivateIncludePaths.Contains("leaf_public_include_path"));
             }
+#endif
         }
 
         [TestMethod]
