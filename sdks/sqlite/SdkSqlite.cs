@@ -2,12 +2,12 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class SdkSqlite : Target
+    public class SdkSqlite : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
-            target.Type = OutputType.StaticLib;
-            target.IncludePaths.Add("sdks/sqlite/include");
+            target.Type = TargetType.StaticLibrary;
+            target.PublicIncludePaths.Add("sdks/sqlite/include");
         }
     }
 }

@@ -2,11 +2,11 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class DevAssetsCompiler : Target
+    public class DevAssetsCompiler : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
-            target.Type = OutputType.DeveloperApplication;
+            target.Type = TargetType.Application;
 
             target.AddPrivateDependency<GxLaunch>();
             target.AddPrivateDependency<GxAssetsMesh>();

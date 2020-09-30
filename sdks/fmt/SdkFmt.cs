@@ -2,22 +2,22 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class SdkFmt : Target
+    public class SdkFmt : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
             if (configuration.Build == BuildType.Retail)
             {
-                target.Type = OutputType.StaticLib;
+                target.Type = TargetType.StaticLibrary;
             }
             else
             {
-                target.Type = OutputType.SharedLib;
+                target.Type = TargetType.SharedLibrary;
             }
 
-            target.IncludePaths.Add("sdks/fmt/include");
-            target.Defines["FMT_EXCEPTIONS"] = "1";
-            target.Defines["FMT_EXPORT"] = "1";
+            target.PublicIncludePaths.Add("sdks/fmt/include");
+            target.PublicDefines["FMT_EXCEPTIONS"] = "1";
+            target.PublicDefines["FMT_EXPORT"] = "1";
             target.PrivateDefines["_CRT_SECURE_NO_WARNINGS"] = "0";
         }
     }

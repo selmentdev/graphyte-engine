@@ -2,13 +2,13 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class SdkVulkanVma : Target
+    public class SdkVulkanVma : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
-            target.Type = OutputType.StaticLib;
+            target.Type = TargetType.StaticLibrary;
 
-            target.IncludePaths.Add("sdks/vulkanvma/include");
+            target.PublicIncludePaths.Add("sdks/vulkanvma/include");
         }
     }
 }

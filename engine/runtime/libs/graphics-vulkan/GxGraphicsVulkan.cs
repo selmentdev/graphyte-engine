@@ -4,11 +4,11 @@ namespace Graphyte
 {
     public class GxGraphicsVulkan : ModuleProject
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
             base.Configure(target, configuration);
 
-            target.IncludePaths.Add("engine/runtime/libs/graphics-vulkan/public");
+            target.PrivateIncludePaths.Add("engine/runtime/libs/graphics-vulkan/public");
 
             target.AddPrivateDependency<GxGraphics>();
         }

@@ -4,11 +4,11 @@ namespace Graphyte
 {
     public class GxGeometry : ModuleProject
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
             base.Configure(target, configuration);
 
-            target.IncludePaths.Add("engine/runtime/libs/geometry/public");
+            target.PublicIncludePaths.Add("engine/runtime/libs/geometry/public");
 
             target.AddPublicDependency<GxBase>();
         }

@@ -2,12 +2,12 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class GxLaunch : Target
+    public class GxLaunch : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
-            target.Type = OutputType.HeaderLib;
-            target.IncludePaths.Add("engine/runtime/libs/launch/public");
+            target.Type = TargetType.HeaderLibrary;
+            target.PublicIncludePaths.Add("engine/runtime/libs/launch/public");
 
             target.AddPublicDependency<GxBase>();
             target.AddPublicDependency<GxGeometry>();
@@ -17,11 +17,11 @@ namespace Graphyte
 
             if (configuration.Platform == PlatformType.UWP)
             {
-                target.Libraries.Add("WindowsApp.lib");
+                target.PublicLibraries.Add("WindowsApp.lib");
             }
             else if (configuration.Platform == PlatformType.Windows)
             {
-                target.Libraries.AddRange(new[]
+                target.PublicLibraries.AddRange(new[]
                 {
                     "Mincore.lib",
                     "user32.lib",

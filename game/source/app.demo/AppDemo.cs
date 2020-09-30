@@ -2,12 +2,12 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class AppDemo : Target
+    public class AppDemo : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
-            target.Type = OutputType.GameApplication;
-            target.IncludePaths.Add("game/source/app.demo/public");
+            target.Type = TargetType.Application;
+            target.PublicIncludePaths.Add("game/source/app.demo/public");
 
             target.AddPrivateDependency<GxBase>();
             target.AddPrivateDependency<GxGraphics>();

@@ -2,11 +2,11 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class TestGxBase : Target
+    public class TestGxBase : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
-            target.Type = OutputType.TestApplication;
+            target.Type = TargetType.Application;
 
             target.AddPrivateDependency<GxBase>();
             target.AddPrivateDependency<GxTestExecutor>();

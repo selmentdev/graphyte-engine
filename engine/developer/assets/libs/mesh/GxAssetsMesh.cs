@@ -2,12 +2,12 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class GxAssetsMesh : Target
+    public class GxAssetsMesh : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
-            target.Type = OutputType.SharedLib;
-            target.IncludePaths.Add("engine/developer/assets/libs/mesh");
+            target.Type = TargetType.SharedLibrary;
+            target.PublicIncludePaths.Add("engine/developer/assets/libs/mesh");
 
             target.AddPublicDependency<GxAssetsBase>();
         }

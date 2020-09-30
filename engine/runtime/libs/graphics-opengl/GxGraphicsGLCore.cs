@@ -4,15 +4,15 @@ namespace Graphyte
 {
     public class GxGraphicsGLCore : ModuleProject
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
             base.Configure(target, configuration);
 
-            target.IncludePaths.Add("engine/runtime/libs/graphics-opengl/public");
+            target.PrivateIncludePaths.Add("engine/runtime/libs/graphics-opengl/public");
 
             target.AddPrivateDependency<GxGraphics>();
 
-            target.Libraries.AddRange(new[]
+            target.PrivateLibraries.AddRange(new[]
             {
                 "dxgi.lib",
                 "d3d11.lib",

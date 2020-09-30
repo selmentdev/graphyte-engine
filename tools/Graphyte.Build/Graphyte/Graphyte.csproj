@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Graphyte.Build\Graphyte.Build.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Compile Include="..\..\..\game\source\app.demo\AppDemo.cs" />
     </ItemGroup>
     <ItemGroup>
@@ -48,6 +44,11 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="..\..\..\MainSolution.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <Reference Include="Graphyte.Build">
+        <HintPath>..\..\..\..\Graphyte.Build\Graphyte.Build\bin\Debug\netcoreapp3.1\Graphyte.Build.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

@@ -2,12 +2,12 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class SdkMbedtls : Target
+    public class SdkMbedtls : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
-            target.Type = OutputType.StaticLib;
-            target.IncludePaths.Add("sdks/mbedtls/include");
+            target.Type = TargetType.StaticLibrary;
+            target.PublicIncludePaths.Add("sdks/mbedtls/include");
 
             if (configuration.Architecture == ArchitectureType.X64)
             {

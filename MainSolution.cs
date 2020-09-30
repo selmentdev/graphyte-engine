@@ -8,23 +8,23 @@ namespace Graphyte
         {
             this.Name = "Graphyte";
 
-            this.AddTarget(PlatformType.Windows, ArchitectureType.X64);
-            this.AddTarget(PlatformType.Windows, ArchitectureType.Arm64);
+            this.AddTargetTuple(PlatformType.Windows, ArchitectureType.X64);
+            this.AddTargetTuple(PlatformType.Windows, ArchitectureType.Arm64);
 
-            this.AddTarget(PlatformType.UWP, ArchitectureType.X64);
-            this.AddTarget(PlatformType.UWP, ArchitectureType.Arm64);
+            this.AddTargetTuple(PlatformType.UWP, ArchitectureType.X64);
+            this.AddTargetTuple(PlatformType.UWP, ArchitectureType.Arm64);
 
-            this.AddTarget(PlatformType.Linux, ArchitectureType.X64);
-            this.AddTarget(PlatformType.Linux, ArchitectureType.Arm64);
+            this.AddTargetTuple(PlatformType.Linux, ArchitectureType.X64);
+            this.AddTargetTuple(PlatformType.Linux, ArchitectureType.Arm64);
 
-            this.AddBuild(BuildType.Developer);
-            this.AddBuild(BuildType.Testing);
-            this.AddBuild(BuildType.Retail);
+            this.AddBuildType(BuildType.Developer);
+            this.AddBuildType(BuildType.Testing);
+            this.AddBuildType(BuildType.Retail);
 
-            this.AddConfiguration(ConfigurationType.Debug);
-            this.AddConfiguration(ConfigurationType.Checked);
-            this.AddConfiguration(ConfigurationType.Release);
-            this.AddConfiguration(ConfigurationType.Profile);
+            this.AddConfigurationType(ConfigurationType.Debug);
+            this.AddConfigurationType(ConfigurationType.Checked);
+            this.AddConfigurationType(ConfigurationType.Release);
+            this.AddConfigurationType(ConfigurationType.Profile);
 
             // Applications
             this.AddProject(new AppDemo());
@@ -63,34 +63,34 @@ namespace Graphyte
             this.AddProject(new GxAssetsShader());
         }
 
-        protected override void PreConfigure(ConfiguredTarget target, ConfigurationContext context)
+        protected override void PreConfigureTarget(Target target, IContext context)
         {
-            base.PreConfigure(target, context);
+            base.PreConfigureTarget(target, context);
         }
 
-        protected override void PostConfigure(ConfiguredTarget target, ConfigurationContext context)
+        protected override void PostConfigureTarget(Target target, IContext context)
         {
-            base.PostConfigure(target, context);
+            base.PostConfigureTarget(target, context);
 
             if (context.Platform == PlatformType.UWP && target.Type.IsApplication())
             {
                 // TODO: This should be added by platform matcher
-                target.Libraries.Add("WindowsApp.lib");
+                target.PublicLibraries.Add("WindowsApp.lib");
             }
         }
     }
 
-    public class ModuleProject : Target
+    public class ModuleProject : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
             if (configuration.Build == BuildType.Retail)
             {
-                target.Type = OutputType.StaticLib;
+                target.Type = TargetType.StaticLibrary;
             }
             else
             {
-                target.Type = OutputType.SharedLib;
+                target.Type = TargetType.SharedLibrary;
             }
         }
     }

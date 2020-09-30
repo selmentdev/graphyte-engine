@@ -2,11 +2,11 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
-    public class GxTestExecutor : Target
+    public class GxTestExecutor : Project
     {
-        public override void Configure(ConfiguredTarget target, ConfigurationContext configuration)
+        public override void Configure(Target target, IContext configuration)
         {
-            target.Type = OutputType.HeaderLib;
+            target.Type = TargetType.HeaderLibrary;
 
             target.AddPublicDependency<GxLaunch>();
             target.AddPublicDependency<SdkCatch2>();
