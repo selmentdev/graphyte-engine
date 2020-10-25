@@ -4,9 +4,9 @@ namespace Graphyte
 {
     public class GxLaunch : Project
     {
-        public override void Configure(Target target, IContext configuration)
+        public override void Configure(Target target)
         {
-            target.Type = TargetType.HeaderLibrary;
+            target.TargetType = TargetType.HeaderLibrary;
             target.PublicIncludePaths.Add("engine/runtime/libs/launch/public");
 
             target.AddPublicDependency<GxBase>();
@@ -15,11 +15,11 @@ namespace Graphyte
 
             target.AddPublicDependency<GxGraphicsD3D11>();
 
-            if (configuration.Platform == PlatformType.UWP)
+            if (target.TargetTuple.Platform == Platform.UWP)
             {
                 target.PublicLibraries.Add("WindowsApp.lib");
             }
-            else if (configuration.Platform == PlatformType.Windows)
+            else if (target.TargetTuple.Platform == Platform.Windows)
             {
                 target.PublicLibraries.AddRange(new[]
                 {

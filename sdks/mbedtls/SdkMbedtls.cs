@@ -4,14 +4,14 @@ namespace Graphyte
 {
     public class SdkMbedtls : Project
     {
-        public override void Configure(Target target, IContext configuration)
+        public override void Configure(Target target)
         {
-            target.Type = TargetType.StaticLibrary;
+            target.TargetType = TargetType.StaticLibrary;
             target.PublicIncludePaths.Add("sdks/mbedtls/include");
 
-            if (configuration.Architecture == ArchitectureType.X64)
+            if (target.TargetTuple.Architecture == Architecture.X64)
             {
-                target.PrivateDefines["MBEDTLS_HAVE_SSE2"] = "1";
+                target.PrivateDefines.Add("MBEDTLS_HAVE_SSE2=1");
             }
         }
     }

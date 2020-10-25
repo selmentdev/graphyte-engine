@@ -4,9 +4,9 @@ namespace Graphyte
 {
     public class GxAssetsBase : Project
     {
-        public override void Configure(Target target, IContext configuration)
+        public override void Configure(Target target)
         {
-            target.Type = TargetType.SharedLibrary;
+            target.TargetType = TargetType.SharedLibrary;
             target.PublicIncludePaths.Add("engine/developer/assets/libs/base");
 
             target.AddPublicDependency<GxBase>();

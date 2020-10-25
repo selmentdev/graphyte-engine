@@ -4,9 +4,9 @@ namespace Graphyte
 {
     public class GxTestExecutor : Project
     {
-        public override void Configure(Target target, IContext configuration)
+        public override void Configure(Target target)
         {
-            target.Type = TargetType.HeaderLibrary;
+            target.TargetType = TargetType.HeaderLibrary;
 
             target.AddPublicDependency<GxLaunch>();
             target.AddPublicDependency<SdkCatch2>();

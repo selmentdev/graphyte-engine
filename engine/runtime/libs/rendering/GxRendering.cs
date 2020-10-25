@@ -4,9 +4,9 @@ namespace Graphyte
 {
     public class GxRendering : ModuleProject
     {
-        public override void Configure(Target target, IContext configuration)
+        public override void Configure(Target target)
         {
-            base.Configure(target, configuration);
+            base.Configure(target);
 
             target.PublicIncludePaths.Add("engine/runtime/libs/rendering/public");
 

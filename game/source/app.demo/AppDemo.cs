@@ -4,9 +4,9 @@ namespace Graphyte
 {
     public class AppDemo : Project
     {
-        public override void Configure(Target target, IContext configuration)
+        public override void Configure(Target target)
         {
-            target.Type = TargetType.Application;
+            target.TargetType = TargetType.Application;
             target.PublicIncludePaths.Add("game/source/app.demo/public");
 
             target.AddPrivateDependency<GxBase>();

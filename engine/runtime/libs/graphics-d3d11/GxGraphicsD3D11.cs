@@ -4,9 +4,9 @@ namespace Graphyte
 {
     public class GxGraphicsD3D11 : ModuleProject
     {
-        public override void Configure(Target target, IContext configuration)
+        public override void Configure(Target target)
         {
-            base.Configure(target, configuration);
+            base.Configure(target);
 
             target.PrivateIncludePaths.Add("engine/runtime/libs/graphics-d3d11/public");
 

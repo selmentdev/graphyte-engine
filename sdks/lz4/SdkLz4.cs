@@ -4,9 +4,9 @@ namespace Graphyte
 {
     public class SdkLz4 : Project
     {
-        public override void Configure(Target target, IContext configuration)
+        public override void Configure(Target target)
         {
-            target.Type = TargetType.StaticLibrary;
+            target.TargetType = TargetType.StaticLibrary;
             target.PublicIncludePaths.Add("sdks/lz4/include");
         }
     }

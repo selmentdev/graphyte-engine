@@ -1,4 +1,16 @@
 using Graphyte.Build;
+using System;
+
+namespace Generate
+{
+    class Program
+    {
+        static int Main(string[] args)
+        {
+            return Graphyte.Build.Application.Main(args);
+        }
+    }
+}
 
 namespace Graphyte
 {
@@ -7,24 +19,6 @@ namespace Graphyte
         public MainSolution()
         {
             this.Name = "Graphyte";
-
-            this.AddTargetTuple(PlatformType.Windows, ArchitectureType.X64);
-            this.AddTargetTuple(PlatformType.Windows, ArchitectureType.Arm64);
-
-            this.AddTargetTuple(PlatformType.UWP, ArchitectureType.X64);
-            this.AddTargetTuple(PlatformType.UWP, ArchitectureType.Arm64);
-
-            this.AddTargetTuple(PlatformType.Linux, ArchitectureType.X64);
-            this.AddTargetTuple(PlatformType.Linux, ArchitectureType.Arm64);
-
-            this.AddBuildType(BuildType.Developer);
-            this.AddBuildType(BuildType.Testing);
-            this.AddBuildType(BuildType.Retail);
-
-            this.AddConfigurationType(ConfigurationType.Debug);
-            this.AddConfigurationType(ConfigurationType.Checked);
-            this.AddConfigurationType(ConfigurationType.Release);
-            this.AddConfigurationType(ConfigurationType.Profile);
 
             // Applications
             this.AddProject(new AppDemo());
@@ -63,16 +57,16 @@ namespace Graphyte
             this.AddProject(new GxAssetsShader());
         }
 
-        protected override void PreConfigureTarget(Target target, IContext context)
+        public override void PreConfigure(Target target)
         {
-            base.PreConfigureTarget(target, context);
+            base.PreConfigure(target);
         }
 
-        protected override void PostConfigureTarget(Target target, IContext context)
+        public override void PostConfigure(Target target)
         {
-            base.PostConfigureTarget(target, context);
+            base.PostConfigure(target);
 
-            if (context.Platform == PlatformType.UWP && target.Type.IsApplication())
+            if (target.TargetTuple.Platform == Platform.UWP && target.TargetType.IsApplication())
             {
                 // TODO: This should be added by platform matcher
                 target.PublicLibraries.Add("WindowsApp.lib");
@@ -82,15 +76,15 @@ namespace Graphyte
 
     public class ModuleProject : Project
     {
-        public override void Configure(Target target, IContext configuration)
+        public override void Configure(Target target)
         {
-            if (configuration.Build == BuildType.Retail)
+            if (target.TargetTuple.Configuration == Configuration.Release)
             {
-                target.Type = TargetType.StaticLibrary;
+                target.TargetType = TargetType.StaticLibrary;
             }
             else
             {
-                target.Type = TargetType.SharedLibrary;
+                target.TargetType = TargetType.SharedLibrary;
             }
         }
     }

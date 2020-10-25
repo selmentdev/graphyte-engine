@@ -4,9 +4,9 @@ namespace Graphyte
 {
     public class SdkCatch2 : Project
     {
-        public override void Configure(Target target, IContext configuration)
+        public override void Configure(Target target)
         {
-            target.Type = TargetType.HeaderLibrary;
+            target.TargetType = TargetType.HeaderLibrary;
             target.PublicIncludePaths.Add("sdks/catch2/include");
         }
     }
