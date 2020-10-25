@@ -1,4 +1,6 @@
 using Graphyte.Build;
+using Graphyte.Build.Platforms;
+using Graphyte.Build.Toolchains;
 
 namespace Graphyte
 {
@@ -14,13 +16,13 @@ namespace Graphyte
             target.AddPublicDependency<SdkFmt>();
             target.AddPrivateDependency<SdkLz4>();
 
-            if (target.TargetTuple.Platform != Platform.UWP)
+            if (target.TargetTuple.Platform != PlatformType.UniversalWindows)
             {
                 target.AddPrivateDependency<SdkMbedtls>();
             }
 
 
-            if (target.TargetTuple.Platform == Platform.Windows || target.TargetTuple.Platform == Platform.UWP)
+            if (target.TargetTuple.Platform == PlatformType.Windows || target.TargetTuple.Platform == PlatformType.UniversalWindows)
             {
                 target.PublicLibraries.Add("ntdll.lib");
                 target.PublicLibraries.Add("comctl32.lib");
@@ -38,12 +40,12 @@ namespace Graphyte
                 target.PublicLibraries.Add("user32.lib");
                 target.PublicLibraries.Add("Mincore.lib");
 
-                if (target.TargetTuple.Configuration != Configuration.Release)
+                if (target.TargetTuple.Configuration != ConfigurationType.Release)
                 {
                     target.PrivateLibraries.Add("dbghelp.lib");
                 }
             }
-            else if (target.TargetTuple.Platform == Platform.Linux)
+            else if (target.TargetTuple.Platform == PlatformType.Linux)
             {
                 target.PublicLibraries.Add("pthread");
                 target.PublicLibraries.Add("uuid");
@@ -52,11 +54,11 @@ namespace Graphyte
                 target.PublicLibraries.Add("unwind");
                 target.PublicLibraries.Add("unwind -generic");
 
-                if (target.TargetTuple.Architecture == Architecture.X64)
+                if (target.TargetTuple.Architecture == ArchitectureType.X64)
                 {
                     target.PublicLibraries.Add("unwind-x86_64");
                 }
-                else if (target.TargetTuple.Architecture == Architecture.ARM64)
+                else if (target.TargetTuple.Architecture == ArchitectureType.ARM64)
                 {
 
                     target.PublicLibraries.Add("unwind-aarch64");

@@ -1,4 +1,5 @@
 using Graphyte.Build;
+using Graphyte.Build.Platforms;
 
 namespace Graphyte
 {
@@ -15,11 +16,11 @@ namespace Graphyte
 
             target.AddPublicDependency<GxGraphicsD3D11>();
 
-            if (target.TargetTuple.Platform == Platform.UWP)
+            if (target.TargetTuple.Platform == PlatformType.UniversalWindows)
             {
                 target.PublicLibraries.Add("WindowsApp.lib");
             }
-            else if (target.TargetTuple.Platform == Platform.Windows)
+            else if (target.TargetTuple.Platform == PlatformType.Windows)
             {
                 target.PublicLibraries.AddRange(new[]
                 {

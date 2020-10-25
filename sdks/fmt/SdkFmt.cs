@@ -6,7 +6,7 @@ namespace Graphyte
     {
         public override void Configure(Target target)
         {
-            if (target.TargetTuple.Configuration == Configuration.Release)
+            if (target.TargetTuple.Configuration == ConfigurationType.Release)
             {
                 target.TargetType = TargetType.StaticLibrary;
             }

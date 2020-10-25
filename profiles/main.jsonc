@@ -1,30 +1,39 @@
 {
-    // Specifies project metadata
-    /*"ProductInfo": {
+    // Solution specific part
+    "ProductInfo": {
         "Name": "My Game",
-        "Company": "My Company"
-    },*/
-    // Sets up windows platform. Because platform is specified only once, do we need to pass "--platform=xxx" option?
-    // Note: architectures are enumerated by platform; no need to specify them
+        "Company": "My Company",
+        "Version": "1.0.0.0"
+    },
+    "EngineFeatures": {
+        "MemoryTracing": false,
+        "Profiling": false
+    },
+
+    // Platform settings
     "WindowsPlatformSettings": {
         "WindowsSdkVersion": "10.0.10240.0"
     },
-    // Use fastbuild generator
+    "UniversalWindowsPlatformSettings": {
+        "WindowsSdkVersion": "10.0.10240.0"
+    },
+
+    // Generator settings
     "FastbuildGeneratorSettings": {
         "CachePath": "path/to/cache/",
         "UnityBuild": true,
         "Distributed": true
     },
-    // When compiling in MSVC, use v142 toolchain
-    "VisualStudioToolchainSettings": {
+
+    // Toolchain settings
+    "MSVCToolchainSettings": {
         "Version": "v142",
         "AddressSanitizer": true
     },
-    // ...and because we specified two toolchains, GraphyteBuildTool must specify "--toolchain=xxx" option
-    /*"ClangToolchain": {
-        "Version": "10",
+    "ClangToolchainSettings": {
+        "Version": "10.0",
         "PgoOptimize": false,
-        "ProProfile": false,
+        "PgoProfile": false,
         "PgoDirectory": "",
         "PgoPrefix": "",
         "TimeTrace": true,
@@ -33,9 +42,4 @@
         "UndefinedBehaviorSanitizer": false,
         "MemorySanitizer": false
     },
-    // Engine features used to configure conditional compilation
-    "EngineFeatures": {
-        "MemoryTracing": false,
-        "Profiling": false
-    }*/
 }

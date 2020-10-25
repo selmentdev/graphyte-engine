@@ -1,4 +1,5 @@
 using Graphyte.Build;
+using Graphyte.Build.Platforms;
 using System;
 
 namespace Generate
@@ -14,6 +15,19 @@ namespace Generate
 
 namespace Graphyte
 {
+    public sealed class EngineFeatures : BaseProfileSection
+    {
+        public bool? MemoryTracing { get; set; }
+        public bool? Profiling { get; set; }
+    }
+
+    public sealed class ProductInfo : BaseProfileSection
+    {
+        public string Name { get; set; }
+        public string Company { get; set; }
+        public string Version { get; set; }
+    }
+
     public class MainSolution : Solution
     {
         public MainSolution()
@@ -66,7 +80,7 @@ namespace Graphyte
         {
             base.PostConfigure(target);
 
-            if (target.TargetTuple.Platform == Platform.UWP && target.TargetType.IsApplication())
+            if (target.TargetTuple.Platform == PlatformType.UniversalWindows && target.TargetType.IsApplication())
             {
                 // TODO: This should be added by platform matcher
                 target.PublicLibraries.Add("WindowsApp.lib");
@@ -78,7 +92,7 @@ namespace Graphyte
     {
         public override void Configure(Target target)
         {
-            if (target.TargetTuple.Configuration == Configuration.Release)
+            if (target.TargetTuple.Configuration == ConfigurationType.Release)
             {
                 target.TargetType = TargetType.StaticLibrary;
             }
