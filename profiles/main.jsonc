@@ -12,10 +12,10 @@
 
     // Platform settings
     "WindowsPlatformSettings": {
-        "WindowsSdkVersion": "10.0.10240.0"
+        "WindowsSdkVersion": "10.0.19041.0"
     },
     "UniversalWindowsPlatformSettings": {
-        "WindowsSdkVersion": "10.0.10240.0"
+        "WindowsSdkVersion": "10.0.19041.0"
     },
 
     // Generator settings
