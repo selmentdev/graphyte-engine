@@ -9,7 +9,7 @@ namespace Graphyte
             target.TargetType = TargetType.StaticLibrary;
             target.PublicIncludePaths.Add("sdks/mbedtls/include");
 
-            if (target.TargetTuple.Architecture == ArchitectureType.X64)
+            if (target.ArchitectureType == ArchitectureType.X64)
             {
                 target.PrivateDefines.Add("MBEDTLS_HAVE_SSE2=1");
             }

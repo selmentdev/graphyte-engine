@@ -16,36 +16,36 @@ namespace Graphyte
             target.AddPublicDependency<SdkFmt>();
             target.AddPrivateDependency<SdkLz4>();
 
-            if (target.TargetTuple.Platform != PlatformType.UniversalWindows)
+            if (target.PlatformType != PlatformType.UniversalWindows)
             {
                 target.AddPrivateDependency<SdkMbedtls>();
             }
 
 
-            if (target.TargetTuple.Platform == PlatformType.Windows || target.TargetTuple.Platform == PlatformType.UniversalWindows)
+            if (target.PlatformType == PlatformType.Windows || target.PlatformType == PlatformType.UniversalWindows)
             {
-                target.PublicLibraries.Add("ntdll.lib");
-                target.PublicLibraries.Add("comctl32.lib");
-                target.PublicLibraries.Add("iphlpapi.lib");
-                target.PublicLibraries.Add("ws2_32.lib");
-                target.PublicLibraries.Add("dwmapi.lib");
-                target.PublicLibraries.Add("xinput.lib");
-                target.PublicLibraries.Add("xaudio2.lib");
-                target.PublicLibraries.Add("advapi32.lib");
-                target.PublicLibraries.Add("gdi32.lib");
-                target.PublicLibraries.Add("shell32.lib");
-                target.PublicLibraries.Add("ole32.lib");
-                target.PublicLibraries.Add("Faultrep.lib");
-                target.PublicLibraries.Add("Bcrypt.lib");
-                target.PublicLibraries.Add("user32.lib");
-                target.PublicLibraries.Add("Mincore.lib");
+                target.PrivateLibraries.Add("ntdll.lib");
+                target.PrivateLibraries.Add("comctl32.lib");
+                target.PrivateLibraries.Add("iphlpapi.lib");
+                target.PrivateLibraries.Add("ws2_32.lib");
+                target.PrivateLibraries.Add("dwmapi.lib");
+                target.PrivateLibraries.Add("xinput.lib");
+                target.PrivateLibraries.Add("xaudio2.lib");
+                target.PrivateLibraries.Add("advapi32.lib");
+                target.PrivateLibraries.Add("gdi32.lib");
+                target.PrivateLibraries.Add("shell32.lib");
+                target.PrivateLibraries.Add("ole32.lib");
+                target.PrivateLibraries.Add("Faultrep.lib");
+                target.PrivateLibraries.Add("Bcrypt.lib");
+                target.PrivateLibraries.Add("user32.lib");
+                target.PrivateLibraries.Add("Mincore.lib");
 
-                if (target.TargetTuple.Configuration != ConfigurationType.Release)
+                if (target.ConfigurationType != ConfigurationType.Release)
                 {
                     target.PrivateLibraries.Add("dbghelp.lib");
                 }
             }
-            else if (target.TargetTuple.Platform == PlatformType.Linux)
+            else if (target.PlatformType == PlatformType.Linux)
             {
                 target.PublicLibraries.Add("pthread");
                 target.PublicLibraries.Add("uuid");
@@ -54,11 +54,11 @@ namespace Graphyte
                 target.PublicLibraries.Add("unwind");
                 target.PublicLibraries.Add("unwind -generic");
 
-                if (target.TargetTuple.Architecture == ArchitectureType.X64)
+                if (target.ArchitectureType == ArchitectureType.X64)
                 {
                     target.PublicLibraries.Add("unwind-x86_64");
                 }
-                else if (target.TargetTuple.Architecture == ArchitectureType.ARM64)
+                else if (target.ArchitectureType == ArchitectureType.ARM64)
                 {
 
                     target.PublicLibraries.Add("unwind-aarch64");

@@ -80,7 +80,7 @@ namespace Graphyte
         {
             base.PostConfigure(target);
 
-            if (target.TargetTuple.Platform == PlatformType.UniversalWindows && target.TargetType.IsApplication())
+            if (target.PlatformType == PlatformType.UniversalWindows && target.TargetType.IsApplication())
             {
                 // TODO: This should be added by platform matcher
                 target.PublicLibraries.Add("WindowsApp.lib");
@@ -92,14 +92,9 @@ namespace Graphyte
     {
         public override void Configure(Target target)
         {
-            if (target.TargetTuple.Configuration == ConfigurationType.Release)
-            {
-                target.TargetType = TargetType.StaticLibrary;
-            }
-            else
-            {
-                target.TargetType = TargetType.SharedLibrary;
-            }
+            target.TargetType = target.ConfigurationType == ConfigurationType.Release
+                ? TargetType.StaticLibrary
+                : TargetType.SharedLibrary;
         }
     }
 }

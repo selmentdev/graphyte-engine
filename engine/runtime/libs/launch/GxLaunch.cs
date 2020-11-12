@@ -16,11 +16,11 @@ namespace Graphyte
 
             target.AddPublicDependency<GxGraphicsD3D11>();
 
-            if (target.TargetTuple.Platform == PlatformType.UniversalWindows)
+            if (target.PlatformType == PlatformType.UniversalWindows)
             {
                 target.PublicLibraries.Add("WindowsApp.lib");
             }
-            else if (target.TargetTuple.Platform == PlatformType.Windows)
+            else if (target.PlatformType == PlatformType.Windows)
             {
                 target.PublicLibraries.AddRange(new[]
                 {

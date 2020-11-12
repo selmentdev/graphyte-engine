@@ -6,14 +6,9 @@ namespace Graphyte
     {
         public override void Configure(Target target)
         {
-            if (target.TargetTuple.Configuration == ConfigurationType.Release)
-            {
-                target.TargetType = TargetType.StaticLibrary;
-            }
-            else
-            {
-                target.TargetType = TargetType.SharedLibrary;
-            }
+            target.TargetType = target.ConfigurationType == ConfigurationType.Release
+                ? TargetType.StaticLibrary
+                : TargetType.SharedLibrary;
 
             target.PublicIncludePaths.Add("sdks/fmt/include");
             target.PublicDefines.Add("FMT_EXCEPTIONS=1");

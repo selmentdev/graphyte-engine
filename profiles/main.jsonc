@@ -26,8 +26,8 @@
     },
 
     // Toolchain settings
-    "MSVCToolchainSettings": {
-        "Version": "v142",
+    "MsvcToolchainSettings": {
+        "Toolkit": "v142",
         "AddressSanitizer": true
     },
     "ClangToolchainSettings": {
@@ -41,5 +41,5 @@
         "ThreadSanitizer": false,
         "UndefinedBehaviorSanitizer": false,
         "MemorySanitizer": false
-    },
+    }
 }
