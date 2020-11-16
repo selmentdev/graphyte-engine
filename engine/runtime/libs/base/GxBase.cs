@@ -52,7 +52,7 @@ namespace Graphyte
                 target.PublicLibraries.Add("dl");
                 target.PublicLibraries.Add("SDL2");
                 target.PublicLibraries.Add("unwind");
-                target.PublicLibraries.Add("unwind -generic");
+                target.PublicLibraries.Add("unwind-generic");
 
                 if (target.ArchitectureType == ArchitectureType.X64)
                 {
