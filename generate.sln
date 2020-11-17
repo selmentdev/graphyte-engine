@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphyte.Build", "..\Graphyte.Build\Graphyte.Build\Graphyte.Build.csproj", "{70A508AD-2D8A-4C77-8862-50F788F4FBEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphyte.Build", "..\Graphyte.Build\Graphyte.Build\Graphyte.Build.csproj", "{70A508AD-2D8A-4C77-8862-50F788F4FBEA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphyte.Build.Tests", "..\Graphyte.Build\Graphyte.Build.Tests\Graphyte.Build.Tests.csproj", "{B2C4BBE7-F81D-4E65-8F66-A442A995DB01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphyte.Build.Tests", "..\Graphyte.Build\Graphyte.Build.Tests\Graphyte.Build.Tests.csproj", "{B2C4BBE7-F81D-4E65-8F66-A442A995DB01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generate", "generate\Generate.csproj", "{0AE1E2A1-A1D1-45F0-B2C7-1AAA54708173}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generate", "generate\Generate.csproj", "{0AE1E2A1-A1D1-45F0-B2C7-1AAA54708173}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,9 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{70A508AD-2D8A-4C77-8862-50F788F4FBEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,5 +55,11 @@ Global
 		{0AE1E2A1-A1D1-45F0-B2C7-1AAA54708173}.Release|x64.Build.0 = Release|Any CPU
 		{0AE1E2A1-A1D1-45F0-B2C7-1AAA54708173}.Release|x86.ActiveCfg = Release|Any CPU
 		{0AE1E2A1-A1D1-45F0-B2C7-1AAA54708173}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {88938EA1-A115-498C-BDB5-FB1112F5FB1D}
 	EndGlobalSection
 EndGlobal
