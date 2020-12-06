@@ -54,3 +54,4 @@ Makefile
 build/
 build-x/
 tmp/
+.generated/

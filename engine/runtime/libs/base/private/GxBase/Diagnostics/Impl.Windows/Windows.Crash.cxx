@@ -88,31 +88,31 @@ namespace Graphyte::Diagnostics
                 GX_LOG_ERROR(LogPlatform, "Context:\n");
 
                 LogProcessorContext(*exception->ContextRecord);
+
+
+                //
+                // Log stack trace.
+                //
+
+
+                GX_LOG_ERROR(LogPlatform, "Stack Trace:\n");
+
+                std::vector<StackFrame> trace{};
+
+                if (auto const status = GetStackTrace(trace, *exception->ContextRecord); status == Status::Success)
+                {
+                    for (size_t i = 0; i < trace.size(); ++i)
+                    {
+                        GX_LOG_ERROR(LogPlatform, "    [{:4}] {}\n",
+                            i,
+                            ToString(trace[i], StackFrameFormat::Extended));
+                    }
+                }
+                else
+                {
+                    GX_LOG_ERROR(LogPlatform, "-- no stack trace available --\n");
+                }
             }
-        }
-
-
-        //
-        // Log stack trace.
-        //
-
-
-        GX_LOG_ERROR(LogPlatform, "Stack Trace:\n");
-
-        std::vector<StackFrame> trace{};
-
-        if (auto const status = GetStackTrace(trace, *exception->ContextRecord); status == Status::Success)
-        {
-            for (size_t i = 0; i < trace.size(); ++i)
-            {
-                GX_LOG_ERROR(LogPlatform, "    [{:4}] {}\n",
-                    i,
-                    ToString(trace[i], StackFrameFormat::Extended));
-            }
-        }
-        else
-        {
-            GX_LOG_ERROR(LogPlatform, "-- no stack trace available --\n");
         }
 
 

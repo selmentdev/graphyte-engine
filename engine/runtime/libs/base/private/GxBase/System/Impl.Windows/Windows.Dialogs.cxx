@@ -51,8 +51,11 @@ namespace Graphyte::System::Impl
         {
             hr = item->GetDisplayName(SIGDN_FILESYSPATH, &wpath);
 
-            out_path = Impl::NarrowString(wpath);
-            CoTaskMemFree(wpath);
+            if (SUCCEEDED(hr))
+            {
+                out_path = Impl::NarrowString(wpath);
+                CoTaskMemFree(wpath);
+            }
         }
         else
         {
@@ -91,9 +94,16 @@ namespace Graphyte::System::Impl
             if (SUCCEEDED(hr))
             {
                 hr = item->GetDisplayName(SIGDN_FILESYSPATH, &wpath);
-                out_paths.emplace_back(Impl::NarrowString(wpath));
+                if (SUCCEEDED(hr))
+                {
+                    out_paths.emplace_back(Impl::NarrowString(wpath));
 
-                CoTaskMemFree(wpath);
+                    CoTaskMemFree(wpath);
+                }
+                else
+                {
+                    break;
+                }
             }
             else
             {

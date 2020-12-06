@@ -289,70 +289,37 @@ namespace Graphyte
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr int BitCountLeadingZeros(T value) noexcept
     {
-        constexpr int digits = std::numeric_limits<T>::digits;
-
-        if (value == 0)
-        {
-            return digits;
-        }
-
-        if constexpr (sizeof(T) <= sizeof(unsigned int))
-        {
-            return __builtin_clz(value) - (std::numeric_limits<unsigned int>::digits - digits);
-        }
-        else
-        {
-            return __builtin_clzll(value) - (std::numeric_limits<unsigned long long>::digits - digits);
-        }
+        return std::countl_zero(value);
     }
 
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr int BitCountTrailingZeros(T value) noexcept
     {
-        if (value == 0)
-        {
-            return std::numeric_limits<T>::digits;
-        }
-
-        if constexpr (sizeof(T) <= sizeof(unsigned int))
-        {
-            return __builtin_ctz(value);
-        }
-        else
-        {
-            return __builtin_ctzll(value);
-        }
+        return std::countr_zero(value);
     }
 
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr int BitCountLeadingOnes(T value) noexcept
     {
-        return BitCountLeadingZeros(static_cast<T>(~value));
+        return std::countl_one(value);
     }
 
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr int BitCountTrailingOnes(T value) noexcept
     {
-        return BitCountTrailingZeros(static_cast<T>(~value));
+        return std::countr_one(value);
     }
 
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr int BitCount(T value) noexcept
     {
-        if constexpr (sizeof(T) <= sizeof(unsigned int))
-        {
-            return __builtin_popcount(value);
-        }
-        else
-        {
-            return __builtin_popcountll(value);
-        }
+        return std::popcount(value);
     }
 
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>
     [[nodiscard]] constexpr size_t BitWidth(T value) noexcept
     {
-        return std::numeric_limits<T>::digits - BitCountLeadingZeros(value);
+        return std::bit_width(value);
     }
 
     template <typename T, std::enable_if_t<IsStandardUnsignedType<T>, int> = 0>

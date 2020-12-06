@@ -38,12 +38,14 @@ namespace Graphyte::Impl
         if (year < 1 || year > 9999 || month < 1 || month > 12 || day < 1)
         {
             status = Status::InvalidArgument;
+            return 0;
         }
 
         auto const& days = IsLeapYear(year) ? g_DaysToMonth366 : g_DaysToMonth365;
         if (day > days[month] - days[month - 1])
         {
             status = Status::InvalidArgument;
+            return 0;
         }
 
         status = Status::Success;

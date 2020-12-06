@@ -217,7 +217,7 @@ namespace Graphyte::Diagnostics
         HRESULT hr) noexcept
     {
 #define CHECK_HRESULT(x) \
-    case x: \
+    case static_cast<HRESULT>(x): \
         return #x
 
 #define CHECK_WIN32(x) \
@@ -226,7 +226,7 @@ namespace Graphyte::Diagnostics
 
 #define CHECK_WIN32_HRESULT(x) \
     case HRESULT_FROM_WIN32(x): \
-    case x: \
+    case static_cast<HRESULT>(x): \
         return #x
 
 

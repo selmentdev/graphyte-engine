@@ -34,11 +34,9 @@ namespace Graphyte
         {
             this.Name = "Graphyte";
 
-            // Applications
-            this.AddProject(new AppDemo());
-
             // Modules
             this.AddProject(new GxBase());
+#if true
             this.AddProject(new GxGeometry());
             this.AddProject(new GxGraphics());
             this.AddProject(new GxGraphicsD3D11());
@@ -47,7 +45,7 @@ namespace Graphyte
             this.AddProject(new GxGraphicsVulkan());
             this.AddProject(new GxLaunch());
             this.AddProject(new GxRendering());
-
+#endif
             // Sdks
             this.AddProject(new SdkCatch2());
             this.AddProject(new SdkFmt());
@@ -56,6 +54,7 @@ namespace Graphyte
             this.AddProject(new SdkSqlite());
             this.AddProject(new SdkVulkanVma());
 
+#if true
             // Tests
             this.AddProject(new GxTestExecutor());
             this.AddProject(new TestGxBase());
@@ -69,6 +68,10 @@ namespace Graphyte
             this.AddProject(new GxAssetsBase());
             this.AddProject(new GxAssetsMesh());
             this.AddProject(new GxAssetsShader());
+
+            // Applications
+            this.AddProject(new AppDemo());
+#endif
         }
 
         public override void PreConfigure(Target target)

@@ -20,7 +20,7 @@
 
     // Generator settings
     "FastbuildGeneratorSettings": {
-        "CachePath": "path/to/cache/",
+        "CachePath": "d:/fbuild/cache",
         "UnityBuild": true,
         "Distributed": true
     },
@@ -32,6 +32,7 @@
     },
     "ClangToolchainSettings": {
         "Version": "10.0",
+        "Location": "D:/Program Files/LLVM",
         "PgoOptimize": false,
         "PgoProfile": false,
         "PgoDirectory": "",
@@ -43,3 +44,5 @@
         "MemorySanitizer": false
     }
 }
+
+
