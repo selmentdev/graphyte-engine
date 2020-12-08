@@ -2,6 +2,7 @@ using Graphyte.Build;
 
 namespace Graphyte
 {
+    [ProvideSourceLocation]
     public class GxGraphicsD3D11 : ModuleProject
     {
         public override void Configure(Target target)

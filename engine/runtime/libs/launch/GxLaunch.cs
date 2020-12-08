@@ -3,6 +3,7 @@ using Graphyte.Build.Platforms;
 
 namespace Graphyte
 {
+    [ProvideSourceLocation]
     public class GxLaunch : Project
     {
         public override void Configure(Target target)

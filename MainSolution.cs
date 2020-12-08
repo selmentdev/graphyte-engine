@@ -1,6 +1,4 @@
 using Graphyte.Build;
-using Graphyte.Build.Platforms;
-using System;
 
 namespace Generate
 {

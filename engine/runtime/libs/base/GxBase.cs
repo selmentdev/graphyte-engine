@@ -1,9 +1,8 @@
 using Graphyte.Build;
-using Graphyte.Build.Platforms;
-using Graphyte.Build.Toolchains;
 
 namespace Graphyte
 {
+    [ProvideSourceLocation]
     public class GxBase : ModuleProject
     {
         public override void Configure(Target target)
