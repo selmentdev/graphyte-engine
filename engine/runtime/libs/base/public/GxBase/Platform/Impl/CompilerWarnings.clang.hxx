@@ -5,6 +5,7 @@
 #pragma clang diagnostic error "-Wextra"
 
 #pragma clang diagnostic ignored "-Wc++98-compat"
+#pragma clang diagnostic ignored "-W#pragma-messages"
 #pragma clang diagnostic ignored "-Wc++98-compat-pedantic"
 #pragma clang diagnostic ignored "-Wgnu-anonymous-struct"
 #pragma clang diagnostic ignored "-Wnon-virtual-dtor"

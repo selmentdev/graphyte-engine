@@ -1,20 +1,29 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class SdkFmt : Project
+    [ModuleRules]
+    public class SdkFmt
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public SdkFmt(TargetRules target)
+            : base(target)
         {
-            target.TargetType = target.ConfigurationType == ConfigurationType.Release
-                ? TargetType.StaticLibrary
-                : TargetType.SharedLibrary;
+            this.Kind = ModuleKind.ThirdParty;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.PublicIncludePaths.Add("sdks/fmt/include");
-            target.PublicDefines.Add("FMT_EXCEPTIONS=1");
-            target.PublicDefines.Add("FMT_EXPORT=1");
-            target.PublicDefines.Add("_CRT_SECURE_NO_WARNINGS=0");
+            this.Type = target.LinkType == TargetLinkType.Monolithic
+                ? ModuleType.StaticLibrary
+                : ModuleType.SharedLibrary;
+
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "include"));
+
+            this.PublicDefines.AddRange(new[] {
+                "FMT_EXCEPTIONS=1",
+                "FMT_EXPORT=1",
+                "_CRT_SECURE_NO_WARNINGS=0",
+            });
         }
     }
 }

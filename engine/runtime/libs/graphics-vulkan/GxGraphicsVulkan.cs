@@ -1,17 +1,22 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class GxGraphicsVulkan : ModuleProject
+    [ModuleRules]
+    public class GxGraphicsVulkan
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public GxGraphicsVulkan(TargetRules target)
+            : base(target)
         {
-            base.Configure(target);
+            this.Type = ModuleType.SharedLibrary;
+            this.Kind = ModuleKind.Runtime;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.PrivateIncludePaths.Add("engine/runtime/libs/graphics-vulkan/public");
+            this.PrivateIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "public"));
 
-            target.AddPrivateDependency<GxGraphics>();
+            this.PrivateDependencies.Add(typeof(GxGraphics));
         }
     }
 }

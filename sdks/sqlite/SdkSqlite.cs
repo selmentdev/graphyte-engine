@@ -1,14 +1,20 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class SdkSqlite : Project
+    [ModuleRules]
+    public  class SdkSqlite
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public SdkSqlite(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.StaticLibrary;
-            target.PublicIncludePaths.Add("sdks/sqlite/include");
+            this.Type = ModuleType.StaticLibrary;
+            this.Kind = ModuleKind.ThirdParty;
+            this.Language = ModuleLanguage.C;
+
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "include"));
         }
     }
 }

@@ -1,17 +1,23 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class DevLogFix : Project
+    [ModuleRules]
+    public class DevLogFix
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public DevLogFix(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.Application;
+            this.Type = ModuleType.Application;
+            this.Kind = ModuleKind.Developer;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.AddPrivateDependency<GxLaunch>();
-            target.AddPrivateDependency<GxAssetsMesh>();
-            target.AddPrivateDependency<GxAssetsShader>();
+            this.PrivateDependencies.AddRange(new[] {
+                typeof(GxLaunch),
+                typeof(GxAssetsMesh),
+                typeof(GxAssetsShader),
+            });
         }
     }
 }

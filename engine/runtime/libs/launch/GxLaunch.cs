@@ -1,29 +1,36 @@
-using Graphyte.Build;
-using Graphyte.Build.Platforms;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class GxLaunch : Project
+    [ModuleRules]
+    public class GxLaunch
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public GxLaunch(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.HeaderLibrary;
-            target.PublicIncludePaths.Add("engine/runtime/libs/launch/public");
+            this.Type = ModuleType.ExternLibrary;
+            this.Kind = ModuleKind.Runtime;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.AddPublicDependency<GxBase>();
-            target.AddPublicDependency<GxGeometry>();
-            target.AddPublicDependency<GxGraphics>();
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "public"));
 
-            target.AddPublicDependency<GxGraphicsD3D11>();
-
-            if (target.PlatformType == PlatformType.UniversalWindows)
+            this.PublicDependencies.AddRange(new[]
             {
-                target.PublicLibraries.Add("WindowsApp.lib");
+                typeof(GxBase),
+                typeof(GxGeometry),
+                typeof(GxGraphics),
+                typeof(GxGraphicsD3D11),
+            });
+
+            if (target.Descriptor.Platform == TargetPlatform.UniversalWindows)
+            {
+                this.PublicLibraries.Add("WindowsApp.lib");
             }
-            else if (target.PlatformType == PlatformType.Windows)
+            else if (target.Descriptor.Platform ==TargetPlatform.Windows)
             {
-                target.PublicLibraries.AddRange(new[]
+                this.PublicLibraries.AddRange(new[]
                 {
                     "Mincore.lib",
                     "user32.lib",

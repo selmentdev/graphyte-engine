@@ -1,14 +1,20 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class SdkCatch2 : Project
+    [ModuleRules]
+    public class SdkCatch2
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public SdkCatch2(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.HeaderLibrary;
-            target.PublicIncludePaths.Add("sdks/catch2/include");
+            this.Type = ModuleType.ExternLibrary;
+            this.Kind = ModuleKind.ThirdParty;
+            this.Language = ModuleLanguage.CPlusPlus;
+
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "include"));
         }
     }
 }

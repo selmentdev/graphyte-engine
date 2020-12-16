@@ -1,25 +1,22 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class GxGraphicsGLCore : ModuleProject
+    [ModuleRules]
+    public class GxGraphicsGLCore
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public GxGraphicsGLCore(TargetRules target)
+            : base(target)
         {
-            base.Configure(target);
+            this.Type = ModuleType.SharedLibrary;
+            this.Kind = ModuleKind.Runtime;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.PrivateIncludePaths.Add("engine/runtime/libs/graphics-opengl/public");
+            this.PrivateIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "public"));
 
-            target.AddPrivateDependency<GxGraphics>();
-
-            target.PrivateLibraries.AddRange(new[]
-            {
-                "dxgi.lib",
-                "d3d11.lib",
-                "dxguid.lib",
-                "User32.lib",
-            });
+            this.PrivateDependencies.Add(typeof(GxGraphics));
         }
     }
 }

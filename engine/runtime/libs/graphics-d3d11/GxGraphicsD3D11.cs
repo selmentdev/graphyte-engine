@@ -1,24 +1,28 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class GxGraphicsD3D11 : ModuleProject
+    [ModuleRules]
+    public class GxGraphicsD3D11
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public GxGraphicsD3D11(TargetRules target)
+            : base(target)
         {
-            base.Configure(target);
+            this.Kind = ModuleKind.Runtime;
+            this.Type = ModuleType.SharedLibrary;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.PrivateIncludePaths.Add("engine/runtime/libs/graphics-d3d11/public");
+            this.PrivateIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "public"));
 
-            target.AddPrivateDependency<GxGraphics>();
+            this.PrivateDependencies.Add(typeof(GxGraphics));
 
-            target.PrivateLibraries.AddRange(new[]
-            {
+            this.PrivateLibraries.AddRange(new[] {
                 "dxgi.lib",
                 "d3d11.lib",
                 "dxguid.lib",
-                "User32.lib",
+                "user32.lib",
             });
         }
     }

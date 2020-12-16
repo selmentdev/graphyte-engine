@@ -1,16 +1,23 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class GxTestExecutor : Project
+    [ModuleRules]
+    public class GxTestExecutor
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public GxTestExecutor(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.HeaderLibrary;
+            this.Type = ModuleType.ExternLibrary;
+            this.Kind = ModuleKind.Developer;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.AddPublicDependency<GxLaunch>();
-            target.AddPublicDependency<SdkCatch2>();
+            this.PublicDependencies.AddRange(new[]
+            {
+                typeof(GxLaunch),
+                typeof(SdkCatch2),
+            });
         }
     }
 }

@@ -1,15 +1,20 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class SdkVulkanVma : Project
+    [ModuleRules]
+    public class SdkVulkanVma
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public SdkVulkanVma(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.StaticLibrary;
+            this.Type = ModuleType.StaticLibrary;
+            this.Kind = ModuleKind.ThirdParty;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.PublicIncludePaths.Add("sdks/vulkanvma/include");
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "include"));
         }
     }
 }

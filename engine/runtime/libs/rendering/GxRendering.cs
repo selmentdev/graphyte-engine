@@ -1,17 +1,22 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class GxRendering : ModuleProject
+    [ModuleRules]
+    public class GxRendering
+        : GraphyteModule
     {
-        public override void Configure(Target target)
+        public GxRendering(TargetRules target)
+            : base(target)
         {
-            base.Configure(target);
+            this.Kind = ModuleKind.Runtime;
+            this.Type = ModuleType.SharedLibrary;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.PublicIncludePaths.Add("engine/runtime/libs/rendering/public");
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "public"));
 
-            target.AddPublicDependency<GxGraphics>();
+            this.PublicDependencies.Add(typeof(GxGraphics));
         }
     }
 }

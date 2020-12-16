@@ -1,17 +1,22 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class GxGeometry : ModuleProject
+    [ModuleRules]
+    public class GxGeometry
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public GxGeometry(TargetRules target)
+            : base(target)
         {
-            base.Configure(target);
+            this.Type = ModuleType.SharedLibrary;
+            this.Kind = ModuleKind.Runtime;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.PublicIncludePaths.Add("engine/runtime/libs/geometry/public");
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "public"));
 
-            target.AddPublicDependency<GxBase>();
+            this.PublicDependencies.Add(typeof(GxBase));
         }
     }
 }

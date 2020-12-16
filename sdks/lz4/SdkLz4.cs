@@ -1,14 +1,20 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class SdkLz4 : Project
+    [ModuleRules]
+    public class SdkLz4
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public SdkLz4(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.StaticLibrary;
-            target.PublicIncludePaths.Add("sdks/lz4/include");
+            this.Type = ModuleType.StaticLibrary;
+            this.Language = ModuleLanguage.C;
+            this.Kind = ModuleKind.ThirdParty;
+
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "include"));
         }
     }
 }

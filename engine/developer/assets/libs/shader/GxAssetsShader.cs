@@ -1,16 +1,22 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class GxAssetsShader : Project
+    [ModuleRules]
+    public class GxAssetsShader
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public GxAssetsShader(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.SharedLibrary;
-            target.PublicIncludePaths.Add("engine/developer/assets/libs/shader");
+            this.Kind = ModuleKind.Developer;
+            this.Type = ModuleType.SharedLibrary;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.AddPublicDependency<GxAssetsBase>();
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "public"));
+
+            this.PublicDependencies.Add(typeof(GxAssetsBase));
         }
     }
 }

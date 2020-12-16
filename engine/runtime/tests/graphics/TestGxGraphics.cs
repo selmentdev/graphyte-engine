@@ -1,16 +1,23 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class TestGxGraphics : Project
+    [ModuleRules]
+    public class TestGxGraphics
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public TestGxGraphics(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.Application;
+            this.Type = ModuleType.Application;
+            this.Kind = ModuleKind.Test;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.AddPrivateDependency<GxBase>();
-            target.AddPrivateDependency<GxTestExecutor>();
+            this.PrivateDependencies.AddRange(new[]
+            {
+                typeof(GxBase),
+                typeof(GxTestExecutor),
+            });
         }
     }
 }

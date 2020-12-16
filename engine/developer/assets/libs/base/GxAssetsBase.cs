@@ -1,16 +1,22 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class GxAssetsBase : Project
+    [ModuleRules]
+    public class GxAssetsBase
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public GxAssetsBase(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.SharedLibrary;
-            target.PublicIncludePaths.Add("engine/developer/assets/libs/base");
+            this.Kind = ModuleKind.Developer;
+            this.Type = ModuleType.SharedLibrary;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.AddPublicDependency<GxBase>();
+            this.PrivateDependencies.Add(typeof(GxBase));
+
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "public"));
         }
     }
 }

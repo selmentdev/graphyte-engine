@@ -1,20 +1,30 @@
-using Graphyte.Build;
+using Graphyte.Build.Framework;
+using System.IO;
 
 namespace Graphyte
 {
-    [ProvideSourceLocation]
-    public class AppDemo : Project
+    [ModuleRules]
+    public class DemoApp
+        : ModuleRules
     {
-        public override void Configure(Target target)
+        public DemoApp(TargetRules target)
+            : base(target)
         {
-            target.TargetType = TargetType.Application;
-            target.PublicIncludePaths.Add("game/source/app.demo/public");
+            this.Type = ModuleType.Application;
+            this.Kind = ModuleKind.Runtime;
+            this.Language = ModuleLanguage.CPlusPlus;
 
-            target.AddPrivateDependency<GxBase>();
-            target.AddPrivateDependency<GxGraphics>();
-            target.AddPrivateDependency<GxLaunch>();
-            target.AddPrivateDependency<GxRendering>();
-            target.AddPrivateDependency<GxGeometry>();
+            this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "public"));
+
+            this.PrivateDependencies.AddRange(
+                new[]
+                {
+                    typeof(GxBase),
+                    typeof(GxGraphics),
+                    typeof(GxLaunch),
+                    typeof(GxRendering),
+                    typeof(GxGeometry)
+                });
         }
     }
 }

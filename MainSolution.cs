@@ -1,6 +1,9 @@
-using Graphyte.Build;
+using System;
+using Graphyte.Build.Framework;
 
-namespace Generate
+[assembly: Graphyte.Build.Core.TypesProvider]
+
+namespace Graphyte
 {
     class Program
     {
@@ -13,89 +16,76 @@ namespace Generate
 
 namespace Graphyte
 {
-    public sealed class EngineFeatures : BaseProfileSection
+    [TargetRules]
+    public class GameTarget
+        : TargetRules
     {
-        public bool? MemoryTracing { get; set; }
-        public bool? Profiling { get; set; }
+        public GameTarget(TargetDescriptor descriptor, TargetContext context)
+            : base(descriptor, context)
+        {
+            this.Modules.Add(typeof(DemoApp));
+            this.Type = TargetType.Game;
+            this.LinkType = TargetLinkType.Modular;
+        }
     }
 
-    public sealed class ProductInfo : BaseProfileSection
+    [TargetRules]
+    public class EditorTarget
+        : TargetRules
     {
-        public string Name { get; set; }
-        public string Company { get; set; }
-        public string Version { get; set; }
+        public EditorTarget(TargetDescriptor descriptor, TargetContext context)
+            : base(descriptor, context)
+        {
+            this.Modules.Add(typeof(DemoApp));
+            this.Type = TargetType.Editor;
+            this.LinkType = TargetLinkType.Modular;
+        }
     }
 
-    public class MainSolution : Solution
+    public abstract class GraphyteModule
+        : ModuleRules
     {
-        public MainSolution()
+        protected GraphyteModule(TargetRules target)
+            : base(target)
         {
-            this.Name = "Graphyte";
+            // BUG:
+            //      This should be resolved only when default is set, only when applicable.
+            //      All modules should have this logic, not only engine modules.
+            //
+            // TODO:
+            //      Move this code to Target.
 
-            // Modules
-            this.AddProject(new GxBase());
-#if true
-            this.AddProject(new GxGeometry());
-            this.AddProject(new GxGraphics());
-            this.AddProject(new GxGraphicsD3D11());
-            this.AddProject(new GxGraphicsD3D12());
-            this.AddProject(new GxGraphicsGLCore());
-            this.AddProject(new GxGraphicsVulkan());
-            this.AddProject(new GxLaunch());
-            this.AddProject(new GxRendering());
-#endif
-            // Sdks
-            this.AddProject(new SdkCatch2());
-            this.AddProject(new SdkFmt());
-            this.AddProject(new SdkLz4());
-            this.AddProject(new SdkMbedtls());
-            this.AddProject(new SdkSqlite());
-            this.AddProject(new SdkVulkanVma());
+            this.Type = (target.LinkType == TargetLinkType.Monolithic)
+                ? ModuleType.StaticLibrary
+                : ModuleType.SharedLibrary;
 
-#if true
-            // Tests
-            this.AddProject(new GxTestExecutor());
-            this.AddProject(new TestGxBase());
-            this.AddProject(new TestGxEntities());
-            this.AddProject(new TestGxGraphics());
-            this.AddProject(new TestGxMaths());
+            this.PrivateDefines.Add("GX_BUILD_TYPE_DEVELOPER=1");
 
-            // Developer tools
-            this.AddProject(new DevAssetsCompiler());
-            this.AddProject(new DevLogFix());
-            this.AddProject(new GxAssetsBase());
-            this.AddProject(new GxAssetsMesh());
-            this.AddProject(new GxAssetsShader());
-
-            // Applications
-            this.AddProject(new AppDemo());
-#endif
-        }
-
-        public override void PreConfigure(Target target)
-        {
-            base.PreConfigure(target);
-        }
-
-        public override void PostConfigure(Target target)
-        {
-            base.PostConfigure(target);
-
-            if (target.PlatformType == PlatformType.UniversalWindows && target.TargetType.IsApplication())
+            switch (target.Descriptor.Configuration)
             {
-                // TODO: This should be added by platform matcher
-                target.PublicLibraries.Add("WindowsApp.lib");
-            }
-        }
-    }
+                case TargetConfiguration.Debug:
+                    this.PublicDefines.Add("GX_CONFIG_DEBUG=1");
+                    break;
 
-    public class ModuleProject : Project
-    {
-        public override void Configure(Target target)
-        {
-            target.TargetType = target.ConfigurationType == ConfigurationType.Release
-                ? TargetType.StaticLibrary
-                : TargetType.SharedLibrary;
+                case TargetConfiguration.DebugGame:
+                    this.PublicDefines.Add("GX_CONFIG_DEBUG_GAME=1");
+                    break;
+
+                case TargetConfiguration.Development:
+                    this.PublicDefines.Add("GX_CONFIG_DEVELOPMENT=1");
+                    break;
+
+                case TargetConfiguration.Release:
+                    this.PublicDefines.Add("GX_CONFIG_RELEASE=1");
+                    break;
+
+                case TargetConfiguration.Testing:
+                    this.PublicDefines.Add("GX_CONFIG_TESTING=1");
+                    break;
+
+                default:
+                    throw new NotSupportedException();
+            }
         }
     }
 }
