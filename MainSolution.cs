@@ -1,7 +1,7 @@
+using Neobyte.Build.Framework;
 using System;
-using Graphyte.Build.Framework;
 
-[assembly: Graphyte.Build.Core.TypesProvider]
+[assembly: Neobyte.Build.Core.TypesProvider]
 
 namespace Graphyte
 {
@@ -9,7 +9,7 @@ namespace Graphyte
     {
         static int Main(string[] args)
         {
-            return Graphyte.Build.Application.Main(args);
+            return Neobyte.Build.Application.Main(args);
         }
     }
 }
@@ -17,6 +17,10 @@ namespace Graphyte
 namespace Graphyte
 {
     [TargetRules]
+    [TargetRulesFlavor(TargetFlavor.Client)]
+    [TargetRulesFlavor(TargetFlavor.Server)]
+    [TargetRulesFlavor(TargetFlavor.Editor)]
+    [TargetRulesFlavor(TargetFlavor.Game)]
     public class GameTarget
         : TargetRules
     {

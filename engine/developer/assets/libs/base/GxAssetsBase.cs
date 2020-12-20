@@ -1,4 +1,4 @@
-using Graphyte.Build.Framework;
+using Neobyte.Build.Framework;
 using System.IO;
 
 namespace Graphyte

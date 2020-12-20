@@ -1,8 +1,10 @@
 {
+/*
     "EngineFeatures": {
         "MemoryTracing": false,
         "Profiling": false
     },
+*/
     "WindowsPlatformSettings": {
         "WindowsSdkVersion": "10.0.19041.0",
         "VisualStudio": {
