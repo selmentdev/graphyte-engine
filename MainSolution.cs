@@ -27,21 +27,8 @@ namespace Graphyte
         public GameTarget(TargetDescriptor descriptor, TargetContext context)
             : base(descriptor, context)
         {
-            this.Modules.Add(typeof(DemoApp));
+            this.LaunchModule = typeof(DemoApp);
             this.Type = TargetType.Game;
-            this.LinkType = TargetLinkType.Modular;
-        }
-    }
-
-    [TargetRules]
-    public class EditorTarget
-        : TargetRules
-    {
-        public EditorTarget(TargetDescriptor descriptor, TargetContext context)
-            : base(descriptor, context)
-        {
-            this.Modules.Add(typeof(DemoApp));
-            this.Type = TargetType.Editor;
             this.LinkType = TargetLinkType.Modular;
         }
     }

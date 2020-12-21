@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Graphyte.Build\Graphyte.Build\Graphyte.Build.csproj" />
+    <ProjectReference Include="..\..\Graphyte.Build\Neobyte.Build\Neobyte.Build.csproj" />
   </ItemGroup>
 
   <ItemGroup>
