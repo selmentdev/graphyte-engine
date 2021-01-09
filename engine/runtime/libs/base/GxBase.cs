@@ -39,8 +39,8 @@ namespace Graphyte
             // BUG: redefine this conditionally
             this.PrivateDefines.Add("module_base_EXPORTS=1");
 
+            this.PublicIncludePaths.Add(Path.Combine(target.SourceDirectory.FullName, "engine", "include"));
             this.PublicIncludePaths.Add(Path.Combine(this.SourceDirectory.FullName, "public"));
-            this.PublicIncludePaths.Add("engine/include");
 
             this.PrivateDependencies.Add(typeof(SdkLz4));
             this.PublicDependencies.Add(typeof(SdkFmt));
