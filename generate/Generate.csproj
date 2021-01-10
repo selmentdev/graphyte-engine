@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\game\Game.target.cs" />
     <Compile Include="..\game\source\app.demo\AppDemo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -27,6 +28,7 @@
     <Compile Include="..\engine\runtime\tests\maths\TestGxMaths.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\engine\runtime\libs\Engine.target.cs" />
     <Compile Include="..\engine\runtime\libs\base\GxBase.cs" />
     <Compile Include="..\engine\runtime\libs\geometry\GxGeometry.cs" />
     <Compile Include="..\engine\runtime\libs\graphics-d3d11\GxGraphicsD3D11.cs" />
